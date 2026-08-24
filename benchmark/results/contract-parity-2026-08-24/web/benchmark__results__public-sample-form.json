@@ -1,0 +1,1106 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "document": {
+    "header": {
+      "contractName": "pdf-editor.document",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "generatedAt": "2026-08-24T16:36:13.725Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "source": {
+        "fileName": "public-sample-form.pdf",
+        "byteCount": 10768,
+        "sha256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+      },
+      "pages": [
+        {
+          "pageIndex": 0,
+          "pageLabel": "1",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 841
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 841
+          },
+          "bleedBox": null,
+          "trimBox": null,
+          "artBox": null,
+          "rotation": 0,
+          "characterCount": 157,
+          "annotationCount": 6,
+          "hasSelectableText": true
+        }
+      ],
+      "fields": [
+        {
+          "id": "applicant.name",
+          "name": "applicant.name",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 705.39,
+            "width": 251,
+            "height": 23
+          },
+          "value": "",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 705.39,
+              "width": 251,
+              "height": 23
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "12R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "applicant.notes",
+          "name": "applicant.notes",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 617.39,
+            "width": 251,
+            "height": 67
+          },
+          "value": "",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 617.39,
+              "width": 251,
+              "height": 67
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "16R",
+          "fieldFlags": 4096
+        },
+        {
+          "id": "applicant.subscribe",
+          "name": "applicant.subscribe",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 567.39,
+            "width": 19,
+            "height": 19
+          },
+          "value": "Off",
+          "choices": [
+            "Yes"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 567.39,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "19R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "applicant.contact",
+          "name": "applicant.contact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 523.39,
+            "width": 19,
+            "height": 19
+          },
+          "value": "",
+          "choices": [
+            "0"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 523.39,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "25R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "applicant.contact",
+          "name": "applicant.contact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 255.5,
+            "y": 523.39,
+            "width": 19,
+            "height": 19
+          },
+          "value": "",
+          "choices": [
+            "1"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 255.5,
+              "y": 523.39,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "30R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "applicant.country",
+          "name": "applicant.country",
+          "kind": "choice",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 477.39,
+            "width": 251,
+            "height": 23
+          },
+          "value": "",
+          "choices": [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 477.39,
+              "width": 251,
+              "height": 23
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "36R",
+          "fieldFlags": 131072
+        }
+      ],
+      "candidates": [
+        {
+          "id": "candidate-37e523fb-a1c5-45d2-8408-cbfbcf578d1a",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 0.5,
+            "y": 22.5,
+            "width": 250,
+            "height": 18
+          },
+          "kind": "vectorRegion",
+          "status": "suggested",
+          "score": 0.6,
+          "evidence": [
+            "Vector underline stroke detected (250pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0.5,
+              "y": 22.5,
+              "width": 250,
+              "height": 18
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "text",
+          "entryMode": "singleText",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorLine",
+              "origin": "geometryExtraction",
+              "summary": "Vector horizontal line at y=23",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 0.5,
+                  "y": 22.5,
+                  "width": 250,
+                  "height": 1
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.6,
+              "id": "evidence-4c20d072-aa7d-4493-b4f4-1ef57a62a708"
+            }
+          ],
+          "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+        },
+        {
+          "id": "candidate-8ace37fa-689e-4015-882f-b0f3f19ba674",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 0.5,
+            "y": 0.5,
+            "width": 250,
+            "height": 18
+          },
+          "kind": "vectorRegion",
+          "status": "suggested",
+          "score": 0.6,
+          "evidence": [
+            "Vector underline stroke detected (250pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0.5,
+              "y": 0.5,
+              "width": 250,
+              "height": 18
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "text",
+          "entryMode": "singleText",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorLine",
+              "origin": "geometryExtraction",
+              "summary": "Vector horizontal line at y=1",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "width": 250,
+                  "height": 1
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.6,
+              "id": "evidence-f6a41e61-442e-4654-94c3-d063da3c487d"
+            }
+          ],
+          "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+        },
+        {
+          "id": "candidate-29b9ee3e-1b7b-48e7-b26a-7973cc7275a6",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 2,
+            "y": 21,
+            "width": 247,
+            "height": 18
+          },
+          "kind": "vectorRegion",
+          "status": "suggested",
+          "score": 0.6,
+          "evidence": [
+            "Vector underline stroke detected (247pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 2,
+              "y": 21,
+              "width": 247,
+              "height": 18
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "text",
+          "entryMode": "singleText",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorLine",
+              "origin": "geometryExtraction",
+              "summary": "Vector horizontal line at y=21",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 2,
+                  "y": 21,
+                  "width": 247,
+                  "height": 1
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.6,
+              "id": "evidence-d9109b5a-c5e3-4961-bc61-e0c696cada9f"
+            }
+          ],
+          "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+        },
+        {
+          "id": "candidate-7ee0cc10-eb56-46ff-b80c-5258e3ff709a",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 0.5,
+            "y": 66.5,
+            "width": 250,
+            "height": 18
+          },
+          "kind": "vectorRegion",
+          "status": "suggested",
+          "score": 0.6,
+          "evidence": [
+            "Vector underline stroke detected (250pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0.5,
+              "y": 66.5,
+              "width": 250,
+              "height": 18
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "text",
+          "entryMode": "singleText",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorLine",
+              "origin": "geometryExtraction",
+              "summary": "Vector horizontal line at y=67",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 0.5,
+                  "y": 66.5,
+                  "width": 250,
+                  "height": 1
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.6,
+              "id": "evidence-6bb97695-8b37-406c-9a82-a97bf201dbbf"
+            }
+          ],
+          "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+        },
+        {
+          "id": "candidate-222e2fdf-fda2-4e97-bfb9-c083ce1ccb75",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 2,
+            "y": 65,
+            "width": 247,
+            "height": 18
+          },
+          "kind": "vectorRegion",
+          "status": "suggested",
+          "score": 0.6,
+          "evidence": [
+            "Vector underline stroke detected (247pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 2,
+              "y": 65,
+              "width": 247,
+              "height": 18
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "text",
+          "entryMode": "singleText",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorLine",
+              "origin": "geometryExtraction",
+              "summary": "Vector horizontal line at y=65",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 2,
+                  "y": 65,
+                  "width": 247,
+                  "height": 1
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.6,
+              "id": "evidence-81b2a662-7d61-4b7b-9ee0-4888a860c63e"
+            }
+          ],
+          "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+        }
+      ],
+      "warnings": [],
+      "links": [],
+      "outlines": [],
+      "metadata": {
+        "title": "Sample form (empty)",
+        "author": "tinytoolkit sample files",
+        "subject": "AcroForm test file",
+        "creator": "https://pdftoolskit.org/sample-pdfs",
+        "producer": "pdf-sample-files generator (pdf-lib)",
+        "creationDate": "D:20260719000000Z",
+        "modificationDate": "D:20260719000000Z",
+        "keywords": "sample test pdf cc0 pdftoolskit.org"
+      },
+      "permissions": {
+        "canPrint": false,
+        "canCopy": false,
+        "canModify": false,
+        "canAddAnnotations": false,
+        "isReadOnly": false
+      },
+      "attachments": [],
+      "accessibility": {
+        "hasTaggedContent": false,
+        "hasReadingOrder": false,
+        "notes": [
+          "Tagged-content and reading-order validation are outside this browser proof."
+        ]
+      },
+      "security": {
+        "isEncrypted": false,
+        "isLocked": false,
+        "requiresPassword": false
+      }
+    }
+  },
+  "coordinates": {
+    "contractName": "pdf-editor.coordinates",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "generatedAt": "2026-08-24T16:36:13.725Z",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "pages": [
+      {
+        "pageIndex": 0,
+        "region": {
+          "pageIndex": 0,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 841
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "id": "candidate-37e523fb-a1c5-45d2-8408-cbfbcf578d1a",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 0.5,
+        "y": 22.5,
+        "width": 250,
+        "height": 18
+      },
+      "kind": "vectorRegion",
+      "status": "suggested",
+      "score": 0.6,
+      "evidence": [
+        "Vector underline stroke detected (250pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 0.5,
+          "y": 22.5,
+          "width": 250,
+          "height": 18
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "text",
+      "entryMode": "singleText",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorLine",
+          "origin": "geometryExtraction",
+          "summary": "Vector horizontal line at y=23",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0.5,
+              "y": 22.5,
+              "width": 250,
+              "height": 1
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.6,
+          "id": "evidence-4c20d072-aa7d-4493-b4f4-1ef57a62a708"
+        }
+      ],
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    },
+    {
+      "id": "candidate-8ace37fa-689e-4015-882f-b0f3f19ba674",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 0.5,
+        "y": 0.5,
+        "width": 250,
+        "height": 18
+      },
+      "kind": "vectorRegion",
+      "status": "suggested",
+      "score": 0.6,
+      "evidence": [
+        "Vector underline stroke detected (250pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 0.5,
+          "y": 0.5,
+          "width": 250,
+          "height": 18
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "text",
+      "entryMode": "singleText",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorLine",
+          "origin": "geometryExtraction",
+          "summary": "Vector horizontal line at y=1",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0.5,
+              "y": 0.5,
+              "width": 250,
+              "height": 1
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.6,
+          "id": "evidence-f6a41e61-442e-4654-94c3-d063da3c487d"
+        }
+      ],
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    },
+    {
+      "id": "candidate-29b9ee3e-1b7b-48e7-b26a-7973cc7275a6",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 2,
+        "y": 21,
+        "width": 247,
+        "height": 18
+      },
+      "kind": "vectorRegion",
+      "status": "suggested",
+      "score": 0.6,
+      "evidence": [
+        "Vector underline stroke detected (247pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 2,
+          "y": 21,
+          "width": 247,
+          "height": 18
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "text",
+      "entryMode": "singleText",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorLine",
+          "origin": "geometryExtraction",
+          "summary": "Vector horizontal line at y=21",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 2,
+              "y": 21,
+              "width": 247,
+              "height": 1
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.6,
+          "id": "evidence-d9109b5a-c5e3-4961-bc61-e0c696cada9f"
+        }
+      ],
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    },
+    {
+      "id": "candidate-7ee0cc10-eb56-46ff-b80c-5258e3ff709a",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 0.5,
+        "y": 66.5,
+        "width": 250,
+        "height": 18
+      },
+      "kind": "vectorRegion",
+      "status": "suggested",
+      "score": 0.6,
+      "evidence": [
+        "Vector underline stroke detected (250pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 0.5,
+          "y": 66.5,
+          "width": 250,
+          "height": 18
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "text",
+      "entryMode": "singleText",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorLine",
+          "origin": "geometryExtraction",
+          "summary": "Vector horizontal line at y=67",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0.5,
+              "y": 66.5,
+              "width": 250,
+              "height": 1
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.6,
+          "id": "evidence-6bb97695-8b37-406c-9a82-a97bf201dbbf"
+        }
+      ],
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    },
+    {
+      "id": "candidate-222e2fdf-fda2-4e97-bfb9-c083ce1ccb75",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 2,
+        "y": 65,
+        "width": 247,
+        "height": 18
+      },
+      "kind": "vectorRegion",
+      "status": "suggested",
+      "score": 0.6,
+      "evidence": [
+        "Vector underline stroke detected (247pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 2,
+          "y": 65,
+          "width": 247,
+          "height": 18
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "text",
+      "entryMode": "singleText",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorLine",
+          "origin": "geometryExtraction",
+          "summary": "Vector horizontal line at y=65",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 2,
+              "y": 65,
+              "width": 247,
+              "height": 1
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.6,
+          "id": "evidence-81b2a662-7d61-4b7b-9ee0-4888a860c63e"
+        }
+      ],
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    }
+  ],
+  "editSession": {
+    "header": {
+      "contractName": "pdf-editor.edit-session",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "generatedAt": "2026-08-24T16:36:13.725Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "source": {
+      "fileName": "public-sample-form.pdf",
+      "byteCount": 10768,
+      "sha256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    },
+    "reviews": [],
+    "operations": []
+  },
+  "validation": {
+    "status": "validated",
+    "messages": [
+      "Source bytes still match the inspected SHA-256.",
+      "Encrypted source remains open in PDF.js with 1 page(s).",
+      "No-op export preserves the already-inspected encrypted page geometry.",
+      "No native field operations were requested.",
+      "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+      "No page content changed because the protected source was copied byte-for-byte.",
+      "No raster content changed because the protected source was copied byte-for-byte.",
+      "No-op export used byte-preserving source download; no PDF writer was invoked."
+    ],
+    "sourceUnchanged": true,
+    "outputReopenable": true,
+    "checks": [
+      {
+        "id": "53219142-a61c-4cf0-8388-f93899af929a",
+        "kind": "sourceDigest",
+        "status": "passed",
+        "message": "Source bytes still match the inspected SHA-256.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "88f72da6-7423-4e33-9ed3-c0d72e531b1a",
+        "kind": "outputReopen",
+        "status": "passed",
+        "message": "Encrypted source remains open in PDF.js with 1 page(s).",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "e6beb100-2c9a-4808-9801-c3d6c0276529",
+        "kind": "pageGeometry",
+        "status": "passed",
+        "message": "No-op export preserves the already-inspected encrypted page geometry.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "9d1a52a7-ad1b-419b-9d31-3bf950f959a5",
+        "kind": "nativeFields",
+        "status": "skipped",
+        "message": "No native field operations were requested.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "c52679a8-68f4-40e0-b694-b5cd46cea49a",
+        "kind": "appliedOperations",
+        "status": "passed",
+        "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "e748b3f6-8e74-4e11-a0b2-df9677aab246",
+        "kind": "outsideRegionText",
+        "status": "passed",
+        "message": "No page content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "14c5bed1-c7e6-46e1-b38f-20b0962fc282",
+        "kind": "visualDiff",
+        "status": "passed",
+        "message": "No raster content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "ffdf5692-e820-4804-b1c6-5fcf530724ef",
+        "kind": "providerCapability",
+        "status": "passed",
+        "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
+        "region": null,
+        "operationIDs": []
+      }
+    ],
+    "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "outputDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "validatedAt": "2026-08-24T16:36:13.755Z",
+    "operationIDs": []
+  },
+  "sourcePath": "benchmark/results/public-sample-form.pdf",
+  "expectedFailure": false,
+  "status": "inspected",
+  "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "error": null
+}

@@ -1,0 +1,73 @@
+{
+  "checkboxStateRoundTrip" : true,
+  "choiceValueRoundTrip" : true,
+  "expectedFieldNames" : [
+    "fullName",
+    "consent",
+    "status",
+    "status",
+    "country",
+    "signature"
+  ],
+  "filledReopen" : true,
+  "fixtureReopen" : true,
+  "fixtureSHA256" : "07f9e8c7ee952701a7721a32fdeea935923fdbcaec60dacf36e62afb1844e0c4",
+  "fixtureUnchanged" : true,
+  "observedFieldNames" : [
+    "fullName",
+    "consent",
+    "status",
+    "status",
+    "country",
+    "signature"
+  ],
+  "provider" : "PDFKit",
+  "radioStateRoundTrip" : true,
+  "signatureFieldRoundTrip" : true,
+  "textValueRoundTrip" : true,
+  "widgetCount" : 6,
+  "widgets" : [
+    {
+      "bounds" : "{{72, 680}, {220, 28}}",
+      "fieldName" : "fullName",
+      "fieldType" : "PDFAnnotationWidgetSubtype(_rawValue: \/Tx)",
+      "type" : "Widget",
+      "value" : "Grace Hopper"
+    },
+    {
+      "bounds" : "{{72, 625}, {24, 24}}",
+      "fieldName" : "consent",
+      "fieldType" : "PDFAnnotationWidgetSubtype(_rawValue: \/Btn)",
+      "type" : "Widget",
+      "value" : "Off"
+    },
+    {
+      "bounds" : "{{72, 570}, {24, 24}}",
+      "fieldName" : "status",
+      "fieldType" : "PDFAnnotationWidgetSubtype(_rawValue: \/Btn)",
+      "type" : "Widget",
+      "value" : "no"
+    },
+    {
+      "bounds" : "{{112, 570}, {24, 24}}",
+      "fieldName" : "status",
+      "fieldType" : "PDFAnnotationWidgetSubtype(_rawValue: \/Btn)",
+      "type" : "Widget",
+      "value" : "no"
+    },
+    {
+      "bounds" : "{{72, 510}, {220, 28}}",
+      "fieldName" : "country",
+      "fieldType" : "PDFAnnotationWidgetSubtype(_rawValue: \/Ch)",
+      "type" : "Widget",
+      "value" : "Other"
+    },
+    {
+      "bounds" : "{{72, 420}, {220, 56}}",
+      "fieldName" : "signature",
+      "fieldType" : "PDFAnnotationWidgetSubtype(_rawValue: \/Sig)",
+      "type" : "Widget",
+      "value" : ""
+    }
+  ]
+}

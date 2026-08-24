@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager and Xcode build state
+.build/
+.swiftpm/
+DerivedData/
+xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local agent/session state and runtime logs
+.agent/
+.freebuff/
+.vscode/
+mcp-shell.log

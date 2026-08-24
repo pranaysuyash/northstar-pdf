@@ -1,0 +1,662 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "document": {
+    "header": {
+      "contractName": "pdf-editor.document",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "generatedAt": "2026-08-24T16:31:15.805Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "source": {
+        "fileName": "encrypted-reader.pdf",
+        "byteCount": 17733,
+        "sha256": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+      },
+      "pages": [
+        {
+          "pageIndex": 0,
+          "pageLabel": "1",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": null,
+          "trimBox": null,
+          "artBox": null,
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        }
+      ],
+      "fields": [
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "8R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [
+            "Yes"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "9R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [
+            "Email"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "10R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "11R",
+          "fieldFlags": 0
+        }
+      ],
+      "candidates": [
+        {
+          "id": "candidate-3474f615-424d-47fc-a0c2-e174404c18d7",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 20,
+            "height": 20
+          },
+          "kind": "vectorRegion",
+          "status": "unknown",
+          "score": 0.52,
+          "evidence": [
+            "Vector checkbox-shaped rectangle detected (20x20pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "checkbox",
+          "entryMode": "checkbox",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorRectangle",
+              "origin": "geometryExtraction",
+              "summary": "Checkbox-shaped vector square path at (0, 0)",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 20,
+                  "height": 20
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.52,
+              "id": "evidence-7d541cb5-b7d6-4ce8-95e5-f8041d716cc6"
+            }
+          ],
+          "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+        },
+        {
+          "id": "candidate-87488ca1-415c-483c-a744-4f6a731402ab",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 1,
+            "y": 23,
+            "width": 218,
+            "height": 18
+          },
+          "kind": "vectorRegion",
+          "status": "suggested",
+          "score": 0.6,
+          "evidence": [
+            "Vector underline stroke detected (218pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 1,
+              "y": 23,
+              "width": 218,
+              "height": 18
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "text",
+          "entryMode": "singleText",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorLine",
+              "origin": "geometryExtraction",
+              "summary": "Vector horizontal line at y=23",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 1,
+                  "y": 23,
+                  "width": 218,
+                  "height": 1
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.6,
+              "id": "evidence-95672823-6494-4f83-9ed1-8474d7b17f94"
+            }
+          ],
+          "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+        }
+      ],
+      "warnings": [],
+      "links": [],
+      "outlines": [],
+      "metadata": {
+        "title": "",
+        "author": "",
+        "subject": "",
+        "creator": "",
+        "producer": "macOS Version 15.7.7 (Build 24G720) Quartz PDFContext",
+        "creationDate": "D:20260823174025Z00'00'",
+        "modificationDate": "D:20260823174025Z00'00'",
+        "keywords": ""
+      },
+      "permissions": {
+        "canPrint": false,
+        "canCopy": false,
+        "canModify": false,
+        "canAddAnnotations": false,
+        "isReadOnly": false
+      },
+      "attachments": [],
+      "accessibility": {
+        "hasTaggedContent": false,
+        "hasReadingOrder": false,
+        "notes": [
+          "Tagged-content and reading-order validation are outside this browser proof."
+        ]
+      },
+      "security": {
+        "isEncrypted": true,
+        "isLocked": true,
+        "requiresPassword": true
+      }
+    }
+  },
+  "coordinates": {
+    "contractName": "pdf-editor.coordinates",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+    "generatedAt": "2026-08-24T16:31:15.805Z",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "pages": [
+      {
+        "pageIndex": 0,
+        "region": {
+          "pageIndex": 0,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "id": "candidate-3474f615-424d-47fc-a0c2-e174404c18d7",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 20,
+        "height": 20
+      },
+      "kind": "vectorRegion",
+      "status": "unknown",
+      "score": 0.52,
+      "evidence": [
+        "Vector checkbox-shaped rectangle detected (20x20pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "checkbox",
+      "entryMode": "checkbox",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorRectangle",
+          "origin": "geometryExtraction",
+          "summary": "Checkbox-shaped vector square path at (0, 0)",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.52,
+          "id": "evidence-7d541cb5-b7d6-4ce8-95e5-f8041d716cc6"
+        }
+      ],
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+    },
+    {
+      "id": "candidate-87488ca1-415c-483c-a744-4f6a731402ab",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 1,
+        "y": 23,
+        "width": 218,
+        "height": 18
+      },
+      "kind": "vectorRegion",
+      "status": "suggested",
+      "score": 0.6,
+      "evidence": [
+        "Vector underline stroke detected (218pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 1,
+          "y": 23,
+          "width": 218,
+          "height": 18
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "text",
+      "entryMode": "singleText",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorLine",
+          "origin": "geometryExtraction",
+          "summary": "Vector horizontal line at y=23",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 1,
+              "y": 23,
+              "width": 218,
+              "height": 1
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.6,
+          "id": "evidence-95672823-6494-4f83-9ed1-8474d7b17f94"
+        }
+      ],
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+    }
+  ],
+  "editSession": {
+    "header": {
+      "contractName": "pdf-editor.edit-session",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "generatedAt": "2026-08-24T16:31:15.805Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "source": {
+      "fileName": "encrypted-reader.pdf",
+      "byteCount": 17733,
+      "sha256": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+    },
+    "reviews": [],
+    "operations": []
+  },
+  "validation": {
+    "status": "validated",
+    "messages": [
+      "Source bytes still match the inspected SHA-256.",
+      "Encrypted source remains open in PDF.js with 1 page(s).",
+      "No-op export preserves the already-inspected encrypted page geometry.",
+      "No native field operations were requested.",
+      "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+      "No page content changed because the protected source was copied byte-for-byte.",
+      "No raster content changed because the protected source was copied byte-for-byte.",
+      "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported."
+    ],
+    "sourceUnchanged": true,
+    "outputReopenable": true,
+    "checks": [
+      {
+        "id": "97498a70-ebc4-4cb7-aeac-6753625b5dea",
+        "kind": "sourceDigest",
+        "status": "passed",
+        "message": "Source bytes still match the inspected SHA-256.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "fdc09b81-90c2-40b2-b6e8-f1d9f65688b7",
+        "kind": "outputReopen",
+        "status": "passed",
+        "message": "Encrypted source remains open in PDF.js with 1 page(s).",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "a32df6e6-b4a2-4e69-8704-029168d49987",
+        "kind": "pageGeometry",
+        "status": "passed",
+        "message": "No-op export preserves the already-inspected encrypted page geometry.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "dcae265a-15cf-4379-8039-e2e7160b0691",
+        "kind": "nativeFields",
+        "status": "skipped",
+        "message": "No native field operations were requested.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "f96f2e11-0891-489a-a6b2-2b3129b51a94",
+        "kind": "appliedOperations",
+        "status": "passed",
+        "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "a02e6121-0cb9-46b3-83f0-cb894137981e",
+        "kind": "outsideRegionText",
+        "status": "passed",
+        "message": "No page content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "49f4419f-03ab-4b3d-978b-7197518b1f17",
+        "kind": "visualDiff",
+        "status": "passed",
+        "message": "No raster content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "99cfbf9c-a1dc-4ad5-b385-2e7076b19e43",
+        "kind": "providerCapability",
+        "status": "passed",
+        "message": "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported.",
+        "region": null,
+        "operationIDs": []
+      }
+    ],
+    "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+    "outputDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "validatedAt": "2026-08-24T16:31:15.843Z",
+    "operationIDs": []
+  },
+  "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+  "expectedFailure": false,
+  "status": "inspected",
+  "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+  "error": null
+}

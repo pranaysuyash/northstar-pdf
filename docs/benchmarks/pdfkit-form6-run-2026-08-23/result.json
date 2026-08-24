@@ -1,0 +1,32 @@
+{
+  "inputSHA256" : "2cf1421343c22676f15eff0ec6f31a4df6e7f7975dc0f3d88d2b29a1dcc79d34",
+  "nativeWidgetCount" : 0,
+  "noOpReopen" : true,
+  "noOpTextEquivalent" : true,
+  "originalUnchanged" : true,
+  "overlayAnnotationCount" : 1,
+  "overlayReopen" : true,
+  "overlayTextEquivalent" : true,
+  "pageSnapshots" : [
+    {
+      "annotationCount" : 0,
+      "characterCount" : 2321,
+      "height" : 841.68,
+      "rotation" : 0,
+      "widgetCount" : 0,
+      "width" : 612
+    },
+    {
+      "annotationCount" : 0,
+      "characterCount" : 3571,
+      "height" : 841.68,
+      "rotation" : 0,
+      "widgetCount" : 0,
+      "width" : 612
+    }
+  ],
+  "pages" : 2,
+  "provider" : "PDFKit",
+  "renderedPageCount" : 2,
+  "textNonEmpty" : true
+}

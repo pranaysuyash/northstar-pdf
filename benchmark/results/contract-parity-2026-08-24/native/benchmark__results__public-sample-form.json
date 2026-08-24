@@ -1,0 +1,395 @@
+{
+  "candidates" : [
+
+  ],
+  "contractName" : "pdf-editor.browser-fixture",
+  "coordinates" : {
+    "contractName" : "pdf-editor.coordinates",
+    "generatedAt" : "2026-08-24T16:35:44Z",
+    "pages" : [
+      {
+        "pageIndex" : 0,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 0,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      }
+    ],
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "version" : {
+      "major" : 1,
+      "minor" : 0
+    }
+  },
+  "document" : {
+    "header" : {
+      "contractName" : "pdf-editor.document",
+      "generatedAt" : "2026-08-24T16:35:44Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "accessibility" : {
+        "hasReadingOrder" : true,
+        "hasTaggedContent" : false,
+        "notes" : [
+          "Reading order is derived from provider text extraction and is not an authored-tag guarantee.",
+          "PDF\/UA conformance and authored tag-tree preservation require a validator-backed lane."
+        ]
+      },
+      "attachments" : [
+
+      ],
+      "candidates" : [
+
+      ],
+      "fields" : [
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.name#0#0",
+          "kind" : "text",
+          "name" : "applicant.name",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.notes#0#1",
+          "kind" : "text",
+          "name" : "applicant.notes",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.subscribe#0#2",
+          "kind" : "button",
+          "name" : "applicant.subscribe",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant.contact#0#3",
+          "kind" : "button",
+          "name" : "applicant.contact",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant.contact#0#4",
+          "kind" : "button",
+          "name" : "applicant.contact",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant.country#0#5",
+          "kind" : "choice",
+          "name" : "applicant.country",
+          "pageIndex" : 0
+        }
+      ],
+      "links" : [
+
+      ],
+      "metadata" : {
+        "author" : "tinytoolkit sample files",
+        "creationDate" : "19\/7\/2026, 5:30 AM",
+        "creator" : "https:\/\/pdftoolskit.org\/sample-pdfs",
+        "keywords" : "",
+        "modificationDate" : "19\/7\/2026, 5:30 AM",
+        "producer" : "pdf-sample-files generator (pdf-lib)",
+        "subject" : "AcroForm test file",
+        "title" : "Sample form (empty)"
+      },
+      "outlines" : [
+
+      ],
+      "pages" : [
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 0,
+          "pageLabel" : "1",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      ],
+      "permissions" : {
+        "canAddAnnotations" : true,
+        "canCopy" : true,
+        "canModify" : true,
+        "canPrint" : true,
+        "isReadOnly" : false
+      },
+      "security" : {
+        "isEncrypted" : false,
+        "isLocked" : false,
+        "requiresPassword" : false
+      },
+      "source" : {
+        "byteCount" : 10768,
+        "fileName" : "public-sample-form.pdf",
+        "sha256" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+      },
+      "warnings" : [
+
+      ]
+    }
+  },
+  "editSession" : {
+    "header" : {
+      "contractName" : "pdf-editor.edit-session",
+      "generatedAt" : "2026-08-24T16:35:44Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "operations" : [
+
+    ],
+    "reviews" : [
+
+    ],
+    "source" : {
+      "byteCount" : 10768,
+      "fileName" : "public-sample-form.pdf",
+      "sha256" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+    }
+  },
+  "expectedFailure" : false,
+  "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "sourcePath" : "benchmark\/results\/public-sample-form.pdf",
+  "status" : "inspected",
+  "validation" : {
+    "checks" : [
+      {
+        "id" : "F346C5B6-C19D-43FE-B99B-4A43B33B0696",
+        "kind" : "sourceDigest",
+        "message" : "Source bytes still match the inspected SHA-256.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "0A76B8B7-E6B9-4D7A-8C19-E16FA20BEE3C",
+        "kind" : "outputReopen",
+        "message" : "Export reopened in PDFKit with 1 page(s).",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "8872362B-AD93-416B-BEC3-B93FFE5C0FAA",
+        "kind" : "pageGeometry",
+        "message" : "Page count, page boxes, and rotations are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "19B88ED4-5D6D-4EFD-B0EE-5FE7BBFBC413",
+        "kind" : "nativeFields",
+        "message" : "Native field identity and geometry are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "BD104194-F032-4F8E-B2C9-9A269810BA3C",
+        "kind" : "outsideRegionText",
+        "message" : "Extracted text outside the authorized operation regions is unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "5CC3A558-94C8-4C61-9C03-C45DB33A9952",
+        "kind" : "visualDiff",
+        "message" : "Raster output is unchanged outside the authorized operation regions.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "B5492178-A24B-46F3-8167-1F0B72D6A9E3",
+        "kind" : "appliedOperations",
+        "message" : "Requested operations were represented in the reopened export.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      }
+    ],
+    "messages" : [
+
+    ],
+    "operationIDs" : [
+
+    ],
+    "outputDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "outputReopenable" : true,
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "forms",
+        "overlay",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "sourceUnchanged" : true,
+    "status" : "validated",
+    "validatedAt" : "2026-08-24T16:35:45Z"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

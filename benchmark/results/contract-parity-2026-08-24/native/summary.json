@@ -1,0 +1,89 @@
+{
+  "fixtureCount" : 11,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourcePath" : "benchmark\/results\/public-sample-form.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+      "sourcePath" : "benchmark\/results\/navigation-corpus\/navigation-metadata.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
+      "sourcePath" : "benchmark\/results\/2026-08-23-pdfkit-widgets\/fixture.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+      "sourcePath" : "benchmark\/results\/2026-08-23-public-acroform\/noop.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "81e59007c14307ad7a40a99f051363b99c9a5d78c880f67507082f12ff72cef0",
+      "sourcePath" : "docs\/benchmarks\/pdfkit-form6-run-2026-08-23\/noop.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "sourcePath" : "benchmark\/results\/security-corpus\/encrypted-reader.pdf",
+      "status" : "inspected"
+    },
+    {
+      "error" : "The PDF could not be opened safely: truncated-128-bytes.pdf",
+      "expectedFailure" : true,
+      "sourcePath" : "benchmark\/results\/security-corpus\/truncated-128-bytes.pdf",
+      "status" : "inspectionFailed"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "sourcePath" : "benchmark\/results\/security-corpus\/repeated-20-pages.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourcePath" : "benchmark\/results\/ocr-corpus\/printed-scan.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+      "sourcePath" : "benchmark\/results\/rotation-corpus\/rotated-widget-90.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "sourcePath" : "benchmark\/results\/rotation-corpus\/rotated-form6-mixed.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 15.7.7 (Build 24G720)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

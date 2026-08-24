@@ -1,0 +1,16 @@
+{
+  "fixture" : "public-acroform",
+  "inputSHA256" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "mutatedReopen" : true,
+  "noOpReopen" : true,
+  "originalUnchanged" : true,
+  "pages" : 1,
+  "provider" : "PDFKit",
+  "widgetCount" : 6,
+  "widgetStateEquivalent" : false,
+  "widgetTypes" : [
+    "\/Btn",
+    "\/Ch",
+    "\/Tx"
+  ]
+}

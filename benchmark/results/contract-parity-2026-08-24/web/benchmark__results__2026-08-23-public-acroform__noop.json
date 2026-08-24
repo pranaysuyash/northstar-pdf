@@ -1,0 +1,602 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "document": {
+    "header": {
+      "contractName": "pdf-editor.document",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+      "generatedAt": "2026-08-24T16:36:14.137Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "source": {
+        "fileName": "noop.pdf",
+        "byteCount": 27307,
+        "sha256": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+      },
+      "pages": [
+        {
+          "pageIndex": 0,
+          "pageLabel": "1",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 841
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 841
+          },
+          "bleedBox": null,
+          "trimBox": null,
+          "artBox": null,
+          "rotation": 0,
+          "characterCount": 157,
+          "annotationCount": 6,
+          "hasSelectableText": true
+        }
+      ],
+      "fields": [
+        {
+          "id": "applicant.name",
+          "name": "applicant.name",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 705.39,
+            "width": 251,
+            "height": 23
+          },
+          "value": "",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 705.39,
+              "width": 251,
+              "height": 23
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "10R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "applicant.notes",
+          "name": "applicant.notes",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 617.39,
+            "width": 251,
+            "height": 67
+          },
+          "value": "",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 617.39,
+              "width": 251,
+              "height": 67
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "11R",
+          "fieldFlags": 4096
+        },
+        {
+          "id": "applicant.subscribe",
+          "name": "applicant.subscribe",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 567.39,
+            "width": 19,
+            "height": 19
+          },
+          "value": "Off",
+          "choices": [
+            "Yes"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 567.39,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "12R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "applicant.contact",
+          "name": "applicant.contact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 523.39,
+            "width": 19,
+            "height": 19
+          },
+          "value": "Off",
+          "choices": [
+            "0"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 523.39,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "13R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "applicant.contact",
+          "name": "applicant.contact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 255.5,
+            "y": 523.39,
+            "width": 19,
+            "height": 19
+          },
+          "value": "Off",
+          "choices": [
+            "1"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 255.5,
+              "y": 523.39,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "14R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "applicant.country",
+          "name": "applicant.country",
+          "kind": "choice",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 185.5,
+            "y": 477.39,
+            "width": 251,
+            "height": 23
+          },
+          "value": "",
+          "choices": [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 185.5,
+              "y": 477.39,
+              "width": 251,
+              "height": 23
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "15R",
+          "fieldFlags": 131072
+        }
+      ],
+      "candidates": [
+        {
+          "id": "candidate-0f5f3774-dff8-48f5-9dc0-2d5092e67776",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 19,
+            "height": 19
+          },
+          "kind": "vectorRegion",
+          "status": "unknown",
+          "score": 0.52,
+          "evidence": [
+            "Vector checkbox-shaped rectangle detected (19x19pt).",
+            "No nearby label matched; review before applying."
+          ],
+          "nativeFieldID": null,
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "suggestedFieldType": "checkbox",
+          "entryMode": "checkbox",
+          "labelText": null,
+          "groupMemberCount": 1,
+          "memberBounds": [],
+          "evidenceItems": [
+            {
+              "kind": "vectorRectangle",
+              "origin": "geometryExtraction",
+              "summary": "Checkbox-shaped vector square path at (0, 0)",
+              "region": {
+                "pageIndex": 0,
+                "rect": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 19,
+                  "height": 19
+                },
+                "coordinateSpace": {
+                  "unit": "points",
+                  "origin": "lowerLeft",
+                  "pageBox": "crop",
+                  "rotationDegrees": 0
+                }
+              },
+              "score": 0.52,
+              "id": "evidence-ea20177c-4994-488b-8c29-48da4975bef8"
+            }
+          ],
+          "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+        }
+      ],
+      "warnings": [],
+      "links": [],
+      "outlines": [],
+      "metadata": {
+        "title": "Sample form (empty)",
+        "author": "tinytoolkit sample files",
+        "subject": "AcroForm test file",
+        "creator": "https://pdftoolskit.org/sample-pdfs",
+        "producer": "macOS Version 15.7.7 (Build 24G720) Quartz PDFContext",
+        "creationDate": "D:20260823173705Z00'00'",
+        "modificationDate": "D:20260823173705Z00'00'",
+        "keywords": "sample test pdf cc0 pdftoolskit.org"
+      },
+      "permissions": {
+        "canPrint": false,
+        "canCopy": false,
+        "canModify": false,
+        "canAddAnnotations": false,
+        "isReadOnly": false
+      },
+      "attachments": [],
+      "accessibility": {
+        "hasTaggedContent": false,
+        "hasReadingOrder": false,
+        "notes": [
+          "Tagged-content and reading-order validation are outside this browser proof."
+        ]
+      },
+      "security": {
+        "isEncrypted": false,
+        "isLocked": false,
+        "requiresPassword": false
+      }
+    }
+  },
+  "coordinates": {
+    "contractName": "pdf-editor.coordinates",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+    "generatedAt": "2026-08-24T16:36:14.137Z",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "pages": [
+      {
+        "pageIndex": 0,
+        "region": {
+          "pageIndex": 0,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 595,
+            "height": 841
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "id": "candidate-0f5f3774-dff8-48f5-9dc0-2d5092e67776",
+      "pageIndex": 0,
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 19,
+        "height": 19
+      },
+      "kind": "vectorRegion",
+      "status": "unknown",
+      "score": 0.52,
+      "evidence": [
+        "Vector checkbox-shaped rectangle detected (19x19pt).",
+        "No nearby label matched; review before applying."
+      ],
+      "nativeFieldID": null,
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 19,
+          "height": 19
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "suggestedFieldType": "checkbox",
+      "entryMode": "checkbox",
+      "labelText": null,
+      "groupMemberCount": 1,
+      "memberBounds": [],
+      "evidenceItems": [
+        {
+          "kind": "vectorRectangle",
+          "origin": "geometryExtraction",
+          "summary": "Checkbox-shaped vector square path at (0, 0)",
+          "region": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 19,
+              "height": 19
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "score": 0.52,
+          "id": "evidence-ea20177c-4994-488b-8c29-48da4975bef8"
+        }
+      ],
+      "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+    }
+  ],
+  "editSession": {
+    "header": {
+      "contractName": "pdf-editor.edit-session",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+      "generatedAt": "2026-08-24T16:36:14.137Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "source": {
+      "fileName": "noop.pdf",
+      "byteCount": 27307,
+      "sha256": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+    },
+    "reviews": [],
+    "operations": []
+  },
+  "validation": {
+    "status": "validated",
+    "messages": [
+      "Source bytes still match the inspected SHA-256.",
+      "Encrypted source remains open in PDF.js with 1 page(s).",
+      "No-op export preserves the already-inspected encrypted page geometry.",
+      "No native field operations were requested.",
+      "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+      "No page content changed because the protected source was copied byte-for-byte.",
+      "No raster content changed because the protected source was copied byte-for-byte.",
+      "No-op export used byte-preserving source download; no PDF writer was invoked."
+    ],
+    "sourceUnchanged": true,
+    "outputReopenable": true,
+    "checks": [
+      {
+        "id": "d477e4bb-775f-48c1-9119-6e7a4062f9cd",
+        "kind": "sourceDigest",
+        "status": "passed",
+        "message": "Source bytes still match the inspected SHA-256.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "96509e6a-8dac-499a-95da-b294b535ac3d",
+        "kind": "outputReopen",
+        "status": "passed",
+        "message": "Encrypted source remains open in PDF.js with 1 page(s).",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "b455ba87-5ec9-435d-87d5-cafe717fac6a",
+        "kind": "pageGeometry",
+        "status": "passed",
+        "message": "No-op export preserves the already-inspected encrypted page geometry.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "3c8ba5e7-acc6-4e9f-a742-aa882ff74d76",
+        "kind": "nativeFields",
+        "status": "skipped",
+        "message": "No native field operations were requested.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "53cac3da-3158-4df1-9de7-f2652dcca80b",
+        "kind": "appliedOperations",
+        "status": "passed",
+        "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "751af095-11e2-4eef-b865-7bf201379d73",
+        "kind": "outsideRegionText",
+        "status": "passed",
+        "message": "No page content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "025b5952-3d65-46b2-9c73-89dc09420b7c",
+        "kind": "visualDiff",
+        "status": "passed",
+        "message": "No raster content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "596ddd3a-3a50-4596-bf2a-3438b82bdea9",
+        "kind": "providerCapability",
+        "status": "passed",
+        "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
+        "region": null,
+        "operationIDs": []
+      }
+    ],
+    "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+    "outputDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "validatedAt": "2026-08-24T16:36:14.161Z",
+    "operationIDs": []
+  },
+  "sourcePath": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+  "expectedFailure": false,
+  "status": "inspected",
+  "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+  "error": null
+}

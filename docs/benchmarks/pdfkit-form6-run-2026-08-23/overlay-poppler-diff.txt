@@ -1,0 +1,10 @@
+--- docs/benchmarks/pdfkit-form6-run-2026-08-23/noop-poppler.txt	2026-08-23 22:28:18
++++ docs/benchmarks/pdfkit-form6-run-2026-08-23/overlay-poppler.txt	2026-08-23 22:28:18
+@@ -1,6 +1,7 @@
+                                                       ELECTION COMMISSION OF INDIA
+                                                                     Form-6                               FORM No._______________
+                                                        Application Form for New Voters                   (To be filled by office)
++               PDFKit benchmark
+                                     (See Rules 13(1) and (26) of the Registration of Electors Rules, 1960)
+ To,
+    The Electoral Registration Officer,

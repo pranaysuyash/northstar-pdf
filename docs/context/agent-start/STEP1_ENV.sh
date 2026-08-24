@@ -1,0 +1,13 @@
+# Source this file in your shell for this project session.
+export MEMSEARCH_PROVIDER="local"
+export MEMSEARCH_MODEL="BAAI/bge-m3"
+export PM="/Users/pranay/Projects/projects-memory"
+export PROJECT_REL="pdf_editor"
+export AGENT_DOCTRINE_ROOT="/Users/pranay/Projects/agent-start/doctrines"
+export AGENT_DOCTRINE_SOURCE="/Users/pranay/Projects/agent-start/doctrines/OPERATING_DOCTRINE.md"
+export AGENT_DOCTRINE_VERSION="8.0"
+export AGENT_DOCTRINE_SHA256="93dc8e76f2c264898cd5adaa3ccd3bbd045275b653696460bc32ed5064479823"
+export AGENT_DOCTRINE_MANIFEST="/Users/pranay/Projects/agent-start/doctrines/DOCTRINE_FAMILY_MANIFEST.json"
+export AGENT_SELECTED_DOCTRINES="OPERATING_DOCTRINE.md"
+export AGENT_SESSION_CONTEXT="/Users/pranay/Projects/pdf_editor/docs/context/agent-start/SESSION_CONTEXT.md"
+export AGENT_KICKOFF_PROMPT="/Users/pranay/Projects/pdf_editor/docs/context/agent-start/AGENT_KICKOFF_PROMPT.txt"

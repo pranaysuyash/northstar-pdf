@@ -1,0 +1,30 @@
+Use sources in this order:
+1) $HOME/AGENTS.md (or /Users/pranay/AGENTS.md on this machine)
+2) $HOME/Projects/AGENTS.md (or /Users/pranay/Projects/AGENTS.md on this machine)
+3) pdf_editor/AGENTS.md or pdf_editor/CLAUDE.md (if present)
+4) pdf_editor/OPERATING_DOCTRINE.md (generated project copy of the canonical operating doctrine at /Users/pranay/Projects/agent-start/doctrines, if present)
+5) Task-relevant specialist doctrines at the canonical root /Users/pranay/Projects/agent-start/doctrines (see the routing record in SESSION_CONTEXT.md)
+6) Other repo-local agent instructions if present, including QWEN.md, CODEX.md, copilot-instructions.md, .cursorrules, and tool-specific guidance
+7) Project-local docs/prompts/worklogs under pdf_editor
+8) pdf_editor/docs/context/AGENT_INTELLIGENCE_GRAPH.md (if present)
+9) pdf_editor/docs/context/agent-start/SESSION_CONTEXT.md
+10) $PM/sources/... (set by STEP1_ENV.sh; defaults to $HOME/Projects/projects-memory)
+
+Rules:
+- Cite concrete file paths for decisions or constraints.
+- If sources conflict, show the conflict and ask before proceeding.
+- Prefer latest dated docs when available.
+- Treat pdf_editor/OPERATING_DOCTRINE.md as the generated project copy of the canonical operating doctrine. The canonical doctrine family root is /Users/pranay/Projects/agent-start/doctrines; no other location is doctrine authority.
+- Selected specialist doctrines for this task: OPERATING_DOCTRINE.md
+  Read a selected specialist doctrine from its canonical path (with the version/hash recorded in SESSION_CONTEXT.md) when entering that mode of work. Candidate doctrines are optional; not_required doctrines are not loaded. Do not load the whole family by default.
+- Treat pdf_editor/.agent/* as compatibility mirrors only.
+- Begin with a read-only status and drift check: inspect current code, docs, worklogs, and relevant repo status because parallel agents may have changed the ground truth.
+- Before editing and before finalizing, re-check the files and docs you rely on, then adapt to newer evidence.
+- Use relevant skills after checking the configured skill locations; do not default to one toolset when a better domain skill exists.
+- Think from first principles and optimize for long-term, scalable, architecturally coherent solutions. Existing code is evidence, not a boundary.
+- Avoid duplicate or parallel systems; extend canonical routes, pipelines, validation, docs, and tools unless a replacement path is explicitly chosen.
+- Use read-only git inspection only unless the user explicitly permits staging, commits, pushes, resets, checkouts, or other write/destructive operations in the current conversation.
+- Before any separately authorized commit, read the full current OPERATING_DOCTRINE.md, refresh the repo attestation with "python3 $PM/scripts/attest_motto.py --repo $PWD", and include the required doctrine review trailers. The managed hooks enforce this in prepare-commit-msg, pre-commit, and commit-msg.
+- Never bypass the gate with core.hooksPath=/dev/null, git commit --no-verify, or an equivalent config/environment override; the Projects Git command guard blocks these invocations.
+- Research online when facts may be current, external, or uncertain; cite sources when research affects decisions.
+- Test changes, verify regressions, document findings/questions/decisions/follow-ups in durable project docs, then re-run agent-start after major updates.

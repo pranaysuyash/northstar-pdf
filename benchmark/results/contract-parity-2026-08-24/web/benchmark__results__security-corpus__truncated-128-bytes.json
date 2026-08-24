@@ -1,0 +1,17 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "sourcePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+  "expectedFailure": true,
+  "status": "inspectionFailed",
+  "sourceDigest": null,
+  "document": null,
+  "coordinates": null,
+  "candidates": null,
+  "editSession": null,
+  "validation": null,
+  "error": "cannot-open: Invalid PDF structure."
+}

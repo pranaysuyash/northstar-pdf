@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
-      "generatedAt": "2026-08-24T16:31:17.028Z",
+      "generatedAt": "2026-08-24T16:46:34.711Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -49,9 +49,24 @@
             "width": 1600,
             "height": 700
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1600,
+            "height": 700
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1600,
+            "height": 700
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 1600,
+            "height": 700
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 0,
@@ -104,7 +119,7 @@
       "minor": 0
     },
     "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
-    "generatedAt": "2026-08-24T16:31:17.028Z",
+    "generatedAt": "2026-08-24T16:46:34.711Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -148,7 +163,7 @@
         "minor": 0
       },
       "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
-      "generatedAt": "2026-08-24T16:31:17.028Z",
+      "generatedAt": "2026-08-24T16:46:34.711Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -187,7 +202,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "7fb5bd78-96aa-4564-82af-ffc735066c3b",
+        "id": "441f43f4-33f6-41b0-92ff-6387e42ad9d9",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -195,7 +210,7 @@
         "operationIDs": []
       },
       {
-        "id": "18268fec-e13e-4dca-aabb-06f065927753",
+        "id": "04e277ee-24d3-4e94-bee0-a130e1324460",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -203,7 +218,7 @@
         "operationIDs": []
       },
       {
-        "id": "8f4597ae-4d50-4347-a0d3-ce8a6ff17753",
+        "id": "49944d25-5e39-44af-9dbd-00dfea2d205d",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -211,7 +226,7 @@
         "operationIDs": []
       },
       {
-        "id": "2bb91b69-878f-4c72-99d5-d5d0e7a63323",
+        "id": "352e15b6-d7af-4f4b-94d3-740c83959444",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -219,7 +234,7 @@
         "operationIDs": []
       },
       {
-        "id": "2f00ddfd-c91c-403b-9de4-4e890226fc1b",
+        "id": "2f354c08-d63b-4438-a033-17f9f19a8cc6",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -227,7 +242,7 @@
         "operationIDs": []
       },
       {
-        "id": "54fc9f59-9036-4905-9206-6d118b4cf12e",
+        "id": "abbdbf71-940c-4371-bb10-034a2dc0879b",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -235,7 +250,7 @@
         "operationIDs": []
       },
       {
-        "id": "e9ce7082-07ae-4908-a577-f28b32bada18",
+        "id": "998fa651-3271-466a-9cb6-aa4213842d0b",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -243,7 +258,7 @@
         "operationIDs": []
       },
       {
-        "id": "c3bf3501-9e43-482e-9dd8-60d3cc050fda",
+        "id": "b662adf1-fac3-4654-810a-9693e53612c6",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -266,7 +281,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-24T16:31:17.066Z",
+    "validatedAt": "2026-08-24T16:46:34.732Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/ocr-corpus/printed-scan.pdf",

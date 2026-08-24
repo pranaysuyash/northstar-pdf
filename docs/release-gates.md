@@ -47,7 +47,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-013 | Large-document/resource limits | Shared/security | `PARTIAL` | Byte/page limits and a 20-page repeated fixture are covered; memory/time and large-structure corpus remain open |
 | RG-014 | Signed-document behavior | Native/web/security | `OPEN` | Signatures are detected and edit invalidation is explicit and safe |
 | RG-015 | XFA behavior | Native/web/provider | `OPEN` | XFA is detected, supported, or safely rejected without false AcroForm claims |
-| RG-016 | Independent-viewer reopen | Validation | `PARTIAL` | Poppler and MuPDF independently reopen 35 eligible source and derived corpus PDFs while qpdf provides separate structural validation; visual diff and semantic fidelity comparison remain open |
+| RG-016 | Independent-viewer reopen | Validation | `PARTIAL` | Poppler and MuPDF independently reopen 38 eligible source and derived corpus PDFs while qpdf provides separate structural validation; visual diff and semantic fidelity comparison remain open |
 | RG-017 | Source-integrity validation | Shared/provider | `PARTIAL` | Native and browser operation gates reject stale source digests before mutation; browser writer-call and pdf-lib-load probes pass, broader adapter and source-replacement coverage remains open |
 | RG-018 | Output-integrity validation | Shared/provider | `PARTIAL` | Output preserves all bounded invariants after reopen |
 | RG-019 | Native/web parity corpus | Shared | `PARTIAL` | Native and web runners now consume the same current ten-entry manifest with explicit password, malformed, OCR, and rotation expectations; normalized fact comparison remains open |

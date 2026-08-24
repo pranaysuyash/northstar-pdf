@@ -362,6 +362,8 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       fieldType: "checkbox",
       mode: "checkbox",
       labelText,
+      groupMemberCount: 1,
+      memberBounds: [rect],
       evidence: [
         `Vector checkbox-shaped rectangle detected (${Math.round(rect.width)}x${Math.round(rect.height)}pt).`,
         label ? `Associated label: "${labelText}"` : "No nearby label matched; review before applying."

@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-24T16:35:45Z",
+    "generatedAt" : "2026-08-24T16:52:58Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -18,10 +18,10 @@
           },
           "pageIndex" : 0,
           "rect" : {
-            "height" : 792,
-            "width" : 612,
-            "x" : 0,
-            "y" : 0
+            "height" : 720,
+            "width" : 540,
+            "x" : 36,
+            "y" : 36
           }
         }
       },
@@ -36,10 +36,10 @@
           },
           "pageIndex" : 1,
           "rect" : {
-            "height" : 792,
-            "width" : 612,
-            "x" : 0,
-            "y" : 0
+            "height" : 720,
+            "width" : 540,
+            "x" : 36,
+            "y" : 36
           }
         }
       },
@@ -54,10 +54,10 @@
           },
           "pageIndex" : 2,
           "rect" : {
-            "height" : 792,
-            "width" : 612,
-            "x" : 0,
-            "y" : 0
+            "height" : 720,
+            "width" : 540,
+            "x" : 36,
+            "y" : 36
           }
         }
       }
@@ -84,7 +84,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-24T16:35:45Z",
+      "generatedAt" : "2026-08-24T16:52:58Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -114,7 +114,7 @@
         ]
       },
       "attachments" : [
-
+        "fixture-note.txt"
       ],
       "candidates" : [
 
@@ -131,7 +131,7 @@
             "x" : 72,
             "y" : 640
           },
-          "id" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45-0-5093025872",
+          "id" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45-0-5147554608",
           "isSafeExternal" : true,
           "kind" : "externalURL",
           "label" : "Page 1 link",
@@ -145,7 +145,7 @@
             "x" : 72,
             "y" : 600
           },
-          "id" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45-0-5093029440",
+          "id" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45-0-5147555520",
           "isSafeExternal" : false,
           "kind" : "externalURL",
           "label" : "Page 1 link",
@@ -159,7 +159,7 @@
             "x" : 72,
             "y" : 560
           },
-          "id" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45-0-5082608352",
+          "id" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45-0-5147555920",
           "isSafeExternal" : true,
           "kind" : "internalPage",
           "label" : "Page 1 link",
@@ -180,36 +180,29 @@
       "outlines" : [
         {
           "children" : [
+
+          ],
+          "destinationPageIndex" : 0,
+          "id" : "Introduction-450A0BD3-E8CD-4EAD-B8D5-17A3FD688064",
+          "level" : 0,
+          "title" : "Introduction"
+        },
+        {
+          "children" : [
             {
               "children" : [
 
               ],
-              "destinationPageIndex" : 0,
-              "id" : "Introduction-4B980EC7-5545-447F-BA86-A56C8F1B8703",
+              "destinationPageIndex" : 2,
+              "id" : "Nested appendix-667292CD-346E-4D86-8377-373BF4CA045F",
               "level" : 1,
-              "title" : "Introduction"
-            },
-            {
-              "children" : [
-                {
-                  "children" : [
-
-                  ],
-                  "destinationPageIndex" : 2,
-                  "id" : "Nested appendix-F5A34775-9803-4572-BD59-02A086FAEBAB",
-                  "level" : 2,
-                  "title" : "Nested appendix"
-                }
-              ],
-              "destinationPageIndex" : 1,
-              "id" : "Details-8CE60C13-5248-45A5-9427-0FEE48F49E55",
-              "level" : 1,
-              "title" : "Details"
+              "title" : "Nested appendix"
             }
           ],
-          "id" : "-D6D8D349-6541-422E-9B60-C42F85D24F43",
+          "destinationPageIndex" : 1,
+          "id" : "Details-772E167D-94CE-44E1-80F4-F839540E9132",
           "level" : 0,
-          "title" : ""
+          "title" : "Details"
         }
       ],
       "pages" : [
@@ -228,10 +221,10 @@
             "y" : 36
           },
           "bounds" : {
-            "height" : 792,
-            "width" : 612,
-            "x" : 0,
-            "y" : 0
+            "height" : 720,
+            "width" : 540,
+            "x" : 36,
+            "y" : 36
           },
           "characterCount" : 0,
           "cropBox" : {
@@ -266,10 +259,10 @@
             "y" : 18
           },
           "bounds" : {
-            "height" : 792,
-            "width" : 612,
-            "x" : 0,
-            "y" : 0
+            "height" : 720,
+            "width" : 540,
+            "x" : 36,
+            "y" : 36
           },
           "characterCount" : 0,
           "cropBox" : {
@@ -304,10 +297,10 @@
             "y" : 36
           },
           "bounds" : {
-            "height" : 792,
-            "width" : 612,
-            "x" : 0,
-            "y" : 0
+            "height" : 720,
+            "width" : 540,
+            "x" : 36,
+            "y" : 36
           },
           "characterCount" : 0,
           "cropBox" : {
@@ -353,7 +346,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-24T16:35:45Z",
+      "generatedAt" : "2026-08-24T16:52:58Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -392,7 +385,7 @@
   "validation" : {
     "checks" : [
       {
-        "id" : "EC571F65-7EC8-471D-8858-83836F0F5783",
+        "id" : "99E31140-E3D1-4D09-BA18-60294142D793",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -401,7 +394,7 @@
         "status" : "passed"
       },
       {
-        "id" : "D9190C2A-041E-4843-A13E-BBE97CCF4254",
+        "id" : "776D9FD2-9843-462E-A1B1-C16C28C61650",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 3 page(s).",
         "operationIDs" : [
@@ -410,7 +403,7 @@
         "status" : "passed"
       },
       {
-        "id" : "3C39376A-24B5-47C1-8581-41F14DB75823",
+        "id" : "1AB960FC-970B-41E6-9C63-72AAF36EC3C5",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -419,7 +412,7 @@
         "status" : "passed"
       },
       {
-        "id" : "04CA019A-2B50-4BFE-BA93-DFE1D7046FA3",
+        "id" : "33140A42-92F8-465D-8DF0-2ADF011C0745",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -428,7 +421,7 @@
         "status" : "passed"
       },
       {
-        "id" : "DE77315B-849B-451E-A60A-7FDC8E3BC1FD",
+        "id" : "B7F1A81E-D13B-43CC-A4E5-9C30BB41B93A",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -437,7 +430,7 @@
         "status" : "passed"
       },
       {
-        "id" : "4A9BFA15-48A3-41B4-9ECD-6C805BE05089",
+        "id" : "C90D5C35-4A87-489C-B52F-A6F7EA3BE726",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -446,7 +439,7 @@
         "status" : "passed"
       },
       {
-        "id" : "D7331618-D948-41EB-AC80-1AA1AFE7A7C4",
+        "id" : "7B9EB6EB-AF0D-428C-A227-FCF1B39E704A",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -477,7 +470,7 @@
     "sourceDigest" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-24T16:35:47Z"
+    "validatedAt" : "2026-08-24T16:52:59Z"
   },
   "version" : {
     "major" : 1,

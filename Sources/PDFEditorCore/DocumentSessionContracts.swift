@@ -146,6 +146,59 @@ public struct DocumentSessionOperationMetadata: Codable, Equatable, Hashable, Id
     self.reversible = reversible
     self.destructive = destructive
   }
+
+  /// Projects an edit into the recovery-safe ledger shape. The edit value,
+  /// previous value, and raw target identifier are intentionally not copied.
+  public init(
+    operation: EditOperation,
+    sourceDigest: String,
+    targetIDDigest: String? = nil,
+    payloadReferenceID: UUID? = nil
+  ) {
+    self.init(
+      id: operation.id,
+      sourceDigest: sourceDigest,
+      pageIndex: operation.pageIndex,
+      targetIDDigest: targetIDDigest,
+      kind: operation.kind,
+      payloadKind: Self.payloadKind(for: operation.payload),
+      bounds: operation.bounds,
+      candidateID: operation.candidateID,
+      coordinate: operation.coordinate,
+      createdAt: operation.createdAt,
+      parentOperationID: operation.parentOperationID,
+      payloadReferenceID: payloadReferenceID,
+      reversible: operation.reversible,
+      destructive: operation.destructive
+    )
+  }
+
+  private static func payloadKind(
+    for payload: EditPayload?
+  ) -> DocumentSessionOperationPayloadKind {
+    switch payload {
+    case nil:
+      return .none
+    case .some(.empty):
+      return .none
+    case .some(.text(_)):
+      return .text
+    case .some(.characterGrid(_, _)):
+      return .characterGrid
+    case .some(.boolean(_)):
+      return .boolean
+    case .some(.choice(_)):
+      return .choice
+    case .some(.choiceMark(_)):
+      return .choiceMark
+    case .some(.nativeField(_)):
+      return .nativeField
+    case .some(.asset(_, _)):
+      return .asset
+    case .some(.stamp(_)):
+      return .stamp
+    }
+  }
 }
 
 // MARK: - View session metadata
@@ -160,7 +213,7 @@ public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
   public let zoomScale: Double?
   public let pageRotation: Int
   public let selectedCandidateID: UUID?
-  public let selectedFieldID: String?
+  public let selectedFieldIDDigest: String?
   public let searchQueryDigest: String?
   public let selectedSearchMatchIndex: Int?
 
@@ -171,7 +224,7 @@ public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
     zoomScale: Double? = nil,
     pageRotation: Int = 0,
     selectedCandidateID: UUID? = nil,
-    selectedFieldID: String? = nil,
+    selectedFieldIDDigest: String? = nil,
     searchQueryDigest: String? = nil,
     selectedSearchMatchIndex: Int? = nil
   ) {
@@ -181,7 +234,7 @@ public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
     self.zoomScale = zoomScale
     self.pageRotation = ((pageRotation % 360) + 360) % 360
     self.selectedCandidateID = selectedCandidateID
-    self.selectedFieldID = selectedFieldID
+    self.selectedFieldIDDigest = selectedFieldIDDigest
     self.searchQueryDigest = searchQueryDigest
     self.selectedSearchMatchIndex = selectedSearchMatchIndex.map { max(0, $0) }
   }
@@ -273,6 +326,7 @@ public struct DocumentSessionRecoveryEnvelope: Codable, Equatable, Hashable, Sen
 
   public let contract: String
   public let schemaVersion: DocumentSessionSchemaVersion
+  public let sourceDigest: String
   public let encodedAt: Date
   public let session: DocumentSession
 
@@ -283,11 +337,52 @@ public struct DocumentSessionRecoveryEnvelope: Codable, Equatable, Hashable, Sen
   ) {
     self.contract = Self.contractName
     self.schemaVersion = schemaVersion
+    self.sourceDigest = session.sourceDigest
     self.encodedAt = encodedAt
     self.session = session
   }
 
+  private enum CodingKeys: String, CodingKey {
+    case contract
+    case schemaVersion
+    case sourceDigest
+    case encodedAt
+    case session
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.contract = try container.decode(String.self, forKey: .contract)
+    self.schemaVersion = try container.decode(
+      DocumentSessionSchemaVersion.self,
+      forKey: .schemaVersion
+    )
+    self.encodedAt = try container.decode(Date.self, forKey: .encodedAt)
+    self.session = try container.decode(DocumentSession.self, forKey: .session)
+    // Keep records written before the envelope-level digest was introduced
+    // readable without weakening the store's consistency checks.
+    self.sourceDigest = try container.decodeIfPresent(
+      String.self,
+      forKey: .sourceDigest
+    ) ?? session.sourceDigest
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(contract, forKey: .contract)
+    try container.encode(schemaVersion, forKey: .schemaVersion)
+    try container.encode(sourceDigest, forKey: .sourceDigest)
+    try container.encode(encodedAt, forKey: .encodedAt)
+    try container.encode(session, forKey: .session)
+  }
+
   public var isReadableByCurrentSchema: Bool {
     contract == Self.contractName && schemaVersion.isReadableBy()
+  }
+
+  public func isReadableBy(
+    _ supported: DocumentSessionSchemaVersion = .current
+  ) -> Bool {
+    contract == Self.contractName && schemaVersion.isReadableBy(supported)
   }
 }

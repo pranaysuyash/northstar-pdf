@@ -793,3 +793,41 @@ the existing PDFKit evidence or weaken a failed preservation gate.
 - **Owner:** Project owner; the preservation validator owns independent
   comparison policy, native/web adapters own output bytes, and the corpus
   manifest owns fixture provenance.
+
+## D-010: Intent-Driven Editor Modes (Read / Fill / Sign / Edit)
+
+- **Date:** 2026-08-24
+- **Status:** Accepted implementation decision
+- **Approval source:** User instructed: "build everything you found — first principles, long term
+  and doctrines aligned." This authorizes implementation of the mode system, its SwiftUI surface,
+  supporting AppModel state, and all associated documentation within this project. It does not
+  authorize Git mutations, production deployment, cryptographic-signature claims, or changes to
+  provider contracts beyond what the existing adapter already supports.
+- **Context:** The current UI has a flat tool surface that requires users to understand the
+  editor's internal model (native fields, candidates, overlays) before they can act. The four
+  real user intents — read, fill, sign, edit — have different risk profiles, different permission
+  requirements, and different visual cues. Surfacing them uniformly creates cognitive noise and
+  weakens the bounded-completion promise of D-001 and D-005.
+- **Selected path:** Introduce a typed `EditorMode` enum (`.read`, `.fill`, `.sign`, `.edit`)
+  as first-class `AppModel` state. Add a mode segmented control to the toolbar. Add an
+  intent-inference router on page tap. Add a Fill highlight overlay layer to `PDFKitView`. Add
+  a Sign sheet (draw/type/image/saved). Add an Edit palette to the inspector. All new operations
+  route through the existing provider.apply chain; no bypass of existing safety gates.
+- **First-principles rationale:**
+  - Bounded mutation promise (D-001): mode is never auto-mutated from source; always user-driven.
+  - Safety gates precede accuracy (D-004): L3 ops (redact apply, flatten) always require explicit confirmation regardless of mode.
+  - Commercial wedge (D-005): Fill mode directly expresses the "complete forms without disturbing surrounding content" promise.
+  - Provider-neutral contracts (D-006/D-007): EditorMode lives in DocumentModel.swift; no PDFKit types exposed outside the adapter.
+  - Local-first invariant: no new network calls; signature storage is app-sandboxed.
+- **Rejected alternatives:**
+  - Auto-enter Fill mode when fields detected: rejected — assumes intent, may surprise users.
+  - Merge Fill and Edit: rejected — different risk profiles; Edit allows irreversible ops that Fill must never trigger accidentally.
+  - Separate Sign app target: rejected — unnecessary complexity; sign is a bounded subset of the same document session.
+- **Trade-offs:** Mode adds state that must be reset on open. Missed reset or bypass could expose
+  Edit affordances in Read mode. Mitigated by reset in open(url:) and independent L3 gate checks.
+- **Validation:** Unit tests for mode reset, tab order, fill progress, and L3 gate firing.
+  Regression: Form 6 and AcroForm benchmarks must still pass unmodified.
+- **Falsifiers:** Mode persists across documents; Read-mode click mutates document; L3 confirmation skippable.
+- **Rollback:** Remove EditorMode and mode pill; inspector sidebar and existing field/candidate workflows remain functional.
+- **Design document:** docs/intent-mode-design.md
+- **Owner:** Project owner; implementation agent maintains evidence and docs.

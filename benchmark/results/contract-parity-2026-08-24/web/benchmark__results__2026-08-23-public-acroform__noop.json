@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-      "generatedAt": "2026-08-24T16:36:14.137Z",
+      "generatedAt": "2026-08-24T16:46:33.296Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -40,18 +40,33 @@
           "bounds": {
             "x": 0,
             "y": 0,
-            "width": 595,
-            "height": 841
+            "width": 595.28,
+            "height": 841.89
           },
           "cropBox": {
             "x": 0,
             "y": 0,
-            "width": 595,
-            "height": 841
+            "width": 595.28,
+            "height": 841.89
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 595.28,
+            "height": 841.89
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 595.28,
+            "height": 841.89
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 595.28,
+            "height": 841.89
+          },
           "rotation": 0,
           "characterCount": 157,
           "annotationCount": 6,
@@ -133,9 +148,7 @@
             "height": 19
           },
           "value": "Off",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 0,
             "rect": {
@@ -260,7 +273,7 @@
       ],
       "candidates": [
         {
-          "id": "candidate-0f5f3774-dff8-48f5-9dc0-2d5092e67776",
+          "id": "candidate-2cc92528-5387-43a3-a738-068fee57189d",
           "pageIndex": 0,
           "bounds": {
             "x": 0,
@@ -295,7 +308,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 19,
+              "height": 19
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -317,7 +337,7 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-ea20177c-4994-488b-8c29-48da4975bef8"
+              "id": "evidence-834e695b-5bcc-4f8a-8e54-839b1b3b68f8"
             }
           ],
           "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
@@ -365,7 +385,7 @@
       "minor": 0
     },
     "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-    "generatedAt": "2026-08-24T16:36:14.137Z",
+    "generatedAt": "2026-08-24T16:46:33.296Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -387,8 +407,8 @@
           "rect": {
             "x": 0,
             "y": 0,
-            "width": 595,
-            "height": 841
+            "width": 595.28,
+            "height": 841.89
           },
           "coordinateSpace": {
             "unit": "points",
@@ -402,7 +422,7 @@
   },
   "candidates": [
     {
-      "id": "candidate-0f5f3774-dff8-48f5-9dc0-2d5092e67776",
+      "id": "candidate-2cc92528-5387-43a3-a738-068fee57189d",
       "pageIndex": 0,
       "bounds": {
         "x": 0,
@@ -437,7 +457,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 19,
+          "height": 19
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -459,7 +486,7 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-ea20177c-4994-488b-8c29-48da4975bef8"
+          "id": "evidence-834e695b-5bcc-4f8a-8e54-839b1b3b68f8"
         }
       ],
       "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
@@ -473,7 +500,7 @@
         "minor": 0
       },
       "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-      "generatedAt": "2026-08-24T16:36:14.137Z",
+      "generatedAt": "2026-08-24T16:46:33.296Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -512,7 +539,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "d477e4bb-775f-48c1-9119-6e7a4062f9cd",
+        "id": "efd9a636-5c87-498b-bdb9-d275e4e7361d",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -520,7 +547,7 @@
         "operationIDs": []
       },
       {
-        "id": "96509e6a-8dac-499a-95da-b294b535ac3d",
+        "id": "bf0ff7d9-79aa-4ac6-bbf7-cd52345f1041",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -528,7 +555,7 @@
         "operationIDs": []
       },
       {
-        "id": "b455ba87-5ec9-435d-87d5-cafe717fac6a",
+        "id": "013d89cb-211d-4b21-bbb1-da6464056370",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -536,7 +563,7 @@
         "operationIDs": []
       },
       {
-        "id": "3c8ba5e7-acc6-4e9f-a742-aa882ff74d76",
+        "id": "9d1bf9ee-2b71-4e7a-96d8-223278e0cc8e",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -544,7 +571,7 @@
         "operationIDs": []
       },
       {
-        "id": "53cac3da-3158-4df1-9de7-f2652dcca80b",
+        "id": "7c74db46-b0a6-4d20-8334-490a07174e1f",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -552,7 +579,7 @@
         "operationIDs": []
       },
       {
-        "id": "751af095-11e2-4eef-b865-7bf201379d73",
+        "id": "38df3c8f-f4f9-4b69-8e40-0d50711663b1",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -560,7 +587,7 @@
         "operationIDs": []
       },
       {
-        "id": "025b5952-3d65-46b2-9c73-89dc09420b7c",
+        "id": "a45cefd3-4092-4fe4-9478-bd924f4f5052",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -568,7 +595,7 @@
         "operationIDs": []
       },
       {
-        "id": "596ddd3a-3a50-4596-bf2a-3438b82bdea9",
+        "id": "06183429-c503-451d-9239-54f4ed433e91",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -591,7 +618,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-24T16:36:14.161Z",
+    "validatedAt": "2026-08-24T16:46:33.315Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/2026-08-23-public-acroform/noop.pdf",

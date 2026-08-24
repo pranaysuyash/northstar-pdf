@@ -1,10 +1,29 @@
 import SwiftUI
 import AppKit
 
-@main
-struct PDFEditorApp: App {
+private struct PDFEditorModelFocusedValueKey: FocusedValueKey {
+    typealias Value = AppModel
+}
+
+extension FocusedValues {
+    var pdfEditorModel: AppModel? {
+        get { self[PDFEditorModelFocusedValueKey.self] }
+        set { self[PDFEditorModelFocusedValueKey.self] = newValue }
+    }
+}
+
+private struct PDFEditorWindow: View {
     @State private var model = AppModel()
 
+    var body: some View {
+        ContentView(model: model)
+            .frame(minWidth: 1_080, minHeight: 700)
+            .focusedSceneValue(\.pdfEditorModel, model)
+    }
+}
+
+@main
+struct PDFEditorApp: App {
     init() {
         // A raw executable launched from a terminal still needs normal app
         // activation so the native preview is immediately testable.
@@ -17,12 +36,11 @@ struct PDFEditorApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("PDF Editor") {
-            ContentView(model: model)
-                .frame(minWidth: 1_080, minHeight: 700)
+        WindowGroup("PDF Editor", id: "pdf-editor") {
+            PDFEditorWindow()
         }
         .commands {
-            AppCommands(model: model)
+            AppCommands()
         }
         Settings {
             SettingsView()

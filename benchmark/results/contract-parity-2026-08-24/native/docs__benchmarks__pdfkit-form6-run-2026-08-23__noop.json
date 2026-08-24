@@ -30,7 +30,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "5A3464CE-F004-4D0E-92C0-043F328914E5",
+          "id" : "98DE52D3-BB96-459E-B77D-9CCB1B0C203A",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -53,7 +53,7 @@
           "text" : "(1)(b) Name (In English in BLOCK LETTERS)"
         },
         {
-          "id" : "D211DE37-6C20-4132-9E11-295C3BE89351",
+          "id" : "85A26057-5DED-4ABC-BF95-F8685CA4A913",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -76,7 +76,7 @@
         }
       ],
       "groupMemberCount" : 13,
-      "id" : "0385C476-0E42-4465-9CF0-0C630E36B0C1",
+      "id" : "E2820D9B-3893-4D0C-B399-1416F319EC35",
       "kind" : "vectorRegion",
       "labelText" : "(1)(b) Name (In English in BLOCK LETTERS)",
       "memberBounds" : [
@@ -194,7 +194,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "EF1CEF73-4134-44CC-8808-2B2BF21DEFE7",
+          "id" : "1864774A-07C1-4A7B-AC1B-C52AA07765A7",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -217,7 +217,7 @@
           "text" : "First Name followed by Middle Name"
         },
         {
-          "id" : "DB0579F3-EF87-4F23-A1AC-15C7DB9DB800",
+          "id" : "1946E3FD-C056-4CE5-A8D7-AD4B3BB79CF0",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -240,7 +240,7 @@
         }
       ],
       "groupMemberCount" : 27,
-      "id" : "E076ACB1-F25B-4707-81A2-FADB867C033F",
+      "id" : "CB95AED0-C98F-4EC4-994D-D67A91719C0C",
       "kind" : "vectorRegion",
       "labelText" : "First Name followed by Middle Name",
       "memberBounds" : [
@@ -442,7 +442,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "539C1696-BA0C-40CE-938B-C8E5CF19C889",
+          "id" : "4C155906-0DFC-498A-8B57-AD0A3F41E486",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -465,7 +465,7 @@
           "text" : "PHOTOGRAPH (4.5 CM"
         },
         {
-          "id" : "5216FC0D-000C-4507-8CC8-F0789DF48A66",
+          "id" : "AA6D208F-4925-4E7B-BE71-93BB91AC03E5",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -488,7 +488,7 @@
         }
       ],
       "groupMemberCount" : 12,
-      "id" : "7F682448-ACF0-4E05-A7D4-468E16C32E58",
+      "id" : "4CC6FDE4-D7DB-426B-B88B-B83C21C56028",
       "kind" : "vectorRegion",
       "labelText" : "PHOTOGRAPH (4.5 CM",
       "memberBounds" : [
@@ -600,7 +600,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "E8852687-6225-4A85-904A-5A4FD8183BDB",
+          "id" : "F405FDAD-A4FA-4945-B4DD-EBF2A52CE276",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -623,7 +623,7 @@
           "text" : "X 3.5 CM) SHOWING"
         },
         {
-          "id" : "60FF24F6-F116-4D35-9851-D1A91DEF7AC2",
+          "id" : "12AFCDD5-7940-4164-A84D-CDE9BAB01CD4",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -646,7 +646,7 @@
         }
       ],
       "groupMemberCount" : 22,
-      "id" : "92BFE612-AF75-4032-9C50-D1EB0F60B241",
+      "id" : "C7420CD7-BA43-4287-8B73-123EB6BD31CD",
       "kind" : "vectorRegion",
       "labelText" : "X 3.5 CM) SHOWING",
       "memberBounds" : [
@@ -816,14 +816,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "E05BD317-F524-4D03-993F-0C3F8F34F600",
+          "id" : "9DBA78B3-FB1D-4982-A22E-B2E604DA04A0",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "summary" : "Vector rectangle at (489, 534)"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "79F17B21-D32E-42AC-9FF6-8F9AEE26D2AC",
+      "id" : "788B70DA-61FF-4D11-A378-4855EA1497DC",
       "kind" : "vectorRegion",
       "memberBounds" : [
 
@@ -862,14 +862,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "111331AD-CC5A-4B40-89A9-A397342B66AE",
+          "id" : "B8A080C2-1317-4CCB-85F4-F17E0D1496D2",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "summary" : "Vector rectangle at (12, 31)"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "B9DE2A3E-DF9A-481A-B413-8F8397109E5C",
+      "id" : "12561EB9-E9BE-4131-9B15-985D21F60310",
       "kind" : "vectorRegion",
       "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
       "memberBounds" : [
@@ -909,14 +909,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "C526185A-299B-42CC-B4AF-CAE31C1333AD",
+          "id" : "06554DE1-984E-44BC-9934-F65D833373EB",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "summary" : "Vector rectangle at (88, 78)"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "B7890AF5-0339-43ED-BE7C-59618C825E61",
+      "id" : "25B59852-514C-4235-90CF-0BDACA2E8B38",
       "kind" : "vectorRegion",
       "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
       "memberBounds" : [
@@ -955,14 +955,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "2E07B78C-4CCA-4686-B16E-3B198B5D99FE",
+          "id" : "C5B0B9AE-7633-43BA-AE48-5699D99BA622",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "summary" : "Vector rectangle at (321, 78)"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "50E62C79-E929-4C27-899C-26DA14085BCF",
+      "id" : "3340D3AD-338B-43D2-BC67-C79FBB708CDB",
       "kind" : "vectorRegion",
       "memberBounds" : [
 
@@ -1002,7 +1002,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "BE12963B-C294-44CD-9DE4-446E5B8CB73D",
+          "id" : "15260233-B194-4357-97F3-47ED07275C82",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -1025,7 +1025,7 @@
           "text" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card"
         },
         {
-          "id" : "1493E861-8FA7-4851-8A40-19BB9DA64D01",
+          "id" : "7CF08101-07DD-4322-B2CE-7EEBF763CA59",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -1048,7 +1048,7 @@
         }
       ],
       "groupMemberCount" : 3,
-      "id" : "284CAACE-7506-49AC-967E-255C42D36D25",
+      "id" : "9FC28B77-4695-4210-8C87-476598E72EAE",
       "kind" : "vectorRegion",
       "labelText" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card",
       "memberBounds" : [
@@ -1106,7 +1106,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "5A58F4B5-A186-4A9A-9833-374F8A8AF738",
+          "id" : "2A098E72-15A2-4A12-A8D1-639A3CFBAB0B",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -1129,7 +1129,7 @@
           "text" : "Indian Passport"
         },
         {
-          "id" : "0EB127F5-B65A-465E-8EFD-223BAA666DDA",
+          "id" : "70404BCE-DD83-469E-8BA5-45877AA77637",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -1152,7 +1152,7 @@
         }
       ],
       "groupMemberCount" : 3,
-      "id" : "82C642A7-B830-47CE-947E-7FC285D3136A",
+      "id" : "32F5D525-6FFA-4D49-937E-05462C661424",
       "kind" : "vectorRegion",
       "labelText" : "Indian Passport",
       "memberBounds" : [
@@ -1210,7 +1210,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "D3D91580-AAB3-4906-8FC6-9D1C127FC217",
+          "id" : "5A6C12F5-F6EC-464D-B5A1-2B69C21D6BB8",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -1233,7 +1233,7 @@
           "text" : "Registered Sale Deed (In case of"
         },
         {
-          "id" : "D4D4F041-2096-4FBE-A9B6-C8C9BB23C563",
+          "id" : "A613EC39-4E00-458E-9B36-ACAE740C90D8",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -1256,7 +1256,7 @@
         }
       ],
       "groupMemberCount" : 3,
-      "id" : "ECEF53A7-B840-4734-8C6B-7A407CFFAA58",
+      "id" : "7A877118-D61C-4C17-A0E6-72111EF48208",
       "kind" : "vectorRegion",
       "labelText" : "Registered Sale Deed (In case of",
       "memberBounds" : [
@@ -1314,7 +1314,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "96B242B0-314B-4F30-BC4C-D9560294E621",
+          "id" : "231B8C3B-3117-434E-8AEC-E965D2725F7C",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -1337,7 +1337,7 @@
           "text" : "ownhouse)"
         },
         {
-          "id" : "8251C912-B6E1-43F7-816A-605D462B7C16",
+          "id" : "D560D341-68D7-4CB6-BF47-11D5D04BEAD5",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -1360,7 +1360,7 @@
         }
       ],
       "groupMemberCount" : 3,
-      "id" : "159A56EF-758F-4254-91BB-78488EFDEF9C",
+      "id" : "58C28BB0-C085-442B-87B9-3F4C8830F990",
       "kind" : "vectorRegion",
       "labelText" : "ownhouse)",
       "memberBounds" : [
@@ -1418,7 +1418,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "55B55F79-6F94-4554-85A5-97BB4782D50F",
+          "id" : "6AD1A9C9-721C-42FE-967F-08E16C9C2D16",
           "kind" : "repeatedPattern",
           "origin" : "geometryExtraction",
           "region" : {
@@ -1441,7 +1441,7 @@
           "text" : "(ii) Any Other document for Proof of residence: -"
         },
         {
-          "id" : "9B7C887C-E0A8-43E7-A98C-1A92FAF6D7C2",
+          "id" : "86438578-39FE-4DFD-B0D8-5F22748AC6B8",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -1464,7 +1464,7 @@
         }
       ],
       "groupMemberCount" : 3,
-      "id" : "88F1E7CC-05DB-45BE-A891-CE2FB9439C86",
+      "id" : "93D320B4-DAE9-4891-9E45-924C76F62F7C",
       "kind" : "vectorRegion",
       "labelText" : "(ii) Any Other document for Proof of residence: -",
       "memberBounds" : [
@@ -1520,14 +1520,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "43C714DE-47B9-4A9A-9A25-CC68474B8623",
+          "id" : "C1738D66-AD56-4410-A6D7-1E3EC9A55677",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "summary" : "Vector rectangle at (409, 666)"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "B9332CB0-299B-428F-9F6A-0CE09A28C533",
+      "id" : "320F3E9F-B30A-4532-81FA-8488CF56A3B1",
       "kind" : "vectorRegion",
       "memberBounds" : [
 
@@ -1566,14 +1566,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "1B05D4FA-F13D-4A9D-AFF6-9CF00E023B28",
+          "id" : "C2AF96B9-E251-4E22-A997-BD5A182D7188",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "summary" : "Vector rectangle at (31, 139)"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "4628291A-6A15-4F3B-9550-A338E247556E",
+      "id" : "765A7FA5-BBF3-402F-82AB-27D3E27E474C",
       "kind" : "vectorRegion",
       "labelText" : "guardian will be required.",
       "memberBounds" : [
@@ -1613,14 +1613,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "5CCE1590-3937-403D-BCEB-8511878A5D28",
+          "id" : "303A00A2-75A1-4095-8E99-2281902539E3",
           "kind" : "underline",
           "origin" : "geometryExtraction",
           "summary" : "Vector line stroke at y=105"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "EEFD3500-C21C-488C-8278-E6FF7609801C",
+      "id" : "C776904F-F4A5-4DE5-A14B-E093B161C577",
       "kind" : "vectorRegion",
       "labelText" : "^ Submission of self-attested copy ofmentioneddocumentswill ensure speedy delivery of services.",
       "memberBounds" : [
@@ -1659,14 +1659,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "F3D58968-11EA-4493-B84B-89EE65A1C0D3",
+          "id" : "8E419270-499B-4B96-AF7A-E293437E0076",
           "kind" : "underline",
           "origin" : "geometryExtraction",
           "summary" : "Vector line stroke at y=105"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "3DE87DAB-A8B5-4C21-9CA8-A9CADA9883F3",
+      "id" : "8332A8F3-5E7E-4C14-BB15-EE61CF79F783",
       "kind" : "vectorRegion",
       "memberBounds" : [
 
@@ -1704,14 +1704,14 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "58F33755-781B-4729-862E-E4CF910C23D7",
+          "id" : "56C42A86-228D-4953-B1E4-E0F1AAAE8155",
           "kind" : "underline",
           "origin" : "geometryExtraction",
           "summary" : "Vector line stroke at y=105"
         }
       ],
       "groupMemberCount" : 1,
-      "id" : "A47AC184-9E06-4CD4-BE43-EDCA1E05EB9D",
+      "id" : "C3102CCF-B778-4102-9964-3705040B7F75",
       "kind" : "vectorRegion",
       "memberBounds" : [
 
@@ -1752,7 +1752,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "83E82D90-03A4-4A8B-B380-C1C4BA9E96BF",
+      "id" : "977F287F-F1DD-4E44-86C5-4BE6B1A00B29",
       "kind" : "textAnchored",
       "labelText" : "Application Form for New Voters Form-6 FORM No._______________",
       "memberBounds" : [
@@ -1794,7 +1794,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "69B7C38E-F5EA-4666-8BDF-E021C1352E71",
+      "id" : "603F59F8-2B4A-4C60-A802-A24E3307E526",
       "kind" : "textAnchored",
       "labelText" : "(9) Category of disability, if any(Optional) Locomotive Visual If any other (Give description)________________________________________________________",
       "memberBounds" : [
@@ -1836,7 +1836,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "5195B695-6395-42F6-86BC-29DC09A81FCB",
+      "id" : "01B5E135-5DEE-4910-98B8-62DE52EA47E9",
       "kind" : "textAnchored",
       "labelText" : "as under:",
       "memberBounds" : [
@@ -1878,7 +1878,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "267523A9-C20D-4176-847F-439BAFA96008",
+      "id" : "2F4126BF-FA46-4048-9244-F767FA4EA780",
       "kind" : "textAnchored",
       "labelText" : "His\/her EPIC no.:",
       "memberBounds" : [
@@ -1920,7 +1920,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "36316777-F84E-4BDE-A5A0-16F4FF9501D3",
+      "id" : "21F2B0C5-3CAA-4714-8C86-70FCEA4A8B55",
       "kind" : "textAnchored",
       "labelText" : "District ______________________________________ State\/UT _________________________",
       "memberBounds" : [
@@ -1962,7 +1962,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "2E34F1E4-9CA2-4733-AF52-5CE77827C0EE",
+      "id" : "480E0B0B-86F7-4E17-B1DA-D995716CF61B",
       "kind" : "textAnchored",
       "labelText" : "(ii) I am ordinarily a resident at the address mentioned at Sr. No. 8(a) in Form 6 since________________ (mention monthand",
       "memberBounds" : [
@@ -2004,7 +2004,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "650339CE-F630-4F00-92DE-28A607B406B3",
+      "id" : "D569D198-CCE5-49E9-A85F-EAFD0484506E",
       "kind" : "textAnchored",
       "labelText" : "_____________________________(Name of the document) in support of age proof (Strike off, if not applicable).",
       "memberBounds" : [
@@ -2046,7 +2046,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "4F97E98F-409B-40FD-8071-0434A03C270E",
+      "id" : "73A28207-E47B-4384-9319-8AD15116BFDD",
       "kind" : "textAnchored",
       "labelText" : "Date:",
       "memberBounds" : [
@@ -2088,7 +2088,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "CC896841-CEB9-48B1-81DC-6AD3CDEF1623",
+      "id" : "5ACD0522-F548-4D7C-B0B3-4638D1754D7C",
       "kind" : "textAnchored",
       "labelText" : "_______________",
       "memberBounds" : [
@@ -2130,7 +2130,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "7C73269C-D1FA-4F6A-BF5A-39F50EF28FFD",
+      "id" : "70C29A06-DD46-48D2-B96D-31019EEA995D",
       "kind" : "textAnchored",
       "labelText" : "Place:",
       "memberBounds" : [
@@ -2172,7 +2172,7 @@
 
       ],
       "groupMemberCount" : 1,
-      "id" : "2BAC35A5-29EE-432B-8B70-60EE9266EA21",
+      "id" : "4E34784E-F2C8-4FD6-8BDD-E6B6BC1D3408",
       "kind" : "textAnchored",
       "labelText" : "______________ Signature of Applicant\/Left Hand Thumb Impression",
       "memberBounds" : [
@@ -2187,7 +2187,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-24T16:35:49Z",
+    "generatedAt" : "2026-08-24T16:53:00Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -2248,7 +2248,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-24T16:35:49Z",
+      "generatedAt" : "2026-08-24T16:53:00Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -2311,7 +2311,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "5A3464CE-F004-4D0E-92C0-043F328914E5",
+              "id" : "98DE52D3-BB96-459E-B77D-9CCB1B0C203A",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -2334,7 +2334,7 @@
               "text" : "(1)(b) Name (In English in BLOCK LETTERS)"
             },
             {
-              "id" : "D211DE37-6C20-4132-9E11-295C3BE89351",
+              "id" : "85A26057-5DED-4ABC-BF95-F8685CA4A913",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -2357,7 +2357,7 @@
             }
           ],
           "groupMemberCount" : 13,
-          "id" : "0385C476-0E42-4465-9CF0-0C630E36B0C1",
+          "id" : "E2820D9B-3893-4D0C-B399-1416F319EC35",
           "kind" : "vectorRegion",
           "labelText" : "(1)(b) Name (In English in BLOCK LETTERS)",
           "memberBounds" : [
@@ -2475,7 +2475,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "EF1CEF73-4134-44CC-8808-2B2BF21DEFE7",
+              "id" : "1864774A-07C1-4A7B-AC1B-C52AA07765A7",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -2498,7 +2498,7 @@
               "text" : "First Name followed by Middle Name"
             },
             {
-              "id" : "DB0579F3-EF87-4F23-A1AC-15C7DB9DB800",
+              "id" : "1946E3FD-C056-4CE5-A8D7-AD4B3BB79CF0",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -2521,7 +2521,7 @@
             }
           ],
           "groupMemberCount" : 27,
-          "id" : "E076ACB1-F25B-4707-81A2-FADB867C033F",
+          "id" : "CB95AED0-C98F-4EC4-994D-D67A91719C0C",
           "kind" : "vectorRegion",
           "labelText" : "First Name followed by Middle Name",
           "memberBounds" : [
@@ -2723,7 +2723,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "539C1696-BA0C-40CE-938B-C8E5CF19C889",
+              "id" : "4C155906-0DFC-498A-8B57-AD0A3F41E486",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -2746,7 +2746,7 @@
               "text" : "PHOTOGRAPH (4.5 CM"
             },
             {
-              "id" : "5216FC0D-000C-4507-8CC8-F0789DF48A66",
+              "id" : "AA6D208F-4925-4E7B-BE71-93BB91AC03E5",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -2769,7 +2769,7 @@
             }
           ],
           "groupMemberCount" : 12,
-          "id" : "7F682448-ACF0-4E05-A7D4-468E16C32E58",
+          "id" : "4CC6FDE4-D7DB-426B-B88B-B83C21C56028",
           "kind" : "vectorRegion",
           "labelText" : "PHOTOGRAPH (4.5 CM",
           "memberBounds" : [
@@ -2881,7 +2881,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "E8852687-6225-4A85-904A-5A4FD8183BDB",
+              "id" : "F405FDAD-A4FA-4945-B4DD-EBF2A52CE276",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -2904,7 +2904,7 @@
               "text" : "X 3.5 CM) SHOWING"
             },
             {
-              "id" : "60FF24F6-F116-4D35-9851-D1A91DEF7AC2",
+              "id" : "12AFCDD5-7940-4164-A84D-CDE9BAB01CD4",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -2927,7 +2927,7 @@
             }
           ],
           "groupMemberCount" : 22,
-          "id" : "92BFE612-AF75-4032-9C50-D1EB0F60B241",
+          "id" : "C7420CD7-BA43-4287-8B73-123EB6BD31CD",
           "kind" : "vectorRegion",
           "labelText" : "X 3.5 CM) SHOWING",
           "memberBounds" : [
@@ -3097,14 +3097,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "E05BD317-F524-4D03-993F-0C3F8F34F600",
+              "id" : "9DBA78B3-FB1D-4982-A22E-B2E604DA04A0",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "summary" : "Vector rectangle at (489, 534)"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "79F17B21-D32E-42AC-9FF6-8F9AEE26D2AC",
+          "id" : "788B70DA-61FF-4D11-A378-4855EA1497DC",
           "kind" : "vectorRegion",
           "memberBounds" : [
 
@@ -3143,14 +3143,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "111331AD-CC5A-4B40-89A9-A397342B66AE",
+              "id" : "B8A080C2-1317-4CCB-85F4-F17E0D1496D2",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "summary" : "Vector rectangle at (12, 31)"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "B9DE2A3E-DF9A-481A-B413-8F8397109E5C",
+          "id" : "12561EB9-E9BE-4131-9B15-985D21F60310",
           "kind" : "vectorRegion",
           "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
           "memberBounds" : [
@@ -3190,14 +3190,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "C526185A-299B-42CC-B4AF-CAE31C1333AD",
+              "id" : "06554DE1-984E-44BC-9934-F65D833373EB",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "summary" : "Vector rectangle at (88, 78)"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "B7890AF5-0339-43ED-BE7C-59618C825E61",
+          "id" : "25B59852-514C-4235-90CF-0BDACA2E8B38",
           "kind" : "vectorRegion",
           "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
           "memberBounds" : [
@@ -3236,14 +3236,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "2E07B78C-4CCA-4686-B16E-3B198B5D99FE",
+              "id" : "C5B0B9AE-7633-43BA-AE48-5699D99BA622",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "summary" : "Vector rectangle at (321, 78)"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "50E62C79-E929-4C27-899C-26DA14085BCF",
+          "id" : "3340D3AD-338B-43D2-BC67-C79FBB708CDB",
           "kind" : "vectorRegion",
           "memberBounds" : [
 
@@ -3283,7 +3283,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "BE12963B-C294-44CD-9DE4-446E5B8CB73D",
+              "id" : "15260233-B194-4357-97F3-47ED07275C82",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -3306,7 +3306,7 @@
               "text" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card"
             },
             {
-              "id" : "1493E861-8FA7-4851-8A40-19BB9DA64D01",
+              "id" : "7CF08101-07DD-4322-B2CE-7EEBF763CA59",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -3329,7 +3329,7 @@
             }
           ],
           "groupMemberCount" : 3,
-          "id" : "284CAACE-7506-49AC-967E-255C42D36D25",
+          "id" : "9FC28B77-4695-4210-8C87-476598E72EAE",
           "kind" : "vectorRegion",
           "labelText" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card",
           "memberBounds" : [
@@ -3387,7 +3387,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "5A58F4B5-A186-4A9A-9833-374F8A8AF738",
+              "id" : "2A098E72-15A2-4A12-A8D1-639A3CFBAB0B",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -3410,7 +3410,7 @@
               "text" : "Indian Passport"
             },
             {
-              "id" : "0EB127F5-B65A-465E-8EFD-223BAA666DDA",
+              "id" : "70404BCE-DD83-469E-8BA5-45877AA77637",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -3433,7 +3433,7 @@
             }
           ],
           "groupMemberCount" : 3,
-          "id" : "82C642A7-B830-47CE-947E-7FC285D3136A",
+          "id" : "32F5D525-6FFA-4D49-937E-05462C661424",
           "kind" : "vectorRegion",
           "labelText" : "Indian Passport",
           "memberBounds" : [
@@ -3491,7 +3491,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "D3D91580-AAB3-4906-8FC6-9D1C127FC217",
+              "id" : "5A6C12F5-F6EC-464D-B5A1-2B69C21D6BB8",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -3514,7 +3514,7 @@
               "text" : "Registered Sale Deed (In case of"
             },
             {
-              "id" : "D4D4F041-2096-4FBE-A9B6-C8C9BB23C563",
+              "id" : "A613EC39-4E00-458E-9B36-ACAE740C90D8",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -3537,7 +3537,7 @@
             }
           ],
           "groupMemberCount" : 3,
-          "id" : "ECEF53A7-B840-4734-8C6B-7A407CFFAA58",
+          "id" : "7A877118-D61C-4C17-A0E6-72111EF48208",
           "kind" : "vectorRegion",
           "labelText" : "Registered Sale Deed (In case of",
           "memberBounds" : [
@@ -3595,7 +3595,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "96B242B0-314B-4F30-BC4C-D9560294E621",
+              "id" : "231B8C3B-3117-434E-8AEC-E965D2725F7C",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -3618,7 +3618,7 @@
               "text" : "ownhouse)"
             },
             {
-              "id" : "8251C912-B6E1-43F7-816A-605D462B7C16",
+              "id" : "D560D341-68D7-4CB6-BF47-11D5D04BEAD5",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -3641,7 +3641,7 @@
             }
           ],
           "groupMemberCount" : 3,
-          "id" : "159A56EF-758F-4254-91BB-78488EFDEF9C",
+          "id" : "58C28BB0-C085-442B-87B9-3F4C8830F990",
           "kind" : "vectorRegion",
           "labelText" : "ownhouse)",
           "memberBounds" : [
@@ -3699,7 +3699,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "55B55F79-6F94-4554-85A5-97BB4782D50F",
+              "id" : "6AD1A9C9-721C-42FE-967F-08E16C9C2D16",
               "kind" : "repeatedPattern",
               "origin" : "geometryExtraction",
               "region" : {
@@ -3722,7 +3722,7 @@
               "text" : "(ii) Any Other document for Proof of residence: -"
             },
             {
-              "id" : "9B7C887C-E0A8-43E7-A98C-1A92FAF6D7C2",
+              "id" : "86438578-39FE-4DFD-B0D8-5F22748AC6B8",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -3745,7 +3745,7 @@
             }
           ],
           "groupMemberCount" : 3,
-          "id" : "88F1E7CC-05DB-45BE-A891-CE2FB9439C86",
+          "id" : "93D320B4-DAE9-4891-9E45-924C76F62F7C",
           "kind" : "vectorRegion",
           "labelText" : "(ii) Any Other document for Proof of residence: -",
           "memberBounds" : [
@@ -3801,14 +3801,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "43C714DE-47B9-4A9A-9A25-CC68474B8623",
+              "id" : "C1738D66-AD56-4410-A6D7-1E3EC9A55677",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "summary" : "Vector rectangle at (409, 666)"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "B9332CB0-299B-428F-9F6A-0CE09A28C533",
+          "id" : "320F3E9F-B30A-4532-81FA-8488CF56A3B1",
           "kind" : "vectorRegion",
           "memberBounds" : [
 
@@ -3847,14 +3847,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "1B05D4FA-F13D-4A9D-AFF6-9CF00E023B28",
+              "id" : "C2AF96B9-E251-4E22-A997-BD5A182D7188",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "summary" : "Vector rectangle at (31, 139)"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "4628291A-6A15-4F3B-9550-A338E247556E",
+          "id" : "765A7FA5-BBF3-402F-82AB-27D3E27E474C",
           "kind" : "vectorRegion",
           "labelText" : "guardian will be required.",
           "memberBounds" : [
@@ -3894,14 +3894,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "5CCE1590-3937-403D-BCEB-8511878A5D28",
+              "id" : "303A00A2-75A1-4095-8E99-2281902539E3",
               "kind" : "underline",
               "origin" : "geometryExtraction",
               "summary" : "Vector line stroke at y=105"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "EEFD3500-C21C-488C-8278-E6FF7609801C",
+          "id" : "C776904F-F4A5-4DE5-A14B-E093B161C577",
           "kind" : "vectorRegion",
           "labelText" : "^ Submission of self-attested copy ofmentioneddocumentswill ensure speedy delivery of services.",
           "memberBounds" : [
@@ -3940,14 +3940,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "F3D58968-11EA-4493-B84B-89EE65A1C0D3",
+              "id" : "8E419270-499B-4B96-AF7A-E293437E0076",
               "kind" : "underline",
               "origin" : "geometryExtraction",
               "summary" : "Vector line stroke at y=105"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "3DE87DAB-A8B5-4C21-9CA8-A9CADA9883F3",
+          "id" : "8332A8F3-5E7E-4C14-BB15-EE61CF79F783",
           "kind" : "vectorRegion",
           "memberBounds" : [
 
@@ -3985,14 +3985,14 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "58F33755-781B-4729-862E-E4CF910C23D7",
+              "id" : "56C42A86-228D-4953-B1E4-E0F1AAAE8155",
               "kind" : "underline",
               "origin" : "geometryExtraction",
               "summary" : "Vector line stroke at y=105"
             }
           ],
           "groupMemberCount" : 1,
-          "id" : "A47AC184-9E06-4CD4-BE43-EDCA1E05EB9D",
+          "id" : "C3102CCF-B778-4102-9964-3705040B7F75",
           "kind" : "vectorRegion",
           "memberBounds" : [
 
@@ -4033,7 +4033,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "83E82D90-03A4-4A8B-B380-C1C4BA9E96BF",
+          "id" : "977F287F-F1DD-4E44-86C5-4BE6B1A00B29",
           "kind" : "textAnchored",
           "labelText" : "Application Form for New Voters Form-6 FORM No._______________",
           "memberBounds" : [
@@ -4075,7 +4075,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "69B7C38E-F5EA-4666-8BDF-E021C1352E71",
+          "id" : "603F59F8-2B4A-4C60-A802-A24E3307E526",
           "kind" : "textAnchored",
           "labelText" : "(9) Category of disability, if any(Optional) Locomotive Visual If any other (Give description)________________________________________________________",
           "memberBounds" : [
@@ -4117,7 +4117,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "5195B695-6395-42F6-86BC-29DC09A81FCB",
+          "id" : "01B5E135-5DEE-4910-98B8-62DE52EA47E9",
           "kind" : "textAnchored",
           "labelText" : "as under:",
           "memberBounds" : [
@@ -4159,7 +4159,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "267523A9-C20D-4176-847F-439BAFA96008",
+          "id" : "2F4126BF-FA46-4048-9244-F767FA4EA780",
           "kind" : "textAnchored",
           "labelText" : "His\/her EPIC no.:",
           "memberBounds" : [
@@ -4201,7 +4201,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "36316777-F84E-4BDE-A5A0-16F4FF9501D3",
+          "id" : "21F2B0C5-3CAA-4714-8C86-70FCEA4A8B55",
           "kind" : "textAnchored",
           "labelText" : "District ______________________________________ State\/UT _________________________",
           "memberBounds" : [
@@ -4243,7 +4243,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "2E34F1E4-9CA2-4733-AF52-5CE77827C0EE",
+          "id" : "480E0B0B-86F7-4E17-B1DA-D995716CF61B",
           "kind" : "textAnchored",
           "labelText" : "(ii) I am ordinarily a resident at the address mentioned at Sr. No. 8(a) in Form 6 since________________ (mention monthand",
           "memberBounds" : [
@@ -4285,7 +4285,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "650339CE-F630-4F00-92DE-28A607B406B3",
+          "id" : "D569D198-CCE5-49E9-A85F-EAFD0484506E",
           "kind" : "textAnchored",
           "labelText" : "_____________________________(Name of the document) in support of age proof (Strike off, if not applicable).",
           "memberBounds" : [
@@ -4327,7 +4327,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "4F97E98F-409B-40FD-8071-0434A03C270E",
+          "id" : "73A28207-E47B-4384-9319-8AD15116BFDD",
           "kind" : "textAnchored",
           "labelText" : "Date:",
           "memberBounds" : [
@@ -4369,7 +4369,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "CC896841-CEB9-48B1-81DC-6AD3CDEF1623",
+          "id" : "5ACD0522-F548-4D7C-B0B3-4638D1754D7C",
           "kind" : "textAnchored",
           "labelText" : "_______________",
           "memberBounds" : [
@@ -4411,7 +4411,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "7C73269C-D1FA-4F6A-BF5A-39F50EF28FFD",
+          "id" : "70C29A06-DD46-48D2-B96D-31019EEA995D",
           "kind" : "textAnchored",
           "labelText" : "Place:",
           "memberBounds" : [
@@ -4453,7 +4453,7 @@
 
           ],
           "groupMemberCount" : 1,
-          "id" : "2BAC35A5-29EE-432B-8B70-60EE9266EA21",
+          "id" : "4E34784E-F2C8-4FD6-8BDD-E6B6BC1D3408",
           "kind" : "textAnchored",
           "labelText" : "______________ Signature of Applicant\/Left Hand Thumb Impression",
           "memberBounds" : [
@@ -4587,7 +4587,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-24T16:35:49Z",
+      "generatedAt" : "2026-08-24T16:53:00Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -4626,7 +4626,7 @@
   "validation" : {
     "checks" : [
       {
-        "id" : "98BCB386-C2CA-4E1E-A655-BD4A05C1AE64",
+        "id" : "29D20320-0853-47CB-859E-0AACF0887C59",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -4635,7 +4635,7 @@
         "status" : "passed"
       },
       {
-        "id" : "8D5FA96B-D6C9-4E16-AB70-CCBB4EBC69EC",
+        "id" : "125D610E-79B0-4A6C-B2F0-BEDAFAC7DB8C",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 2 page(s).",
         "operationIDs" : [
@@ -4644,7 +4644,7 @@
         "status" : "passed"
       },
       {
-        "id" : "BF06865B-ED2C-4F21-B36F-1D6BD630792C",
+        "id" : "48435227-70BB-4A39-83F1-B3EB02DBD41A",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -4653,7 +4653,7 @@
         "status" : "passed"
       },
       {
-        "id" : "86AD47D3-8C7C-45CC-8ED7-B8D5C003CA5D",
+        "id" : "4ECD311A-EE18-409D-BF3C-B2E01FB6C280",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -4662,7 +4662,7 @@
         "status" : "passed"
       },
       {
-        "id" : "8BA4860A-D066-4019-A044-4F968E3B6B23",
+        "id" : "C8F57A0E-A84B-43AB-B154-604CFA7AE304",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -4671,7 +4671,7 @@
         "status" : "passed"
       },
       {
-        "id" : "A4184219-DC00-4E9A-BB09-14EED4E8B4D6",
+        "id" : "494F4749-0589-42CA-B328-A8E712A2F2B8",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -4680,7 +4680,7 @@
         "status" : "passed"
       },
       {
-        "id" : "E6D9934F-5FF1-455A-963F-1F068AC00236",
+        "id" : "D21805DB-2872-4F16-8F04-1AD55C95942D",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -4711,7 +4711,7 @@
     "sourceDigest" : "81e59007c14307ad7a40a99f051363b99c9a5d78c880f67507082f12ff72cef0",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-24T16:35:51Z"
+    "validatedAt" : "2026-08-24T16:53:01Z"
   },
   "version" : {
     "major" : 1,

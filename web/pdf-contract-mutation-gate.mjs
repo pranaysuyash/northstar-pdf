@@ -8,6 +8,7 @@
 
 export const BROWSER_EXPORT_OPERATION_KINDS = Object.freeze([
   "nativeFieldValue",
+  "synthesizeNativeField",
   "overlayText"
 ]);
 

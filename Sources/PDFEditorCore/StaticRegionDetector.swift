@@ -129,6 +129,8 @@ public enum StaticRegionDetector {
             suggestedFieldType: .checkbox,
             entryMode: .checkbox,
             labelText: nearbyLabel?.text.trimmingCharacters(in: .whitespacesAndNewlines),
+            groupMemberCount: 1,
+            memberBounds: [box],
             evidenceItems: [
               CandidateEvidence(
                 kind: .vectorRectangle,

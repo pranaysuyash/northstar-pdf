@@ -28,11 +28,15 @@ struct ContentView: View {
         Button("Undo", systemImage: "arrow.uturn.backward") {
           model.undoLastEdit()
         }
-        .disabled(model.operations.isEmpty)
+        .disabled(!model.canUndo)
+        Button("Redo", systemImage: "arrow.uturn.forward") {
+          model.redoLastEdit()
+        }
+        .disabled(!model.canRedo)
         Button("Export", systemImage: "square.and.arrow.down") {
           model.export()
         }
-        .disabled(model.inspection == nil)
+        .disabled(!model.canExportCurrentOperations)
       }
       ToolbarItem {
         Picker(
@@ -399,6 +403,7 @@ private struct InspectorView: View {
         Text("Review and edit")
           .font(.title3.weight(.semibold))
 
+        profileSection
         fieldSection
         candidateSection
         searchSection
@@ -414,6 +419,105 @@ private struct InspectorView: View {
     .onChange(of: model.selectedCandidateID, initial: true) { _, _ in
       overlayDraft = ""
       choiceCellIndex = 0
+    }
+  }
+
+  private var profileSection: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Label("Profile & Bulk Fill", systemImage: "person.crop.circle")
+        .font(.headline)
+
+      if let profile = model.currentProfile {
+        // Active profile
+        HStack {
+          Text(profile.displayName)
+            .font(.subheadline.weight(.medium))
+          Spacer()
+          Button("Switch") {
+            model.currentProfile = nil
+          }
+          .font(.caption)
+        }
+        .padding(8)
+        .background(Color.blue.opacity(0.06))
+        .cornerRadius(6)
+
+        // Profile fields
+        ForEach(StandardSemanticKey.allCases, id: \.self) { key in
+          let value = profile.value(for: key.rawValue) ?? ""
+          HStack {
+            Text(key.displayName)
+              .font(.caption)
+              .frame(width: 80, alignment: .trailing)
+              .foregroundStyle(.secondary)
+            TextField("—", text: Binding(
+              get: { value },
+              set: { model.updateProfileValue($0, for: key.rawValue) }
+            ))
+            .textFieldStyle(.roundedBorder)
+            .font(.caption)
+          }
+        }
+
+        Divider()
+
+        // Bulk fill actions
+        HStack {
+          Button("Preview Fill") {
+            model.previewBulkFill()
+          }
+          .buttonStyle(.bordered)
+          .disabled(model.inspection == nil)
+
+          if let result = model.bulkFillResult, result.totalMatches > 0 {
+            Button("Apply \(result.totalMatches) Field(s)") {
+              model.applyBulkFill()
+            }
+            .buttonStyle(.borderedProminent)
+          }
+        }
+
+        if let result = model.bulkFillResult {
+          Text("\(result.totalMatches) matched · \(result.unmatchedFields.count) unmatched")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+
+        Button("Save Profile") {
+          model.saveCurrentProfile()
+        }
+        .font(.caption)
+
+      } else {
+        // No profile selected — show list or create
+        if model.availableProfiles.isEmpty {
+          Text("No profiles yet. Create one to enable bulk fill.")
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        } else {
+          ForEach(model.availableProfiles) { profile in
+            Button {
+              model.loadProfile(profileID: profile.profileID)
+            } label: {
+              HStack {
+                Image(systemName: "person.circle")
+                Text(profile.displayName)
+                Spacer()
+                Text("\(profile.values.count) fields")
+                  .font(.caption)
+                  .foregroundStyle(.secondary)
+              }
+            }
+            .buttonStyle(.plain)
+          }
+        }
+
+        Divider()
+
+        NewProfileButton { name in
+          model.createProfile(displayName: name)
+        }
+      }
     }
   }
 
@@ -917,6 +1021,63 @@ private struct InspectorView: View {
   }
 }
 
+private struct PDFPresentationHighlight {
+  enum Kind {
+    case candidate
+    case field
+    case search
+  }
+
+  let kind: Kind
+  let page: PDFPage
+  let bounds: CGRect
+}
+
+private final class PDFPresentationOverlayView: NSView {
+  var highlights: [PDFPresentationHighlight] = [] {
+    didSet { needsDisplay = true }
+  }
+
+  override func hitTest(_ point: NSPoint) -> NSView? {
+    nil
+  }
+
+  override func draw(_ dirtyRect: NSRect) {
+    guard let pdfView = superview as? PDFView else { return }
+
+    for highlight in highlights {
+      let pdfViewBounds = pdfView.convert(highlight.bounds, from: highlight.page)
+      let overlayBounds = convert(pdfViewBounds, from: pdfView)
+      guard overlayBounds.intersects(dirtyRect) else { continue }
+
+      let fillColor: NSColor
+      let strokeColor: NSColor
+      switch highlight.kind {
+      case .candidate:
+        fillColor = NSColor.systemBlue.withAlphaComponent(0.18)
+        strokeColor = NSColor.controlAccentColor
+      case .field:
+        fillColor = NSColor.systemGreen.withAlphaComponent(0.16)
+        strokeColor = NSColor.systemGreen
+      case .search:
+        fillColor = NSColor.systemYellow.withAlphaComponent(0.28)
+        strokeColor = NSColor.systemOrange
+      }
+
+      fillColor.setFill()
+      strokeColor.setStroke()
+      let path = NSBezierPath(
+        roundedRect: overlayBounds,
+        xRadius: 3,
+        yRadius: 3
+      )
+      path.lineWidth = 2
+      path.fill()
+      path.stroke()
+    }
+  }
+}
+
 private final class InteractivePDFView: PDFView {
   var isManualPlacementMode = false
   var onManualPlacement: ((Int, CGPoint) -> Void)?
@@ -924,6 +1085,12 @@ private final class InteractivePDFView: PDFView {
   var requestedScaleMode: ReaderScaleMode = .fitWidth
   var requestedRowWidth: CGFloat = 612
   var requestedZoom: CGFloat = 1
+
+  override var acceptsFirstResponder: Bool { true }
+
+  override func becomeFirstResponder() -> Bool {
+    true
+  }
 
   override func layout() {
     super.layout()
@@ -944,6 +1111,7 @@ private final class InteractivePDFView: PDFView {
   }
 
   override func mouseDown(with event: NSEvent) {
+    window?.makeFirstResponder(self)
     guard let document,
       let page = page(for: convert(event.locationInWindow, from: nil), nearest: true)
     else {
@@ -960,6 +1128,23 @@ private final class InteractivePDFView: PDFView {
     } else {
       super.mouseDown(with: event)
     }
+  }
+
+  override func keyDown(with event: NSEvent) {
+    guard isManualPlacementMode,
+      event.keyCode == 36 || event.keyCode == 49,
+      let document,
+      let page = currentPage
+    else {
+      super.keyDown(with: event)
+      return
+    }
+
+    let pageBounds = page.bounds(for: displayBox)
+    onManualPlacement?(
+      document.index(for: page),
+      CGPoint(x: pageBounds.midX, y: pageBounds.midY)
+    )
   }
 }
 
@@ -978,8 +1163,12 @@ private struct PDFKitView: NSViewRepresentable {
   let onDirectEdit: (Int, CGPoint) -> Void
 
   final class Coordinator {
-    weak var highlightedPage: PDFPage?
-    var highlightAnnotation: PDFAnnotation?
+    weak var sourceDocument: PDFDocument?
+    var presentationDocument: PDFDocument?
+    var presentationRotation: Int?
+    weak var overlayView: PDFPresentationOverlayView?
+    var lastNavigatedPageIndex: Int?
+    var lastSearchSignature: String?
   }
 
   func makeCoordinator() -> Coordinator {
@@ -994,12 +1183,38 @@ private struct PDFKitView: NSViewRepresentable {
     view.backgroundColor = .windowBackgroundColor
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
+
+    let overlayView = PDFPresentationOverlayView(frame: view.bounds)
+    overlayView.autoresizingMask = [.width, .height]
+    overlayView.wantsLayer = true
+    view.addSubview(overlayView)
+    context.coordinator.overlayView = overlayView
     return view
   }
 
   func updateNSView(_ view: InteractivePDFView, context: Context) {
-    if view.document !== document {
-      view.document = document
+    if context.coordinator.sourceDocument !== document
+      || context.coordinator.presentationRotation != rotation
+    {
+      context.coordinator.sourceDocument = document
+      context.coordinator.presentationRotation = rotation
+      context.coordinator.lastNavigatedPageIndex = nil
+      context.coordinator.lastSearchSignature = nil
+
+      if let document,
+        let presentationDocument = document.copy() as? PDFDocument
+      {
+        for pageNumber in 0..<presentationDocument.pageCount {
+          presentationDocument.page(at: pageNumber)?.rotation = rotation
+        }
+        context.coordinator.presentationDocument = presentationDocument
+        view.document = presentationDocument
+      } else {
+        context.coordinator.presentationDocument = document
+        view.document = document
+      }
+    } else if view.document !== context.coordinator.presentationDocument {
+      view.document = context.coordinator.presentationDocument
     }
 
     view.isManualPlacementMode = isManualPlacementMode
@@ -1024,36 +1239,37 @@ private struct PDFKitView: NSViewRepresentable {
     view.requestedZoom = CGFloat(zoom)
     view.applyRequestedScale()
 
-    removeTransientHighlight(from: context.coordinator)
+    var highlights: [PDFPresentationHighlight] = []
     if let selectedCandidate,
-      let page = document?.page(at: selectedCandidate.pageIndex)
+      let page = view.document?.page(at: selectedCandidate.pageIndex)
     {
-      addTransientHighlight(
-        to: page,
-        bounds: selectedCandidate.bounds.cgRect,
-        color: NSColor.systemBlue.withAlphaComponent(0.18),
-        borderColor: NSColor.controlAccentColor,
-        coordinator: context.coordinator
+      highlights.append(
+        PDFPresentationHighlight(
+          kind: .candidate,
+          page: page,
+          bounds: selectedCandidate.bounds.cgRect
+        )
       )
     } else if let selectedField,
-      let page = document?.page(at: selectedField.pageIndex)
+      let page = view.document?.page(at: selectedField.pageIndex)
     {
-      addTransientHighlight(
-        to: page,
-        bounds: selectedField.bounds.cgRect,
-        color: NSColor.systemGreen.withAlphaComponent(0.16),
-        borderColor: NSColor.systemGreen,
-        coordinator: context.coordinator
+      highlights.append(
+        PDFPresentationHighlight(
+          kind: .field,
+          page: page,
+          bounds: selectedField.bounds.cgRect
+        )
       )
     }
 
-    if let document {
-      for pageNumber in 0..<document.pageCount {
-        document.page(at: pageNumber)?.rotation = rotation
-      }
-      if let page = document.page(at: pageIndex) {
+    if let document = view.document {
+      if context.coordinator.lastNavigatedPageIndex != pageIndex,
+        let page = document.page(at: pageIndex)
+      {
         view.go(to: page)
+        context.coordinator.lastNavigatedPageIndex = pageIndex
       }
+
       if let selectedSearchMatch,
         let selection = document.findString(
           selectedSearchMatch.query, withOptions: [.caseInsensitive]
@@ -1062,41 +1278,32 @@ private struct PDFKitView: NSViewRepresentable {
           $0.pages.contains(where: { $0 === document.page(at: selectedSearchMatch.pageIndex) })
         })
       {
-        view.setCurrentSelection(selection, animate: true)
+        let signature = "\(selectedSearchMatch.query)|\(selectedSearchMatch.pageIndex)"
+        if context.coordinator.lastSearchSignature != signature {
+          view.setCurrentSelection(selection, animate: true)
+          context.coordinator.lastSearchSignature = signature
+        }
+        if let page = document.page(at: selectedSearchMatch.pageIndex) {
+          highlights.append(
+            PDFPresentationHighlight(
+              kind: .search,
+              page: page,
+              bounds: selection.bounds(for: page)
+            )
+          )
+        }
       } else {
-        view.currentSelection = nil
+        if context.coordinator.lastSearchSignature != nil {
+          view.currentSelection = nil
+          context.coordinator.lastSearchSignature = nil
+        }
       }
+    } else {
+      context.coordinator.lastNavigatedPageIndex = nil
+      context.coordinator.lastSearchSignature = nil
     }
-  }
 
-  private func addTransientHighlight(
-    to page: PDFPage,
-    bounds: CGRect,
-    color: NSColor,
-    borderColor: NSColor,
-    coordinator: Coordinator
-  ) {
-    let annotation = PDFAnnotation(bounds: bounds, forType: .square, withProperties: nil)
-    annotation.color = borderColor
-    annotation.interiorColor = color
-    annotation.border = PDFBorder()
-    annotation.border?.lineWidth = 2
-    annotation.shouldPrint = false
-    annotation.shouldDisplay = true
-    page.addAnnotation(annotation)
-    // The annotation is a transient view affordance. Export rebuilds from the
-    // source bytes and the operation ledger, so this highlight never becomes
-    // part of the exported artifact.
-    coordinator.highlightedPage = page
-    coordinator.highlightAnnotation = annotation
-  }
-
-  private func removeTransientHighlight(from coordinator: Coordinator) {
-    if let page = coordinator.highlightedPage, let annotation = coordinator.highlightAnnotation {
-      page.removeAnnotation(annotation)
-    }
-    coordinator.highlightedPage = nil
-    coordinator.highlightAnnotation = nil
+    context.coordinator.overlayView?.highlights = highlights
   }
 
 }
@@ -1117,5 +1324,43 @@ struct SettingsView: View {
     .formStyle(.grouped)
     .scenePadding()
     .frame(width: 420)
+  }
+}
+
+private struct NewProfileButton: View {
+  let onCreate: (String) -> Void
+  @State private var isPresented = false
+  @State private var name = ""
+
+  var body: some View {
+    Button {
+      isPresented = true
+    } label: {
+      Label("New Profile", systemImage: "plus")
+        .font(.subheadline)
+    }
+    .sheet(isPresented: $isPresented) {
+      VStack(spacing: 16) {
+        Text("Create Profile")
+          .font(.headline)
+        TextField("Profile name", text: $name)
+          .textFieldStyle(.roundedBorder)
+          .frame(width: 240)
+        HStack {
+          Button("Cancel") { isPresented = false }
+          Button("Create") {
+            let trimmed = name.trimmingCharacters(in: .whitespaces)
+            if !trimmed.isEmpty {
+              onCreate(trimmed)
+              isPresented = false
+              name = ""
+            }
+          }
+          .buttonStyle(.borderedProminent)
+          .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+      }
+      .padding(24)
+    }
   }
 }

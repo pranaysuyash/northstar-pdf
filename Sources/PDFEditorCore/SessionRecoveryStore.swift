@@ -8,6 +8,13 @@ public enum SessionRecoveryStoreError: Error, LocalizedError, Sendable {
   case fileOperationFailed(String)
   case unsupportedSchema(DocumentSessionSchemaVersion)
   case invalidEnvelope(String)
+  case invalidFileName(String)
+  case sessionIdentityMismatch(expected: UUID, actual: UUID)
+  case filenameIdentityMismatch(
+    fileName: String,
+    filenameSessionID: UUID,
+    envelopeSessionID: UUID
+  )
 
   public var errorDescription: String? {
     switch self {
@@ -23,7 +30,72 @@ public enum SessionRecoveryStoreError: Error, LocalizedError, Sendable {
       return "Unsupported recovery schema \(version.major).\(version.minor)."
     case .invalidEnvelope(let message):
       return "Invalid recovery envelope: \(message)"
+    case .invalidFileName(let message):
+      return "Invalid recovery file name: \(message)"
+    case .sessionIdentityMismatch(let expected, let actual):
+      return "Recovery session identity mismatch: expected \(expected.uuidString), found \(actual.uuidString)."
+    case .filenameIdentityMismatch(
+      let fileName,
+      let filenameSessionID,
+      let envelopeSessionID
+    ):
+      return "Recovery filename \(fileName) identifies \(filenameSessionID.uuidString), but the envelope identifies \(envelopeSessionID.uuidString)."
     }
+  }
+}
+
+/// The reason a recovery record could not be admitted during discovery.
+public enum SessionRecoveryCorruptionKind: String, Sendable {
+  case invalidFileName
+  case unreadable
+  case decodingFailed
+  case unsupportedSchema
+  case invalidEnvelope
+  case sessionIdentityMismatch
+  case filenameIdentityMismatch
+  case fileOperationFailed
+}
+
+/// A structured, non-fatal diagnostic for one recovery file.
+///
+/// The diagnostic intentionally contains only a file name and a sanitized
+/// message. It does not include source bytes, OCR text, edit values, or other
+/// document content.
+public struct SessionRecoveryCorruption: Sendable, Equatable {
+  public let fileName: String
+  public let kind: SessionRecoveryCorruptionKind
+  public let message: String
+
+  public init(
+    fileName: String,
+    kind: SessionRecoveryCorruptionKind,
+    message: String
+  ) {
+    self.fileName = fileName
+    self.kind = kind
+    self.message = message
+  }
+}
+
+/// The result of recovery discovery.
+///
+/// Valid records remain available even when one or more files are corrupt.
+/// Callers should surface `corruptions` as a recoverable warning rather than
+/// treating a non-empty result as equivalent to a clean discovery.
+public struct SessionRecoveryListResult: Sendable {
+  public let envelopes: [DocumentSessionRecoveryEnvelope]
+  public let corruptions: [SessionRecoveryCorruption]
+
+  public init(
+    envelopes: [DocumentSessionRecoveryEnvelope],
+    corruptions: [SessionRecoveryCorruption]
+  ) {
+    self.envelopes = envelopes
+    self.corruptions = corruptions
+  }
+
+  public var hasCorruptions: Bool {
+    !corruptions.isEmpty
   }
 }
 
@@ -32,7 +104,16 @@ public protocol SessionRecoveryStoring: Sendable {
   func save(_ envelope: DocumentSessionRecoveryEnvelope) throws
   func load(sessionID: UUID) throws -> DocumentSessionRecoveryEnvelope?
   func list() throws -> [DocumentSessionRecoveryEnvelope]
+  func listRecoveries() throws -> SessionRecoveryListResult
   func delete(sessionID: UUID) throws
+}
+
+public extension SessionRecoveryStoring {
+  /// Compatibility default for existing alternate store implementations.
+  /// Concrete stores should provide diagnostics when they can inspect files.
+  func listRecoveries() throws -> SessionRecoveryListResult {
+    SessionRecoveryListResult(envelopes: try list(), corruptions: [])
+  }
 }
 
 /// A local JSON recovery store using atomic replacement semantics.
@@ -107,7 +188,7 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
     do {
       let data = try Data(contentsOf: fileURL)
       let envelope = try decoder.decode(DocumentSessionRecoveryEnvelope.self, from: data)
-      try validate(envelope)
+      try validate(envelope, expectedSessionID: sessionID)
       return envelope
     } catch let error as SessionRecoveryStoreError {
       throw error
@@ -121,10 +202,16 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
   }
 
   public func list() throws -> [DocumentSessionRecoveryEnvelope] {
+    try listRecoveries().envelopes
+  }
+
+  public func listRecoveries() throws -> SessionRecoveryListResult {
     lock.lock()
     defer { lock.unlock() }
 
-    guard fileManager.fileExists(atPath: directory.path) else { return [] }
+    guard fileManager.fileExists(atPath: directory.path) else {
+      return SessionRecoveryListResult(envelopes: [], corruptions: [])
+    }
 
     let files: [URL]
     do {
@@ -137,26 +224,42 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
     }
 
     var envelopes: [DocumentSessionRecoveryEnvelope] = []
+    var corruptions: [SessionRecoveryCorruption] = []
     for fileURL in files {
       do {
+        guard let filenameSessionID = UUID(
+          uuidString: fileURL.deletingPathExtension().lastPathComponent
+        ) else {
+          throw SessionRecoveryStoreError.invalidFileName(
+            "Recovery filename does not contain a valid session ID."
+          )
+        }
         let data = try Data(contentsOf: fileURL)
         let envelope = try decoder.decode(DocumentSessionRecoveryEnvelope.self, from: data)
-        try validate(envelope)
+        guard envelope.session.sessionID == filenameSessionID else {
+          throw SessionRecoveryStoreError.filenameIdentityMismatch(
+            fileName: fileURL.lastPathComponent,
+            filenameSessionID: filenameSessionID,
+            envelopeSessionID: envelope.session.sessionID
+          )
+        }
+        try validate(envelope, expectedSessionID: filenameSessionID)
         envelopes.append(envelope)
-      } catch let error as SessionRecoveryStoreError {
-        throw error
-      } catch is DecodingError {
-        throw SessionRecoveryStoreError.decodingFailed(
-          "Recovery file is corrupted: \(fileURL.lastPathComponent)"
-        )
       } catch {
-        throw SessionRecoveryStoreError.fileOperationFailed(error.localizedDescription)
+        corruptions.append(corruption(for: error, fileURL: fileURL))
       }
     }
 
-    return envelopes.sorted {
+    let sortedEnvelopes = envelopes.sorted {
       $0.session.recovery.updatedAt > $1.session.recovery.updatedAt
     }
+    let sortedCorruptions = corruptions.sorted {
+      $0.fileName.localizedStandardCompare($1.fileName) == .orderedAscending
+    }
+    return SessionRecoveryListResult(
+      envelopes: sortedEnvelopes,
+      corruptions: sortedCorruptions
+    )
   }
 
   public func delete(sessionID: UUID) throws {
@@ -188,17 +291,32 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
     }
   }
 
-  private func validate(_ envelope: DocumentSessionRecoveryEnvelope) throws {
+  private func validate(
+    _ envelope: DocumentSessionRecoveryEnvelope,
+    expectedSessionID: UUID? = nil
+  ) throws {
     guard envelope.contract == DocumentSessionRecoveryEnvelope.contractName else {
       throw SessionRecoveryStoreError.invalidEnvelope("Unexpected contract name.")
     }
     guard envelope.schemaVersion.isReadableBy() else {
       throw SessionRecoveryStoreError.unsupportedSchema(envelope.schemaVersion)
     }
+    if let expectedSessionID,
+       envelope.session.sessionID != expectedSessionID {
+      throw SessionRecoveryStoreError.sessionIdentityMismatch(
+        expected: expectedSessionID,
+        actual: envelope.session.sessionID
+      )
+    }
 
     let sourceDigest = envelope.session.sourceDigest
     guard !sourceDigest.isEmpty else {
       throw SessionRecoveryStoreError.invalidEnvelope("Source digest is empty.")
+    }
+    guard envelope.sourceDigest == sourceDigest else {
+      throw SessionRecoveryStoreError.invalidEnvelope(
+        "Envelope source digest does not match the session source digest."
+      )
     }
     if let inspection = envelope.session.inspectionReference,
        inspection.sourceDigest != sourceDigest {
@@ -213,6 +331,54 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
         "Operation metadata does not match the source digest."
       )
     }
+    if envelope.session.operationLedger.contains(where: { $0.pageIndex < 0 }) {
+      throw SessionRecoveryStoreError.invalidEnvelope(
+        "Operation metadata contains a negative page index."
+      )
+    }
+  }
+
+  private func corruption(
+    for error: Error,
+    fileURL: URL
+  ) -> SessionRecoveryCorruption {
+    let kind: SessionRecoveryCorruptionKind
+    let message: String
+
+    if let recoveryError = error as? SessionRecoveryStoreError {
+      switch recoveryError {
+      case .unsupportedSchema:
+        kind = .unsupportedSchema
+      case .sessionIdentityMismatch:
+        kind = .sessionIdentityMismatch
+      case .filenameIdentityMismatch:
+        kind = .filenameIdentityMismatch
+      case .invalidEnvelope:
+        kind = .invalidEnvelope
+      case .invalidFileName:
+        kind = .invalidFileName
+      case .decodingFailed:
+        kind = .decodingFailed
+      case .fileOperationFailed:
+        kind = .fileOperationFailed
+      case .directoryCreationFailed, .encodingFailed:
+        kind = .fileOperationFailed
+      }
+      message = recoveryError.localizedDescription
+    } else if error is DecodingError {
+      kind = .decodingFailed
+      message = "Recovery file is corrupted."
+    } else {
+      kind = .unreadable
+      message = "Recovery file could not be read."
+    }
+
+    let filename = fileURL.lastPathComponent
+    return SessionRecoveryCorruption(
+      fileName: filename,
+      kind: kind,
+      message: message
+    )
   }
 
   private func url(for sessionID: UUID) -> URL {

@@ -889,14 +889,15 @@
   implements, `nativeFieldValue` and `overlayText`. Long-term contract kinds
   remain available for future provider lanes but cannot be silently dropped by
   this writer.
-- Added `Tests/web_pdf_contract_mutation_test.mjs` with a valid control, six
+- Added `Tests/web_pdf_contract_mutation_test.mjs` with a valid control, seven
   deliberate mutation cases, writer-call assertions, and an actual
   `PDFDocument.load()` spy through the materializer probe.
-- Verification passed: six rejected cases recorded zero writer calls, the valid
-  control called the writer once, and the stale materialization probe recorded
-  zero pdf-lib load calls. The materializer probes now cover all six mutation
-  cases and each recorded zero pdf-lib load calls. Existing native
-  negative-test semantics remain the reference contract.
+- Verification passed: seven rejected cases recorded zero writer calls, the
+  valid control called the writer once, and all seven materializer probes
+  recorded zero pdf-lib load calls. Targeted guard mutation runs killed the
+  destructive, page-coordinate, coordinate-space, and composite rectangle
+  bypasses. Each single rectangle comparison mutant survived only because the
+  other rectangle invariant caught it, proving defense in depth.
 - Durable evidence is recorded in
   [`docs/audits/contract-negative-test-evidence-2026-08-24.md`](docs/audits/contract-negative-test-evidence-2026-08-24.md), with the shared boundary
   and recovery mapping updated in `docs/shared-contracts.md` and
@@ -910,3 +911,15 @@
 - Enhanced VoiceOver accessibility tree in `Sources/PDFEditorApp/ContentView.swift` with `.accessibilityElement(children: .combine)`, descriptive `.accessibilityLabel`, `.accessibilityHint`, and dynamic `.accessibilityAddTraits(.isSelected)`.
 - Enhanced web toolbar in `web/index.html` with explicit descriptive `aria-label` attributes across all interactive controls.
 - Verification: `swift test` passed all 44 tests across 3 suites; `node Tests/web_accessibility_gate_test.mjs` passed landmarks, skip links, text layers, and dialogs; `node Tests/web_reader_contract_test.mjs` passed 42 checks; `swift build -c release` compiled with 0 warnings.
+
+### 2026-08-24 Red-Team Campaign Audit (PER-PDEV-0168)
+
+- Adopted **Persona `PER-PDEV-0168 — RED-TEAM ENGINEER`** (supported by `PER-PL2-0038 — PENETRATION TESTER` and `PER-PDEV-0164 — FAULT-INJECTION ENGINEER`) from `desktop/personas_23rdaug26.zip`.
+- Conducted objective-driven adversarial campaign against two attacker models: Actor A (local, low privilege, Application Support file access) and Actor B (remote, untrusted PDF supplier).
+- Published campaign narrative in [`docs/audits/red-team-campaign-audit-per-pdev-0168.md`](docs/audits/red-team-campaign-audit-per-pdev-0168.md).
+- **RT-001 (High / CVSS 7.1) — REMEDIATED:** `EncryptedProfileStore` was writing raw plaintext JSON to disk despite the "Encrypted" class name and AES-GCM documentation. Implemented genuine AES-256-GCM encryption: a 256-bit key is generated once and stored in the macOS Keychain (`com.pdfeditor.profilestore`); on-disk file is an envelope JSON `{ nonce, ciphertext }` with no readable PII. Backward-compatible with legacy plaintext profiles (migrated to encrypted format on next save).
+- **RT-002 (Medium / CVSS 5.3) — REMEDIATED:** Export staging temp file was created in the user-chosen export directory rather than the OS-isolated `FileManager.default.temporaryDirectory`. Moved to OS tmpdir to eliminate symlink race attack vector.
+- **RT-003 (Low / CVSS 3.7) — REMEDIATED:** vCard import had no per-value length limit; a crafted `FN:` line could store unbounded data. Added 1024-character truncation guard via `sanitized()` helper in `importFromVCard`.
+- **RT-004 (Informational) — DOCUMENTED:** CSP `'unsafe-inline'` required by current inline module script design. No current exploitability; deferred to RT-004 milestone (extract `web/app.js`).
+- Added two regression tests: `redTeamRT001ProfileIsNotStoredAsPlaintextJSON` (asserts on-disk file not parseable as plaintext `UserProfile`) and `redTeamRT003VCardImportTruncatesLongValues` (asserts 4096-char vCard FN: stored ≤ 1024 chars).
+- Verification: `swift test` passed all **62 tests** across 4 suites with 0 failures; Actor B objective (remote exploit chain) not achieved across all hardened surfaces.

@@ -11,6 +11,36 @@ export const DEFAULT_TEMPLATE_MATCH_POLICY = Object.freeze({
   regionWeight: 0.30
 });
 
+export const DOCUMENT_CLASS_MATCH_POLICY_VERSION = { major: 1, minor: 0 };
+
+export const DOCUMENT_CLASS_MATCH_POLICIES = Object.freeze({
+  publicAcroForm: Object.freeze({ familyAcceptance: "review" }),
+  staticPrintedForm: Object.freeze({ familyAcceptance: "review" }),
+  nativeWidget: Object.freeze({ familyAcceptance: "review" }),
+  rotatedStaticForm: Object.freeze({ familyAcceptance: "review" }),
+  rotatedNativeWidget: Object.freeze({ familyAcceptance: "review" }),
+  scannedDocument: Object.freeze({ familyAcceptance: "disabled" })
+});
+
+function policyWithoutClassMap(policy = DEFAULT_TEMPLATE_MATCH_POLICY) {
+  const { documentClassPolicies: _documentClassPolicies, ...globalPolicy } = policy || {};
+  return { ...DEFAULT_TEMPLATE_MATCH_POLICY, ...globalPolicy };
+}
+
+export function resolveTemplateMatchPolicy({
+  documentClass = "unknown",
+  policy = DEFAULT_TEMPLATE_MATCH_POLICY
+} = {}) {
+  const globalPolicy = policyWithoutClassMap(policy);
+  const builtInClassPolicy = DOCUMENT_CLASS_MATCH_POLICIES[documentClass] || {};
+  const explicitClassPolicy = policy?.documentClassPolicies?.[documentClass] || {};
+  return {
+    ...globalPolicy,
+    ...builtInClassPolicy,
+    ...explicitClassPolicy
+  };
+}
+
 function clamp(value) {
   return Math.max(0, Math.min(1, value));
 }
@@ -142,6 +172,9 @@ function candidateState(candidate, fingerprint, sourceDigest, scoreResult, polic
   if (candidateFingerprint.layoutFingerprint === fingerprint.layoutFingerprint) {
     return { state: "knownVariant", score: 0.9, reason: "Reviewed keyed layout matched a different source digest." };
   }
+  if (policy.familyAcceptance === "disabled") {
+    return { state: "noMatch", score: scoreResult.score, reason: "Family matching is disabled for this document class until reviewed calibration exists." };
+  }
   if (scoreResult.score >= policy.familyThreshold) {
     return { state: "familyMatch", score: scoreResult.score, reason: "Structural family evidence exceeded the reviewed threshold." };
   }
@@ -153,6 +186,7 @@ export function classifyTemplateIndex({
   fingerprint,
   sourceDigest,
   expectedSourceDigest = null,
+  documentClass = "unknown",
   policy = DEFAULT_TEMPLATE_MATCH_POLICY
 }) {
   if (expectedSourceDigest && expectedSourceDigest !== sourceDigest) {
@@ -162,14 +196,17 @@ export function classifyTemplateIndex({
       selectedTemplateID: null,
       candidates: [],
       reasons: ["The current source digest differs from the reviewed session source digest."],
-      falsePositiveGate: { passed: true, selected: false }
+      falsePositiveGate: { passed: true, selected: false },
+      documentClass,
+      policy: resolveTemplateMatchPolicy({ documentClass, policy })
     };
   }
+  const resolvedPolicy = resolveTemplateMatchPolicy({ documentClass, policy });
   const ranked = (templates || []).map((template, index) => {
     if (template?.payload) validateTemplateContract(template);
     const id = templateID(template, `template-${index + 1}`);
-    const scoreResult = scoreTemplateFingerprints(template, fingerprint, policy);
-    const classification = candidateState(template, fingerprint, sourceDigest, scoreResult, policy);
+    const scoreResult = scoreTemplateFingerprints(template, fingerprint, resolvedPolicy);
+    const classification = candidateState(template, fingerprint, sourceDigest, scoreResult, resolvedPolicy);
     return {
       templateID: id,
       state: classification.state,
@@ -187,13 +224,15 @@ export function classifyTemplateIndex({
       selectedTemplateID: null,
       candidates: ranked,
       reasons: ["No reviewed template exceeded the matching threshold."],
-      falsePositiveGate: { passed: true, selected: false }
+      falsePositiveGate: { passed: true, selected: false },
+      documentClass,
+      policy: resolvedPolicy
     };
   }
   const [best, second] = viable;
   const ambiguous = second && best.state !== "exact"
     && second.state !== "exact"
-    && (best.score - second.score) < policy.ambiguityMargin;
+    && (best.score - second.score) < resolvedPolicy.ambiguityMargin;
   if (ambiguous) {
     return {
       state: "ambiguous",
@@ -201,7 +240,9 @@ export function classifyTemplateIndex({
       selectedTemplateID: null,
       candidates: viable,
       reasons: ["Multiple reviewed templates are within the ambiguity margin."],
-      falsePositiveGate: { passed: true, selected: false }
+      falsePositiveGate: { passed: true, selected: false },
+      documentClass,
+      policy: resolvedPolicy
     };
   }
   return {
@@ -210,13 +251,19 @@ export function classifyTemplateIndex({
     selectedTemplateID: best.templateID,
     candidates: ranked,
     reasons: [best.reason],
-    falsePositiveGate: { passed: true, selected: true }
+    falsePositiveGate: { passed: true, selected: true },
+    documentClass,
+    policy: resolvedPolicy
   };
 }
 
 export function runReviewedTemplateBenchmark(fixtures, policy = DEFAULT_TEMPLATE_MATCH_POLICY) {
   const cases = fixtures.map((fixture) => {
-    const actual = classifyTemplateIndex({ ...fixture.input, policy });
+    const actual = classifyTemplateIndex({
+      ...fixture.input,
+      documentClass: fixture.documentClass || fixture.input?.documentClass || "unknown",
+      policy
+    });
     const expected = fixture.expected;
     const statePassed = actual.state === expected.state;
     const selectedPassed = expected.selectedTemplateID === undefined
@@ -253,5 +300,103 @@ export function runReviewedTemplateBenchmark(fixtures, policy = DEFAULT_TEMPLATE
     failures: failures.map(({ actual, ...fixture }) => fixture),
     counts,
     cases
+  };
+}
+
+function roundUp(value, precision = 4) {
+  const scale = 10 ** precision;
+  return Math.ceil((value * scale) - Number.EPSILON) / scale;
+}
+
+function rankedScores(fixture, policy) {
+  return (fixture.input.templates || [])
+    .map((template, index) => ({
+      templateID: templateID(template, `template-${index + 1}`),
+      score: scoreTemplateFingerprints(template, fixture.input.fingerprint, policy).score
+    }))
+    .sort((left, right) => right.score - left.score || left.templateID.localeCompare(right.templateID));
+}
+
+function classCalibrationCases(fixtures, documentClass) {
+  return fixtures.filter((fixture) =>
+    (fixture.documentClass || fixture.input?.documentClass || "unknown") === documentClass
+  );
+}
+
+function calibrateClassPolicy(fixtures, basePolicy, options = {}) {
+  const positiveCases = fixtures.filter((fixture) => fixture.expected.state === "familyMatch");
+  const negativeCases = fixtures.filter((fixture) => fixture.expected.state === "noMatch");
+  const ambiguousCases = fixtures.filter((fixture) => fixture.expected.state === "ambiguous");
+  const positiveScores = positiveCases.map((fixture) => rankedScores(fixture, basePolicy)[0]?.score ?? 0);
+  const negativeScores = negativeCases.map((fixture) => rankedScores(fixture, basePolicy)[0]?.score ?? 0);
+  const minimumPositiveScore = positiveScores.length ? Math.min(...positiveScores) : null;
+  const maximumNegativeScore = negativeScores.length ? Math.max(...negativeScores) : null;
+  const separable = positiveScores.length > 0
+    && negativeScores.length > 0
+    && minimumPositiveScore > maximumNegativeScore;
+  const threshold = separable
+    ? roundUp((minimumPositiveScore + maximumNegativeScore) / 2)
+    : null;
+  const ambiguityGaps = ambiguousCases
+    .map((fixture) => rankedScores(fixture, basePolicy))
+    .filter((scores) => scores.length > 1)
+    .map(([best, second]) => best.score - second.score);
+  const minimumAmbiguityMargin = options.minimumAmbiguityMargin ?? DEFAULT_TEMPLATE_MATCH_POLICY.ambiguityMargin;
+  const ambiguityMargin = ambiguityGaps.length
+    ? Math.max(minimumAmbiguityMargin, roundUp(Math.max(...ambiguityGaps) + 0.001))
+    : minimumAmbiguityMargin;
+  const familyAcceptance = separable ? "review" : "disabled";
+  return {
+    familyThreshold: threshold ?? 1.01,
+    ambiguityMargin,
+    familyAcceptance,
+    calibrationStatus: separable ? "calibrated" : "insufficientEvidence",
+    evidence: {
+      positiveCaseCount: positiveCases.length,
+      negativeCaseCount: negativeCases.length,
+      ambiguousCaseCount: ambiguousCases.length,
+      minimumPositiveScore,
+      maximumNegativeScore,
+      falsePositiveGate: familyAcceptance === "disabled"
+        ? false
+        : negativeScores.every((score) => score < threshold)
+    }
+  };
+}
+
+export function calibrateDocumentClassPolicies(
+  fixtures,
+  {
+    basePolicy = DEFAULT_TEMPLATE_MATCH_POLICY,
+    minimumAmbiguityMargin = DEFAULT_TEMPLATE_MATCH_POLICY.ambiguityMargin
+  } = {}
+) {
+  const documentClasses = [...new Set((fixtures || []).map((fixture) =>
+    fixture.documentClass || fixture.input?.documentClass || "unknown"
+  ))].sort();
+  const scorePolicy = policyWithoutClassMap(basePolicy);
+  const classes = Object.fromEntries(documentClasses.map((documentClass) => {
+    const cases = classCalibrationCases(fixtures, documentClass);
+    return [documentClass, {
+      documentClass,
+      fixtureCount: cases.length,
+      policy: calibrateClassPolicy(cases, scorePolicy, { minimumAmbiguityMargin }),
+      fixtureIDs: cases.map((fixture) => fixture.id)
+    }];
+  }));
+  const policyByDocumentClass = Object.fromEntries(
+    Object.entries(classes).map(([documentClass, result]) => [documentClass, result.policy])
+  );
+  return {
+    benchmarkVersion: { ...TEMPLATE_MATCH_BENCHMARK_VERSION },
+    calibrationVersion: { ...DOCUMENT_CLASS_MATCH_POLICY_VERSION },
+    basePolicy: { ...scorePolicy },
+    policyByDocumentClass,
+    classes,
+    passed: Object.values(classes).every((result) =>
+      result.policy.calibrationStatus === "calibrated"
+        ? result.policy.evidence.falsePositiveGate === true
+        : result.policy.calibrationStatus === "insufficientEvidence"
+    )
   };
 }

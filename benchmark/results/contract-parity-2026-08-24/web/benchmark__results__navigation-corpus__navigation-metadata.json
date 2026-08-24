@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
-      "generatedAt": "2026-08-24T16:36:13.898Z",
+      "generatedAt": "2026-08-24T16:46:33.026Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -49,9 +49,24 @@
             "width": 540,
             "height": 720
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 36,
+            "y": 36,
+            "width": 540,
+            "height": 720
+          },
+          "trimBox": {
+            "x": 36,
+            "y": 36,
+            "width": 540,
+            "height": 720
+          },
+          "artBox": {
+            "x": 36,
+            "y": 36,
+            "width": 540,
+            "height": 720
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -72,9 +87,24 @@
             "width": 540,
             "height": 720
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 18,
+            "y": 18,
+            "width": 576,
+            "height": 756
+          },
+          "trimBox": {
+            "x": 54,
+            "y": 72,
+            "width": 504,
+            "height": 648
+          },
+          "artBox": {
+            "x": 36,
+            "y": 36,
+            "width": 540,
+            "height": 720
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 1,
@@ -95,9 +125,24 @@
             "width": 540,
             "height": 720
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 36,
+            "y": 36,
+            "width": 540,
+            "height": 720
+          },
+          "trimBox": {
+            "x": 36,
+            "y": 36,
+            "width": 540,
+            "height": 720
+          },
+          "artBox": {
+            "x": 72,
+            "y": 90,
+            "width": 468,
+            "height": 612
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 1,
@@ -113,54 +158,45 @@
         {
           "id": "link-1",
           "pageIndex": 0,
-          "label": "https://example.com/safe",
+          "label": "Page 1 link",
           "kind": "externalURL",
-          "targetPageIndex": null,
           "destination": "https://example.com/safe",
-          "destinationBounds": null,
+          "destinationBounds": {
+            "x": 72,
+            "y": 640,
+            "width": 180,
+            "height": 28
+          },
           "isSafeExternal": true
         },
         {
           "id": "link-2",
           "pageIndex": 0,
-          "label": "Link on page 1",
-          "kind": "unknown",
-          "targetPageIndex": null,
-          "destination": null,
-          "destinationBounds": null,
+          "label": "Page 1 link",
+          "kind": "externalURL",
+          "destination": "file:///tmp/unsafe.pdf",
+          "destinationBounds": {
+            "x": 72,
+            "y": 600,
+            "width": 180,
+            "height": 28
+          },
           "isSafeExternal": false
         },
         {
           "id": "link-3",
           "pageIndex": 0,
-          "label": [
-            {
-              "num": 41,
-              "gen": 0
-            },
-            {
-              "name": "XYZ"
-            },
-            72,
-            700,
-            null
-          ],
+          "label": "Page 1 link",
           "kind": "internalPage",
-          "targetPageIndex": 1,
-          "destination": [
-            {
-              "num": 41,
-              "gen": 0
-            },
-            {
-              "name": "XYZ"
-            },
-            72,
-            700,
-            null
-          ],
-          "destinationBounds": null,
-          "isSafeExternal": false
+          "destination": "2",
+          "destinationBounds": {
+            "x": 72,
+            "y": 560,
+            "width": 180,
+            "height": 28
+          },
+          "isSafeExternal": true,
+          "targetPageIndex": 1
         }
       ],
       "outlines": [
@@ -228,7 +264,7 @@
       "minor": 0
     },
     "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
-    "generatedAt": "2026-08-24T16:36:13.898Z",
+    "generatedAt": "2026-08-24T16:46:33.026Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -308,7 +344,7 @@
         "minor": 0
       },
       "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
-      "generatedAt": "2026-08-24T16:36:13.898Z",
+      "generatedAt": "2026-08-24T16:46:33.026Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -347,7 +383,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "d47e2172-db26-4091-a5bd-7cdfa1a82a25",
+        "id": "e416ed55-1372-428a-b590-8f3fc404ee15",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -355,7 +391,7 @@
         "operationIDs": []
       },
       {
-        "id": "00b9ef13-a921-45fd-9025-f3a54c7ea94e",
+        "id": "904721a4-51af-4850-9cb0-4fdaeb21f8f3",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 3 page(s).",
@@ -363,7 +399,7 @@
         "operationIDs": []
       },
       {
-        "id": "ae048a70-60be-4cab-bc06-19b95f98fd2b",
+        "id": "e74db176-cb2f-48b9-b17a-96c1b0f52289",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -371,7 +407,7 @@
         "operationIDs": []
       },
       {
-        "id": "9a2462ef-824a-4ca1-bed9-025bdccee404",
+        "id": "22fd83ed-9d23-428c-8270-d91b70130737",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -379,7 +415,7 @@
         "operationIDs": []
       },
       {
-        "id": "7a852870-da83-43da-9d6c-08d376434a11",
+        "id": "e764a348-1b46-481b-8833-0d526dd0682d",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -387,7 +423,7 @@
         "operationIDs": []
       },
       {
-        "id": "104893df-7bf1-4463-aac3-85daf68b457b",
+        "id": "98f480db-e9cc-452d-b763-eaf12abd2e0d",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -395,7 +431,7 @@
         "operationIDs": []
       },
       {
-        "id": "6bc1866d-db87-4f52-ba9f-d67dac06dba9",
+        "id": "94f558f2-4cfd-459c-b4d4-42d0cdadff8f",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -403,7 +439,7 @@
         "operationIDs": []
       },
       {
-        "id": "30cf307c-2ec8-4bb8-82d7-e3be0a11e08f",
+        "id": "329408d0-d04e-44de-8447-1959b1c4fde4",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -426,7 +462,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-24T16:36:13.921Z",
+    "validatedAt": "2026-08-24T16:46:33.051Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",

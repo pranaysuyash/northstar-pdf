@@ -1,15 +1,21 @@
 import AppKit
+import CryptoKit
 import Observation
 import PDFEditorCore
 import PDFKit
 
 struct SearchMatch: Identifiable, Equatable, Sendable {
-  let id = UUID()
   let pageIndex: Int
   let query: String
   let snippet: String
   let charStart: Int
   let charLength: Int
+
+  // The PDF text position is the durable identity. A generated UUID made
+  // every search refresh look like a different hit and made selection drift.
+  var id: String {
+    "\(pageIndex):\(charStart):\(charLength):\(query.lowercased()):\(snippet)"
+  }
 }
 
 struct ManualTextPlacement: Equatable, Sendable {
@@ -22,9 +28,11 @@ struct ManualTextPlacement: Equatable, Sendable {
 final class AppModel {
   private let provider = PDFKitProvider()
   private let sessionStore: FileSessionStore
+  private let profileStore: EncryptedProfileStore
 
   var inspection: DocumentInspection?
   var liveDocument: PDFDocument?
+  private(set) var documentProjectionRevision: UInt64 = 0
   var sourceURL: URL?
   var operations: [EditOperation] = []
   var selectedPageIndex = 0
@@ -37,7 +45,14 @@ final class AppModel {
   var isImporterPresented = false
   var statusMessage: String?
   var alertMessage: String?
+
+  // Profile state
+  var currentProfile: UserProfile?
+  var availableProfiles: [UserProfile] = []
+  var isProfilePanelOpen = false
+  var bulkFillResult: ProfileBulkFillResult?
   var exportReport: ValidationReport?
+  private(set) var lastActionDenial: ActionDenial?
 
   var readerViewMode: ReaderViewMode = .continuous
   var readerScaleMode: ReaderScaleMode = .fitWidth
@@ -59,9 +74,88 @@ final class AppModel {
   var hasSavedSession: Bool = false
   var lastSessionInfo: String?
 
+  var sessionID: UUID? { currentSessionID }
+
+  enum LifecycleAction: String, Sendable {
+    case newDocument
+    case openDocument
+    case closeWindow
+  }
+
+  enum LifecycleDisposition: String, Sendable {
+    case proceed
+    case confirmBeforeDiscardingChanges
+  }
+
+  struct LifecycleDecisionInfo: Equatable, Sendable {
+    let action: LifecycleAction
+    let hasDocument: Bool
+    let isDirty: Bool
+    let hasRecoverableSession: Bool
+    let canExportChanges: Bool
+    let disposition: LifecycleDisposition
+  }
+
   private struct ReplayCheckpoint {
     let operationCount: Int
     let document: PDFDocument
+  }
+
+  enum PermissionRequirement: String, Sendable {
+    case copy = "copy or extract text"
+    case modify = "modify form data"
+    case addAnnotations = "add annotations or overlays"
+  }
+
+  struct ActionDenial: Identifiable, Equatable, Sendable {
+    let id: String
+    let action: String
+    let requirement: PermissionRequirement?
+    let message: String
+
+    init(action: String, requirement: PermissionRequirement?, message: String) {
+      self.action = action
+      self.requirement = requirement
+      self.message = message
+      self.id = "denied:\(action):\(requirement?.rawValue ?? "document")"
+    }
+  }
+
+  struct InMemoryRecoverySnapshot: Equatable, Sendable {
+    let sessionID: UUID
+    let sourceDigest: String
+    let operationLedgerDigest: String
+    let operationCount: Int
+    let selectedPageIndex: Int
+    let selectedFieldID: String?
+    let selectedCandidateID: UUID?
+    let selectedSearchMatchID: String?
+    let readerViewMode: String
+    let readerScaleMode: String
+    let readerZoom: Double
+    let readerRotation: Int
+    let capturedAt: Date
+  }
+
+  private struct ViewStateSnapshot {
+    let selectedPageIndex: Int
+    let selectedFieldID: String?
+    let selectedCandidateID: UUID?
+    let selectedSearchMatchIndex: Int?
+    let readerViewMode: ReaderViewMode
+    let readerScaleMode: ReaderScaleMode
+    let readerZoom: Double
+    let readerRotation: Int
+  }
+
+  private struct OperationViewState {
+    let before: ViewStateSnapshot
+    let after: ViewStateSnapshot
+  }
+
+  private struct RedoEntry {
+    let operation: EditOperation
+    let viewStateAfter: ViewStateSnapshot
   }
 
   // Checkpoints bound undo replay work without making a full-document copy for
@@ -70,9 +164,17 @@ final class AppModel {
   private static let replayCheckpointInterval = 8
   private static let maximumReplayCheckpoints = 8
   private var replayCheckpoints: [ReplayCheckpoint] = []
+  private var operationViewStates: [OperationViewState] = []
+  private var redoEntries: [RedoEntry] = []
+  private(set) var inMemoryRecoverySnapshot: InMemoryRecoverySnapshot?
 
-  init(sessionStore: FileSessionStore = FileSessionStore(directory: FileSessionStore.defaultDirectory)) {
+  init(
+    sessionStore: FileSessionStore = FileSessionStore(directory: FileSessionStore.defaultDirectory),
+    profileStore: EncryptedProfileStore = EncryptedProfileStore(directory: EncryptedProfileStore.defaultDirectory)
+  ) {
     self.sessionStore = sessionStore
+    self.profileStore = profileStore
+    refreshProfiles()
   }
 
   var selectedField: NativeField? {
@@ -105,6 +207,106 @@ final class AppModel {
     inspection?.pages.count ?? 0
   }
 
+  var canUndo: Bool { !operations.isEmpty }
+
+  var canRedo: Bool { !redoEntries.isEmpty }
+
+  /// A session is dirty when it has a live source and operations that have
+  /// not been committed back to the source file. Export Copy is intentionally
+  /// separate from this predicate because it does not replace the source.
+  var isDirty: Bool {
+    liveDocument != nil && !operations.isEmpty
+  }
+
+  var hasUnexportedChanges: Bool { isDirty }
+
+  func lifecycleDecision(for action: LifecycleAction) -> LifecycleDecisionInfo {
+    LifecycleDecisionInfo(
+      action: action,
+      hasDocument: liveDocument != nil,
+      isDirty: isDirty,
+      hasRecoverableSession: hasSavedSession,
+      canExportChanges: canExportCurrentOperations,
+      disposition: isDirty ? .confirmBeforeDiscardingChanges : .proceed
+    )
+  }
+
+  var canExportCurrentOperations: Bool {
+    guard inspection != nil else { return false }
+    return operations.allSatisfy { operation in
+      permissionRequirements(for: operation).allSatisfy {
+        permissionIsGranted($0)
+      }
+    }
+  }
+
+  // Compatibility names for the native command surface. Keeping these as
+  // model-owned actions prevents menus from maintaining a second history.
+  func reset() { resetDocument() }
+
+  func undo() { undoLastEdit() }
+
+  func redo() { redoLastEdit() }
+
+  func goToPage(_ index: Int) {
+    jumpToPage(index)
+  }
+
+  func goToFirstPage() {
+    goToPage(0)
+  }
+
+  func goToPreviousPage() {
+    goToPage(selectedPageIndex - 1)
+  }
+
+  func goToNextPage() {
+    goToPage(selectedPageIndex + 1)
+  }
+
+  func goToLastPage() {
+    goToPage(max(0, currentPageCount - 1))
+  }
+
+  func setScaleMode(_ mode: ReaderScaleMode) {
+    setReaderScaleMode(mode)
+  }
+
+  func setActualSize() {
+    setReaderScaleMode(.zoom)
+    setZoom(1.0)
+  }
+
+  func setFitPage() {
+    setReaderScaleMode(.fitPage)
+  }
+
+  func setFitWidth() {
+    setReaderScaleMode(.fitWidth)
+  }
+
+  /// Typed entry point for the standard Find command. The shell can provide
+  /// a query when it owns the field, while the model remains the sole search
+  /// authority and preserves the selected hit when possible.
+  func routeSearchCommand(query: String? = nil) {
+    if let query {
+      searchQuery = query
+    }
+    if searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+      statusMessage = "Search is ready."
+      return
+    }
+    runSearch()
+  }
+
+  func routeNextSearchCommand() {
+    selectNextSearchMatch()
+  }
+
+  func routePreviousSearchCommand() {
+    selectPreviousSearchMatch()
+  }
+
   func open(url: URL, password: String? = nil) {
     do {
       let hasSecurityScope = url.startAccessingSecurityScopedResource()
@@ -123,11 +325,15 @@ final class AppModel {
       }
 
       inspection = nextInspection
-      liveDocument = document
+      replaceLiveDocument(document)
       sourceURL = url
       cachedSourceData = data
       operations = []
       replayCheckpoints = []
+      operationViewStates = []
+      redoEntries = []
+      inMemoryRecoverySnapshot = nil
+      lastActionDenial = nil
       selectedPageIndex = 0
       selectedFieldID = nil
       selectedCandidateID = nil
@@ -142,6 +348,9 @@ final class AppModel {
       passwordAttempt = ""
       isPasswordSheetPresented = false
       pageJumpInput = ""
+      currentSessionID = UUID()
+      hasSavedSession = false
+      lastSessionInfo = nil
 
       // Attempt to load a saved session for this source
       if let savedSession = try? sessionStore.load(sourceDigest: nextInspection.source.sha256) {
@@ -170,7 +379,19 @@ final class AppModel {
           security: nextInspection.security
         )
         operations = savedSession.operations
+        operationViewStates = []
+        redoEntries = []
+        replayCheckpoints = []
+        do {
+          let replay = try replayDocument(upTo: operations.count)
+          replaceLiveDocument(replay.document)
+          recordReplayCheckpointIfNeeded()
+        } catch {
+          statusMessage =
+            "Saved edits were found, but the preview could not be rebuilt: \(error.localizedDescription)"
+        }
         selectedPageIndex = savedSession.selectedPageIndex
+        seedViewStateHistoryForLoadedOperations()
         statusMessage = "Opened \(url.lastPathComponent) — restored session from \(savedSession.lastModifiedAt.formatted(date: .abbreviated, time: .shortened))"
       } else {
         hasSavedSession = false
@@ -210,11 +431,15 @@ final class AppModel {
 
   func resetDocument() {
     inspection = nil
-    liveDocument = nil
+    replaceLiveDocument(nil)
     sourceURL = nil
     cachedSourceData = nil
     operations = []
     replayCheckpoints = []
+    operationViewStates = []
+    redoEntries = []
+    inMemoryRecoverySnapshot = nil
+    lastActionDenial = nil
     selectedPageIndex = 0
     selectedFieldID = nil
     selectedCandidateID = nil
@@ -256,6 +481,7 @@ final class AppModel {
   }
 
   func applyFieldValue(_ value: String) {
+    guard requirePermission(.modify, action: "Edit form field") else { return }
     guard let field = selectedField, let liveDocument else { return }
     let operation = EditOperation(
       pageIndex: field.pageIndex,
@@ -270,9 +496,7 @@ final class AppModel {
     )
     do {
       try provider.apply(operation, to: liveDocument)
-      operations.append(operation)
-      recordReplayCheckpointIfNeeded()
-      autoSaveSession()
+      recordAppliedOperation(operation)
       statusMessage = "Applied a reversible native-field edit."
     } catch {
       alertMessage = error.localizedDescription
@@ -280,6 +504,9 @@ final class AppModel {
   }
 
   func applyOverlay(_ value: String) {
+    guard requirePermission(.modify, action: "Add text overlay"),
+      requirePermission(.addAnnotations, action: "Add text overlay")
+    else { return }
     guard let candidate = selectedCandidate else { return }
     let normalized = value.trimmingCharacters(in: .whitespacesAndNewlines)
     if candidate.entryMode == .characterGrid {
@@ -306,6 +533,9 @@ final class AppModel {
   }
 
   func applyStaticChoiceMark(cellIndex: Int) {
+    guard requirePermission(.modify, action: "Add choice mark"),
+      requirePermission(.addAnnotations, action: "Add choice mark")
+    else { return }
     guard let candidate = selectedCandidate,
       [.checkbox, .radioGroup].contains(candidate.entryMode),
       candidate.memberBounds.indices.contains(cellIndex)
@@ -325,6 +555,9 @@ final class AppModel {
   }
 
   func synthesizeNativeField() {
+    guard requirePermission(.modify, action: "Create native field"),
+      requirePermission(.addAnnotations, action: "Create native field")
+    else { return }
     guard let candidate = selectedCandidate,
       candidate.isDirectlyEditable,
       let liveDocument
@@ -346,9 +579,7 @@ final class AppModel {
     )
     do {
       try provider.apply(operation, to: liveDocument)
-      operations.append(operation)
-      recordReplayCheckpointIfNeeded()
-      autoSaveSession()
+      recordAppliedOperation(operation)
       updateCandidate(candidate.id, status: .confirmed)
       statusMessage =
         "Created a reviewed native text field overlay. Export will preserve the static page and reopen the new field."
@@ -358,6 +589,9 @@ final class AppModel {
   }
 
   func applyManualText() {
+    guard requirePermission(.modify, action: "Place manual text"),
+      requirePermission(.addAnnotations, action: "Place manual text")
+    else { return }
     guard let placement = manualTextPlacement else { return }
     let value = manualTextDraft.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !value.isEmpty else {
@@ -378,6 +612,9 @@ final class AppModel {
   }
 
   func beginManualTextPlacement() {
+    guard requirePermission(.modify, action: "Place manual text"),
+      requirePermission(.addAnnotations, action: "Place manual text")
+    else { return }
     guard liveDocument != nil else {
       statusMessage = "Open a PDF before placing text."
       return
@@ -405,6 +642,9 @@ final class AppModel {
   /// Double-click placement is the direct-on-page path. It uses the same
   /// page-space bounds and reversible overlay operation as toolbar placement.
   func beginDirectTextPlacement(pageIndex: Int, point: CGPoint) {
+    guard requirePermission(.modify, action: "Place manual text"),
+      requirePermission(.addAnnotations, action: "Place manual text")
+    else { return }
     guard liveDocument != nil else {
       statusMessage = "Open a PDF before placing text."
       return
@@ -451,6 +691,7 @@ final class AppModel {
     markCandidateConfirmed: Bool,
     payload: EditPayload
   ) {
+    guard requirePermission(.addAnnotations, action: "Add text overlay") else { return }
     guard let liveDocument else { return }
     let operation = EditOperation(
       pageIndex: pageIndex,
@@ -464,18 +705,17 @@ final class AppModel {
     )
     do {
       try provider.apply(operation, to: liveDocument)
-      operations.append(operation)
-      recordReplayCheckpointIfNeeded()
+      recordAppliedOperation(operation)
       if markCandidateConfirmed, let candidateID {
         updateCandidate(candidateID, status: .confirmed)
       }
       if case .characterGrid = payload {
         statusMessage = "Placed one glyph per detected character cell. The edit remains reversible."
-      } else {      autoSaveSession()
-      statusMessage =
-        candidateID == nil
-          ? "Added reversible text to the document preview."
-          : "Added reviewed text. It remains an overlay, not a native PDF field."
+      } else {
+        statusMessage =
+          candidateID == nil
+            ? "Added reversible text to the document preview."
+            : "Added reviewed text. It remains an overlay, not a native PDF field."
       }
     } catch {
       alertMessage = error.localizedDescription
@@ -512,6 +752,220 @@ final class AppModel {
 
   var dismissedCandidates: [RegionCandidate] {
     inspection?.candidates.filter { $0.status == .rejected } ?? []
+  }
+
+  private func requirePermission(_ requirement: PermissionRequirement, action: String) -> Bool {
+    guard let permissions = inspection?.permissions else {
+      denyAction(
+        action: action,
+        requirement: nil,
+        message: "Cannot \(action.lowercased()): open a PDF before using this action."
+      )
+      return false
+    }
+
+    guard permissionIsGranted(requirement, permissions: permissions) else {
+      denyAction(
+        action: action,
+        requirement: requirement,
+        message: "Cannot \(action.lowercased()): this PDF's permissions do not allow \(requirement.rawValue)."
+      )
+      return false
+    }
+    lastActionDenial = nil
+    return true
+  }
+
+  private func permissionIsGranted(
+    _ requirement: PermissionRequirement,
+    permissions: PDFPermissionsSummary? = nil
+  ) -> Bool {
+    guard let permissions = permissions ?? inspection?.permissions else { return false }
+    switch requirement {
+    case .copy:
+      return permissions.canCopy
+    case .modify:
+      return permissions.canModify
+    case .addAnnotations:
+      return permissions.canAddAnnotations
+    }
+  }
+
+  private func ensureExportPermission() -> Bool {
+    guard inspection != nil else {
+      denyAction(
+        action: "Export copy",
+        requirement: nil,
+        message: "Cannot export a copy: open a PDF before exporting."
+      )
+      return false
+    }
+    for operation in operations {
+      for requirement in permissionRequirements(for: operation) {
+        guard requirePermission(requirement, action: "Export copy") else { return false }
+      }
+    }
+    return true
+  }
+
+  private func denyAction(
+    action: String,
+    requirement: PermissionRequirement?,
+    message: String
+  ) {
+    let denial = ActionDenial(action: action, requirement: requirement, message: message)
+    lastActionDenial = denial
+    statusMessage = message
+    alertMessage = message
+  }
+
+  private func recordAppliedOperation(_ operation: EditOperation) {
+    let viewStateAfter = captureViewState()
+    let viewStateBefore = operationViewStates.last?.after ?? viewStateAfter
+    searchMatches = []
+    selectedSearchMatchIndex = nil
+    operations.append(operation)
+    advanceDocumentProjectionRevision()
+    operationViewStates.append(
+      OperationViewState(before: viewStateBefore, after: viewStateAfter))
+    redoEntries.removeAll()
+    recordReplayCheckpointIfNeeded()
+    autoSaveSession()
+    refreshInMemoryRecoverySnapshot()
+  }
+
+  private func seedViewStateHistoryForLoadedOperations() {
+    let state = captureViewState()
+    operationViewStates = operations.map { _ in
+      OperationViewState(before: state, after: state)
+    }
+  }
+
+  private func captureViewState() -> ViewStateSnapshot {
+    ViewStateSnapshot(
+      selectedPageIndex: selectedPageIndex,
+      selectedFieldID: selectedFieldID,
+      selectedCandidateID: selectedCandidateID,
+      selectedSearchMatchIndex: selectedSearchMatchIndex,
+      readerViewMode: readerViewMode,
+      readerScaleMode: readerScaleMode,
+      readerZoom: readerZoom,
+      readerRotation: readerRotation
+    )
+  }
+
+  private func restoreViewState(_ state: ViewStateSnapshot) {
+    selectedPageIndex = min(max(state.selectedPageIndex, 0), max(0, currentPageCount - 1))
+    selectedFieldID = state.selectedFieldID
+    selectedCandidateID = state.selectedCandidateID
+    selectedSearchMatchIndex = state.selectedSearchMatchIndex
+    readerViewMode = state.readerViewMode
+    readerScaleMode = state.readerScaleMode
+    readerZoom = state.readerZoom
+    readerRotation = state.readerRotation
+  }
+
+  private func operationLedgerDigest() -> String {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys]
+    guard let data = try? encoder.encode(operations) else {
+      return "operation-count:\(operations.count)"
+    }
+    return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+  }
+
+  private func advanceDocumentProjectionRevision() {
+    precondition(
+      documentProjectionRevision < UInt64.max,
+      "Document projection revision exhausted its representable range."
+    )
+    documentProjectionRevision += 1
+  }
+
+  private func replaceLiveDocument(_ document: PDFDocument?) {
+    liveDocument = document
+    advanceDocumentProjectionRevision()
+  }
+
+  private func refreshInMemoryRecoverySnapshot() {
+    guard let sessionID = currentSessionID,
+      let sourceDigest = inspection?.source.sha256
+    else {
+      inMemoryRecoverySnapshot = nil
+      return
+    }
+    inMemoryRecoverySnapshot = InMemoryRecoverySnapshot(
+      sessionID: sessionID,
+      sourceDigest: sourceDigest,
+      operationLedgerDigest: operationLedgerDigest(),
+      operationCount: operations.count,
+      selectedPageIndex: selectedPageIndex,
+      selectedFieldID: selectedFieldID,
+      selectedCandidateID: selectedCandidateID,
+      selectedSearchMatchID: selectedSearchMatch?.id,
+      readerViewMode: readerViewMode.rawValue,
+      readerScaleMode: readerScaleMode.rawValue,
+      readerZoom: readerZoom,
+      readerRotation: readerRotation,
+      capturedAt: Date()
+    )
+  }
+
+  /// Returns a lightweight view/history checkpoint. It never stores PDF bytes
+  /// or edit values; the source digest is the binding for a future
+  /// DocumentSession recovery adapter.
+  func captureInMemoryRecoverySnapshot() -> InMemoryRecoverySnapshot? {
+    refreshInMemoryRecoverySnapshot()
+    return inMemoryRecoverySnapshot
+  }
+
+  @discardableResult
+  func restoreInMemoryRecoverySnapshot(_ snapshot: InMemoryRecoverySnapshot) -> Bool {
+    guard currentSessionID == snapshot.sessionID else {
+      statusMessage = "Recovery snapshot belongs to a different editing session."
+      return false
+    }
+    guard inspection?.source.sha256 == snapshot.sourceDigest else {
+      statusMessage = "Recovery snapshot belongs to a different PDF source."
+      return false
+    }
+    guard operations.count == snapshot.operationCount,
+      operationLedgerDigest() == snapshot.operationLedgerDigest
+    else {
+      statusMessage = "Recovery snapshot belongs to a different edit history."
+      return false
+    }
+    if let selectedFieldID = snapshot.selectedFieldID,
+      inspection?.fields.contains(where: { $0.id == selectedFieldID }) != true
+    {
+      statusMessage = "Recovery snapshot references a field that is no longer available."
+      return false
+    }
+    if let selectedCandidateID = snapshot.selectedCandidateID,
+      inspection?.candidates.contains(where: { $0.id == selectedCandidateID }) != true
+    {
+      statusMessage = "Recovery snapshot references a candidate that is no longer available."
+      return false
+    }
+    selectedPageIndex = min(max(snapshot.selectedPageIndex, 0), max(0, currentPageCount - 1))
+    selectedFieldID = snapshot.selectedFieldID
+    selectedCandidateID = snapshot.selectedCandidateID
+    if let index = searchMatches.firstIndex(where: { $0.id == snapshot.selectedSearchMatchID }) {
+      selectedSearchMatchIndex = index
+    } else {
+      selectedSearchMatchIndex = nil
+    }
+    if let mode = ReaderViewMode(rawValue: snapshot.readerViewMode) {
+      readerViewMode = mode
+    }
+    if let mode = ReaderScaleMode(rawValue: snapshot.readerScaleMode) {
+      readerScaleMode = mode
+    }
+    readerZoom = max(0.25, min(3.0, snapshot.readerZoom))
+    readerRotation = ((snapshot.readerRotation % 360) + 360) % 360
+    statusMessage = "Restored the in-memory document view checkpoint."
+    refreshInMemoryRecoverySnapshot()
+    return true
   }
 
   private func recordReplayCheckpointIfNeeded() {
@@ -574,25 +1028,86 @@ final class AppModel {
 
   func undoLastEdit() {
     guard !operations.isEmpty else { return }
+    searchMatches = []
+    selectedSearchMatchIndex = nil
     let removedOperation = operations[operations.count - 1]
+    let removedViewState = operationViewStates.last
     let targetOperationCount = operations.count - 1
     do {
       let replay = try replayDocument(upTo: targetOperationCount)
-      liveDocument = replay.document
+      replaceLiveDocument(replay.document)
       operations.removeLast()
+      if let removedViewState {
+        operationViewStates.removeLast()
+        redoEntries.append(
+          RedoEntry(operation: removedOperation, viewStateAfter: removedViewState.after))
+        restoreViewState(removedViewState.before)
+      } else {
+        redoEntries.append(RedoEntry(operation: removedOperation, viewStateAfter: captureViewState()))
+      }
       replayCheckpoints.removeAll { $0.operationCount > operations.count }
       if let candidateID = removedOperation.candidateID {
         updateCandidate(candidateID, status: .suggested)
       }
       // Viewer rotation is derived UI state, not an edit operation. Reapply it
       // after restoring a source or checkpoint document.
-      refreshRotation()
       autoSaveSession()
+      refreshInMemoryRecoverySnapshot()
       statusMessage = replay.usedCheckpoint
         ? "Removed the last edit and restored the preview from an in-memory checkpoint."
         : "Removed the last edit and rebuilt the preview from the cached source."
     } catch {
       alertMessage = "Undo could not rebuild the preview: \(error.localizedDescription)"
+    }
+  }
+
+  private func permissionRequirements(for operation: EditOperation) -> [PermissionRequirement] {
+    switch operation.kind {
+    case .nativeFieldValue:
+      return [.modify]
+    case .overlayText, .synthesizeNativeField:
+      return [.modify, .addAnnotations]
+    case .overlayImage, .stamp, .annotation:
+      return [.modify, .addAnnotations]
+    case .pageTransform, .pageInsert, .pageDelete, .pageMove:
+      return [.modify]
+    case .flatten, .redactMark, .applyRedaction:
+      return [.modify]
+    case .metadata, .sanitize:
+      return [.modify]
+    }
+  }
+
+  func redoLastEdit() {
+    guard let entry = redoEntries.last else { return }
+    for requirement in permissionRequirements(for: entry.operation) {
+      guard requirePermission(requirement, action: "Redo edit") else { return }
+    }
+    guard let liveDocument else {
+      statusMessage = "Redo is unavailable because the active PDF preview is missing."
+      return
+    }
+
+    do {
+      let viewStateBefore = captureViewState()
+      try provider.apply(entry.operation, to: liveDocument)
+      advanceDocumentProjectionRevision()
+      searchMatches = []
+      selectedSearchMatchIndex = nil
+      operations.append(entry.operation)
+      operationViewStates.append(
+        OperationViewState(before: viewStateBefore, after: entry.viewStateAfter))
+      redoEntries.removeLast()
+      recordReplayCheckpointIfNeeded()
+      restoreViewState(entry.viewStateAfter)
+      if let candidateID = entry.operation.candidateID {
+        updateCandidate(candidateID, status: .confirmed)
+      }
+      autoSaveSession()
+      statusMessage = "Reapplied the previously undone edit."
+      refreshInMemoryRecoverySnapshot()
+    } catch {
+      alertMessage = "Redo could not reapply the edit: \(error.localizedDescription)"
     }
   }
 
@@ -625,6 +1140,7 @@ final class AppModel {
   }
 
   func runOCROnSelectedPage() {
+    guard requirePermission(.copy, action: "Run OCR") else { return }
     guard let page = liveDocument?.page(at: selectedPageIndex),
       let pageSnapshot = inspection?.pages[safe: selectedPageIndex]
     else {
@@ -677,6 +1193,7 @@ final class AppModel {
 
   func export() {
     guard let sourceURL else { return }
+    guard ensureExportPermission() else { return }
     let panel = NSSavePanel()
     panel.allowedContentTypes = [.pdf]
     panel.canCreateDirectories = true
@@ -688,9 +1205,15 @@ final class AppModel {
   }
 
   func jumpToPage(_ index: Int) {
+    jumpToPage(index, preservingSearchMatch: false)
+  }
+
+  private func jumpToPage(_ index: Int, preservingSearchMatch: Bool) {
     let clamped = min(max(index, 0), max(0, currentPageCount - 1))
     selectedPageIndex = clamped
-    selectedSearchMatchIndex = nil
+    if !preservingSearchMatch {
+      selectedSearchMatchIndex = nil
+    }
   }
 
   func runPageJump() {
@@ -719,6 +1242,13 @@ final class AppModel {
       selectedSearchMatchIndex = nil
       return
     }
+    guard requirePermission(.copy, action: "Search document text") else {
+      searchMatches = []
+      selectedSearchMatchIndex = nil
+      return
+    }
+
+    let previousMatchID = selectedSearchMatch?.id
 
     var nextMatches: [SearchMatch] = []
     let needle = query.lowercased()
@@ -752,16 +1282,18 @@ final class AppModel {
       }
     }
     searchMatches = nextMatches
-    selectedSearchMatchIndex = nextMatches.isEmpty ? nil : 0
+    selectedSearchMatchIndex = nextMatches.firstIndex { $0.id == previousMatchID }
+      ?? (nextMatches.isEmpty ? nil : 0)
     statusMessage =
       nextMatches.isEmpty
       ? "No matches found for \(query)." : "Found \(nextMatches.count) matches for \(query)."
     if let first = selectedSearchMatch {
-      jumpToPage(first.pageIndex)
+      jumpToPage(first.pageIndex, preservingSearchMatch: true)
     }
   }
 
   func copyCurrentPageText() {
+    guard requirePermission(.copy, action: "Copy page text") else { return }
     guard let page = liveDocument?.page(at: selectedPageIndex) else {
       statusMessage = "Open a page first before copying."
       return
@@ -780,7 +1312,7 @@ final class AppModel {
     guard index >= 0 && index < searchMatches.count else { return }
     selectedSearchMatchIndex = index
     if let match = selectedSearchMatch {
-      jumpToPage(match.pageIndex)
+      jumpToPage(match.pageIndex, preservingSearchMatch: true)
     }
   }
 
@@ -855,11 +1387,9 @@ final class AppModel {
   }
 
   private func refreshRotation() {
-    guard let document = liveDocument else { return }
-    for pageIndex in 0..<document.pageCount {
-      guard let page = document.page(at: pageIndex) else { continue }
-      page.rotation = readerRotation
-    }
+    // Reader rotation is session/view state. The PDFKit presentation layer
+    // projects this value onto its own copy, so the editable document keeps
+    // the source PDF coordinate system used by operations and export.
   }
 
   private func performExport(sourceURL: URL, destination: URL) {
@@ -940,7 +1470,20 @@ final class AppModel {
           security: currentInspection.security
         )
         operations = savedSession.operations
+        operationViewStates = []
+        redoEntries = []
+        replayCheckpoints = []
+        do {
+          let replay = try replayDocument(upTo: operations.count)
+          replaceLiveDocument(replay.document)
+          recordReplayCheckpointIfNeeded()
+        } catch {
+          statusMessage =
+            "Saved edits were found, but the preview could not be rebuilt: \(error.localizedDescription)"
+        }
         selectedPageIndex = savedSession.selectedPageIndex
+        seedViewStateHistoryForLoadedOperations()
+        refreshInMemoryRecoverySnapshot()
         statusMessage = "Restored session from \(savedSession.lastModifiedAt.formatted(date: .abbreviated, time: .shortened))"
       } else {
         statusMessage = "No saved session found for this document."
@@ -972,6 +1515,123 @@ final class AppModel {
     } catch {
       print("Session delete failed: \(error.localizedDescription)")
     }
+  }
+
+  // MARK: - Profile Management
+
+  /// Refresh the list of available profiles from disk.
+  func refreshProfiles() {
+    availableProfiles = (try? profileStore.listAll()) ?? []
+  }
+
+  /// Create a new empty profile and select it.
+  func createProfile(displayName: String) {
+    var profile = UserProfile.standard(displayName: displayName)
+    do {
+      try profileStore.save(profile: profile)
+      currentProfile = profile
+      refreshProfiles()
+      statusMessage = "Created profile \(displayName)."
+    } catch {
+      alertMessage = "Could not create profile: \(error.localizedDescription)"
+    }
+  }
+
+  /// Load a profile by ID and make it current.
+  func loadProfile(profileID: UUID) {
+    do {
+      if let profile = try profileStore.load(profileID: profileID) {
+        currentProfile = profile
+        statusMessage = "Loaded profile \(profile.displayName)."
+      } else {
+        statusMessage = "Profile not found."
+      }
+    } catch {
+      alertMessage = "Could not load profile: \(error.localizedDescription)"
+    }
+  }
+
+  /// Save the current profile to disk.
+  func saveCurrentProfile() {
+    guard var profile = currentProfile else { return }
+    do {
+      profile.lastModifiedAt = Date()
+      try profileStore.save(profile: profile)
+      currentProfile = profile
+      refreshProfiles()
+    } catch {
+      alertMessage = "Could not save profile: \(error.localizedDescription)"
+    }
+  }
+
+  /// Delete a profile by ID.
+  func deleteProfile(profileID: UUID) {
+    do {
+      try profileStore.delete(profileID: profileID)
+      if currentProfile?.profileID == profileID {
+        currentProfile = nil
+      }
+      refreshProfiles()
+      statusMessage = "Profile deleted."
+    } catch {
+      alertMessage = "Could not delete profile: \(error.localizedDescription)"
+    }
+  }
+
+  /// Update a value in the current profile.
+  func updateProfileValue(_ value: String, for key: String) {
+    guard var profile = currentProfile else { return }
+    profile.setValue(value, for: key)
+    currentProfile = profile
+  }
+
+  /// Import a vCard into the current profile.
+  func importVCard(_ vCard: String) {
+    guard var profile = currentProfile else { return }
+    profile.importFromVCard(vCard)
+    currentProfile = profile
+    saveCurrentProfile()
+    statusMessage = "Imported vCard data into \(profile.displayName)."
+  }
+
+  /// Run bulk fill: match profile values against the current document's fields and candidates.
+  /// Returns the result but does NOT apply operations — the user must review and confirm.
+  func previewBulkFill() {
+    guard let profile = currentProfile, let inspection else {
+      statusMessage = "Open a document and select a profile before bulk fill."
+      return
+    }
+    let result = profile.bulkFill(
+      fields: inspection.fields,
+      candidates: inspection.candidates,
+      sourceDigest: inspection.source.sha256
+    )
+    bulkFillResult = result
+    if result.totalMatches > 0 {
+      statusMessage = "Profile matches \(result.totalMatches) field(s). \(result.unmatchedFields.count) field(s) unmatched. Review before applying."
+    } else {
+      statusMessage = "No profile values matched this document's fields."
+    }
+  }
+
+  /// Apply all matched operations from the last bulk fill preview.
+  func applyBulkFill() {
+    guard let result = bulkFillResult, let liveDocument else {
+      statusMessage = "Run a bulk fill preview first."
+      return
+    }
+    var applied = 0
+    for operation in result.matchedOperations {
+      do {
+        try provider.apply(operation, to: liveDocument)
+        recordAppliedOperation(operation)
+        applied += 1
+      } catch {
+        // Skip operations that fail (e.g., field not found on page)
+      }
+    }
+    bulkFillResult = nil
+    statusMessage = "Applied \(applied) profile field(s) to the document."
   }
 }
 

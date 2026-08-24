@@ -76,6 +76,7 @@ against `benchmark/results/public-sample-form.pdf`. It calls the same
 | Unknown validation state | an `unknown` `visualDiff` check is rejected with `unknownValidationState` | Pass |
 | Coordinate page mismatch | coordinate page differs from operation page and is rejected | Pass |
 | Coordinate bounds mismatch | coordinate rectangle differs from operation bounds and is rejected | Pass |
+| Coordinate space mismatch | `pixels` replaces the required points/lower-left/crop space | Pass |
 
 The integration probes then spy on `window.PDFLib.PDFDocument.load` while
 submitting each of the six mutations to `runMaterializationProbe()`. Every
@@ -89,12 +90,40 @@ Verification command:
 node Tests/web_pdf_contract_mutation_test.mjs
 ```
 
-Observed result: six mutation cases passed with zero writer calls, the valid
-control called the writer once, and all six actual pdf-lib load probes recorded
-zero calls. This is Tier 3/S1 browser integration evidence,
+Observed result: seven mutation cases passed with zero writer calls, the valid
+control called the writer once, and all seven actual pdf-lib load probes
+recorded zero calls. This is Tier 3/S1 browser integration evidence,
 with deliberate input mutation providing S3-style sensitivity for the browser
 source-binding invariant. It does not establish provider fidelity, semantic
 parity, independent-viewer equivalence, or permission enforcement.
+
+## Targeted guard mutation kill matrix
+
+The following mutations were applied one at a time to
+`web/pdf-contract-mutation-gate.mjs`, with the browser test run after each
+change. Every temporary mutation was restored before the next run and the
+final baseline was rerun successfully.
+
+| Mutated guard | Negative test that kills it | Result | Interpretation |
+|---|---|---|---|
+| Destructive predicate changed to always false | `destructive operation` writer-call assertion | Killed, exit 1 | The destructive flag is a live pre-writer invariant |
+| Coordinate page comparison changed to always false | `coordinate page mismatch` writer-call assertion | Killed, exit 1 | Page identity is independently protected |
+| Primary operation-bounds comparison changed to always false | `coordinate bounds mismatch` | Survived, exit 0 | The later finite/internal rectangle check redundantly catches the same mismatch |
+| Later finite/internal rectangle comparison changed to always false | `coordinate bounds mismatch` | Survived, exit 0 | The primary operation-bounds comparison redundantly catches the same mismatch |
+| Both rectangle comparisons changed to always false | `coordinate bounds mismatch` writer-call assertion | Killed, exit 1 | The negative test kills a complete rectangle-guard bypass |
+| Coordinate-space comparison changed to always false | `coordinate space mismatch` writer-call assertion | Killed, exit 1 | Unit, origin, crop-box, and rotation compatibility are covered |
+
+The two surviving single mutants are intentional evidence of defense in depth,
+not untested unsafe behavior. The composite rectangle mutant is the relevant
+failure mode: the negative test kills removal of the complete rectangle
+invariant. The matrix should be rerun if the two rectangle checks are refactored
+into one helper, because the expected mutation surface will change.
+
+Mutation command used for each temporary variant:
+
+```sh
+node Tests/web_pdf_contract_mutation_test.mjs
+```
 
 ## Residual risks
 

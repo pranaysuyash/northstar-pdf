@@ -71,7 +71,7 @@ preservation evidence is recorded separately below.
 | `rotation-corpus/rotated-widget-90.pdf` | Match | inspected | inspected | 7 |
 | `rotation-corpus/rotated-form6-mixed.pdf` | Match | inspected | inspected | 11 |
 
-Baseline total: **75 normalized mismatches across 10 fixtures**. The count is a
+Historical baseline total: **75 normalized mismatches across 10 fixtures**. The count is a
 diagnostic baseline, not an accuracy score. It includes intentionally
 provider-specific contract differences that still need either an explicit
 compatibility rule or an implementation decision.

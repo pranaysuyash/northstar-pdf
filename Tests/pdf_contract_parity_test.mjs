@@ -119,6 +119,35 @@ function pageProjection(page) {
   };
 }
 
+function linkProjection(link) {
+  return {
+    pageIndex: link.pageIndex,
+    label: link.label || "",
+    kind: link.kind || "unknown",
+    targetPageIndex: link.targetPageIndex ?? null,
+    destination: link.destination ?? null,
+    destinationBounds: rectProjection(link.destinationBounds),
+    isSafeExternal: Boolean(link.isSafeExternal)
+  };
+}
+
+function outlineProjection(items) {
+  return (items || []).map((item) => ({
+    title: item.title || "",
+    level: item.level || 0,
+    destinationPageIndex: item.destinationPageIndex ?? null,
+    children: outlineProjection(item.children)
+  }));
+}
+
+function accessibilityProjection(value) {
+  if (!value) return null;
+  return {
+    hasTaggedContent: Boolean(value.hasTaggedContent),
+    hasReadingOrder: Boolean(value.hasReadingOrder)
+  };
+}
+
 function pushMismatch(mismatches, kind, pathName, nativeValue, webValue) {
   mismatches.push({
     kind,
@@ -249,9 +278,22 @@ function compareBundles(nativeBundle, webBundle) {
     }
   }
 
-  for (const key of ["links", "outlines", "attachments", "accessibility", "security"]) {
-    if (JSON.stringify(nativePayload[key] || null) !== JSON.stringify(webPayload[key] || null)) {
-      pushMismatch(mismatches, `document.${key}`, `document.payload.${key}`, nativePayload[key] || null, webPayload[key] || null);
+  const metadataComparisons = [
+    ["links", (value) => (value || []).map(linkProjection)],
+    ["outlines", outlineProjection],
+    ["attachments", (value) => [...(value || [])].sort()],
+    ["accessibility", accessibilityProjection],
+    ["security", (value) => value ? {
+      isEncrypted: Boolean(value.isEncrypted),
+      isLocked: Boolean(value.isLocked),
+      requiresPassword: Boolean(value.requiresPassword)
+    } : null]
+  ];
+  for (const [key, project] of metadataComparisons) {
+    const nativeValue = project(nativePayload[key]);
+    const webValue = project(webPayload[key]);
+    if (JSON.stringify(nativeValue) !== JSON.stringify(webValue)) {
+      pushMismatch(mismatches, `document.${key}`, `document.payload.${key}`, nativeValue, webValue);
     }
   }
   return mismatches;

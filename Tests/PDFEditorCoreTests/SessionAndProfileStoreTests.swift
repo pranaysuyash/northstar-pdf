@@ -530,4 +530,57 @@ struct SessionAndProfileStoreTests {
       totalCandidates: 4, confirmedCount: 4, rejectedCount: 0, remainingCount: 0)
     #expect(complete.percentComplete == 100.0)
   }
+
+  // MARK: - Red-Team Regression Tests (PER-PDEV-0168)
+
+  /// RT-001: Verify on-disk profile file is NOT readable as plaintext JSON.
+  ///
+  /// A local attacker reading Application Support must not find plaintext PII
+  /// in the profile JSON files. After `save()`, the on-disk bytes must not be
+  /// decodable directly as `UserProfile` — the file should contain only the
+  /// nonce+ciphertext envelope.
+  @Test func redTeamRT001ProfileIsNotStoredAsPlaintextJSON() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-rt001-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    let store = EncryptedProfileStore(directory: directory)
+    var profile = UserProfile(displayName: "RT-001 Victim")
+    profile.setValue("123-45-6789", for: StandardSemanticKey.ssn.rawValue)
+    profile.setValue("Jane Doe", for: StandardSemanticKey.fullName.rawValue)
+    try store.save(profile: profile)
+
+    // Read the raw bytes from disk.
+    let fileURL = directory.appendingPathComponent("\(profile.profileID.uuidString).json")
+    let rawData = try Data(contentsOf: fileURL)
+
+    // The raw file must NOT decode directly to a UserProfile (that would mean plaintext PII).
+    let decodedDirectly = try? JSONDecoder().decode(UserProfile.self, from: rawData)
+    #expect(
+      decodedDirectly == nil,
+      "RT-001 FAIL: Profile was written as plaintext JSON — PII is readable without decryption.")
+
+    // But the store must still round-trip correctly (real decryption works).
+    let reloaded = try store.load(profileID: profile.profileID)
+    #expect(reloaded?.value(for: StandardSemanticKey.ssn.rawValue) == "123-45-6789")
+    #expect(reloaded?.value(for: StandardSemanticKey.fullName.rawValue) == "Jane Doe")
+  }
+
+  /// RT-003: Verify vCard import truncates values longer than 1024 characters.
+  ///
+  /// A crafted vCard with a multi-kilobyte FN: line must not store unbounded
+  /// data in the profile.
+  @Test func redTeamRT003VCardImportTruncatesLongValues() {
+    var profile = UserProfile(displayName: "RT-003 Victim")
+    // Craft a 4096-character FN: value.
+    let longValue = String(repeating: "A", count: 4096)
+    let vCard = "BEGIN:VCARD\nFN:\(longValue)\nEND:VCARD"
+    profile.importFromVCard(vCard)
+
+    let stored = profile.value(for: StandardSemanticKey.fullName.rawValue)
+    #expect(
+      (stored?.count ?? 0) <= 1024,
+      "RT-003 FAIL: vCard FN: value was stored at \(stored?.count ?? 0) chars; expected ≤ 1024.")
+  }
 }

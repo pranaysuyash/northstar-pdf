@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-      "generatedAt": "2026-08-24T16:31:16.243Z",
+      "generatedAt": "2026-08-24T16:46:34.509Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -49,9 +49,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -72,9 +87,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -95,9 +125,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -118,9 +163,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -141,9 +201,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -164,9 +239,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -187,9 +277,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -210,9 +315,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -233,9 +353,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -256,9 +391,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -279,9 +429,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -302,9 +467,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -325,9 +505,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -348,9 +543,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -371,9 +581,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -394,9 +619,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -417,9 +657,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -440,9 +695,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -463,9 +733,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -486,9 +771,24 @@
             "width": 612,
             "height": 792
           },
-          "bleedBox": null,
-          "trimBox": null,
-          "artBox": null,
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
@@ -3139,7 +3439,7 @@
       ],
       "candidates": [
         {
-          "id": "candidate-2583d0ed-a90d-4a44-aae5-1b8e0d3f1fb7",
+          "id": "candidate-6bfb8ee6-2542-488b-b373-dc22ef5d4dea",
           "pageIndex": 0,
           "bounds": {
             "x": 0,
@@ -3174,7 +3474,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3196,13 +3503,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-62b5faba-0fad-4122-9f19-00ea829d12b1"
+              "id": "evidence-d67efa1a-0bc3-4a76-8e9c-21ca66de9098"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-d453d31e-b771-4526-a927-489bed68a7a7",
+          "id": "candidate-b9e64e8e-4179-4297-ac39-573ef9221390",
           "pageIndex": 0,
           "bounds": {
             "x": 1,
@@ -3259,13 +3566,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-a3946ce4-c807-4d78-a82a-203eacdaedaa"
+              "id": "evidence-003e0389-6fd4-4cf3-89dd-4251bb5712b4"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-fe66b4d2-9a95-4848-8d8b-ef2efa773401",
+          "id": "candidate-af1deda5-eb5c-4b98-a199-e9081bd3c704",
           "pageIndex": 1,
           "bounds": {
             "x": 0,
@@ -3300,7 +3607,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3322,13 +3636,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-da434958-a5a2-4f65-b650-313aa9c51d20"
+              "id": "evidence-db6e9caf-94bf-4019-b78c-1964c20cb1d4"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-90465f2f-77c4-43ba-91e4-93f2c7fa7655",
+          "id": "candidate-d114a8d0-e3b5-4f18-a225-e42529b9b67d",
           "pageIndex": 1,
           "bounds": {
             "x": 1,
@@ -3385,13 +3699,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-d4ac4116-31bb-439c-9ba5-b2d58e2dd3aa"
+              "id": "evidence-97f79163-caac-40e8-845e-0d1e5bff6ca3"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-53619b46-bc84-47b9-8ac8-ab6fa59d3dd9",
+          "id": "candidate-d21bf34b-18e7-42ec-b919-8fc8d5ab944c",
           "pageIndex": 2,
           "bounds": {
             "x": 0,
@@ -3426,7 +3740,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3448,13 +3769,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-1ac2006a-a625-458c-b89f-407b752bc169"
+              "id": "evidence-b28bd820-f203-43c5-82a2-509ef4fec520"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-8796f5e4-cde9-4dad-974a-98907b844a66",
+          "id": "candidate-3fffb8fa-3e3f-4a86-be8e-81500b5c0ba3",
           "pageIndex": 2,
           "bounds": {
             "x": 1,
@@ -3511,13 +3832,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-14b667e5-3a2b-473a-bc82-3bf293d928fb"
+              "id": "evidence-d1ae5b4b-aac7-4dd6-9cba-51a0c8f08aec"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-f7fe5f1c-b65e-4042-9a95-a4a6f21527ab",
+          "id": "candidate-92ff6e74-d17c-4b5e-87c2-26f69759d942",
           "pageIndex": 3,
           "bounds": {
             "x": 0,
@@ -3552,7 +3873,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3574,13 +3902,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-475cc373-60a2-4ea3-a513-ca2eba170cc4"
+              "id": "evidence-b9ff16be-8fd5-425e-8a25-e632c8d239b6"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-14b36c76-ef2c-4b96-8c50-db238f02e8e1",
+          "id": "candidate-7ba063d3-0b95-43cb-8b7a-3bf2436a8cef",
           "pageIndex": 3,
           "bounds": {
             "x": 1,
@@ -3637,13 +3965,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-97e7c3ee-b3c6-4982-b322-1c3d641acb07"
+              "id": "evidence-f1cddc9c-9405-48de-92a9-2affe9b33fd3"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-396fab14-d453-4f3a-a448-2cf3619449db",
+          "id": "candidate-84f769c7-13b6-4df3-b984-ace1eb441426",
           "pageIndex": 4,
           "bounds": {
             "x": 0,
@@ -3678,7 +4006,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3700,13 +4035,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-f7b57bfd-7c24-42e7-932f-8b07c4646e16"
+              "id": "evidence-2e233a58-02cf-43da-b0b7-62232eacbb01"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-d1824340-82be-4179-bb99-3b261666bfce",
+          "id": "candidate-4534a4e9-8ddf-4f47-b8c9-ce9d5d6574d3",
           "pageIndex": 4,
           "bounds": {
             "x": 1,
@@ -3763,13 +4098,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-b99a9b56-53d6-4eee-a6ba-08a349d4250a"
+              "id": "evidence-ab3f879b-62a4-4bdf-9a39-fa04f158e206"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-51fe2224-8ca0-4179-87bf-a5b186542958",
+          "id": "candidate-92a304ae-ce29-4140-9711-48e9eac8bbc2",
           "pageIndex": 5,
           "bounds": {
             "x": 0,
@@ -3804,7 +4139,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3826,13 +4168,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-c669aba9-e1f6-4b05-98fb-7f785d8f3e4c"
+              "id": "evidence-cc44d45c-cfab-419c-938b-3b2b6aff9227"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-ad435726-6794-4cae-a56a-bcc35bf46ed7",
+          "id": "candidate-90ba3610-cdbd-4139-848e-0be356a427ca",
           "pageIndex": 5,
           "bounds": {
             "x": 1,
@@ -3889,13 +4231,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-82a494b0-3331-452a-b9d3-04da81d821cc"
+              "id": "evidence-acaef074-ea45-426f-94bf-afb7de67e254"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-c37bb533-5083-4d34-aab3-3e44aa31bde5",
+          "id": "candidate-0241e07d-358c-48d8-ae56-71bdd2ba7fb7",
           "pageIndex": 6,
           "bounds": {
             "x": 0,
@@ -3930,7 +4272,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -3952,13 +4301,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-e7aba0ed-446a-44fc-b4a5-7933e568aa12"
+              "id": "evidence-e8603c06-1919-4f17-84a1-e6733149fe0e"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-bba770bc-a845-4d22-868c-dddd99bec76a",
+          "id": "candidate-5bee8f67-6f88-4e86-ab31-bf1a85ebb071",
           "pageIndex": 6,
           "bounds": {
             "x": 1,
@@ -4015,13 +4364,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-343aeee0-7842-48eb-b80d-269c9fe3840a"
+              "id": "evidence-f851cc11-e812-4b09-ac98-3b2760bb27fb"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-41d4df33-f538-4499-a282-589c6e032da8",
+          "id": "candidate-eb1d04d3-14f3-4643-b2c9-411eff05df34",
           "pageIndex": 7,
           "bounds": {
             "x": 0,
@@ -4056,7 +4405,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4078,13 +4434,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-811f40a7-9639-416c-b960-7bacad6f540a"
+              "id": "evidence-4ec522e4-5173-4c69-bd04-07e6c1a7955c"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-11d85e92-307b-42e9-ac86-50f5d302e8ee",
+          "id": "candidate-db370df2-222a-4bbf-84e3-33b101ae77a8",
           "pageIndex": 7,
           "bounds": {
             "x": 1,
@@ -4141,13 +4497,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-e788fae8-5161-44f7-ba6b-a3a32da813ce"
+              "id": "evidence-99d1275a-5ab9-42c5-9979-6db8401d2aa9"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-9a22e360-eb14-4b03-aeab-6e0128449132",
+          "id": "candidate-6fadb3f3-a678-4a1f-8890-6430bce8d26f",
           "pageIndex": 8,
           "bounds": {
             "x": 0,
@@ -4182,7 +4538,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4204,13 +4567,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-5763cb61-6d0b-41fd-83b7-b0f122c7f530"
+              "id": "evidence-1f5e9b6c-6e3e-452d-b8dc-bc64d8d72dcf"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-80602428-99dc-48d7-8cda-90c92dd18561",
+          "id": "candidate-c0fff669-69f7-4a8e-a645-37c8826a2aef",
           "pageIndex": 8,
           "bounds": {
             "x": 1,
@@ -4267,13 +4630,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-585eab6b-cbf1-4c4e-8f8e-aab442439d42"
+              "id": "evidence-ebad8d19-24d0-479c-a599-e9c1b697717c"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-4da98b85-b6da-44d7-96ba-88d1e6e3af9d",
+          "id": "candidate-f123e631-403e-49bb-927f-b7d28dabad58",
           "pageIndex": 9,
           "bounds": {
             "x": 0,
@@ -4308,7 +4671,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4330,13 +4700,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-ca8a89b0-8ac0-4d07-a0d9-8b5743c61231"
+              "id": "evidence-2da9644a-5946-490f-904b-ac823099962d"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-efeb7698-f3ad-434e-9a89-a09f5d11395f",
+          "id": "candidate-0874ffeb-d249-49e8-be54-f558f3af61c4",
           "pageIndex": 9,
           "bounds": {
             "x": 1,
@@ -4393,13 +4763,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-cd4760fc-5db0-4905-8309-f1cedd2193a2"
+              "id": "evidence-d8b730dc-5a6f-4c30-988f-293d7c0db33a"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-7b123cca-451c-4591-855b-041c03f23b4f",
+          "id": "candidate-a37e0832-3237-4c31-b29d-66ec845afe46",
           "pageIndex": 10,
           "bounds": {
             "x": 0,
@@ -4434,7 +4804,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4456,13 +4833,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-6082799f-e06e-417a-ab64-dc7f4d6a6cc3"
+              "id": "evidence-86299b62-9d42-4afe-b344-4db6eef547b4"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-1c097279-d0e6-4041-a27e-ac290d2f3e16",
+          "id": "candidate-102b519c-6f57-4252-ba36-08c4f9dc926d",
           "pageIndex": 10,
           "bounds": {
             "x": 1,
@@ -4519,13 +4896,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-733b5452-69e8-4060-84a3-e725930f7b11"
+              "id": "evidence-0c6030d7-e37f-4ad6-b80a-169a79812570"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-0f0a684c-03e6-476b-bb37-638a6a40b566",
+          "id": "candidate-f80d8d4c-a9bb-4439-8aa7-50c887c65051",
           "pageIndex": 11,
           "bounds": {
             "x": 0,
@@ -4560,7 +4937,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4582,13 +4966,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-844f9774-70bf-42f9-b7a5-c54b6b9f2791"
+              "id": "evidence-d1157b44-efea-472c-8d76-f000d112ef35"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-9bd57fad-400e-49b1-92e5-78056cfc55fd",
+          "id": "candidate-69d0fcbc-76b1-4e16-a2ee-bb4fc02478c3",
           "pageIndex": 11,
           "bounds": {
             "x": 1,
@@ -4645,13 +5029,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-6fe7c3e1-9207-4b5d-9726-3db09c451197"
+              "id": "evidence-faed55f0-288c-4d8d-b07b-f6f52977cc1f"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-5ec1f833-9296-4389-9e6e-a0ba93080b3f",
+          "id": "candidate-45c55062-77cc-4233-add0-3926fd1cdd5a",
           "pageIndex": 12,
           "bounds": {
             "x": 0,
@@ -4686,7 +5070,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4708,13 +5099,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-fb7b8dc0-a885-4b78-bf11-da354affb81f"
+              "id": "evidence-570c3445-3158-4600-953e-ef04e77c7d56"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-c2f748f4-70ce-451c-b125-02baca1303b4",
+          "id": "candidate-b94d5b5c-6cb8-4f52-bcbf-09c3faf5065e",
           "pageIndex": 12,
           "bounds": {
             "x": 1,
@@ -4771,13 +5162,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-ea30380d-969e-4f0f-98d7-a9ab5fa49708"
+              "id": "evidence-c99fe57b-79ea-4733-bae4-1f29ee39a926"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-d4c0da12-4549-4128-9280-e9c3507177f2",
+          "id": "candidate-702cce1d-d095-417a-831b-35d0dcfe9d65",
           "pageIndex": 13,
           "bounds": {
             "x": 0,
@@ -4812,7 +5203,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4834,13 +5232,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-334b82fe-144e-4948-863d-7f2a3fe731bc"
+              "id": "evidence-255cae1b-29a8-4ca4-b380-56516da7e031"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-ce37c25a-9eda-4cbc-92f7-f339df7376b8",
+          "id": "candidate-9db653c3-9ba7-4c48-977f-ed0eaf33f9a8",
           "pageIndex": 13,
           "bounds": {
             "x": 1,
@@ -4897,13 +5295,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-ac5645c1-be85-4b3b-a2d6-cc47dbe28f76"
+              "id": "evidence-ee570df0-7041-47c1-864b-b1af2190ebd2"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-096e1752-861f-4a38-a537-ae557f6b7f94",
+          "id": "candidate-539e4dcd-961e-44e1-873d-8aaa6ff70850",
           "pageIndex": 14,
           "bounds": {
             "x": 0,
@@ -4938,7 +5336,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -4960,13 +5365,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-940c3189-e3af-40dd-96f8-4bb3af7a260b"
+              "id": "evidence-5a43650d-bae7-4f68-b241-a9aa607b3061"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-5fa5da48-b635-40cc-8b61-495cd4d55a55",
+          "id": "candidate-f36fd5d9-bd8d-4723-af49-60da49891d84",
           "pageIndex": 14,
           "bounds": {
             "x": 1,
@@ -5023,13 +5428,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-68ab2ed5-79eb-4c65-af89-d8c779cd5d8c"
+              "id": "evidence-61ca0887-02de-41f4-970c-975f6fbeff89"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-72642bdd-1d2d-481d-a2f0-87188c491f77",
+          "id": "candidate-94bca663-96bc-4c84-9723-a2b176ce59c8",
           "pageIndex": 15,
           "bounds": {
             "x": 0,
@@ -5064,7 +5469,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -5086,13 +5498,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-526fe492-c197-4c0d-b9dc-dcf779aff969"
+              "id": "evidence-560b4a6d-d3d2-473e-bee9-d4f057bd28d5"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-a90e8740-a24d-4f93-86c1-29141d3084c2",
+          "id": "candidate-64b277a5-a864-4a41-8f4e-09310d6a67f2",
           "pageIndex": 15,
           "bounds": {
             "x": 1,
@@ -5149,13 +5561,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-13b790db-4374-49e0-a47b-566d6e9655d8"
+              "id": "evidence-02299592-f9a9-44a5-b0f0-5ba02b0d630d"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-409781fa-9ff4-44ad-8d56-623a53a5c964",
+          "id": "candidate-486a9053-784d-4b35-a7c7-760ff4a73604",
           "pageIndex": 16,
           "bounds": {
             "x": 0,
@@ -5190,7 +5602,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -5212,13 +5631,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-edd108cd-acf4-4fc0-8c2a-868cdd0c32d4"
+              "id": "evidence-68a34cb0-5d5a-4d96-b406-46b41efbb3d6"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-38e39f31-1cae-41d7-a85e-eb6c69eaf873",
+          "id": "candidate-d68fd48b-0708-478d-9574-1e7ec12f8cb4",
           "pageIndex": 16,
           "bounds": {
             "x": 1,
@@ -5275,13 +5694,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-460489e4-3777-4288-9d4e-f16ed8548d18"
+              "id": "evidence-c7a7e0fc-45b7-4a5a-bad6-52142e427b89"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-dc748639-0c98-43b0-8980-b357ca119b07",
+          "id": "candidate-9febe027-11da-4280-a577-d31b586233f7",
           "pageIndex": 17,
           "bounds": {
             "x": 0,
@@ -5316,7 +5735,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -5338,13 +5764,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-7f9e5781-aff9-42d1-8570-0ee701acb096"
+              "id": "evidence-ab2012eb-255b-4947-a210-a2ef7f6c5268"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-58249f42-d43c-4bf4-9c9f-79b804300586",
+          "id": "candidate-1eaaaa01-9518-42be-96a5-28ab5bbecbfa",
           "pageIndex": 17,
           "bounds": {
             "x": 1,
@@ -5401,13 +5827,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-bde78b10-8ab5-4acf-a4b9-7110f56d79bd"
+              "id": "evidence-de795afc-3277-4106-b24e-5caa45d8face"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-b30ade92-55a1-482e-9cdc-b09c8b149573",
+          "id": "candidate-1d780a5b-7721-41d5-a032-63184966a474",
           "pageIndex": 18,
           "bounds": {
             "x": 0,
@@ -5442,7 +5868,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -5464,13 +5897,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-aff178b8-f2fd-45b4-83be-d60c72491ba6"
+              "id": "evidence-046839b0-0c2d-4568-b4ba-ec3a8621cea3"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-e2017acc-d0fa-429f-b70c-d7a5bccfc8ae",
+          "id": "candidate-ba954048-cbe0-4277-b6b0-6326d15195c6",
           "pageIndex": 18,
           "bounds": {
             "x": 1,
@@ -5527,13 +5960,13 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-44524ab0-4b34-477c-b340-d3b82b6aae4f"
+              "id": "evidence-186d0665-5a48-4a98-aa9a-65e671aeebfe"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-0d8642a2-435a-4d1b-ad56-dda4b43ddb1c",
+          "id": "candidate-d265f7b1-874b-43c7-8914-f5249af2b2de",
           "pageIndex": 19,
           "bounds": {
             "x": 0,
@@ -5568,7 +6001,14 @@
           "entryMode": "checkbox",
           "labelText": null,
           "groupMemberCount": 1,
-          "memberBounds": [],
+          "memberBounds": [
+            {
+              "x": 0,
+              "y": 0,
+              "width": 20,
+              "height": 20
+            }
+          ],
           "evidenceItems": [
             {
               "kind": "vectorRectangle",
@@ -5590,13 +6030,13 @@
                 }
               },
               "score": 0.52,
-              "id": "evidence-b72723fc-bc97-42bc-8398-adae69809794"
+              "id": "evidence-676dd49c-07e9-46a9-b4d5-b9b57729ba2b"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
         },
         {
-          "id": "candidate-f186bcdf-7788-4aa5-b216-2b10c260f644",
+          "id": "candidate-0bf6b8f8-cbae-4352-b6e6-dc8c5e9ec51e",
           "pageIndex": 19,
           "bounds": {
             "x": 1,
@@ -5653,7 +6093,7 @@
                 }
               },
               "score": 0.6,
-              "id": "evidence-2840ebf2-42cb-465d-8ca1-c6b20fa9ae58"
+              "id": "evidence-e7cb9843-6d6d-43e2-9b41-75136b15e37f"
             }
           ],
           "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
@@ -5701,7 +6141,7 @@
       "minor": 0
     },
     "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-    "generatedAt": "2026-08-24T16:31:16.243Z",
+    "generatedAt": "2026-08-24T16:46:34.509Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -6080,7 +6520,7 @@
   },
   "candidates": [
     {
-      "id": "candidate-2583d0ed-a90d-4a44-aae5-1b8e0d3f1fb7",
+      "id": "candidate-6bfb8ee6-2542-488b-b373-dc22ef5d4dea",
       "pageIndex": 0,
       "bounds": {
         "x": 0,
@@ -6115,7 +6555,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6137,13 +6584,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-62b5faba-0fad-4122-9f19-00ea829d12b1"
+          "id": "evidence-d67efa1a-0bc3-4a76-8e9c-21ca66de9098"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-d453d31e-b771-4526-a927-489bed68a7a7",
+      "id": "candidate-b9e64e8e-4179-4297-ac39-573ef9221390",
       "pageIndex": 0,
       "bounds": {
         "x": 1,
@@ -6200,13 +6647,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-a3946ce4-c807-4d78-a82a-203eacdaedaa"
+          "id": "evidence-003e0389-6fd4-4cf3-89dd-4251bb5712b4"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-fe66b4d2-9a95-4848-8d8b-ef2efa773401",
+      "id": "candidate-af1deda5-eb5c-4b98-a199-e9081bd3c704",
       "pageIndex": 1,
       "bounds": {
         "x": 0,
@@ -6241,7 +6688,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6263,13 +6717,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-da434958-a5a2-4f65-b650-313aa9c51d20"
+          "id": "evidence-db6e9caf-94bf-4019-b78c-1964c20cb1d4"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-90465f2f-77c4-43ba-91e4-93f2c7fa7655",
+      "id": "candidate-d114a8d0-e3b5-4f18-a225-e42529b9b67d",
       "pageIndex": 1,
       "bounds": {
         "x": 1,
@@ -6326,13 +6780,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-d4ac4116-31bb-439c-9ba5-b2d58e2dd3aa"
+          "id": "evidence-97f79163-caac-40e8-845e-0d1e5bff6ca3"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-53619b46-bc84-47b9-8ac8-ab6fa59d3dd9",
+      "id": "candidate-d21bf34b-18e7-42ec-b919-8fc8d5ab944c",
       "pageIndex": 2,
       "bounds": {
         "x": 0,
@@ -6367,7 +6821,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6389,13 +6850,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-1ac2006a-a625-458c-b89f-407b752bc169"
+          "id": "evidence-b28bd820-f203-43c5-82a2-509ef4fec520"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-8796f5e4-cde9-4dad-974a-98907b844a66",
+      "id": "candidate-3fffb8fa-3e3f-4a86-be8e-81500b5c0ba3",
       "pageIndex": 2,
       "bounds": {
         "x": 1,
@@ -6452,13 +6913,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-14b667e5-3a2b-473a-bc82-3bf293d928fb"
+          "id": "evidence-d1ae5b4b-aac7-4dd6-9cba-51a0c8f08aec"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-f7fe5f1c-b65e-4042-9a95-a4a6f21527ab",
+      "id": "candidate-92ff6e74-d17c-4b5e-87c2-26f69759d942",
       "pageIndex": 3,
       "bounds": {
         "x": 0,
@@ -6493,7 +6954,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6515,13 +6983,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-475cc373-60a2-4ea3-a513-ca2eba170cc4"
+          "id": "evidence-b9ff16be-8fd5-425e-8a25-e632c8d239b6"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-14b36c76-ef2c-4b96-8c50-db238f02e8e1",
+      "id": "candidate-7ba063d3-0b95-43cb-8b7a-3bf2436a8cef",
       "pageIndex": 3,
       "bounds": {
         "x": 1,
@@ -6578,13 +7046,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-97e7c3ee-b3c6-4982-b322-1c3d641acb07"
+          "id": "evidence-f1cddc9c-9405-48de-92a9-2affe9b33fd3"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-396fab14-d453-4f3a-a448-2cf3619449db",
+      "id": "candidate-84f769c7-13b6-4df3-b984-ace1eb441426",
       "pageIndex": 4,
       "bounds": {
         "x": 0,
@@ -6619,7 +7087,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6641,13 +7116,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-f7b57bfd-7c24-42e7-932f-8b07c4646e16"
+          "id": "evidence-2e233a58-02cf-43da-b0b7-62232eacbb01"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-d1824340-82be-4179-bb99-3b261666bfce",
+      "id": "candidate-4534a4e9-8ddf-4f47-b8c9-ce9d5d6574d3",
       "pageIndex": 4,
       "bounds": {
         "x": 1,
@@ -6704,13 +7179,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-b99a9b56-53d6-4eee-a6ba-08a349d4250a"
+          "id": "evidence-ab3f879b-62a4-4bdf-9a39-fa04f158e206"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-51fe2224-8ca0-4179-87bf-a5b186542958",
+      "id": "candidate-92a304ae-ce29-4140-9711-48e9eac8bbc2",
       "pageIndex": 5,
       "bounds": {
         "x": 0,
@@ -6745,7 +7220,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6767,13 +7249,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-c669aba9-e1f6-4b05-98fb-7f785d8f3e4c"
+          "id": "evidence-cc44d45c-cfab-419c-938b-3b2b6aff9227"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-ad435726-6794-4cae-a56a-bcc35bf46ed7",
+      "id": "candidate-90ba3610-cdbd-4139-848e-0be356a427ca",
       "pageIndex": 5,
       "bounds": {
         "x": 1,
@@ -6830,13 +7312,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-82a494b0-3331-452a-b9d3-04da81d821cc"
+          "id": "evidence-acaef074-ea45-426f-94bf-afb7de67e254"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-c37bb533-5083-4d34-aab3-3e44aa31bde5",
+      "id": "candidate-0241e07d-358c-48d8-ae56-71bdd2ba7fb7",
       "pageIndex": 6,
       "bounds": {
         "x": 0,
@@ -6871,7 +7353,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -6893,13 +7382,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-e7aba0ed-446a-44fc-b4a5-7933e568aa12"
+          "id": "evidence-e8603c06-1919-4f17-84a1-e6733149fe0e"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-bba770bc-a845-4d22-868c-dddd99bec76a",
+      "id": "candidate-5bee8f67-6f88-4e86-ab31-bf1a85ebb071",
       "pageIndex": 6,
       "bounds": {
         "x": 1,
@@ -6956,13 +7445,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-343aeee0-7842-48eb-b80d-269c9fe3840a"
+          "id": "evidence-f851cc11-e812-4b09-ac98-3b2760bb27fb"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-41d4df33-f538-4499-a282-589c6e032da8",
+      "id": "candidate-eb1d04d3-14f3-4643-b2c9-411eff05df34",
       "pageIndex": 7,
       "bounds": {
         "x": 0,
@@ -6997,7 +7486,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7019,13 +7515,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-811f40a7-9639-416c-b960-7bacad6f540a"
+          "id": "evidence-4ec522e4-5173-4c69-bd04-07e6c1a7955c"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-11d85e92-307b-42e9-ac86-50f5d302e8ee",
+      "id": "candidate-db370df2-222a-4bbf-84e3-33b101ae77a8",
       "pageIndex": 7,
       "bounds": {
         "x": 1,
@@ -7082,13 +7578,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-e788fae8-5161-44f7-ba6b-a3a32da813ce"
+          "id": "evidence-99d1275a-5ab9-42c5-9979-6db8401d2aa9"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-9a22e360-eb14-4b03-aeab-6e0128449132",
+      "id": "candidate-6fadb3f3-a678-4a1f-8890-6430bce8d26f",
       "pageIndex": 8,
       "bounds": {
         "x": 0,
@@ -7123,7 +7619,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7145,13 +7648,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-5763cb61-6d0b-41fd-83b7-b0f122c7f530"
+          "id": "evidence-1f5e9b6c-6e3e-452d-b8dc-bc64d8d72dcf"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-80602428-99dc-48d7-8cda-90c92dd18561",
+      "id": "candidate-c0fff669-69f7-4a8e-a645-37c8826a2aef",
       "pageIndex": 8,
       "bounds": {
         "x": 1,
@@ -7208,13 +7711,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-585eab6b-cbf1-4c4e-8f8e-aab442439d42"
+          "id": "evidence-ebad8d19-24d0-479c-a599-e9c1b697717c"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-4da98b85-b6da-44d7-96ba-88d1e6e3af9d",
+      "id": "candidate-f123e631-403e-49bb-927f-b7d28dabad58",
       "pageIndex": 9,
       "bounds": {
         "x": 0,
@@ -7249,7 +7752,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7271,13 +7781,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-ca8a89b0-8ac0-4d07-a0d9-8b5743c61231"
+          "id": "evidence-2da9644a-5946-490f-904b-ac823099962d"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-efeb7698-f3ad-434e-9a89-a09f5d11395f",
+      "id": "candidate-0874ffeb-d249-49e8-be54-f558f3af61c4",
       "pageIndex": 9,
       "bounds": {
         "x": 1,
@@ -7334,13 +7844,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-cd4760fc-5db0-4905-8309-f1cedd2193a2"
+          "id": "evidence-d8b730dc-5a6f-4c30-988f-293d7c0db33a"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-7b123cca-451c-4591-855b-041c03f23b4f",
+      "id": "candidate-a37e0832-3237-4c31-b29d-66ec845afe46",
       "pageIndex": 10,
       "bounds": {
         "x": 0,
@@ -7375,7 +7885,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7397,13 +7914,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-6082799f-e06e-417a-ab64-dc7f4d6a6cc3"
+          "id": "evidence-86299b62-9d42-4afe-b344-4db6eef547b4"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-1c097279-d0e6-4041-a27e-ac290d2f3e16",
+      "id": "candidate-102b519c-6f57-4252-ba36-08c4f9dc926d",
       "pageIndex": 10,
       "bounds": {
         "x": 1,
@@ -7460,13 +7977,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-733b5452-69e8-4060-84a3-e725930f7b11"
+          "id": "evidence-0c6030d7-e37f-4ad6-b80a-169a79812570"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-0f0a684c-03e6-476b-bb37-638a6a40b566",
+      "id": "candidate-f80d8d4c-a9bb-4439-8aa7-50c887c65051",
       "pageIndex": 11,
       "bounds": {
         "x": 0,
@@ -7501,7 +8018,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7523,13 +8047,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-844f9774-70bf-42f9-b7a5-c54b6b9f2791"
+          "id": "evidence-d1157b44-efea-472c-8d76-f000d112ef35"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-9bd57fad-400e-49b1-92e5-78056cfc55fd",
+      "id": "candidate-69d0fcbc-76b1-4e16-a2ee-bb4fc02478c3",
       "pageIndex": 11,
       "bounds": {
         "x": 1,
@@ -7586,13 +8110,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-6fe7c3e1-9207-4b5d-9726-3db09c451197"
+          "id": "evidence-faed55f0-288c-4d8d-b07b-f6f52977cc1f"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-5ec1f833-9296-4389-9e6e-a0ba93080b3f",
+      "id": "candidate-45c55062-77cc-4233-add0-3926fd1cdd5a",
       "pageIndex": 12,
       "bounds": {
         "x": 0,
@@ -7627,7 +8151,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7649,13 +8180,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-fb7b8dc0-a885-4b78-bf11-da354affb81f"
+          "id": "evidence-570c3445-3158-4600-953e-ef04e77c7d56"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-c2f748f4-70ce-451c-b125-02baca1303b4",
+      "id": "candidate-b94d5b5c-6cb8-4f52-bcbf-09c3faf5065e",
       "pageIndex": 12,
       "bounds": {
         "x": 1,
@@ -7712,13 +8243,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-ea30380d-969e-4f0f-98d7-a9ab5fa49708"
+          "id": "evidence-c99fe57b-79ea-4733-bae4-1f29ee39a926"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-d4c0da12-4549-4128-9280-e9c3507177f2",
+      "id": "candidate-702cce1d-d095-417a-831b-35d0dcfe9d65",
       "pageIndex": 13,
       "bounds": {
         "x": 0,
@@ -7753,7 +8284,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7775,13 +8313,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-334b82fe-144e-4948-863d-7f2a3fe731bc"
+          "id": "evidence-255cae1b-29a8-4ca4-b380-56516da7e031"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-ce37c25a-9eda-4cbc-92f7-f339df7376b8",
+      "id": "candidate-9db653c3-9ba7-4c48-977f-ed0eaf33f9a8",
       "pageIndex": 13,
       "bounds": {
         "x": 1,
@@ -7838,13 +8376,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-ac5645c1-be85-4b3b-a2d6-cc47dbe28f76"
+          "id": "evidence-ee570df0-7041-47c1-864b-b1af2190ebd2"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-096e1752-861f-4a38-a537-ae557f6b7f94",
+      "id": "candidate-539e4dcd-961e-44e1-873d-8aaa6ff70850",
       "pageIndex": 14,
       "bounds": {
         "x": 0,
@@ -7879,7 +8417,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -7901,13 +8446,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-940c3189-e3af-40dd-96f8-4bb3af7a260b"
+          "id": "evidence-5a43650d-bae7-4f68-b241-a9aa607b3061"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-5fa5da48-b635-40cc-8b61-495cd4d55a55",
+      "id": "candidate-f36fd5d9-bd8d-4723-af49-60da49891d84",
       "pageIndex": 14,
       "bounds": {
         "x": 1,
@@ -7964,13 +8509,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-68ab2ed5-79eb-4c65-af89-d8c779cd5d8c"
+          "id": "evidence-61ca0887-02de-41f4-970c-975f6fbeff89"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-72642bdd-1d2d-481d-a2f0-87188c491f77",
+      "id": "candidate-94bca663-96bc-4c84-9723-a2b176ce59c8",
       "pageIndex": 15,
       "bounds": {
         "x": 0,
@@ -8005,7 +8550,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -8027,13 +8579,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-526fe492-c197-4c0d-b9dc-dcf779aff969"
+          "id": "evidence-560b4a6d-d3d2-473e-bee9-d4f057bd28d5"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-a90e8740-a24d-4f93-86c1-29141d3084c2",
+      "id": "candidate-64b277a5-a864-4a41-8f4e-09310d6a67f2",
       "pageIndex": 15,
       "bounds": {
         "x": 1,
@@ -8090,13 +8642,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-13b790db-4374-49e0-a47b-566d6e9655d8"
+          "id": "evidence-02299592-f9a9-44a5-b0f0-5ba02b0d630d"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-409781fa-9ff4-44ad-8d56-623a53a5c964",
+      "id": "candidate-486a9053-784d-4b35-a7c7-760ff4a73604",
       "pageIndex": 16,
       "bounds": {
         "x": 0,
@@ -8131,7 +8683,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -8153,13 +8712,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-edd108cd-acf4-4fc0-8c2a-868cdd0c32d4"
+          "id": "evidence-68a34cb0-5d5a-4d96-b406-46b41efbb3d6"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-38e39f31-1cae-41d7-a85e-eb6c69eaf873",
+      "id": "candidate-d68fd48b-0708-478d-9574-1e7ec12f8cb4",
       "pageIndex": 16,
       "bounds": {
         "x": 1,
@@ -8216,13 +8775,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-460489e4-3777-4288-9d4e-f16ed8548d18"
+          "id": "evidence-c7a7e0fc-45b7-4a5a-bad6-52142e427b89"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-dc748639-0c98-43b0-8980-b357ca119b07",
+      "id": "candidate-9febe027-11da-4280-a577-d31b586233f7",
       "pageIndex": 17,
       "bounds": {
         "x": 0,
@@ -8257,7 +8816,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -8279,13 +8845,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-7f9e5781-aff9-42d1-8570-0ee701acb096"
+          "id": "evidence-ab2012eb-255b-4947-a210-a2ef7f6c5268"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-58249f42-d43c-4bf4-9c9f-79b804300586",
+      "id": "candidate-1eaaaa01-9518-42be-96a5-28ab5bbecbfa",
       "pageIndex": 17,
       "bounds": {
         "x": 1,
@@ -8342,13 +8908,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-bde78b10-8ab5-4acf-a4b9-7110f56d79bd"
+          "id": "evidence-de795afc-3277-4106-b24e-5caa45d8face"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-b30ade92-55a1-482e-9cdc-b09c8b149573",
+      "id": "candidate-1d780a5b-7721-41d5-a032-63184966a474",
       "pageIndex": 18,
       "bounds": {
         "x": 0,
@@ -8383,7 +8949,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -8405,13 +8978,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-aff178b8-f2fd-45b4-83be-d60c72491ba6"
+          "id": "evidence-046839b0-0c2d-4568-b4ba-ec3a8621cea3"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-e2017acc-d0fa-429f-b70c-d7a5bccfc8ae",
+      "id": "candidate-ba954048-cbe0-4277-b6b0-6326d15195c6",
       "pageIndex": 18,
       "bounds": {
         "x": 1,
@@ -8468,13 +9041,13 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-44524ab0-4b34-477c-b340-d3b82b6aae4f"
+          "id": "evidence-186d0665-5a48-4a98-aa9a-65e671aeebfe"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-0d8642a2-435a-4d1b-ad56-dda4b43ddb1c",
+      "id": "candidate-d265f7b1-874b-43c7-8914-f5249af2b2de",
       "pageIndex": 19,
       "bounds": {
         "x": 0,
@@ -8509,7 +9082,14 @@
       "entryMode": "checkbox",
       "labelText": null,
       "groupMemberCount": 1,
-      "memberBounds": [],
+      "memberBounds": [
+        {
+          "x": 0,
+          "y": 0,
+          "width": 20,
+          "height": 20
+        }
+      ],
       "evidenceItems": [
         {
           "kind": "vectorRectangle",
@@ -8531,13 +9111,13 @@
             }
           },
           "score": 0.52,
-          "id": "evidence-b72723fc-bc97-42bc-8398-adae69809794"
+          "id": "evidence-676dd49c-07e9-46a9-b4d5-b9b57729ba2b"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
     },
     {
-      "id": "candidate-f186bcdf-7788-4aa5-b216-2b10c260f644",
+      "id": "candidate-0bf6b8f8-cbae-4352-b6e6-dc8c5e9ec51e",
       "pageIndex": 19,
       "bounds": {
         "x": 1,
@@ -8594,7 +9174,7 @@
             }
           },
           "score": 0.6,
-          "id": "evidence-2840ebf2-42cb-465d-8ca1-c6b20fa9ae58"
+          "id": "evidence-e7cb9843-6d6d-43e2-9b41-75136b15e37f"
         }
       ],
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
@@ -8608,7 +9188,7 @@
         "minor": 0
       },
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-      "generatedAt": "2026-08-24T16:31:16.243Z",
+      "generatedAt": "2026-08-24T16:46:34.509Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -8647,7 +9227,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "56e6ffe3-8663-48df-8c4d-b127dd73e7b2",
+        "id": "5df08ff9-84e7-4189-8a62-d44b4688fb95",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -8655,7 +9235,7 @@
         "operationIDs": []
       },
       {
-        "id": "172b1fcc-4f10-473a-bab9-28ff5860f90b",
+        "id": "863b6711-7d61-4c57-b4a9-c2bed61f68c0",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 20 page(s).",
@@ -8663,7 +9243,7 @@
         "operationIDs": []
       },
       {
-        "id": "961ea8a6-99c5-47b2-807b-bfcbcf48f115",
+        "id": "4886e8d8-1421-41fa-a274-bf275d5a81a6",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -8671,7 +9251,7 @@
         "operationIDs": []
       },
       {
-        "id": "f857ecd6-5dfb-4ca7-9843-25c3c08f707a",
+        "id": "8eaa6f8b-6ada-41c3-9e30-86820f8befd3",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -8679,7 +9259,7 @@
         "operationIDs": []
       },
       {
-        "id": "47511e58-17cf-4a9d-8ca2-8b413852aad4",
+        "id": "1e48e09c-1831-45d9-8dc9-2295d5e4bbcf",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -8687,7 +9267,7 @@
         "operationIDs": []
       },
       {
-        "id": "780c59a1-91b2-493b-a3a1-f43af63bc6b2",
+        "id": "fe992a1b-4124-4b58-b120-14f94c81498b",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -8695,7 +9275,7 @@
         "operationIDs": []
       },
       {
-        "id": "5e7558e3-6585-48a1-8f1c-531f1eecf6c9",
+        "id": "003bbff3-d20e-452e-a943-5f436f1d6e53",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -8703,7 +9283,7 @@
         "operationIDs": []
       },
       {
-        "id": "41cfb368-19a9-4a63-bf5e-ade5ced8dec7",
+        "id": "9806fcd9-4159-46a5-9a65-e31d5e212d27",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -8726,7 +9306,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-24T16:31:16.519Z",
+    "validatedAt": "2026-08-24T16:46:34.536Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",

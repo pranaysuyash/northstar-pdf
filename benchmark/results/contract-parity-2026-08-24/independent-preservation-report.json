@@ -241,6 +241,447 @@
       }
     },
     {
+      "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/navigation-corpus/navigation-metadata.pdf",
+        "digest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__navigation-corpus__navigation-metadata-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+        "outputDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 4,
+                "textHash": "453b2016e36b840fa2b6506210a0411a6cef02ec122f13997d446866a4ca018c"
+              },
+              "output": {
+                "wordCount": 4,
+                "textHash": "453b2016e36b840fa2b6506210a0411a6cef02ec122f13997d446866a4ca018c"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 4,
+                "textHash": "e83c2539649929e26ea5254c447d91687fefdba8bb720d38f4426ee511d8a34c"
+              },
+              "output": {
+                "wordCount": 4,
+                "textHash": "e83c2539649929e26ea5254c447d91687fefdba8bb720d38f4426ee511d8a34c"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 2,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 4,
+                "textHash": "940f116b6c59e50c51106d7021f5532b314d6748fba4eb574117c8093a7551f4"
+              },
+              "output": {
+                "wordCount": 4,
+                "textHash": "940f116b6c59e50c51106d7021f5532b314d6748fba4eb574117c8093a7551f4"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 874800,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 874800,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 2,
+              "status": "passed",
+              "comparedPixelCount": 874800,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__navigation-corpus__navigation-metadata-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+        "outputDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 540,
+                "height": 720,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 36,
+                  "y": 36,
+                  "width": 540,
+                  "height": 720
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 4,
+                "textHash": "453b2016e36b840fa2b6506210a0411a6cef02ec122f13997d446866a4ca018c"
+              },
+              "output": {
+                "wordCount": 4,
+                "textHash": "453b2016e36b840fa2b6506210a0411a6cef02ec122f13997d446866a4ca018c"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 4,
+                "textHash": "e83c2539649929e26ea5254c447d91687fefdba8bb720d38f4426ee511d8a34c"
+              },
+              "output": {
+                "wordCount": 4,
+                "textHash": "e83c2539649929e26ea5254c447d91687fefdba8bb720d38f4426ee511d8a34c"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 2,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 4,
+                "textHash": "940f116b6c59e50c51106d7021f5532b314d6748fba4eb574117c8093a7551f4"
+              },
+              "output": {
+                "wordCount": 4,
+                "textHash": "940f116b6c59e50c51106d7021f5532b314d6748fba4eb574117c8093a7551f4"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 874800,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 874800,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 2,
+              "status": "passed",
+              "comparedPixelCount": 874800,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
       "sourcePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
       "expectedFailure": false,
       "sourceViewer": {

@@ -1,5 +1,6 @@
 import AppKit
 import CryptoKit
+import CoreGraphics
 import Foundation
 import PDFKit
 
@@ -59,9 +60,10 @@ public struct PDFKitProvider: PDFProvider {
     }
 
     let fileManager = FileManager.default
+    // RT-002: Use the OS-isolated temporary directory rather than the user-chosen
+    // export directory, which could be attacker-influenced via symlink placement.
     let temporaryURL =
-      outputURL
-      .deletingLastPathComponent()
+      fileManager.temporaryDirectory
       .appendingPathComponent(".pdf-editor-\(UUID().uuidString).pdf")
     if operations.isEmpty {
       do {
@@ -201,9 +203,8 @@ public struct PDFKitProvider: PDFProvider {
       )
       widget.widgetFieldType = .text
       widget.fieldName = targetID
-      widget.backgroundColor = NSColor(calibratedWhite: 1, alpha: 0.01)
       widget.border = PDFBorder()
-      widget.border?.lineWidth = 0.75
+      widget.border?.lineWidth = 0
       page.addAnnotation(widget)
 
     case .overlayText, .annotation:
@@ -311,7 +312,7 @@ public struct PDFKitProvider: PDFProvider {
       guard let page = document.page(at: pageIndex) else {
         throw PDFEditorError.invalidPage(pageIndex)
       }
-      let bounds = page.bounds(for: .mediaBox)
+      let bounds = page.bounds(for: .cropBox)
       pages.append(
         PageSnapshot(
           pageIndex: pageIndex,
@@ -369,7 +370,7 @@ public struct PDFKitProvider: PDFProvider {
       }
     }
 
-    let outlineRoot = collectOutlines(from: document.outlineRoot)
+    let outlineRoot = collectOutlines(from: document.outlineRoot, level: 0, includeRoot: false)
     let metadata = inspectMetadata(document)
     let permissions = inspectPermissions(document)
     let accessibility = inspectAccessibility(document)
@@ -392,7 +393,7 @@ public struct PDFKitProvider: PDFProvider {
       outlines: outlineRoot,
       metadata: metadata,
       permissions: permissions,
-      attachments: attachments,
+      attachments: attachments + embeddedFileNames(from: data),
       accessibility: accessibility,
       security: security
     )
@@ -858,9 +859,88 @@ public struct PDFKitProvider: PDFProvider {
     )
   }
 
-  private func collectOutlines(from outlineRoot: PDFOutline?) -> [PDFOutlineItem] {
+  private func collectOutlines(
+    from outlineRoot: PDFOutline?,
+    level: Int,
+    includeRoot: Bool
+  ) -> [PDFOutlineItem] {
     guard let outlineRoot else { return [] }
-    return collectOutlines(from: outlineRoot, level: 0)
+    if includeRoot {
+      return collectOutlines(from: outlineRoot, level: level)
+    }
+    var items: [PDFOutlineItem] = []
+    for index in 0..<outlineRoot.numberOfChildren {
+      if let child = outlineRoot.child(at: index) {
+        items.append(contentsOf: collectOutlines(from: child, level: level))
+      }
+    }
+    return items
+  }
+
+  private func embeddedFileNames(from data: Data?) -> [String] {
+    guard
+      let data,
+      let provider = CGDataProvider(data: data as CFData),
+      let document = CGPDFDocument(provider),
+      let catalog = document.catalog
+    else { return [] }
+
+    var names: CGPDFDictionaryRef?
+    guard CGPDFDictionaryGetDictionary(catalog, "Names", &names), let names else { return [] }
+    var embeddedFiles: CGPDFDictionaryRef?
+    guard CGPDFDictionaryGetDictionary(names, "EmbeddedFiles", &embeddedFiles), let embeddedFiles else {
+      return []
+    }
+
+    func collect(_ node: CGPDFDictionaryRef, into result: inout [String]) {
+      var nameArray: CGPDFArrayRef?
+      if CGPDFDictionaryGetArray(node, "Names", &nameArray), let nameArray {
+        var index = 0
+        while index + 1 < CGPDFArrayGetCount(nameArray) {
+          var nameString: CGPDFStringRef?
+          if CGPDFArrayGetString(nameArray, index, &nameString), let nameString,
+             let value = CGPDFStringCopyTextString(nameString) as String?
+          {
+            result.append(value)
+          }
+          index += 2
+        }
+      }
+
+      var kids: CGPDFArrayRef?
+      if CGPDFDictionaryGetArray(node, "Kids", &kids), let kids {
+        for index in 0..<CGPDFArrayGetCount(kids) {
+          var child: CGPDFDictionaryRef?
+          if CGPDFArrayGetDictionary(kids, index, &child), let child {
+            collect(child, into: &result)
+          }
+        }
+      }
+    }
+
+    var result: [String] = []
+    collect(embeddedFiles, into: &result)
+    if result.isEmpty {
+      result = embeddedFileNamesFromBoundedNameTree(data)
+    }
+    var seen = Set<String>()
+    return result.filter { seen.insert($0).inserted }
+  }
+
+  private func embeddedFileNamesFromBoundedNameTree(_ data: Data) -> [String] {
+    let source = String(decoding: data, as: UTF8.self)
+    guard let marker = source.range(of: "/EmbeddedFiles") else { return [] }
+    let tail = String(source[marker.upperBound...])
+    guard let end = tail.range(of: "endobj") else { return [] }
+    let node = String(tail[..<end.lowerBound])
+    guard let expression = try? NSRegularExpression(
+      pattern: #"\(([^()\\]*(?:\\.[^()\\]*)*)\)\s+\d+\s+\d+\s+R"#
+    ) else { return [] }
+    let range = NSRange(node.startIndex..<node.endIndex, in: node)
+    return expression.matches(in: node, range: range).compactMap { match in
+      guard let valueRange = Range(match.range(at: 1), in: node) else { return nil }
+      return String(node[valueRange])
+    }
   }
 
   private func collectOutlines(from outline: PDFOutline, level: Int) -> [PDFOutlineItem] {

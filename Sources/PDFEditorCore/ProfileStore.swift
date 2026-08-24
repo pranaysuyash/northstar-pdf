@@ -5,7 +5,8 @@ import Foundation
 
 /// A local user profile containing form-fill values indexed by semantic keys.
 /// The profile never leaves the device. Values are encrypted at rest.
-public struct UserProfile: Codable, Equatable, Sendable {
+public struct UserProfile: Codable, Equatable, Hashable, Sendable, Identifiable {
+  public var id: UUID { profileID }
   public let profileID: UUID
   public var displayName: String
   public var values: [UserProfileValue]
@@ -183,8 +184,72 @@ public enum ProfileStoreError: Error, LocalizedError {
 
 // MARK: - Encrypted Profile Store (Native macOS)
 
-/// Stores profiles as AES-GCM encrypted JSON files.
-/// Each profile is encrypted with a derived key from the user's passphrase.
+// MARK: - AES-GCM On-Disk Envelope
+
+/// The on-disk representation of an encrypted profile.
+/// Both fields are base64-encoded; neither contains plaintext PII.
+private struct EncryptedProfileEnvelope: Codable {
+  /// Fresh AES-GCM 12-byte nonce, base64-encoded.
+  let nonce: String
+  /// AES-256-GCM sealed ciphertext + 16-byte auth tag, base64-encoded.
+  let ciphertext: String
+}
+
+// MARK: - Keychain Key Management
+
+/// Keychain service and account labels for the profile encryption key.
+private let kProfileStoreKeychainService = "com.pdfeditor.profilestore"
+private let kProfileStoreKeychainAccount = "profile-encryption-key-v1"
+
+/// Retrieve or create the 256-bit AES-GCM symmetric key used to protect profiles.
+/// The key is stored in the user's macOS Keychain and never written to disk.
+private func profileEncryptionKey() throws -> SymmetricKey {
+  let query: [String: Any] = [
+    kSecClass as String: kSecClassGenericPassword,
+    kSecAttrService as String: kProfileStoreKeychainService,
+    kSecAttrAccount as String: kProfileStoreKeychainAccount,
+    kSecReturnData as String: true,
+    kSecMatchLimit as String: kSecMatchLimitOne,
+  ]
+  var result: AnyObject?
+  let status = SecItemCopyMatching(query as CFDictionary, &result)
+  if status == errSecSuccess, let keyData = result as? Data {
+    return SymmetricKey(data: keyData)
+  }
+
+  let newKey = SymmetricKey(size: .bits256)
+  let newKeyData = newKey.withUnsafeBytes { Data($0) }
+  let addQuery: [String: Any] = [
+    kSecClass as String: kSecClassGenericPassword,
+    kSecAttrService as String: kProfileStoreKeychainService,
+    kSecAttrAccount as String: kProfileStoreKeychainAccount,
+    kSecValueData as String: newKeyData,
+    kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
+  ]
+  let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+  guard addStatus == errSecSuccess else {
+    throw ProfileStoreError.encryptionFailed(
+      "Could not store encryption key in Keychain (OSStatus \(addStatus)).")
+  }
+  return newKey
+}
+
+/// Stores profiles as AES-256-GCM encrypted JSON files on disk.
+///
+/// Each profile is encoded to JSON and sealed with AES-256-GCM using a 256-bit
+/// key generated once and stored in the user's macOS Keychain under the service
+/// label `com.pdfeditor.profilestore`. The on-disk file is an
+/// `EncryptedProfileEnvelope` JSON blob containing only the nonce and sealed
+/// ciphertext; no plaintext PII is ever written to the Application Support directory.
+///
+/// **Red-team finding RT-001 remediated.** The previous implementation wrote raw
+/// plaintext JSON to disk despite the "Encrypted" class name and AES-GCM
+/// documentation. This implementation provides genuine at-rest encryption for all
+/// profile values including SSN, address, DOB, employer, and email.
+///
+/// **Backward compatibility:** Profiles written by the previous plaintext
+/// implementation are detected (they decode successfully as `UserProfile` directly)
+/// and migrated to the encrypted format on the next save.
 public final class EncryptedProfileStore: ProfileStore, @unchecked Sendable {
   private let directory: URL
   private let lock = NSLock()
@@ -210,6 +275,8 @@ public final class EncryptedProfileStore: ProfileStore, @unchecked Sendable {
       .appendingPathComponent("Profiles", isDirectory: true)
   }
 
+  // MARK: - ProfileStore Protocol
+
   public func save(profile: UserProfile) throws {
     lock.lock()
     defer { lock.unlock() }
@@ -221,16 +288,49 @@ public final class EncryptedProfileStore: ProfileStore, @unchecked Sendable {
       throw ProfileStoreError.directoryCreationFailed(error.localizedDescription)
     }
 
-    let data: Data
+    // 1. JSON-encode the profile.
+    let plaintext: Data
     do {
-      data = try encoder.encode(profile)
+      plaintext = try encoder.encode(profile)
+    } catch {
+      throw ProfileStoreError.encodingFailed(error.localizedDescription)
+    }
+
+    // 2. Retrieve (or generate) the Keychain-backed 256-bit symmetric key.
+    let key: SymmetricKey
+    do {
+      key = try profileEncryptionKey()
+    } catch {
+      throw ProfileStoreError.encryptionFailed(error.localizedDescription)
+    }
+
+    // 3. Seal with AES-256-GCM using a fresh random 96-bit nonce.
+    let sealedBox: AES.GCM.SealedBox
+    do {
+      sealedBox = try AES.GCM.seal(plaintext, using: key)
+    } catch {
+      throw ProfileStoreError.encryptionFailed(error.localizedDescription)
+    }
+
+    let nonceData = sealedBox.nonce.withUnsafeBytes { Data($0) }
+    // .combined = nonce(12) + ciphertext + tag(16)
+    let combinedData = sealedBox.combined ?? (sealedBox.ciphertext + sealedBox.tag)
+
+    // 4. Write the envelope (nonce + combined, both base64) to disk atomically.
+    let envelope = EncryptedProfileEnvelope(
+      nonce: nonceData.base64EncodedString(),
+      ciphertext: combinedData.base64EncodedString()
+    )
+    let envelopeData: Data
+    do {
+      envelopeData = try encoder.encode(envelope)
     } catch {
       throw ProfileStoreError.encodingFailed(error.localizedDescription)
     }
 
     let fileURL = url(for: profile.profileID)
     do {
-      try data.write(to: fileURL, options: .atomic)
+      try envelopeData.write(to: fileURL, options: .atomic)
     } catch {
       throw ProfileStoreError.fileOperationFailed(error.localizedDescription)
     }
@@ -247,8 +347,8 @@ public final class EncryptedProfileStore: ProfileStore, @unchecked Sendable {
 
     do {
       let data = try Data(contentsOf: fileURL)
-      return try decoder.decode(UserProfile.self, from: data)
-    } catch is DecodingError {
+      return try decodeProfile(from: data)
+    } catch is ProfileStoreError {
       throw ProfileStoreError.decodingFailed("Profile file is corrupted.")
     } catch {
       throw ProfileStoreError.fileOperationFailed(error.localizedDescription)
@@ -274,7 +374,7 @@ public final class EncryptedProfileStore: ProfileStore, @unchecked Sendable {
     var profiles: [UserProfile] = []
     for fileURL in contents where fileURL.pathExtension == "json" {
       if let data = try? Data(contentsOf: fileURL),
-        let profile = try? decoder.decode(UserProfile.self, from: data)
+        let profile = try? decodeProfile(from: data)
       {
         profiles.append(profile)
       }
@@ -309,8 +409,64 @@ public final class EncryptedProfileStore: ProfileStore, @unchecked Sendable {
     ).filter { $0.pathExtension == "json" }.count) ?? 0
   }
 
+  // MARK: - Private Helpers
+
   private func url(for profileID: UUID) -> URL {
     directory.appendingPathComponent("\(profileID.uuidString).json")
+  }
+
+  /// Decode a profile from raw file data.
+  /// Tries the encrypted envelope format first; falls back to legacy plaintext JSON.
+  private func decodeProfile(from data: Data) throws -> UserProfile {
+    // Attempt encrypted envelope path.
+    if let envelope = try? decoder.decode(EncryptedProfileEnvelope.self, from: data),
+      !envelope.nonce.isEmpty, !envelope.ciphertext.isEmpty
+    {
+      return try decryptProfile(from: envelope)
+    }
+
+    // Backward-compat: plaintext profile written before encryption was implemented.
+    if let profile = try? decoder.decode(UserProfile.self, from: data) {
+      return profile
+    }
+
+    throw ProfileStoreError.decodingFailed("Profile file is corrupted or unrecognized format.")
+  }
+
+  /// Decrypt an `EncryptedProfileEnvelope` and return the contained `UserProfile`.
+  private func decryptProfile(from envelope: EncryptedProfileEnvelope) throws -> UserProfile {
+    guard let combinedData = Data(base64Encoded: envelope.ciphertext) else {
+      throw ProfileStoreError.decryptionFailed("Ciphertext field is not valid base64.")
+    }
+
+    let key: SymmetricKey
+    do {
+      key = try profileEncryptionKey()
+    } catch {
+      throw ProfileStoreError.decryptionFailed(error.localizedDescription)
+    }
+
+    let sealedBox: AES.GCM.SealedBox
+    do {
+      // combinedData = nonce(12) + ciphertext + tag(16)
+      sealedBox = try AES.GCM.SealedBox(combined: combinedData)
+    } catch {
+      throw ProfileStoreError.decryptionFailed(
+        "Could not reconstruct sealed box: \(error.localizedDescription)")
+    }
+
+    let plaintext: Data
+    do {
+      plaintext = try AES.GCM.open(sealedBox, using: key)
+    } catch {
+      throw ProfileStoreError.wrongKey
+    }
+
+    do {
+      return try decoder.decode(UserProfile.self, from: plaintext)
+    } catch {
+      throw ProfileStoreError.decodingFailed("Decrypted profile content is invalid JSON.")
+    }
   }
 }
 
@@ -377,15 +533,27 @@ extension UserProfile {
   }
 
   /// Import values from a vCard string (basic extraction).
+  ///
+  /// - Red-team finding RT-003 remediated: Values longer than
+  ///   `vCardMaxValueLength` characters are silently truncated to prevent
+  ///   crafted vCard inputs from storing unbounded data.
   public mutating func importFromVCard(_ vCard: String) {
+    /// Maximum allowed length for any single imported vCard field value.
+    let vCardMaxValueLength = 1024
+
+    /// Truncate a raw imported string to the permitted maximum.
+    func sanitized(_ raw: String) -> String {
+      raw.count <= vCardMaxValueLength ? raw : String(raw.prefix(vCardMaxValueLength))
+    }
+
     let lines = vCard.components(separatedBy: CharacterSet.newlines)
 
     for line in lines {
       let trimmed = line.trimmingCharacters(in: CharacterSet.whitespaces)
       if trimmed.hasPrefix("FN:") {
-        self.setValue(String(trimmed.dropFirst(3)), for: StandardSemanticKey.fullName.rawValue)
+        self.setValue(sanitized(String(trimmed.dropFirst(3))), for: StandardSemanticKey.fullName.rawValue)
       } else if trimmed.hasPrefix("N:") {
-        let parts = String(trimmed.dropFirst(2)).components(separatedBy: ";")
+        let parts = sanitized(String(trimmed.dropFirst(2))).components(separatedBy: ";")
         if parts.count >= 2 {
           self.setValue(parts[1].trimmingCharacters(in: CharacterSet.whitespaces),
                         for: StandardSemanticKey.firstName.rawValue)
@@ -393,28 +561,28 @@ extension UserProfile {
                         for: StandardSemanticKey.lastName.rawValue)
         }
       } else if trimmed.hasPrefix("TEL") {
-        let value = Self.extractVCardValue(trimmed)
+        let value = sanitized(Self.extractVCardValue(trimmed))
         if !value.isEmpty { self.setValue(value, for: StandardSemanticKey.phone.rawValue) }
       } else if trimmed.hasPrefix("EMAIL") {
-        let value = Self.extractVCardValue(trimmed)
+        let value = sanitized(Self.extractVCardValue(trimmed))
         if !value.isEmpty { self.setValue(value, for: StandardSemanticKey.email.rawValue) }
       } else if trimmed.hasPrefix("ADR") {
-        let value = Self.extractVCardValue(trimmed)
+        let value = sanitized(Self.extractVCardValue(trimmed))
         let parts = value.components(separatedBy: ";").map {
           $0.trimmingCharacters(in: CharacterSet.whitespaces)
         }
-        if parts.count >= 5 {
-          if !parts[0].isEmpty { self.setValue(parts[0], for: StandardSemanticKey.addressStreet.rawValue) }
-          if !parts[2].isEmpty { self.setValue(parts[2], for: StandardSemanticKey.addressCity.rawValue) }
-          if !parts[3].isEmpty { self.setValue(parts[3], for: StandardSemanticKey.addressState.rawValue) }
-          if !parts[4].isEmpty { self.setValue(parts[4], for: StandardSemanticKey.addressZip.rawValue) }
-          if parts.count >= 6 && !parts[5].isEmpty { self.setValue(parts[5], for: StandardSemanticKey.addressCountry.rawValue) }
+        if parts.count >= 6 {
+          if !parts[2].isEmpty { self.setValue(parts[2], for: StandardSemanticKey.addressStreet.rawValue) }
+          if !parts[3].isEmpty { self.setValue(parts[3], for: StandardSemanticKey.addressCity.rawValue) }
+          if !parts[4].isEmpty { self.setValue(parts[4], for: StandardSemanticKey.addressState.rawValue) }
+          if !parts[5].isEmpty { self.setValue(parts[5], for: StandardSemanticKey.addressZip.rawValue) }
+          if parts.count > 6 && !parts[6].isEmpty { self.setValue(parts[6], for: StandardSemanticKey.addressCountry.rawValue) }
         }
       } else if trimmed.hasPrefix("ORG") {
-        let value = Self.extractVCardValue(trimmed)
+        let value = sanitized(Self.extractVCardValue(trimmed))
         if !value.isEmpty { self.setValue(value, for: StandardSemanticKey.employer.rawValue) }
       } else if trimmed.hasPrefix("TITLE") {
-        let value = Self.extractVCardValue(trimmed)
+        let value = sanitized(Self.extractVCardValue(trimmed))
         if !value.isEmpty { self.setValue(value, for: StandardSemanticKey.jobTitle.rawValue) }
       }
     }
@@ -426,5 +594,168 @@ extension UserProfile {
         .trimmingCharacters(in: CharacterSet.whitespaces)
     }
     return ""
+  }
+}
+
+// MARK: - Profile Bulk Fill
+
+/// The result of matching a profile against a document's candidates and fields.
+public struct ProfileBulkFillResult: Codable, Equatable, Sendable {
+  public let matchedOperations: [EditOperation]
+  public let unmatchedFields: [String]
+  public let profileKeysUsed: Set<String>
+  public let totalMatches: Int
+
+  public init(
+    matchedOperations: [EditOperation],
+    unmatchedFields: [String],
+    profileKeysUsed: Set<String>,
+    totalMatches: Int
+  ) {
+    self.matchedOperations = matchedOperations
+    self.unmatchedFields = unmatchedFields
+    self.profileKeysUsed = profileKeysUsed
+    self.totalMatches = totalMatches
+  }
+}
+
+extension UserProfile {
+  /// Match profile values against native fields and static candidates.
+  /// Uses semantic key matching: "person.fullName" matches fields labeled "Full Name" etc.
+  /// Returns operations for every match, plus a list of unmatched fields.
+  public func bulkFill(
+    fields: [NativeField],
+    candidates: [RegionCandidate],
+    sourceDigest: String
+  ) -> ProfileBulkFillResult {
+    var operations: [EditOperation] = []
+    var unmatchedFields: [String] = []
+    var usedKeys: Set<String> = []
+
+    // Match native fields
+    for field in fields {
+      if let value = matchForField(field) {
+        usedKeys.insert(matchingKey(for: field) ?? "")
+        operations.append(
+          EditOperation(
+            pageIndex: field.pageIndex,
+            targetID: field.name,
+            kind: .nativeFieldValue,
+            value: value,
+            bounds: field.bounds,
+            sourceDigest: sourceDigest,
+            coordinate: PDFPageRegion(pageIndex: field.pageIndex, rect: field.bounds),
+            payload: .text(value)
+          )
+        )
+      } else {
+        unmatchedFields.append(field.name)
+      }
+    }
+
+    // Match static candidates (text-entry regions only)
+    for candidate in candidates where candidate.isDirectlyEditable {
+      if let value = matchForCandidate(candidate) {
+        usedKeys.insert(matchingKey(for: candidate) ?? "")
+        operations.append(
+          EditOperation(
+            pageIndex: candidate.pageIndex,
+            kind: .overlayText,
+            value: value,
+            bounds: candidate.bounds,
+            candidateID: candidate.id,
+            sourceDigest: sourceDigest,
+            coordinate: PDFPageRegion(pageIndex: candidate.pageIndex, rect: candidate.bounds),
+            payload: candidate.entryMode == .characterGrid
+              ? .characterGrid(text: value, cells: candidate.memberBounds)
+              : .text(value)
+          )
+        )
+      }
+    }
+
+    return ProfileBulkFillResult(
+      matchedOperations: operations,
+      unmatchedFields: unmatchedFields,
+      profileKeysUsed: usedKeys,
+      totalMatches: operations.count
+    )
+  }
+
+  /// Find a profile value that matches a native field by name/label heuristics.
+  private func matchForField(_ field: NativeField) -> String? {
+    let name = field.name.lowercased()
+    let label = field.name
+
+    // Direct semantic key match
+    if let value = value(for: label), !value.isEmpty { return value }
+
+    // Heuristic matching by field name patterns
+    for profileValue in values where !profileValue.textValue.isEmpty {
+      let key = profileValue.semanticKey.lowercased()
+      if name.contains("name") && key.contains("fullname") { return profileValue.textValue }
+      if name.contains("first") && key.contains("firstname") { return profileValue.textValue }
+      if name.contains("last") && key.contains("lastname") { return profileValue.textValue }
+      if name.contains("email") && key.contains("email") { return profileValue.textValue }
+      if name.contains("phone") && key.contains("phone") { return profileValue.textValue }
+      if name.contains("address") && key.contains("address.street") { return profileValue.textValue }
+      if name.contains("city") && key.contains("address.city") { return profileValue.textValue }
+      if name.contains("state") && key.contains("address.state") { return profileValue.textValue }
+      if (name.contains("zip") || name.contains("postal")) && key.contains("address.zip") { return profileValue.textValue }
+      if name.contains("ssn") && key.contains("ssn") { return profileValue.textValue }
+      if name.contains("dob") || name.contains("birth") {
+        if key.contains("dateofbirth") { return profileValue.textValue }
+      }
+      if name.contains("employer") || name.contains("company") && key.contains("employer") { return profileValue.textValue }
+      if name.contains("title") && key.contains("jobtitle") { return profileValue.textValue }
+    }
+    return nil
+  }
+
+  /// Find a profile value that matches a static candidate by label.
+  private func matchForCandidate(_ candidate: RegionCandidate) -> String? {
+    guard let labelText = candidate.labelText?.lowercased() else { return nil }
+
+    for profileValue in values where !profileValue.textValue.isEmpty {
+      let key = profileValue.semanticKey.lowercased()
+      if labelText.contains("name") && key.contains("fullname") { return profileValue.textValue }
+      if labelText.contains("first") && key.contains("firstname") { return profileValue.textValue }
+      if labelText.contains("last") && key.contains("lastname") { return profileValue.textValue }
+      if labelText.contains("email") && key.contains("email") { return profileValue.textValue }
+      if labelText.contains("phone") && key.contains("phone") { return profileValue.textValue }
+      if labelText.contains("address") && key.contains("address.street") { return profileValue.textValue }
+      if labelText.contains("city") && key.contains("address.city") { return profileValue.textValue }
+      if labelText.contains("state") && key.contains("address.state") { return profileValue.textValue }
+      if (labelText.contains("zip") || labelText.contains("postal")) && key.contains("address.zip") { return profileValue.textValue }
+      if labelText.contains("ssn") && key.contains("ssn") { return profileValue.textValue }
+      if labelText.contains("date") || labelText.contains("birth") {
+        if key.contains("dateofbirth") { return profileValue.textValue }
+      }
+      if labelText.contains("employer") && key.contains("employer") { return profileValue.textValue }
+      if labelText.contains("title") && key.contains("jobtitle") { return profileValue.textValue }
+    }
+    return nil
+  }
+
+  private func matchingKey(for field: NativeField) -> String? {
+    let name = field.name.lowercased()
+    for profileValue in values {
+      let key = profileValue.semanticKey.lowercased()
+      if name.contains("name") && key.contains("fullname") { return profileValue.semanticKey }
+      if name.contains("email") && key.contains("email") { return profileValue.semanticKey }
+      if name.contains("phone") && key.contains("phone") { return profileValue.semanticKey }
+    }
+    return nil
+  }
+
+  private func matchingKey(for candidate: RegionCandidate) -> String? {
+    guard let labelText = candidate.labelText?.lowercased() else { return nil }
+    for profileValue in values {
+      let key = profileValue.semanticKey.lowercased()
+      if labelText.contains("name") && key.contains("fullname") { return profileValue.semanticKey }
+      if labelText.contains("email") && key.contains("email") { return profileValue.semanticKey }
+      if labelText.contains("phone") && key.contains("phone") { return profileValue.semanticKey }
+    }
+    return nil
   }
 }

@@ -218,6 +218,18 @@ try {
     pageCoordinates: fixtureState.pages.map((entry) => ({ pageIndex: entry.pageIndex, rotation: entry.region.coordinateSpace.rotationDegrees })),
     validation: { status: "validated", checks: [{ status: "passed" }] }
   }, "coordinateMismatch"));
+  cases.push(await expectRejected(page, "coordinate space mismatch", {
+    currentSourceDigest: fixtureState.sourceDigest,
+    operations: [{
+      ...fixtureState.operation,
+      coordinate: {
+        ...fixtureState.operation.coordinate,
+        coordinateSpace: { ...fixtureState.operation.coordinate.coordinateSpace, unit: "pixels" }
+      }
+    }],
+    pageCoordinates: fixtureState.pages.map((entry) => ({ pageIndex: entry.pageIndex, rotation: entry.region.coordinateSpace.rotationDegrees })),
+    validation: { status: "validated", checks: [{ status: "passed" }] }
+  }, "coordinateMismatch"));
 
   const pdfLibLoadProbes = [];
   pdfLibLoadProbes.push(await expectMaterializerRejected(
@@ -263,6 +275,19 @@ try {
       coordinate: {
         ...fixtureState.operation.coordinate,
         rect: { ...fixtureState.operation.bounds, x: fixtureState.operation.bounds.x + 8 }
+      }
+    },
+    null,
+    "coordinateMismatch"
+  ));
+  pdfLibLoadProbes.push(await expectMaterializerRejected(
+    page,
+    "coordinate space materializer probe",
+    {
+      ...fixtureState.operation,
+      coordinate: {
+        ...fixtureState.operation.coordinate,
+        coordinateSpace: { ...fixtureState.operation.coordinate.coordinateSpace, unit: "pixels" }
       }
     },
     null,

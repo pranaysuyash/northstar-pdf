@@ -1,246 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!--
-    RT-004 (Red-Team PER-PDEV-0168): CSP tightened — 'unsafe-inline' removed from script-src.
-    The inline application bootstrap uses a dedicated nonce. style-src 'unsafe-inline'
-    is retained for the large inline <style> blocks. img-src allows blob: for rendered
-    PDF page canvases and data: for the favicon. worker-src blob: is required by PDF.js
-    worker materialisation.
-  -->
-  <meta http-equiv="Content-Security-Policy" content="
-    script-src 'self' 'nonce-pdf-editor-bootstrap';
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data:;
-    worker-src blob:;
-    connect-src 'none';
-    object-src 'none';
-    base-uri 'self';
-    form-action 'none';
-  ">
-  <link rel="icon" href="data:,">
-  <title>PDF Editor</title>
-  <script src="./vendor/pdf-lib/pdf-lib.min.js"></script>
-  <style>
-    :root { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #172033; background: #f5f6f8; }
-    html, body { margin: 0; height: 100%; }
-    body { display: flex; background: #f5f6f8; }
-    #app { display: grid; grid-template-rows: auto 1fr; width: 100vw; height: 100vh; }
-    .toolbar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; background: rgba(255,255,255,.96); border-bottom: 1px solid #dfe3e8; padding: 10px 14px; box-shadow: 0 1px 3px rgba(23,32,51,.06); z-index: 3; }
-    .toolbar-title { display: flex; flex-direction: column; min-width: 150px; margin-right: 8px; }
-    .toolbar-title strong { font-size: 14px; letter-spacing: -.01em; }
-    .toolbar-title span { font-size: 11px; color: #687386; }
-    .toolbar button, .toolbar select, .toolbar input { font: inherit; }
-    .toolbar button { border: 1px solid #cfd6df; border-radius: 7px; background: #fff; color: #273247; padding: 6px 10px; cursor: pointer; }
-    .toolbar button:hover:not(:disabled) { background: #f0f4fa; }
-    .toolbar button.primary, .toolbar button[data-primary="true"] { color: #fff; background: #2563eb; border-color: #2563eb; }
-    .toolbar button:disabled { opacity: .5; cursor: not-allowed; }
-    .workspace { display: grid; grid-template-columns: 214px minmax(420px, 1fr) 350px; gap: 12px; padding: 12px; overflow: hidden; min-height: 0; }
-    .panel { background: #fff; border: 1px solid #dfe3e8; border-radius: 12px; padding: 12px; overflow: auto; box-shadow: 0 2px 10px rgba(23,32,51,.045); min-height: 0; }
-    .control-row { display: flex; gap: 8px; align-items: center; }
-    .small { font-size: 12px; color: #475569; }
-    #viewerCanvasWrap { overflow: auto; background: #e9edf2; border-radius: 10px; border: 1px solid #dfe3e8; padding: 20px; display: flex; justify-content: center; min-height: 0; }
-    #viewerCanvas { border: 1px solid #cbd5e1; }
-    .page-stack { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
-    .thumb { width: 120px; height: 160px; border: 1px solid #cbd5e1; border-radius: 6px; margin: 4px 0; padding: 4px; cursor: pointer; background: #f8fafc; }
-    .thumb img { width: 100%; height: auto; display: block; }
-    .thumb.selected { outline: 2px solid #2563eb; background: #dbeafe; }
-    .item { padding: 6px; border-bottom: 1px solid #edf0f3; }
-    .item button { margin-right: 8px; }
-    .muted { color: #64748b; }
-    .danger { color: #b91c1c; }
-    .success { color: #15803d; }
-    .list-title { font-weight: 700; margin-bottom: 6px; color: #1f2937; }
-    .outline-item { margin-left: 8px; }
-    .inline { display: inline-flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .status { font-size: 12px; color: #334155; }
-    .password-card { display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.35); justify-content: center; align-items: center; }
-    .password-card.show { display: flex; }
-    .password-panel { background: #fff; padding: 18px; border-radius: 10px; border: 1px solid #94a3b8; }
-    .skip-link { position: absolute; left: 8px; top: -48px; z-index: 20; padding: 8px 12px; background: #0f172a; color: #fff; border-radius: 6px; }
-    .skip-link:focus { top: 8px; }
-    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-    :focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
-  </style>
-  <style>
-    .page-shell { position: relative; display: inline-block; line-height: 1; }
-    .text-layer { position: absolute; inset: 0; overflow: hidden; user-select: text; pointer-events: auto; color: transparent; background: transparent; }
-    .text-layer span { position: absolute; white-space: pre; transform-origin: 0 0; color: transparent; cursor: text; }
-    .text-layer span:focus { outline: 2px solid #2b6cb0; outline-offset: 1px; }
-    .text-layer mark { color: transparent; background: rgba(255, 210, 77, 0.75); }
-    .completion-card { border: 1px solid #cbdcf8; background: #f7faff; border-radius: 10px; padding: 12px; margin-top: 14px; }
-    .completion-card input, .completion-card select { width: 100%; box-sizing: border-box; margin: 4px 0; font: inherit; }
-    .completion-list { max-height: 205px; overflow: auto; }
-    .completion-item { border-top: 1px solid #e4eaf2; padding: 8px 0; }
-    .completion-item button { margin-top: 4px; }
-    .candidate-score { font-variant-numeric: tabular-nums; color: #315da8; }
-    .candidate-preview { position: absolute; border: 2px solid rgba(37, 99, 235, .7); background: rgba(191, 219, 254, .25); color: #17345f; padding: 3px 5px; box-sizing: border-box; cursor: pointer; white-space: nowrap; overflow: hidden; font: 11px/1.1 sans-serif; z-index: 5; border-radius: 4px; }
-    .candidate-preview:hover, .candidate-preview.selected { border-color: #2563eb; background: rgba(147, 197, 253, .48); box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
-    .candidate-preview.rejected { display: none; }
-    .overlay-preview { position: absolute; border: 1px solid #16803c; background: rgba(187, 247, 208, 0.72); color: #123b26; padding: 3px 5px; box-sizing: border-box; cursor: pointer; white-space: pre-wrap; overflow: hidden; font: 12px/1.1 sans-serif; z-index: 6; border-radius: 4px; }
-    .manual-placement #viewerCanvasWrap { cursor: crosshair; box-shadow: inset 0 0 0 3px rgba(37,99,235,.2); }
-    .review-card { border: 1px solid #b9d1f7; background: #eef5ff; border-radius: 9px; padding: 10px; margin: 8px 0; }
-    .review-card h3 { font-size: 13px; margin: 0 0 4px; }
-    .review-card p { margin: 4px 0; }
-    .review-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-    .review-actions button { border: 1px solid #b9c8dc; border-radius: 7px; background: #fff; padding: 6px 9px; cursor: pointer; }
-    .review-actions button.primary { color: #fff; background: #2563eb; border-color: #2563eb; }
-    .review-actions button.danger { color: #a33a3a; }
-    .template-mapping { border-top: 1px solid #dbe7f7; padding: 8px 0; }
-    .template-mapping input[type="text"] { width: 100%; box-sizing: border-box; }
-    .template-mapping label { display: block; margin-top: 4px; }
-    @media (max-width: 1100px) { .workspace { grid-template-columns: 180px minmax(360px, 1fr); } .workspace > aside:last-child { grid-column: 1 / -1; max-height: 360px; } }
-  </style>
-</head>
-<body>
-  <div id="app">
-    <a class="skip-link" href="#viewerMain">Skip to document viewer</a>
-    <div class="toolbar">
-      <div class="toolbar-title" aria-label="PDF Editor">
-        <strong>PDF Editor</strong>
-        <span>Local document workspace</span>
-      </div>
-      <div class="control-row">
-        <label for="fileInput">PDF</label>
-        <input id="fileInput" type="file" accept=".pdf">
-        <label for="fitMode">Fit</label>
-        <select id="fitMode">
-          <option value="fitWidth" selected>Width</option>
-          <option value="fitPage">Page</option>
-          <option value="zoom">Zoom</option>
-        </select>
-        <label for="viewMode">View</label>
-        <select id="viewMode">
-          <option value="single">Single</option>
-          <option value="continuous" selected>Continuous</option>
-          <option value="twoPage">Two-page</option>
-        </select>
-      </div>
-      <div class="control-row">
-        <button id="rotateL" aria-label="Rotate counter-clockwise 90 degrees">Rotate -90</button>
-        <button id="rotateR" aria-label="Rotate clockwise 90 degrees">Rotate +90</button>
-        <label for="zoomSlider">Zoom</label>
-        <input id="zoomSlider" type="range" min="25" max="300" value="100" aria-label="Zoom level">
-        <span id="zoomValue" class="small">100%</span>
-      </div>
-      <div class="control-row">
-        <label for="pageInput">Page</label>
-        <input id="pageInput" type="number" min="1" placeholder="Page" style="width: 72px;" aria-label="Target page number">
-        <button id="jumpButton" aria-label="Jump to entered page">Go</button>
-        <label for="searchInput">Search</label>
-        <input id="searchInput" type="text" placeholder="Search..." style="width: 200px;" aria-label="Search document text">
-        <button id="searchButton" aria-label="Find occurrences in document">Find</button>
-        <button id="searchPrev" aria-label="Previous search occurrence">Prev</button>
-        <button id="searchNext" aria-label="Next search occurrence">Next</button>
-        <span id="searchCount" class="small">0</span>
-      </div>
-      <div class="control-row">
-        <button id="copyPageText" aria-label="Copy extracted text of current page to clipboard">Copy current page text</button>
-        <button id="manualTextButton" class="primary" data-primary="true" aria-label="Add manual text overlay">Add text</button>
-        <span id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></span>
-      </div>
-    </div>
-
-    <div class="workspace">
-      <aside class="panel" aria-label="Page thumbnails">
-        <div class="list-title">Page thumbnails</div>
-        <div id="thumbnails"></div>
-      </aside>
-      <main id="viewerMain" class="panel" tabindex="-1" aria-label="PDF document viewer">
-        <div id="viewerCanvasWrap">
-          <div id="viewerStack" class="page-stack"></div>
-        </div>
-      </main>
-      <aside class="panel" aria-label="Reading and navigation tools">
-        <div class="list-title">Reading & navigation</div>
-        <div id="outlineBox" class="small"></div>
-        <div class="list-title" style="margin-top: 14px;">Links</div>
-        <div id="linksBox" class="small"></div>
-        <div class="list-title" style="margin-top: 14px;">Search matches</div>
-        <div id="searchBox" class="small"></div>
-        <div class="list-title" style="margin-top: 14px;">Metadata</div>
-        <div id="metaBox" class="small"></div>
-        <div class="list-title" style="margin-top: 14px;">Permissions</div>
-        <div id="permissionsBox" class="small"></div>
-        <div class="list-title" style="margin-top: 14px;">Attachments</div>
-        <div id="attachmentsBox" class="small"></div>
-        <div class="list-title" style="margin-top: 14px;">Accessibility lane note</div>
-        <div id="accessibilityBox" class="small muted">
-          Tagged-content/reading-order validation is conditional in web lane.
-        </div>
-        <section class="completion-card" aria-labelledby="completionTitle">
-          <div id="completionTitle" class="list-title">Complete this document</div>
-          <div id="completionSource" class="small muted">Load a PDF to inspect fields and blank-region candidates.</div>
-          <div class="list-title" style="margin-top: 10px;">Native fields</div>
-          <div id="fieldList" class="completion-list small"></div>
-          <div class="list-title" style="margin-top: 10px;">Detected entry regions</div>
-          <div id="candidateList" class="completion-list small"></div>
-          <div id="candidateAction" class="review-card" hidden>
-            <h3>Review this area</h3>
-            <p id="candidateActionDetail" class="small muted"></p>
-            <label id="choiceCellControl" class="small" hidden for="choiceCellSelect">Choice cell</label>
-            <select id="choiceCellSelect" hidden aria-label="Choice cell"></select>
-            <div class="review-actions">
-              <button id="applyOverlayButton" class="primary" data-primary="true" disabled>Add text here</button>
-              <button id="synthesizeFieldButton" disabled>Create native field</button>
-              <button id="dismissCandidateButton" class="danger">Dismiss</button>
-            </div>
-          </div>
-          <div id="templateCard" class="review-card" hidden>
-            <h3>Reusable completion template</h3>
-            <p id="templateSummary" class="small muted">Capture reviewed mappings locally. A template never changes this source PDF.</p>
-            <div class="review-actions">
-              <button id="captureTemplateButton" type="button">Capture layout</button>
-              <button id="activateTemplateButton" type="button" class="primary" disabled>Activate reviewed template</button>
-              <button id="prepareTemplateButton" type="button" disabled>Prepare completion</button>
-            </div>
-            <div id="templateMappingList" class="small"></div>
-            <div id="templateCompletionList" class="small"></div>
-            <button id="applyTemplateButton" type="button" class="primary" disabled>Apply reviewed completion</button>
-          </div>
-          <div id="manualAction" class="review-card" hidden>
-            <h3>Manual text placement</h3>
-            <p class="small muted">Click anywhere on the document to choose the text area, then enter its value here.</p>
-            <div class="review-actions">
-              <button id="cancelManualTextButton">Cancel placement</button>
-            </div>
-          </div>
-          <label for="completionValue" class="small">Value</label>
-          <div id="fieldControl" class="inline" hidden></div>
-          <input id="completionValue" type="text" placeholder="Select a field or suggested area first" disabled>
-          <div class="inline">
-            <button id="applyFieldButton" disabled>Fill field</button>
-            <button id="restoreDismissedButton" hidden>Show dismissed</button>
-          </div>
-          <div class="inline" style="margin-top: 6px;">
-            <button id="undoEditButton" disabled>Undo last</button>
-            <button id="exportButton" disabled>Export + validate</button>
-          </div>
-          <div id="editList" class="small" style="margin-top: 8px;"></div>
-          <div id="validationBox" class="small" role="status" aria-live="polite" style="margin-top: 8px;">No export validation yet.</div>
-        </section>
-      </aside>
-    </div>
-
-    <div id="passwordModal" class="password-card" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
-      <form id="passwordForm" class="password-panel">
-        <div id="passwordTitle" class="list-title">Password required</div>
-        <div class="small">Enter the PDF password to continue.</div>
-        <label class="visually-hidden" for="passwordUsername">PDF account</label>
-        <input id="passwordUsername" class="visually-hidden" type="text" autocomplete="username" tabindex="-1" aria-hidden="true">
-        <label for="passwordInput" class="small">PDF password</label>
-        <input id="passwordInput" type="password" autocomplete="current-password" style="width: 240px; margin-top: 10px;">
-        <div class="control-row" style="justify-content: flex-end; margin-top: 10px;">
-          <button id="passwordCancel" type="button">Cancel</button>
-          <button id="passwordSubmit" type="submit">Open</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-<script type="module" nonce="pdf-editor-bootstrap">
   // The independent impact validator is fail-closed for missing or mismatched operation regions.
   import { compareOutsideRegions } from "./pdf-impact-validator.mjs";
   import {
@@ -406,7 +163,6 @@
   let sourceDigest = "";
   let documentContract = null;
   let nativeFields = [];
-  let formOptionMap = new Map();
   let candidates = [];
   let operations = [];
   let reviews = [];
@@ -797,20 +553,24 @@
         const pageIndex = pageNum - 1;
         const name = annotation.fieldName || annotation.id || `field-${pageNum}-${index + 1}`;
         const bounds = normalizeRect(annotation.rect || [0, 0, 0, 0]);
-        const pdfFormChoices = formOptionMap.get(name) || [];
-        const choices = (pdfFormChoices.length ? pdfFormChoices : (annotation.options || [])).map((option) => {
+        const choices = (annotation.options || []).map((option) => {
           if (typeof option === "string") { return option; }
           return option.displayValue || option.exportValue || option.value || "";
         }).filter(Boolean);
-        const rawValue = stringValue(annotation.fieldValue);
-        const value = annotation.fieldType === "Btn" && /^off$/i.test(rawValue) ? "" : rawValue;
+        const buttonValue = annotation.buttonValue || annotation.fieldValue;
+        if (annotation.fieldType === "Btn" && buttonValue) {
+          const normalizedButtonValue = stringValue(buttonValue);
+          if (!/^off$/i.test(normalizedButtonValue) && normalizedButtonValue !== "") {
+            choices.push(normalizedButtonValue);
+          }
+        }
         return {
           id: name,
           name,
           kind: fieldKind(annotation),
           pageIndex,
           bounds,
-          value,
+          value: stringValue(annotation.fieldValue),
           choices,
           coordinate: coordinateFor(pageIndex, bounds, page.rotate || 0),
           annotationID: annotation.id || null,
@@ -1815,18 +1575,6 @@
     }
     try {
       const boxDocument = await pdfLib.PDFDocument.load(new Uint8Array(pdfData));
-      formOptionMap = new Map();
-      try {
-        for (const field of boxDocument.getForm().getFields()) {
-          if (typeof field.getOptions !== "function") { continue; }
-          const options = field.getOptions();
-          if (Array.isArray(options) && options.length) {
-            formOptionMap.set(field.getName(), options.map(String));
-          }
-        }
-      } catch {
-        formOptionMap = new Map();
-      }
       boxDocument.getPages().forEach((page, index) => {
         const box = (value) => value
           ? normalizeRect([value.x, value.y, value.x + value.width, value.y + value.height])
@@ -2430,7 +2178,9 @@
             y: bounds.y,
             width: bounds.width,
             height: bounds.height,
-            borderWidth: 0
+            borderWidth: 1,
+            backgroundColor: pdfLib.rgb(1, 1, 1),
+            textColor: pdfLib.rgb(0.06, 0.18, 0.35)
           });
           continue;
         }
@@ -2930,6 +2680,3 @@
   });
 
   setStatus("Load a PDF to begin.");
-</script>
-</body>
-</html>

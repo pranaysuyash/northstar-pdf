@@ -406,7 +406,6 @@
   let sourceDigest = "";
   let documentContract = null;
   let nativeFields = [];
-  let formOptionMap = new Map();
   let candidates = [];
   let operations = [];
   let reviews = [];
@@ -797,8 +796,7 @@
         const pageIndex = pageNum - 1;
         const name = annotation.fieldName || annotation.id || `field-${pageNum}-${index + 1}`;
         const bounds = normalizeRect(annotation.rect || [0, 0, 0, 0]);
-        const pdfFormChoices = formOptionMap.get(name) || [];
-        const choices = (pdfFormChoices.length ? pdfFormChoices : (annotation.options || [])).map((option) => {
+        const choices = (annotation.options || []).map((option) => {
           if (typeof option === "string") { return option; }
           return option.displayValue || option.exportValue || option.value || "";
         }).filter(Boolean);
@@ -1815,18 +1813,6 @@
     }
     try {
       const boxDocument = await pdfLib.PDFDocument.load(new Uint8Array(pdfData));
-      formOptionMap = new Map();
-      try {
-        for (const field of boxDocument.getForm().getFields()) {
-          if (typeof field.getOptions !== "function") { continue; }
-          const options = field.getOptions();
-          if (Array.isArray(options) && options.length) {
-            formOptionMap.set(field.getName(), options.map(String));
-          }
-        }
-      } catch {
-        formOptionMap = new Map();
-      }
       boxDocument.getPages().forEach((page, index) => {
         const box = (value) => value
           ? normalizeRect([value.x, value.y, value.x + value.width, value.y + value.height])

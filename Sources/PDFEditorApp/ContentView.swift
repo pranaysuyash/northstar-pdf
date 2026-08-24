@@ -495,7 +495,7 @@ private struct InspectorView: View {
             .font(.callout)
             .foregroundStyle(.secondary)
         } else {
-          ForEach(model.availableProfiles) { profile in
+          ForEach(model.availableProfiles, id: \.profileID) { profile in
             Button {
               model.loadProfile(profileID: profile.profileID)
             } label: {

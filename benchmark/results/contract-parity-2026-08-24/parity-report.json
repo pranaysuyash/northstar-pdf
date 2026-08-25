@@ -896,11 +896,11 @@
     {
       "parityCaseID": "PARITY-006",
       "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
-      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
       "sourceBinding": {
-        "liveSourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
-        "nativeSourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
-        "browserSourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+        "liveSourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
+        "nativeSourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
+        "browserSourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
         "nativeMatchesLive": true,
         "browserMatchesLive": true,
         "expectedFailure": false
@@ -924,8 +924,8 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "e568b91581232276e753c233f202cb1a670412fa2616013e23092d671afed768",
-          "browser": "6864b43372220d9e1dbf8986a8331da1705a0da0d656ae1194f6de7e744d4672",
+          "native": "b6215371a4b6a7fec2cc8291e6f9356e0c7e852ff6b293a81dd37a642a441555",
+          "browser": "3dc7efb025096d470a13ba6ef542586fd1305e38431eb802c5db2b49eaa84ac9",
           "exactDigestEquality": false,
           "comparatorEquivalent": true
         }
@@ -986,11 +986,11 @@
     {
       "parityCaseID": "PARITY-008",
       "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
       "sourceBinding": {
-        "liveSourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-        "nativeSourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-        "browserSourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+        "liveSourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
+        "nativeSourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
+        "browserSourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
         "nativeMatchesLive": true,
         "browserMatchesLive": true,
         "expectedFailure": false
@@ -1014,8 +1014,8 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "3c5e0247516759f9701ef9d9350cf6d3af28e910a57c0392940410527d507957",
-          "browser": "b00cb3837e8dc446722c6568656f90386ef1a11942dc7c76dd7e019bdcc0f2c4",
+          "native": "aceb5b8e7852ed496c2f140bd89ee3d55012ba4cfcdd42eba1881afedca44d1a",
+          "browser": "fef1b6d14e0249e2fd66caa636323cd6781ffcaebf100ffbf08eb0bf62e0cf5d",
           "exactDigestEquality": false,
           "comparatorEquivalent": true
         }
@@ -1031,11 +1031,11 @@
     {
       "parityCaseID": "PARITY-009",
       "sourcePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
-      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "sourceBinding": {
-        "liveSourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
-        "nativeSourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
-        "browserSourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+        "liveSourceDigest": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
+        "nativeSourceDigest": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
+        "browserSourceDigest": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
         "nativeMatchesLive": true,
         "browserMatchesLive": true,
         "expectedFailure": false
@@ -1059,8 +1059,8 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "8e91590eb4e96090a7025abb36cda48c61f2768eee37a7dc8834a8e7bae05a3f",
-          "browser": "eaec73c17b469f27072a5d530035a1c7bbdce3b681ce389d2fd206cbda572ce6",
+          "native": "5fb664e0fc6145000d7a6bfa1d11bdc7f55057aa5bc661a3b8e6c4878de6ee0f",
+          "browser": "3b340cb7652ba0d3de8a4f1e74039b427d5ce79b5e36af46017133cbef029cb1",
           "exactDigestEquality": false,
           "comparatorEquivalent": true
         }

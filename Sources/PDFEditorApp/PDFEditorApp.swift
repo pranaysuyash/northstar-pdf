@@ -28,7 +28,56 @@ final class PDFEditorWindowController {
     weak var window: NSWindow?
 
     func close() {
-        window?.performClose(nil)
+        close(afterConfirmed: {})
+    }
+
+    /// Requests AppKit's normal close behavior and runs `completion` only
+    /// after the target window has actually emitted `didClose`.
+    ///
+    /// This is intentionally a post-close transaction boundary. A close can
+    /// be rejected by AppKit or a window delegate, so callers must not clear
+    /// model state merely because `performClose` was requested.
+    func close(afterConfirmed completion: @escaping @MainActor () -> Void) {
+        guard let window else { return }
+
+        pendingCloseObserver.map(NotificationCenter.default.removeObserver)
+        pendingCloseObserver = nil
+        pendingCloseCompletion = completion
+        let confirmPendingClose: @MainActor @Sendable () -> Void = { [weak self] in
+            self?.confirmPendingClose()
+        }
+
+        pendingCloseObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { @Sendable _ in
+            Task { @MainActor in
+                confirmPendingClose()
+            }
+        }
+
+        window.performClose(nil)
+
+        // `performClose` is synchronous on AppKit's main thread. If the
+        // target is still visible, AppKit rejected the request; remove the
+        // pending action so a later unrelated close cannot discard recovery.
+        if window.isVisible {
+            pendingCloseObserver.map(NotificationCenter.default.removeObserver)
+            pendingCloseObserver = nil
+            pendingCloseCompletion = nil
+        }
+    }
+
+    private var pendingCloseObserver: NSObjectProtocol?
+    private var pendingCloseCompletion: (@MainActor () -> Void)?
+
+    private func confirmPendingClose() {
+        guard let completion = pendingCloseCompletion else { return }
+        pendingCloseObserver.map(NotificationCenter.default.removeObserver)
+        pendingCloseObserver = nil
+        pendingCloseCompletion = nil
+        completion()
     }
 }
 

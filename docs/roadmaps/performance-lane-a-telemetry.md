@@ -1,21 +1,27 @@
 # Performance Lane A: Telemetry and benchmark contract
 
-**Status:** Implemented instrumentation primitive; call-site wiring and runtime baselines remain open
+**Status:** Six-stage instrumentation primitive with `inspect`/`export` provider-boundary wiring described in the 2026-08-25 follow-up; remaining stage seams and runtime baselines remain open
 **Owner:** Performance Lane A
 **Date:** 2026-08-24
 **Write set:** `Sources/PDFEditorCore/PerformanceTelemetry.swift` and this report only
 
 ## Outcome
 
-The native core now has one opt-in timing primitive for the five performance
-operations that matter to the PDF editor: open/load, page render, detection,
-undo, redo, and save. It records monotonic durations, success/failure status,
+The native core now has one opt-in timing primitive for the six performance
+stages that matter to the PDF editor: `open_load`, `page_render`, `detection`,
+`undo`, `redo`, and `save`. It records monotonic durations, success/failure status,
 P50/P95 summaries, and no document content. The recorder is disabled by default,
 keeps a bounded in-memory ring when enabled, and emits value-free `os_signpost`
 intervals for Instruments.
 
 This is a Tier 1 static implementation claim. No tests, benchmarks, or runtime
 verification were run for this lane, by instruction.
+
+The dated [`performance-lane-a-implementation-2026-08-25.md`](performance-lane-a-implementation-2026-08-25.md)
+report narrows the former "call-site wiring remains open" statement: it describes
+`open_load` wiring at `PDFKitProvider.inspect` and `save` wiring around the full
+`PDFKitProvider.export` contract. It does not establish page-render, detection,
+undo, redo, standalone benchmark-harness, or runtime coverage.
 
 ## Current architecture and ownership boundary
 
@@ -158,21 +164,28 @@ in performance runs; the instrumentation must not turn it into a success.
 
 ## Integration points still open
 
-The additive primitive is ready, but actual app capture is not yet claimed.
-The owning lanes should wire the following shared call sites in separate,
-ownership-confirmed changes:
+The current wiring posture is:
 
-1. Wrap `PDFKitProvider.inspect` with `measureOpenLoad` and its detector call with `measureDetection`.
-2. Wrap `PDFKitProvider.export` serialization/publication with `measureSave`, keeping reopen/fidelity validation as its own result.
-3. Route the existing PDFKit page drawing or benchmark render helper through `PDFPerformancePageRenderer.draw`.
-4. Wrap `AppModel.undoLastEdit` with `measureUndo`.
-5. Add a real redo state transition before wiring `measureRedo`; the current app surface exposes undo but no corresponding redo operation.
-6. Update standalone benchmark compile commands or add a package-owned benchmark executable so the new core source is exercised by benchmark runs rather than only being available to package clients.
+| Stage | Current status | Evidence boundary |
+|---|---|---|
+| `open_load` | Provider-boundary wiring described at `PDFKitProvider.inspect` | Tier 1 static implementation report; no runtime emission claim |
+| `save` | Provider-boundary wiring described around the full `PDFKitProvider.export` contract, including reopen/fidelity validation before publication | Tier 1 static implementation report; export validation remains authoritative |
+| `page_render` | Renderer seam exists, but coverage of every app or standalone benchmark render path is not established | Open integration seam |
+| `detection` | Detector call-site coverage is not established | Open integration seam |
+| `undo` | Not wired; Lane B currently uses bounded checkpoints plus cached-source fallback | Open integration seam; no timing result |
+| `redo` | Not wired because a real redo transition is not part of the current native surface | Proposed only after redo semantics exist |
 
-Until those call sites are wired and a fixed corpus run is preserved, this lane
-proves the measurement contract and safe storage behavior only. It does not
-prove app-level latency, UI non-blocking behavior, crash freedom, or production
-performance.
+Standalone benchmark-harness integration also remains open. The additive
+primitive and the two provider wrappers therefore prove the measurement
+contract and safe storage behavior only. They do not prove app-level latency,
+UI non-blocking behavior, crash freedom, or production performance.
+
+The [`performance-realignment-2026-08-25.md`](performance-realignment-2026-08-25.md)
+record is the current evidence vocabulary and cross-lane dependency contract.
+Its companion [`../../benchmark/performance-corpus-manifest.json`](../../benchmark/performance-corpus-manifest.json)
+is a proposed value-free input contract with null/TODO measurement fields, not
+a completed baseline. Existing governance remains owned by
+`Tests/fixtures/pdf_corpus_governance_manifest.json`.
 
 ## Rollback and revisit trigger
 

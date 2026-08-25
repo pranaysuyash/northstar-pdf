@@ -4,7 +4,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
-const source = fs.readFileSync(path.join(testDirectory, "..", "web", "index.html"), "utf8");
+const webDir = path.join(testDirectory, "..", "web");
+
+// RT-004: JavaScript was extracted from inline <script> to app.js.
+// Read both files and concatenate so all contract patterns remain verifiable.
+const htmlSource = fs.readFileSync(path.join(webDir, "index.html"), "utf8");
+const appSource = fs.readFileSync(path.join(webDir, "app.js"), "utf8");
+const source = htmlSource + "\n" + appSource;
 
 const requiredContracts = [
   ["document language", /<html lang="en">/],
@@ -51,7 +57,7 @@ const requiredContracts = [
   ["preservation metrics renderer", /function renderImpactMetrics\(/],
   ["value-minimized text metrics", /changedPageCount/],
   ["raster pixel metrics", /changedPixelCount/],
-  ["pinned PDF.js runtime", /pdfjs-dist@4\.2\.67\/build\/pdf\.min\.mjs/],
+  ["pinned PDF.js runtime", /PDFJS_PINNED_VERSION = "4\.2\.67"/],
   ["local PDF.js runtime", /\.\/vendor\/pdfjs\/pdf\.min\.mjs/],
   ["runtime failure state", /PDF\.js runtime unavailable/],
   ["stable web error codes", /WEB_ERROR_CODES[\s\S]*password-required[\s\S]*runtime-unavailable[\s\S]*export-failed[\s\S]*invalid-operation/],
@@ -65,4 +71,28 @@ for (const [name, pattern] of requiredContracts) {
 }
 
 assert.match(source, /Selectable text for page \$\{pageNum\}/);
-console.log(`web reader and completion contract: ${requiredContracts.length} checks passed`);
+
+// Boot-smoke gate (audit A-4, 2026-08-25): the source-contract regexes above
+// passed while a duplicate-import SyntaxError made the inline module unbootable.
+// Parsing the real application module closes that gap at Tier 2 without a browser.
+import os from "node:os";
+import { spawnSync } from "node:child_process";
+assert.match(
+  htmlSource,
+  /<script type="module" src="\.\/app\.js">/,
+  "RT-004 regression: index.html must load the application from ./app.js"
+);
+const bootCheckCopy = path.join(os.tmpdir(), `pdf-editor-app-boot-check-${process.pid}.mjs`);
+fs.writeFileSync(bootCheckCopy, appSource);
+try {
+  const bootCheck = spawnSync(process.execPath, ["--check", bootCheckCopy], { encoding: "utf8" });
+  assert.equal(
+    bootCheck.status,
+    0,
+    `Application module must parse (boot smoke): ${bootCheck.stderr?.slice(0, 400) ?? ""}`
+  );
+} finally {
+  fs.rmSync(bootCheckCopy, { force: true });
+}
+
+console.log(`web reader and completion contract: ${requiredContracts.length} checks passed (+ boot smoke)`);

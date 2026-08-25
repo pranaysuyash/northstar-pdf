@@ -123,7 +123,9 @@ runtime had no console or page errors.
 
 ## Verification
 
-- Swift package: 92 tests in 10 suites passed.
+- Swift package: the current full run passed 101 tests in 12 suites. An earlier
+  92-test run is retained as historical evidence for the original workflow;
+  the current run includes the typed native value review coverage.
 - Browser contract: fingerprint, mapping, profile, matcher, dual-review, and
   negative checks passed.
 - Browser store and reader contract checks passed, including 51 reader and

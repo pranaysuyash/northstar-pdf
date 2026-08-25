@@ -15,10 +15,10 @@ const assets = [
   ["web/vendor/pdf-lib/LICENSE.md", "f2c9fc00fdb66eb99ac156ba52d734af66d8d309f65753ae809ad34ee2883bcb"],
   ["benchmark/results/public-sample-form.pdf", "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"],
   ["benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf", "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74"],
-  ["benchmark/results/security-corpus/encrypted-reader.pdf", "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"],
+  ["benchmark/results/security-corpus/encrypted-reader.pdf", "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491"],
   ["benchmark/results/security-corpus/truncated-128-bytes.pdf", "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1"],
-  ["benchmark/results/security-corpus/repeated-20-pages.pdf", "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"]
-  , ["benchmark/results/ocr-corpus/printed-scan.pdf", "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364"]
+  ["benchmark/results/security-corpus/repeated-20-pages.pdf", "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6"]
+  , ["benchmark/results/ocr-corpus/printed-scan.pdf", "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3"]
   , ["benchmark/results/rotation-corpus/rotated-widget-90.pdf", "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2"]
   , ["benchmark/results/rotation-corpus/rotated-form6-mixed.pdf", "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177"]
   , ["benchmark/results/governed-corpus/handwritten-simulated-entries.pdf", "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897"]

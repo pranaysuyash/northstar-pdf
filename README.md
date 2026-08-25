@@ -111,6 +111,9 @@ Current durable research artifacts:
   and browser reviewed completion workflow with separate mapping approval and
   exact profile-value approval, target/value invalidation, source binding, and
   mutation-tested materialization gates.
+- [`docs/audits/native-template-capture-review-surface-evidence-2026-08-25.md`](docs/audits/native-template-capture-review-surface-evidence-2026-08-25.md): native
+  SwiftUI capture, immutable revision review, target evidence, typed
+  mapping/value approval, and current native build evidence.
 - [`docs/audits/template-lifecycle-evidence-2026-08-25.md`](docs/audits/template-lifecycle-evidence-2026-08-25.md),
   [`Sources/PDFEditorCore/TemplateLifecycleContracts.swift`](Sources/PDFEditorCore/TemplateLifecycleContracts.swift),
   [`Sources/PDFEditorCore/TemplateSyncContracts.swift`](Sources/PDFEditorCore/TemplateSyncContracts.swift),
@@ -118,6 +121,14 @@ Current durable research artifacts:
   encrypted native/browser template lifecycle with OPFS, IndexedDB, Keychain,
   separate profile unlock, deletion and recovery, value-free transfer,
   revision diffs, learning journals, and client-encrypted sync.
+- [`docs/audits/template-runtime-completion-evidence-2026-08-25.md`](docs/audits/template-runtime-completion-evidence-2026-08-25.md),
+  [`Sources/PDFEditorCore/TemplateIndexContracts.swift`](Sources/PDFEditorCore/TemplateIndexContracts.swift),
+  [`web/template-index.mjs`](web/template-index.mjs), and
+  [`web/pdf-capability-lanes.mjs`](web/pdf-capability-lanes.mjs): native/browser
+  value-free exact, variant, family, ambiguous, stale, and no-match retrieval,
+  encrypted-store recovery controls, learning/revision review visibility, and
+  named source-bound lanes for OCR, text editing, redaction, signatures, XFA,
+  PDF/UA, and independent-viewer validation.
 - [`web/template-match-benchmark.mjs`](web/template-match-benchmark.mjs) and
   [`Tests/web_template_match_benchmark_test.mjs`](Tests/web_template_match_benchmark_test.mjs):
   reviewer-labeled 24-case exact, known-variant, family, ambiguous, stale, and

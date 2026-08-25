@@ -3,7 +3,7 @@
 **Date:** 2026-08-24  
 **Owner:** Performance Lane D  
 **Scope:** native PDF rendering, file I/O, concurrency, and memory behavior  
-**Status:** design-only follow-up; no native source change is safe to land from static inspection alone
+**Status:** design-only follow-up; Lane A now describes `inspect`/`export` telemetry wiring, but no native runtime change or runtime performance result is established
 
 ## Outcome
 
@@ -12,6 +12,15 @@ This lane preserves the native macOS PDFKit path while making the next performan
 The current implementation does not yet establish a safe thread-isolation contract for moving PDFKit work away from the main actor. It also has no cooperative cancellation points inside the synchronous provider pipeline. Adding an asynchronous wrapper or a page cache without resolving those boundaries could create stale-document publication, PDFKit object races, excessive memory retention, or cancellation that reports success while an export is still writing.
 
 For this pass, the correct implementation result is therefore documentation only. The design below is the required path for a later, measured implementation.
+
+The current telemetry contract is the six-stage, value-free contract defined in
+[`performance-lane-a-telemetry.md`](performance-lane-a-telemetry.md):
+`open_load`, `page_render`, `detection`, `undo`, `redo`, and `save`. The dated
+Lane A implementation report describes `open_load` at `PDFKitProvider.inspect`
+and `save` around the full staged `PDFKitProvider.export` contract. Page-render,
+detection, undo, redo, standalone harness, and runtime coverage remain open.
+This provider-boundary wiring does not change the native-only or
+provider-neutral contract and does not constitute runtime verification.
 
 ## Source-grounded current state
 
@@ -32,7 +41,7 @@ The following observations are from static inspection of the live checkout. They
 | `Sources/PDFEditorApp/AppModel.swift:729-749` | Export snapshots neither operations nor a session token; it calls synchronous provider export from the main actor after `NSSavePanel`. | Export can block the UI and can race with future asynchronous edits unless a versioned request snapshot is introduced before work leaves the main actor. |
 | `Sources/PDFEditorApp/ContentView.swift:199-230` | `PDFKitView` receives `model.liveDocument` and reader state directly. | The view is a main-actor presentation projection over the live PDFKit object. A background job must never mutate or replace this object concurrently with `PDFView` updates. |
 
-The existing native performance plan already identifies the relevant future work: instrumentation before tuning, page-scoped invalidation, bounded caches, visible-window rendering, cancellation, background parse/detect work, and memory pressure handling in `docs/roadmaps/performance-roadmap-2026-08-24.md:45-118`. This document narrows that broad plan to the PDFKit and AppModel ownership constraints that must be resolved first.
+The existing native performance plan already identifies the relevant future work: instrumentation before tuning, page-scoped invalidation, bounded caches, visible-window rendering, cancellation, background parse/detect work, and memory pressure handling in `docs/roadmaps/performance-roadmap-2026-08-24.md:45-118`. The 2026-08-25 Lane A implementation report and [`performance-realignment-2026-08-25.md`](performance-realignment-2026-08-25.md) now refine that plan with the six-stage measurement contract, current provider wiring, checkpoint/redo boundary, and value-free corpus input contract. This document narrows the broad plan to the PDFKit and AppModel ownership constraints that must be resolved first.
 
 ## Invariants that must not move
 
@@ -153,7 +162,8 @@ Background execution must wrap this sequence, not reorder it. Temporary files sh
 
 ### Phase A: measurement and contract preparation
 
-- Add privacy-safe timing and peak-memory measurements around open, inspection, undo rebuild, export mutation, validation, and publication.
+- Use the existing six-stage, privacy-safe telemetry contract for measurement; `open_load` and the full `save` export boundary are described as provider-wired, while page-render, detection, undo, redo, and standalone benchmark seams still need ownership-confirmed integration.
+- Add peak-memory measurements around open, inspection, undo rebuild, export mutation, validation, and publication.
 - Use a fixed corpus described by input byte count, page count, text density, annotation count, vector complexity, encryption state, and image presence. Do not log source names or content.
 - Record queue depth, canceled request count, stale-result drops, temporary-file cleanup outcomes, and first-page readiness.
 - Define the cancellation, generation, and publication state machine before moving work off-main.
@@ -212,6 +222,12 @@ The implementation is not ready to claim performance improvement until all of th
 - `docs/roadmaps/performance-lane-d-native-runtime.md`: records the current native runtime facts, the documentation-only decision, invariants, proposed bounded executor and cache design, acceptance gates, and unresolved risks.
 
 No Swift source, package configuration, tests, benchmarks, generated artifacts, or runtime state were changed in this lane.
+
+The companion [`../../benchmark/performance-corpus-manifest.json`](../../benchmark/performance-corpus-manifest.json)
+is a proposed value-free input contract, not a runtime corpus result. The
+2026-08-25 realignment records which fields remain null/TODO until an authorized
+measurement flow populates them. Historical parity and preservation outputs are
+not substituted for native runtime evidence.
 
 ## Next decision
 

@@ -1,11 +1,16 @@
 /*
  * Northstar PDF visual system, adapted from Web-Prototype.zip.
  *
- * This first pass deliberately styles the existing semantic DOM instead of
- * replacing the PDF.js/pdf-lib runtime. The selectors preserve the current
- * IDs and event wiring so the design work can land independently of the
- * later React migration.
+ * Single source of truth for web styling (audit A-5, 2026-08-25): the legacy
+ * inline <style> blocks were retired into this file and tokenized. Colors and
+ * type come only from the tokens below; the five-mode surfaces (mode stage,
+ * analysis reveal, validation report) follow the design rationale's "calm
+ * evidence workspace" contract.
  */
+
+/* ------------------------------------------------------------------ */
+/* Tokens (design handoff: color and brand contract)                    */
+/* ------------------------------------------------------------------ */
 :root {
   --pdf-ink: oklch(0.22 0.03 255);
   --pdf-ink-soft: oklch(0.42 0.035 255);
@@ -15,6 +20,9 @@
   --pdf-shell: oklch(0.18 0.035 255);
   --pdf-shell-raised: oklch(0.23 0.038 255);
   --pdf-shell-line: oklch(0.33 0.035 255);
+  --pdf-shell-text: oklch(0.88 0.02 255);
+  --pdf-shell-muted: oklch(0.68 0.025 255);
+  --pdf-accent-soft: oklch(0.78 0.1 258);
   --pdf-surface: oklch(0.99 0.006 255);
   --pdf-surface-soft: oklch(0.965 0.012 255);
   --pdf-border: oklch(0.86 0.02 255);
@@ -23,37 +31,146 @@
   --pdf-accent-wash: oklch(0.92 0.055 258);
   --pdf-amber: oklch(0.73 0.14 80);
   --pdf-amber-wash: oklch(0.95 0.05 90);
+  --pdf-amber-line: oklch(0.82 0.11 82);
   --pdf-green: oklch(0.57 0.13 155);
+  --pdf-green-ink: oklch(0.38 0.09 155);
+  --pdf-red: oklch(0.56 0.16 25);
+  --pdf-red-ink: oklch(0.5 0.13 25);
   --pdf-display: Iowan Old Style, Baskerville, Palatino Linotype, Georgia, serif;
   --pdf-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --pdf-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --pdf-shadow: 0 18px 45px oklch(0.17 0.04 255 / 0.14);
+  --pdf-motion: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* ------------------------------------------------------------------ */
+/* Base                                                                 */
+/* ------------------------------------------------------------------ */
 html,
 body {
+  margin: 0;
+  height: 100%;
   background: var(--pdf-canvas);
   color: var(--pdf-ink);
   font-family: var(--pdf-body);
 }
 
+body {
+  display: flex;
+}
+
 #app {
+  display: grid;
   grid-template-rows: auto minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
   min-height: 100vh;
 }
 
-/* Command frame: the existing toolbar remains one responsive command area. */
+:focus-visible {
+  outline: 2px solid var(--pdf-accent);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: -48px;
+  z-index: 20;
+  padding: 8px 12px;
+  background: var(--pdf-shell);
+  color: var(--pdf-paper);
+  border-radius: 6px;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.small {
+  font-size: 12px;
+  color: var(--pdf-ink-soft);
+}
+
+.muted {
+  color: var(--pdf-ink-faint);
+}
+
+.danger {
+  color: var(--pdf-red-ink);
+}
+
+.success {
+  color: var(--pdf-green-ink);
+}
+
+.status {
+  font-size: 12px;
+  color: var(--pdf-ink-soft);
+}
+
+.list-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--pdf-ink);
+}
+
+.outline-item {
+  margin-left: 8px;
+}
+
+.inline {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.item {
+  padding: 6px;
+  border-bottom: 1px solid var(--pdf-surface-soft);
+}
+
+.item button {
+  margin-right: 8px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Command frame (toolbar)                                             */
+/* ------------------------------------------------------------------ */
 .toolbar {
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px 12px;
   align-items: center;
   padding: 9px 14px;
-  color: oklch(0.88 0.02 255);
+  color: var(--pdf-shell-text);
   background: var(--pdf-shell);
-  border-bottom-color: var(--pdf-shell-line);
-  box-shadow: none;
+  border-bottom: 1px solid var(--pdf-shell-line);
+  z-index: 3;
 }
 
 .toolbar-title {
+  display: flex;
+  flex-direction: column;
   min-width: 174px;
   margin-right: 4px;
 }
@@ -68,7 +185,7 @@ body {
 .toolbar label,
 .toolbar .small,
 .toolbar .status {
-  color: oklch(0.68 0.025 255);
+  color: var(--pdf-shell-muted);
 }
 
 .toolbar label {
@@ -80,9 +197,10 @@ body {
 .toolbar button,
 .toolbar select,
 .toolbar input {
+  font: inherit;
   color: oklch(0.9 0.015 255);
   background: var(--pdf-shell-raised);
-  border-color: var(--pdf-shell-line);
+  border: 1px solid var(--pdf-shell-line);
   border-radius: 5px;
 }
 
@@ -102,11 +220,17 @@ body {
   min-height: 34px;
   padding: 6px 9px;
   font-size: 11px;
+  cursor: pointer;
 }
 
 .toolbar button:hover:not(:disabled) {
   color: oklch(0.98 0.01 255);
   background: oklch(0.3 0.045 255);
+}
+
+.toolbar button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .toolbar button.primary,
@@ -119,20 +243,35 @@ body {
 .toolbar button:focus-visible,
 .toolbar select:focus-visible,
 .toolbar input:focus-visible {
-  outline-color: var(--pdf-accent);
+  outline-color: var(--pdf-accent-soft);
 }
 
-/* Three-region workspace: shell, document stage, evidence inspector. */
+@media (pointer: coarse) {
+  .toolbar button {
+    min-height: 44px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Three-region workspace: shell rail, document stage, inspector        */
+/* ------------------------------------------------------------------ */
 .workspace {
+  display: grid;
   grid-template-columns: 232px minmax(0, 1fr) 310px;
   gap: 0;
   padding: 0;
+  overflow: hidden;
+  min-height: 0;
   background: var(--pdf-canvas);
 }
 
 .panel {
+  min-height: 0;
+  overflow: auto;
+  background: var(--pdf-surface);
+  border: 1px solid var(--pdf-border);
   border-radius: 0;
-  border-color: var(--pdf-border);
+  padding: 12px;
   box-shadow: none;
 }
 
@@ -146,23 +285,31 @@ body {
 .workspace > aside:first-child .list-title {
   margin: 0 0 14px;
   padding: 0 10px;
-  color: oklch(0.6 0.025 255);
+  color: var(--pdf-shell-muted);
   font: 700 10px var(--pdf-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.workspace > aside:first-child .thumb {
+.thumb {
   width: 100%;
   height: auto;
   min-height: 160px;
   margin: 6px 0;
   padding: 6px;
-  background: oklch(0.23 0.038 255);
-  border-color: var(--pdf-shell-line);
+  background: var(--pdf-shell-raised);
+  border: 1px solid var(--pdf-shell-line);
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.workspace > aside:first-child .thumb.selected {
+.thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.thumb.selected {
   outline: 2px solid var(--pdf-accent);
   background: oklch(0.3 0.06 258);
 }
@@ -172,14 +319,22 @@ body {
   padding: 0;
   background: var(--pdf-canvas);
   border: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 #viewerCanvasWrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
   min-height: 100%;
   padding: 28px;
+  overflow: auto;
   background: var(--pdf-canvas);
   border: 0;
   border-radius: 0;
+  display: flex;
+  justify-content: center;
 }
 
 #viewerStack {
@@ -188,15 +343,61 @@ body {
   margin: 0 auto;
 }
 
+.page-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+}
+
 .page-shell {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
   box-shadow: var(--pdf-shadow);
 }
 
 #viewerCanvas {
-  border-color: oklch(0.84 0.025 255);
+  border: 1px solid oklch(0.84 0.025 255);
+  background: var(--pdf-paper);
 }
 
-/* Evidence inspector: cards are containers, not the visual center of gravity. */
+/* Text layer: selectable, transparent glyphs aligned to the canvas. */
+.text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  user-select: text;
+  pointer-events: auto;
+  color: transparent;
+  background: transparent;
+}
+
+.text-layer span {
+  position: absolute;
+  white-space: pre;
+  transform-origin: 0 0;
+  color: transparent;
+  cursor: text;
+}
+
+.text-layer span:focus {
+  outline: 2px solid var(--pdf-accent);
+  outline-offset: 1px;
+}
+
+/* Search-text highlight stays legible without masking the PDF canvas. */
+.text-layer mark {
+  color: transparent;
+  background: oklch(0.87 0.13 92 / 0.2);
+  box-shadow: inset 0 -2px oklch(0.78 0.14 70 / 0.5);
+  padding: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Evidence inspector                                                   */
+/* ------------------------------------------------------------------ */
 .workspace > aside:last-child {
   padding: 0;
   background: var(--pdf-surface);
@@ -227,10 +428,15 @@ body {
 }
 
 .workspace > aside:last-child > .small,
-.workspace > aside:last-child > .completion-card {
-  margin-right: 0;
-  margin-left: 0;
-  border-radius: 0;
+.workspace > aside:last-child .list-title ~ .small,
+.workspace > aside:last-child .list-title[style] {
+  margin-right: 20px;
+  margin-left: 20px;
+}
+
+.workspace > aside:last-child > .small + .list-title,
+.workspace > aside:last-child .list-title[style] {
+  margin-top: 14px;
 }
 
 .workspace > aside:last-child .item,
@@ -248,6 +454,14 @@ body {
   border-radius: 0;
 }
 
+.completion-card input,
+.completion-card select {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 4px 0;
+  font: inherit;
+}
+
 .completion-card .list-title {
   color: var(--pdf-ink-faint);
   font: 700 10px var(--pdf-mono);
@@ -255,38 +469,230 @@ body {
   text-transform: uppercase;
 }
 
+.completion-list {
+  max-height: 205px;
+  overflow: auto;
+}
+
+.completion-item {
+  border-top: 1px solid var(--pdf-surface-soft);
+  padding: 8px 0;
+}
+
+.completion-item button {
+  margin-top: 4px;
+}
+
+.candidate-score {
+  font-variant-numeric: tabular-nums;
+  color: var(--pdf-accent-deep);
+}
+
+/* Candidate overlays on the document: restrained cobalt language.
+   Character-grid candidates render the union as a thin dashed boundary only
+   (no fill) and paint each cell individually, preserving the printed text
+   through the gaps between cells. */
+.candidate-preview {
+  position: absolute;
+  border: 2px solid color-mix(in oklch, var(--pdf-accent) 70%, transparent);
+  background: color-mix(in oklch, var(--pdf-accent-wash) 55%, transparent);
+  color: var(--pdf-accent-deep);
+  padding: 3px 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  font: 11px/1.1 var(--pdf-body);
+  z-index: 5;
+  border-radius: 4px;
+}
+
+.candidate-preview:hover,
+.candidate-preview.selected {
+  border-color: var(--pdf-accent);
+  background: color-mix(in oklch, var(--pdf-accent-soft) 48%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--pdf-accent) 15%, transparent);
+}
+
+.candidate-preview.character-grid {
+  background: transparent;
+  border-style: dashed;
+  padding: 0;
+  border-radius: 0;
+}
+
+.candidate-preview.character-grid.selected {
+  border-style: solid;
+}
+
+.candidate-cell-tint {
+  position: absolute;
+  border: 1.5px solid color-mix(in oklch, var(--pdf-accent) 85%, transparent);
+  background: color-mix(in oklch, var(--pdf-accent-wash) 45%, transparent);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 4;
+  box-sizing: border-box;
+}
+
+.candidate-cell-tint.selected {
+  border-color: var(--pdf-accent);
+  background: color-mix(in oklch, var(--pdf-accent-soft) 42%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--pdf-accent) 18%, transparent);
+}
+
+.candidate-preview.rejected {
+  display: none;
+}
+
+/* Pending edits use the same restrained language as candidate cells: a dense
+   fill made entered glyphs look like a highlighter over the printed form. */
+.overlay-preview {
+  position: absolute;
+  border: 1px solid color-mix(in oklch, var(--pdf-accent) 55%, transparent);
+  background: color-mix(in oklch, var(--pdf-accent-wash) 65%, transparent);
+  color: var(--pdf-ink);
+  padding: 3px 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  white-space: pre-wrap;
+  overflow: hidden;
+  font: 600 12px/1.1 var(--pdf-body);
+  z-index: 6;
+  border-radius: 3px;
+}
+
+.manual-placement #viewerCanvasWrap {
+  cursor: crosshair;
+  box-shadow: inset 0 0 0 3px color-mix(in oklch, var(--pdf-accent) 20%, transparent);
+}
+
 .review-card {
   background: var(--pdf-surface-soft);
-  border-color: var(--pdf-border);
+  border: 1px solid var(--pdf-border);
   border-radius: 5px;
+  padding: 10px;
+  margin: 8px 0;
 }
 
 .review-card:first-of-type {
   background: var(--pdf-amber-wash);
-  border-color: oklch(0.82 0.11 82);
+  border-color: var(--pdf-amber-line);
+}
+
+.review-card h3 {
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.review-card p {
+  margin: 4px 0;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .review-actions button {
   min-height: 34px;
+  border: 1px solid var(--pdf-border);
   border-radius: 5px;
+  background: var(--pdf-surface);
+  color: var(--pdf-ink);
+  padding: 6px 9px;
+  cursor: pointer;
 }
 
 .review-actions button.primary {
+  color: oklch(0.98 0.01 255);
   background: var(--pdf-accent-deep);
   border-color: var(--pdf-accent-deep);
 }
 
-.success {
-  color: oklch(0.38 0.09 155);
+.review-actions button.danger {
+  color: var(--pdf-red-ink);
 }
 
-.danger {
-  color: oklch(0.5 0.13 25);
+.impact-metrics {
+  border-top: 1px solid var(--pdf-border);
+  margin-top: 8px;
+  padding-top: 8px;
 }
 
-/* The mode rail is the first visible bridge from the prototype's five-mode
-   product model into the existing PDF.js surface. It is intentionally a
-   navigation/state layer, not a claim that every provider is connected. */
+.impact-metric-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--pdf-surface-soft);
+}
+
+.impact-metric-label {
+  color: var(--pdf-ink-soft);
+}
+
+.impact-metric-value {
+  color: var(--pdf-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.impact-metric-value.success {
+  color: var(--pdf-green-ink);
+}
+
+.impact-metric-value.danger {
+  color: var(--pdf-red-ink);
+}
+
+.impact-metric-value.muted {
+  color: var(--pdf-ink-faint);
+}
+
+.template-mapping {
+  border-top: 1px solid var(--pdf-border);
+  padding: 8px 0;
+}
+
+.template-mapping input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.template-mapping label {
+  display: block;
+  margin-top: 4px;
+}
+
+/* Password dialog */
+.password-card {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: oklch(0.18 0.035 255 / 0.45);
+  justify-content: center;
+  align-items: center;
+}
+
+.password-card.show {
+  display: flex;
+}
+
+.password-panel {
+  background: var(--pdf-surface);
+  padding: 18px;
+  border-radius: 8px;
+  border: 1px solid var(--pdf-border);
+  box-shadow: var(--pdf-shadow);
+}
+
+/* ------------------------------------------------------------------ */
+/* Mode rail (tablist)                                                  */
+/* ------------------------------------------------------------------ */
 .product-mode-rail {
   margin: -17px -20px 18px;
   padding: 18px 14px 14px;
@@ -381,33 +787,442 @@ body {
   line-height: 1.45;
 }
 
-@media (max-width: 760px) {
-  .product-mode-rail {
-    margin: -17px -20px 18px;
-  }
-
-  .product-mode-nav {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-
-  .product-mode-button {
-    display: block;
-    min-height: 62px;
-    padding: 8px 5px;
-  }
-
-  .product-mode-index,
-  .product-mode-state {
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .product-mode-copy small {
-    display: none;
-  }
+/* ------------------------------------------------------------------ */
+/* Mode stage: five-mode product surfaces above the document            */
+/* ------------------------------------------------------------------ */
+.mode-stage {
+  border-bottom: 1px solid var(--pdf-border);
+  background: var(--pdf-surface);
 }
 
-/* Preserve a usable reading surface at the prototype's tablet and mobile widths. */
+.mode-panel {
+  padding: 10px 16px;
+}
+
+.mode-panel[hidden] {
+  display: none;
+}
+
+.mode-panel-reader {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 7px 16px;
+  background: var(--pdf-surface);
+}
+
+.mode-context-line {
+  color: var(--pdf-ink-soft);
+  font: 11px/1.4 var(--pdf-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.mode-panel-head {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.mode-panel-kicker {
+  color: var(--pdf-ink-faint);
+  font: 700 9px var(--pdf-mono);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.mode-panel-title {
+  margin: 0;
+  color: var(--pdf-ink);
+  font: 600 17px/1.15 var(--pdf-display);
+  letter-spacing: -0.02em;
+}
+
+.mode-return-button {
+  margin-left: auto;
+  min-height: 28px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--pdf-border);
+  border-radius: 5px;
+  color: var(--pdf-ink-soft);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.mode-return-button:hover,
+.mode-return-button:focus-visible {
+  border-color: var(--pdf-accent);
+  color: var(--pdf-accent-deep);
+}
+
+.mode-panel-body {
+  display: grid;
+  gap: 10px 22px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  padding-bottom: 4px;
+}
+
+.understand-block {
+  min-width: 0;
+}
+
+.understand-block .block-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--pdf-ink-faint);
+  font: 700 9px var(--pdf-mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.docmap-row,
+.evidence-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--pdf-surface-soft);
+  font-size: 11px;
+}
+
+.docmap-row .docmap-count,
+.evidence-row .evidence-count {
+  color: var(--pdf-ink-soft);
+  font-family: var(--pdf-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.next-action-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 9px 11px;
+  background: var(--pdf-amber-wash);
+  border: 1px solid var(--pdf-amber-line);
+  border-radius: 5px;
+  font-size: 11px;
+}
+
+.next-action-card .next-action-copy {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.next-action-card button {
+  min-height: 30px;
+  padding: 5px 10px;
+  background: var(--pdf-accent-deep);
+  border: 1px solid var(--pdf-accent-deep);
+  border-radius: 5px;
+  color: oklch(0.98 0.01 255);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.next-action-empty {
+  color: var(--pdf-ink-faint);
+  font-size: 11px;
+}
+
+/* Review panel: export guardrail + validation report */
+.guardrail-decision {
+  display: grid;
+  gap: 3px;
+  padding: 8px 11px;
+  border: 1px solid var(--pdf-border);
+  border-left: 3px solid var(--pdf-ink-faint);
+  border-radius: 5px;
+  background: var(--pdf-surface-soft);
+}
+
+.guardrail-decision.is-satisfied {
+  border-left-color: var(--pdf-green);
+}
+
+.guardrail-decision.is-pending {
+  border-left-color: var(--pdf-amber);
+}
+
+.guardrail-decision .guardrail-label {
+  color: var(--pdf-ink);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.guardrail-decision .guardrail-note {
+  color: var(--pdf-ink-soft);
+  font-size: 11px;
+}
+
+.validation-report {
+  display: grid;
+  gap: 3px;
+}
+
+.vr-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--pdf-surface-soft);
+  font-size: 11px;
+}
+
+.vr-state {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  border-radius: 99px;
+  border: 1px solid var(--pdf-border);
+  color: var(--pdf-ink-soft);
+  font: 600 9px var(--pdf-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.vr-state.passed {
+  border-color: color-mix(in oklch, var(--pdf-green) 55%, transparent);
+  color: var(--pdf-green-ink);
+}
+
+.vr-state.warning {
+  border-color: var(--pdf-amber-line);
+  color: oklch(0.45 0.11 80);
+  background: var(--pdf-amber-wash);
+}
+
+.vr-state.unknown {
+  border-color: var(--pdf-border);
+  color: var(--pdf-ink-faint);
+}
+
+.vr-state.failed {
+  border-color: color-mix(in oklch, var(--pdf-red) 55%, transparent);
+  color: var(--pdf-red-ink);
+}
+
+.vr-note {
+  color: var(--pdf-ink-faint);
+  font-size: 10px;
+}
+
+/* Organize panel inventory rows reuse docmap-row styling. */
+.organize-boundary {
+  padding: 8px 11px;
+  border: 1px dashed var(--pdf-amber-line);
+  border-radius: 5px;
+  background: var(--pdf-amber-wash);
+  color: var(--pdf-ink-soft);
+  font-size: 11px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Local analysis reveal (design §5/§6.1)                               */
+/* ------------------------------------------------------------------ */
+.analysis-overlay {
+  position: sticky;
+  top: 14px;
+  z-index: 8;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  pointer-events: none;
+}
+
+.analysis-overlay[hidden] {
+  display: none;
+}
+
+.analysis-console {
+  pointer-events: auto;
+  width: min(430px, 88%);
+  padding: 16px 18px 14px;
+  background: var(--pdf-paper);
+  border: 1px solid var(--pdf-border);
+  border-radius: 7px;
+  box-shadow: var(--pdf-shadow);
+  text-align: left;
+  transition: opacity var(--pdf-motion), transform var(--pdf-motion);
+}
+
+.analysis-overlay.is-leaving .analysis-console {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.analysis-kicker {
+  margin-bottom: 5px;
+  color: var(--pdf-accent-deep);
+  font: 700 9px var(--pdf-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.analysis-title {
+  margin: 0 0 4px;
+  color: var(--pdf-ink);
+  font: 600 19px/1.12 var(--pdf-display);
+  letter-spacing: -0.02em;
+}
+
+.analysis-copy {
+  margin: 0 0 12px;
+  color: var(--pdf-ink-soft);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.analysis-progress {
+  height: 3px;
+  margin-bottom: 12px;
+  background: var(--pdf-surface-soft);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.analysis-progress-fill {
+  width: 0;
+  height: 100%;
+  background: var(--pdf-accent);
+  border-radius: 99px;
+  transition: width 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.analysis-signals {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.analysis-signal {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  padding: 3px 9px;
+  background: var(--pdf-surface);
+  border: 1px solid var(--pdf-border);
+  border-radius: 99px;
+  color: var(--pdf-ink-faint);
+  font: 600 9px var(--pdf-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.analysis-signal::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--pdf-border);
+}
+
+.analysis-signal.is-active {
+  color: var(--pdf-accent-deep);
+  border-color: color-mix(in oklch, var(--pdf-accent) 45%, transparent);
+}
+
+.analysis-signal.is-active::before {
+  background: var(--pdf-accent);
+}
+
+.analysis-signal.is-done {
+  color: var(--pdf-green-ink);
+  border-color: color-mix(in oklch, var(--pdf-green) 45%, transparent);
+}
+
+.analysis-signal.is-done::before {
+  background: var(--pdf-green);
+}
+
+.analysis-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.analysis-skip-button {
+  min-height: 30px;
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid var(--pdf-border);
+  border-radius: 5px;
+  color: var(--pdf-ink-soft);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.analysis-skip-button:hover,
+.analysis-skip-button:focus-visible {
+  border-color: var(--pdf-accent);
+  color: var(--pdf-accent-deep);
+}
+
+/* Persistent analysis status pill (design §6.2): color always paired with
+   text; the dot is never the only signal. */
+.analysis-pill {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  margin-left: auto;
+  padding: 2px 4px 2px 0;
+  color: var(--pdf-ink-faint);
+  font: 600 10px var(--pdf-mono);
+  letter-spacing: 0.03em;
+}
+
+.analysis-pill:not(.is-complete, .is-skipped, .is-partial, .is-unavailable, .is-failed):empty {
+  display: none;
+}
+
+.analysis-pill .pill-copy {
+  white-space: nowrap;
+}
+
+.analysis-pill.is-complete {
+  color: var(--pdf-green-ink);
+}
+
+.analysis-pill.is-partial {
+  color: oklch(0.45 0.11 80);
+}
+
+.analysis-pill.is-skipped,
+.analysis-pill.is-unavailable,
+.analysis-pill.is-failed {
+  color: var(--pdf-ink-faint);
+}
+
+.analysis-pill.is-failed .pill-copy {
+  color: var(--pdf-red-ink);
+}
+
+.analysis-pill button {
+  min-height: 24px;
+  padding: 2px 9px;
+  background: transparent;
+  border: 1px solid var(--pdf-border);
+  border-radius: 99px;
+  color: var(--pdf-ink-soft);
+  font: 600 9px var(--pdf-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.analysis-pill button:hover,
+.analysis-pill button:focus-visible {
+  border-color: var(--pdf-accent);
+  color: var(--pdf-accent-deep);
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive contract (2025–2026 viewport matrix)                      */
+/* ------------------------------------------------------------------ */
 @media (max-width: 1100px) {
   .workspace {
     grid-template-columns: 180px minmax(0, 1fr);
@@ -418,6 +1233,20 @@ body {
     max-height: 380px;
     border-top: 1px solid var(--pdf-border);
     border-left: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+
+  .product-mode-copy small {
+    display: none;
+  }
+
+  #viewerCanvasWrap {
+    padding: 18px;
   }
 }
 
@@ -438,6 +1267,10 @@ body {
   .toolbar .control-row {
     flex: 1 1 100%;
     flex-wrap: wrap;
+  }
+
+  .toolbar input[type="text"] {
+    width: min(200px, 60vw);
   }
 
   .workspace {
@@ -471,8 +1304,72 @@ body {
   #viewerStack {
     max-width: none;
   }
+
+  .product-mode-rail {
+    margin: -17px -14px 14px;
+    padding: 14px 10px 10px;
+  }
+
+  .product-mode-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .product-mode-button {
+    display: block;
+    min-height: 62px;
+    padding: 8px 5px;
+  }
+
+  .product-mode-index,
+  .product-mode-state {
+    display: block;
+    margin-bottom: 4px;
+    white-space: normal;
+  }
+
+  .product-mode-copy small {
+    display: none;
+  }
+
+  .mode-panel-body {
+    grid-template-columns: 1fr;
+  }
+
+  .mode-panel-title {
+    font-size: 15px;
+  }
 }
 
+@media (max-width: 600px) {
+  .toolbar {
+    padding: 8px 10px;
+  }
+
+  .toolbar input[type="file"] {
+    max-width: 100%;
+  }
+
+  .workspace > aside:first-child {
+    max-height: 200px;
+  }
+
+  .mode-panel-reader {
+    padding: 6px 10px;
+  }
+
+  .mode-context-line {
+    font-size: 10px;
+  }
+
+  .analysis-console {
+    width: 94%;
+    padding: 13px 14px 11px;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion (design §7)                                           */
+/* ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -481,5 +1378,9 @@ body {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .analysis-overlay.is-leaving .analysis-console {
+    transform: none;
   }
 }

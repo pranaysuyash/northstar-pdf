@@ -127,6 +127,24 @@ struct ContentView: View {
         .help(exportCopyHelp(model))
         .accessibilityHelp(exportCopyHelp(model))
       }
+      // MARK: Editor mode pill (D-010)
+      ToolbarItem {
+        Picker(
+          "Editor mode",
+          selection: Binding(
+            get: { model.editorMode },
+            set: { model.setEditorMode($0) }
+          )
+        ) {
+          ForEach(EditorMode.allCases, id: \.self) { mode in
+            Label(mode.displayName, systemImage: mode.symbolName).tag(mode)
+          }
+        }
+        .pickerStyle(.segmented)
+        .frame(width: 260)
+        .disabled(model.inspection == nil)
+        .help("Choose your intent: Read (passive), Fill (complete form fields), Sign (place a signature), or Edit (full authoring).")
+      }
       ToolbarItem {
         Picker(
           "Reader mode",
@@ -158,9 +176,45 @@ struct ContentView: View {
         .frame(width: 140)
       }
       ToolbarItem(placement: .status) {
-        Text(model.statusMessage ?? "Ready")
-          .foregroundStyle(.secondary)
-          .lineLimit(1)
+        HStack(spacing: 6) {
+          // Fill offer chip
+          if model.isFillOfferVisible && model.editorMode == .read {
+            Button {
+              model.setEditorMode(.fill)
+            } label: {
+              HStack(spacing: 4) {
+                Image(systemName: "pencil.and.list.clipboard")
+                Text(model.fillProgressLabel ?? "Start filling")
+                  .fontWeight(.medium)
+              }
+              .font(.caption)
+              .padding(.horizontal, 8)
+              .padding(.vertical, 3)
+              .background(Color.accentColor.opacity(0.15))
+              .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .transition(.scale.combined(with: .opacity))
+            .help("Enter Fill mode to highlight and complete all form fields.")
+          }
+          // Fill progress in Fill mode
+          if model.editorMode == .fill, let label = model.fillProgressLabel {
+            HStack(spacing: 6) {
+              if let progress = model.fillProgress {
+                ProgressView(value: progress)
+                  .progressViewStyle(.linear)
+                  .frame(width: 80)
+                  .tint(.accentColor)
+              }
+              Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+          }
+          Text(model.statusMessage ?? "Ready")
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        }
       }
     }
     .fileImporter(
@@ -197,6 +251,28 @@ struct ContentView: View {
     }
     .sheet(isPresented: $model.isManualTextSheetPresented) {
       ManualTextSheet(model: model)
+    }
+    // D-010: Sign sheet
+    .sheet(isPresented: $model.isSignatureSheetPresented) {
+      SignatureSheet(model: model)
+    }
+    // D-010: Redaction commit L3 gate
+    .alert(
+      "Commit Redactions Permanently?",
+      isPresented: $model.isRedactionCommitPresented
+    ) {
+      Button("Cancel", role: .cancel) {
+        model.isRedactionCommitPresented = false
+      }
+      Button("Commit Permanently", role: .destructive) {
+        model.commitRedactions()
+      }
+    } message: {
+      let count = model.operations.filter { $0.kind == .redactMark }.count
+      Text(
+        "This will permanently remove the content under \(count) marked region\(count == 1 ? "" : "s") from a new PDF copy. The original file is never overwritten.\n\nThis action cannot be undone."
+      )
+    }
   }
 }
 
@@ -304,7 +380,9 @@ private struct RecoveryStatusView: View {
   }
 }
 
-private func openImportedPDF(_ url: URL) {
+
+private extension ContentView {
+  func openImportedPDF(_ url: URL) {
     // The current session remains untouched while the importer is open. A
     // lightweight PDFKit admission check also prevents malformed or empty
     // files from reaching the mutating AppModel load path.
@@ -319,7 +397,7 @@ private func openImportedPDF(_ url: URL) {
     model.open(url: url)
   }
 
-  private func requestOpenDocument() {
+  func requestOpenDocument() {
     let decision = model.lifecycleDecision(for: .openDocument)
     guard decision.disposition == .confirmBeforeDiscardingChanges else {
       model.isImporterPresented = true
@@ -436,6 +514,446 @@ private struct ManualTextSheet: View {
     }
     .padding(24)
     .frame(width: 420)
+  }
+}
+
+// MARK: - Signature Sheet (D-010)
+
+/// The signature entry sheet for Sign mode.
+///
+/// Presents four tabs: Draw (freehand Canvas), Type (stylised text), Image
+/// (file picker), and Saved (previously stored signatures).
+///
+/// Storage: interim app-sandboxed file; v2 migrates to macOS Keychain per D-010.
+/// The user must explicitly check "Save for later" — no silent persistence.
+private struct SignatureSheet: View {
+  @Bindable var model: AppModel
+  @State private var selectedTab = 0
+  @State private var typedName = ""
+  @State private var selectedFontIndex = 0
+  @State private var saveForLater = false
+  @State private var signatureLabel = ""
+
+  private let scriptFonts = ["Zapfino", "Snell Roundhand", "Bradley Hand"]
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      // Header
+      HStack {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("Add your signature")
+            .font(.title3.weight(.semibold))
+          Text("This places a visual signature overlay. For legally binding signatures, use a certified e-signature service.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        Spacer()
+        Button("Cancel") {
+          model.isSignatureSheetPresented = false
+          model.pendingSignatureRegion = nil
+        }
+      }
+      .padding([.horizontal, .top], 24)
+      .padding(.bottom, 12)
+
+      Divider()
+
+      // Tab picker
+      Picker("Signature method", selection: $selectedTab) {
+        Text("Draw").tag(0)
+        Text("Type").tag(1)
+        Text("Image").tag(2)
+        if !model.savedSignatures.isEmpty {
+          Text("Saved").tag(3)
+        }
+      }
+      .pickerStyle(.segmented)
+      .padding(.horizontal, 24)
+      .padding(.vertical, 12)
+
+      // Tab content
+      Group {
+        if selectedTab == 0 {
+          SignatureDrawTab(onApply: applySignature)
+        } else if selectedTab == 1 {
+          SignatureTypeTab(
+            typedName: $typedName,
+            selectedFontIndex: $selectedFontIndex,
+            fontNames: scriptFonts,
+            onApply: { applySignature(renderTypedSignature()) }
+          )
+        } else if selectedTab == 2 {
+          SignatureImageTab(onApply: applySignature)
+        } else {
+          SignatureSavedTab(signatures: model.savedSignatures, onApply: applySignature)
+        }
+      }
+      .frame(height: 200)
+
+      Divider()
+
+      // Save for later
+      HStack {
+        Toggle("Save this signature for future use", isOn: $saveForLater)
+          .font(.caption)
+        if saveForLater {
+          TextField("Label (optional)", text: $signatureLabel)
+            .textFieldStyle(.roundedBorder)
+            .frame(width: 160)
+            .font(.caption)
+        }
+      }
+      .padding(.horizontal, 24)
+      .padding(.vertical, 12)
+    }
+    .frame(width: 520)
+  }
+
+  private func applySignature(_ imageData: Data) {
+    guard let inspection = model.inspection,
+      let pageIndex = model.pendingSignatureRegion?.pageIndex ?? inspection.pages.first?.pageIndex
+    else { return }
+
+    // Place at the candidate's bounds or default to centre-bottom of current page
+    let bounds: PDFRect
+    if let region = model.pendingSignatureRegion {
+      bounds = region.bounds
+    } else {
+      let page = inspection.pages.indices.contains(model.selectedPageIndex)
+        ? inspection.pages[model.selectedPageIndex] : inspection.pages[0]
+      let w = page.bounds.width * 0.35
+      let h = 60.0
+      bounds = PDFRect(x: page.bounds.x + (page.bounds.width - w) / 2,
+                       y: page.bounds.y + 60,
+                       width: w, height: h)
+    }
+    model.applySignature(imageData, to: bounds, on: pageIndex)
+
+    if saveForLater {
+      let label = signatureLabel.isEmpty ? "Signature \(model.savedSignatures.count + 1)" : signatureLabel
+      let dataURL = "data:image/png;base64,\(imageData.base64EncodedString())"
+      model.savedSignatures.append(SavedSignature(label: label, dataURL: dataURL))
+    }
+  }
+
+  private func renderTypedSignature() -> Data {
+    // Render the typed name in the chosen script font to an NSImage, then PNG data.
+    let font = NSFont(name: scriptFonts[selectedFontIndex], size: 48)
+      ?? NSFont.systemFont(ofSize: 48, weight: .light)
+    let attrs: [NSAttributedString.Key: Any] = [
+      .font: font,
+      .foregroundColor: NSColor.black
+    ]
+    let str = NSAttributedString(string: typedName.isEmpty ? "Signature" : typedName, attributes: attrs)
+    let size = str.size()
+    let image = NSImage(size: NSSize(width: size.width + 20, height: size.height + 12))
+    image.lockFocus()
+    str.draw(at: NSPoint(x: 10, y: 6))
+    image.unlockFocus()
+    return image.pngData ?? Data()
+  }
+}
+
+private struct SignatureDrawTab: View {
+  let onApply: (Data) -> Void
+  @State private var strokes: [[CGPoint]] = []
+  @State private var currentStroke: [CGPoint] = []
+
+  var body: some View {
+    VStack(spacing: 8) {
+      ZStack {
+        RoundedRectangle(cornerRadius: 8)
+          .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+        Canvas { ctx, size in
+          for stroke in strokes + [currentStroke] {
+            guard stroke.count > 1 else { continue }
+            var path = Path()
+            path.move(to: stroke[0])
+            for pt in stroke.dropFirst() { path.addLine(to: pt) }
+            ctx.stroke(path, with: .color(.primary), lineWidth: 2)
+          }
+        }
+        .gesture(
+          DragGesture(minimumDistance: 0)
+            .onChanged { v in currentStroke.append(v.location) }
+            .onEnded { _ in strokes.append(currentStroke); currentStroke = [] }
+        )
+        if strokes.isEmpty && currentStroke.isEmpty {
+          Text("Draw your signature here")
+            .foregroundStyle(.secondary)
+            .font(.callout)
+            .allowsHitTesting(false)
+        }
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .padding(.horizontal, 24)
+
+      HStack {
+        Button("Clear") { strokes = []; currentStroke = [] }
+          .buttonStyle(.bordered)
+        Spacer()
+        Button("Use signature") {
+          onApply(renderStrokes())
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(strokes.isEmpty)
+      }
+      .padding(.horizontal, 24)
+      .padding(.bottom, 8)
+    }
+  }
+
+  private func renderStrokes() -> Data {
+    let size = CGSize(width: 472, height: 140)
+    let image = NSImage(size: size)
+    image.lockFocus()
+    NSColor.clear.set()
+    NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
+    NSColor.black.set()
+    for stroke in strokes {
+      guard stroke.count > 1 else { continue }
+      let path = NSBezierPath()
+      path.lineWidth = 2
+      path.move(to: stroke[0])
+      for pt in stroke.dropFirst() { path.line(to: pt) }
+      path.stroke()
+    }
+    image.unlockFocus()
+    return image.pngData ?? Data()
+  }
+}
+
+private struct SignatureTypeTab: View {
+  @Binding var typedName: String
+  @Binding var selectedFontIndex: Int
+  let fontNames: [String]
+  let onApply: () -> Void
+
+  var body: some View {
+    VStack(spacing: 12) {
+      TextField("Your name", text: $typedName)
+        .textFieldStyle(.roundedBorder)
+        .font(.title3)
+        .padding(.horizontal, 24)
+
+      ScrollView(.horizontal, showsIndicators: false) {
+        HStack(spacing: 16) {
+          ForEach(fontNames.indices, id: \.self) { idx in
+            Text(typedName.isEmpty ? "Your name" : typedName)
+              .font(Font.custom(fontNames[idx], size: 32))
+              .foregroundStyle(selectedFontIndex == idx ? Color.accentColor : Color.primary)
+              .padding(8)
+              .background(selectedFontIndex == idx ? Color.accentColor.opacity(0.1) : Color.clear)
+              .clipShape(RoundedRectangle(cornerRadius: 6))
+              .onTapGesture { selectedFontIndex = idx }
+          }
+        }
+        .padding(.horizontal, 24)
+      }
+
+      HStack {
+        Spacer()
+        Button("Use this style") { onApply() }
+          .buttonStyle(.borderedProminent)
+          .disabled(typedName.trimmingCharacters(in: .whitespaces).isEmpty)
+        Spacer()
+      }
+      .padding(.bottom, 8)
+    }
+  }
+}
+
+private struct SignatureImageTab: View {
+  let onApply: (Data) -> Void
+  @State private var isImporting = false
+  @State private var previewData: Data?
+
+  var body: some View {
+    VStack(spacing: 12) {
+      if let data = previewData, let img = NSImage(data: data) {
+        Image(nsImage: img)
+          .resizable()
+          .scaledToFit()
+          .frame(maxHeight: 100)
+          .padding(.horizontal, 24)
+      } else {
+        RoundedRectangle(cornerRadius: 8)
+          .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [6]))
+          .frame(height: 100)
+          .overlay(Text("Drop a PNG or JPEG here, or click Choose").foregroundStyle(.secondary).font(.callout))
+          .padding(.horizontal, 24)
+      }
+      HStack {
+        Button("Choose image…") { isImporting = true }
+          .buttonStyle(.bordered)
+        Spacer()
+        Button("Use image") { if let d = previewData { onApply(d) } }
+          .buttonStyle(.borderedProminent)
+          .disabled(previewData == nil)
+      }
+      .padding(.horizontal, 24)
+      .padding(.bottom, 8)
+    }
+    .fileImporter(
+      isPresented: $isImporting,
+      allowedContentTypes: [.png, .jpeg],
+      allowsMultipleSelection: false
+    ) { result in
+      if case .success(let urls) = result, let url = urls.first {
+        previewData = try? Data(contentsOf: url)
+      }
+    }
+  }
+}
+
+private struct SignatureSavedTab: View {
+  let signatures: [SavedSignature]
+  let onApply: (Data) -> Void
+
+  var body: some View {
+    ScrollView {
+      LazyVStack(alignment: .leading, spacing: 8) {
+        ForEach(signatures) { sig in
+          HStack {
+            if let data = Data(base64Encoded: sig.dataURL.components(separatedBy: ",").last ?? ""),
+               let img = NSImage(data: data)
+            {
+              Image(nsImage: img)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 40)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+              Text(sig.label).font(.caption.weight(.medium))
+              Text(sig.createdAt.formatted(date: .abbreviated, time: .omitted)).font(.caption2).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button("Use") {
+              if let raw = sig.dataURL.components(separatedBy: ",").last,
+                 let data = Data(base64Encoded: raw) {
+                onApply(data)
+              }
+            }
+            .buttonStyle(.bordered)
+          }
+          .padding(.horizontal, 24)
+          Divider()
+        }
+      }
+    }
+  }
+}
+
+private extension NSImage {
+  var pngData: Data? {
+    guard let tiff = tiffRepresentation,
+      let bitmap = NSBitmapImageRep(data: tiff)
+    else { return nil }
+    return bitmap.representation(using: .png, properties: [:])
+  }
+}
+
+private struct TemplateCompletionEntryReviewCard: View {
+  @Bindable var model: AppModel
+  let entry: PDFTemplateCompletionEntry
+
+  private var valueApprovalIsOn: Bool {
+    entry.valueReview == .approved && entry.profileValueApproval?.state == .approved
+  }
+
+  private var valueApprovalDisabled: Bool {
+    entry.profileRevisionID == nil
+      || entry.value == nil
+      || model.templateValueEditorKind(for: entry.mappingID) == .assetReference
+      || model.templateValueEditorKind(for: entry.mappingID) == .missing
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(alignment: .firstTextBaseline) {
+        Label(entry.semanticKey, systemImage: entry.mappingReview == .approved ? "checkmark.circle.fill" : "circle")
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text(entry.target.kind.rawValue)
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+      }
+
+      Text("Page \(entry.target.pageIndex + 1) · x \(entry.target.region.rect.x, specifier: "%.1f") · y \(entry.target.region.rect.y, specifier: "%.1f") · \(entry.target.region.rect.width, specifier: "%.1f") × \(entry.target.region.rect.height, specifier: "%.1f")")
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+
+      if entry.target.kind == .nativeField {
+        Label(
+          entry.resolvedTargetID.map { "Resolved native field: \($0)" } ?? "Native field target unresolved",
+          systemImage: entry.resolvedTargetID == nil ? "exclamationmark.triangle" : "link")
+          .font(.caption2)
+          .foregroundStyle(entry.resolvedTargetID == nil ? .orange : .secondary)
+      } else {
+        Label("Static region remains an overlay target, not a native form field", systemImage: "square.dashed")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+      }
+
+      Toggle(
+        isOn: Binding(
+          get: { entry.mappingReview == .approved },
+          set: { model.reviewTemplateCompletionMapping(entry.mappingID, approved: $0) }
+        )
+      ) {
+        Text("Approve mapping")
+      }
+      .accessibilityHelp("Approve only the target association. This does not approve the profile value.")
+
+      switch model.templateValueEditorKind(for: entry.mappingID) {
+      case .boolean:
+        Toggle(
+          "Profile boolean: \(model.templateCompletionBooleanValue(for: entry.mappingID) ? "true" : "false")",
+          isOn: Binding(
+            get: { model.templateCompletionBooleanValue(for: entry.mappingID) },
+            set: { model.updateTemplateCompletionBoolean(entry.mappingID, value: $0) }
+          )
+        )
+        .disabled(entry.profileRevisionID == nil)
+      case .assetReference:
+        Label("Asset reference needs an explicit asset picker before it can be applied", systemImage: "photo.badge.exclamationmark")
+          .font(.caption)
+          .foregroundStyle(.orange)
+      case .missing:
+        Label("No profile value resolved for this semantic key", systemImage: "questionmark.circle")
+          .font(.caption)
+          .foregroundStyle(.orange)
+      case .text, .choice:
+        TextField(
+          model.templateValueEditorKind(for: entry.mappingID) == .choice ? "Profile choice" : "Profile value",
+          text: Binding(
+            get: { model.templateValueDrafts[entry.mappingID] ?? "" },
+            set: { model.updateTemplateCompletionValue(entry.mappingID, value: $0) }
+          ))
+          .textFieldStyle(.roundedBorder)
+          .disabled(entry.profileRevisionID == nil)
+      }
+
+      Toggle(
+        isOn: Binding(
+          get: { valueApprovalIsOn },
+          set: { model.reviewTemplateCompletionValue(entry.mappingID, approved: $0) }
+        )
+      ) {
+        Text("Approve exact value for this profile revision")
+      }
+      .disabled(valueApprovalDisabled)
+      .accessibilityHelp("Approve the displayed value from the selected profile revision. Editing the value revokes this approval.")
+
+      Text("Mapping: \(entry.mappingReview.rawValue) · Value: \(entry.valueReview.rawValue) · Profile revision: \(entry.profileRevisionID?.uuidString.prefix(8) ?? "none")")
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+    }
+    .padding(8)
+    .background(Color.accentColor.opacity(0.06))
+    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .accessibilityElement(children: .contain)
   }
 }
 
@@ -707,6 +1225,7 @@ private struct InspectorView: View {
   @State private var fieldDraft = ""
   @State private var overlayDraft = ""
   @State private var choiceCellIndex = 0
+  @State private var templateDisplayName = "Reviewed local layout"
 
   var body: some View {
     ScrollView {
@@ -856,11 +1375,16 @@ private struct InspectorView: View {
         .font(.caption)
         .foregroundStyle(.secondary)
 
+      TextField("Template display name", text: $templateDisplayName)
+        .textFieldStyle(.roundedBorder)
+        .help("The display name is local template metadata. Source bytes and profile values are not copied into the template.")
+
       HStack(spacing: 8) {
         Button("Capture layout") {
-          model.captureTemplateReview()
+          model.captureTemplateReview(displayName: templateDisplayName)
         }
         .buttonStyle(.bordered)
+        .disabled(model.inspection == nil || templateDisplayName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         Button(model.templateSaveButtonTitle) {
           model.saveTemplateRevision()
         }
@@ -870,6 +1394,11 @@ private struct InspectorView: View {
           model.unlockTemplateVault()
         }
         .buttonStyle(.bordered)
+        Button("Find local matches") {
+          model.findLocalTemplateMatches()
+        }
+        .buttonStyle(.bordered)
+        .disabled(!model.isTemplateVaultUnlocked)
         Button("Import") {
           model.importTemplate()
         }
@@ -892,16 +1421,77 @@ private struct InspectorView: View {
           .foregroundStyle(.orange)
       }
 
+      if let match = model.templateIndexMatch {
+        VStack(alignment: .leading, spacing: 4) {
+          Text("Local index: \(match.state.rawValue) · \(match.candidates.count) candidate(s) · \(match.abstained ? "abstained" : "review required")")
+            .font(.caption)
+          ForEach(match.candidates, id: \.entry.revisionID) { candidate in
+            HStack {
+              VStack(alignment: .leading, spacing: 2) {
+                Text(candidate.entry.displayName)
+                Text("\(candidate.state.rawValue) · score \(candidate.score, specifier: "%.3f") · \(candidate.entry.revisionID.uuidString.prefix(8))")
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+              }
+              Spacer()
+              Button("Review") {
+                model.loadTemplateRevision(templateID: candidate.entry.templateID, revisionID: candidate.entry.revisionID)
+              }
+              .buttonStyle(.bordered)
+            }
+          }
+          ForEach(match.reasons, id: \.self) { reason in
+            Text(reason)
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
+        .padding(8)
+        .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
+      }
+
       if let template = model.templateContract {
         LabeledContent(
           "Template state",
           value: "\(template.payload.lifecycle.rawValue) · \(template.payload.mappings.count) mapping(s)")
           .font(.caption)
 
+        VStack(alignment: .leading, spacing: 3) {
+          Text("Source-bound evidence")
+            .font(.caption.weight(.semibold))
+          Text("Layout fingerprint: \(template.payload.fingerprint.layoutFingerprint.prefix(16))...")
+          Text("Source digests retained: \(template.payload.fingerprint.exactSourceDigests.count) · privacy: \(template.payload.privacyMode.rawValue)")
+          Text("Template revision: \(template.payload.revisionID.uuidString.prefix(8)) · parent: \(template.payload.parentRevisionID?.uuidString.prefix(8) ?? "none")")
+        }
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+        .padding(8)
+        .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
+
         if let diff = model.templateRevisionDiff {
           Text("Revision diff: +\(diff.exactSourceDigestsAdded.count) source variant(s), \(diff.mappingChanges.count) mapping change(s)")
             .font(.caption2)
             .foregroundStyle(.secondary)
+          ForEach(diff.mappingChanges) { change in
+            Text("• \(change.change.rawValue) mapping \(change.id.uuidString.prefix(8))")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
+
+        if !model.templateLearningEvents.isEmpty {
+          Text("Learning journal")
+            .font(.caption.weight(.semibold))
+          ForEach(model.templateLearningEvents) { event in
+            Text("\(event.kind.rawValue) · \(event.status.rawValue) · source \(event.sourceDigest.prefix(12))...")
+              .font(.caption2)
+              .foregroundStyle(event.status == .pending ? .orange : .secondary)
+          }
+          if model.canSaveValidatedTemplateRevision {
+            Text("A validated completion can migrate pending corrections into one immutable child revision.")
+              .font(.caption2)
+              .foregroundStyle(.green)
+          }
         }
 
         ForEach(model.templateMappings) { mapping in
@@ -936,7 +1526,12 @@ private struct InspectorView: View {
             model.prepareTemplateCompletionReview()
           }
           .buttonStyle(.borderedProminent)
-          .disabled(model.currentProfile == nil)
+          .disabled(!model.isProfileVaultUnlocked || model.currentProfile == nil)
+          Text(model.isProfileVaultUnlocked
+            ? "Current profile: \(model.currentProfile?.displayName ?? "none")"
+            : "Unlock the profile vault and select a profile before resolving values.")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
         }
       }
 
@@ -944,6 +1539,19 @@ private struct InspectorView: View {
         Divider()
         Text("Completion review")
           .font(.subheadline.weight(.semibold))
+        Text("\(model.templateCompletionApprovedMappingCount)/\(model.templateReviewableEntries.count) mappings approved · \(model.templateCompletionApprovedValueCount)/\(model.templateReviewableEntries.count) values approved")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+        if let proposal = model.templateCompletionProposal {
+          Text("Match: \(proposal.matchState.rawValue) · source \(proposal.sourceDigest.prefix(12))... · session \(proposal.sessionID.uuidString.prefix(8))")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          ForEach(proposal.reasons, id: \.self) { reason in
+            Label(reason, systemImage: "info.circle")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
         ForEach(model.templateReviewableEntries) { entry in
           VStack(alignment: .leading, spacing: 7) {
             Toggle(
@@ -980,8 +1588,7 @@ private struct InspectorView: View {
               .foregroundStyle(.secondary)
           }
           .padding(8)
-          .background(Color.accentColor.opacity(0.06))
-          .clipShape(RoundedRectangle(cornerRadius: 8))
+          .background(.quaternary.opacity(0.2), in: RoundedRectangle(cornerRadius: 6))
         }
 
         Button("Apply reviewed completion") {

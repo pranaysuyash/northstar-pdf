@@ -1,0 +1,512 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema": "pdf-editor.performance-corpus",
+  "schemaVersion": "1.0.0",
+  "manifestId": "performance-corpus-2026-08-25",
+  "status": "proposed-value-free-input-contract",
+  "purpose": "Reproducible native PDF performance inputs without document content or measured results.",
+  "authority": {
+    "owner": "program-realignment-and-performance-corpus-contract",
+    "sourceOfTruth": "This manifest for performance input identity, plus retained fixture bytes, existing governance manifest, and recorded generators.",
+    "governanceManifest": "Tests/fixtures/pdf_corpus_governance_manifest.json",
+    "generatedAt": "2026-08-25",
+    "networkPolicy": "Local-only by default; source bytes, text, images, passwords, and ground truth must not enter performance telemetry or result logs."
+  },
+  "valuePolicy": {
+    "allowedFields": [
+      "corpusId",
+      "fixturePathOrStableLocator",
+      "sha256",
+      "bytes",
+      "pages",
+      "rotations",
+      "contentClass",
+      "formClass",
+      "provenance",
+      "warmColdPolicy",
+      "iterations",
+      "buildRuntimeMetadata",
+      "gates"
+    ],
+    "prohibitedFields": [
+      "pageText",
+      "ocrText",
+      "fieldValues",
+      "imagePixels",
+      "passwords",
+      "sourceContent",
+      "rawPdfBytes",
+      "userProfileValues"
+    ],
+    "unknownRepresentation": "Use JSON null for discovery or runtime values not established; use TODO strings for the exact next owner/check."
+  },
+  "reproducibilityContract": {
+    "identityRule": "A corpus entry is bound to exact retained bytes only after sha256 and bytes are discovered from the declared locator.",
+    "digestAlgorithm": "SHA-256 over the exact retained fixture bytes.",
+    "fixturePathsAreRelativeTo": "/Users/pranay/Projects/pdf_editor",
+    "derivedOutputRule": "Results and exports are derived artifacts and never replace the input fixture identity.",
+    "generatorRule": "Derived fixtures must name their generator and source chain in provenance before a run is promoted.",
+    "resultLocatorPattern": "benchmark/results/<YYYY-MM-DD>-<run-id>/<lane>/benchmark__results__<corpusId>.json"
+  },
+  "runContract": {
+    "warmColdPolicy": {
+      "cold": {
+        "processPolicy": "new-process-per-case",
+        "filesystemCacheState": "unknown-unless-explicitly-controlled",
+        "observed": null,
+        "nextCheck": "TODO: record process and filesystem cache conditions in the run result."
+      },
+      "warm": {
+        "processPolicy": "one-process-and-loaded-case-reused-for-the-measured-sequence",
+        "plannedWarmupIterations": 3,
+        "plannedMeasuredIterations": 15,
+        "observed": null,
+        "nextCheck": "TODO: record completed warm-up and measured sample counts without dropping failures."
+      },
+      "separationRule": "Cold and warm samples must never share one percentile series."
+    },
+    "iterations": {
+      "plannedWarmup": 3,
+      "plannedMeasured": 15,
+      "observedWarmup": null,
+      "observedMeasured": null,
+      "completedSamples": null,
+      "failedSamples": null,
+      "nextCheck": "TODO: populate from an authorized benchmark run."
+    },
+    "buildRuntimeMetadata": {
+      "platform": null,
+      "architecture": null,
+      "osVersion": null,
+      "swiftVersion": null,
+      "sdkVersion": null,
+      "providerVersion": null,
+      "harnessRevision": null,
+      "buildConfiguration": "release-proposed",
+      "processIsolation": null,
+      "telemetryConfiguration": "opt-in-value-free",
+      "nextCheck": "TODO: record exact build and runtime identity for every promoted result."
+    }
+  },
+  "gateContract": {
+    "fidelity": {
+      "status": "TODO",
+      "sourceDigestUnchanged": null,
+      "outputReopens": null,
+      "pageGeometryPreserved": null,
+      "rotationPreserved": null,
+      "textAndFormInventoryPreserved": null,
+      "outsideRegionTextPreserved": null,
+      "rasterPreservation": null,
+      "independentViewerReopen": null,
+      "nextCheck": "TODO: run the existing provider and independent preservation gates on the same fixture."
+    },
+    "memory": {
+      "status": "TODO",
+      "peakBytes": null,
+      "approvedBudgetBytes": null,
+      "normalizedBudget": null,
+      "growthBounded": null,
+      "sourceBytesPeak": null,
+      "liveDocumentPeak": null,
+      "validationDocumentPeak": null,
+      "rasterComparisonPeak": null,
+      "derivedCachePeak": null,
+      "nextCheck": "TODO: measure peak memory and identify ownership by representation."
+    },
+    "crash": {
+      "status": "TODO",
+      "crashes": null,
+      "hangs": null,
+      "watchdogTimeouts": null,
+      "malformedFailsClosed": null,
+      "encryptedFailsClosed": null,
+      "temporaryOutputCleanedOnFailure": null,
+      "sourceAndPriorDestinationPreserved": null,
+      "nextCheck": "TODO: exercise repeated, malformed, encrypted, oversized, and canceled paths in isolated processes."
+    }
+  },
+  "fixtures": [
+    {
+      "corpusId": "form6-static-source",
+      "fixturePathOrStableLocator": "pdfkit-benchmark:Form6-source",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "static-text-form",
+      "formClass": "none",
+      "provenance": {
+        "status": "observed-in-docs",
+        "sourceLocator": "docs/pdfkit-benchmark.md",
+        "sourceKind": "local-external-locator",
+        "lineage": null,
+        "generator": null,
+        "privacyClass": "TODO: confirm local retention class",
+        "nextCheck": "TODO: bind the stable locator to exact retained bytes and record the digest."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "public-sample-form",
+      "fixturePathOrStableLocator": "benchmark/results/public-sample-form.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "static-form",
+      "formClass": "native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "external-sample-license-unresolved",
+        "lineage": "Existing local benchmark artifact; acquisition and license record remains open.",
+        "generator": null,
+        "privacyClass": "external-sample-license-unresolved",
+        "nextCheck": "TODO: discover exact retained bytes and preserve the license uncertainty."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "navigation-metadata",
+      "fixturePathOrStableLocator": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "mixed-content",
+      "formClass": "static-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Generated by benchmark/generate_navigation_fixture.sh and local metadata augmentation.",
+        "generator": "benchmark/generate_navigation_fixture.sh",
+        "privacyClass": "synthetic-local",
+        "nextCheck": "TODO: discover exact bytes and record generator revision."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "pdfkit-widget-fixture",
+      "fixturePathOrStableLocator": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "static-content",
+      "formClass": "native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Locally generated native widget benchmark fixture.",
+        "generator": "benchmark/PDFKitWidgetBenchmark.swift",
+        "privacyClass": "synthetic-local",
+        "nextCheck": "TODO: discover exact bytes and record generator revision."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "encrypted-reader",
+      "fixturePathOrStableLocator": "benchmark/results/security-corpus/encrypted-reader.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "static-content",
+      "formClass": "native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "local-derived-no-personal-content",
+        "lineage": "Derived from the synthetic PDFKit widget fixture by benchmark/generate_security_fixtures.sh.",
+        "generator": "benchmark/generate_security_fixtures.sh",
+        "privacyClass": "synthetic-local",
+        "passwordPolicy": "Fixture password is excluded from this contract and all logs.",
+        "nextCheck": "TODO: discover exact bytes and exercise explicit-password handling without logging the password."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "truncated-128-bytes",
+      "fixturePathOrStableLocator": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "malformed",
+      "formClass": "unknown",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Intentionally truncated from the synthetic widget fixture by benchmark/generate_security_fixtures.sh.",
+        "generator": "benchmark/generate_security_fixtures.sh",
+        "privacyClass": "synthetic-local",
+        "nextCheck": "TODO: discover exact bytes; never repair this fixture in place."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "repeated-20-pages",
+      "fixturePathOrStableLocator": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "repeated-content",
+      "formClass": "native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Twenty deterministic copies of the synthetic widget page from benchmark/generate_security_fixtures.sh.",
+        "generator": "benchmark/generate_security_fixtures.sh",
+        "privacyClass": "synthetic-local",
+        "nextCheck": "TODO: discover exact bytes and record the resource-budget identity."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "printed-scan",
+      "fixturePathOrStableLocator": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "raster-only-scan",
+      "formClass": "none",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Generated by benchmark/generate_ocr_fixture.sh from synthetic text rendered to a raster image.",
+        "generator": "benchmark/generate_ocr_fixture.sh",
+        "privacyClass": "synthetic-local",
+        "groundTruthLocator": "benchmark/results/ocr-corpus/ground-truth.txt",
+        "nextCheck": "TODO: discover exact bytes; ground truth remains local-only and outside telemetry."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "rotated-widget-90",
+      "fixturePathOrStableLocator": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "static-content",
+      "formClass": "native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Derived by benchmark/generate_rotation_fixtures.sh from the synthetic widget fixture.",
+        "generator": "benchmark/generate_rotation_fixtures.sh",
+        "privacyClass": "synthetic-local",
+        "nextCheck": "TODO: discover exact per-page rotations rather than inferring them from the name."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "rotated-form6-mixed",
+      "fixturePathOrStableLocator": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "static-text-form",
+      "formClass": "none",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "local-derived-no-personal-content",
+        "lineage": "Derived by benchmark/generate_rotation_fixtures.sh from the local Form 6 benchmark output.",
+        "generator": "benchmark/generate_rotation_fixtures.sh",
+        "privacyClass": "local-derived-no-personal-content",
+        "nextCheck": "TODO: discover exact per-page rotations and retain the inherited provider warning."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "hybrid-text-raster-form",
+      "fixturePathOrStableLocator": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "mixed-text-raster",
+      "formClass": "mixed-native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "local-derived-no-personal-content",
+        "lineage": "Composed by benchmark/generate_browser_corpus.sh from the local public sample and synthetic raster benchmark.",
+        "generator": "benchmark/generate_browser_corpus.sh",
+        "privacyClass": "local-derived-no-personal-content",
+        "nextCheck": "TODO: discover exact bytes and retain component lineage."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "scanned-noisy",
+      "fixturePathOrStableLocator": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "degraded-raster-scan",
+      "formClass": "none",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Derived by benchmark/generate_browser_corpus.sh from the synthetic raster benchmark with declared noise and blur transforms.",
+        "generator": "benchmark/generate_browser_corpus.sh",
+        "privacyClass": "synthetic-local",
+        "groundTruthLocator": "benchmark/results/ocr-corpus/ground-truth.txt",
+        "nextCheck": "TODO: discover exact bytes and record transform parameters without claiming OCR accuracy."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "rotated-hybrid-90",
+      "fixturePathOrStableLocator": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "rotated-mixed-text-raster",
+      "formClass": "mixed-native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "local-derived-no-personal-content",
+        "lineage": "Derived by benchmark/generate_browser_corpus.sh from the hybrid fixture with both pages rotated.",
+        "generator": "benchmark/generate_browser_corpus.sh",
+        "privacyClass": "local-derived-no-personal-content",
+        "nextCheck": "TODO: discover exact per-page rotations and verify coordinate parity."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "encrypted-hybrid",
+      "fixturePathOrStableLocator": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "encrypted-mixed-text-raster",
+      "formClass": "mixed-native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "local-derived-no-personal-content",
+        "lineage": "Encrypted once from the local hybrid fixture by benchmark/generate_browser_corpus.sh.",
+        "generator": "benchmark/generate_browser_corpus.sh",
+        "privacyClass": "local-derived-no-personal-content",
+        "passwordPolicy": "Fixture password is excluded from this contract and all logs.",
+        "nextCheck": "TODO: discover exact bytes and exercise explicit-password handling without logging the password."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "malformed-hybrid-truncated",
+      "fixturePathOrStableLocator": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "malformed-mixed-content",
+      "formClass": "unknown",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "First 512 bytes of the local hybrid fixture from benchmark/generate_browser_corpus.sh.",
+        "generator": "benchmark/generate_browser_corpus.sh",
+        "privacyClass": "synthetic-local",
+        "nextCheck": "TODO: discover exact bytes; never repair this fixture in place."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "large-hybrid-40-pages",
+      "fixturePathOrStableLocator": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "large-mixed-text-raster",
+      "formClass": "mixed-native-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "local-derived-no-personal-content",
+        "lineage": "Forty-page repeated hybrid composition from benchmark/generate_browser_corpus.sh.",
+        "generator": "benchmark/generate_browser_corpus.sh",
+        "privacyClass": "local-derived-no-personal-content",
+        "nextCheck": "TODO: discover exact bytes, page count, and resource-budget identity."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    },
+    {
+      "corpusId": "handwritten-simulated-entries",
+      "fixturePathOrStableLocator": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+      "sha256": null,
+      "bytes": null,
+      "pages": null,
+      "rotations": null,
+      "contentClass": "handwriting-like-raster",
+      "formClass": "static-form",
+      "provenance": {
+        "status": "observed-in-governance-manifest",
+        "sourceKind": "synthetic-local",
+        "lineage": "Generated by benchmark/generate_governed_corpus.sh from synthetic labels and local handwriting-like glyphs rendered to a raster image.",
+        "generator": "benchmark/generate_governed_corpus.sh",
+        "privacyClass": "synthetic-local",
+        "groundTruthLocator": "benchmark/results/governed-corpus/handwritten-simulated-ground-truth.txt",
+        "claimBoundary": "Not evidence for genuine handwriting recognition, biometrics, identity, or signature validity.",
+        "nextCheck": "TODO: discover exact bytes and record generator revision."
+      },
+      "warmColdPolicy": "runContract.warmColdPolicy",
+      "iterations": "runContract.iterations",
+      "buildRuntimeMetadata": "runContract.buildRuntimeMetadata",
+      "gates": "gateContract"
+    }
+  ]
+}

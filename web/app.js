@@ -21,21 +21,36 @@
     createCompletionProposal,
     createLearningEvent,
     createTemplateFingerprint,
+    diffTemplateRevisions,
+    exportTemplateHistory,
+    importTemplateHistory,
+    makeValidatedTemplateRevision,
     matchTemplate,
     materializeCompletionOperations,
     resolveCompletionTarget,
     reviewCompletionMapping,
     reviewCompletionValue,
+    validateProfileContract,
     validateTemplateContract
   } from "./pdf-template-contract.mjs";
   import {
     createEncryptedTemplateStore,
+    createEncryptedOPFSTemplateStore,
     createEphemeralTemplateStore,
     createZeroContentLogger,
     TemplateStoreError
   } from "./pdf-template-store.mjs";
   import { runIhatepdfExperimentParity } from "./ihatepdf-experiment-contract.mjs";
   import { buildPreflightReport, validatePreflightReport } from "./pdf-preflight.mjs";
+  import {
+    createSessionPrivacyProvenance,
+    validateSessionPrivacyProvenance
+  } from "./pdf-session-provenance.mjs";
+  import {
+    decryptTemplateSyncEnvelope,
+    encryptTemplateSyncEnvelope,
+    mergeTemplateHistories
+  } from "./pdf-template-sync.mjs";
   import {
     chooseBrowserResourcePolicy,
     collectBrowserResourceEnvironment,
@@ -53,6 +68,12 @@
     normalizePdfJsTextItems,
     validateTextRunOCRAlignmentReport
   } from "./text-run-ocr-alignment-benchmark.mjs";
+  import {
+    createProductSurfaceState,
+    getProductMode,
+    selectProductMode
+  } from "./product-modes.mjs";
+  import { createModeStageController } from "./mode-stage.mjs";
 
   const pdfLib = window.PDFLib;
   const WEB_ERROR_CODES = Object.freeze({
@@ -65,20 +86,19 @@
     invalidOperation: "invalid-operation",
     unsupported: "unsupported"
   });
-  const pdfjsRuntimeURLs = [
-    "./vendor/pdfjs/pdf.min.mjs",
-    "https://unpkg.com/pdfjs-dist@4.2.67/build/pdf.min.mjs",
-    "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/build/pdf.min.mjs"
-  ];
-  const pdfjsWorkerURLs = [
-    "./vendor/pdfjs/pdf.worker.min.mjs",
-    "https://unpkg.com/pdfjs-dist@4.2.67/build/pdf.worker.min.mjs",
-    "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.2.67/build/pdf.worker.min.mjs"
-  ];
+  // The vendored PDF.js build is the only runtime source: CSP `script-src 'self'`
+  // and `connect-src 'none'` make CDN fallbacks unreachable dead code, and the
+  // air-gap is a product promise. The pin is declared here so the contract test
+  // can keep asserting the version without network URL strings.
+  const PDFJS_PINNED_VERSION = "4.2.67";
+  const pdfjsRuntimeURLs = ["./vendor/pdfjs/pdf.min.mjs"];
+  const pdfjsWorkerURLs = ["./vendor/pdfjs/pdf.worker.min.mjs"];
   let pdfjsLib = null;
+  let pdfjsRuntimeURL = null;
   for (const runtimeURL of pdfjsRuntimeURLs) {
     try {
       pdfjsLib = await import(runtimeURL);
+      pdfjsRuntimeURL = runtimeURL;
       break;
     } catch {
       // Try the next pinned runtime before showing the local error state.
@@ -102,6 +122,8 @@
     searchCount: document.getElementById("searchCount"),
     copyPageText: document.getElementById("copyPageText"),
     manualTextButton: document.getElementById("manualTextButton"),
+    productModeNav: document.getElementById("productModeNav"),
+    productModeStatus: document.getElementById("productModeStatus"),
     status: document.getElementById("status"),
     thumbnails: document.getElementById("thumbnails"),
     viewerStack: document.getElementById("viewerStack"),
@@ -111,11 +133,19 @@
     metaBox: document.getElementById("metaBox"),
     permissionsBox: document.getElementById("permissionsBox"),
     attachmentsBox: document.getElementById("attachmentsBox"),
+    preflightBox: document.getElementById("preflightBox"),
     accessibilityBox: document.getElementById("accessibilityBox"),
     completionSource: document.getElementById("completionSource"),
     templateCard: document.getElementById("templateCard"),
     templateSummary: document.getElementById("templateSummary"),
     captureTemplateButton: document.getElementById("captureTemplateButton"),
+    saveTemplateButton: document.getElementById("saveTemplateButton"),
+    exportTemplateButton: document.getElementById("exportTemplateButton"),
+    importTemplateButton: document.getElementById("importTemplateButton"),
+    templateImportInput: document.getElementById("templateImportInput"),
+    exportTemplateSyncButton: document.getElementById("exportTemplateSyncButton"),
+    importTemplateSyncButton: document.getElementById("importTemplateSyncButton"),
+    templateSyncImportInput: document.getElementById("templateSyncImportInput"),
     activateTemplateButton: document.getElementById("activateTemplateButton"),
     prepareTemplateButton: document.getElementById("prepareTemplateButton"),
     templateMappingList: document.getElementById("templateMappingList"),
@@ -140,12 +170,37 @@
     exportButton: document.getElementById("exportButton"),
     editList: document.getElementById("editList"),
     validationBox: document.getElementById("validationBox"),
+    impactMetricsContent: document.getElementById("impactMetricsContent"),
     statusEl: document.getElementById("status"),
     modal: document.getElementById("passwordModal"),
     passwordForm: document.getElementById("passwordForm"),
     passwordInput: document.getElementById("passwordInput"),
     passwordSubmit: document.getElementById("passwordSubmit"),
-    passwordCancel: document.getElementById("passwordCancel")
+    passwordCancel: document.getElementById("passwordCancel"),
+    modeStage: document.getElementById("modeStage"),
+    modePanels: {
+      reader: document.getElementById("mode-panel-reader"),
+      understand: document.getElementById("mode-panel-understand"),
+      complete: document.getElementById("mode-panel-complete"),
+      organize: document.getElementById("mode-panel-organize"),
+      review: document.getElementById("mode-panel-review")
+    },
+    readerContextLine: document.getElementById("readerContextLine"),
+    analysisStatusPill: document.getElementById("analysisStatusPill"),
+    analysisOverlay: document.getElementById("analysisOverlay"),
+    analysisTitle: document.getElementById("analysisTitle"),
+    analysisCopy: document.getElementById("analysisCopy"),
+    analysisProgress: document.getElementById("analysisProgress"),
+    analysisProgressFill: document.getElementById("analysisProgressFill"),
+    analysisSignals: document.getElementById("analysisSignals"),
+    analysisCancelButton: document.getElementById("analysisCancelButton"),
+    understandDocumentMap: document.getElementById("understandDocumentMap"),
+    understandEvidence: document.getElementById("understandEvidence"),
+    understandNextAction: document.getElementById("understandNextAction"),
+    completeProgress: document.getElementById("completeProgress"),
+    organizeInventory: document.getElementById("organizeInventory"),
+    reviewGuardrail: document.getElementById("reviewGuardrail"),
+    reviewValidation: document.getElementById("reviewValidation")
   };
 
   function disableReaderForRuntimeFailure() {
@@ -160,7 +215,7 @@
     disableReaderForRuntimeFailure();
   } else {
     window.pdfjsLib = pdfjsLib;
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorkerURLs[0];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(pdfjsWorkerURLs[0], document.baseURI).href;
   }
 
   let pdfDoc = null;
@@ -181,9 +236,11 @@
   let isEncryptedDocument = false;
   let sourceName = "document.pdf";
   let sourceDigest = "";
+  let currentSessionID = null;
   let documentContract = null;
   let textRunProjections = [];
   let nativeFields = [];
+  let formOptionMap = new Map();
   let candidates = [];
   let operations = [];
   let reviews = [];
@@ -195,13 +252,120 @@
   let showDismissedCandidates = false;
   let lastValidation = null;
   let preflightReport = null;
+  let sessionProvenance = null;
   let resourcePolicy = null;
   let templateFingerprint = null;
   let templateContract = null;
   let templateRevisionHistory = null;
   let templateProposal = null;
   let templateValueDrafts = {};
+  let templateLearningEvents = [];
+  let pendingValidatedTemplateRevision = null;
+  let templateRevisionDiff = null;
+  let lastAppliedTemplateProposal = null;
+  let templateCompletionOperationIDs = [];
   let loadGeneration = 0;
+  let productSurfaceState = createProductSurfaceState();
+
+  function readableCapabilityState(state) {
+    return state.replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase());
+  }
+
+  // --- Mode stage controller (Northstar five-mode surfaces + analysis reveal) ---
+  // Presentation lives in mode-stage.mjs; this wires it to the live application
+  // state via getters so the panels can never hold a second source of truth.
+  const modeStage = createModeStageController({
+    ui,
+    getState: () => ({
+      activeMode: productSurfaceState.activeMode,
+      documentContract,
+      sourceDigest,
+      pageCount: scaleState.pageCount,
+      currentPage,
+      fitMode: scaleState.fitMode,
+      zoom: scaleState.zoom,
+      rotation,
+      searchCount: searchResults.length,
+      outlineCount: outlines.length,
+      topOutlineSections: outlines.slice(0, 4).map((node) => ({
+        title: node.title || "Section",
+        pageLabel: node.pageLabel || ""
+      })),
+      pagesWithTextCount: pageFacts.length && documentContract
+        ? documentContract.payload.pages.filter((page) => page.hasSelectableText).length
+        : 0,
+      rotatedPageCount: pageFacts.filter((fact) => fact.rotate % 360 !== 0).length,
+      nativeFieldCount: nativeFields.length,
+      candidateCount: candidates.length,
+      confirmedCount: candidates.filter((candidate) => candidate.status === "confirmed").length,
+      dismissedCount: candidates.filter((candidate) => candidate.status === "rejected").length,
+      firstPendingCandidate: candidates.find((candidate) => candidate.status === "suggested") || null,
+      filledNativeFieldCount: operations.filter((operation) => operation.kind === "nativeFieldValue").length,
+      operationCount: operations.length,
+      validationComplete: Boolean(lastValidation),
+      validationSummary: lastValidation?.status || "",
+      validationChecks: lastValidation?.checks || []
+    }),
+    actions: {
+      selectMode: (modeID) => selectVisibleProductMode(modeID),
+      focusCandidate: (candidateID) => {
+        const row = ui.candidateList?.querySelector(`[data-candidate-id="${CSS.escape(candidateID)}"] button`)
+          || ui.candidateList?.querySelector(`[data-candidate-id="${CSS.escape(candidateID)}"]`);
+        if (row instanceof HTMLButtonElement) {
+          row.click();
+        } else if (row) {
+          const button = row.querySelector("button") || row;
+          button.click();
+        } else {
+          setStatus("That suggestion is not visible in the current queue.");
+        }
+      },
+      focusCompletionQueue: () => {
+        const card = document.querySelector(".completion-card");
+        card?.scrollIntoView({ block: "start" });
+        (card?.querySelector("button:not([disabled])") || card)?.focus?.();
+      },
+      rerunAnalysis: () => {
+        if (!pdfDoc) return;
+        setStatus("Re-running local analysis…");
+        buildCompletionContract().finally(() => {
+          renderCompletionPanel();
+          renderVisiblePages();
+        });
+      }
+    }
+  });
+
+  function renderProductModeState() {
+    modeStage.syncChrome(productSurfaceState);
+    const mode = getProductMode(productSurfaceState.activeMode);
+    const capability = productSurfaceState.capabilities[mode.id];
+    if (ui.productModeStatus) {
+      ui.productModeStatus.textContent = `${mode.label}: ${mode.description} Capability is ${readableCapabilityState(capability)}.`;
+    }
+  }
+
+  function selectVisibleProductMode(modeID) {
+    productSurfaceState = selectProductMode(productSurfaceState, modeID);
+    renderProductModeState();
+    modeStage.selectMode(modeID);
+    if (modeID === "reader") {
+      setStatus("Reader mode active.");
+      return;
+    }
+    if (modeID === "complete") {
+      setStatus("Complete mode active. Review a native field or suggested region before applying a change.");
+      return;
+    }
+    if (modeID === "review") {
+      setStatus("Review mode active. Export remains gated by validation.");
+      return;
+    }
+    setStatus(`${getProductMode(modeID).label} mode is mapped and visible; its provider surface is not fully connected yet.`);
+  }
+
+  renderProductModeState();
+  modeStage.selectMode("reader");
 
   // --- Web Session Persistence (IndexedDB) ---
   const SESSION_DB_NAME = "pdf-editor-sessions";
@@ -324,6 +488,284 @@
     renderVisiblePages();
     setStatus(`Restored session from ${new Date(record.savedAt).toLocaleDateString()} — ${record.operationCount} edits, ${record.completionProgress?.confirmedCount || 0}/${record.completionProgress?.totalCandidates || 0} fields filled`);
     return true;
+  }
+
+  // --- Encrypted local template and profile vaults ---
+  const LOCAL_VAULT_DB_NAME = "pdf-editor-local-template-vault-v3";
+  let encryptedBrowserStore = null;
+  let browserStorePassphrase = null;
+  let browserProfilePassphrase = null;
+  let currentProfile = null;
+
+  function profilePassphrasePrompt() {
+    return window.prompt(
+      "Unlock the encrypted local profile vault. Use at least 12 characters. The vault is local to this browser profile.",
+      ""
+    );
+  }
+
+  function templatePassphrasePrompt() {
+    return window.prompt(
+      "Unlock the encrypted local template store. Use at least 12 characters. This protects layout history, not PDF bytes.",
+      ""
+    );
+  }
+
+  async function ensureEncryptedBrowserStore({ promptForPassphrase = false } = {}) {
+    if (!browserStorePassphrase && promptForPassphrase) {
+      const passphrase = templatePassphrasePrompt();
+      if (!passphrase) return null;
+      browserStorePassphrase = passphrase;
+    }
+    if (!browserStorePassphrase) return null;
+    if (!encryptedBrowserStore) {
+      encryptedBrowserStore = createEncryptedTemplateStore({
+        dbName: LOCAL_VAULT_DB_NAME,
+        passphrase: browserStorePassphrase,
+        logger: createZeroContentLogger()
+      });
+    }
+    try {
+      await encryptedBrowserStore.unlock(browserStorePassphrase);
+      return encryptedBrowserStore;
+    } catch (error) {
+      browserStorePassphrase = null;
+      if (error instanceof TemplateStoreError) throw error;
+      throw new Error("The encrypted local store could not be unlocked.");
+    }
+  }
+
+  async function unlockEncryptedProfileVault() {
+    const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+    if (!store) return false;
+    const passphrase = browserProfilePassphrase || profilePassphrasePrompt();
+    if (!passphrase) return false;
+    browserProfilePassphrase = passphrase;
+    const profiles = await store.list("profileHistory", { storePassphrase: browserStorePassphrase });
+    for (const entry of profiles) {
+      try {
+        await store.unlockProfile(entry.id, browserProfilePassphrase, { storePassphrase: browserStorePassphrase });
+      } catch {
+        // A profile-specific unlock failure remains local and value-free. The
+        // panel lists only profiles that can be authenticated explicitly.
+      }
+    }
+    return true;
+  }
+
+  const STANDARD_KEYS = [
+    { key: "person.firstName", label: "First Name" },
+    { key: "person.lastName", label: "Last Name" },
+    { key: "person.fullName", label: "Full Name" },
+    { key: "person.email", label: "Email" },
+    { key: "person.phone", label: "Phone" },
+    { key: "person.dateOfBirth", label: "Date of Birth" },
+    { key: "person.address.street", label: "Street Address" },
+    { key: "person.address.city", label: "City" },
+    { key: "person.address.state", label: "State" },
+    { key: "person.address.zip", label: "ZIP Code" },
+    { key: "person.address.country", label: "Country" },
+    { key: "person.ssn", label: "SSN" },
+    { key: "person.employer", label: "Employer" },
+    { key: "person.jobTitle", label: "Job Title" }
+  ];
+
+  async function saveProfile(profile) {
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return false;
+      if (!browserProfilePassphrase) {
+        browserProfilePassphrase = profilePassphrasePrompt();
+      }
+      if (!browserProfilePassphrase) return false;
+      const revisionID = makeID("profile-revision");
+      const profileContract = {
+        header: {
+          contractName: "pdf-editor.profile",
+          version: { major: 1, minor: 0 },
+          profileID: profile.profileID,
+          revisionID,
+          generatedAt: new Date().toISOString(),
+          provider: providerDescriptor()
+        },
+        payload: {
+          profileID: profile.profileID,
+          revisionID,
+          parentRevisionID: profile.__profileRevisionID || null,
+          displayName: profile.displayName,
+          revisionNumber: Number(profile.__profileRevisionNumber || 0) + 1,
+          storageScope: "deviceLocal",
+          requiresUnlock: true,
+          values: (profile.values || []).map((value) => ({
+            id: value.id || makeID("profile-value"),
+            semanticKey: value.semanticKey,
+            value: { kind: "text", text: value.textValue || "" }
+          }))
+        }
+      };
+      validateProfileContract(profileContract);
+      await store.saveProfileRevision(profileContract, {
+        storePassphrase: browserStorePassphrase,
+        profilePassphrase: browserProfilePassphrase
+      });
+      profile.__profileRevisionID = revisionID;
+      profile.__profileRevisionNumber = profileContract.payload.revisionNumber;
+      return true;
+    } catch (error) {
+      setStatus(`Encrypted profile save failed: ${error.message || "unknown error"}.`, "danger");
+      return false;
+    }
+  }
+
+  async function loadProfile(profileID) {
+    if (!encryptedBrowserStore || !browserStorePassphrase || !browserProfilePassphrase) return null;
+    try {
+      const history = await encryptedBrowserStore.getProfileHistory(profileID, {
+        storePassphrase: browserStorePassphrase,
+        profilePassphrase: browserProfilePassphrase
+      });
+      const latest = history?.revisions?.at(-1);
+      if (!latest) return null;
+      return {
+        profileID: latest.payload.profileID,
+        displayName: latest.payload.displayName,
+        values: (latest.payload.values || []).map((entry) => ({
+          semanticKey: entry.semanticKey,
+          textValue: entry.value?.text || entry.value?.choice || "",
+          label: entry.semanticKey,
+          category: "general"
+        })),
+        createdAt: latest.header.generatedAt,
+        lastModifiedAt: latest.header.generatedAt,
+        __profileRevisionID: latest.payload.revisionID,
+        __profileRevisionNumber: latest.payload.revisionNumber
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async function listProfiles() {
+    if (!encryptedBrowserStore || !browserStorePassphrase || !browserProfilePassphrase) return [];
+    try {
+      const entries = await encryptedBrowserStore.list("profileHistory", { storePassphrase: browserStorePassphrase });
+      const profiles = [];
+      for (const entry of entries) {
+        const profile = await loadProfile(entry.id);
+        if (profile) profiles.push(profile);
+      }
+      return profiles;
+    } catch {
+      return [];
+    }
+  }
+
+  async function deleteProfile(profileID) {
+    if (!encryptedBrowserStore || !browserStorePassphrase || !browserProfilePassphrase) return;
+    try {
+      await encryptedBrowserStore.deleteProfile(profileID, {
+        storePassphrase: browserStorePassphrase,
+        profilePassphrase: browserProfilePassphrase
+      });
+    } catch (error) {
+      setStatus(`Encrypted profile deletion failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  function profileGetValue(profile, key) {
+    const entry = (profile.values || []).find(v => v.semanticKey === key);
+    return entry ? entry.textValue : "";
+  }
+
+  function profileSetValue(profile, key, value) {
+    if (!profile.values) profile.values = [];
+    const idx = profile.values.findIndex(v => v.semanticKey === key);
+    if (idx >= 0) {
+      profile.values[idx].textValue = value;
+    } else {
+      profile.values.push({ semanticKey: key, textValue: value, label: key, category: "general" });
+    }
+    profile.lastModifiedAt = new Date().toISOString();
+  }
+
+  function matchProfileToFields(profile, fields, candidates) {
+    const operations = [];
+    const unmatched = [];
+    const usedKeys = new Set();
+    const values = (profile.values || []).filter(v => v.textValue);
+
+    // Match native fields
+    for (const field of fields) {
+      const name = field.name.toLowerCase();
+      let matched = false;
+      for (const pv of values) {
+        const key = pv.semanticKey.toLowerCase();
+        if ((name.includes("name") && key.includes("fullname")) ||
+            (name.includes("first") && key.includes("firstname")) ||
+            (name.includes("last") && key.includes("lastname")) ||
+            (name.includes("email") && key.includes("email")) ||
+            (name.includes("phone") && key.includes("phone")) ||
+            (name.includes("address") && key.includes("address.street")) ||
+            (name.includes("city") && key.includes("address.city")) ||
+            (name.includes("state") && key.includes("address.state")) ||
+            ((name.includes("zip") || name.includes("postal")) && key.includes("address.zip")) ||
+            (name.includes("ssn") && key.includes("ssn")) ||
+            ((name.includes("dob") || name.includes("birth")) && key.includes("dateofbirth")) ||
+            ((name.includes("employer") || name.includes("company")) && key.includes("employer")) ||
+            (name.includes("title") && key.includes("jobtitle"))) {
+          usedKeys.add(pv.semanticKey);
+          operations.push(makeOperation({
+            pageIndex: field.pageIndex,
+            kind: "nativeFieldValue",
+            value: pv.textValue,
+            targetID: field.name,
+            bounds: field.bounds,
+            sourceDigest,
+            coordinate: field.coordinate,
+            payload: { kind: field.kind === "button" ? "boolean" : "text", value: pv.textValue }
+          }));
+          matched = true;
+          break;
+        }
+      }
+      if (!matched) unmatched.push(field.name);
+    }
+
+    // Match static candidates
+    for (const candidate of candidates) {
+      if (!candidateIsDirectlyEditable(candidate)) continue;
+      const label = (candidate.labelText || "").toLowerCase();
+      if (!label) continue;
+      for (const pv of values) {
+        const key = pv.semanticKey.toLowerCase();
+        if ((label.includes("name") && key.includes("fullname")) ||
+            (label.includes("email") && key.includes("email")) ||
+            (label.includes("phone") && key.includes("phone")) ||
+            (label.includes("address") && key.includes("address.street")) ||
+            (label.includes("city") && key.includes("address.city")) ||
+            (label.includes("state") && key.includes("address.state")) ||
+            ((label.includes("zip") || label.includes("postal")) && key.includes("address.zip")) ||
+            (label.includes("ssn") && key.includes("ssn"))) {
+          usedKeys.add(pv.semanticKey);
+          const payload = candidate.entryMode === "characterGrid"
+            ? { kind: "characterGrid", text: pv.textValue, cells: candidate.memberBounds || [] }
+            : { kind: "text", text: pv.textValue };
+          operations.push(makeOperation({
+            pageIndex: candidate.pageIndex,
+            kind: "overlayText",
+            value: pv.textValue,
+            bounds: candidate.bounds,
+            candidateID: candidate.id,
+            sourceDigest,
+            coordinate: candidate.coordinate,
+            payload
+          }));
+          break;
+        }
+      }
+    }
+
+    return { operations, unmatched, usedKeys: [...usedKeys], totalMatches: operations.length };
   }
 
   const scaleState = {
@@ -585,24 +1027,31 @@
         const pageIndex = pageNum - 1;
         const name = annotation.fieldName || annotation.id || `field-${pageNum}-${index + 1}`;
         const bounds = normalizeRect(annotation.rect || [0, 0, 0, 0]);
-        const choices = (annotation.options || []).map((option) => {
+        let rawChoices = annotation.options || [];
+        if (annotation.fieldType === "Btn") {
+          rawChoices = (annotation.fieldFlags & 32768) && formOptionMap.has(name)
+            ? formOptionMap.get(name)
+            : [];
+        }
+        const choices = rawChoices.map((option) => {
           if (typeof option === "string") { return option; }
           return option.displayValue || option.exportValue || option.value || "";
-        }).filter(Boolean);
-        const buttonValue = annotation.buttonValue || annotation.fieldValue;
-        if (annotation.fieldType === "Btn" && buttonValue) {
-          const normalizedButtonValue = stringValue(buttonValue);
-          if (!/^off$/i.test(normalizedButtonValue) && normalizedButtonValue !== "") {
-            choices.push(normalizedButtonValue);
-          }
-        }
+        }).filter((option) => {
+          if (!option) return false;
+          // pdf-lib can expose numeric widget indices as radio options. They
+          // are implementation placeholders, not user-facing export values;
+          // keep meaningful string values while matching the native contract.
+          return !((annotation.fieldFlags & 32768) && /^\d+$/.test(String(option).trim()));
+        });
+        const rawValue = stringValue(annotation.fieldValue);
+        const value = annotation.fieldType === "Btn" && /^off$/i.test(rawValue) ? "" : rawValue;
         return {
           id: name,
           name,
           kind: fieldKind(annotation),
           pageIndex,
           bounds,
-          value: stringValue(annotation.fieldValue),
+          value,
           choices,
           coordinate: coordinateFor(pageIndex, bounds, page.rotate || 0),
           annotationID: annotation.id || null,
@@ -663,16 +1112,19 @@
   function buildResourcePolicy() {
     const pages = documentContract?.payload?.pages || [];
     const pageAreas = pages.map((page) => Math.max(0, (page.bounds?.width || 0) * (page.bounds?.height || 0)));
+    const maxPageAreaPoints = Math.max(...pageAreas, 612 * 792);
+    const maxPageDimensionPoints = Math.max(...pages.map((page) => Math.max(page.bounds?.width || 0, page.bounds?.height || 0)), 792);
+    const selectableTextPageCount = pages.filter((page) => page.hasSelectableText).length;
     resourcePolicy = chooseBrowserResourcePolicy({
       environment: collectBrowserResourceEnvironment(window),
       document: normalizeResourceDocument({
         byteCount: pdfData?.byteLength || 0,
         pageCount: pages.length || 1,
-        maxPageAreaPoints: Math.max(...pageAreas, 612 * 792),
-        maxPageDimensionPoints: Math.max(...pages.map((page) => Math.max(page.bounds?.width || 0, page.bounds?.height || 0)), 792),
+        maxPageAreaPoints,
+        maxPageDimensionPoints,
         rotatedPageCount: pages.filter((page) => page.rotation).length,
         rasterPageCount: pages.filter((page) => !page.hasSelectableText).length,
-        selectableTextPageCount: pages.filter((page) => page.hasSelectableText).length,
+        selectableTextPageCount,
         nativeFieldCount: nativeFields.length,
         candidateCount: candidates.length,
         isEncrypted: isEncryptedDocument
@@ -765,11 +1217,87 @@
         },
         attachments,
         annotationTypeCounts,
-        accessibility: { hasTaggedContent: false, hasReadingOrder: false, notes: ["Tagged-content and reading-order validation are outside this browser proof."] },
-        security: { isEncrypted: Boolean(pendingPassword), isLocked: Boolean(pendingPassword), requiresPassword: Boolean(pendingPassword) }
+        accessibility: {
+          hasTaggedContent: false,
+          hasReadingOrder: pages.some((page) => page.hasSelectableText),
+          notes: ["Reading order is derived from PDF.js text extraction and is not an authored-tag guarantee."]
+        },
+        security: { isEncrypted: Boolean(isEncryptedDocument), isLocked: false, requiresPassword: false }
       }
     };
+    preflightReport = buildPreflightReport({
+      document: documentContract,
+      sourceBytes: pdfData,
+      provider: providerDescriptor()
+    });
+    validatePreflightReport(preflightReport);
+    buildResourcePolicy();
+    sessionProvenance = buildSessionPrivacyProvenance();
+    renderPreflightReport();
     renderCompletionPanel();
+  }
+
+  function buildSessionPrivacyProvenance() {
+    if (!sourceDigest) return null;
+    const externalRuntime = /^https?:\/\//i.test(pdfjsRuntimeURL || "");
+    const validation = lastValidation;
+    let exportProvenance;
+    if (!validation) {
+      exportProvenance = {
+        state: "not-attempted",
+        sourceDigest,
+        outputDigest: null,
+        storage: "not-applicable",
+        validation: "not-run",
+        outputReopenable: null,
+        operationCount: operations.length,
+        exporterID: null,
+        validationProviderID: null
+      };
+    } else {
+      const succeeded = validation.status === "validated" || validation.status === "validated-with-warnings";
+      exportProvenance = {
+        state: succeeded ? "succeeded" : "failed",
+        sourceDigest,
+        outputDigest: validation.outputDigest || null,
+        storage: succeeded ? "local-download" : "not-applicable",
+        validation: validation.status === "validated" ? "validated"
+          : validation.status === "validated-with-warnings" ? "validated-with-warnings"
+            : validation.status === "failed" ? "failed" : "unknown",
+        outputReopenable: validation.outputReopenable ?? null,
+        operationCount: operations.length,
+        exporterID: validation.provider?.id || null,
+        validationProviderID: validation.provider?.id || null
+      };
+    }
+    const record = createSessionPrivacyProvenance({
+      sessionID: currentSessionID || "browser-session-pending",
+      sourceDigest,
+      provider: providerDescriptor(),
+      processing: {
+        locality: "local-browser",
+        sourceInput: "local-file-picker",
+        dataEgress: externalRuntime ? "runtime-only" : "none",
+        networkRequestCount: externalRuntime ? 1 : 0,
+        companionRequestCount: 0
+      },
+      ocr: {
+        state: "not-used",
+        providerIDs: [],
+        processedPageCount: 0,
+        recognizedTextRetained: false,
+        recognizedBoundsRetained: false
+      },
+      sourceRetention: {
+        state: "in-memory-session",
+        retainedUntilSessionEnd: true,
+        deletion: "pending",
+        sourceCopyCount: 1
+      },
+      exportProvenance
+    });
+    validateSessionPrivacyProvenance(record, { expectedSourceDigest: sourceDigest });
+    return record;
   }
 
   async function captureTemplateLayout() {
@@ -789,6 +1317,11 @@
       const mappings = templateContract.payload.mappings || [];
       templateProposal = null;
       templateValueDrafts = {};
+      templateLearningEvents = [];
+      pendingValidatedTemplateRevision = null;
+      templateRevisionDiff = null;
+      lastAppliedTemplateProposal = null;
+      templateCompletionOperationIDs = [];
       templateRevisionHistory = {
         templateID: templateContract.payload.templateID,
         revisions: [templateContract]
@@ -812,6 +1345,212 @@
           : mapping)
       }
     };
+  }
+
+  function canSaveValidatedTemplateRevision() {
+    if (!pendingValidatedTemplateRevision || !lastValidation || lastValidation.status !== "validated") return false;
+    const currentIDs = new Set(operations.map((operation) => operation.id));
+    const validatedIDs = new Set(lastValidation.operationIDs || []);
+    const completionIDs = new Set(templateCompletionOperationIDs);
+    return currentIDs.size > 0
+      && currentIDs.size === validatedIDs.size
+      && [...currentIDs].every((id) => validatedIDs.has(id))
+      && currentIDs.size === completionIDs.size
+      && [...currentIDs].every((id) => completionIDs.has(id));
+  }
+
+  async function saveTemplateRevisionLocally() {
+    if (!templateContract) return;
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      if (canSaveValidatedTemplateRevision()) {
+        const parent = templateContract;
+        const child = pendingValidatedTemplateRevision || makeValidatedTemplateRevision({
+          template: parent,
+          sourceDigest,
+          sessionID: lastAppliedTemplateProposal?.sessionID || null
+        });
+        templateRevisionHistory = await store.saveTemplateRevision(child, {
+          storePassphrase: browserStorePassphrase
+        });
+        for (const event of templateLearningEvents) {
+          await store.saveLearningEvent({ ...event, status: "applied" }, {
+            storePassphrase: browserStorePassphrase
+          });
+        }
+        templateRevisionDiff = diffTemplateRevisions(parent, child);
+        templateContract = child;
+        templateLearningEvents = templateLearningEvents.map((event) => ({ ...event, status: "applied" }));
+        pendingValidatedTemplateRevision = null;
+        lastAppliedTemplateProposal = null;
+        templateCompletionOperationIDs = [];
+        setStatus("Saved a new validated template revision. Profile values remain outside template history.");
+      } else {
+        templateRevisionHistory = await store.saveTemplateRevision(templateContract, {
+          storePassphrase: browserStorePassphrase
+        });
+        setStatus(`Persisted encrypted ${templateContract.payload.lifecycle} working capture. A strict validated export is still required before learning is saved.`);
+      }
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Encrypted template save failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function exportTemplateTransfer() {
+    if (!templateContract) return;
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const envelope = await store.exportTemplateHistory(templateContract.payload.templateID, {
+        storePassphrase: browserStorePassphrase
+      });
+      const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${templateContract.payload.displayName.replace(/[^a-z0-9_-]+/gi, "-") || "pdf-template"}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setStatus("Exported a value-free template transfer envelope. Source bytes and profile values were excluded.");
+    } catch (error) {
+      setStatus(`Template export failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function importTemplateTransfer(file) {
+    if (!file) return;
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const envelope = JSON.parse(await file.text());
+      const history = await store.importTemplateHistory(envelope, {
+        storePassphrase: browserStorePassphrase,
+        replace: false
+      });
+      templateRevisionHistory = history;
+      templateContract = history.revisions.at(-1) || null;
+      templateFingerprint = templateContract?.payload?.fingerprint || null;
+      templateProposal = null;
+      templateLearningEvents = await store.getLearningEvents(history.templateID, {
+        storePassphrase: browserStorePassphrase
+      });
+      pendingValidatedTemplateRevision = null;
+      templateRevisionDiff = null;
+      setStatus("Imported a value-free template revision history. Review the current document before completion.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Template import failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function exportTemplateSync() {
+    if (!templateRevisionHistory || !templateContract) return;
+    const passphrase = templatePassphrasePrompt();
+    if (!passphrase) return;
+    try {
+      const envelope = await encryptTemplateSyncEnvelope({
+        history: templateRevisionHistory,
+        learningEvents: templateLearningEvents,
+        deviceID: "browser-local-device",
+        generation: templateRevisionHistory.revisions.length,
+        passphrase
+      });
+      const blob = new Blob([JSON.stringify(envelope, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${templateContract.payload.displayName.replace(/[^a-z0-9_-]+/gi, "-") || "pdf-template"}-sync.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setStatus("Exported a client-encrypted template sync envelope. The passphrase never leaves this browser.");
+    } catch (error) {
+      setStatus(`Encrypted sync export failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function importTemplateSync(file) {
+    if (!file) return;
+    const passphrase = templatePassphrasePrompt();
+    if (!passphrase) return;
+    try {
+      const envelope = JSON.parse(await file.text());
+      const incoming = await decryptTemplateSyncEnvelope(envelope, { passphrase });
+      if (templateRevisionHistory) {
+        const merged = mergeTemplateHistories(templateRevisionHistory, incoming.history);
+        if (merged.conflicts.length) throw new Error(`Sync merge requires review: ${merged.conflicts.map((entry) => entry.reason).join(", ")}`);
+        templateRevisionHistory = merged.history;
+      } else {
+        templateRevisionHistory = incoming.history;
+      }
+      templateContract = templateRevisionHistory.revisions.at(-1) || null;
+      templateFingerprint = templateContract?.payload?.fingerprint || null;
+      templateLearningEvents = incoming.learningEvents || [];
+      pendingValidatedTemplateRevision = null;
+      templateProposal = null;
+      templateRevisionDiff = null;
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (store && templateRevisionHistory) {
+        for (const revision of templateRevisionHistory.revisions) {
+          const existing = await store.getTemplateHistory(revision.payload.templateID, { storePassphrase: browserStorePassphrase });
+          if (!existing?.revisions?.some((entry) => entry.payload.revisionID === revision.payload.revisionID)) {
+            await store.saveTemplateRevision(revision, { storePassphrase: browserStorePassphrase });
+          }
+        }
+      }
+      setStatus("Imported and merged a client-encrypted template sync envelope. No profile values were synchronized.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Encrypted sync import failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  function prepareValidatedTemplateRevisionFromValidation() {
+    pendingValidatedTemplateRevision = null;
+    templateRevisionDiff = null;
+    if (!lastAppliedTemplateProposal || !templateContract || !lastValidation) return;
+    const currentIDs = new Set(operations.map((operation) => operation.id));
+    const completionIDs = new Set(templateCompletionOperationIDs);
+    const validationIDs = new Set(lastValidation.operationIDs || []);
+    if (lastValidation.status !== "validated"
+      || !lastValidation.sourceUnchanged
+      || !lastValidation.outputReopenable
+      || lastValidation.sourceDigest !== sourceDigest
+      || !completionIDs.size
+      || currentIDs.size !== validationIDs.size
+      || [...currentIDs].some((id) => !validationIDs.has(id))
+      || currentIDs.size !== completionIDs.size
+      || [...currentIDs].some((id) => !completionIDs.has(id))
+      || (lastValidation.checks || []).some((check) => ["unknown", "failed"].includes(check.status))) return;
+    const event = createLearningEvent({
+      template: templateContract,
+      proposal: lastAppliedTemplateProposal,
+      kind: "completionValidated",
+      note: "Strict export validation completed after two-stage reviewed completion."
+    });
+    if (!canPromoteTemplateRevision({
+      template: templateContract,
+      sourceDigest,
+      validation: lastValidation,
+      events: [event]
+    })) return;
+    try {
+      pendingValidatedTemplateRevision = makeValidatedTemplateRevision({
+        template: templateContract,
+        sourceDigest,
+        sessionID: lastAppliedTemplateProposal.sessionID
+      });
+      templateLearningEvents = [event];
+      templateRevisionDiff = diffTemplateRevisions(templateContract, pendingValidatedTemplateRevision);
+      setStatus("Validated export is ready. Save the proposed child revision explicitly to remember this reviewed completion.");
+    } catch (error) {
+      setStatus(`Validated completion could not create a child revision: ${error.message || "unknown error"}.`, "danger");
+    }
   }
 
   function activateReviewedTemplate() {
@@ -847,21 +1586,26 @@
   function prepareTemplateCompletion() {
     if (!templateContract || templateContract.payload.lifecycle !== "active") return;
     const approvedMappings = templateContract.payload.mappings.filter((mapping) => mapping.status === "confirmed");
-    const profileID = makeID("profile");
-    const revisionID = makeID("profile-revision");
+    const profileID = currentProfile?.profileID || makeID("session-profile");
+    const revisionID = currentProfile?.__profileRevisionID || makeID("session-profile-revision");
     const profileValues = approvedMappings
       .map((mapping) => ({
         id: makeID("profile-value"),
         semanticKey: mapping.semanticKey,
-        value: { kind: "text", text: templateValueDrafts[mapping.id] || "" }
+        value: { kind: "text", text: currentProfile ? profileGetValue(currentProfile, mapping.semanticKey) : templateValueDrafts[mapping.id] || "" }
       }))
       .filter((entry) => entry.value.text);
     const profile = {
       header: { contractName: "pdf-editor.profile", version: { major: 1, minor: 0 }, profileID, revisionID, generatedAt: new Date().toISOString(), provider: providerDescriptor() },
-      payload: { profileID, revisionID, displayName: "Current reviewed values", revisionNumber: 1, storageScope: "deviceLocal", requiresUnlock: true, values: profileValues }
+      payload: { profileID, revisionID, displayName: currentProfile?.displayName || "Session values", revisionNumber: currentProfile?.__profileRevisionNumber || 0, storageScope: currentProfile ? "deviceLocal" : "deviceLocal", requiresUnlock: Boolean(currentProfile), values: profileValues }
     };
     const match = matchTemplate({ template: templateContract, fingerprint: templateFingerprint, sourceDigest });
     templateProposal = createCompletionProposal({ template: templateContract, match, profile, sessionID: makeID("completion") });
+    lastAppliedTemplateProposal = null;
+    templateCompletionOperationIDs = [];
+    pendingValidatedTemplateRevision = null;
+    templateLearningEvents = [];
+    templateRevisionDiff = null;
     for (const entry of templateProposal?.entries || []) {
       if (entry.target.kind !== "nativeField") continue;
       const field = nativeFields.find((candidate) => candidate.pageIndex === entry.target.pageIndex
@@ -883,6 +1627,12 @@
     ui.templateMappingList.innerHTML = "";
     ui.templateCompletionList.innerHTML = "";
     ui.captureTemplateButton.disabled = false;
+    ui.saveTemplateButton.disabled = !templateContract;
+    ui.saveTemplateButton.textContent = canSaveValidatedTemplateRevision()
+      ? "Save validated template revision"
+      : "Persist encrypted working capture";
+    ui.exportTemplateButton.disabled = !templateContract;
+    ui.exportTemplateSyncButton.disabled = !templateContract || !templateRevisionHistory;
     ui.activateTemplateButton.disabled = true;
     ui.prepareTemplateButton.disabled = true;
     ui.applyTemplateButton.disabled = true;
@@ -891,7 +1641,19 @@
       return;
     }
     const mappings = templateContract.payload.mappings || [];
-    ui.templateSummary.textContent = `${templateContract.payload.lifecycle} revision · ${mappings.length} mapping(s) · source-bound ${sourceDigest.slice(0, 12)}...`;
+    const promotionState = canSaveValidatedTemplateRevision()
+      ? " · validated child revision ready to save"
+      : pendingValidatedTemplateRevision
+        ? " · pending revision withdrawn until the ledger is unchanged"
+        : "";
+    const diffState = templateRevisionDiff
+      ? ` · diff +${templateRevisionDiff.mappingChanges.filter((change) => change.change === "added").length}`
+        + ` / -${templateRevisionDiff.mappingChanges.filter((change) => change.change === "removed").length}`
+        + ` / ~${templateRevisionDiff.mappingChanges.filter((change) => change.change === "changed").length}`
+        + ` mappings, +${templateRevisionDiff.exactSourceDigestsAdded.length}`
+        + ` / -${templateRevisionDiff.exactSourceDigestsRemoved.length} source variant(s)`
+      : "";
+    ui.templateSummary.textContent = `${templateContract.payload.lifecycle} revision · ${mappings.length} mapping(s) · source-bound ${sourceDigest.slice(0, 12)}...${diffState}${promotionState}`;
     mappings.forEach((mapping) => {
       const row = document.createElement("div");
       row.className = "template-mapping";
@@ -978,13 +1740,162 @@
     }
     try {
       operations.push(...materializeCompletionOperations({ proposal: templateProposal, currentSourceDigest: sourceDigest }));
+      lastAppliedTemplateProposal = templateProposal;
+      templateCompletionOperationIDs = operations.slice(-templateProposal.entries.length).map((operation) => operation.id);
+      pendingValidatedTemplateRevision = null;
+      templateLearningEvents = [];
+      templateRevisionDiff = null;
       templateProposal = null;
-      setStatus("Queued reviewed template operations. The source remains unchanged until export.");
+      setStatus("Queued reviewed template operations. The source remains unchanged until export and strict validation.");
       renderCompletionPanel();
       renderVisiblePages();
       saveWebSession();
     } catch (error) {
       displayReaderError(error);
+    }
+  }
+
+  function renderProfilePanel() {
+    const panel = document.getElementById("profilePanel");
+    if (!panel) return;
+    panel.innerHTML = "";
+
+    if (currentProfile) {
+      // Active profile
+      const header = document.createElement("div");
+      header.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:8px;";
+      header.innerHTML = `<strong style="font-size:13px;">${currentProfile.displayName}</strong>`;
+      const switchBtn = document.createElement("button");
+      switchBtn.textContent = "Switch";
+      switchBtn.style.cssText = "font-size:11px;margin-left:auto;";
+      switchBtn.onclick = () => { currentProfile = null; renderProfilePanel(); };
+      header.appendChild(switchBtn);
+      panel.appendChild(header);
+
+      // Profile fields
+      for (const sk of STANDARD_KEYS) {
+        const val = profileGetValue(currentProfile, sk.key);
+        const row = document.createElement("div");
+        row.style.cssText = "display:flex;gap:4px;align-items:center;margin:2px 0;";
+        const label = document.createElement("span");
+        label.textContent = sk.label;
+        label.style.cssText = "width:80px;text-align:right;font-size:11px;color:#64748b;flex-shrink:0;";
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = val;
+        input.placeholder = "—";
+        input.style.cssText = "flex:1;font-size:11px;padding:2px 4px;border:1px solid #d1d5db;border-radius:4px;";
+        input.onchange = () => {
+          profileSetValue(currentProfile, sk.key, input.value);
+          saveProfile(currentProfile);
+        };
+        row.appendChild(label);
+        row.appendChild(input);
+        panel.appendChild(row);
+      }
+
+      // Bulk fill buttons
+      const actions = document.createElement("div");
+      actions.style.cssText = "display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;";
+      const previewBtn = document.createElement("button");
+      previewBtn.textContent = "Preview Fill";
+      previewBtn.className = "primary";
+      previewBtn.onclick = () => {
+        const result = matchProfileToFields(currentProfile, nativeFields, candidates);
+        if (result.totalMatches > 0) {
+          // Apply matched operations
+          for (const op of result.operations) {
+            operations.push(op);
+            if (op.candidateID) {
+              reviews.push({
+                id: makeID("review"), candidateID: op.candidateID, kind: "confirmed",
+                region: op.coordinate, fieldType: "text",
+                note: "Confirmed by profile bulk fill.", createdAt: new Date().toISOString()
+              });
+              candidates = candidates.map(c => c.id === op.candidateID ? { ...c, status: "confirmed" } : c);
+            }
+          }
+          renderCompletionPanel();
+          renderVisiblePages();
+          saveWebSession();
+          setStatus(`Applied ${result.totalMatches} profile field(s). ${result.unmatched.length} unmatched.`);
+        } else {
+          setStatus("No profile values matched this document's fields.");
+        }
+      };
+      actions.appendChild(previewBtn);
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.onclick = () => { saveProfile(currentProfile); setStatus("Profile saved."); };
+      actions.appendChild(saveBtn);
+      panel.appendChild(actions);
+
+    } else {
+      // No profile — show list or create
+      const info = document.createElement("div");
+      info.className = "small muted";
+      info.textContent = "Select or create a profile to enable bulk fill.";
+      panel.appendChild(info);
+
+      const unlockButton = document.createElement("button");
+      unlockButton.type = "button";
+      unlockButton.textContent = "Unlock encrypted local profiles";
+      unlockButton.onclick = async () => {
+        try {
+          await unlockEncryptedProfileVault();
+          renderProfilePanel();
+        } catch (error) {
+          setStatus(`Profile vault unlock failed: ${error.message || "unknown error"}.`, "danger");
+        }
+      };
+      panel.appendChild(unlockButton);
+
+      // Load profiles list
+      listProfiles().then(profiles => {
+        for (const p of profiles) {
+          const row = document.createElement("div");
+          row.style.cssText = "display:flex;align-items:center;gap:6px;padding:4px 0;border-top:1px solid #e5e7eb;";
+          const btn = document.createElement("button");
+          btn.textContent = p.displayName;
+          btn.style.cssText = "flex:1;text-align:left;font-size:12px;";
+          btn.onclick = () => { currentProfile = p; renderProfilePanel(); };
+          row.appendChild(btn);
+          panel.appendChild(row);
+        }
+      });
+
+      // Create new profile
+      const createRow = document.createElement("div");
+      createRow.style.cssText = "margin-top:6px;display:flex;gap:4px;";
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.placeholder = "Profile name";
+      nameInput.style.cssText = "flex:1;font-size:12px;padding:4px;border:1px solid #d1d5db;border-radius:4px;";
+      const createBtn = document.createElement("button");
+      createBtn.textContent = "Create";
+      createBtn.className = "primary";
+      createBtn.style.cssText = "font-size:12px;";
+      createBtn.onclick = async () => {
+        const name = nameInput.value.trim();
+        if (!name) return;
+        const newProfile = {
+          profileID: makeID("profile"),
+          displayName: name,
+          values: STANDARD_KEYS.map(sk => ({ semanticKey: sk.key, textValue: "", label: sk.label, category: "general" })),
+          createdAt: new Date().toISOString(),
+          lastModifiedAt: new Date().toISOString()
+        };
+        const saved = await saveProfile(newProfile);
+        if (!saved) return;
+        currentProfile = newProfile;
+        nameInput.value = "";
+        renderProfilePanel();
+        setStatus(`Created profile ${name}.`);
+      };
+      createRow.appendChild(nameInput);
+      createRow.appendChild(createBtn);
+      panel.appendChild(createRow);
     }
   }
 
@@ -996,6 +1907,7 @@
       ui.candidateList.innerHTML = "";
       ui.editList.innerHTML = "";
       ui.validationBox.textContent = "No export validation yet.";
+      renderImpactMetrics(null);
       setHidden(ui.candidateAction, true);
       setHidden(ui.manualAction, true);
       ui.applyFieldButton.disabled = true;
@@ -1013,6 +1925,7 @@
 
     const payload = documentContract.payload;
     ui.completionSource.textContent = `${sourceName} | ${payload.pages.length} page(s) | ${nativeFields.length} native field(s) | ${activeCandidates().length} suggested area(s) | SHA-256 ${sourceDigest.slice(0, 16)}...`;
+    renderProfilePanel();
     ui.fieldList.innerHTML = "";
     if (!nativeFields.length) {
       const empty = document.createElement("div");
@@ -1169,6 +2082,7 @@
     } else {
       ui.validationBox.textContent = "No export validation yet.";
     }
+    renderImpactMetrics(lastValidation);
     renderTemplateReview();
   }
 
@@ -1203,6 +2117,7 @@
       setStatus("Enter a value before applying the field edit.", "danger");
       return;
     }
+    const buttonOptions = selectedField.kind === "button" ? nativeButtonOptions(selectedField) : [];
     const operation = makeOperation({
       pageIndex: selectedField.pageIndex,
       targetID: selectedField.name,
@@ -1210,7 +2125,11 @@
       value,
       bounds: selectedField.bounds,
       previousValue: selectedField.value || null,
-      payload: { kind: selectedField.kind === "button" ? "boolean" : selectedField.kind, value },
+      payload: selectedField.kind !== "button"
+        ? { kind: selectedField.kind, value }
+        : buttonOptions.length > 1
+          ? { kind: "radio", value, options: buttonOptions }
+          : { kind: "boolean", value },
       coordinate: selectedField.coordinate
     });
     operations.push(operation);
@@ -1566,9 +2485,11 @@
     const sourceBytes = new Uint8Array(data);
     pdfData = new Uint8Array(sourceBytes);
     sourceDigest = "";
+    currentSessionID = makeID("session");
     documentContract = null;
-    resourcePolicy = null;
     preflightReport = null;
+    sessionProvenance = null;
+    resourcePolicy = null;
     nativeFields = [];
     candidates = [];
     operations = [];
@@ -1578,6 +2499,11 @@
     templateRevisionHistory = null;
     templateProposal = null;
     templateValueDrafts = {};
+    templateLearningEvents = [];
+    pendingValidatedTemplateRevision = null;
+    templateRevisionDiff = null;
+    lastAppliedTemplateProposal = null;
+    templateCompletionOperationIDs = [];
     selectedField = null;
     selectedCandidate = null;
     lastValidation = null;
@@ -1676,6 +2602,26 @@
     }
     try {
       const boxDocument = await pdfLib.PDFDocument.load(new Uint8Array(pdfData));
+      formOptionMap = new Map();
+      try {
+        const form = boxDocument.getForm();
+        for (const fact of pageFacts) {
+          const page = await pdfDoc.getPage(fact.page);
+          const annotations = await page.getAnnotations({ intent: "display" });
+          for (const annotation of annotations) {
+            if (annotation.fieldType !== "Btn" || !(annotation.fieldFlags & 32768)) { continue; }
+            const name = annotation.fieldName || annotation.id;
+            if (!name || formOptionMap.has(name)) { continue; }
+            const group = form.getRadioGroup(name);
+            const options = group.getOptions();
+            if (Array.isArray(options) && options.length) {
+              formOptionMap.set(name, options);
+            }
+          }
+        }
+      } catch {
+        formOptionMap = new Map();
+      }
       boxDocument.getPages().forEach((page, index) => {
         const box = (value) => value
           ? normalizeRect([value.x, value.y, value.x + value.width, value.y + value.height])
@@ -2219,6 +3165,40 @@
     }
   }
 
+  function renderPreflightReport() {
+    if (!ui.preflightBox) return;
+    ui.preflightBox.textContent = "";
+    if (!preflightReport) {
+      ui.preflightBox.textContent = "Preflight is not available until a PDF is loaded.";
+      return;
+    }
+    const payload = preflightReport.payload;
+    const summary = document.createElement("div");
+    summary.className = "item small";
+    summary.textContent = `Observed ${payload.summary.findingCount} finding(s): ${payload.summary.warningCount} warning(s), ${payload.summary.blockedCount} blocked surface(s).`;
+    ui.preflightBox.appendChild(summary);
+    const status = document.createElement("div");
+    status.className = "item small";
+    status.textContent = `Sanitization: ${payload.sanitization.status}; clean claim: no; source unchanged: yes.`;
+    ui.preflightBox.appendChild(status);
+    const categories = [
+      ["Metadata fields present", payload.summary.metadataFieldCount],
+      ["Embedded-data observations", payload.summary.embeddedDataCount],
+      ["Network-boundary observations", payload.summary.networkBoundaryCount],
+      ["Possible active-content tokens", payload.summary.activeContentCount]
+    ];
+    for (const [label, count] of categories) {
+      const row = document.createElement("div");
+      row.className = "small muted";
+      row.textContent = `${label}: ${count}`;
+      ui.preflightBox.appendChild(row);
+    }
+    const limits = document.createElement("div");
+    limits.className = "small muted";
+    limits.textContent = `Limits: ${payload.sanitization.limits.length} documented; preflight does not remove or execute PDF content.`;
+    ui.preflightBox.appendChild(limits);
+  }
+
   async function writeClipboardText(text) {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
@@ -2279,9 +3259,7 @@
             y: bounds.y,
             width: bounds.width,
             height: bounds.height,
-            borderWidth: 1,
-            backgroundColor: pdfLib.rgb(1, 1, 1),
-            textColor: pdfLib.rgb(0.06, 0.18, 0.35)
+            borderWidth: 0
           });
           continue;
         }
@@ -2302,6 +3280,59 @@
     }
     if (overlayOperations.length) {
       font ||= await outputDocument.embedFont(pdfLib.StandardFonts.Helvetica);
+      const boundedTextMinimumSize = 6;
+      const boundedTextPadding = 2;
+      const singleLineLayouts = new Map();
+      const isExplicitMultiline = (operation) => operation.multiline === true
+        || operation.payload?.multiline === true
+        || operation.payload?.lineMode === "multiline";
+      const measureTextHeight = (size) => typeof font.heightAtSize === "function"
+        ? font.heightAtSize(size)
+        : size;
+
+      // Preflight all bounded single-line overlays before mutating the
+      // in-memory output document. pdf-lib's maxWidth option can wrap text;
+      // it is not a one-line fit guarantee and can therefore escape the
+      // operation's declared authorization rectangle.
+      for (const operation of overlayOperations) {
+        if (!operation.bounds) {
+          throw new Error(`Overlay ${operation.id} has no coordinate bounds.`);
+        }
+        if (operation.payload?.kind === "characterGrid" || isExplicitMultiline(operation)) {
+          continue;
+        }
+        const text = String(operation.value || "");
+        const availableWidth = operation.bounds.width - (boundedTextPadding * 2);
+        const availableHeight = operation.bounds.height - (boundedTextPadding * 2);
+        const preferredSize = Math.max(8, Math.min(14, operation.bounds.height * 0.72));
+        const preferredWidth = font.widthOfTextAtSize(text, preferredSize);
+        const preferredHeight = measureTextHeight(preferredSize);
+        const widthSize = preferredWidth > 0 ? (preferredSize * availableWidth) / preferredWidth : preferredSize;
+        const heightSize = preferredHeight > 0 ? (preferredSize * availableHeight) / preferredHeight : preferredSize;
+        const size = Math.min(preferredSize, widthSize, heightSize);
+        if (!Number.isFinite(size) || size < boundedTextMinimumSize) {
+          throw new Error(
+            `Bounded single-line text operation ${operation.id} cannot fit inside its declared region `
+            + `(${operation.bounds.width.toFixed(2)} x ${operation.bounds.height.toFixed(2)}pt) `
+            + `at the supported minimum font size of ${boundedTextMinimumSize}pt. `
+            + "Choose a larger region or explicitly request multiline text."
+          );
+        }
+        const measuredWidth = font.widthOfTextAtSize(text, size);
+        const measuredHeight = measureTextHeight(size);
+        if (measuredWidth > availableWidth + 0.01 || measuredHeight > availableHeight + 0.01) {
+          throw new Error(
+            `Bounded single-line text operation ${operation.id} cannot fit its measured text footprint `
+            + "inside the declared operation region. Choose a larger region or explicitly request multiline text."
+          );
+        }
+        singleLineLayouts.set(operation.id, {
+          x: operation.bounds.x + boundedTextPadding,
+          y: operation.bounds.y + boundedTextPadding + Math.max(0, (availableHeight - measuredHeight) / 2),
+          size
+        });
+      }
+
       for (const operation of overlayOperations) {
         if (!operation.bounds) { throw new Error(`Overlay ${operation.id} has no coordinate bounds.`); }
         const page = outputDocument.getPage(operation.pageIndex);
@@ -2323,14 +3354,28 @@
           });
           continue;
         }
+        if (isExplicitMultiline(operation)) {
+          page.drawText(operation.value, {
+            x: operation.bounds.x + 2,
+            y: operation.bounds.y + 2,
+            size: Math.max(8, Math.min(14, operation.bounds.height * 0.72)),
+            font,
+            color: pdfLib.rgb(0.06, 0.18, 0.35),
+            maxWidth: Math.max(8, operation.bounds.width - 4),
+            lineHeight: Math.max(9, operation.bounds.height)
+          });
+          continue;
+        }
+        const layout = singleLineLayouts.get(operation.id);
+        if (!layout) {
+          throw new Error(`Bounded single-line text operation ${operation.id} has no validated layout.`);
+        }
         page.drawText(operation.value, {
-          x: operation.bounds.x + 2,
-          y: operation.bounds.y + 2,
-          size: Math.max(8, Math.min(14, operation.bounds.height * 0.72)),
+          x: layout.x,
+          y: layout.y,
+          size: layout.size,
           font,
-          color: pdfLib.rgb(0.06, 0.18, 0.35),
-          maxWidth: Math.max(8, operation.bounds.width - 4),
-          lineHeight: Math.max(9, operation.bounds.height)
+          color: pdfLib.rgb(0.06, 0.18, 0.35)
         });
       }
     }
@@ -2355,18 +3400,138 @@
     return fields;
   }
 
-  function validationCheck(kind, status, message, operationIDs = [], region = null) {
+  function operationMetricIDs(operationIDs = []) {
+    return [...new Set((Array.isArray(operationIDs) ? operationIDs : []).filter(Boolean))];
+  }
+
+  function textImpactMetrics(result, operationIDs = [], basis = "pdfjs-text-outside-region") {
+    const pages = Array.isArray(result?.pages) ? result.pages : [];
+    return {
+      basis,
+      comparedPageCount: pages.length,
+      changedPageCount: pages.filter((page) => page?.equal === false).length,
+      operationCount: operationMetricIDs(operationIDs).length,
+      operationIDs: operationMetricIDs(operationIDs)
+    };
+  }
+
+  function rasterImpactMetrics(result, operationIDs = [], basis = "pdfjs-raster-outside-region") {
+    const pages = Array.isArray(result?.pages) ? result.pages : [];
+    const comparedPixelCount = pages.reduce((total, page) => total + (Number(page?.outsidePixelCount) || 0), 0);
+    const changedPixelCount = pages.reduce((total, page) => total + (Number(page?.changedPixelCount) || 0), 0);
+    return {
+      basis,
+      comparedPageCount: pages.length,
+      changedPageCount: pages.filter((page) => page?.status === "failed").length,
+      comparedPixelCount,
+      changedPixelCount,
+      outsidePixelRatio: comparedPixelCount ? changedPixelCount / comparedPixelCount : 0,
+      maximumChannelDelta: pages.reduce((maximum, page) => Math.max(maximum, Number(page?.maxChannelDelta) || 0), 0),
+      scale: Number.isFinite(result?.scale) ? result.scale : null,
+      channelTolerance: Number.isFinite(result?.channelTolerance) ? result.channelTolerance : null,
+      maxAllowedOutsidePixelRatio: Number.isFinite(result?.maxAllowedOutsidePixelRatio) ? result.maxAllowedOutsidePixelRatio : null,
+      operationCount: operationMetricIDs(operationIDs).length,
+      operationIDs: operationMetricIDs(operationIDs)
+    };
+  }
+
+  function metricValueClass(status) {
+    if (status === "passed") return "success";
+    if (status === "failed") return "danger";
+    return "muted";
+  }
+
+  function formatMetricNumber(value, digits = 0) {
+    return Number.isFinite(value) ? value.toLocaleString(undefined, { maximumFractionDigits: digits }) : "not measured";
+  }
+
+  function appendImpactMetricRow(container, label, value, status = null) {
+    const row = document.createElement("div");
+    row.className = "impact-metric-row";
+    const labelElement = document.createElement("span");
+    labelElement.className = "impact-metric-label";
+    labelElement.textContent = label;
+    const valueElement = document.createElement("span");
+    valueElement.className = `impact-metric-value${status ? ` ${metricValueClass(status)}` : ""}`;
+    valueElement.textContent = value;
+    row.append(labelElement, valueElement);
+    container.appendChild(row);
+  }
+
+  function renderImpactMetrics(validation) {
+    if (!ui.impactMetricsContent) return;
+    ui.impactMetricsContent.innerHTML = "";
+    if (!validation) {
+      ui.impactMetricsContent.textContent = "No outside-region validation metrics yet.";
+      return;
+    }
+    const textCheck = validation.checks?.find((check) => check.kind === "outsideRegionText") || null;
+    const rasterCheck = validation.checks?.find((check) => check.kind === "visualDiff") || null;
+    if (!textCheck && !rasterCheck) {
+      ui.impactMetricsContent.textContent = "Outside-region validation was not reported.";
+      return;
+    }
+    const textMetrics = textCheck?.metrics || {};
+    const rasterMetrics = rasterCheck?.metrics || {};
+    const summary = document.createElement("div");
+    summary.className = "small muted";
+    summary.textContent = "Counts exclude document text and field values.";
+    ui.impactMetricsContent.appendChild(summary);
+
+    const textHeading = document.createElement("div");
+    textHeading.className = "list-title";
+    textHeading.style.marginTop = "6px";
+    textHeading.textContent = "Outside-region text";
+    ui.impactMetricsContent.appendChild(textHeading);
+    appendImpactMetricRow(ui.impactMetricsContent, "Status", textCheck?.status || "unknown", textCheck?.status || "unknown");
+    if (Number.isFinite(textMetrics.sourcePageCount)) {
+      appendImpactMetricRow(ui.impactMetricsContent, "Source pages", formatMetricNumber(textMetrics.sourcePageCount));
+    }
+    appendImpactMetricRow(ui.impactMetricsContent, "Pages compared", formatMetricNumber(textMetrics.comparedPageCount));
+    appendImpactMetricRow(ui.impactMetricsContent, "Pages changed outside region", formatMetricNumber(textMetrics.changedPageCount));
+    appendImpactMetricRow(ui.impactMetricsContent, "Authorized operations", formatMetricNumber(textMetrics.operationCount));
+
+    const rasterHeading = document.createElement("div");
+    rasterHeading.className = "list-title";
+    rasterHeading.style.marginTop = "8px";
+    rasterHeading.textContent = "Outside-region raster";
+    ui.impactMetricsContent.appendChild(rasterHeading);
+    appendImpactMetricRow(ui.impactMetricsContent, "Status", rasterCheck?.status || "unknown", rasterCheck?.status || "unknown");
+    if (Number.isFinite(rasterMetrics.sourcePageCount)) {
+      appendImpactMetricRow(ui.impactMetricsContent, "Source pages", formatMetricNumber(rasterMetrics.sourcePageCount));
+    }
+    appendImpactMetricRow(ui.impactMetricsContent, "Pages compared", formatMetricNumber(rasterMetrics.comparedPageCount));
+    appendImpactMetricRow(ui.impactMetricsContent, "Pages changed outside region", formatMetricNumber(rasterMetrics.changedPageCount));
+    appendImpactMetricRow(ui.impactMetricsContent, "Changed pixels / compared", `${formatMetricNumber(rasterMetrics.changedPixelCount)} / ${formatMetricNumber(rasterMetrics.comparedPixelCount)}`);
+    appendImpactMetricRow(ui.impactMetricsContent, "Outside-pixel ratio", Number.isFinite(rasterMetrics.outsidePixelRatio) ? `${(rasterMetrics.outsidePixelRatio * 100).toFixed(4)}%` : "not measured");
+    appendImpactMetricRow(ui.impactMetricsContent, "Maximum channel delta", formatMetricNumber(rasterMetrics.maximumChannelDelta));
+    appendImpactMetricRow(ui.impactMetricsContent, "Render scale / tolerance", `${rasterMetrics.scale == null ? "not measured" : `${rasterMetrics.scale}x`} / ${rasterMetrics.channelTolerance == null ? "not measured" : rasterMetrics.channelTolerance}`);
+    if (textMetrics.basis || rasterMetrics.basis) {
+      appendImpactMetricRow(ui.impactMetricsContent, "Evidence basis", `${textMetrics.basis || "unknown"} / ${rasterMetrics.basis || "unknown"}`);
+    }
+  }
+
+  function validationCheck(kind, status, message, operationIDs = [], region = null, metrics = null) {
     return {
       id: makeID("check"),
       kind,
       status,
       message,
       region,
-      operationIDs
+      operationIDs,
+      ...(metrics ? { metrics } : {})
     };
   }
 
   function valuesMatch(expected, actual, operation) {
+    if (operation.payload?.kind === "radio") {
+      const options = Array.isArray(operation.payload.options) ? operation.payload.options : [];
+      const expectedIndex = options.indexOf(expected);
+      if (expectedIndex >= 0 && String(expectedIndex) === String(actual || "").trim()) {
+        return true;
+      }
+      return (expected || "").trim() === (actual || "").trim();
+    }
     if (operation.payload?.kind === "boolean") {
       const expectedTruthy = /^(1|true|yes|on|checked)$/i.test(expected.trim());
       const actualTruthy = !/^(off|false|no|0|)$/i.test((actual || "").trim());
@@ -2396,8 +3561,29 @@
         validationCheck("pageGeometry", "passed", "No-op export preserves the already-inspected encrypted page geometry.", operationIDs),
         validationCheck("nativeFields", "skipped", "No native field operations were requested.", operationIDs),
         validationCheck("appliedOperations", "passed", "0 queued operation(s) were applied; the protected source was copied byte-for-byte.", operationIDs),
-        validationCheck("outsideRegionText", "passed", "No page content changed because the protected source was copied byte-for-byte.", operationIDs),
-        validationCheck("visualDiff", "passed", "No raster content changed because the protected source was copied byte-for-byte.", operationIDs),
+        validationCheck(
+          "outsideRegionText",
+          "passed",
+          "No page content changed because the protected source was copied byte-for-byte.",
+          operationIDs,
+          null,
+          {
+            ...textImpactMetrics({ pages: [] }, operationIDs, "source-digest-equality"),
+            sourcePageCount: pdfDoc.numPages
+          }
+        ),
+        validationCheck(
+          "visualDiff",
+          "passed",
+          "No raster content changed because the protected source was copied byte-for-byte.",
+          operationIDs,
+          null,
+          {
+            ...rasterImpactMetrics({ pages: [] }, operationIDs, "source-digest-equality"),
+            sourcePageCount: pdfDoc.numPages,
+            renderedPageCount: 0
+          }
+        ),
         validationCheck(
           "providerCapability",
           "passed",
@@ -2513,26 +3699,34 @@
           "outsideRegionText",
           impact.text.status,
           impact.text.message,
-          operations.map((operation) => operation.id)
+          operations.map((operation) => operation.id),
+          null,
+          textImpactMetrics(impact.text, operations.map((operation) => operation.id))
         ));
         checks.push(validationCheck(
           "visualDiff",
           impact.raster.status,
           `${impact.raster.message}${impact.raster.scale ? ` Scale ${impact.raster.scale}.` : ""}`,
-          operations.map((operation) => operation.id)
+          operations.map((operation) => operation.id),
+          null,
+          rasterImpactMetrics(impact.raster, operations.map((operation) => operation.id))
         ));
       } catch (error) {
         checks.push(validationCheck(
           "outsideRegionText",
           "unknown",
           `Outside-region impact validation could not run: ${error.message}`,
-          operations.map((operation) => operation.id)
+          operations.map((operation) => operation.id),
+          null,
+          textImpactMetrics(null, operations.map((operation) => operation.id))
         ));
         checks.push(validationCheck(
           "visualDiff",
           "unknown",
           "Raster impact validation was not completed.",
-          operations.map((operation) => operation.id)
+          operations.map((operation) => operation.id),
+          null,
+          rasterImpactMetrics(null, operations.map((operation) => operation.id))
         ));
       }
       checks.push(validationCheck("providerCapability", "passed", "PDF.js reopened the export and pdf-lib produced the bytes."));
@@ -2576,6 +3770,7 @@
     try {
       const outputBytes = await materializeOperations();
       lastValidation = await validateExport(outputBytes);
+      prepareValidatedTemplateRevisionFromValidation();
       renderCompletionPanel();
       if (lastValidation.status === "failed") {
         setStatus("Export validation failed. The artifact was not downloaded.", "danger");
@@ -2596,15 +3791,11 @@
         provider: providerDescriptor(),
         validatedAt: new Date().toISOString(),
         operationIDs: operations.map((operation) => operation.id)
-    };
-    preflightReport = buildPreflightReport({
-      document: documentContract,
-      sourceBytes: pdfData,
-      provider: providerDescriptor()
-    });
-    validatePreflightReport(preflightReport);
-    buildResourcePolicy();
-    renderCompletionPanel();
+      };
+      pendingValidatedTemplateRevision = null;
+      templateLearningEvents = [];
+      templateRevisionDiff = null;
+      renderCompletionPanel();
       displayReaderError(normalized);
     } finally {
       ui.exportButton.disabled = false;
@@ -2642,6 +3833,7 @@
       candidates: cloneContractValue(documentContract.payload.candidates),
       textRuns: cloneContractValue(textRunProjections),
       preflight: cloneContractValue(preflightReport),
+      sessionProvenance: cloneContractValue(buildSessionPrivacyProvenance() || sessionProvenance),
       resourcePolicy: cloneContractValue(resourcePolicy),
       editSession: {
         header: {
@@ -2709,6 +3901,8 @@
       return report;
     },
     validatePreflightReport,
+    createSessionPrivacyProvenance,
+    validateSessionPrivacyProvenance,
     validateTemplateContract,
     matchTemplate,
     createCompletionProposal,
@@ -2719,10 +3913,18 @@
     materializeCompletionOperations,
     createLearningEvent,
     canPromoteTemplateRevision,
+    makeValidatedTemplateRevision,
+    diffTemplateRevisions,
+    exportTemplateHistory,
+    importTemplateHistory,
+    encryptTemplateSyncEnvelope,
+    decryptTemplateSyncEnvelope,
+    mergeTemplateHistories,
     captureTemplateDraft,
     activateTemplateRevision,
     appendTemplateRevision,
     createEncryptedTemplateStore,
+    createEncryptedOPFSTemplateStore,
     createEphemeralTemplateStore,
     createZeroContentLogger,
     assertExportableContract,
@@ -2790,6 +3992,19 @@
   });
   ui.dismissCandidateButton.addEventListener("click", dismissSelectedCandidate);
   ui.captureTemplateButton.addEventListener("click", captureTemplateLayout);
+  ui.saveTemplateButton.addEventListener("click", saveTemplateRevisionLocally);
+  ui.exportTemplateButton.addEventListener("click", exportTemplateTransfer);
+  ui.importTemplateButton.addEventListener("click", () => ui.templateImportInput.click());
+  ui.templateImportInput.addEventListener("change", async (event) => {
+    await importTemplateTransfer(event.target.files?.[0] || null);
+    event.target.value = "";
+  });
+  ui.exportTemplateSyncButton.addEventListener("click", exportTemplateSync);
+  ui.importTemplateSyncButton.addEventListener("click", () => ui.templateSyncImportInput.click());
+  ui.templateSyncImportInput.addEventListener("change", async (event) => {
+    await importTemplateSync(event.target.files?.[0] || null);
+    event.target.value = "";
+  });
   ui.activateTemplateButton.addEventListener("click", activateReviewedTemplate);
   ui.prepareTemplateButton.addEventListener("click", prepareTemplateCompletion);
   ui.applyTemplateButton.addEventListener("click", applyTemplateCompletion);

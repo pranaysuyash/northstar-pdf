@@ -1334,6 +1334,57 @@ struct PDFEditorCoreTests {
     #expect(pdfRect.height == 30)
   }
 
+  @Test func completionReviewPreservesTypedProfileValueSemantics() throws {
+    let sourceDigest = String(repeating: "d", count: 64)
+    let mappingID = UUID(uuidString: "77777777-7777-7777-7777-777777777777")!
+    let region = PDFPageRegion(pageIndex: 0, rect: PDFRect(x: 20, y: 30, width: 100, height: 18))
+    let profileID = UUID(uuidString: "88888888-8888-8888-8888-888888888888")!
+    let profileRevisionID = UUID(uuidString: "99999999-9999-9999-9999-999999999999")!
+
+    let choiceEntry = PDFTemplateCompletionEntry(
+      mappingID: mappingID,
+      semanticKey: "organization.type",
+      target: PDFTemplateMappingTarget(kind: .staticRegion, pageIndex: 0, region: region),
+      profileID: profileID,
+      profileRevisionID: profileRevisionID,
+      value: .choice("Company"))
+    var choiceProposal = PDFTemplateCompletionProposal(
+      sessionID: UUID(),
+      templateID: UUID(),
+      revisionID: UUID(),
+      sourceDigest: sourceDigest,
+      matchState: .exact,
+      entries: [choiceEntry])
+    choiceProposal = choiceProposal
+      .reviewingMapping(mappingID, approved: true)
+      .reviewingValue(mappingID, value: .choice("Nonprofit"), approved: true)
+    #expect(choiceProposal.entries[0].value == .choice("Nonprofit"))
+    #expect(choiceProposal.entries[0].isApproved)
+    #expect(try choiceProposal.materializeOperations(currentSourceDigest: sourceDigest)[0].payload == .choice("Nonprofit"))
+
+    let booleanEntry = PDFTemplateCompletionEntry(
+      mappingID: mappingID,
+      semanticKey: "person.isResident",
+      target: PDFTemplateMappingTarget(kind: .nativeField, pageIndex: 0, region: region),
+      profileID: profileID,
+      profileRevisionID: profileRevisionID,
+      value: .boolean(true))
+    var booleanProposal = PDFTemplateCompletionProposal(
+      sessionID: UUID(),
+      templateID: UUID(),
+      revisionID: UUID(),
+      sourceDigest: sourceDigest,
+      matchState: .exact,
+      entries: [booleanEntry])
+    booleanProposal = booleanProposal
+      .resolvingNativeTarget(mappingID, targetID: "resident-field")
+      .reviewingMapping(mappingID, approved: true)
+      .reviewingValue(mappingID, value: .boolean(false), approved: true)
+    #expect(booleanProposal.entries[0].value == .boolean(false))
+    #expect(booleanProposal.entries[0].isApproved)
+    #expect(try booleanProposal.materializeOperations(currentSourceDigest: sourceDigest)[0].payload == .boolean(false))
+  }
+
   @Test func resilienceRejectsTruncatedStreamWithoutCrash() throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("pdf-editor-truncated-\(UUID().uuidString)", isDirectory: true)
@@ -1405,5 +1456,55 @@ struct PDFEditorCoreTests {
       unsafeLinks.contains {
         $0.destination?.contains("javascript:") == true || $0.destination?.contains("file:") == true
       })
+  }
+
+  // MARK: - D-010: EditorMode Tests
+
+  @Test func editorModeEnumPropertiesAndCases() {
+    #expect(EditorMode.allCases.count == 4)
+    #expect(EditorMode.read.displayName == "Read")
+    #expect(EditorMode.fill.displayName == "Fill")
+    #expect(EditorMode.sign.displayName == "Sign")
+    #expect(EditorMode.edit.displayName == "Edit")
+
+    #expect(!EditorMode.read.symbolName.isEmpty)
+    #expect(!EditorMode.fill.symbolName.isEmpty)
+    #expect(!EditorMode.sign.symbolName.isEmpty)
+    #expect(!EditorMode.edit.symbolName.isEmpty)
+  }
+
+  @Test func fillHighlightInitializesCorrectly() {
+    let bounds = PDFRect(x: 10, y: 20, width: 100, height: 30)
+    let highlight = FillHighlight(
+      id: "test-field-1",
+      pageIndex: 0,
+      bounds: bounds,
+      state: .nativeField,
+      label: "Full Name"
+    )
+
+    #expect(highlight.id == "test-field-1")
+    #expect(highlight.pageIndex == 0)
+    #expect(highlight.bounds == bounds)
+    #expect(highlight.state == .nativeField)
+    #expect(highlight.label == "Full Name")
+  }
+
+  @Test func savedSignatureInitializesAndEncodes() throws {
+    let sig = SavedSignature(
+      label: "My Signature",
+      dataURL: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    )
+
+    #expect(sig.label == "My Signature")
+    #expect(sig.dataURL.hasPrefix("data:image/png;base64,"))
+
+    let encoder = JSONEncoder()
+    let data = try encoder.encode(sig)
+    let decoded = try JSONDecoder().decode(SavedSignature.self, from: data)
+
+    #expect(decoded.id == sig.id)
+    #expect(decoded.label == sig.label)
+    #expect(decoded.dataURL == sig.dataURL)
   }
 }

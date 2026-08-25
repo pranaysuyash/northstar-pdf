@@ -1970,3 +1970,61 @@
   native interactive accessibility, sync-service retention/revocation, secure
   deletion across backups, and independent-viewer evidence after completion
   export.
+
+### 2026-08-25 Long-term template retrieval and capability lanes
+
+- Implemented the native and browser value-free local template index. It
+  rebuilds from encrypted histories and returns exact, known-variant,
+  family-match, ambiguous, stale, unsupported, and no-match states with
+  explainable scores and reasons. Exact and known-variant identity evidence
+  outranks family similarity; competing family candidates abstain.
+- Added native SwiftUI and browser review visibility for index candidates,
+  revision details, mapping changes, and learning-journal events. Candidate
+  retrieval never creates operations and never approves mappings.
+- Added browser vault health, encrypted backup export, restore after eviction,
+  explicit destructive deletion, and recovery messaging. The backup contract
+  carries ciphertext records only. Native Keychain custody and separate
+  profile-vault storage remain active in the same lifecycle.
+- Added named cross-platform capability lanes for OCR, text replacement and
+  reflow, redaction, signatures, XFA, PDF/UA, and independent viewer reopen.
+  Each request and result is source-digest bound and provider-admission based;
+  unmeasured or unavailable work returns a typed abstention or review outcome.
+- Added `TemplateIndexTests`, `pdf_capability_lanes_test.mjs`, and
+  `PDFCapabilityLaneTests`. The first parity correction was recorded during
+  verification: Swift initially treated a known variant as ambiguous, while
+  the browser precedence was correct. Both now share the same rule.
+- Evidence record:
+  [`docs/audits/template-runtime-completion-evidence-2026-08-25.md`](docs/audits/template-runtime-completion-evidence-2026-08-25.md).
+- Verification note: the isolated Chrome smoke route on port 4174 exposed all
+  new template/index/capability controls with zero page errors; the browser
+  template workflow and encrypted security workflow passed. The full Swift
+  suite attempt was superseded by the current full 101-test run recorded in
+  the native capture/review evidence below. No concurrent native edits were
+  overwritten.
+
+### 2026-08-25 Native SwiftUI template capture and dual-review surface
+
+- Completed the native SwiftUI projection of the shared template runtime. The
+  inspector now captures a named value-free layout, shows keyed fingerprint and
+  revision provenance, reviews draft mappings, loads local index candidates,
+  prepares a source-bound completion proposal, and exposes separate mapping and
+  profile-value approval controls.
+- Added typed native value editing. Text, choice, and boolean values retain
+  their `PDFProfileValue` semantics through review. Asset references are shown
+  as unsupported until an explicit native asset picker exists. Changing a
+  value revokes its prior approval through the shared proposal contract.
+- Per-entry review now shows page-space coordinates, native provider target
+  resolution, static-region versus native-field semantics, match reasons,
+  source/session identity prefixes, and approval counters. SwiftUI does not
+  construct operations directly; Apply still routes through
+  `materializeOperations` and the native PDFKit adapter.
+- Added the shared typed-value contract test covering choice and boolean
+  materialization, alongside the existing stale-source, target-resolution,
+  mapping-bypass, and value-bypass tests.
+- Verification: focused Swift template suite passed 4/4; `swift build
+  --target PDFEditorApp` passed; full `swift build` passed. Evidence is in
+  [`docs/audits/native-template-capture-review-surface-evidence-2026-08-25.md`](docs/audits/native-template-capture-review-surface-evidence-2026-08-25.md).
+- Remaining evidence is intentionally separate: automated macOS UI
+  interaction/accessibility, provider-specific choice/checkbox/signature
+  fixtures, same-source native/browser review-session comparison, and
+  independent-viewer export validation.

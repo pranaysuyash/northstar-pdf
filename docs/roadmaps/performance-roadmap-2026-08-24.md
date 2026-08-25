@@ -16,7 +16,7 @@ This work is partitioned into 4 synchronized subagent lanes.
 ### Subagent A: Telemetry + Benchmarks
 - Owner: Performance instrumentation lane
 - Scope: metrics, baselines, reproducibility
-- Deliverable: fixed benchmark harness outputs and trend dashboards
+- Deliverable: a value-free six-stage measurement contract, provider-boundary wiring, and future fixed-corpus baselines; no runtime baseline is implied by the roadmap
 
 ### Subagent B: Edit Pipeline + Undo
 - Owner: Core edit orchestration lane
@@ -33,29 +33,57 @@ This work is partitioned into 4 synchronized subagent lanes.
 - Scope: rendering strategy, caching, disk and memory budget controls
 - Deliverable: smoother UI and reduced memory pressure for large PDFs
 
+## Current reconciliation (2026-08-25)
+
+The dated lane reports and realignment record refine this outline. They are
+static implementation and coordination evidence, not runtime performance proof:
+
+- Lane A defines six value-free stages: `open_load`, `page_render`,
+  `detection`, `undo`, `redo`, and `save`.
+- The 2026-08-25 Lane A implementation report describes provider-boundary wiring
+  for `open_load` at `PDFKitProvider.inspect` and `save` around the full staged
+  `PDFKitProvider.export` contract, including reopen/fidelity validation before
+  publication. Page-render coverage, detection, undo, redo, and standalone
+  benchmark-harness coverage remain open.
+- Lane B's current bounded improvement is checkpoint-backed undo replay: a
+  maximum of eight in-memory PDFKit checkpoints, eligible after every eight
+  successful edits, with cached-source replay as the correctness fallback. A
+  real redo transition and direct inverse mutation remain proposed.
+- The 2026-08-25 realignment keeps observed behavior, proposed targets,
+  historical evidence, and unknowns separate. Its companion
+  `benchmark/performance-corpus-manifest.json` is a proposed, value-free input
+  contract with unpopulated measurement fields, not a baseline result.
+- Historical corpus, parity, viewer, and preservation artifacts remain useful
+  fidelity/provenance evidence, but do not establish current latency, memory,
+  crash, or runtime behavior.
+
+Cross-references: [`performance-lane-a-implementation-2026-08-25.md`](performance-lane-a-implementation-2026-08-25.md), [`performance-realignment-2026-08-25.md`](performance-realignment-2026-08-25.md), and [`performance-lane-b-edit-state.md`](performance-lane-b-edit-state.md).
+
 ## Long-term KPI targets
 1. App warm start target: reduce to stable first usable page < 2.0s on target Mac profile (P50)
 2. Large doc open target: document open + first page raster ready P95 <= 5.0s at 15-20 pages mixed content
-3. Undo/redo target: single edit undo/redo P95 <= 250ms for small-to-moderate changes
+3. Undo target: single edit undo P95 <= 250ms for small-to-moderate changes; measure redo only after a real redo transition exists
 4. Detection target: candidate refresh under normal UI cadence at 60Hz budget (no UI freeze)
 5. Peak memory target: no regression beyond budget at file-size-normalized thresholds
 6. Repeated save/reopen correctness target: preserve existing fidelity gates with zero regression
 7. Crash-free target: no additional crash classes introduced by optimization paths
 
 ## Epic 0: Baseline and safety before optimization
-- [ ] Add instrumentation in app and benchmark harness for operation durations and memory peaks
-- [ ] Add a fixed corpus manifest for repeated speed/accuracy comparisons
+- [x] Define the value-free six-stage instrumentation contract in the Lane A telemetry report
+- [x] Wire the provider boundaries currently owned by Lane A: `open_load` at `inspect` and `save` around the full `export` contract
+- [x] Add the proposed value-free corpus input manifest at `benchmark/performance-corpus-manifest.json`
 - [ ] Add baseline snapshots for existing workflows in a dedicated JSON/CSV artifact
-- [ ] Pin benchmark output schema for cross-run diffing
+- [ ] Pin and populate a benchmark result schema for cross-run diffing
 - [ ] Gate PRs with no-op checks and regression thresholds before tuning
 
 ## Epic 1: Remove avoidable full-document recomputation (highest priority)
 - [ ] Track page-level dirty bit per operation.
 - [ ] Memoize parsed page geometry per page hash.
 - [ ] Invalidate only changed pages in parse/detection passes.
-- [ ] Introduce page-scoped operation checkpoints for undo replay.
-- [ ] Remove full document reopen from hot undo/redo path when state can be replayed from checkpoints.
-- [ ] Keep strict fallback to full reopen on recovery boundary or corruption.
+- [ ] Introduce page-scoped operation checkpoints for undo replay; the current checkpoints are bounded PDFKit document snapshots, not page-scoped checkpoints.
+- [~] Avoid full source replay for recent undo by replaying the suffix after the newest usable checkpoint; retain cached-source replay when no checkpoint is usable.
+- [ ] Remove full document reopen from a hot undo/redo path; redo is not currently a real native transition.
+- [x] Keep strict fallback to full source replay on checkpoint recovery failure or corruption.
 
 ## Epic 2: Rendering throughput
 - [ ] Add page image cache with memory budget and LRU eviction.
@@ -149,3 +177,4 @@ This work is partitioned into 4 synchronized subagent lanes.
 - `benchmark/perf-latency-deltas-YYYY-MM-DD.json`
 - `docs/roadmaps/performance-retrospective-YYYY-MM-DD.md`
 
+Current coordination records: [`performance-lane-a-telemetry.md`](performance-lane-a-telemetry.md), [`performance-lane-a-implementation-2026-08-25.md`](performance-lane-a-implementation-2026-08-25.md), [`performance-realignment-2026-08-25.md`](performance-realignment-2026-08-25.md), and [`performance-lane-d-native-runtime.md`](performance-lane-d-native-runtime.md). These records do not claim that the listed baseline, runtime, or benchmark artifacts exist.

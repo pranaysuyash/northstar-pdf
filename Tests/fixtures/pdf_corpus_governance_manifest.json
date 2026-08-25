@@ -111,7 +111,7 @@
     {
       "fixtureId": "encrypted-reader",
       "relativePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
-      "sha256": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "sha256": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
       "sourceKind": "local-derived-no-personal-content",
       "lineage": "Derived from the synthetic PDFKit widget fixture by benchmark/generate_security_fixtures.sh.",
       "privacyClass": "synthetic-local",

@@ -6,6 +6,7 @@ public enum PDFTemplateStoreRecordKind: String, Codable, CaseIterable, Hashable,
     case profile
     case learningEvent
     case revisionPromotion
+    case audit
 }
 
 public struct PDFEncryptedTemplateStoreRecord: Codable, Equatable, Hashable, Sendable {

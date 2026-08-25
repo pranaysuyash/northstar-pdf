@@ -114,11 +114,6 @@ public protocol SessionRecoveryStoring: Sendable {
   /// This requirement remains in the protocol so existing alternate store
   /// implementations and callers remain source-compatible while migrating to
   /// the diagnostic-preserving contract.
-  @available(
-    *,
-    deprecated,
-    message: "Use listRecoveries() to preserve recovery corruption diagnostics."
-  )
   func list() throws -> [DocumentSessionRecoveryEnvelope]
 
   /// Discovers recovery envelopes without hiding malformed or unreadable

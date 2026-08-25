@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-25T04:31:13Z",
+    "generatedAt" : "2026-08-25T05:30:45Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -39,7 +39,7 @@
       "platform" : "macOS",
       "version" : "Version 15.7.7 (Build 24G720)"
     },
-    "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+    "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
     "version" : {
       "major" : 1,
       "minor" : 0
@@ -48,7 +48,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-25T04:31:13Z",
+      "generatedAt" : "2026-08-25T05:30:45Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -62,7 +62,7 @@
         "platform" : "macOS",
         "version" : "Version 15.7.7 (Build 24G720)"
       },
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -94,10 +94,10 @@
       ],
       "metadata" : {
         "author" : "https:\/\/imagemagick.org",
-        "creationDate" : "24\/8\/2026, 5:58 PM",
+        "creationDate" : "25\/8\/2026, 10:04 AM",
         "creator" : "https:\/\/imagemagick.org",
         "keywords" : "",
-        "modificationDate" : "24\/8\/2026, 5:58 PM",
+        "modificationDate" : "25\/8\/2026, 10:04 AM",
         "producer" : "https:\/\/imagemagick.org",
         "subject" : "",
         "title" : "printed-scan"
@@ -160,7 +160,7 @@
       "source" : {
         "byteCount" : 14506,
         "fileName" : "printed-scan.pdf",
-        "sha256" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364"
+        "sha256" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3"
       },
       "warnings" : [
 
@@ -170,7 +170,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-25T04:31:13Z",
+      "generatedAt" : "2026-08-25T05:30:45Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -184,7 +184,7 @@
         "platform" : "macOS",
         "version" : "Version 15.7.7 (Build 24G720)"
       },
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -199,7 +199,7 @@
     "source" : {
       "byteCount" : 14506,
       "fileName" : "printed-scan.pdf",
-      "sha256" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364"
+      "sha256" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3"
     }
   },
   "expectedFailure" : false,
@@ -219,7 +219,7 @@
         "platform" : "macOS",
         "version" : "Version 15.7.7 (Build 24G720)"
       },
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 1
@@ -677,7 +677,7 @@
         "version" : "Version 15.7.7 (Build 24G720)"
       },
       "sessionID" : "native-(inspection.source.sha256.prefix(16))",
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -687,9 +687,9 @@
       "export" : {
         "exporterID" : "pdfkit",
         "operationCount" : 0,
-        "outputDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+        "outputDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
         "outputReopenable" : true,
-        "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+        "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
         "state" : "succeeded",
         "storage" : "local-file",
         "validation" : "validated",
@@ -727,13 +727,13 @@
       }
     }
   },
-  "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+  "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
   "sourcePath" : "benchmark\/results\/ocr-corpus\/printed-scan.pdf",
   "status" : "inspected",
   "validation" : {
     "checks" : [
       {
-        "id" : "B8F281CF-4CB4-43BD-9DB8-7E01E313F515",
+        "id" : "7AE3AD4C-AC8F-4E49-A226-326E022A529F",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -742,7 +742,7 @@
         "status" : "passed"
       },
       {
-        "id" : "BD998400-6067-4CB0-986C-92E84677AD30",
+        "id" : "4391851B-EC05-4548-9543-6E12DB306361",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 1 page(s).",
         "operationIDs" : [
@@ -751,7 +751,7 @@
         "status" : "passed"
       },
       {
-        "id" : "0F125C6B-062B-478B-B13E-ABF8D24A78D6",
+        "id" : "E16B6D1A-725F-4F49-8703-3FFC9C22A9B2",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -760,7 +760,7 @@
         "status" : "passed"
       },
       {
-        "id" : "EA1FC100-B8AC-4B66-B51A-C255F1FD1F8E",
+        "id" : "707F32C1-3A45-4853-8F0D-250447B7B9FA",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -769,7 +769,7 @@
         "status" : "passed"
       },
       {
-        "id" : "F90C32A7-8D1B-4B3D-A3D3-0190B6B6C65A",
+        "id" : "9C55AED6-8B9A-4178-902F-6C64C16FF334",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -778,7 +778,7 @@
         "status" : "passed"
       },
       {
-        "id" : "C352BED3-E83E-4401-9E13-BA1ADBE373F9",
+        "id" : "5D825EE2-0203-4A11-94FF-963A713120BE",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -787,7 +787,7 @@
         "status" : "passed"
       },
       {
-        "id" : "845A4D98-0C5E-4B57-89E6-AF6AC8AD502A",
+        "id" : "3589D954-FA86-4B0C-B83A-F9FA65761328",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -802,7 +802,7 @@
     "operationIDs" : [
 
     ],
-    "outputDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+    "outputDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
     "outputReopenable" : true,
     "provider" : {
       "capabilities" : [
@@ -815,10 +815,10 @@
       "platform" : "macOS",
       "version" : "Version 15.7.7 (Build 24G720)"
     },
-    "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+    "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-25T04:31:14Z"
+    "validatedAt" : "2026-08-25T05:30:47Z"
   },
   "version" : {
     "major" : 1,

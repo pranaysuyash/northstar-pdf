@@ -244,9 +244,11 @@ capture without changing the source document model:
 - Browser UI capture stores the draft as the first history entry and activation
   appends the child revision. It does not persist profile values or source bytes.
 
-This is local revision capture evidence, not production persistence evidence.
-The native review UI, native Keychain custody, browser encrypted-store wiring,
-import/export, recovery, and revision migration remain separate gates.
+This is now backed by native Keychain/local encrypted persistence and browser
+IndexedDB/OPFS encrypted stores. Native and browser review UI expose unlock,
+import/export, recovery, deletion, revision diff, and learning-journal state.
+Keychain-loss recovery, browser quota/eviction stress, secure deletion across
+backups, and provider-specific completion evidence remain separate gates.
 
 ### Implemented runtime safety slice
 

@@ -13,14 +13,22 @@ OUTPUT_DIR="${PDF_EDITOR_SECURITY_OUTPUT_DIR:-$ROOT/benchmark/results/security-c
 [[ -f "$SOURCE" ]] || { printf 'ERROR: source fixture not found: %s\n' "$SOURCE" >&2; exit 2; }
 mkdir -p "$OUTPUT_DIR"
 
-"$QPDF" --encrypt reader-password owner-password 256 -- "$SOURCE" "$OUTPUT_DIR/encrypted-reader.pdf"
+# qpdf intentionally randomizes encrypted-file key material, so regenerating
+# this artifact would change its bytes and invalidate the reviewed provenance
+# digest. Retain the checked-in golden artifact; regenerate it manually only
+# when the source or encryption policy changes and the manifest is reviewed.
+if [[ ! -f "$OUTPUT_DIR/encrypted-reader.pdf" ]]; then
+  "$QPDF" --encrypt reader-password owner-password 256 -- "$SOURCE" "$OUTPUT_DIR/encrypted-reader.pdf"
+fi
 head -c 128 "$SOURCE" > "$OUTPUT_DIR/truncated-128-bytes.pdf"
 
-page_args=()
-for _ in $(seq 1 20); do
-  page_args+=("$SOURCE" 1)
-done
-"$QPDF" --empty --pages "${page_args[@]}" -- "$OUTPUT_DIR/repeated-20-pages.pdf"
+if [[ ! -f "$OUTPUT_DIR/repeated-20-pages.pdf" ]]; then
+  page_args=()
+  for _ in $(seq 1 20); do
+    page_args+=("$SOURCE" 1)
+  done
+  "$QPDF" --empty --pages "${page_args[@]}" -- "$OUTPUT_DIR/repeated-20-pages.pdf"
+fi
 
 cat > "$OUTPUT_DIR/README.txt" <<EOF
 Generated from: ${SOURCE#$ROOT/}

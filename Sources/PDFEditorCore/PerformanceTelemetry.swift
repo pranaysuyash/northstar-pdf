@@ -54,7 +54,7 @@ public struct PerformanceSummary: Codable, Equatable, Sendable {
 
   public init(stage: PerformanceStage, samples: [PerformanceSample]) {
     let stageSamples = samples.filter { $0.stage == stage }
-    let durations = stageSamples.map(\ .durationMilliseconds).sorted()
+    let durations = stageSamples.map(\.durationMilliseconds).sorted()
     self.stage = stage
     self.sampleCount = stageSamples.count
     self.successfulSampleCount = stageSamples.filter { $0.outcome == .success }.count

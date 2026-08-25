@@ -18,6 +18,7 @@ xcuserdata/
 .agent/
 .freebuff/
 .vscode/
+.workbuddy-ai/
 mcp-shell.log
 
 # Local generated fixtures and scratch outputs

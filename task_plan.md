@@ -165,9 +165,8 @@ remain open.
   and provider gate rather than silently accepting degraded semantics.
 
 The bounded web reader/editor proof and contract fixture are implemented and
-documented. Its next safe unit is native reviewed template capture UI and
-independent fingerprint extraction parity, not silent autofill or a second PDF
-provider. See
+documented. Its next safe unit is local-index retrieval and independent
+fingerprint extraction parity, not silent autofill or a second PDF provider. See
 [`docs/audits/browser-contract-fixture-evidence-2026-08-24.md`](docs/audits/browser-contract-fixture-evidence-2026-08-24.md)
 and [`docs/template-system-design.md`](docs/template-system-design.md).
 
@@ -307,9 +306,9 @@ record primitives, review-gated operation materialization, and strict learning
 promotion. The browser mapping/value review surface is now implemented against
 the shared contracts. The browser encrypted-store lifecycle now includes
 explicit store/profile unlock, deletion, eviction health, ciphertext backup
-restore, and zero-content diagnostics. The next template slice is native
-review UI, browser backup/import UX, native Keychain wiring, adapter integration,
-and held-out recurring-version calibration, not automatic completion. The
+restore, and zero-content diagnostics. The next template slice is local-index
+retrieval, recovery hardening, adapter integration, and held-out recurring-
+version calibration, not automatic completion. The
 controlled correction-event measurement now shows a bounded reviewed-target
 coverage lift while preserving rollback, privacy, and hard-negative abstention;
 genuine held-out recurring families, reviewer agreement, value correctness, and
@@ -765,6 +764,38 @@ Implementation and evidence:
 - [`Tests/browser_export_independent_viewer_validator_test.mjs`](Tests/browser_export_independent_viewer_validator_test.mjs)
 - [`docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md`](docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md)
 
+### Phase 34: Template retrieval, recovery UX, and named capability lanes
+
+**Status:** Native/browser runtime implemented and contract-tested; provider and
+device evidence remain active long-term build lanes
+
+- Rebuild a value-free local template index from encrypted histories and expose
+  exact, known-variant, family, ambiguous, stale, unsupported, and no-match
+  states with deterministic precedence and reasons.
+- Keep family and ambiguous retrieval review-only. Explicit revision selection
+  must re-enter mapping approval, profile-value approval, source binding,
+  export, and strict validation before a revision can be saved.
+- Expose revision diff and learning-journal state in native SwiftUI and browser
+  review surfaces. Keep pending corrections append-only until explicit validated
+  child revision migration.
+- Expose encrypted browser health, backup, restore, eviction, and deletion
+  controls. Keep native Keychain custody and separate profile-vault storage.
+- Name and negotiate OCR, OCR-layer, text-run, reflow, redaction, signature,
+  XFA, PDF/UA, and independent-viewer lanes through the existing provider
+  manifest and measurement model. An admitted provider still requires a
+  source-bound execution result and validation evidence.
+- Continue implementation and measurement for Keychain loss, browser quota,
+  interrupted writes, provider fidelity, and interactive accessibility. These
+  gates do not remove any lane from the full capability program.
+
+Implementation and evidence:
+
+- [`Sources/PDFEditorCore/TemplateIndexContracts.swift`](Sources/PDFEditorCore/TemplateIndexContracts.swift)
+- [`web/template-index.mjs`](web/template-index.mjs)
+- [`Sources/PDFEditorCore/PDFCapabilityLaneContracts.swift`](Sources/PDFEditorCore/PDFCapabilityLaneContracts.swift)
+- [`web/pdf-capability-lanes.mjs`](web/pdf-capability-lanes.mjs)
+- [`docs/audits/template-runtime-completion-evidence-2026-08-25.md`](docs/audits/template-runtime-completion-evidence-2026-08-25.md)
+
 ### Phase 33: Complete encrypted reviewed-template lifecycle
 
 **Status:** Implemented in native and browser adapters. Operational recovery,
@@ -830,7 +861,9 @@ Implementation and evidence:
 ### Phase 31: Native and browser dual-approval template completion
 
 **Status:** Mapping and profile-value review workflow implemented in shared
-contracts, native SwiftUI, and browser review surfaces; automated macOS UI
+contracts, native SwiftUI, and browser review surfaces. Native capture naming,
+revision provenance, target evidence, typed value editors, and explicit
+approval counters are implemented and build-verified. Automated macOS UI
 interaction, mid-session profile revision changes, collaborative authority,
 and export-audit approval projections remain active long-term hardening lanes
 
@@ -860,6 +893,7 @@ Implementation and evidence:
 - [`Tests/web_template_contract_test.mjs`](Tests/web_template_contract_test.mjs)
 - [`Tests/web_template_browser_test.mjs`](Tests/web_template_browser_test.mjs)
 - [`docs/audits/template-review-workflow-evidence-2026-08-25.md`](docs/audits/template-review-workflow-evidence-2026-08-25.md)
+- [`docs/audits/native-template-capture-review-surface-evidence-2026-08-25.md`](docs/audits/native-template-capture-review-surface-evidence-2026-08-25.md)
 
 ### Phase 32: Native/browser structural fingerprint parity
 

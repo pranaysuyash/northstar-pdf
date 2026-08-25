@@ -65,6 +65,7 @@ final class AppModel {
   var templateLearningEvents: [PDFTemplateLearningEvent] = []
   var pendingValidatedTemplateRevision: PDFTemplateContract?
   var templateRevisionDiff: PDFTemplateRevisionDiff?
+  var templateIndexMatch: PDFTemplateIndexQueryResult?
   var availableTemplateIDs: [UUID] = []
   var isTemplateVaultUnlocked = false
   var isProfileVaultUnlocked = false
@@ -80,16 +81,24 @@ final class AppModel {
   var pageJumpInput = ""
 
   // MARK: - Editor mode (D-010)
-  /// Current intent mode. Always reset to `.read` on every `open(url:)`.
+  /// Current intent mode. Resets to `.read` on open unless `persistModeAcrossDocuments` is true.
   var editorMode: EditorMode = .read
+  /// User preference: when true, the mode chosen by the user persists when a new document is
+  /// opened. Default false (reset to .read on each open) per D-010 owner decision 2026-08-25.
+  var persistModeAcrossDocuments: Bool {
+    get { UserDefaults.standard.bool(forKey: "persistModeAcrossDocuments") }
+    set { UserDefaults.standard.set(newValue, forKey: "persistModeAcrossDocuments") }
+  }
   /// When true, the status bar shows a "This document has fields — fill them?" chip.
   var isFillOfferVisible = false
   /// Pending signature region when Sign mode is active (nil = free placement).
   var pendingSignatureRegion: RegionCandidate?
   /// Whether the signature sheet is presented.
   var isSignatureSheetPresented = false
-  /// Saved signatures in the app sandbox. Persisted across sessions.
+  /// Saved signatures (interim: app-sandboxed store; v2 migrates to Keychain per D-010).
   var savedSignatures: [SavedSignature] = []
+  /// Whether the redaction commit confirmation is presented (L3 gate).
+  var isRedactionCommitPresented = false
   /// Tab-order cursor: index into `editableRegions` for the current tab position.
   private var tabCursorIndex: Int = 0
 
@@ -270,6 +279,7 @@ final class AppModel {
     templateRevisionHistory = nil
     templateLearningEvents = []
     pendingValidatedTemplateRevision = nil
+    templateIndexMatch = nil
     statusMessage = "Locked the local template vault."
   }
 
@@ -295,6 +305,37 @@ final class AppModel {
 
   func refreshTemplateIDs() {
     availableTemplateIDs = (try? templateStore.templateIDs()) ?? []
+  }
+
+  /// Rebuild the value-free local index from encrypted histories and query it
+  /// against the current source. Retrieval never mutates the active template
+  /// or creates operations.
+  func findLocalTemplateMatches() {
+    guard let inspection else {
+      statusMessage = "Open a PDF before searching local templates."
+      return
+    }
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before searching local templates."
+      return
+    }
+    do {
+      let histories = try availableTemplateIDs.compactMap { try templateStore.load(templateID: $0) }
+      let index = try PDFTemplateIndex(histories: histories)
+      let fingerprint = PDFTemplateFingerprint.make(
+        from: inspection,
+        workspaceKey: Data("pdf-editor-native-template-workspace".utf8),
+        includeExactSourceDigest: false)
+      templateIndexMatch = try PDFTemplateIndexQuery.query(
+        index: index,
+        fingerprint: fingerprint,
+        sourceDigest: inspection.source.sha256)
+      let state = templateIndexMatch?.state.rawValue ?? "noMatch"
+      statusMessage = "Local template search: \(state). Review the evidence before loading a revision."
+    } catch {
+      templateIndexMatch = nil
+      alertMessage = "Could not search the encrypted local template index: \(error.localizedDescription)"
+    }
   }
 
   var selectedField: NativeField? {
@@ -364,9 +405,9 @@ final class AppModel {
   // model-owned actions prevents menus from maintaining a second history.
   func reset() { resetDocument() }
 
-  func undo() { undoLastEdit() }
+  func undo() { PerformanceTelemetry.shared.measureUndo { undoLastEdit() } }
 
-  func redo() { redoLastEdit() }
+  func redo() { PerformanceTelemetry.shared.measureRedo { redoLastEdit() } }
 
   func goToPage(_ index: Int) {
     jumpToPage(index)
@@ -483,12 +524,23 @@ final class AppModel {
       hasSavedSession = false
       lastSessionInfo = nil
 
+      // D-010: Reset mode on open unless user has opted into persistence.
+      if !persistModeAcrossDocuments {
+        editorMode = .read
+      }
+      isFillOfferVisible = false
+      isSignatureSheetPresented = false
+      pendingSignatureRegion = nil
+      tabCursorIndex = 0
+
       refreshRecoveryDiscovery()
       if !restoreDurableRecovery(for: nextInspection.source.sha256) {
         hasSavedSession = false
         lastSessionInfo = nil
         statusMessage = "Opened \(url.lastPathComponent)"
       }
+      // After setting status, offer fill chip if the document has editable regions.
+      showFillOfferIfNeeded()
     } catch {
       switch error {
       case PDFEditorError.passwordRequired:
@@ -1640,6 +1692,28 @@ final class AppModel {
     }
   }
 
+  /// Commits reviewed redaction marks only when the active provider exposes a
+  /// measured permanent-redaction implementation. The current PDFKit lane
+  /// exposes neither the capability nor an implementation for
+  /// `EditKind.applyRedaction`, so this action must remain a visible denial.
+  func commitRedactions() {
+    let markedOperations = operations.filter { $0.kind == .redactMark }
+    guard !markedOperations.isEmpty else {
+      denyAction(
+        action: "Commit redactions",
+        requirement: nil,
+        message: "Cannot commit redactions: add at least one redaction mark first."
+      )
+      return
+    }
+    guard requirePermission(.modify, action: "Commit redactions") else { return }
+    denyAction(
+      action: "Commit redactions",
+      requirement: nil,
+      message: "Cannot commit redactions: the active PDFKit provider does not expose the explicit \(PDFCapabilityLane.permanentRedaction.rawValue) capability or an implementation for \(EditKind.applyRedaction.rawValue). The \(EditKind.redactMark.rawValue) entries remain reversible; no PDF export or document mutation was performed."
+    )
+  }
+
   func jumpToPage(_ index: Int) {
     jumpToPage(index, preservingSearchMatch: false)
   }
@@ -2475,9 +2549,17 @@ final class AppModel {
     templateCompletionProposal?.entries ?? []
   }
 
+  enum TemplateValueEditorKind: String, Sendable {
+    case text
+    case choice
+    case boolean
+    case assetReference
+    case missing
+  }
+
   /// Capture an immutable, value-free layout proposal from the current native
   /// inspection. Profile data is intentionally not consulted in this phase.
-  func captureTemplateReview() {
+  func captureTemplateReview(displayName: String = "Reviewed local layout") {
     guard let inspection else {
       statusMessage = "Open a PDF before capturing a completion template."
       return
@@ -2486,6 +2568,9 @@ final class AppModel {
       let draft = try PDFTemplateCapture.captureDraft(
         from: inspection,
         workspaceKey: Data("pdf-editor-native-template-workspace".utf8),
+        displayName: displayName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+          ? "Reviewed local layout"
+          : displayName.trimmingCharacters(in: .whitespacesAndNewlines),
         sessionID: currentSessionID)
       templateContract = draft
       templateRevisionHistory = try PDFTemplateRevisionSet(
@@ -2600,6 +2685,30 @@ final class AppModel {
       statusMessage = "Loaded the encrypted template revision history. Completion still requires review for this source."
     } catch {
       alertMessage = "Could not load the encrypted template: \(error.localizedDescription)"
+    }
+  }
+
+  func loadTemplateRevision(templateID: UUID, revisionID: UUID) {
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before loading a template revision."
+      return
+    }
+    do {
+      guard let history = try templateStore.load(templateID: templateID),
+            let revision = history.revisions.first(where: { $0.payload.revisionID == revisionID })
+      else {
+        statusMessage = "The selected template revision was not found."
+        return
+      }
+      templateRevisionHistory = history
+      templateContract = revision
+      templateLearningEvents = (try? templateStore.learningEvents(templateID: templateID)) ?? []
+      templateCompletionProposal = nil
+      pendingValidatedTemplateRevision = nil
+      templateRevisionDiff = nil
+      statusMessage = "Loaded the selected template revision for explicit mapping and value review."
+    } catch {
+      alertMessage = "Could not load the selected template revision: \(error.localizedDescription)"
     }
   }
 
@@ -2722,6 +2831,34 @@ final class AppModel {
     statusMessage = "Review mappings first, then approve each exact profile value before applying."
   }
 
+  var templateCompletionApprovedMappingCount: Int {
+    templateReviewableEntries.filter { $0.mappingReview == .approved }.count
+  }
+
+  var templateCompletionApprovedValueCount: Int {
+    templateReviewableEntries.filter { $0.valueReview == .approved }.count
+  }
+
+  func templateValueEditorKind(for mappingID: UUID) -> TemplateValueEditorKind {
+    guard let entry = templateCompletionProposal?.entries.first(where: { $0.mappingID == mappingID }) else {
+      return .missing
+    }
+    guard let value = entry.value else { return .missing }
+    switch value {
+    case .text: return .text
+    case .choice: return .choice
+    case .boolean: return .boolean
+    case .assetReference: return .assetReference
+    }
+  }
+
+  func templateCompletionBooleanValue(for mappingID: UUID) -> Bool {
+    guard let entry = templateCompletionProposal?.entries.first(where: { $0.mappingID == mappingID }),
+          case .boolean(let value) = entry.value
+    else { return false }
+    return value
+  }
+
   func reviewTemplateCompletionMapping(_ mappingID: UUID, approved: Bool) {
     guard let proposal = templateCompletionProposal else { return }
     templateCompletionProposal = proposal.reviewingMapping(mappingID, approved: approved)
@@ -2731,8 +2868,12 @@ final class AppModel {
     guard let proposal = templateCompletionProposal,
           let entry = proposal.entries.first(where: { $0.mappingID == mappingID })
     else { return }
-    let rawValue = templateValueDrafts[mappingID] ?? ""
-    let value: PDFProfileValue? = rawValue.isEmpty ? nil : .text(rawValue)
+    let value = templateCompletionValue(for: entry, rawValue: templateValueDrafts[mappingID] ?? "")
+    if case .assetReference = value {
+      templateCompletionProposal = proposal.reviewingValue(mappingID, value: value, approved: false)
+      statusMessage = "Asset references need an explicit native asset picker before completion can apply them."
+      return
+    }
     templateCompletionProposal = proposal.reviewingValue(mappingID, value: value, approved: approved)
     if approved && value == nil {
       statusMessage = "A non-empty profile value is required before approval."
@@ -2744,10 +2885,40 @@ final class AppModel {
   func updateTemplateCompletionValue(_ mappingID: UUID, value: String) {
     templateValueDrafts[mappingID] = value
     guard let proposal = templateCompletionProposal else { return }
-    let nextValue: PDFProfileValue? = value.isEmpty ? nil : .text(value)
+    guard let entry = proposal.entries.first(where: { $0.mappingID == mappingID }) else { return }
+    let nextValue = templateCompletionValue(for: entry, rawValue: value)
     // Editing a value always returns it to resolvedUnreviewed. Approval is a
     // separate action and cannot survive a changed value.
     templateCompletionProposal = proposal.reviewingValue(mappingID, value: nextValue, approved: false)
+  }
+
+  func updateTemplateCompletionBoolean(_ mappingID: UUID, value: Bool) {
+    templateValueDrafts[mappingID] = value ? "true" : "false"
+    guard let proposal = templateCompletionProposal,
+          let entry = proposal.entries.first(where: { $0.mappingID == mappingID })
+    else { return }
+    templateCompletionProposal = proposal.reviewingValue(
+      mappingID,
+      value: templateCompletionValue(for: entry, rawValue: value ? "true" : "false"),
+      approved: false)
+  }
+
+  private func templateCompletionValue(
+    for entry: PDFTemplateCompletionEntry,
+    rawValue: String
+  ) -> PDFProfileValue? {
+    switch entry.value {
+    case .text:
+      return rawValue.isEmpty ? nil : .text(rawValue)
+    case .choice:
+      return rawValue.isEmpty ? nil : .choice(rawValue)
+    case .boolean:
+      return .boolean(rawValue == "true")
+    case .assetReference:
+      return rawValue.isEmpty ? nil : .assetReference(rawValue)
+    case nil:
+      return rawValue.isEmpty ? nil : .text(rawValue)
+    }
   }
 
   func applyTemplateCompletion() {

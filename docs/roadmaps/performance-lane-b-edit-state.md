@@ -1,18 +1,21 @@
 # Performance Lane B: Edit State and Undo Scalability
 
 **Date:** 2026-08-24  
-**Scope:** native Swift edit pipeline, undo replay, and future redo seam  
+**Scope:** native Swift edit pipeline, undo/redo replay, and future edit-history scaling
 **Owner:** Performance Lane B  
-**Evidence level:** Tier 1 static inspection; no tests or verification commands run by request
+**Evidence level:** Tier 1 static inspection; current undo/redo/checkpoint behavior is observed in source but remains unverified because no tests or verification commands were run by request
 
 ## Outcome
 
 The native preview now keeps a bounded ring of in-memory PDFKit replay
 checkpoints. Every eighth successful edit may create one checkpoint, and at most
 eight checkpoints are retained. Undo restores the newest checkpoint at or before
-the target history position and replays only the short tail after that point.
+the target history position and replays only the short tail after that point;
+redo reapplies the latest undone operation and restores its recorded view state.
 When no usable checkpoint exists, the existing cached-source replay path remains
-the correctness fallback.
+the correctness fallback. These checkpoint, redo, truncation, and restoration
+behaviors are observed by static inspection of the current source and remain
+unverified without focused tests or runtime observation.
 
 This removes the common recent-history case where undo must reopen the whole
 source document and replay the entire edit log. It does not claim that PDFKit
@@ -22,7 +25,7 @@ the staged output.
 
 ## Current architecture observed
 
-- [`AppModel.swift`](/Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/AppModel.swift) owns the live `PDFDocument`, the append-only `operations` array, cached source bytes, and the native undo action.
+- [`AppModel.swift`](/Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/AppModel.swift) owns the live `PDFDocument`, the applied `operations` array, cached source bytes, and the native undo/redo actions.
 - Each successful native-field, synthesized-field, or overlay mutation applies directly to the live PDFKit document and then appends its typed `EditOperation`.
 - Before this lane, undo removed the last operation, reopened a new `PDFDocument` from cached source bytes, replayed every remaining operation, and replaced the live document.
 - [`DocumentModel.swift`](/Users/pranay/Projects/pdf_editor/Sources/PDFEditorCore/DocumentModel.swift) defines the provider-neutral `EditOperation` and `PDFProvider` contracts. `EditOperation` carries `previousValue`, but that is sufficient only for some native field inverses, not for every supported mutation.
@@ -41,6 +44,12 @@ The checkpoint cache has these properties:
 - Undo commits atomically: the operation and candidate state are removed only after the replacement document has been rebuilt successfully.
 - Viewer rotation is reapplied after restoration because it is derived reader state, not part of the edit log.
 - Opening a new source clears the checkpoint cache with the operation log.
+
+The current source also exposes model-owned `undo()` and `redo()` transitions.
+Undo moves the removed operation into `redoEntries` after successful replay;
+redo reapplies the most recent entry, and a new successful edit truncates all
+redo entries. Undo and redo preserve the existing view-state restoration path.
+These are observed source behaviors, not independently verified runtime claims.
 
 The implementation does not change operation meaning, export ordering, source
 binding, provider validation, output publication, or the user-visible PDF
@@ -72,11 +81,12 @@ For these reasons, checkpoints are the smallest safe optimization available at
 the current boundary. They reduce replay work without inventing semantics for
 inverse operations.
 
-## Exact future integration seam for redo and deeper scaling
+## Exact future integration seam for deeper edit-history scaling
 
-The next architectural step should be additive and provider-neutral:
+The current `operations` plus `redoEntries` behavior should be retained while
+the next architectural step remains additive and provider-neutral:
 
-1. Introduce an edit-history cursor with `applied`, `undone`, and `redo` operation sequences. A new edit after undo truncates redo history.
+1. Extract the existing applied/undone cursor behavior into an edit-history abstraction with explicit applied, undone, and redo operation sequences. Preserve the current rule that a new edit after undo truncates redo history.
 2. Change the provider mutation result from `Void` to a typed, non-persisted `AppliedMutation` containing the operation ID, provider-local mutation token(s), and an explicit inverse capability.
 3. Require each provider to declare whether its inverse is exact, recoverable by checkpoint replay, or unsupported. Unknown inverse capability must fail closed to replay.
 4. Give created annotations and synthesized widgets provider-owned identities that are scoped to the current in-memory document, without changing the persisted `EditOperation` contract until cross-provider semantics are agreed.
@@ -93,7 +103,7 @@ before the checkpoint path can be promoted beyond its fallback role.
 
 - Checkpoint creation itself performs a periodic full-document copy and may increase peak memory for large PDFs. The eight-checkpoint cap bounds retained snapshots but does not guarantee a fixed byte budget because document sizes vary.
 - Older history beyond the retained checkpoint ring still falls back to full source replay.
-- No redo command is currently exposed in the native UI or shared provider contract. Adding redo safely depends on the provider-owned inverse/recoverability seam above.
+- Redo is currently exposed through the model-owned `redo()` and `redoLastEdit()` transitions, but a provider-neutral redo contract and direct inverse capability remain unimplemented. Extending redo beyond the current replay path depends on the provider-owned inverse/recoverability seam above.
 - Export remains O(file size + operation replay + validation), by design. Optimizing that path requires a source-bound provider session and independent proof that validation semantics are unchanged.
 - No tests or verification commands were run in this lane, so checkpoint independence, memory behavior, and replay equivalence remain unverified claims pending focused coverage.
 

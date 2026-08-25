@@ -205,11 +205,11 @@ private struct PDFEditorCommandRouter {
         case .alertFirstButtonReturn:
             windowController.close()
         case .alertSecondButtonReturn:
-            // The dedicated recovery discard method is private in AppModel.
-            // resetDocument() is the existing public model-owned transition
-            // that clears the active document and its recovery pair.
-            model.resetDocument()
-            windowController.close()
+            windowController.close(afterConfirmed: {
+                // The model transition is committed only after AppKit has
+                // confirmed that this exact window actually closed.
+                model.resetDocument()
+            })
         default:
             break
         }

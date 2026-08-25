@@ -129,6 +129,44 @@ private struct KeychainPersistenceKeyProvider {
         }
         return data
     }
+
+    func existingKeyData() throws -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+        ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let data = result as? Data, !data.isEmpty else {
+            throw PDFTemplatePersistenceError.keychainFailed("OSStatus \(status)")
+        }
+        return data
+    }
+
+    func replaceKeyData(_ data: Data) throws {
+        guard !data.isEmpty else { throw PDFTemplatePersistenceError.emptyKey }
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+        ]
+        let attributes: [String: Any] = [kSecValueData as String: data]
+        let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
+        if status == errSecItemNotFound {
+            var addQuery = query
+            addQuery[kSecValueData as String] = data
+            let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
+            guard addStatus == errSecSuccess || addStatus == errSecDuplicateItem else {
+                throw PDFTemplatePersistenceError.keychainFailed("OSStatus \(addStatus)")
+            }
+        } else if status != errSecSuccess {
+            throw PDFTemplatePersistenceError.keychainFailed("OSStatus \(status)")
+        }
+    }
 }
 
 private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unchecked Sendable {
@@ -136,6 +174,8 @@ private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unch
     private let recordKind: PDFTemplateStoreRecordKind
     private let keyDataOverride: Data?
     private let keyProvider: KeychainPersistenceKeyProvider
+    private let localStoreKind: PDFLocalStoreKind
+    private let keyIdentifier: String
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
     private let fileManager = FileManager.default
@@ -145,12 +185,16 @@ private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unch
         directory: URL,
         recordKind: PDFTemplateStoreRecordKind,
         keyData: Data?,
-        keyProvider: KeychainPersistenceKeyProvider
+        keyProvider: KeychainPersistenceKeyProvider,
+        localStoreKind: PDFLocalStoreKind,
+        keyIdentifier: String
     ) {
         self.directory = directory
         self.recordKind = recordKind
         self.keyDataOverride = keyData
         self.keyProvider = keyProvider
+        self.localStoreKind = localStoreKind
+        self.keyIdentifier = keyIdentifier
         self.encoder = JSONEncoder()
         self.encoder.dateEncodingStrategy = .iso8601
         self.encoder.outputFormatting = [.sortedKeys]
@@ -231,10 +275,79 @@ private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unch
             .sorted()
     }
 
+    func recoveryEnvelope(passphrase: String) throws -> Data {
+        let envelope = try PDFLocalStoreRecoveryCrypto.makeEnvelope(
+            keyData: try encryptionKey(),
+            passphrase: passphrase,
+            storeKind: localStoreKind,
+            keyIdentifier: keyIdentifier)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.sortedKeys]
+        return try encoder.encode(envelope)
+    }
+
+    func recoverKey(from data: Data, passphrase: String) throws {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let envelope: PDFLocalStoreRecoveryEnvelope
+        do {
+            envelope = try decoder.decode(PDFLocalStoreRecoveryEnvelope.self, from: data)
+            try envelope.validate()
+        } catch let error as PDFTemplatePersistenceError {
+            throw error
+        } catch {
+            throw PDFTemplatePersistenceError.encodingFailed("invalid passphrase recovery envelope")
+        }
+        guard envelope.storeKind == localStoreKind, envelope.keyIdentifier == keyIdentifier else {
+            throw PDFTemplatePersistenceError.keychainFailed("recovery envelope belongs to another local store")
+        }
+        let recovered = try PDFLocalStoreRecoveryCrypto.openEnvelope(envelope, passphrase: passphrase)
+        if let override = keyDataOverride {
+            guard override == recovered else { throw PDFTemplatePersistenceError.keychainFailed("recovered key does not match the configured test key") }
+        } else if let existing = try keyProvider.existingKeyData() {
+            guard existing == recovered else { throw PDFTemplatePersistenceError.keychainFailed("a different Keychain key already protects this store") }
+        } else {
+            try keyProvider.replaceKeyData(recovered)
+        }
+        _ = try decodeExistingRecordIfPresent()
+    }
+
+    func health(auditEventCount: Int, recoveryEnvelopeAvailable: Bool) throws -> PDFLocalStoreHealth {
+        let recordIDs = try ids()
+        var recovered = false
+        var backupAvailable = false
+        let directoryExists = fileManager.fileExists(atPath: directory.path)
+        if directoryExists {
+            let contents = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+            backupAvailable = contents.contains { $0.lastPathComponent.hasSuffix(".backup.json") }
+        }
+        for id in recordIDs {
+            if let result = try load(id) {
+                recovered = recovered || result.state == .recoveredFromBackup
+            }
+        }
+        return PDFLocalStoreHealth(
+            storeKind: localStoreKind,
+            state: recovered ? .recovered : recordIDs.isEmpty ? .uninitialized : .ready,
+            primaryAvailable: !recordIDs.isEmpty,
+            backupAvailable: backupAvailable,
+            recordCount: recordIDs.count,
+            auditEventCount: auditEventCount,
+            recoveryEnvelopeAvailable: recoveryEnvelopeAvailable,
+            encryptedBackupRecommended: !recordIDs.isEmpty && !recoveryEnvelopeAvailable,
+            messageCode: recovered ? "primary-recovered-from-backup" : recordIDs.isEmpty ? "store-uninitialized" : "store-ready")
+    }
+
     private func encryptionKey() throws -> Data {
         let data = try keyDataOverride ?? keyProvider.keyData()
         guard !data.isEmpty else { throw PDFTemplatePersistenceError.emptyKey }
         return data
+    }
+
+    private func decodeExistingRecordIfPresent() throws {
+        guard let id = try ids().first, let result = try load(id) else { return }
+        _ = result.value
     }
 
     private func decode(_ data: Data, id: String) throws -> Value {
@@ -312,6 +425,7 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
 
     private let store: EncryptedRevisionFileStore<PDFTemplateRevisionSet>
     private let learningStore: EncryptedRevisionFileStore<PDFTemplateLearningEventJournal>
+    private let auditStore: EncryptedRevisionFileStore<PDFLocalStoreAuditJournal>
 
     public init(directory: URL = EncryptedPDFTemplateStore.defaultDirectory, keyData: Data? = nil) {
         self.store = EncryptedRevisionFileStore(
@@ -320,14 +434,27 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
             keyData: keyData,
             keyProvider: KeychainPersistenceKeyProvider(
                 service: "com.pdfeditor.template-store",
-                account: "template-encryption-key-v1"))
+                account: "template-encryption-key-v1"),
+            localStoreKind: .template,
+            keyIdentifier: "template-encryption-key-v1")
         self.learningStore = EncryptedRevisionFileStore(
             directory: directory.appendingPathComponent("Learning", isDirectory: true),
             recordKind: .learningEvent,
             keyData: keyData,
             keyProvider: KeychainPersistenceKeyProvider(
                 service: "com.pdfeditor.template-store",
-                account: "template-encryption-key-v1"))
+                account: "template-encryption-key-v1"),
+            localStoreKind: .template,
+            keyIdentifier: "template-encryption-key-v1")
+        self.auditStore = EncryptedRevisionFileStore(
+            directory: directory.appendingPathComponent("Audit", isDirectory: true),
+            recordKind: .audit,
+            keyData: keyData,
+            keyProvider: KeychainPersistenceKeyProvider(
+                service: "com.pdfeditor.template-store",
+                account: "template-encryption-key-v1"),
+            localStoreKind: .template,
+            keyIdentifier: "template-encryption-key-v1")
     }
 
     public func save(history: PDFTemplateRevisionSet) throws {
@@ -358,6 +485,7 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
     public func delete(templateID: UUID) throws {
         try store.delete(templateID.uuidString)
         try learningStore.delete(templateID.uuidString)
+        try appendAudit(action: .recordDelete, outcome: .succeeded, recordID: templateID.uuidString, state: .ready, reasonCode: "template-deleted")
     }
 
     public func templateIDs() throws -> [UUID] {
@@ -368,9 +496,38 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
     /// as the explicit vault-unlock step; Keychain controls the OS-level lock.
     @discardableResult
     public func unlock() throws -> [UUID] {
-        let ids = try templateIDs()
-        for id in ids { _ = try load(templateID: id) }
-        return ids
+        do {
+            let ids = try templateIDs()
+            for id in ids { _ = try load(templateID: id) }
+            try appendAudit(action: .unlock, outcome: .succeeded, state: .ready, reasonCode: "keychain-authenticated")
+            return ids
+        } catch {
+            try? appendAudit(action: .unlockFailure, outcome: .failed, state: .locked, reasonCode: "authentication-failed")
+            throw error
+        }
+    }
+
+    public func exportRecoveryEnvelope(passphrase: String) throws -> Data {
+        let data = try store.recoveryEnvelope(passphrase: passphrase)
+        try appendAudit(action: .recoveryExport, outcome: .succeeded, state: .ready, reasonCode: "passphrase-envelope-exported")
+        return data
+    }
+
+    public func recoverKey(from data: Data, passphrase: String) throws {
+        try store.recoverKey(from: data, passphrase: passphrase)
+        try appendAudit(action: .recoveryImport, outcome: .succeeded, state: .recovered, reasonCode: "passphrase-envelope-imported")
+    }
+
+    public func health() throws -> PDFLocalStoreHealth {
+        let result = try store.health(
+            auditEventCount: auditEvents().count,
+            recoveryEnvelopeAvailable: false)
+        try appendAudit(action: .healthCheck, outcome: .succeeded, state: result.state, reasonCode: result.messageCode)
+        return result
+    }
+
+    public func auditEvents() throws -> [PDFLocalStoreAuditEvent] {
+        try auditStore.load("audit")?.value.events ?? []
     }
 
     public func exportHistory(templateID: UUID) throws -> Data {
@@ -382,7 +539,9 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         encoder.outputFormatting = [.sortedKeys]
-        return try encoder.encode(envelope)
+        let data = try encoder.encode(envelope)
+        try appendAudit(action: .backupExport, outcome: .succeeded, state: .ready, reasonCode: "value-free-template-transfer-exported")
+        return data
     }
 
     @discardableResult
@@ -402,6 +561,7 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
             throw PDFTemplatePersistenceError.fileOperationFailed("template already exists; use replacing=true to replace it")
         }
         try save(history: envelope.history)
+        try appendAudit(action: .backupImport, outcome: .succeeded, recordID: envelope.history.templateID.uuidString, state: .ready, reasonCode: "value-free-template-transfer-imported")
         return envelope.history
     }
 
@@ -425,6 +585,24 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
     public func deleteLearningEvents(templateID: UUID) throws {
         try learningStore.delete(templateID.uuidString)
     }
+
+    private func appendAudit(
+        action: PDFLocalStoreAuditAction,
+        outcome: PDFLocalStoreAuditOutcome,
+        recordID: String? = nil,
+        state: PDFLocalStoreHealthState,
+        reasonCode: String?
+    ) throws {
+        let event = PDFLocalStoreAuditEvent(
+            storeKind: .template,
+            action: action,
+            outcome: outcome,
+            recordToken: recordID.map(PDFLocalStoreAuditIdentity.token),
+            state: state,
+            reasonCode: reasonCode)
+        let journal = try auditStore.load("audit")?.value ?? PDFLocalStoreAuditJournal(storeKind: .template)
+        try auditStore.save(try journal.appending(event), id: "audit")
+    }
 }
 
 /// Encrypted profile vault with its own directory and Keychain account.
@@ -436,6 +614,7 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
     }
 
     private let store: EncryptedRevisionFileStore<PDFProfileRevisionSet>
+    private let auditStore: EncryptedRevisionFileStore<PDFLocalStoreAuditJournal>
 
     public init(directory: URL = EncryptedPDFProfileVault.defaultDirectory, keyData: Data? = nil) {
         self.store = EncryptedRevisionFileStore(
@@ -444,7 +623,18 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
             keyData: keyData,
             keyProvider: KeychainPersistenceKeyProvider(
                 service: "com.pdfeditor.profile-vault",
-                account: "profile-vault-encryption-key-v1"))
+                account: "profile-vault-encryption-key-v1"),
+            localStoreKind: .profile,
+            keyIdentifier: "profile-vault-encryption-key-v1")
+        self.auditStore = EncryptedRevisionFileStore(
+            directory: directory.appendingPathComponent("Audit", isDirectory: true),
+            recordKind: .audit,
+            keyData: keyData,
+            keyProvider: KeychainPersistenceKeyProvider(
+                service: "com.pdfeditor.profile-vault",
+                account: "profile-vault-encryption-key-v1"),
+            localStoreKind: .profile,
+            keyIdentifier: "profile-vault-encryption-key-v1")
     }
 
     public func save(history: PDFProfileRevisionSet) throws {
@@ -474,6 +664,7 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
 
     public func delete(profileID: UUID) throws {
         try store.delete(profileID.uuidString)
+        try appendAudit(action: .recordDelete, outcome: .succeeded, recordID: profileID.uuidString, state: .ready, reasonCode: "profile-deleted")
     }
 
     public func profileIDs() throws -> [UUID] {
@@ -484,9 +675,38 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
     /// Keychain-backed key before the native UI exposes their values.
     @discardableResult
     public func unlock() throws -> [UUID] {
-        let ids = try profileIDs()
-        for id in ids { _ = try load(profileID: id) }
-        return ids
+        do {
+            let ids = try profileIDs()
+            for id in ids { _ = try load(profileID: id) }
+            try appendAudit(action: .unlock, outcome: .succeeded, state: .ready, reasonCode: "keychain-authenticated")
+            return ids
+        } catch {
+            try? appendAudit(action: .unlockFailure, outcome: .failed, state: .locked, reasonCode: "authentication-failed")
+            throw error
+        }
+    }
+
+    public func exportRecoveryEnvelope(passphrase: String) throws -> Data {
+        let data = try store.recoveryEnvelope(passphrase: passphrase)
+        try appendAudit(action: .recoveryExport, outcome: .succeeded, state: .ready, reasonCode: "passphrase-envelope-exported")
+        return data
+    }
+
+    public func recoverKey(from data: Data, passphrase: String) throws {
+        try store.recoverKey(from: data, passphrase: passphrase)
+        try appendAudit(action: .recoveryImport, outcome: .succeeded, state: .recovered, reasonCode: "passphrase-envelope-imported")
+    }
+
+    public func health() throws -> PDFLocalStoreHealth {
+        let result = try store.health(
+            auditEventCount: auditEvents().count,
+            recoveryEnvelopeAvailable: false)
+        try appendAudit(action: .healthCheck, outcome: .succeeded, state: result.state, reasonCode: result.messageCode)
+        return result
+    }
+
+    public func auditEvents() throws -> [PDFLocalStoreAuditEvent] {
+        try auditStore.load("audit")?.value.events ?? []
     }
 
     /// Compatibility bridge for the native profile-fill UI. The UI keeps its
@@ -547,5 +767,23 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
     public func listUserProfiles() throws -> [UserProfile] {
         try profileIDs().compactMap { try loadUserProfile(profileID: $0) }
             .sorted { $0.lastModifiedAt > $1.lastModifiedAt }
+    }
+
+    private func appendAudit(
+        action: PDFLocalStoreAuditAction,
+        outcome: PDFLocalStoreAuditOutcome,
+        recordID: String? = nil,
+        state: PDFLocalStoreHealthState,
+        reasonCode: String?
+    ) throws {
+        let event = PDFLocalStoreAuditEvent(
+            storeKind: .profile,
+            action: action,
+            outcome: outcome,
+            recordToken: recordID.map(PDFLocalStoreAuditIdentity.token),
+            state: state,
+            reasonCode: reasonCode)
+        let journal = try auditStore.load("audit")?.value ?? PDFLocalStoreAuditJournal(storeKind: .profile)
+        try auditStore.save(try journal.appending(event), id: "audit")
     }
 }

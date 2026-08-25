@@ -124,13 +124,30 @@ current product claim is blocked.
   an explicit ephemeral store. The browser store has explicit store unlock and
   lock, separate profile unlock, record and whole-store deletion, eviction
   health detection, ciphertext-only backup restore, and an allowlisted
-  zero-content logger. Native Keychain custody and production persistence UX
-  remain adapter/product work.
-- The browser reader now includes a capture-review surface for draft template
-  mappings, immutable child-revision activation, session-only values, proposal
-  preparation, and a fail-closed apply control. It is not yet backed by the
-  encrypted store and the native app does not yet expose an equivalent review
-  UI.
+  zero-content logger. Native template/profile custody is Keychain-backed and
+  the native review surface exposes unlock, import, export, deletion, and
+  revision history actions. Keychain-loss recovery and OS-level secure deletion
+  remain evidence gates.
+- The browser and native readers now include equivalent capture-review surfaces
+  for draft mappings, immutable child-revision activation, profile-value
+  approval, proposal preparation, and fail-closed apply controls. Browser
+  health, encrypted backup, restore, and vault deletion are explicit UI
+  actions. Native/browser local template retrieval is provided by
+  `TemplateIndexContracts.swift` and `web/template-index.mjs`; family and
+  ambiguous matches remain review-only.
+- Named long-term capability lanes are implemented in
+  `PDFCapabilityLaneContracts.swift` and `web/pdf-capability-lanes.mjs` for
+  OCR, text replacement/reflow, redaction, signatures, XFA, PDF/UA, and
+- **D-010 Intent-Driven Editor Modes (`Read` / `Fill` / `Sign` / `Edit`):**
+  - Typed `EditorMode` enum (`.read`, `.fill`, `.sign`, `.edit`) shared in `PDFEditorCore/DocumentModel.swift`.
+  - First-class mode selection segmented control in `ContentView` toolbar.
+  - Mode persistence preference (UserDefaults-backed) supporting both casual (resets to Read) and professional (preserves mode) workflows.
+  - Fill progress calculation, dynamic status bar chips, and keyboard tab-order navigation across native fields and active candidates in page reading order.
+  - Full-featured `SignatureSheet` with multi-modal input (Draw canvas, Type with typography styles, Image file upload, and Saved signatures store).
+  - Explicit two-phase redaction workflow with hard confirmation gate (L3) alerting the user of permanent data destruction before committing `.applyRedaction`.
+  - Intent inference engine routing page clicks to inline editors, sign sheets, or direct placements based on active mode and tapped element semantics.
+  independent-viewer reopening. Provider admission, execution evidence, and
+  revocation remain separately measured gates.
 
 ## Current user workflow contract
 

@@ -22,6 +22,7 @@ public struct PDFKitProvider: PDFProvider {
   }
 
   public func inspect(url: URL, password: String?) throws -> DocumentInspection {
+    try PerformanceTelemetry.shared.measureOpenLoad {
     let data = try loadData(from: url)
     guard let document = PDFDocument(data: data) else {
       throw PDFEditorError.cannotOpen(url.lastPathComponent)
@@ -36,6 +37,7 @@ public struct PDFKitProvider: PDFProvider {
       }
     }
     return try inspection(for: document, source: makeSource(url: url, data: data), data: data)
+    }
   }
 
   /// Produces a value-minimized privacy preflight without mutating the source.
@@ -70,6 +72,9 @@ public struct PDFKitProvider: PDFProvider {
   public func export(url: URL, operations: [EditOperation], to outputURL: URL) throws
     -> ExportResult
   {
+    // Save timing intentionally covers the full export contract, including
+    // source load, staging, reopen/fidelity validation, cleanup, and publication.
+    try PerformanceTelemetry.shared.measureSave {
     let sourceData = try loadData(from: url)
     guard let document = PDFDocument(data: sourceData) else {
       throw PDFEditorError.cannotOpen(url.lastPathComponent)
@@ -153,6 +158,7 @@ public struct PDFKitProvider: PDFProvider {
     }
 
     return ExportResult(outputURL: outputURL, report: report)
+    }
   }
 
   private func validateSourceBinding(_ operation: EditOperation, source: DocumentSource) throws {
@@ -456,7 +462,9 @@ public struct PDFKitProvider: PDFProvider {
     )
 
     let vectorGeometries = data.map { PDFVectorStreamParser.parse(data: $0) } ?? []
-    let candidates = StaticRegionDetector.detect(lines: lines, vectorGeometries: vectorGeometries)
+    let candidates = PerformanceTelemetry.shared.measureDetection {
+      StaticRegionDetector.detect(lines: lines, vectorGeometries: vectorGeometries)
+    }
 
     return DocumentInspection(
       source: source,

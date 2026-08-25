@@ -49,7 +49,6 @@ SIGN   Signature regions are highlighted. A draw/type/image sheet appears.
 EDIT   Full authoring palette. All EditKind operations are reachable.
        Dangerous ops (redact apply, flatten) require an explicit confirmation.
 ```
-
 ### Mode is not automatic
 
 The mode is **never set without user intent**. Documents never auto-enter Fill mode.
@@ -277,13 +276,43 @@ Requirements:
 
 ---
 
-## Open questions (resolved at design time)
+## Decisions updated 2026-08-25 (owner-resolved)
 
-| Question | Resolution |
-|---|---|
-| Mode persists across documents? | **No.** Always reset to `.read` on `open(url:)` |
-| Inline vs sidebar edit in Fill mode? | **Inline** for Fill; sidebar remains for Edit |
-| Tab order user-reorderable? | **Not in v1.** Automatic reading order only |
-| Signature storage backend? | **App-sandboxed file.** Explicit save checkbox. Not Keychain. |
-| Redaction gate design? | **Two-phase.** Mark (reversible) then explicit "Commit redactions" alert (L3) |
-| Auto-enter Fill on open if fields present? | **No.** Offer chip only. User must explicitly enter Fill |
+The following open questions were answered by the project owner with first-principles reasoning.
+They supersede the initial draft resolutions above.
+
+| Question | Owner decision | First-principles rationale |
+|---|---|---|
+| Inline vs sidebar edit in Fill mode? | **Both.** Clicking a region opens an inline editor *at the click point* AND the sidebar inspector synchronises to show the same field. | Spatial mapping is the right mental model for filling; the sidebar remains for power-user evidence review. Forcing a choice between them is a false dilemma — the two surfaces serve different cognitive needs. |
+| Mode reset on open? | **User preference** (settable in Settings). Default is reset to `.read`. | Power users who fill many similar documents should not be forced back to Read every time. The default protects casual users; the pref serves professional workflows. |
+| Signature storage? | **macOS Keychain** (long-term first principles). Interim: app-sandboxed file with explicit migration path to Keychain. | Signatures are sensitive biometric-adjacent data. The Keychain is the platform-native credential store — hardware-backed on Apple Silicon, sandboxed per app, cleared on uninstall, never accessible to other apps. An app-sandboxed file is weaker and is an interim step only. |
+| Redaction gate? | **Two-phase with a hard irrevocability gate** (long-term first principles). Phase 1: mark regions (fully reversible, shown in red overlay). Phase 2: explicit "Commit redactions" action — presents a destructive alert listing exactly what will be removed, requires "Commit" to be typed or an explicit affirmative, and records an irrevocability audit entry. | Redaction is a legal act. Applying it accidentally or without understanding its permanence creates liability. The hard gate mirrors the discipline of physical document destruction: you must consciously choose and understand the irreversibility. |
+| Auto-enter Fill on open if fields present? | **No.** Offer chip only. | Unchanged — user must consciously choose Fill mode. |
+| Tab order user-reorderable? | **v2.** Automatic in v1. | Unchanged. |
+
+### Keychain migration plan (signature storage)
+
+1. **v1 (current implementation):** App-sandboxed file in `~/Library/Application Support/PDFEditor/signatures/`. Explicit user checkbox: "Save this signature for future use."
+2. **v2:** Migrate to macOS Keychain using `kSecClassGenericPassword` with `kSecAttrService = "com.pdeditor.signatures"` and per-signature `kSecAttrAccount = signature-uuid`. Migration runs on first launch after upgrade and deletes the file store on success.
+3. **iCloud Keychain:** Opt-in only. Never enabled by default — signature sync across devices requires explicit user consent.
+
+### Redaction gate specification
+
+```
+Phase 1: Mark (reversible)
+  editKind = .redactMark
+  reversible = true, destructive = false
+  Visual: red semi-transparent overlay rectangle
+  Undo: removes the mark, no PDF content changed
+
+Phase 2: Commit (irreversible, L3 gate)
+  Trigger: explicit "Commit redactions" button or menu item
+  Pre-check: at least one .redactMark operation exists
+  Alert: sheet listing the count and page locations of marked regions,
+         text "This action permanently removes content from the PDF.
+               It cannot be undone. The original file is not modified —
+               a new file will be created."
+         Buttons: "Cancel" (default), "Commit Permanently"
+  Post-commit: editKind = .applyRedaction, destructive = true
+  Audit entry: written to session log with timestamp, page list, hash
+```

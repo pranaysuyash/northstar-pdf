@@ -31,6 +31,7 @@ public enum StaticRegionDetector {
     // 1. Process vector geometries after grouping repeated small cells.
     for geom in vectorGeometries {
       let pageLines = pageLinesByIndex[geom.pageIndex] ?? []
+      let fieldLabelLines = likelyFieldLabelLines(from: pageLines)
 
       // Character-entry forms often encode every cell as a separate
       // rectangle. Group those cells before assigning semantics so a
@@ -45,7 +46,8 @@ public enum StaticRegionDetector {
         // Repeated geometry is not field intent by itself. Require a
         // semantically plausible label before promoting a grid to a review
         // candidate; unlabeled grids remain raw geometry evidence.
-        guard let nearbyLabel = findNearestLabel(for: region, in: pageLines, maxDistance: 160.0)
+        guard let nearbyLabel = findNearestLabel(
+          for: region, in: fieldLabelLines, maxDistance: 160.0)
         else { continue }
         let labelText: String? = nearbyLabel.text
         let inferredType = inferFieldType(from: labelText ?? "")
@@ -111,7 +113,8 @@ public enum StaticRegionDetector {
             // A. Isolated checkbox geometry. Small cells are handled above;
             // only larger, ungrouped rectangles can reach this path.
       for box in geom.potentialCheckboxes {
-        let nearbyLabel = findNearestLabel(for: box, in: pageLines, maxDistance: 120.0)
+        let nearbyLabel = findNearestLabel(
+          for: box, in: fieldLabelLines, maxDistance: 120.0)
         // Character-entry grids and decorative squares are common PDF
         // geometry. Without label evidence, treating every tiny square
         // as a checkbox creates an unusable review queue.
@@ -172,7 +175,8 @@ public enum StaticRegionDetector {
 
             // B. Larger input boxes (table cells, form blanks)
       for box in geom.potentialInputBoxes {
-        let nearbyLabel = findNearestLabel(for: box, in: pageLines, maxDistance: 160.0)
+        let nearbyLabel = findNearestLabel(
+          for: box, in: fieldLabelLines, maxDistance: 160.0)
         // Defer unlabeled character cells to grouped-layout detection;
         // a single cell is not a useful text-entry suggestion.
         guard !claimedVectorBoxes.contains(box), box.height >= 8, nearbyLabel != nil else {
@@ -232,7 +236,8 @@ public enum StaticRegionDetector {
             // C. Underlines from vector stream
       for line in geom.potentialUnderlines {
         let boxAbove = PDFRect(x: line.x, y: line.y, width: line.width, height: 18.0)
-        let nearbyLabel = findNearestLabel(for: boxAbove, in: pageLines, maxDistance: 120.0)
+        let nearbyLabel = findNearestLabel(
+          for: boxAbove, in: fieldLabelLines, maxDistance: 120.0)
         guard nearbyLabel != nil else { continue }
         let inferredType = inferFieldType(from: nearbyLabel?.text ?? "")
         var evidenceStrings = ["Vector underline stroke detected (\(Int(line.width))pt)."]
@@ -384,9 +389,6 @@ public enum StaticRegionDetector {
     var minDistance: CGFloat = maxDistance
 
     for line in lines {
-      let text = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
-      guard text.count > 1, isLikelyFieldLabel(text) else { continue }
-
       let lineBounds = line.bounds.cgRect
       let boxRect = box.cgRect
 
@@ -435,6 +437,15 @@ public enum StaticRegionDetector {
     ]
     return tokens.contains { token in
       normalized.range(of: "\\b\(token)\\b", options: .regularExpression) != nil
+    }
+  }
+
+  private static func likelyFieldLabelLines(from lines: [TextLineEvidence])
+    -> [TextLineEvidence]
+  {
+    lines.filter { line in
+      let text = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
+      return text.count > 1 && isLikelyFieldLabel(text)
     }
   }
 
@@ -487,7 +498,9 @@ public enum StaticRegionDetector {
   }
 
   private static func smallCellBoxes(checkboxes: [PDFRect], inputBoxes: [PDFRect]) -> [PDFRect] {
-    var result = checkboxes
+    var result: [PDFRect] = []
+    result.reserveCapacity(min(checkboxes.count + inputBoxes.count, 256))
+    result.append(contentsOf: checkboxes)
     for box in inputBoxes {
       if box.width <= 32 && box.height <= 32 {
         result.append(box)
@@ -502,7 +515,7 @@ public enum StaticRegionDetector {
   private static func adjacentCellGroups(_ boxes: [PDFRect]) -> [[PDFRect]] {
     guard !boxes.isEmpty else { return [] }
 
-    let unique = Array(Set(boxes))
+    let unique = stableUnique(boxes)
     let topTolerance: CGFloat = 0.5
     let bottomTolerance: CGFloat = 0.5
     let heightTolerance: CGFloat = 0.7
@@ -603,6 +616,19 @@ public enum StaticRegionDetector {
       }
     }
     return groups
+  }
+
+  private static func stableUnique(_ boxes: [PDFRect]) -> [PDFRect] {
+    let reserveHint = min(boxes.count, 256)
+    var unique: [PDFRect] = []
+    unique.reserveCapacity(reserveHint)
+    var seen = Set<PDFRect>()
+    seen.reserveCapacity(reserveHint)
+
+    for box in boxes where seen.insert(box).inserted {
+      unique.append(box)
+    }
+    return unique
   }
 
   private static func union(of boxes: [PDFRect]) -> PDFRect {

@@ -36,6 +36,10 @@ let package = Package(
             name: "PDFTextRunOCRBenchmark",
             targets: ["PDFTextRunOCRBenchmark"]
         ),
+        .executable(
+            name: "PDFPerformanceBenchmark",
+            targets: ["PDFPerformanceBenchmark"]
+        ),
     ],
     targets: [
         .target(
@@ -63,6 +67,10 @@ let package = Package(
         ),
         .executableTarget(
             name: "PDFTextRunOCRBenchmark",
+            dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFPerformanceBenchmark",
             dependencies: ["PDFEditorCore"]
         ),
         .testTarget(

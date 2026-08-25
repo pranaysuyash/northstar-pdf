@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en" data-page-node-id="DTGUzPYKHuyDg56vcBoe2r">
+<head data-page-node-id="rZlEymMGOaasmy1L1IrWRH">
+  <meta charset="utf-8" data-page-node-id="cyt9wPaWLdo449Nbzh296q">
+  <meta name="viewport" content="width=device-width, initial-scale=1" data-page-node-id="KUAlzBhkAZIxkMK2YN1uqT">
+  <title>PDF Editor — Northstar design preview</title>
+  <style>
+    :root {
+      --action: #2563eb;
+      --action-deep: #1d4ed8;
+      --action-wash: #dbeafe;
+      --shell: #242a37;
+      --shell-raised: #303848;
+      --shell-border: #465062;
+      --ink: #172033;
+      --ink-soft: #475569;
+      --ink-faint: #64748b;
+      --canvas: #e9edf2;
+      --paper: #fcfbf8;
+      --surface: #ffffff;
+      --surface-soft: #f5f7fa;
+      --border: #d7dde5;
+      --border-strong: #b8c2d0;
+      --evidence: #b7791f;
+      --evidence-wash: #fff7e6;
+      --success: #15803d;
+      --success-wash: #eaf7ee;
+      --danger: #b42318;
+      --danger-wash: #fdecec;
+      --info: #0369a1;
+      --font-display: Iowan Old Style, Baskerville, Palatino Linotype, Georgia, serif;
+      --font-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --shadow-page: 0 18px 45px rgba(23, 32, 51, .14);
+      --shadow-overlay: 0 20px 56px rgba(15, 23, 42, .22);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #dfe4eb;
+      font: 13px/1.45 var(--font-body);
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--action);
+      outline-offset: 2px;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 60px minmax(0, 1fr);
+      background: var(--canvas);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 10px 18px;
+      color: #e8ecf3;
+      background: var(--shell);
+      border-bottom: 1px solid var(--shell-border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 224px;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      color: #fff;
+      background: var(--action-deep);
+      border: 1px solid #5e8cf4;
+      border-radius: 6px;
+      font: 700 13px var(--font-mono);
+    }
+    .brand strong {
+      display: block;
+      color: #fff;
+      font: 600 17px/1 var(--font-display);
+      letter-spacing: -.02em;
+    }
+    .brand span {
+      display: block;
+      margin-top: 3px;
+      color: #9faabd;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+    .document-name {
+      overflow: hidden;
+      color: #f3f5f8;
+      font-weight: 650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topbar button, .topbar .control {
+      min-height: 32px;
+      color: #dce2ec;
+      background: var(--shell-raised);
+      border: 1px solid var(--shell-border);
+      border-radius: 5px;
+    }
+    .topbar button { padding: 6px 10px; }
+    .topbar button.primary { color: #fff; background: var(--action-deep); border-color: #5e8cf4; }
+    .topbar .control { display: inline-flex; align-items: center; gap: 7px; padding: 0 9px; font-size: 11px; }
+    .topbar button:hover:not(:disabled) { background: #3a4355; }
+    .topbar button.primary:hover { background: var(--action); }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px rgba(21, 128, 61, .16);
+    }
+    .status-dot.amber { background: #e5a928; box-shadow: 0 0 0 3px rgba(229, 169, 40, .16); }
+
+    .workbench {
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 232px minmax(0, 1fr) 340px;
+    }
+    .rail {
+      color: #dbe2ed;
+      background: var(--shell);
+      border-right: 1px solid var(--shell-border);
+      overflow: auto;
+    }
+    .rail-header, .inspector-header { padding: 18px 18px 14px; }
+    .kicker {
+      color: #8290a6;
+      font: 700 10px/1.2 var(--font-mono);
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .rail-header h1 {
+      margin: 8px 0 0;
+      color: #fff;
+      font: 600 22px/1.05 var(--font-display);
+      letter-spacing: -.025em;
+    }
+    .rail-header p { margin: 8px 0 0; color: #9faabd; font-size: 11px; }
+    .mode-nav { display: grid; gap: 3px; padding: 0 11px 16px; }
+    .mode-button {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+      padding: 10px 8px;
+      color: #c8d0dd;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 5px;
+    }
+    .mode-button:hover { background: var(--shell-raised); }
+    .mode-button.active {
+      color: #fff;
+      background: var(--shell-raised);
+      border-color: rgba(94, 140, 244, .45);
+      box-shadow: inset 3px 0 var(--action);
+    }
+    .mode-index { color: #7e8ba0; font: 600 9px var(--font-mono); }
+    .mode-copy { min-width: 0; }
+    .mode-copy strong { display: block; font-size: 12px; }
+    .mode-copy span { display: block; margin-top: 2px; color: #8e9bb0; font-size: 10px; white-space: nowrap; }
+    .mode-button.active .mode-copy span { color: #b7c4d8; }
+    .mode-state { color: #8e9bb0; font: 600 9px var(--font-mono); text-transform: uppercase; }
+    .mode-button.active .mode-state { color: #a8c3ff; }
+    .rail-note {
+      margin: 4px 14px 16px;
+      padding: 11px 12px;
+      color: #a9b4c5;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--shell-border);
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .rail-note strong { display: block; margin-bottom: 3px; color: #e4e9f1; font-size: 11px; }
+    .rail-section { padding: 14px 18px; border-top: 1px solid var(--shell-border); }
+    .rail-section .kicker { margin-bottom: 9px; }
+    .source-line { display: flex; align-items: center; gap: 8px; color: #c5cedc; font-size: 11px; }
+    .source-meta { margin-top: 5px; color: #7f8ca1; font: 10px var(--font-mono); }
+
+    .stage {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: 48px minmax(0, 1fr) 40px;
+      background: var(--canvas);
+    }
+    .stage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.55);
+    }
+    .stage-toolbar .crumbs { display: flex; align-items: center; gap: 8px; color: var(--ink-faint); font-size: 11px; }
+    .crumbs strong { color: var(--ink-soft); }
+    .stage-controls { display: flex; align-items: center; gap: 6px; }
+    .stage-controls button {
+      min-height: 28px;
+      padding: 4px 8px;
+      color: var(--ink-soft);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 11px;
+    }
+    .stage-controls button:hover { background: var(--action-wash); border-color: var(--action); }
+    .stage-content {
+      min-height: 0;
+      overflow: auto;
+      padding: 28px;
+    }
+    .paper-stack { display: grid; gap: 28px; justify-items: center; }
+    .paper {
+      position: relative;
+      width: min(760px, 100%);
+      min-height: 900px;
+      padding: 58px 64px 72px;
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid #d5d4d0;
+      box-shadow: var(--shadow-page);
+    }
+    .paper::after {
+      content: "SOURCE DOCUMENT";
+      position: absolute;
+      top: 20px;
+      right: 22px;
+      color: #c2c4c8;
+      font: 700 9px var(--font-mono);
+      letter-spacing: .12em;
+    }
+    .paper-header { display: flex; justify-content: space-between; gap: 20px; padding-bottom: 20px; border-bottom: 2px solid #273246; }
+    .paper-kicker { color: #536176; font: 700 10px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+    .paper h2 { margin: 8px 0 0; color: #172033; font: 600 28px/1.05 var(--font-display); letter-spacing: -.03em; }
+    .paper-number { color: #536176; font: 600 11px var(--font-mono); text-align: right; }
+    .paper-number strong { display: block; margin-top: 6px; color: #172033; font-size: 15px; }
+    .paper-intro { margin: 24px 0 18px; color: #4b586b; font: 14px/1.65 var(--font-display); }
+    .form-section { margin-top: 26px; }
+    .form-section h3 { margin: 0 0 12px; color: #253148; font: 700 10px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; }
+    .form-field label { display: block; margin-bottom: 6px; color: #667286; font-size: 10px; font-weight: 650; }
+    .field-line { height: 32px; border-bottom: 1px solid #8994a5; }
+    .field-line.filled { display: flex; align-items: end; padding-bottom: 5px; color: #26364e; border-bottom-color: #5b6b82; font-size: 13px; }
+    .field-line.checkbox { display: flex; align-items: center; gap: 9px; border: 0; }
+    .checkbox-box { width: 15px; height: 15px; border: 1px solid #7d8998; }
+    .checkbox-box.checked { position: relative; background: var(--action); border-color: var(--action); }
+    .checkbox-box.checked::after { content: "✓"; position: absolute; top: -4px; left: 2px; color: white; font-size: 14px; }
+    .paper-table { width: 100%; margin-top: 8px; border-collapse: collapse; font-size: 11px; }
+    .paper-table th, .paper-table td { padding: 9px 8px; text-align: left; border: 1px solid #c7cbd1; }
+    .paper-table th { color: #4d5a6e; background: #f0f1ef; font: 700 9px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
+    .paper-table td.blank { height: 34px; background: #fffefa; }
+    .paper-foot { display: flex; justify-content: space-between; margin-top: 48px; padding-top: 15px; border-top: 1px solid #c7cbd1; color: #7a8491; font-size: 10px; }
+
+    .evidence-box {
+      position: absolute;
+      border-radius: 4px;
+      pointer-events: none;
+    }
+    .evidence-box.suggested { left: 64px; top: 347px; width: 260px; height: 55px; border: 2px dashed var(--evidence); background: rgba(255, 247, 230, .42); }
+    .evidence-box.suggested::before { content: "SUGGESTED · 87%"; position: absolute; top: -21px; left: -2px; padding: 3px 5px; color: #805814; background: var(--evidence-wash); border: 1px solid #e5c27a; border-radius: 3px 3px 0 0; font: 700 9px var(--font-mono); }
+    .evidence-box.selected { left: 64px; top: 446px; width: 260px; height: 55px; border: 2px solid var(--action); background: rgba(219, 234, 254, .35); box-shadow: 0 0 0 3px rgba(37, 99, 235, .13); }
+    .evidence-box.selected::before { content: "SELECTED · REVIEW"; position: absolute; top: -21px; left: -2px; padding: 3px 5px; color: #1643a2; background: var(--action-wash); border: 1px solid #9ebcfb; border-radius: 3px 3px 0 0; font: 700 9px var(--font-mono); }
+    .overlay-box { position: absolute; left: 64px; top: 546px; width: 260px; height: 35px; display: flex; align-items: center; padding: 0 8px; color: #26364e; background: rgba(219, 234, 254, .5); border: 1px solid rgba(37,99,235,.62); border-radius: 3px; font-weight: 650; }
+    .overlay-box::after { content: "APPLIED"; position: absolute; right: 5px; color: #1d4ed8; font: 700 8px var(--font-mono); letter-spacing: .06em; }
+
+    .stage-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px; color: var(--ink-faint); background: rgba(255,255,255,.62); border-top: 1px solid var(--border); font-size: 10px; }
+    .footer-group { display: flex; align-items: center; gap: 10px; }
+    .footer-code { color: var(--ink-soft); font: 10px var(--font-mono); }
+
+    .inspector {
+      min-width: 0;
+      color: var(--ink);
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      overflow: auto;
+    }
+    .inspector-header { border-bottom: 1px solid var(--border); }
+    .inspector-header h2 { margin: 7px 0 0; font: 600 23px/1.05 var(--font-display); letter-spacing: -.025em; }
+    .inspector-header p { margin: 8px 0 0; color: var(--ink-soft); font-size: 11px; }
+    .inspector-section { padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+    .section-title { color: var(--ink-faint); font: 700 10px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+    .section-link { color: var(--action-deep); font-size: 10px; font-weight: 650; }
+    .review-card { padding: 12px; background: var(--evidence-wash); border: 1px solid #e5c27a; border-radius: 6px; }
+    .review-card h3 { margin: 0; color: #614412; font-size: 13px; }
+    .review-card p { margin: 5px 0 0; color: #755c28; font-size: 11px; }
+    .review-card .meta { margin-top: 10px; color: #8a6b2a; font: 10px var(--font-mono); }
+    .actions { display: flex; gap: 7px; margin-top: 11px; }
+    .actions button { min-height: 31px; padding: 5px 9px; color: var(--ink-soft); background: #fff; border: 1px solid var(--border-strong); border-radius: 5px; font-size: 11px; }
+    .actions button.primary { color: #fff; background: var(--action-deep); border-color: var(--action-deep); }
+    .actions button:hover { background: var(--action-wash); border-color: var(--action); }
+    .actions button.primary:hover { background: var(--action); }
+    .metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .metric { padding: 9px 10px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 5px; }
+    .metric span { display: block; color: var(--ink-faint); font-size: 10px; }
+    .metric strong { display: block; margin-top: 3px; color: var(--ink); font: 650 15px var(--font-mono); }
+    .metric strong.success { color: var(--success); }
+    .metric strong.amber { color: var(--evidence); }
+    .operation { display: grid; grid-template-columns: 23px minmax(0,1fr) auto; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid #edf0f3; }
+    .operation:last-child { border-bottom: 0; }
+    .operation-index { display: grid; place-items: center; width: 23px; height: 23px; color: #4264a9; background: var(--action-wash); border-radius: 50%; font: 700 9px var(--font-mono); }
+    .operation strong { display: block; font-size: 11px; }
+    .operation span { display: block; margin-top: 2px; color: var(--ink-faint); font-size: 10px; }
+    .operation-status { color: var(--success); font: 700 9px var(--font-mono); text-transform: uppercase; }
+    .capability-list { display: grid; gap: 7px; }
+    .capability { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 9px; background: var(--surface-soft); border: 1px solid var(--border); border-radius: 5px; }
+    .capability strong { display: block; font-size: 11px; }
+    .capability span { display: block; margin-top: 2px; color: var(--ink-faint); font-size: 10px; }
+    .badge { display: inline-flex; align-items: center; min-height: 20px; padding: 2px 7px; border: 1px solid currentColor; border-radius: 999px; font: 700 9px/1 var(--font-mono); white-space: nowrap; }
+    .badge.blue { color: var(--action-deep); background: var(--action-wash); }
+    .badge.amber { color: #936b1e; background: var(--evidence-wash); }
+    .badge.green { color: var(--success); background: var(--success-wash); }
+    .badge.gray { color: var(--ink-faint); background: #eef1f5; }
+    .provider {
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 0;
+    }
+    .provider-icon { display: grid; place-items: center; width: 22px; height: 22px; color: #52617a; background: #eef1f5; border-radius: 5px; font: 700 10px var(--font-mono); }
+    .provider strong { display: block; font-size: 11px; }
+    .provider span { display: block; margin-top: 2px; color: var(--ink-faint); font: 10px var(--font-mono); }
+
+    .mode-copy-panel { display: none; }
+    .mode-copy-panel.active { display: block; }
+    .mini-callout { padding: 10px; color: var(--ink-soft); background: var(--surface-soft); border: 1px solid var(--border); border-radius: 5px; font-size: 11px; }
+    .mini-callout strong { color: var(--ink); }
+    .mini-callout.danger { color: #86342d; background: var(--danger-wash); border-color: #e8a7a1; }
+
+    @media (max-width: 1180px) {
+      .workbench { grid-template-columns: 196px minmax(0, 1fr) 300px; }
+      .brand { min-width: 190px; }
+      .paper { padding-left: 48px; padding-right: 48px; }
+      .evidence-box.suggested, .evidence-box.selected, .overlay-box { left: 48px; }
+    }
+    @media (max-width: 940px) {
+      .workbench { grid-template-columns: 176px minmax(0, 1fr); }
+      .inspector { grid-column: 1 / -1; max-height: 420px; border-top: 1px solid var(--border); border-left: 0; }
+      .topbar-center { display: none; }
+      .stage-content { padding: 20px; }
+    }
+    @media (max-width: 680px) {
+      .app { grid-template-rows: auto minmax(0, 1fr); }
+      .topbar { flex-wrap: wrap; gap: 10px; padding: 10px 12px; }
+      .brand { min-width: 0; flex: 1; }
+      .topbar-actions { margin-left: auto; }
+      .topbar-actions .control { display: none; }
+      .workbench { display: flex; flex-direction: column; }
+      .rail { order: 2; border-top: 1px solid var(--shell-border); border-right: 0; }
+      .stage { order: 1; min-height: 650px; }
+      .inspector { order: 3; max-height: none; }
+      .rail-header { display: none; }
+      .mode-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); padding: 10px; }
+      .mode-button { display: block; min-height: 58px; padding: 8px 5px; }
+      .mode-index, .mode-state { display: block; margin-bottom: 5px; }
+      .mode-copy span { display: none; }
+      .mode-copy strong { font-size: 10px; }
+      .rail-note, .rail-section { display: none; }
+      .stage-toolbar { padding: 8px 12px; }
+      .stage-toolbar .crumbs span:not(:last-child) { display: none; }
+      .stage-content { padding: 14px; }
+      .paper { min-height: 720px; padding: 42px 28px 52px; }
+      .paper h2 { font-size: 23px; }
+      .paper-header { gap: 8px; }
+      .form-grid { grid-template-columns: 1fr; gap: 12px; }
+      .evidence-box.suggested, .evidence-box.selected, .overlay-box { left: 28px; width: calc(100% - 56px); }
+      .evidence-box.suggested { top: 314px; }
+      .evidence-box.selected { top: 415px; }
+      .overlay-box { top: 514px; }
+      .stage-footer { padding: 0 12px; }
+      .footer-group:last-child { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body data-page-node-id="d41EIi2L9lKAiR8PQ06RLE">
+  <main class="app" aria-label="PDF Editor design preview" data-page-node-id="HHpj0Ls7IH8bszFKKzZGeH">
+    <header class="topbar" data-page-node-id="mFXoEUr90YeqMCY8w427JZ">
+      <div class="brand" data-page-node-id="8BbJwHVmycC1O0dIWLy0in">
+        <div class="brand-mark" data-page-node-id="GS33LYIjKrV6V2GN3R5z6O">N</div>
+        <div data-page-node-id="AheKq9R1L22hBzvSoGspJa">
+          <strong data-page-node-id="IEeVJbL3CBFk0K1mPsU3GH">PDF Editor</strong>
+          <span data-page-node-id="F7HI4U8KQN0kWvUwAuPt9I">Northstar design preview</span>
+        </div>
+      </div>
+      <div class="topbar-center" data-page-node-id="ruD8ZAR43ASOp3DDBybEga">
+        <span class="document-name" data-page-node-id="pqDZjNvgzAZ8ZcTGTf3Ft0">Form 6 — Reviewed completion session</span>
+        <span class="badge blue" data-page-node-id="saJTSFSIgMcB9owuR0WkF2">LOCAL-FIRST</span>
+        <span class="badge gray" data-page-node-id="AzSDMOGJzi6qf4ggMxrheX">BROWSER PREVIEW</span>
+      </div>
+      <div class="topbar-actions" data-page-node-id="egtaMjgJVVGWVDW2ClH2RS">
+        <span class="control" data-page-node-id="1Cb1rov2sAMbkfZH25dlA2"><span class="status-dot" data-page-node-id="DM4sYOjsnBGWuXnEQR6M19"></span> Source preserved</span>
+        <button type="button" id="undoButton" data-page-node-id="GR1ZqRoPYiRCeRuDNtqzDk">Undo</button>
+        <button type="button" class="primary" id="exportButton" data-page-node-id="2xqHYO2needIngE04b2pbp">Export + validate</button>
+      </div>
+    </header>
+
+    <section class="workbench" data-page-node-id="pueYEeIrIfCiOhiKdNyCIJ">
+      <aside class="rail" aria-label="Product modes" data-page-node-id="LSTXO34lhq9Z8wcJOC2xUi">
+        <div class="rail-header" data-page-node-id="CL0YZNAH5cPzjpNj5J01Fn">
+          <div class="kicker" data-page-node-id="sjNKBmJdV67e1v3owFm5ab">Document workbench</div>
+          <h1 id="railTitle" data-page-node-id="oCnJq3CVgvPbErqzCgT6iQ">Reader</h1>
+          <p id="railDescription" data-page-node-id="97Dbwm6CFkSlgo8YC1T7uk">Navigate, search, and inspect the source document.</p>
+        </div>
+        <nav class="mode-nav" id="modeNav" data-page-node-id="Em1uP3UwjKMao8Gh0C0cVM">
+          <button class="mode-button active" data-mode="reader" type="button" aria-current="page" data-page-node-id="AsDTuGAUHAVmnhodYsBmLL">
+            <span class="mode-index" data-page-node-id="FNFsMGKOergvTLodJLxrIF">01</span><span class="mode-copy" data-page-node-id="sQvZYMCltg3GVzoOhbvKPp"><strong data-page-node-id="xUqH629HyQYNcCNcZlF9lg">Reader</strong><span data-page-node-id="UCfHmUQKauKgxRpxQYXCHM">Navigate and inspect</span></span><span class="mode-state" data-page-node-id="dkNvuUqC9OxBN5GTiOS2XO">Ready</span>
+          </button>
+          <button class="mode-button" data-mode="understand" type="button" aria-current="false" data-page-node-id="j5aniPYDE1oAMS19Hj3haj">
+            <span class="mode-index" data-page-node-id="DOwcObCZRXD7k1sLBDCXLz">02</span><span class="mode-copy" data-page-node-id="g8ZUcFk4mF5zodbogGBsUV"><strong data-page-node-id="dCXQzbo7axFn6DO88MjBG9">Understand</strong><span data-page-node-id="uUrYGtlB1zJFzxzJ0D4SIx">Map evidence</span></span><span class="mode-state" data-page-node-id="zhai7oOsWdY9XaY1OOvd2g">Partial</span>
+          </button>
+          <button class="mode-button" data-mode="complete" type="button" aria-current="false" data-page-node-id="yx3Y8GjkogqukwxTBOSsB9">
+            <span class="mode-index" data-page-node-id="yfXLA4RywLywWzhWasELO8">03</span><span class="mode-copy" data-page-node-id="AzNGjaQoZVLpbA3LXhxreS"><strong data-page-node-id="wRsvqrSMbANab8zBSjJpxJ">Complete</strong><span data-page-node-id="AwYWjr0Im5kG8qsFEoyZCz">Review and fill</span></span><span class="mode-state" data-page-node-id="nrE8DcHTzFzHytXcKIc5YQ">Partial</span>
+          </button>
+          <button class="mode-button" data-mode="organize" type="button" aria-current="false" data-page-node-id="D2gd2w3ZqyOU5hgKmYGGNx">
+            <span class="mode-index" data-page-node-id="3ZBiKwJPWe6oUftkP2qbGH">04</span><span class="mode-copy" data-page-node-id="ToVCrwuFwDoU9vZJcpkUnZ"><strong data-page-node-id="xxFj2GVoi3Vti6ZdbO3a8T">Organize</strong><span data-page-node-id="7UnuCLPUjH4qNXU7LDyDBc">Arrange pages</span></span><span class="mode-state" data-page-node-id="Sf0PHY0TKeGgU71hIo5DoY">Reader only</span>
+          </button>
+          <button class="mode-button" data-mode="review" type="button" aria-current="false" data-page-node-id="5wKCsuqYBazmVkNKAoUXOz">
+            <span class="mode-index" data-page-node-id="Fww1ANGs7Qx26t18D70dCz">05</span><span class="mode-copy" data-page-node-id="oQ7NBGRFJcN5CM2NxOKhR3"><strong data-page-node-id="UYi4IJXVc4bBktfOUhqp5g">Review</strong><span data-page-node-id="vdvqS8IXEf7RrqYKdHP3xR">Validate and export</span></span><span class="mode-state" data-page-node-id="ukyfDzApgb3FWWfZ6jIIVP">Partial</span>
+          </button>
+        </nav>
+        <div class="rail-note" data-page-node-id="kcgjfMjhtaFVKt7guH1GQ9"><strong data-page-node-id="JRJhgtSAZqTugFRjdXdZWa">Design principle</strong>The document remains the visual center. Tools explain the source; they do not compete with it.</div>
+        <div class="rail-section" data-page-node-id="goMrBvobFTZtLiXnWtr44Z">
+          <div class="kicker" data-page-node-id="MXAdYSurnZyqVsagcGNeqq">Source identity</div>
+          <div class="source-line" data-page-node-id="dpQXTtynJ2SAZvSiaUXXJQ"><span class="status-dot" data-page-node-id="Wjsef56Uc9l5A8WQaNVKNB"></span> Immutable session</div>
+          <div class="source-meta" data-page-node-id="4fGNysBU3aQtcO9je2bfrG">SHA-256 7d3f…c8a1 · 4 pages</div>
+        </div>
+        <div class="rail-section" data-page-node-id="NtiGcy8AjlKfCAupbiCK0u">
+          <div class="kicker" data-page-node-id="oY5vyBWBjulM9py5A6b8Rw">Surface parity</div>
+          <div class="source-line" data-page-node-id="79F2LefInYyU2FOqiADegk">Web contract <span class="badge green" data-page-node-id="ORmWAAH2jGXqzIw6S111hi">SYNCED</span></div>
+          <div class="source-line" style="margin-top:8px" data-page-node-id="CU4alQgflsOtWpLP8k6qwU">macOS shell <span class="badge gray" data-page-node-id="W6cUpKSxNPv0VNlsFvDNLU">SAME TOKENS</span></div>
+        </div>
+      </aside>
+
+      <section class="stage" aria-label="Document canvas" data-page-node-id="uwCdPJ2x6CyXKLw2eYcWDX">
+        <div class="stage-toolbar" data-page-node-id="ucQ4BR6cf8b8mDFWhWpkr1">
+          <div class="crumbs" data-page-node-id="LVBLcBFCVIYDVk0u874ZCS"><span data-page-node-id="DDEyNbsUOTolVGPuc8rC8F">Documents</span><span data-page-node-id="6dwHtqDfU2Cog6n2LB5atB">›</span><strong data-page-node-id="kTY18oRh7pDVE6wf6s42xq">Form 6</strong><span data-page-node-id="6GruyVtHcJG6oya6iAekFE">›</span><span id="modeCrumb" data-page-node-id="x9SEGsD2rElqtpEUgClJSW">Reader</span></div>
+          <div class="stage-controls" data-page-node-id="rOMbwjF3JSrPXv2spSDxco">
+            <button type="button" data-page-node-id="MGyapAnciSwC9qg76laien">−</button><span class="footer-code" data-page-node-id="JBtoyON3eB2RBaWjMTZrCx">100%</span><button type="button" data-page-node-id="1pVSo3lYkMbgQ69W4orbWC">+</button><button type="button" data-page-node-id="9HJCs1lrb1vv5TXEkRx9iH">Fit width</button><button type="button" data-page-node-id="syIaEGASKzXg4f86cfz66E">Rotate</button>
+          </div>
+        </div>
+        <div class="stage-content" data-page-node-id="VOuF1YCQPm4OqW1qkAGGY4">
+          <div class="paper-stack" data-page-node-id="y260iK8tpflFsCCcBTBhKJ">
+            <article class="paper" aria-label="Preview PDF page" data-page-node-id="hARDzjFlT6atTJ735sEgoW">
+              <div class="paper-header" data-page-node-id="UbkbpCrLbRAIMQ2BGxUswa">
+                <div data-page-node-id="IyGbBxwLb3vnV0VDeoDFmJ"><div class="paper-kicker" data-page-node-id="UmJMWrha0Xn1fLL1yyqcPE">Application for benefits</div><h2 data-page-node-id="BvRIRSsKFoffEwfDvNO9Ax">Form 6</h2></div>
+                <div class="paper-number" data-page-node-id="Zt2ivJlisnl5JJMuFjecFJ">Page<strong data-page-node-id="5WjBPTnUfX1eoAQeAafbNB">1 of 4</strong></div>
+              </div>
+              <p class="paper-intro" data-page-node-id="Z1e7JSios8Wln7mDyzdzH1">Complete the requested information in the spaces provided. Review all suggested regions before exporting a new copy.</p>
+              <section class="form-section" data-page-node-id="ArZSt0CdwpOIxLH56KPdF2">
+                <h3 data-page-node-id="EyDDSFSpgjp6EvFVFd03OS">Applicant information</h3>
+                <div class="form-grid" data-page-node-id="WTZF8Rt2Dpw1UGWbP8AgKq">
+                  <div class="form-field" data-page-node-id="Ez0jRMVNCr9TFRvLosFfC2"><label data-page-node-id="Xi2HA6xLuWKHrghlx2T3cl">Family name</label><div class="field-line filled" data-page-node-id="Ms1WFcMuiOjDfpSKtUFtbu">Harrington</div></div>
+                  <div class="form-field" data-page-node-id="FWSGDPnFPivWunzBGaEwVY"><label data-page-node-id="6t5KBV0AF0XIqNjnF0OCDU">Given name</label><div class="field-line" data-page-node-id="LI6gvF5fxJj5NEXbVzBdfG"></div></div>
+                  <div class="form-field" data-page-node-id="v4sPHfLrXzLoNEm6QUwyqk"><label data-page-node-id="8LkiEumUtZA12ShGhFGd6f">Date of birth</label><div class="field-line" data-page-node-id="pYwPwvPRJliFZThKhoMgEZ"></div></div>
+                  <div class="form-field" data-page-node-id="RSBA7jciSQ3D3Uk9tnnBSQ"><label data-page-node-id="Xso97XXbhm9k4QC7oJQlFs">Reference number</label><div class="field-line filled" data-page-node-id="RaPxzq3gD82qfo8ZxQp4kM">A-1048</div></div>
+                  <div class="form-field" data-page-node-id="ITHchdIgliTpyY6OYM59Ev"><label data-page-node-id="otunMzXAQOrXxNajUUWQx8">Address</label><div class="field-line" data-page-node-id="wGos1slGW9kjPZ2xjFKjS5"></div></div>
+                  <div class="form-field" data-page-node-id="pGplfKjDjDzmWwh19Xy4VY"><label data-page-node-id="C0M1b8bALbULxWIP0cqoCA">Postal code</label><div class="field-line" data-page-node-id="Myw8oZoowNeLcYkccPUOOB"></div></div>
+                </div>
+              </section>
+              <section class="form-section" data-page-node-id="mU2TmJ4mjIL4a3hxMffYCT">
+                <h3 data-page-node-id="ILRZIboZ0h1BNr6L5DuXen">Eligibility</h3>
+                <div class="form-grid" data-page-node-id="zlnNsBLKZfwHEdDI0IoOft">
+                  <div class="form-field" data-page-node-id="kDCiGrGY4OFMI02JPceP8s"><label data-page-node-id="J5qfiFRHUC03cNHCpVRr8e">Current resident</label><div class="field-line checkbox" data-page-node-id="gXLzL9hWcDepg6oshE0BTx"><span class="checkbox-box checked" data-page-node-id="vYWpb92fVLNOQrlmlZQZpU"></span><span data-page-node-id="P34G9J7Rm4GyHUhrxSr0Mk">Yes</span></div></div>
+                  <div class="form-field" data-page-node-id="cNY5nPsnLZ2PMamV8GMTai"><label data-page-node-id="2y2YzufxeAS5xU5MDDjgCa">Additional support required</label><div class="field-line checkbox" data-page-node-id="G6umxEWU1CyT9GlFBNEU9n"><span class="checkbox-box" data-page-node-id="FGm1OHyvbGXeff4RVXggtg"></span><span data-page-node-id="GvOX8DULxYNBzKXImUbAnE">No</span></div></div>
+                </div>
+              </section>
+              <section class="form-section" data-page-node-id="q0GND5QF8FALpLG0SFyZ12">
+                <h3 data-page-node-id="QlcDIkDFb3cxxgMWPzcjD7">Declaration</h3>
+                <table class="paper-table" data-page-node-id="cahbLL0z99eFoEOKMHz7W0"><thead data-page-node-id="N8GVScT674gi8i8U6EThgv"><tr data-page-node-id="2rBzuYGXnrbMPBFP4kqdI7"><th data-page-node-id="GfwUV7lWl59bv0gFGJWsjZ">Statement</th><th data-page-node-id="mxKTZOjdR7IkQF5Ud9s9d8">Response</th><th data-page-node-id="xvlx0PMlKcgn8zw9UQ4zHa">Evidence</th></tr></thead><tbody data-page-node-id="0F4qguex3dHaQqOQludM2M"><tr data-page-node-id="6IwbquAfsfxb8fcpXKdi2s"><td data-page-node-id="DscdiBwS8mlqGuEmbY7yzQ">Information is complete</td><td class="blank" data-page-node-id="L54GvFjuPNB9IB7KOUAKrP"></td><td class="blank" data-page-node-id="87lQXrZPL5QjEsHKZQlBOE"></td></tr><tr data-page-node-id="K2db8RlU1dEDOYra6WwpnA"><td data-page-node-id="XVfm5rIAZOXC0rED8JJNPy">Applicant signature</td><td class="blank" data-page-node-id="UAAZ6zqwqWA6X2KpSSj5Jt"></td><td class="blank" data-page-node-id="Nex8wsEF5m5Dx9qjxWqyFH"></td></tr></tbody></table>
+              </section>
+              <div class="paper-foot" data-page-node-id="gDJ1n9xaCS2xqjPA1o0jcE"><span data-page-node-id="qBRE6ELsPmsxgeUGzNb0SH">Form 6 · Revision 2026.04</span><span data-page-node-id="x0aVGePY00Vx0dMBNkA1SE">Keep this page with your supporting records</span></div>
+              <div class="evidence-box suggested" aria-label="Suggested region" data-page-node-id="V0Eabx32B4Rr5X6oNpMje7"></div>
+              <div class="evidence-box selected" aria-label="Selected suggested region" data-page-node-id="QCHXz1NmlgP3OHunlFCWUr"></div>
+              <div class="overlay-box" aria-label="Applied overlay" data-page-node-id="iNivXRCiNqtEsrbFpDrHVf">M. Harrington</div>
+            </article>
+          </div>
+        </div>
+        <footer class="stage-footer" data-page-node-id="94kpvkB1EuiM8OVWHpNhrA"><div class="footer-group" data-page-node-id="0bghpZRcT9DH759Dtk2gAI"><span class="status-dot" data-page-node-id="HzwuJTGdIMeGmDU6IMYSRh"></span><span data-page-node-id="4stOmTIZurGZYb9UTdB4iL">Source untouched until export</span></div><div class="footer-group" data-page-node-id="BysT9dWEJ6lkrBNmnfcYnc"><span data-page-node-id="05e7S3n3MS6YQvMTiYRF8Y">Page 1 / 4</span><span data-page-node-id="xxGW7jDaAWAYhmTZZK95GH">·</span><span data-page-node-id="iw69F0HXEun7lUm3fvQA28">Coordinates: page-space</span></div></footer>
+      </section>
+
+      <aside class="inspector" aria-label="Evidence inspector" data-page-node-id="enRKm04Gg1se7hkvHaT9b3">
+        <div class="inspector-header" data-page-node-id="EsJQKarZfrtXkwDb6bWbQ8">
+          <div class="kicker" data-page-node-id="gzMFOaTDBOdv1GQXUO5P9M">Inspector</div>
+          <h2 id="inspectorTitle" data-page-node-id="3SiNGjSv2ZT03AD4NpgdaY">Reading & navigation</h2>
+          <p id="inspectorDescription" data-page-node-id="VOxsFO5FqWkf5tcLKCf1Cw">Search, page structure, links, and source facts stay adjacent to the document.</p>
+        </div>
+
+        <div class="mode-copy-panel active" data-panel="reader" data-page-node-id="tXfHXxkOE1KJfIZkAXd32S">
+          <section class="inspector-section" data-page-node-id="9h7nfoREPmoRxQVFt1FPUo"><div class="section-head" data-page-node-id="GB8yxx0KiAdIy5ziyS3lEh"><span class="section-title" data-page-node-id="LWbtP85Mi388oqqDIKi0Ot">Current document</span><span class="badge green" data-page-node-id="riLWsZtSn3OTUI186Yb7rQ">OPEN</span></div><div class="mini-callout" data-page-node-id="sKHEsnHDqt3voP7DT6BE9r"><strong data-page-node-id="OvUN6bbLTtjNIEsXYpUnDa">Form 6</strong><br data-page-node-id="SD83UFtdC1S0TDS0kySQgs">4 pages · searchable text · no network requests<br data-page-node-id="qdCPgvuCEPUfct7ew8EQeJ"><span class="footer-code" data-page-node-id="BfTQx1cQoGF4KonOEqqE5V">source digest bound</span></div></section>
+          <section class="inspector-section" data-page-node-id="RNda28t5wK4pTpVAcNGTEn"><div class="section-head" data-page-node-id="Q7aCwuV6XWXJ2YJVDjxzkn"><span class="section-title" data-page-node-id="xEZOMVEuePvgyANZHuzvyv">Reading tools</span><span class="section-link" data-page-node-id="OrN24lw0V0rTlSZUD4ECFB">Keyboard ready</span></div><div class="capability-list" data-page-node-id="eMaD8QKMYjVbVTtFWBHGDb"><div class="capability" data-page-node-id="XGLesZsDPBCFAMh8E3gPxF"><div data-page-node-id="seDeGH7BNvRGg2RH1x640X"><strong data-page-node-id="QvcF3iLuCFaGhDFUIXLakH">Outline & links</strong><span data-page-node-id="RSIof3GD7EI7eJzyI7U3gZ">Safe navigation targets</span></div><span class="badge blue" data-page-node-id="218CKKzzeYIRrrYfFShrAe">AVAILABLE</span></div><div class="capability" data-page-node-id="GaDBmwuBmIMyGvx8WzadqK"><div data-page-node-id="TLE7HcBiKRdeO8JOeafuLU"><strong data-page-node-id="SoxmuVRZAHQKldUxiX5jFQ">Search matches</strong><span data-page-node-id="m8YrjKG16VDmyCWcpL6ELB">0 selected · 12 total</span></div><span class="badge blue" data-page-node-id="p97Ts2BmFJPdPFKfXqVGNP">AVAILABLE</span></div><div class="capability" data-page-node-id="9e9IBamhjEoTkEGrEGtYVc"><div data-page-node-id="PU4RrRq69OWomE0TnlLIwA"><strong data-page-node-id="PH1k0eXHXahpQcfH2ytEX2">Accessibility lane</strong><span data-page-node-id="gtBImjp6Efjw04owQl9K1O">Tagged reading order</span></div><span class="badge gray" data-page-node-id="qaxlCFOcO8fQJkNcwLdd2G">CONDITIONAL</span></div></div></section>
+        </div>
+
+        <div class="mode-copy-panel" data-panel="understand" data-page-node-id="IkMrnqvLc85wy4zd6YL2xx">
+          <section class="inspector-section" data-page-node-id="jkUMdhWxvynFu1Eu0rnPZR"><div class="section-head" data-page-node-id="ROzdwgZ16bBkgsCYIPkByn"><span class="section-title" data-page-node-id="hgUcFTjkj5VbYrZSelXEam">Evidence map</span><span class="badge amber" data-page-node-id="944aG5P7uSZzqg1asb8hEN">PARTIAL</span></div><div class="review-card" data-page-node-id="AlKYNPMW53EUgAuApEKgU1"><h3 data-page-node-id="ngGxiB00wmgTowzaU5woLh">2 regions need review</h3><p data-page-node-id="tRfCprRB77IJA7dSutUDpq">One text-like region and one repeated-cell group have evidence-backed suggestions. Nothing is applied automatically.</p><div class="meta" data-page-node-id="T1dhmcG3E8ahXqUsDv8RVq">VECTOR + TEXT · PAGE 1 · SOURCE BOUND</div><div class="actions" data-page-node-id="l4uHqEnTEXoBap0vZwogr8"><button class="primary" type="button" data-page-node-id="kwCUiSWbT2pIC7LyNP1G8O">Review next</button><button type="button" data-page-node-id="d7HrUBjbOpZLy6tWbVKuok">Show evidence</button></div></div></section><section class="inspector-section" data-page-node-id="rtjINHnvi9WBNmmAYgrBVh"><div class="section-head" data-page-node-id="W7YGCe5XATR9geIHFkKwj9"><span class="section-title" data-page-node-id="D2TMkEpzFUgBzsRMOuHtUq">Signal families</span></div><div class="capability-list" data-page-node-id="cYtryQ5fOdJXY8RNxceapT"><div class="capability" data-page-node-id="RGkrwWJMrhEHCFGnBr1nVA"><div data-page-node-id="FEjf4AZCOroQtN98lHpOmb"><strong data-page-node-id="EWq7Xu7etVpMTKrSl1sszC">Native fields</strong><span data-page-node-id="lNeVaGFKpJCSYJuWTVhsxN">Existing PDF widget identity</span></div><span class="badge green" data-page-node-id="L5Js4IeMXdXyLLyEcRDECm">6 FOUND</span></div><div class="capability" data-page-node-id="4XxtfEZQEf2os4KZA6zCJX"><div data-page-node-id="5jfkxUcqw4un1fzNpCbXNg"><strong data-page-node-id="Ahqa566ZB4dAVPqHwmYbvF">Geometry candidates</strong><span data-page-node-id="9TaiXsD0h7roLBdHvnkgfr">Review-only inference</span></div><span class="badge amber" data-page-node-id="heJ1nMw6t6za1gazwQS5Ac">87%</span></div><div class="capability" data-page-node-id="tabOrqzPJEJO8GsE3K7G9U"><div data-page-node-id="asmJF8F2uR7Dj9hf0DlGUQ"><strong data-page-node-id="EeZ1gkHffeC5o7BvGbfTuS">OCR layer</strong><span data-page-node-id="NQiO5On6teTB7m98PRLhOl">Provider admission pending</span></div><span class="badge gray" data-page-node-id="6KC861cZfqr7mxCeA5JGuT">ABSTAINED</span></div></div></section></div>
+
+        <div class="mode-copy-panel" data-panel="complete" data-page-node-id="OBVbG4mOHvUcDnoZOpaJS6">
+          <section class="inspector-section" data-page-node-id="J7Xf4rHVBu2uXibDXixcMt"><div class="section-head" data-page-node-id="ozREsqEd4GjeRtlWTisHlM"><span class="section-title" data-page-node-id="RQZb2qBqHmmgnzdu3pSw0b">Completion queue</span><span class="badge amber" data-page-node-id="wC7NVZsZovGpRSPg57mNFM">2 / 9 REVIEWED</span></div><div class="review-card" data-page-node-id="khIUmck1UbJSM1Y0Kp1x2h"><h3 data-page-node-id="Wbigit9v0BLea9HBW7iDAN">Review this suggested area</h3><p data-page-node-id="S2uP6rFQzvZr1H413GHhRE">Text-like region near “Given name”. The detector found a likely entry area but cannot make it authoritative.</p><div class="meta" data-page-node-id="tqgxPNlpEWkYdXTEzzPmqy">SUGGESTED · 87% · PAGE 1 · BOUNDS 64, 347, 260 × 55</div><div class="actions" data-page-node-id="eato6b37A0QbhTecLGiNKq"><button class="primary" type="button" id="applyButton" data-page-node-id="kCE7W3Y9LVGjwLJw3MKWdO">Apply overlay</button><button type="button" id="dismissButton" data-page-node-id="uoUQPffmaAgHbmgbA9Aj6F">Dismiss</button></div></div></section><section class="inspector-section" data-page-node-id="bImHaMA5feaG0k0PvfhO79"><div class="section-head" data-page-node-id="CyPfWPAbrJmkbd1urQKC02"><span class="section-title" data-page-node-id="hGpxREALhvVSBXrG1Q6H9v">Operation history</span><span class="section-link" data-page-node-id="yMIeuH63EaLH4praZvjItR">View all</span></div><div class="operation" data-page-node-id="BC0EL3ETaBAitomtMqiCRA"><span class="operation-index" data-page-node-id="DqhHY6oLa1sntElknc6pC5">01</span><div data-page-node-id="hRoPf8BkMKqHKHceoBhYud"><strong data-page-node-id="vsuxtueKLqc1mBt9V7pNFu">Fill native field</strong><span data-page-node-id="FA1cf9KXkfRcHQXsbLujit">Family name · page 1</span></div><span class="operation-status" data-page-node-id="1LvBEumKFM7TDxADG3ItMq">Applied</span></div><div class="operation" data-page-node-id="x75rEiuS0N3oDymQymSAln"><span class="operation-index" data-page-node-id="C4OsynYwbJDvjPrzQT3Qjg">02</span><div data-page-node-id="3OYONx2WN0k6p46i1trrRj"><strong data-page-node-id="8qMH10Qj3OnL0NW8Ls0BbQ">Reviewed overlay</strong><span data-page-node-id="dLsII9cL9H6PI5XvwWnSjQ">Given name · page 1</span></div><span class="operation-status" data-page-node-id="dLdQsojFmgtTo4rMPFCmFs">Applied</span></div><div class="operation" data-page-node-id="D4afB7VmNZzze6JHEsRUjG"><span class="operation-index" data-page-node-id="iC6MVZ2Z7qXle0YyRtMNZb">03</span><div data-page-node-id="VO8EAHUK0AHjbBYANKn7WH"><strong data-page-node-id="qkdxkDQBFjlx5XP8HlQOSb">Static choice mark</strong><span data-page-node-id="B2ZDx5IWsSjYAHAJmqMDBH">Eligibility · page 1</span></div><span class="operation-status" data-page-node-id="3rD7uRu347vccEGGA4Jzta">Undo</span></div></section></div>
+
+        <div class="mode-copy-panel" data-panel="organize" data-page-node-id="i8alqXDGZEjXGIADyY1hGm">
+          <section class="inspector-section" data-page-node-id="dYRskLmnLqSO5bwv761lsL"><div class="section-head" data-page-node-id="KRIqEfMnwMFqHTlHeWEn29"><span class="section-title" data-page-node-id="ndlGzPwZLdIBOumtkxt66T">Document operations</span><span class="badge gray" data-page-node-id="M0jeMlVX9Ttdar8DSwM8sw">READER ONLY</span></div><div class="mini-callout" data-page-node-id="pCF1vXqYV6hrqYiAL2b7V9">Page operations are visible in the product model even when the current provider is not admitted for this source class.</div></section><section class="inspector-section" data-page-node-id="qxe3pgC6xTaPUDNwjhCV4M"><div class="section-head" data-page-node-id="9biAzJvLGrY437DR4TiIfF"><span class="section-title" data-page-node-id="Ed6B1C9WLoAE8M58INtuds">Capability lanes</span></div><div class="capability-list" data-page-node-id="YXKPNN7F0i5xiKg4z8Frl6"><div class="capability" data-page-node-id="tsndJoqIhtEqTWUur5exin"><div data-page-node-id="EMpuBcJQt1BFuAjVXiRuEO"><strong data-page-node-id="DD3dsBJAyDkfSC1sFSPqMJ">Reorder pages</strong><span data-page-node-id="DZBjAVy8dumBfeSgFDVb5L">Provider-safe output gate</span></div><span class="badge gray" data-page-node-id="cGz4A1YLE9tWleM4oPQQfi">BLOCKED</span></div><div class="capability" data-page-node-id="HN6o2juMXKYKQGibrPXdiX"><div data-page-node-id="EH8SnMXgEldwRPDp2XwaPL"><strong data-page-node-id="Y77Exf6PzHvDw5FDyULhQo">Recurring template</strong><span data-page-node-id="EukRrZm6eNA873DXpWChkp">Encrypted local vault</span></div><span class="badge green" data-page-node-id="c7VZQkE8ZypdZURizgttEO">AVAILABLE</span></div><div class="capability" data-page-node-id="CVhKCpxZfEzKJrz7pWejTn"><div data-page-node-id="sOBswu8Fe9TuBtp0dVuJWd"><strong data-page-node-id="hqYqwYs9GWsaBWvwbII9Zq">Batch completion</strong><span data-page-node-id="dupLV0sYgaUDbcJh8OTB9x">Worker and recovery policy</span></div><span class="badge amber" data-page-node-id="CaOKoBhHcJRU7wK3pFQrZV">EXPLORING</span></div></div></section></div>
+
+        <div class="mode-copy-panel" data-panel="review" data-page-node-id="EC1ywToG8pEQzg5t4xnBHn">
+          <section class="inspector-section" data-page-node-id="GA17DUxpwmbvtBni5eBLgc"><div class="section-head" data-page-node-id="T8163XMZROvex1yK5dyocQ"><span class="section-title" data-page-node-id="MR3tx0WbYGxLx5duCDk4r9">Export readiness</span><span class="badge green" data-page-node-id="9ROvgEhaM6IYXBCckqv1bK">READY WITH WARNINGS</span></div><div class="metric-grid" data-page-node-id="ugBQlQ921rt6DetaisioAQ"><div class="metric" data-page-node-id="JHKCfTkCympPOQY0UUfxkB"><span data-page-node-id="7QX1Uv9D2uCaGyJpRSuJzF">Operations</span><strong data-page-node-id="1IRcSTXTmQSLgb8IA6f5vD">3</strong></div><div class="metric" data-page-node-id="S4oWharsyLReps4yhBjVqE"><span data-page-node-id="Fn1lHXThDFsda2UqHSGI77">Pages changed</span><strong data-page-node-id="B5HnTAQQOSpLo5SbfeBWF5">1</strong></div><div class="metric" data-page-node-id="tFPDELWuYo7zKZNazTXY8z"><span data-page-node-id="17ri4wYXWV1LbUIGCmCLFD">Outside-region</span><strong class="success" data-page-node-id="Tl4n1y8rDSdaXrla5eQ26E">PASS</strong></div><div class="metric" data-page-node-id="dBsUQv78OI65d4pENaPxHd"><span data-page-node-id="NbLgTaJIulJeCstSKLKW6B">Provider parity</span><strong class="amber" data-page-node-id="fVhYFq7wKrEby3GEzHzqFJ">PARTIAL</strong></div></div><div class="actions" data-page-node-id="h8fnkyevxbGvwZYuV3h9CI"><button class="primary" type="button" data-page-node-id="Y14azOKDADtGGZK7rIGkD2">Export new copy</button><button type="button" data-page-node-id="iTRyAPHzHNiCqF2fKdyXw9">Open report</button></div></section><section class="inspector-section" data-page-node-id="OZHgnG5vUoXHLQFXmFy0No"><div class="section-head" data-page-node-id="HW6LISLK0aBS3OUENCdHhW"><span class="section-title" data-page-node-id="b59SRudJ3QmsF17ihe94R8">Validation basis</span></div><div class="mini-callout" data-page-node-id="2Ctc9Gf4xuXBTtpxOQdjdJ"><strong data-page-node-id="LQOAhgW2ioJcOUvcxWPjTd">Passed:</strong> source binding, page geometry, outside-region text, reopen.<br data-page-node-id="kQquDyuPUrEjbA9cmAB86l"><strong data-page-node-id="Tb7jTLgebF4FYNU5rY6Ilz">Warning:</strong> independent viewer coverage remains bounded for this provider.<br data-page-node-id="TRfHt8FyN2NZZQ0Bv7yabO"><strong data-page-node-id="EYqgl0ZVRO4OBW8XbfEeN4">Unknown:</strong> general semantic text-edit fidelity.</div></section></div>
+
+        <section class="inspector-section" data-page-node-id="u4rnRRFj68mqb3cfsRL00O"><div class="section-head" data-page-node-id="U5kiPNC8CI377nGm7Eh3vd"><span class="section-title" data-page-node-id="SNzBdq8M7i51ylWB7owUWz">Provider boundary</span><span class="badge gray" data-page-node-id="yOIJFRCj80ENVsf7meCruf">LOCAL</span></div><div class="provider" data-page-node-id="4kBwu7JTa7rb4VOTNESFH8"><span class="provider-icon" data-page-node-id="6U9E6sDvZsWUhWe4kDltIM">W</span><div data-page-node-id="n8pv7n17Ql2wu2pPibL4Iu"><strong data-page-node-id="06hTfuYNCGER5jPGFJaqfa">Browser baseline</strong><span data-page-node-id="whvxNDJi1C1t0UCG9iORtQ">PDF.js + pdf-lib · measured</span></div><span class="badge green" data-page-node-id="ZBMGwsiIs5Jzlvdmvq1oAV">ENABLED</span></div><div class="provider" data-page-node-id="bLktyHGfP1gNPkaiNRNpVX"><span class="provider-icon" data-page-node-id="9KOX90xVM6NZrogDsbMQre">M</span><div data-page-node-id="yV5AFEkchUiwzRQs6OfO31"><strong data-page-node-id="kk4CoviIYgyeUpIk32DFVd">macOS native</strong><span data-page-node-id="xLWL5k7wyhiJgoMm1pwYt1">PDFKit + Vision · shared intent</span></div><span class="badge blue" data-page-node-id="hGK3gb7YfPEmHL14TTnHpM">READY</span></div><div class="provider" data-page-node-id="Z0H1KIMLgiP4x9hTV2Ax3n"><span class="provider-icon" data-page-node-id="oQxhMIs3J8q8YQHX5GOvEg">C</span><div data-page-node-id="cc49ZC5NkOzCyyB24u616K"><strong data-page-node-id="MICPMWDOtjSWfc4SIbOTUN">Local companion</strong><span data-page-node-id="tdyTmTyiTHAPUESEAoeAMU">OCR / high-fidelity lanes</span></div><span class="badge gray" data-page-node-id="jXP1MZ6gGIgFijGm61x5tp">OPTIONAL</span></div></section>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    const modes = {
+      reader: { title: "Reader", description: "Navigate, search, and inspect the source document.", inspector: "Reading & navigation", inspectorDescription: "Search, page structure, links, and source facts stay adjacent to the document." },
+      understand: { title: "Understand", description: "Review document structure, evidence, and suggested regions.", inspector: "Evidence map", inspectorDescription: "Signals are useful only when their origin, confidence, and abstention path are visible." },
+      complete: { title: "Complete", description: "Confirm fields, place content, and build reversible operations.", inspector: "Completion queue", inspectorDescription: "Native fields and inferred regions stay visually distinct and reviewable." },
+      organize: { title: "Organize", description: "Plan page, template, and repeatable workflow operations.", inspector: "Document operations", inspectorDescription: "Provider capability states remain visible instead of silently disappearing." },
+      review: { title: "Review", description: "Validate changes, preserve lineage, and export a new copy.", inspector: "Export readiness", inspectorDescription: "A successful export shows its evidence basis, warnings, and unknowns." }
+    };
+    const buttons = [...document.querySelectorAll(".mode-button")];
+    const panels = [...document.querySelectorAll(".mode-copy-panel")];
+    function selectMode(id) {
+      const mode = modes[id];
+      buttons.forEach(button => {
+        const active = button.dataset.mode === id;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-current", active ? "page" : "false");
+      });
+      panels.forEach(panel => panel.classList.toggle("active", panel.dataset.panel === id));
+      document.querySelector("#railTitle").textContent = mode.title;
+      document.querySelector("#railDescription").textContent = mode.description;
+      document.querySelector("#inspectorTitle").textContent = mode.inspector;
+      document.querySelector("#inspectorDescription").textContent = mode.inspectorDescription;
+      document.querySelector("#modeCrumb").textContent = mode.title;
+    }
+    buttons.forEach(button => button.addEventListener("click", () => selectMode(button.dataset.mode)));
+    document.querySelector("#applyButton")?.addEventListener("click", event => {
+      event.currentTarget.textContent = "Applied";
+      event.currentTarget.classList.remove("primary");
+      event.currentTarget.parentElement.previousElementSibling.textContent = "Overlay applied as a reversible operation. The source PDF remains untouched.";
+    });
+    document.querySelector("#dismissButton")?.addEventListener("click", event => {
+      event.currentTarget.textContent = "Dismissed";
+      event.currentTarget.parentElement.previousElementSibling.textContent = "Suggestion dismissed. It can be restored from session history.";
+    });
+    document.querySelector("#exportButton")?.addEventListener("click", event => {
+      event.currentTarget.textContent = "Validated ✓";
+      event.currentTarget.disabled = true;
+    });
+    document.querySelector("#undoButton")?.addEventListener("click", event => {
+      event.currentTarget.textContent = "Undone";
+      setTimeout(() => event.currentTarget.textContent = "Undo", 1200);
+    });
+  </script>
+</body>
+</html>

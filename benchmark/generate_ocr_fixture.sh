@@ -14,13 +14,18 @@ mkdir -p "$OUTPUT_DIR"
 PNG="$OUTPUT_DIR/printed-scan.png"
 PDF="$OUTPUT_DIR/printed-scan.pdf"
 
-"$MAGICK" -size 1600x700 xc:white \
-  -font "$FONT" -gravity center -fill black -pointsize 54 \
-  -annotate +0-70 'OCR SAMPLE 2026' \
-  -pointsize 42 -annotate +0+10 'Applicant: Ada Lovelace' \
-  -pointsize 38 -annotate +0+80 'Reference: OCR-042' \
-  "$PNG"
-"$MAGICK" "$PNG" "$PDF"
+# ImageMagick PDF output embeds renderer metadata and is not byte-stable
+# across regeneration. Retain the reviewed golden PDF so provenance remains
+# meaningful; regenerate it manually only when the fixture policy changes.
+if [[ ! -f "$PDF" ]]; then
+  "$MAGICK" -size 1600x700 xc:white \
+    -font "$FONT" -gravity center -fill black -pointsize 54 \
+    -annotate +0-70 'OCR SAMPLE 2026' \
+    -pointsize 42 -annotate +0+10 'Applicant: Ada Lovelace' \
+    -pointsize 38 -annotate +0+80 'Reference: OCR-042' \
+    "$PNG"
+  "$MAGICK" "$PNG" "$PDF"
+fi
 
 cat > "$OUTPUT_DIR/ground-truth.txt" <<'EOF'
 OCR SAMPLE 2026

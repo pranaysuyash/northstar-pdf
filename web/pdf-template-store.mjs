@@ -10,8 +10,12 @@ import {
 const STORE_VERSION = 2;
 const BACKUP_CONTRACT_NAME = "pdf-editor.template-store-backup";
 const BACKUP_VERSION = { major: 1, minor: 0 };
+const RECOVERY_CONTRACT_NAME = "pdf-editor.local-store-recovery";
+const RECOVERY_VERSION = { major: 1, minor: 0 };
+const RECOVERY_ITERATIONS = 150_000;
 const META_KEY = "__meta__";
 const PRESENCE_PREFIX = "pdf-editor-template-store-present:";
+const AUDIT_PREFIX = "pdf-editor-template-store-audit:";
 const PROFILE_SALT_BYTES = 16;
 
 const RECORD_KINDS = new Set([
@@ -20,7 +24,8 @@ const RECORD_KINDS = new Set([
   "profile",
   "profileHistory",
   "learningEvent",
-  "revisionPromotion"
+  "revisionPromotion",
+  "audit"
 ]);
 const PRIVACY_EVENT_FIELDS = new Set(["event", "code", "kind", "mode", "state", "count"]);
 const ALLOWED_PRIVACY_EVENTS = new Set([
@@ -29,6 +34,7 @@ const ALLOWED_PRIVACY_EVENTS = new Set([
   "store_eviction_detected",
   "store_unlocked",
   "store_unlock_failed",
+  "record_deleted",
   "record_written",
   "profile_access_blocked",
   "profile_unlock_failed",
@@ -38,6 +44,8 @@ const ALLOWED_PRIVACY_EVENTS = new Set([
   "store_health",
   "backup_exported",
   "backup_restored",
+  "recovery_exported",
+  "recovery_imported",
   "store_closed",
   "store_deleted"
 ]);
@@ -57,6 +65,8 @@ const ALLOWED_PRIVACY_CODES = new Set([
   "store_closed",
   "store_delete_ok",
   "delete_ok"
+  ,"recovery_export_ok"
+  ,"recovery_import_ok"
 ]);
 const ALLOWED_PRIVACY_STATES = new Set(["locked", "unlocked", "ready", "evicted", "closed", "deleted"]);
 
@@ -132,7 +142,10 @@ export function createZeroContentLogger({ sink = () => {} } = {}) {
   });
 }
 
-async function deriveKey(passphrase, salt, label = "local template-store") {
+async function deriveKey(passphrase, salt, label = "local template-store", {
+  iterations = 150_000,
+  extractable = true
+} = {}) {
   requirePassphrase(passphrase, label);
   const material = await crypto.subtle.importKey(
     "raw",
@@ -142,12 +155,56 @@ async function deriveKey(passphrase, salt, label = "local template-store") {
     ["deriveKey"]
   );
   return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt, iterations: 150_000, hash: "SHA-256" },
+    { name: "PBKDF2", salt, iterations, hash: "SHA-256" },
     material,
     { name: "AES-GCM", length: 256 },
-    false,
+    extractable,
     ["encrypt", "decrypt"]
   );
+}
+
+async function exportRawKey(key) {
+  try {
+    return new Uint8Array(await crypto.subtle.exportKey("raw", key));
+  } catch {
+    throw new TemplateStoreError("key_export_failed", "The local store key could not be exported for recovery.");
+  }
+}
+
+async function importRawKey(bytes) {
+  try {
+    return await crypto.subtle.importKey(
+      "raw",
+      bytes,
+      { name: "AES-GCM", length: 256 },
+      true,
+      ["encrypt", "decrypt"]
+    );
+  } catch {
+    throw new TemplateStoreError("recovery_invalid", "The recovery envelope contains an invalid store key.");
+  }
+}
+
+async function opaqueRecordToken(kind, id) {
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(`${kind}:${id}`)
+  );
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function validateRecoveryEnvelope(envelope) {
+  if (!envelope || typeof envelope !== "object"
+      || envelope.contractName !== RECOVERY_CONTRACT_NAME
+      || envelope.version?.major !== RECOVERY_VERSION.major
+      || envelope.version?.minor > RECOVERY_VERSION.minor
+      || envelope.kdf !== "PBKDF2-HMAC-SHA256"
+      || !Number.isInteger(envelope.iterations)
+      || envelope.iterations < 100_000
+      || typeof envelope.dbName !== "string"
+      || !envelope.salt || !envelope.iv || !envelope.ciphertext) {
+    throw new TemplateStoreError("recovery_invalid", "The local store recovery envelope is invalid.");
+  }
 }
 
 async function encryptJSON(key, value) {
@@ -276,6 +333,27 @@ function clearPresenceMarker(dbName) {
   }
 }
 
+function auditStorageKey(dbName) {
+  return `${AUDIT_PREFIX}${dbName}`;
+}
+
+function readAuditStorage(dbName) {
+  try {
+    const value = JSON.parse(localStorage.getItem(auditStorageKey(dbName)) || "[]");
+    return Array.isArray(value) ? value.filter((entry) => entry && typeof entry === "object") : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeAuditStorage(dbName, entries) {
+  try {
+    localStorage.setItem(auditStorageKey(dbName), JSON.stringify(entries.slice(-128)));
+  } catch {
+    // Audit persistence is best effort and contains no document content.
+  }
+}
+
 function validateBackup(backup) {
   if (!backup || typeof backup !== "object" || Array.isArray(backup)) {
     throw new TemplateStoreError("backup_invalid", "Template store backup is invalid.");
@@ -313,6 +391,21 @@ export function createEncryptedTemplateStore({
   let storeState = "locked";
   let initialized = false;
   const unlockedProfiles = new Map();
+  let auditEntries = readAuditStorage(dbName);
+  async function recordAudit(action, { kind = null, id = null, outcome = "succeeded", state = storeState, reasonCode = null } = {}) {
+    const entry = {
+      id: crypto.randomUUID(),
+      action,
+      outcome,
+      state,
+      reasonCode,
+      recordToken: kind && id ? await opaqueRecordToken(kind, id) : null,
+      createdAt: new Date().toISOString()
+    };
+    auditEntries = [...auditEntries, entry].slice(-128);
+    writeAuditStorage(dbName, auditEntries);
+    return structuredClone(entry);
+  }
   const database = () => databasePromise ||= openDatabase(dbName).then((db) => {
     databaseHandle = db;
     db.onversionchange = () => {
@@ -406,6 +499,81 @@ export function createEncryptedTemplateStore({
     }
   }
 
+  async function exportPassphraseRecovery(recoveryPassphrase) {
+    await ensureUnlocked();
+    requirePassphrase(recoveryPassphrase, "recovery");
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const recoveryKey = await deriveKey(recoveryPassphrase, salt, "recovery", {
+      iterations: RECOVERY_ITERATIONS,
+      extractable: false
+    });
+    const encrypted = await encryptJSON(recoveryKey, {
+      storeKey: bytesToBase64(await exportRawKey(storeKey)),
+      storeVersion: STORE_VERSION,
+      dbName
+    });
+    const envelope = {
+      contractName: RECOVERY_CONTRACT_NAME,
+      version: { ...RECOVERY_VERSION },
+      dbName,
+      keyIdentifier: `indexeddb:${dbName}`,
+      kdf: "PBKDF2-HMAC-SHA256",
+      iterations: RECOVERY_ITERATIONS,
+      salt: bytesToBase64(salt),
+      iv: encrypted.iv,
+      ciphertext: encrypted.ciphertext,
+      createdAt: new Date().toISOString()
+    };
+    validateRecoveryEnvelope(envelope);
+    await recordAudit("recovery-export", { outcome: "succeeded", state: "unlocked", reasonCode: "passphrase-envelope-exported" });
+    logger.record({ event: "recovery_exported", code: "recovery_export_ok", mode: "indexeddb-aes-gcm", state: "unlocked" });
+    return structuredClone(envelope);
+  }
+
+  async function recoverPassphraseRecovery(envelope, recoveryPassphrase) {
+    validateRecoveryEnvelope(envelope);
+    if (envelope.dbName !== dbName || envelope.keyIdentifier !== `indexeddb:${dbName}`) {
+      throw new TemplateStoreError("recovery_wrong_store", "This recovery envelope belongs to another local store.");
+    }
+    requirePassphrase(recoveryPassphrase, "recovery");
+    try {
+      const recoveryKey = await deriveKey(
+        recoveryPassphrase,
+        base64ToBytes(envelope.salt),
+        "recovery",
+        { iterations: envelope.iterations, extractable: false }
+      );
+      const payload = await decryptJSON(recoveryKey, {
+        iv: envelope.iv,
+        ciphertext: envelope.ciphertext
+      });
+      if (payload.storeVersion !== STORE_VERSION || payload.dbName !== dbName) {
+        throw new TemplateStoreError("recovery_invalid", "The recovery envelope store version is unsupported.");
+      }
+      const recoveredKey = await importRawKey(base64ToBytes(payload.storeKey));
+      const metaRecord = await rawGet(META_KEY);
+      if (metaRecord) {
+        const meta = await decryptJSON(recoveredKey, metaRecord);
+        if (meta.contractName !== "pdf-editor.template-store-meta") {
+          throw new TemplateStoreError("recovery_invalid", "The recovered key does not authenticate this store.");
+        }
+        storeState = "unlocked";
+      } else {
+        storeState = "evicted";
+      }
+      storeKey = recoveredKey;
+      initialized = true;
+      setPresenceMarker(dbName);
+      await recordAudit("recovery-import", { outcome: "succeeded", state: storeState, reasonCode: metaRecord ? "passphrase-envelope-imported" : "key-recovered-records-evicted" });
+      logger.record({ event: "recovery_imported", code: "recovery_import_ok", mode: "indexeddb-aes-gcm", state: storeState });
+      return inspectHealth();
+    } catch (error) {
+      await recordAudit("recovery-import", { outcome: "failed", state: "locked", reasonCode: "recovery-authentication-failed" });
+      if (error instanceof TemplateStoreError && ["recovery_invalid", "recovery_wrong_store"].includes(error.code)) throw error;
+      throw new TemplateStoreError("recovery_failed", "The recovery passphrase was not accepted.");
+    }
+  }
+
   async function encryptRecord(kind, id, value, options = {}) {
     const key = await ensureUnlocked(options.storePassphrase);
     let payload = value;
@@ -492,6 +660,7 @@ export function createEncryptedTemplateStore({
     const db = await database();
     await requestResult(db.transaction("records", "readwrite").objectStore("records").delete(`${kind}:${id}`));
     if (isProfileKind(kind)) unlockedProfiles.delete(id);
+    await recordAudit("record-delete", { kind, id, state: "unlocked", reasonCode: "record-deleted" });
     logger.record({ event: "record_deleted", code: "delete_ok", kind, mode: "indexeddb-aes-gcm", state: "unlocked" });
   }
 
@@ -628,14 +797,21 @@ export function createEncryptedTemplateStore({
     }
     const state = hasMeta ? (storeKey ? "ready" : "locked") : (hasPresenceMarker(dbName) ? "evicted" : "uninitialized");
     if (state === "evicted") logger.record({ event: "store_health", code: "store_evicted", mode: "indexeddb-aes-gcm", state });
-    return {
+    const health = {
       mode: "indexeddb-aes-gcm",
       state,
       recordCount: records.filter((record) => record.kind !== "meta").length,
+      auditEventCount: auditEntries.length,
       quotaBytes: Number.isFinite(quota.quota) ? quota.quota : null,
       usageBytes: Number.isFinite(quota.usage) ? quota.usage : null,
-      recovery: state === "evicted" ? "restoreEncryptedBackup" : state === "ready" ? "exportEncryptedBackup" : null
+      recovery: state === "evicted" ? "restoreEncryptedBackup" : state === "ready" ? "exportEncryptedBackup" : null,
+      recoveryEnvelopeAvailable: auditEntries.some((entry) => entry.action === "recovery-export" && entry.outcome === "succeeded"),
+      evictionWarning: state === "evicted" ? "Browser storage is missing. Restore an encrypted backup before writing." : null,
+      sourceRetention: "none",
+      contentLogging: "zero-content"
     };
+    await recordAudit("health-check", { state, reasonCode: state === "evicted" ? "store-evicted" : "health-observed" });
+    return health;
   }
 
   async function exportEncryptedBackup(options = {}) {
@@ -652,6 +828,7 @@ export function createEncryptedTemplateStore({
     };
     validateBackup(backup);
     logger.record({ event: "backup_exported", code: "backup_export_ok", mode: "indexeddb-aes-gcm", state: "unlocked", count: backup.records.length });
+    await recordAudit("backup-export", { state: "unlocked", reasonCode: "encrypted-backup-exported" });
     return structuredClone(backup);
   }
 
@@ -678,6 +855,7 @@ export function createEncryptedTemplateStore({
     await ensureUnlocked(storePassphrase, { allowEvictionRecovery: true });
     setPresenceMarker(dbName);
     logger.record({ event: "backup_restored", code: "backup_restore_ok", mode: "indexeddb-aes-gcm", state: "unlocked", count: backup.records.length });
+    await recordAudit("backup-import", { state: "unlocked", reasonCode: "encrypted-backup-restored" });
     return inspectHealth();
   }
 
@@ -703,6 +881,7 @@ export function createEncryptedTemplateStore({
     initialized = false;
     storeState = "deleted";
     logger.record({ event: "store_deleted", code: "store_delete_ok", mode: "indexeddb-aes-gcm", state: storeState });
+    await recordAudit("store-delete", { state: "deleted", reasonCode: "store-records-deleted" });
   }
 
   const api = {
@@ -715,6 +894,8 @@ export function createEncryptedTemplateStore({
     inspectHealth,
     exportEncryptedBackup,
     restoreEncryptedBackup,
+    exportPassphraseRecovery,
+    recoverPassphraseRecovery,
     close,
     deleteStore,
     put,
@@ -735,6 +916,7 @@ export function createEncryptedTemplateStore({
   };
   Object.defineProperty(api, "isUnlocked", { enumerable: true, get: () => Boolean(storeKey) });
   Object.defineProperty(api, "logger", { enumerable: true, value: logger });
+  Object.defineProperty(api, "auditSnapshot", { enumerable: true, value: () => structuredClone(auditEntries) });
   return Object.freeze(api);
 }
 

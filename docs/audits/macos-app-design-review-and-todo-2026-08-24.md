@@ -702,3 +702,45 @@ The following cleanup items were completed after the previous status update:
 - [ ] Measure recovery autosave, presentation-copy rebuild, undo/redo, and export performance on large PDFs.
 
 The implementation is now materially complete at the source-architecture level for the primary review findings. It remains `NOT RELEASE VERIFIED` until the evidence gates above are executed and the payload threat-model decision is recorded.
+## 14. Reconciliation wave and current evidence, 2026-08-25
+
+### 14.1 Current source repairs
+
+- Reconciled the shared checkout without reverting the current editor-mode, signature, redaction, viewer, or recovery work.
+- Added a model-owned `commitRedactions()` action. It records no destructive operation when the provider has no measured permanent-redaction capability; it returns an explicit structured denial instead of presenting visual marks, flattening, or generic export as permanent redaction.
+- Completed the close transaction boundary. `Close and Discard Recovery` waits for the exact window's `NSWindow.willCloseNotification` before resetting the model. A rejected close leaves the document and recovery state untouched.
+- Corrected the close observer's strict-concurrency boundary. The AppKit notification callback is nonisolated and `@Sendable`, then explicitly hops to `MainActor`.
+- Repaired bounded single-line web overlay writing in `web/app.js`. Text is measured with the embedded font, fitted to the authorized operation rectangle, preflighted before any draw, and rejected before export below the supported minimum size. Explicit multiline operations retain multiline behavior.
+- Aligned the governed encrypted-reader digest in `Tests/fixtures/pdf_corpus_governance_manifest.json` with the stable artifact digest already enforced by `Tests/provenance_contract_test.mjs`.
+
+### 14.2 Current validation evidence
+
+Observed or verified on 2026-08-25:
+
+- `swift build -c debug`: passed.
+- `swift build -c debug --target PDFEditorApp -Xswiftc -strict-concurrency=complete`: passed.
+- `swift test`: passed, 97 tests across 12 suites.
+- `swift build -c release`: passed with no compiler diagnostics.
+- `node Tests/provenance_contract_test.mjs`: passed, 14 assets verified.
+- `node Tests/pdf_contract_parity_test.mjs`: passed, 18 fixtures inspected by the native PDFKit harness. The generated parity report records 26 known native/web semantic mismatches and 16 preflight-presence mismatches; those are reported differences, not silently accepted as parity.
+- `PDF_PROOF_BASE_URL=http://127.0.0.1:4175/web/index.html node Tests/web_pdf_proof_playwright_test.mjs`: passed. Native-field proof and bounded-overlay proof both passed source digest, reopen, geometry, applied-operation, outside-region text, visual diff, and provider capability checks. Outside-region pixels were 0 for both exports.
+- `PDF_PROOF_BASE_URL=http://127.0.0.1:4178/web/index.html node Tests/web_accessibility_gate_test.mjs`: passed. Landmarks, skip-link focus, keyboard text-layer access, password dialog, and error-free runtime passed.
+- `PDF_EDITOR_BASE_URL=http://127.0.0.1:4177/web/index.html node Tests/web_editor_workflow_test.mjs`: passed. Candidate highlight, apply, edit, undo, dismiss/restore, and manual placement passed.
+- `PDF_PROOF_BASE_URL=http://127.0.0.1:4180/web/index.html node Tests/web_pdf_contract_fixture_test.mjs`: passed. The 18-fixture corpus emitted explicit checkbox evidence and completed contract export validation.
+- `PDF_EDITOR_PREVIEW_URL=http://127.0.0.1:4173/web/ node Tests/pdf_independent_preservation_test.mjs`: passed. Unauthorized text and raster mutation were rejected; authorized text, raster, and reopen checks passed; rotated fixtures preserved 90 and 90/180 degree rotations.
+- `node Tests/web_reader_contract_test.mjs`: passed, 51 checks.
+
+Non-fatal runtime warnings observed during browser evidence include PDF.js font/operator warnings and the existing `TT: undefined function: 32` warning. No browser console errors or page errors were reported by the proof and accessibility gates.
+
+### 14.3 Remaining TODOs and evidence ceiling
+
+- Native UI runtime evidence remains required for actual AppKit multi-window behavior, Cmd-W and native close-button behavior, rejected-close rollback, Cmd-F focus routing, PDFKit overlay projection after in-place revision changes, VoiceOver traversal, and reduced-motion behavior. Command-line compilation and PDFKit harness evidence do not prove those interactions.
+- Recovery crash-interruption evidence remains required. The metadata envelope, sensitive payload, pair manifest, generation retention, schema quarantine, and source-digest binding are implemented, but an interrupted native process must still be observed to prove that the previous commit pointer remains readable.
+- The sensitive payload store currently uses restrictive filesystem permissions but is not encrypted. A long-term security decision is still required: local-trust threat model with explicit documented boundary, or Keychain-backed key management and authenticated encryption.
+- Permanent redaction remains intentionally unavailable until a provider exposes a measured `redaction.permanent` capability and a validated `applyRedaction` implementation. The UI now states that limitation explicitly and fails closed.
+- The native/web parity report continues to expose semantic differences in native field choice encodings, accessibility reading-order claims, candidate sets, encrypted security metadata, and page geometry precision. Each difference remains a review item; parity is not claimed merely because the harness exits successfully.
+- Historical generated evidence reports retain their original digests. They are not rewritten to conceal the encrypted-fixture refresh; the governance manifest and executable provenance contract are the current anchors.
+
+### 14.4 Current completion status
+
+The implementation and command-line/browser validation waves are complete. The overall macOS design goal remains open because native UI runtime proof, recovery interruption proof, and the payload-encryption policy decision are not yet verified or resolved. No `Complete` claim should be made until those evidence and policy items are closed.

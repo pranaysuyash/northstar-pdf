@@ -973,52 +973,60 @@ private struct EditorView: View {
       HSplitView {
         PageList(model: model, inspection: inspection)
           .frame(minWidth: 200, idealWidth: 230, maxWidth: 280)
-        PDFKitView(
-          document: model.liveDocument,
-          projectionRevision: model.documentProjectionRevision,
-          pageIndex: model.selectedPageIndex,
-          viewMode: model.readerViewMode,
-          scaleMode: model.readerScaleMode,
-          zoom: model.readerZoom,
-          rotation: model.readerRotation,
-          selectedSearchMatch: model.selectedSearchMatch,
-          searchProjectionState: $searchProjectionState,
-          selectedCandidate: model.selectedCandidate,
-          selectedField: model.selectedField,
-          isManualPlacementMode: model.isManualPlacementMode,
-          onManualPlacement: { pageIndex, point in
-            model.receiveManualPlacement(pageIndex: pageIndex, point: point)
-          },
-          onDirectEdit: { pageIndex, point in
-            model.beginDirectTextPlacement(pageIndex: pageIndex, point: point)
-          }
-        )
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("PDF document page \(model.selectedPageIndex + 1)")
-        .accessibilityValue(
-          model.selectedSearchMatch.map {
-            "Search result on page \($0.pageIndex + 1): \($0.snippet)"
-          }
-            ?? model.selectedCandidate.map {
-              "Selected suggested area on page \($0.pageIndex + 1), \($0.entryMode.rawValue)"
-            }
-            ?? model.selectedField.map {
-              "Selected native field \($0.name) on page \($0.pageIndex + 1)"
-            }
-            ?? "Page \(model.selectedPageIndex + 1)"
-        )
-        .accessibilityHint(
-          (model.isManualPlacementMode
-            ? "Manual placement mode. Press Return or Space to place text at the current page center, or click the page."
-            : "Use the page list, inspector, or search results to change the selected document element.")
-            + " " + searchProjectionState.message
-        )
-        .frame(minWidth: 520)
+        documentPane
         InspectorView(model: model, inspection: inspection)
           .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
       }
       .padding(.horizontal, 8)
     }
+  }
+
+  private var documentPane: some View {
+    PDFKitView(
+      document: model.liveDocument,
+      projectionRevision: model.documentProjectionRevision,
+      pageIndex: model.selectedPageIndex,
+      viewMode: model.readerViewMode,
+      scaleMode: model.readerScaleMode,
+      zoom: model.readerZoom,
+      rotation: model.readerRotation,
+      selectedSearchMatch: model.selectedSearchMatch,
+      searchProjectionState: $searchProjectionState,
+      selectedCandidate: model.selectedCandidate,
+      selectedField: model.selectedField,
+      isManualPlacementMode: model.isManualPlacementMode,
+      fillHighlights: model.fillHighlightRegions,
+      onManualPlacement: { pageIndex, point in
+        model.receiveManualPlacement(pageIndex: pageIndex, point: point)
+      },
+      onDirectEdit: { pageIndex, point in
+        model.beginDirectTextPlacement(pageIndex: pageIndex, point: point)
+      },
+      onPageTap: { pageIndex, point in
+        model.handlePageTap(pageIndex: pageIndex, point: point)
+      }
+    )
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("PDF document page \(model.selectedPageIndex + 1)")
+    .accessibilityValue(
+      model.selectedSearchMatch.map {
+        "Search result on page \($0.pageIndex + 1): \($0.snippet)"
+      }
+        ?? model.selectedCandidate.map {
+          "Selected suggested area on page \($0.pageIndex + 1), \($0.entryMode.rawValue)"
+        }
+        ?? model.selectedField.map {
+          "Selected native field \($0.name) on page \($0.pageIndex + 1)"
+        }
+        ?? "Page \(model.selectedPageIndex + 1)"
+    )
+    .accessibilityHint(
+      (model.isManualPlacementMode
+        ? "Manual placement mode. Press Return or Space to place text at the current page center, or click the page."
+        : "Use the page list, inspector, or search results to change the selected document element.")
+        + " " + searchProjectionState.message
+    )
+    .frame(minWidth: 520)
   }
 }
 
@@ -1233,6 +1241,7 @@ private struct InspectorView: View {
         Text("Review and edit")
           .font(.title3.weight(.semibold))
 
+        preflightSection
         templateSection
         profileSection
         fieldSection
@@ -1250,6 +1259,97 @@ private struct InspectorView: View {
     .onChange(of: model.selectedCandidateID, initial: true) { _, _ in
       overlayDraft = ""
       choiceCellIndex = 0
+    }
+  }
+
+  private var preflightSection: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label("Privacy and persistence preflight", systemImage: "lock.shield")
+        .font(.headline)
+      if let report = model.preflightReport {
+        Text("Read-only inspection bound to source \(report.header.sourceDigest.prefix(12))...: \(report.payload.summary.findingCount) finding(s), \(report.payload.summary.unknownCount) unknown coverage state(s).")
+          .font(.caption)
+        Text("Processing: local macOS device through PDFKit. No network egress is requested by this session. OCR is not used unless an explicit local OCR action is started.")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+        Text("Source retention: the selected source remains outside the encrypted template/profile stores; exports are new files. Sanitization: not run, so no clean claim is made.")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+        HStack(spacing: 8) {
+          Text("Metadata \(report.payload.summary.metadataFieldCount)")
+          Text("Embedded \(report.payload.summary.embeddedDataCount)")
+          Text("Network \(report.payload.summary.networkBoundaryCount)")
+          Text("Active tokens \(report.payload.summary.activeContentCount)")
+        }
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+        Text("Coverage: attachments \(report.payload.attachments.coverage.state.rawValue), annotations \(report.payload.annotations.coverage.state.rawValue), revisions \(report.payload.revisions.coverage.state.rawValue).")
+          .font(.caption2)
+          .foregroundStyle(report.payload.summary.unknownCount > 0 ? .orange : .secondary)
+      } else {
+        Text("No validated preflight report is available for the current source.")
+          .font(.caption)
+          .foregroundStyle(.orange)
+      }
+
+      Divider()
+      Text("Encrypted local stores")
+        .font(.subheadline.weight(.semibold))
+      persistenceHealthRow(model.templateStoreHealth, label: "Templates")
+      persistenceHealthRow(model.profileStoreHealth, label: "Profiles")
+      HStack(spacing: 8) {
+        Button("Refresh health") { model.refreshLocalPersistenceHealth() }
+          .buttonStyle(.bordered)
+        Button("Export template recovery") { model.exportTemplateRecoveryEnvelope() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isTemplateVaultUnlocked)
+        Button("Import template recovery") { model.importTemplateRecoveryEnvelope() }
+          .buttonStyle(.bordered)
+        Button("Delete template records") { model.deleteAllTemplateVaultRecords() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isTemplateVaultUnlocked)
+      }
+      HStack(spacing: 8) {
+        Button("Export profile recovery") { model.exportProfileRecoveryEnvelope() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isProfileVaultUnlocked)
+        Button("Import profile recovery") { model.importProfileRecoveryEnvelope() }
+          .buttonStyle(.bordered)
+        Button("Delete profile records") { model.deleteAllProfileVaultRecords() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isProfileVaultUnlocked)
+      }
+      if let event = (model.templateAuditEvents + model.profileAuditEvents).sorted(by: { $0.createdAt > $1.createdAt }).first {
+        Text("Last value-free audit: \(event.action.rawValue) · \(event.outcome.rawValue) · \(event.state.rawValue) · \(event.reasonCode ?? "no reason code")")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+      }
+      Text("Recovery envelopes protect keys; encrypted backups or value-free template exports protect records. Browser storage may be evicted, so keep an explicit export outside the browser.")
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+    }
+    .padding(10)
+    .background(Color.orange.opacity(0.05))
+    .clipShape(RoundedRectangle(cornerRadius: 10))
+  }
+
+  @ViewBuilder
+  private func persistenceHealthRow(_ health: PDFLocalStoreHealth?, label: String) -> some View {
+    if let health {
+      HStack {
+        Text(label)
+        Spacer()
+        Text("\(health.state.rawValue) · \(health.recordCount) record(s) · \(health.auditEventCount) audit event(s)")
+          .font(.caption2)
+          .foregroundStyle(health.state == .unknown || health.state == .evicted ? .orange : .secondary)
+      }
+      Text("\(health.messageCode) · recovery envelope \(health.recoveryEnvelopeAvailable ? "available" : "not recorded") · backup recommended \(health.encryptedBackupRecommended ? "yes" : "no")")
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+    } else {
+      Text("\(label): health unknown")
+        .font(.caption2)
+        .foregroundStyle(.orange)
     }
   }
 
@@ -1749,22 +1849,48 @@ private struct InspectorView: View {
       )
       .font(.callout)
       .foregroundStyle(.secondary)
-      HStack(spacing: 8) {
-          Button("Add text manually", systemImage: "plus.circle") {
+
+      // MARK: - Authoring Tools / Edit Palette (D-010)
+      VStack(alignment: .leading, spacing: 6) {
+        HStack(spacing: 8) {
+          Button("Add text", systemImage: "text.cursor") {
             model.beginManualTextPlacement()
           }
           .disabled(!canEditAnnotations(model))
-          .accessibilityHelp(
-            canEditAnnotations(model)
-              ? "Starts reversible text overlay placement."
-              : "Unavailable because this PDF does not allow document annotations."
-          )
-        .buttonStyle(.borderedProminent)
-        if model.isManualPlacementMode {
-          Button("Cancel placement") {
-            model.cancelManualTextPlacement()
+          .buttonStyle(.borderedProminent)
+          .help("Click the document where new text should begin.")
+
+          Button("Sign document", systemImage: "signature") {
+            model.beginSign(for: nil)
           }
+          .disabled(!canEditAnnotations(model))
           .buttonStyle(.bordered)
+          .help("Open signature pad to draw, type, or import your signature.")
+
+          if model.isManualPlacementMode {
+            Button("Cancel", role: .cancel) {
+              model.cancelManualTextPlacement()
+            }
+            .buttonStyle(.bordered)
+          }
+        }
+
+        let markedRedactions = model.operations.filter { $0.kind == .redactMark }.count
+        if markedRedactions > 0 {
+          HStack(spacing: 8) {
+            Label("\(markedRedactions) area(s) marked for redaction", systemImage: "eye.slash")
+              .font(.caption)
+              .foregroundStyle(.red)
+            Spacer()
+            Button("Commit Redactions", systemImage: "trash") {
+              model.isRedactionCommitPresented = true
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
+            .help("Permanently remove content in marked regions (L3 irrevocable action).")
+          }
+          .padding(8)
+          .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
         }
       }
       if !model.activeCandidates.isEmpty {
@@ -2234,6 +2360,10 @@ private struct PDFPresentationHighlight {
     case characterGrid
     case field
     case search
+    case candidateUnfilled
+    case candidateFilled
+    case signatureRegion
+    case focused
   }
 
   let kind: Kind
@@ -2297,18 +2427,37 @@ private final class PDFPresentationOverlayView: NSView {
 
       let fillColor: NSColor
       let strokeColor: NSColor
+      var isDashed = false
+      var lineWidth: CGFloat = 1.5
+
       switch highlight.kind {
       case .candidate:
         fillColor = NSColor.systemBlue.withAlphaComponent(0.12)
         strokeColor = NSColor.controlAccentColor
       case .field:
+        fillColor = NSColor.systemBlue.withAlphaComponent(0.08)
+        strokeColor = NSColor.controlAccentColor
+      case .candidateUnfilled:
+        fillColor = NSColor.systemOrange.withAlphaComponent(0.08)
+        strokeColor = NSColor.systemOrange
+        isDashed = true
+      case .candidateFilled:
         fillColor = NSColor.systemGreen.withAlphaComponent(0.10)
         strokeColor = NSColor.systemGreen
+      case .signatureRegion:
+        fillColor = NSColor.systemPurple.withAlphaComponent(0.10)
+        strokeColor = NSColor.systemPurple
+        isDashed = true
+      case .focused:
+        fillColor = NSColor.controlAccentColor.withAlphaComponent(0.20)
+        strokeColor = NSColor.controlAccentColor
+        lineWidth = 2.0
       case .characterGrid:
         continue
       case .search:
         fillColor = NSColor.systemYellow.withAlphaComponent(0.10)
         strokeColor = NSColor.systemOrange.withAlphaComponent(0.70)
+        lineWidth = 1.0
       }
 
       fillColor.setFill()
@@ -2318,7 +2467,10 @@ private final class PDFPresentationOverlayView: NSView {
         xRadius: 3,
         yRadius: 3
       )
-      path.lineWidth = highlight.kind == .search ? 1 : 1.5
+      if isDashed {
+        path.setLineDash([4, 3], count: 2, phase: 0)
+      }
+      path.lineWidth = lineWidth
       path.fill()
       path.stroke()
       if highlight.kind == .search {
@@ -2337,6 +2489,7 @@ private final class InteractivePDFView: PDFView {
   var isManualPlacementMode = false
   var onManualPlacement: ((Int, CGPoint) -> Void)?
   var onDirectEdit: ((Int, CGPoint) -> Void)?
+  var onPageTap: ((Int, CGPoint) -> Void)?
   var onProjectionInvalidated: (@MainActor @Sendable () -> Void)?
   var requestedScaleMode: ReaderScaleMode = .fitWidth
   var requestedRowWidth: CGFloat = 612
@@ -2384,6 +2537,7 @@ private final class InteractivePDFView: PDFView {
     } else if event.clickCount >= 2 {
       onDirectEdit?(pageIndex, pagePoint)
     } else {
+      onPageTap?(pageIndex, pagePoint)
       super.mouseDown(with: event)
     }
   }
@@ -2419,8 +2573,10 @@ private struct PDFKitView: NSViewRepresentable {
     let selectedCandidate: RegionCandidate?
   let selectedField: NativeField?
   let isManualPlacementMode: Bool
+  let fillHighlights: [FillHighlight]
   let onManualPlacement: (Int, CGPoint) -> Void
   let onDirectEdit: (Int, CGPoint) -> Void
+  let onPageTap: (Int, CGPoint) -> Void
 
   private final class ProjectionObserverTokenStore {
     var tokens: [NSObjectProtocol] = []
@@ -2532,6 +2688,7 @@ private struct PDFKitView: NSViewRepresentable {
     view.backgroundColor = .windowBackgroundColor
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
+    view.onPageTap = onPageTap
 
     let overlayView = PDFPresentationOverlayView(frame: view.bounds)
     overlayView.autoresizingMask = [.width, .height]
@@ -2575,6 +2732,7 @@ private struct PDFKitView: NSViewRepresentable {
     view.isManualPlacementMode = isManualPlacementMode
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
+    view.onPageTap = onPageTap
     view.onProjectionInvalidated = { @MainActor [weak coordinator = context.coordinator] in
       coordinator?.invalidateOverlay()
     }
@@ -2600,7 +2758,28 @@ private struct PDFKitView: NSViewRepresentable {
     context.coordinator.invalidateOverlay()
 
     var highlights: [PDFPresentationHighlight] = []
-    if let selectedCandidate,
+
+    if !fillHighlights.isEmpty {
+      for highlight in fillHighlights {
+        if let page = view.document?.page(at: highlight.pageIndex) {
+          let kind: PDFPresentationHighlight.Kind
+          switch highlight.state {
+          case .nativeField: kind = .field
+          case .candidateUnfilled: kind = .candidateUnfilled
+          case .candidateFilled: kind = .candidateFilled
+          case .signatureRegion: kind = .signatureRegion
+          case .focused: kind = .focused
+          }
+          highlights.append(
+            PDFPresentationHighlight(
+              kind: kind,
+              page: page,
+              bounds: highlight.bounds.cgRect
+            )
+          )
+        }
+      }
+    } else if let selectedCandidate,
       let page = view.document?.page(at: selectedCandidate.pageIndex)
     {
       highlights.append(

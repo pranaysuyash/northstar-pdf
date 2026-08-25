@@ -94,10 +94,14 @@ enum SessionPayloadSchemaDisposition: Equatable, Sendable {
 enum SessionPayloadStoreError: Error, LocalizedError {
   case invalidRecord(String)
   case quarantinedSchema(version: Int, reason: String)
+  case quarantinedRecord(reason: String)
+  case keyUnavailable
+  case authenticationFailed
   case encodingFailed(String)
   case decodingFailed(String)
   case directoryCreationFailed(String)
   case fileOperationFailed(String)
+  case quarantineFailed
 
   var errorDescription: String? {
     switch self {
@@ -105,6 +109,12 @@ enum SessionPayloadStoreError: Error, LocalizedError {
       "Recovery payload is invalid: \(message)"
     case .quarantinedSchema(let version, let reason):
       "Recovery payload schema v\(version) was quarantined: \(reason)"
+    case .quarantinedRecord(let reason):
+      "Recovery payload was quarantined: \(reason)"
+    case .keyUnavailable:
+      "Recovery payload encryption key is unavailable."
+    case .authenticationFailed:
+      "Recovery payload authentication failed."
     case .encodingFailed(let message):
       "Recovery payload could not be encoded: \(message)"
     case .decodingFailed(let message):
@@ -113,6 +123,8 @@ enum SessionPayloadStoreError: Error, LocalizedError {
       "Recovery payload storage is unavailable: \(message)"
     case .fileOperationFailed(let message):
       "Recovery payload file operation failed: \(message)"
+    case .quarantineFailed:
+      "Recovery payload could not be quarantined safely."
     }
   }
 }
@@ -122,20 +134,43 @@ enum SessionPayloadStoreError: Error, LocalizedError {
 /// The payload plane can contain user-entered values and profile-derived
 /// values because it stores the full operations required by provider replay.
 /// It intentionally does not contain source PDF bytes or OCR text, but it is
-/// not value-free and is not encrypted. Filesystem permissions provide local
-/// access control only. A process or user able to read the app sandbox can
-/// read this directory until an encrypted or Keychain-backed container is
-/// introduced.
+/// not value-free. The on-disk representation is an authenticated AES-GCM
+/// envelope whose key is stable in the user's Keychain. Filesystem
+/// permissions remain a second, independent local access-control boundary.
 final class SessionPayloadStore: @unchecked Sendable {
+  private struct EncryptedPayloadRecord: Codable {
+    static let contractName = "pdf-editor.document-session-recovery-payload-encrypted"
+    static let formatVersion = 1
+
+    let contract: String
+    let formatVersion: Int
+    let sessionID: UUID
+    let autosaveSequence: Int
+    let sourceDigest: String
+    let payloadSchemaVersion: Int
+    let combinedCiphertext: Data
+  }
+
+  private struct AuthenticatedContext: Codable {
+    let contract: String
+    let formatVersion: Int
+    let sessionID: UUID
+    let autosaveSequence: Int
+    let sourceDigest: String
+    let payloadSchemaVersion: Int
+  }
+
   private let directory: URL
   private let fileManager: FileManager
   private let encoder: JSONEncoder
   private let decoder: JSONDecoder
+  private let keyStore: RecoveryPayloadKeyStore
   private let lock = NSLock()
 
   init(
     directory: URL = SessionPayloadStore.defaultDirectory,
-    fileManager: FileManager = .default
+    fileManager: FileManager = .default,
+    keyStore: RecoveryPayloadKeyStore = .shared
   ) {
     self.directory = directory
     self.fileManager = fileManager
@@ -144,6 +179,7 @@ final class SessionPayloadStore: @unchecked Sendable {
     self.encoder.outputFormatting = [.sortedKeys]
     self.decoder = JSONDecoder()
     self.decoder.dateDecodingStrategy = .iso8601
+    self.keyStore = keyStore
   }
 
   static var defaultDirectory: URL {
@@ -156,6 +192,10 @@ final class SessionPayloadStore: @unchecked Sendable {
       .appendingPathComponent("RecoveryPayloads", isDirectory: true)
   }
 
+  private var quarantineDirectory: URL {
+    directory.appendingPathComponent("Quarantine", isDirectory: true)
+  }
+
   func save(_ record: SessionPayloadRecord) throws {
     lock.lock()
     defer { lock.unlock() }
@@ -165,9 +205,39 @@ final class SessionPayloadStore: @unchecked Sendable {
 
     let data: Data
     do {
-      data = try encoder.encode(record)
+      let plaintext = try encoder.encode(record)
+      let key = try keyStore.loadOrCreateKey()
+      let context = try authenticatedContext(for: record)
+      let sealedBox = try AES.GCM.seal(
+        plaintext,
+        using: key,
+        authenticating: context
+      )
+      guard let combinedCiphertext = sealedBox.combined else {
+        throw SessionPayloadStoreError.encodingFailed(
+          "Authenticated payload encoding produced no ciphertext."
+        )
+      }
+      data = try encoder.encode(
+        EncryptedPayloadRecord(
+          contract: EncryptedPayloadRecord.contractName,
+          formatVersion: EncryptedPayloadRecord.formatVersion,
+          sessionID: record.sessionID,
+          autosaveSequence: record.autosaveSequence,
+          sourceDigest: record.sourceDigest,
+          payloadSchemaVersion: record.schemaVersion,
+          combinedCiphertext: combinedCiphertext
+        )
+      )
+    } catch let error as SessionPayloadStoreError {
+      throw error
     } catch {
-      throw SessionPayloadStoreError.encodingFailed(error.localizedDescription)
+      if error is RecoveryPayloadKeyStoreError {
+        throw SessionPayloadStoreError.keyUnavailable
+      }
+      throw SessionPayloadStoreError.encodingFailed(
+        "Recovery payload encryption failed."
+      )
     }
 
     do {
@@ -178,7 +248,9 @@ final class SessionPayloadStore: @unchecked Sendable {
         ofItemAtPath: fileURL.path
       )
     } catch {
-      throw SessionPayloadStoreError.fileOperationFailed(error.localizedDescription)
+      throw SessionPayloadStoreError.fileOperationFailed(
+        "Recovery payload file operation failed."
+      )
     }
   }
 
@@ -202,20 +274,65 @@ final class SessionPayloadStore: @unchecked Sendable {
   private func loadUnlocked(sessionID: UUID, autosaveSequence: Int) throws -> SessionPayloadRecord {
     let fileURL = url(for: sessionID, autosaveSequence: autosaveSequence)
 
+    let data: Data
     do {
-      let data = try Data(contentsOf: fileURL)
-      let record = try decoder.decode(SessionPayloadRecord.self, from: data)
-      guard record.sessionID == sessionID else {
-        throw SessionPayloadStoreError.invalidRecord("Session identity does not match its filename.")
+      data = try Data(contentsOf: fileURL)
+    } catch is DecodingError {
+      try quarantine(fileURL)
+      throw SessionPayloadStoreError.quarantinedRecord(
+        reason: "The recovery payload format is unsupported."
+      )
+    } catch {
+      throw SessionPayloadStoreError.fileOperationFailed(
+        "Recovery payload file operation failed."
+      )
+    }
+
+    let encryptedRecord: EncryptedPayloadRecord
+    do {
+      encryptedRecord = try decoder.decode(EncryptedPayloadRecord.self, from: data)
+      try validate(encryptedRecord, sessionID: sessionID, autosaveSequence: autosaveSequence)
+    } catch {
+      try quarantine(fileURL)
+      throw SessionPayloadStoreError.quarantinedRecord(
+        reason: "The recovery payload format or identity is invalid."
+      )
+    }
+
+    let plaintext: Data
+    do {
+      let key = try keyStore.loadOrCreateKey()
+      let sealedBox = try AES.GCM.SealedBox(combined: encryptedRecord.combinedCiphertext)
+      plaintext = try AES.GCM.open(
+        sealedBox,
+        using: key,
+        authenticating: authenticatedContext(for: encryptedRecord)
+      )
+    } catch let error as RecoveryPayloadKeyStoreError {
+      throw SessionPayloadStoreError.keyUnavailable
+    } catch {
+      try quarantine(fileURL)
+      throw SessionPayloadStoreError.authenticationFailed
+    }
+
+    do {
+      let record = try decoder.decode(SessionPayloadRecord.self, from: plaintext)
+      guard record.sessionID == sessionID,
+        record.autosaveSequence == autosaveSequence,
+        record.sourceDigest == encryptedRecord.sourceDigest,
+        record.schemaVersion == encryptedRecord.payloadSchemaVersion
+      else {
+        throw SessionPayloadStoreError.invalidRecord(
+          "Recovery payload identity does not match its encrypted envelope."
+        )
       }
       try validate(record)
       return record
-    } catch let error as SessionPayloadStoreError {
-      throw error
-    } catch is DecodingError {
-      throw SessionPayloadStoreError.decodingFailed(fileURL.lastPathComponent)
     } catch {
-      throw SessionPayloadStoreError.fileOperationFailed(error.localizedDescription)
+      try quarantine(fileURL)
+      throw SessionPayloadStoreError.quarantinedRecord(
+        reason: "The authenticated recovery payload is invalid."
+      )
     }
   }
 
@@ -237,8 +354,19 @@ final class SessionPayloadStore: @unchecked Sendable {
       for fileURL in fileURLs {
         try fileManager.removeItem(at: fileURL)
       }
+      if fileManager.fileExists(atPath: quarantineDirectory.path) {
+        let quarantinedURLs = try fileManager.contentsOfDirectory(
+          at: quarantineDirectory,
+          includingPropertiesForKeys: nil
+        ).filter { $0.lastPathComponent.hasPrefix(prefix) }
+        for fileURL in quarantinedURLs {
+          try fileManager.removeItem(at: fileURL)
+        }
+      }
     } catch {
-      throw SessionPayloadStoreError.fileOperationFailed(error.localizedDescription)
+      throw SessionPayloadStoreError.fileOperationFailed(
+        "Recovery payload file operation failed."
+      )
     }
   }
 
@@ -272,7 +400,7 @@ final class SessionPayloadStore: @unchecked Sendable {
       }
     } catch {
       throw SessionPayloadStoreError.fileOperationFailed(
-        "Recovery payload retention cleanup failed: \(error.localizedDescription)"
+        "Recovery payload retention cleanup failed."
       )
     }
   }
@@ -285,7 +413,93 @@ final class SessionPayloadStore: @unchecked Sendable {
         ofItemAtPath: directory.path
       )
     } catch {
-      throw SessionPayloadStoreError.directoryCreationFailed(error.localizedDescription)
+      throw SessionPayloadStoreError.directoryCreationFailed(
+        "Recovery payload directory is unavailable."
+      )
+    }
+  }
+
+  private func ensureQuarantineDirectory() throws {
+    do {
+      try fileManager.createDirectory(
+        at: quarantineDirectory,
+        withIntermediateDirectories: true
+      )
+      try fileManager.setAttributes(
+        [.posixPermissions: NSNumber(value: Int16(0o700))],
+        ofItemAtPath: quarantineDirectory.path
+      )
+    } catch {
+      throw SessionPayloadStoreError.quarantineFailed
+    }
+  }
+
+  private func quarantine(_ fileURL: URL) throws {
+    try ensureQuarantineDirectory()
+    let destination = quarantineDirectory.appendingPathComponent(
+      "\(fileURL.lastPathComponent).\(UUID().uuidString).quarantined"
+    )
+    do {
+      try fileManager.moveItem(at: fileURL, to: destination)
+      try fileManager.setAttributes(
+        [.posixPermissions: NSNumber(value: Int16(0o600))],
+        ofItemAtPath: destination.path
+      )
+    } catch {
+      throw SessionPayloadStoreError.quarantineFailed
+    }
+  }
+
+  private func authenticatedContext(for record: SessionPayloadRecord) throws -> Data {
+    try encoder.encode(
+      AuthenticatedContext(
+        contract: EncryptedPayloadRecord.contractName,
+        formatVersion: EncryptedPayloadRecord.formatVersion,
+        sessionID: record.sessionID,
+        autosaveSequence: record.autosaveSequence,
+        sourceDigest: record.sourceDigest,
+        payloadSchemaVersion: record.schemaVersion
+      )
+    )
+  }
+
+  private func authenticatedContext(for record: EncryptedPayloadRecord) -> Data {
+    (try? encoder.encode(
+      AuthenticatedContext(
+        contract: record.contract,
+        formatVersion: record.formatVersion,
+        sessionID: record.sessionID,
+        autosaveSequence: record.autosaveSequence,
+        sourceDigest: record.sourceDigest,
+        payloadSchemaVersion: record.payloadSchemaVersion
+      )
+    )) ?? Data()
+  }
+
+  private func validate(
+    _ record: EncryptedPayloadRecord,
+    sessionID: UUID,
+    autosaveSequence: Int
+  ) throws {
+    guard record.contract == EncryptedPayloadRecord.contractName,
+      record.formatVersion == EncryptedPayloadRecord.formatVersion,
+      record.sessionID == sessionID,
+      record.autosaveSequence == autosaveSequence,
+      !record.sourceDigest.isEmpty,
+      !record.combinedCiphertext.isEmpty
+    else {
+      throw SessionPayloadStoreError.invalidRecord(
+        "Encrypted recovery payload identity is invalid."
+      )
+    }
+    switch SessionPayloadSchemaDisposition.forVersion(record.payloadSchemaVersion) {
+    case .current:
+      break
+    case .quarantine(let reason):
+      throw SessionPayloadStoreError.quarantinedSchema(
+        version: record.payloadSchemaVersion,
+        reason: reason
+      )
     }
   }
 

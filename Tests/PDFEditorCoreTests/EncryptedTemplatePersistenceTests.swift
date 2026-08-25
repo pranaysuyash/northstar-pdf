@@ -134,6 +134,34 @@ struct EncryptedTemplatePersistenceTests {
         #expect(try templateStore.templateIDs() == [templateID])
     }
 
+    @Test func recoveryEnvelopeHealthAndDeletionAuditRemainValueFree() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("pdf-editor-persistence-recovery-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let key = Data(repeating: 6, count: 32)
+        let store = EncryptedPDFTemplateStore(directory: directory, keyData: key)
+        _ = try store.append(revision: template(revisionID: UUID(uuidString: "26262626-2626-2626-2626-262626262626")!))
+
+        let passphrase = "native-recovery-passphrase"
+        let envelope = try store.exportRecoveryEnvelope(passphrase: passphrase)
+        #expect(String(decoding: envelope, as: UTF8.self).contains(passphrase) == false)
+        #expect(try store.health().recoveryEnvelopeAvailable)
+
+        let reopened = EncryptedPDFTemplateStore(directory: directory, keyData: key)
+        #expect(throws: PDFTemplatePersistenceError.decryptionFailed) {
+            try reopened.recoverKey(from: envelope, passphrase: "wrong-recovery-passphrase")
+        }
+        try reopened.recoverKey(from: envelope, passphrase: passphrase)
+        #expect(try reopened.load(templateID: templateID) != nil)
+
+        try reopened.deleteAllRecords()
+        #expect(try reopened.templateIDs().isEmpty)
+        let events = try reopened.auditEvents()
+        #expect(events.contains { $0.action == .storeDelete && $0.outcome == .succeeded })
+        #expect(events.allSatisfy { $0.recordToken?.contains(templateID.uuidString) != true })
+        #expect(events.allSatisfy { $0.reasonCode?.contains("Private recurring form") != true })
+    }
+
     @Test func validatedChildRevisionTransferDiffAndLearningJournalRemainValueFree() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("pdf-editor-template-lifecycle-\(UUID().uuidString)", isDirectory: true)

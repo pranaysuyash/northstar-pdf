@@ -127,6 +127,11 @@ try {
     expectEqual(backupText.includes("Ada Lovelace Secret Value"), false, "backup profile-content exclusion");
     expectEqual(backupText.includes("browser-profile-security-passphrase"), false, "backup passphrase exclusion");
     expectEqual(backupText.includes("%PDF-"), false, "backup source-byte exclusion");
+    const recoveryPassphrase = "browser-key-recovery-passphrase";
+    const recoveryEnvelope = await store.exportPassphraseRecovery(recoveryPassphrase);
+    const recoveryText = JSON.stringify(recoveryEnvelope);
+    expectEqual(recoveryText.includes(recoveryPassphrase), false, "recovery passphrase exclusion");
+    expectEqual(recoveryEnvelope.contractName, "pdf-editor.local-store-recovery", "recovery contract");
 
     store.lock();
     expectEqual(store.isUnlocked, false, "store lock state");
@@ -144,6 +149,9 @@ try {
     expectEqual(evictedHealth.state, "evicted", "evicted health state");
     expectEqual(evictedHealth.recovery, "restoreEncryptedBackup", "eviction recovery action");
     await expectRejectCode(() => evictedStore.unlock(storePassphrase), "store_evicted");
+    await expectRejectCode(() => evictedStore.recoverPassphraseRecovery(recoveryEnvelope, "wrong-recovery-passphrase"), "recovery_failed");
+    const recoveredKeyHealth = await evictedStore.recoverPassphraseRecovery(recoveryEnvelope, recoveryPassphrase);
+    expectEqual(recoveredKeyHealth.state, "evicted", "recovered key with evicted records");
     await expectRejectCode(() => evictedStore.restoreEncryptedBackup({ ...backup, version: { major: 99, minor: 0 } }, { storePassphrase }), "backup_invalid");
     const restoredHealth = await evictedStore.restoreEncryptedBackup(backup, { storePassphrase });
     expectEqual(restoredHealth.state, "ready", "restored health state");
@@ -180,6 +188,8 @@ try {
         && !logText.includes("browser-store-security-passphrase")
         && !logText.includes("browser-profile-security-passphrase")
         && !logText.includes("%PDF-")
+        && !logText.includes(recoveryPassphrase),
+      auditCount: evictedStore.auditSnapshot().length
     };
   });
 
@@ -188,6 +198,7 @@ try {
   assert.equal(result.restoredHealth.state, "ready");
   assert.equal(result.deletedHealth.state, "uninitialized");
   assert.equal(result.zeroContent, true);
+  assert.ok(result.auditCount >= 1);
   assert.ok(result.logs.some((event) => event.code === "profile_unlock_failed"));
   assert.ok(result.logs.some((event) => event.code === "store_evicted"));
   assert.ok(result.logs.some((event) => event.code === "backup_restore_ok"));

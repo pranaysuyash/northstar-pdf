@@ -266,6 +266,12 @@
   let templateCompletionOperationIDs = [];
   let loadGeneration = 0;
   let productSurfaceState = createProductSurfaceState();
+  const scaleState = {
+    fitMode: "fitWidth",
+    viewMode: "continuous",
+    zoom: 1,
+    pageCount: 0
+  };
 
   function readableCapabilityState(state) {
     return state.replaceAll("_", " ").replace(/\b\w/g, (character) => character.toUpperCase());
@@ -328,6 +334,7 @@
       rerunAnalysis: () => {
         if (!pdfDoc) return;
         setStatus("Re-running local analysis…");
+        modeStage.beginAnalysis();
         buildCompletionContract().finally(() => {
           renderCompletionPanel();
           renderVisiblePages();
@@ -365,7 +372,6 @@
   }
 
   renderProductModeState();
-  modeStage.selectMode("reader");
 
   // --- Web Session Persistence (IndexedDB) ---
   const SESSION_DB_NAME = "pdf-editor-sessions";
@@ -768,13 +774,6 @@
     return { operations, unmatched, usedKeys: [...usedKeys], totalMatches: operations.length };
   }
 
-  const scaleState = {
-    fitMode: "fitWidth",
-    viewMode: "continuous",
-    zoom: 1,
-    pageCount: 0
-  };
-
   function setStatus(message, kind = "muted") {
     ui.status.className = `status ${kind}`;
     ui.status.textContent = message;
@@ -1138,13 +1137,24 @@
   }
 
   async function buildCompletionContract() {
+    // Analysis reveal: the four inspection stages report real progress and the
+    // user may cancel into reader-only mode; a cancelled pass leaves partial,
+    // clearly-scoped results instead of pretending completion.
+    modeStage.analysisStage("digest");
     sourceDigest = await sha256Hex(pdfData);
+    modeStage.analysisStageDone("digest");
     const fields = [];
     const staticCandidates = [];
     const pages = [];
     const projectedTextRuns = [];
     const annotationTypeCounts = {};
+    let cancelledPage = null;
+    modeStage.analysisStage("fields");
     for (let pageNum = 1; pageNum <= scaleState.pageCount; pageNum += 1) {
+      if (modeStage.isAnalysisCancelled()) {
+        cancelledPage = pageNum;
+        break;
+      }
       const page = await pdfDoc.getPage(pageNum);
       const content = await page.getTextContent();
       const annotations = await page.getAnnotations({ intent: "display" });
@@ -1156,7 +1166,6 @@
       const view = fact?.view || [0, 0, page.view?.[2] || 0, page.view?.[3] || 0];
       const bounds = fact?.boxes?.crop || normalizeRect(view);
       fields.push(...await inspectNativeFields(pageNum));
-      staticCandidates.push(...await detectStaticCandidates(pageNum));
       projectedTextRuns.push(...await normalizePdfJsTextItems({
         items: content.items,
         pageIndex: pageNum - 1,
@@ -1179,6 +1188,20 @@
         hasSelectableText: content.items.some((item) => Boolean((item.str || "").trim()))
       });
     }
+    modeStage.analysisStageDone("fields");
+    if (!cancelledPage && !modeStage.isAnalysisCancelled()) {
+      modeStage.analysisStage("signals");
+      for (let pageNum = 1; pageNum <= scaleState.pageCount; pageNum += 1) {
+        if (modeStage.isAnalysisCancelled()) {
+          cancelledPage = pageNum;
+          break;
+        }
+        staticCandidates.push(...await detectStaticCandidates(pageNum));
+      }
+      modeStage.analysisStageDone("signals");
+    } else if (!cancelledPage) {
+      cancelledPage = 1;
+    }
     nativeFields = fields;
     candidates = staticCandidates;
     textRunProjections = projectedTextRuns;
@@ -1195,7 +1218,9 @@
         pages,
         fields: nativeFields,
         candidates,
-        warnings: candidates.length ? [] : ["No static blank-region candidate was inferred from text extraction."],
+        warnings: cancelledPage
+          ? [`Local analysis was cancelled on page ${cancelledPage}; review signals for pages ${cancelledPage}–${scaleState.pageCount} were not inspected.`]
+          : candidates.length ? [] : ["No static blank-region candidate was inferred from text extraction."],
         links: linkContractItems(),
         outlines: outlineContractItems(outlines),
         metadata: {
@@ -1235,6 +1260,11 @@
     sessionProvenance = buildSessionPrivacyProvenance();
     renderPreflightReport();
     renderCompletionPanel();
+    modeStage.completeAnalysis({
+      nativeFieldCount: nativeFields.length,
+      candidateCount: candidates.length,
+      partialPage: cancelledPage
+    });
   }
 
   function buildSessionPrivacyProvenance() {
@@ -2474,6 +2504,7 @@
       sourceName = file.name || "document.pdf";
       await loadPdf(new Uint8Array(arrayBuffer), password);
     } catch (error) {
+      modeStage.failAnalysis();
       displayReaderError(error, WEB_ERROR_CODES.cannotOpen);
     }
   }
@@ -2514,6 +2545,7 @@
     manualPlacement = null;
     showDismissedCandidates = false;
     renderCompletionPanel();
+    modeStage.beginAnalysis();
 
     while (true) {
       try {
@@ -2527,6 +2559,7 @@
         if (error?.name === "PasswordException") {
           closePasswordPrompt();
           showPasswordPrompt();
+          modeStage.blockAnalysis("Analysis unavailable — password required");
           return;
         }
         throw normalizeReaderError(error, WEB_ERROR_CODES.cannotOpen);
@@ -2535,7 +2568,9 @@
 
     if (generation !== loadGeneration) { return; }
     closePasswordPrompt();
+    modeStage.analysisStage("structure");
     await hydrateDocumentFacts();
+    modeStage.analysisStageDone("structure");
     if (generation !== loadGeneration) { return; }
     await buildThumbnails(generation);
     if (generation !== loadGeneration) { return; }
@@ -2553,6 +2588,7 @@
     await renderVisiblePages();
     if (generation !== loadGeneration) { return; }
     await runSearch();
+    modeStage.refreshPanels();
     if (!savedSession) {
       setStatus(`Loaded ${scaleState.pageCount} page(s).`);
     }
@@ -4034,3 +4070,7 @@
   });
 
   setStatus("Load a PDF to begin.");
+
+  // Initial mode surface render happens only after every state binding above
+  // exists (the controller reads them through its getState snapshot).
+  modeStage.selectMode("reader");

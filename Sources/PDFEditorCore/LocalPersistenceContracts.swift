@@ -78,7 +78,7 @@ public struct PDFLocalStoreAuditJournal: Codable, Equatable, Sendable {
     guard events.allSatisfy({ $0.storeKind == storeKind }) else {
       throw PDFTemplatePersistenceError.invalidRevisionHistory("persistence audit store kind mismatch")
     }
-    guard Set(events.map(\.id).count) == events.count else {
+    guard Set(events.map(\.id)).count == events.count else {
       throw PDFTemplatePersistenceError.invalidRevisionHistory("persistence audit IDs must be unique")
     }
     self.storeKind = storeKind

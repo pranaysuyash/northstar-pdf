@@ -12,9 +12,10 @@ Completed a static Delightful Experience Designer audit of the PDF Editor's brow
 - Flagged browser candidate dismissal persistence as a concrete issue to verify because the dismissal path does not currently call `saveWebSession()`.
 - Kept confidence language review-oriented until detector calibration supports probability-like wording.
 
-## Deliverable
+## Deliverables
 
-See `delightful-experience-redesign-report.md` for the design health score, before/after recommendations by touchpoint, micro-interaction timings, copy direction, accessibility constraints, prioritized backlog, rollout sequence, measurement plan, and open validation questions.
+- `delightful-experience-redesign-report.md` contains the design health score, before/after recommendations by touchpoint, micro-interaction timings, copy direction, accessibility constraints, prioritized backlog, rollout sequence, measurement plan, and open validation questions.
+- `agent-task-registry.md` turns the redesign and native audit into an execution inventory: explicit and implicit tasks, priorities, dependencies, acceptance criteria, evidence gates, agent roles, safe parallel tracks, and a do-not-start list.
 
 ## Evidence boundary
 

@@ -446,6 +446,13 @@ The current CSS bridge in `web/design-system.css` is the first implementation of
 Future React and native SwiftUI/AppKit work should consume the same token meanings rather than
 copying selectors. Preserve the existing semantic DOM and contract modules while migrating.
 
+### Living specimen
+
+Interactive pages that render the type scale, font stacks, and responsive breakpoints at
+actual render time are linked from [`docs/design-system-specimen.md`](docs/design-system-specimen.md).
+Run them after any typography, color, spacing, or layout change to visually verify the
+tokens before committing.
+
 When a capability or provider is not ready, keep the surface present with an honest state.
 The visual system must make it easy to understand what is available now, what is being
 measured, what requires review, and what will happen on export.

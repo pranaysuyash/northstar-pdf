@@ -749,6 +749,35 @@ The implementation and evidence are recorded in
 [`Tests/candidate_parity_mutation_test.mjs`](Tests/candidate_parity_mutation_test.mjs),
 and [`docs/audits/native-browser-candidate-parity-evidence-2026-08-25.md`](docs/audits/native-browser-candidate-parity-evidence-2026-08-25.md).
 
+### Phase 36: Reviewed detector semantic comparison
+
+**Status:** Versioned reviewed-region comparison implemented and passing on
+the controlled native/browser fixture; reviewed expansion across the 18-fixture
+corpus remains active long-term implementation
+
+- Give every reviewed detector region a stable identity independent of native
+  or browser candidate IDs.
+- Compare region-level precision, recall, false-negative misses, and
+  hard-negative abstention separately from provider candidate counts.
+- Compare minimum recognition evidence with the complete expected evidence
+  family set, retaining geometry, whitespace, label, relationship, OCR, and
+  native-field semantics without raw text.
+- Compare label association and grouping state/member counts explicitly.
+- Attach severity to hard-negative promotion and compute a weighted burden so
+  high-consequence false positives cannot hide behind aggregate rates.
+- Rebuild reports from mutated candidate inputs and kill reviewed-region,
+  false-positive, evidence-family, label-association, and grouping bypasses.
+- Join the reviewed report to the broader 18-fixture mismatch ledger before
+  promoting detector taxonomy or provider parity claims.
+
+Implementation and evidence:
+
+- [`web/detector-semantic-comparison.mjs`](web/detector-semantic-comparison.mjs)
+- [`benchmark/results/detector-calibration/detector_calibration_labels.json`](benchmark/results/detector-calibration/detector_calibration_labels.json)
+- [`benchmark/results/detector-calibration/detector-semantic-comparison-report.json`](benchmark/results/detector-calibration/detector-semantic-comparison-report.json)
+- [`Tests/detector_semantic_comparison_test.mjs`](Tests/detector_semantic_comparison_test.mjs)
+- [`docs/audits/detector-semantic-comparison-evidence-2026-08-25.md`](docs/audits/detector-semantic-comparison-evidence-2026-08-25.md)
+
 ### Phase 26: Session privacy and export provenance
 
 **Status:** Implemented and corpus-measured; provider-specific OCR, companion,

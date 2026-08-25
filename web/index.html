@@ -66,23 +66,35 @@
         <button id="rotateR" aria-label="Rotate clockwise 90 degrees">Rotate +90</button>
         <label for="zoomSlider">Zoom</label>
         <input id="zoomSlider" type="range" min="25" max="300" value="100" aria-label="Zoom level">
-        <span id="zoomValue" class="small">100%</span>
+        <span id="zoomValue" class="small" aria-label="zoom level">100%</span>
       </div>
       <div class="control-row">
         <label for="pageInput">Page</label>
-        <input id="pageInput" type="number" min="1" placeholder="Page" style="width: 72px;" aria-label="Target page number">
+        <input id="pageInput" type="number" min="1" placeholder="Page" class="input-page" aria-label="Target page number">
         <button id="jumpButton" aria-label="Jump to entered page">Go</button>
         <label for="searchInput">Search</label>
-        <input id="searchInput" type="text" placeholder="Search..." style="width: 200px;" aria-label="Search document text">
+        <input id="searchInput" type="text" placeholder="Search..." class="input-search" aria-label="Search document text">
         <button id="searchButton" aria-label="Find occurrences in document">Find</button>
         <button id="searchPrev" aria-label="Previous search occurrence">Prev</button>
         <button id="searchNext" aria-label="Next search occurrence">Next</button>
-        <span id="searchCount" class="small">0</span>
+        <span id="searchCount" class="small" aria-label="search result count">0</span>
       </div>
       <div class="control-row">
         <button id="copyPageText" aria-label="Copy extracted text of current page to clipboard">Copy current page text</button>
-        <button id="manualTextButton" class="primary" data-primary="true" aria-label="Add manual text overlay">Add text</button>
+        <button id="manualTextButton" class="primary" data-primary="true">Add text</button>
+        <button id="shortcutsHelpButton" aria-label="Keyboard shortcuts" aria-expanded="false" title="Keyboard shortcuts">?</button>
         <span id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></span>
+      </div>
+      <div id="shortcutsHelpPanel" class="shortcuts-help" hidden>
+        <div class="shortcuts-help-title">Keyboard Shortcuts</div>
+        <div class="shortcuts-grid">
+          <div class="shortcut-row"><kbd>Ctrl/⌘ Z</kbd><span>Undo last edit</span></div>
+          <div class="shortcut-row"><kbd>Ctrl/⌘ ⇧ Z</kbd><span>Redo last edit</span></div>
+          <div class="shortcut-row"><kbd>Ctrl/⌘ E</kbd><span>Export + validate</span></div>
+          <div class="shortcut-row"><kbd>Ctrl/⌘ D</kbd><span>Toggle diff overlay</span></div>
+          <div class="shortcut-row"><kbd>Ctrl/⌘ F</kbd><span>Focus search</span></div>
+          <div class="shortcut-row"><kbd>Escape</kbd><span>Close panel / blur</span></div>
+        </div>
       </div>
     </div>
 
@@ -133,7 +145,7 @@
             <span id="readerContextLine" class="mode-context-line">Open a PDF to begin — nothing leaves this device.</span>
             <span id="analysisStatusPill" class="analysis-pill" role="status" aria-live="polite"></span>
           </section>
-          <section id="mode-panel-understand" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-understand" tabindex="0" hidden>
+          <section id="mode-panel-understand" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-understand" tabindex="-1" hidden>
             <header class="mode-panel-head">
               <span class="mode-panel-kicker">Understand</span>
               <h2 class="mode-panel-title">Build a mental model before you edit.</h2>
@@ -145,7 +157,7 @@
               <div id="understandNextAction" class="understand-block"></div>
             </div>
           </section>
-          <section id="mode-panel-complete" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-complete" tabindex="0" hidden>
+          <section id="mode-panel-complete" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-complete" tabindex="-1" hidden>
             <header class="mode-panel-head">
               <span class="mode-panel-kicker">Complete</span>
               <h2 class="mode-panel-title">Finish the reviewed fields.</h2>
@@ -155,7 +167,7 @@
               <div id="completeProgress"></div>
             </div>
           </section>
-          <section id="mode-panel-organize" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-organize" tabindex="0" hidden>
+          <section id="mode-panel-organize" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-organize" tabindex="-1" hidden>
             <header class="mode-panel-head">
               <span class="mode-panel-kicker">Organize</span>
               <h2 class="mode-panel-title">Shape the document before you send it.</h2>
@@ -165,7 +177,7 @@
               <div id="organizeInventory"></div>
             </div>
           </section>
-          <section id="mode-panel-review" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-review" tabindex="0" hidden>
+          <section id="mode-panel-review" class="mode-panel" role="tabpanel" aria-labelledby="mode-tab-review" tabindex="-1" hidden>
             <header class="mode-panel-head">
               <span class="mode-panel-kicker">Review</span>
               <h2 class="mode-panel-title">Know exactly what will leave the session.</h2>
@@ -294,7 +306,8 @@
             <button id="restoreDismissedButton" hidden>Show dismissed</button>
           </div>
           <div class="inline" style="margin-top: 6px;">
-            <button id="undoEditButton" disabled>Undo last</button>
+            <button id="undoEditButton" disabled>Undo</button>
+            <button id="redoEditButton" disabled>Redo</button>
             <button id="exportButton" disabled>Export + validate</button>
             <button id="diffToggleButton" disabled>Show diff</button>
           </div>
@@ -315,7 +328,7 @@
         <label class="visually-hidden" for="passwordUsername">PDF account</label>
         <input id="passwordUsername" class="visually-hidden" type="text" autocomplete="username" tabindex="-1" aria-hidden="true">
         <label for="passwordInput" class="small">PDF password</label>
-        <input id="passwordInput" type="password" autocomplete="current-password" style="width: 240px; margin-top: 10px;">
+        <input id="passwordInput" type="password" autocomplete="current-password" class="input-password">
         <div class="control-row" style="justify-content: flex-end; margin-top: 10px;">
           <button id="passwordCancel" type="button">Cancel</button>
           <button id="passwordSubmit" type="submit">Open</button>

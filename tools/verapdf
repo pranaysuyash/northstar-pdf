@@ -1,0 +1,3 @@
+#!/bin/sh
+# veraPDF 1.30.2 CLI wrapper (vendored flat classpath; see benchmark/results/verapdf-2026-08-25/result.json for provenance)
+exec java -cp "$(dirname "$0")/verapdf-cli-1.30.2" org.verapdf.apps.GreenfieldCliWrapper "$@"

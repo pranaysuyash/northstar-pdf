@@ -106,6 +106,30 @@ runtime evidence belongs in [`pdfkit-benchmark.md`](pdfkit-benchmark.md).
   risk, and exact next check.
 - **Revisit trigger:** The benchmark corpus or product mutation boundary changes.
 
+## D-002 Amendment: PDFBox Passes the External-AcroForm Gate PDFKit Fails
+
+- **Date:** 2026-08-25
+- **Status:** Active provider evidence; final provider selection remains open
+- **Evidence:** The PDFBox control lane (`benchmark/pdfbox-lane/run.sh`) passed
+  all four oracle booleans on the public AcroForm sample that PDFKit fails
+  (F-016): no-op reopen, widget-state equivalence (radio export values
+  `email|phone` preserved with zero per-field diffs across all six fields),
+  mutated text retention, and source-unchanged. The `pdfbox-app-3.0.8` fat jar
+  SHA-512 was verified against the published digest. The native-widget fixture
+  without an AcroForm dictionary correctly reports zero fields (negative
+  control).
+- **Decision impact:** The radio-choice loss is PDFKit-specific, not systemic.
+  PDFBox becomes the leading form-aware provider lane for documents PDFKit
+  cannot safely edit. PDFKit remains acceptable for AcroForm-free documents
+  behind the structural catalog guard. JVM packaging, raster/visual parity,
+  and the broader corpus remain open gates before any provider adoption.
+- **Falsifier/next:** Run the same corpus (rotated, malformed, encrypted,
+  signed, large) through the PDFBox lane; add raster comparison; resolve JVM
+  packaging and license review before treating PDFBox as the default
+  form-aware writer.
+- **Owner:** Project owner; the lane maintains machine evidence under
+  `benchmark/results/2026-08-25-pdfbox-public-acroform/`.
+
 ## Decision History
 
 No earlier decision records are superseded. The initial architecture and comparison
@@ -2301,3 +2325,58 @@ Implementation and evidence:
 - [`Tests/PDFEditorCoreTests/EncryptedTemplatePersistenceTests.swift`](../Tests/PDFEditorCoreTests/EncryptedTemplatePersistenceTests.swift)
 - [`Tests/web_template_security_browser_test.mjs`](../Tests/web_template_security_browser_test.mjs)
 - [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](audits/local-persistence-product-surface-evidence-2026-08-25.md)
+
+## D-050: Promote reviewed detector semantics above provider parity
+
+- **Date:** 2026-08-25
+- **Status:** Accepted implementation decision; controlled reviewed fixture
+  passes; broader corpus adjudication remains active
+- **Context:** The native/browser candidate parity report records provider
+  divergence across 18 fixtures, including 78 semantic mismatches across
+  document and provider projections. Treating those differences as either
+  universal failures or silent equivalence would both be incorrect. The
+  detector needs a reviewed-region layer that measures product safety rather
+  than provider serialization similarity.
+- **Selected path:** Add `pdf-editor.detector-semantic-comparison` version
+  1.0. Use stable reviewed region IDs from the governed sidecar, select
+  candidates with minimum recognition evidence, then separately compare the
+  full expected evidence-family set, label association, grouping, and false-
+  positive severity. Compute precision, recall, positive abstention, correct
+  hard-negative abstention, and severity burden for each adapter. Compare
+  native and browser outputs by reviewed identity, not provider candidate ID.
+- **Alternatives considered:** Treat the larger provider candidate set as
+  truth, rejected because provider-only candidates may be false positives.
+  Use provider candidate parity as accuracy, rejected because agreement is not
+  reviewed ground truth. Require full expected evidence for candidate
+  admission, rejected because it collapses evidence-family drift into recall
+  failure and hides a detected-but-under-explained region.
+- **Invariants:** Reviewed IDs are stable and source-bound. Reports contain no
+  labels, evidence prose, provider IDs, evidence IDs, scores, timestamps,
+  output digests, profile values, or PDF bytes. A hard negative must abstain.
+  A candidate must remain review-only and cannot create an edit operation.
+  False-positive severity is explicit and weighted. Provider mismatches remain
+  diagnostic until they change a reviewed detector outcome or safety property.
+- **Validation:** Native PDFKit and browser PDF.js both pass the controlled
+  10-region fixture with precision 1.00, recall 1.00, correct abstention 1.00,
+  evidence-family agreement 1.00, label association 1.00, grouping agreement
+  1.00, severity burden 0, and zero reviewed-region parity mismatches. Five
+  independent candidate mutations are killed by reviewed-region,
+  false-positive, evidence-family, label-association, and grouping clusters.
+- **Falsifiers:** A provider ID becomes the reviewed identity; a hard negative
+  is promoted without a severity failure; evidence-family, label, or grouping
+  drift is hidden by aggregate precision; raw content enters the report; or a
+  broader corpus mismatch changes a reviewed region without being surfaced.
+- **Rollback:** Retain the existing calibration and candidate parity reports,
+  revoke only the reviewed semantic report gate, and preserve all raw provider
+  bundles and mutation evidence. No shared PDF document or edit-operation
+  contract migration is needed.
+- **Owner:** Static detector adapters, reviewed corpus governance, evidence
+  fusion, coordinate normalization, candidate taxonomy, and safety validation.
+
+Implementation and evidence:
+
+- [`web/detector-semantic-comparison.mjs`](../web/detector-semantic-comparison.mjs)
+- [`Tests/detector_semantic_comparison_test.mjs`](../Tests/detector_semantic_comparison_test.mjs)
+- [`benchmark/results/detector-calibration/detector_calibration_labels.json`](../benchmark/results/detector-calibration/detector_calibration_labels.json)
+- [`benchmark/results/detector-calibration/detector-semantic-comparison-report.json`](../benchmark/results/detector-calibration/detector-semantic-comparison-report.json)
+- [`docs/audits/detector-semantic-comparison-evidence-2026-08-25.md`](audits/detector-semantic-comparison-evidence-2026-08-25.md)

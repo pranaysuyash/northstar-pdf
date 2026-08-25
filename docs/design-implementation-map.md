@@ -82,8 +82,16 @@ provider and validation evidence.
   `web/design-system.css` and are linked from the current browser entry.
 - The existing PDF.js/pdf-lib behavior and DOM contracts remain intact while
   the visual foundation is being evaluated.
-- React migration is the next architectural slice. The current CSS pass is a
-  compatibility bridge, not the final framework boundary.
+- React migration is underway: the canonical Vite + React 19 + TypeScript
+  entry now lives in `web/app/` (map step 2). It consumes the framework-neutral
+  contract modules directly (`web/product-modes.mjs`, typed via
+  `web/product-modes.d.mts`) and the vendored pdf.js runtime through a
+  controller boundary (`web/app/src/pdf/PdfController.ts`) that owns workers,
+  rendering, search, and cancellation. The legacy `web/index.html` +
+  `web/app.js` browser entry remains intact for behavioral parity until the
+  five-mode workflow reaches feature parity in the React surface. The current
+  CSS pass stays a compatibility bridge: `web/app/src/app.css` adds only
+  token-consuming rules on top of `web/design-system.css`.
 
 ## Explicit non-goals of this record
 

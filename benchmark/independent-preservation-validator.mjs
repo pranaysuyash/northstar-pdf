@@ -214,7 +214,19 @@ function operationRegions(operations, pages) {
     } else if (!rect || !["x", "y", "width", "height"].every((key) => Number.isFinite(rect[key])) || rect.width <= 0 || rect.height <= 0) {
       issues.push("missing operation rectangle");
     } else {
-      regions.push({ operationID: operation.id, pageIndex: operation.pageIndex, rect: normalizeRect(rect) });
+      const page = pages[operation.pageIndex];
+      const coordinateSpace = coordinate.coordinateSpace || {};
+      const isCropRelative = coordinateSpace.pageBox === "crop";
+      regions.push({
+        operationID: operation.id,
+        pageIndex: operation.pageIndex,
+        rect: normalizeRect({
+          x: rect.x + (isCropRelative ? page.cropBox.x : 0),
+          y: rect.y + (isCropRelative ? page.cropBox.y : 0),
+          width: rect.width,
+          height: rect.height
+        })
+      });
     }
   }
   return { regions, issues };

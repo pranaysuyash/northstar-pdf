@@ -37,7 +37,7 @@ struct DiffComparisonView: View {
         editedPanel
       }
     }
-    .frame(minWidth: 900, minHeight: 500)
+    .frame(minWidth: 1000, minHeight: 600)
     .onAppear { pageIndex = selectedPageIndex }
   }
 

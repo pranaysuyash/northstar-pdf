@@ -1,0 +1,29 @@
+{
+  "gate": "RG-037 continuous-view performance",
+  "fixture": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+  "environment": {
+    "browser": "Chrome headless (channel: chrome) via Playwright",
+    "viewport": "1280x900",
+    "note": "single local machine profile; physical-device calibration remains open"
+  },
+  "measurements": {
+    "openToFirstCanvasMs": 179,
+    "pageCountReported": 40,
+    "viewModesAvailable": ["single", "continuous", "twoPage"],
+    "scrollerUsed": "DIV#viewerCanvasWrap",
+    "scrollReachLastCanvasMs": 10,
+    "canvasCountAfterScroll": 102,
+    "jumpDispatchMs": 355,
+    "heapBeforeMB": 5,
+    "heapAfterMB": 8,
+    "heapGrowthMB": 3
+  },
+  "provisionalBudgets": { "openMs": 20000, "scrollReachMs": 10000, "heapGrowthMB": 600 },
+  "withinBudgets": true,
+  "method": "Tests/perf-continuous-view_test.mjs: real app load via #fileInput, continuous viewMode selected, scrollable ancestor auto-detected from the last canvas, at-bottom + last-canvas-rendered condition asserted (no swallowed timeouts), JS heap via performance.memory.",
+  "scopeBoundaries": [
+    "provisional budgets; formal budget ratification remains open",
+    "single headless profile; device-matrix calibration and long-run soak remain open"
+  ],
+  "evidence": "Tests/perf-continuous-view_test.mjs"
+}

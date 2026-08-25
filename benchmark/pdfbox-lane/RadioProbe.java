@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,22 +7,39 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDCheckBox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDChoice;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.apache.pdfbox.pdmodel.interactive.form.PDRadioButton;
 import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 /**
  * PDFBox control lane for the external-AcroForm preservation contract.
- * Args: <input.pdf> <output-dir>. Emits a JSON report on stdout.
+ *
+ * Usage: RadioProbe [--no-mutate] [--raster] <input.pdf> <output-dir>
+ *
+ * Bare <input.pdf> <output-dir> keeps the historical behavior: full oracle
+ * incl. a mutated-save round trip. Optional flags:
+ *   --no-mutate  skip the mutated-save phase (fixtures where mutation is
+ *                not applicable, e.g. encrypted or field-less documents)
+ *   --raster     render page 1 of input and of the no-op output at scale
+ *                1.0 and report rasterAE (absolute differing-pixel count)
+ *                and rasterMeanDelta (mean absolute per-channel delta)
+ *
+ * Emits a JSON report on stdout. Encrypted inputs that cannot be opened
+ * without a password produce an explicit encryptedUnsupported report
+ * instead of crashing.
  */
 public final class RadioProbe {
 
@@ -31,12 +49,30 @@ public final class RadioProbe {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length < 2) {
-            System.err.println("usage: RadioProbe <input.pdf> <output-dir>");
+        File input = null;
+        File outDir = null;
+        boolean noMutate = false;
+        boolean rasterWanted = false;
+        for (String arg : args) {
+            if ("--no-mutate".equals(arg)) {
+                noMutate = true;
+            } else if ("--raster".equals(arg)) {
+                rasterWanted = true;
+            } else if (!arg.startsWith("--") && input == null) {
+                input = new File(arg);
+            } else if (!arg.startsWith("--") && outDir == null) {
+                outDir = new File(arg);
+            } else {
+                System.err.println("usage: RadioProbe [--no-mutate] [--raster]"
+                        + " <input.pdf> <output-dir>");
+                System.exit(2);
+            }
+        }
+        if (input == null || outDir == null) {
+            System.err.println("usage: RadioProbe [--no-mutate] [--raster]"
+                    + " <input.pdf> <output-dir>");
             System.exit(2);
         }
-        File input = new File(args[0]);
-        File outDir = new File(args[1]);
         if (!outDir.exists() && !outDir.mkdirs()) {
             System.err.println("cannot create output dir: " + outDir);
             System.exit(2);
@@ -46,9 +82,23 @@ public final class RadioProbe {
 
         int pagesInitial;
         LinkedHashMap<String, Map<String, String>> snapshotInitial;
-        try (PDDocument doc = Loader.loadPDF(input)) {
-            pagesInitial = doc.getNumberOfPages();
-            snapshotInitial = inspect(doc);
+        try {
+            try (PDDocument doc = Loader.loadPDF(input)) {
+                pagesInitial = doc.getNumberOfPages();
+                snapshotInitial = inspect(doc);
+            }
+        } catch (InvalidPasswordException e) {
+            emitEncryptedReport(input, inputSha256,
+                    "encrypted-no-password", describe(e));
+            return;
+        } catch (IOException e) {
+            String detail = describe(e).toLowerCase(Locale.ROOT);
+            if (detail.contains("password") || detail.contains("decrypt")) {
+                emitEncryptedReport(input, inputSha256,
+                        "encrypted-no-password", describe(e));
+                return;
+            }
+            throw e;
         }
 
         List<String> fieldTypes = new ArrayList<>();
@@ -87,32 +137,56 @@ public final class RadioProbe {
         List<Map<String, Object>> perFieldDiffs =
                 diffSnapshots(snapshotInitial, snapshotNoop);
 
+        Long rasterAE = null;
+        String rasterMeanDelta = null;
+        String rasterPage1 = null;
+        if (rasterWanted) {
+            LinkedHashMap<String, Object> raster =
+                    rasterParity(input, noopPdf);
+            rasterAE = (Long) raster.remove("ae");
+            rasterMeanDelta = (String) raster.remove("mean");
+            StringBuilder meta = new StringBuilder("{");
+            boolean firstMeta = true;
+            for (Map.Entry<String, Object> m : raster.entrySet()) {
+                if (!firstMeta) {
+                    meta.append(", ");
+                }
+                firstMeta = false;
+                meta.append(q(m.getKey())).append(" : ").append(m.getValue());
+            }
+            meta.append('}');
+            rasterPage1 = meta.toString();
+        }
+
         // Mutated save: first text field gets a known value.
         boolean mutatedReopen = false;
         String mutatedFieldName = null;
         File mutatedPdf = new File(outDir, "mutated.pdf");
-        try (PDDocument doc = Loader.loadPDF(input)) {
-            PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
-            if (acroForm != null) {
-                for (PDField field : acroForm.getFieldTree()) {
-                    if (field instanceof PDTextField) {
-                        mutatedFieldName = field.getFullyQualifiedName();
-                        ((PDTextField) field).setValue(MUTATED_TEXT);
-                        break;
+        if (!noMutate) {
+            try (PDDocument doc = Loader.loadPDF(input)) {
+                PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
+                if (acroForm != null) {
+                    for (PDField field : acroForm.getFieldTree()) {
+                        if (field instanceof PDTextField) {
+                            mutatedFieldName = field.getFullyQualifiedName();
+                            ((PDTextField) field).setValue(MUTATED_TEXT);
+                            break;
+                        }
                     }
+                }
+                if (mutatedFieldName != null) {
+                    doc.save(mutatedPdf);
                 }
             }
             if (mutatedFieldName != null) {
-                doc.save(mutatedPdf);
-            }
-        }
-        if (mutatedFieldName != null) {
-            try (PDDocument doc = Loader.loadPDF(mutatedPdf)) {
-                PDAcroForm acroForm = doc.getDocumentCatalog().getAcroForm();
-                if (acroForm != null) {
-                    PDField field = acroForm.getField(mutatedFieldName);
-                    mutatedReopen = field instanceof PDTextField
-                            && MUTATED_TEXT.equals(safeValueAsString(field));
+                try (PDDocument doc = Loader.loadPDF(mutatedPdf)) {
+                    PDAcroForm acroForm =
+                            doc.getDocumentCatalog().getAcroForm();
+                    if (acroForm != null) {
+                        PDField field = acroForm.getField(mutatedFieldName);
+                        mutatedReopen = field instanceof PDTextField
+                                && MUTATED_TEXT.equals(safeValueAsString(field));
+                    }
                 }
             }
         }
@@ -138,6 +212,15 @@ public final class RadioProbe {
         json.append("  \"widgetStateEquivalent\" : ").append(widgetStateEquivalent)
             .append(",\n");
         json.append("  \"mutatedReopen\" : ").append(mutatedReopen).append(",\n");
+        json.append("  \"mutateSkipped\" : ").append(noMutate).append(",\n");
+        json.append("  \"encryptedUnsupported\" : false,\n");
+        json.append("  \"rasterAE\" : ")
+            .append(rasterAE == null ? "null" : rasterAE.toString()).append(",\n");
+        json.append("  \"rasterMeanDelta\" : ")
+            .append(rasterMeanDelta == null ? "null" : rasterMeanDelta)
+            .append(",\n");
+        json.append("  \"rasterPage1\" : ")
+            .append(rasterPage1 == null ? "null" : rasterPage1).append(",\n");
         json.append("  \"originalUnchanged\" : ").append(originalUnchanged).append(",\n");
         json.append("  \"finalInputSHA256\" : ").append(q(finalInputSha256)).append(",\n");
         json.append("  \"jarSHA512\" : ").append(q(jarSha512)).append(",\n");
@@ -147,6 +230,114 @@ public final class RadioProbe {
             .append("\n");
         json.append("}\n");
         System.out.print(json);
+    }
+
+    private static void emitEncryptedReport(
+            File input, String inputSha256,
+            String failureMode, String failureDetail) throws IOException {
+        String finalInputSha256 = sha256(input);
+        boolean originalUnchanged = inputSha256.equals(finalInputSha256);
+        String jarSha512 = System.getProperty("pdfbox.jar.sha512", "");
+        StringBuilder json = new StringBuilder();
+        json.append("{\n");
+        json.append("  \"provider\" : \"PDFBox\",\n");
+        json.append("  \"pdfboxVersion\" : ")
+            .append(q(org.apache.pdfbox.util.Version.getVersion())).append(",\n");
+        json.append("  \"inputSHA256\" : ").append(q(inputSha256)).append(",\n");
+        json.append("  \"pages\" : null,\n");
+        json.append("  \"fieldCount\" : null,\n");
+        json.append("  \"fieldTypes\" : [],\n");
+        json.append("  \"radioExportValues\" : {},\n");
+        json.append("  \"fieldInventory\" : [],\n");
+        json.append("  \"noOpReopen\" : false,\n");
+        json.append("  \"widgetStateEquivalent\" : false,\n");
+        json.append("  \"mutatedReopen\" : false,\n");
+        json.append("  \"mutateSkipped\" : true,\n");
+        json.append("  \"encryptedUnsupported\" : true,\n");
+        json.append("  \"rasterAE\" : null,\n");
+        json.append("  \"rasterMeanDelta\" : null,\n");
+        json.append("  \"rasterPage1\" : null,\n");
+        json.append("  \"originalUnchanged\" : ").append(originalUnchanged).append(",\n");
+        json.append("  \"finalInputSHA256\" : ")
+            .append(q(finalInputSha256)).append(",\n");
+        json.append("  \"jarSHA512\" : ").append(q(jarSha512)).append(",\n");
+        json.append("  \"failureMode\" : ").append(q(failureMode)).append(",\n");
+        json.append("  \"failureDetail\" : ").append(q(failureDetail)).append(",\n");
+        json.append("  \"mutatedFieldName\" : \"\",\n");
+        json.append("  \"perFieldDiffs\" : []\n");
+        json.append("}\n");
+        System.out.print(json);
+    }
+
+    /**
+     * Renders page 1 of both documents at scale 1.0 (72 dpi, RGB, headless
+     * Java2D) and compares them pixel-wise. Returns ae = absolute count of
+     * differing pixels, mean = mean absolute per-channel delta formatted as
+     * a decimal string (-1 when page dimensions differ and the mean is not
+     * comparable), plus both page sizes.
+     */
+    private static LinkedHashMap<String, Object> rasterParity(
+            File a, File b) throws IOException {
+        BufferedImage imgA;
+        BufferedImage imgB;
+        try (PDDocument docA = Loader.loadPDF(a);
+             PDDocument docB = Loader.loadPDF(b)) {
+            if (docA.getNumberOfPages() < 1 || docB.getNumberOfPages() < 1) {
+                throw new IOException("cannot rasterize: document has no page 1");
+            }
+            imgA = new PDFRenderer(docA).renderImage(
+                    0, 1.0f, ImageType.RGB);
+            imgB = new PDFRenderer(docB).renderImage(
+                    0, 1.0f, ImageType.RGB);
+        }
+        int widthA = imgA.getWidth();
+        int heightA = imgA.getHeight();
+        int widthB = imgB.getWidth();
+        int heightB = imgB.getHeight();
+        long differingPixels;
+        String meanDelta;
+        if (widthA == widthB && heightA == heightB) {
+            differingPixels = 0L;
+            long channelSum = 0L;
+            long channels = (long) widthA * heightA * 3L;
+            for (int y = 0; y < heightA; y++) {
+                for (int x = 0; x < widthA; x++) {
+                    int pa = imgA.getRGB(x, y);
+                    int pb = imgB.getRGB(x, y);
+                    int dRed = Math.abs(((pa >> 16) & 0xFF)
+                            - ((pb >> 16) & 0xFF));
+                    int dGreen = Math.abs(((pa >> 8) & 0xFF)
+                            - ((pb >> 8) & 0xFF));
+                    int dBlue = Math.abs((pa & 0xFF) - (pb & 0xFF));
+                    if ((dRed | dGreen | dBlue) != 0) {
+                        differingPixels++;
+                    }
+                    channelSum += dRed + dGreen + dBlue;
+                }
+            }
+            meanDelta = String.format(Locale.ROOT, "%.6f",
+                    channelSum / (double) channels);
+        } else {
+            differingPixels = Math.max((long) widthA * heightA,
+                    (long) widthB * heightB);
+            meanDelta = "-1.000000";
+        }
+        LinkedHashMap<String, Object> out = new LinkedHashMap<>();
+        out.put("ae", Long.valueOf(differingPixels));
+        out.put("mean", meanDelta);
+        out.put("widthA", Integer.valueOf(widthA));
+        out.put("heightA", Integer.valueOf(heightA));
+        out.put("widthB", Integer.valueOf(widthB));
+        out.put("heightB", Integer.valueOf(heightB));
+        return out;
+    }
+
+    private static String describe(Exception e) {
+        String msg = e.getMessage();
+        if (msg == null || msg.isEmpty()) {
+            return e.getClass().getName();
+        }
+        return e.getClass().getSimpleName() + ": " + msg;
     }
 
     private static LinkedHashMap<String, Map<String, String>> inspect(
@@ -181,7 +372,7 @@ public final class RadioProbe {
             } else if (field instanceof PDChoice) {
                 PDChoice choice = (PDChoice) field;
                 props.put("value",
-                        safeListJoin(choice.getValue()));
+                        safe(() -> safeListJoin(choice.getValue())));
                 props.put("options",
                         safeListJoin(choice.getOptions()));
                 props.put("optionsExportValues",

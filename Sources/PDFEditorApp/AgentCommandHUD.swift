@@ -258,12 +258,12 @@ public struct AgentCommandHUD: View {
       // Search Bar Header
       HStack(spacing: 12) {
         Image(systemName: "sparkle.magnifyingglass")
-          .font(.system(size: 18, weight: .medium))
+          .font(.title3.weight(.medium))
           .foregroundStyle(.tint)
 
         TextField("Ask Agent or search commands (e.g. 'fill', 'ocr', 'diff', 'sign')…", text: $query)
           .textFieldStyle(.plain)
-          .font(.system(size: 14, weight: .regular))
+          .font(.body)
           .focused($isFieldFocused)
           .onSubmit {
             executeSelected()
@@ -294,9 +294,8 @@ public struct AgentCommandHUD: View {
 
       // Results List
       if filteredCommands.isEmpty {
-        VStack(spacing: 8) {
-          Image(systemName: "questionmark.folder")
-            .font(.system(size: 28))
+        VStack(spacing: 8) {            Image(systemName: "questionmark.folder")
+            .font(.title)
             .foregroundStyle(.secondary)
           Text("No matching agent commands")
             .font(.subheadline)
@@ -314,14 +313,14 @@ public struct AgentCommandHUD: View {
                 } label: {
                   HStack(spacing: 12) {
                     Image(systemName: item.icon)
-                      .font(.system(size: 16, weight: .medium))
+                      .font(.title3.weight(.medium))
                       .frame(width: 24, height: 24)
                       .foregroundStyle(item.isAvailable ? Color.accentColor : Color.secondary)
 
                     VStack(alignment: .leading, spacing: 2) {
                       HStack {
                         Text(item.title)
-                          .font(.system(size: 13, weight: .medium))
+                          .font(.callout.weight(.medium))
                           .foregroundStyle(item.isAvailable ? Color.primary : Color.secondary)
 
                         Spacer()
@@ -422,6 +421,12 @@ public struct AgentCommandHUD: View {
 
   private func executeCommand(_ item: AgentCommandItem) {
     guard item.isAvailable else { return }
+    /* Apple Design §13: haptic feedback on command execution */
+    let sel = NSSelectorFromString("performFeedback:performanceTime:")
+    let performer: AnyObject = NSHapticFeedbackManager.defaultPerformer as AnyObject
+    if performer.responds(to: sel) {
+      performer.perform(sel, with: NSHapticFeedbackManager.FeedbackPattern.generic.rawValue as NSNumber, with: 0 as NSNumber)
+    }
     isPresented = false
     item.action()
   }

@@ -5,6 +5,17 @@ import PDFKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+// MARK: - Apple Design §13: haptic feedback helper
+// NSHapticFeedbackPerformer is an ObjC protocol; dispatch via selector.
+@MainActor
+private func hapticFeedback(_ pattern: NSHapticFeedbackManager.FeedbackPattern = .generic) {
+  let sel = NSSelectorFromString("performFeedback:performanceTime:")
+  let performer: AnyObject = NSHapticFeedbackManager.defaultPerformer as AnyObject
+  if performer.responds(to: sel) {
+    performer.perform(sel, with: pattern.rawValue as NSNumber, with: 0 as NSNumber)
+  }
+}
+
 extension NSImage {
   fileprivate var pngData: Data? {
     guard let tiffData = tiffRepresentation,
@@ -65,9 +76,12 @@ public struct ContentView: View {
     self._searchFocusEvent = searchFocusEvent
   }
 
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
   public var body: some View {
     mainContent
       .toolbar { appToolbar }
+      // Apple Design §12: translucent toolbar — .ultraThinMaterial on macOS
       .fileImporter(
         isPresented: $model.isImporterPresented,
         allowedContentTypes: [.pdf],
@@ -90,15 +104,19 @@ public struct ContentView: View {
       }
       .sheet(isPresented: $model.isPasswordSheetPresented) {
         PasswordPromptView(model: model)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.isManualTextSheetPresented) {
         ManualTextSheet(model: model)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.isSignatureSheetPresented) {
         SignatureSheet(model: model)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $isSecurityVaultPresented) {
         SecurityVaultSheet(model: model)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.showDiffSheet) {
         DiffComparisonView(
@@ -172,7 +190,10 @@ public struct ContentView: View {
           .transition(.scale(scale: 0.95).combined(with: .opacity))
         }
       }
-      .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isAgentCommandPresented)
+      .animation(
+        reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.25, dampingFraction: 0.8),
+        value: isAgentCommandPresented
+      )
       .onChange(of: model.selectedPageIndex) { _, _ in model.scheduleViewStateAutosave() }
       .onChange(of: model.selectedFieldID) { _, _ in model.scheduleViewStateAutosave() }
       .onChange(of: model.selectedCandidateID) { _, _ in model.scheduleViewStateAutosave() }
@@ -191,18 +212,21 @@ public struct ContentView: View {
   private var appToolbar: some ToolbarContent {
     ToolbarItemGroup {
       Button("Open", systemImage: "folder") {
+        hapticFeedback(.generic)
         requestOpenDocument()
       }
       .accessibilityLabel("Open PDF")
       .help("Open another PDF. The current document remains open until the new PDF is admitted.")
 
       Button("Undo", systemImage: "arrow.uturn.backward") {
+        hapticFeedback(.levelChange)
         model.undoLastEdit()
       }
       .accessibilityLabel("Undo last edit")
       .disabled(!model.canUndo)
 
       Button("Redo", systemImage: "arrow.uturn.forward") {
+        hapticFeedback(.levelChange)
         model.redoLastEdit()
       }
       .accessibilityLabel("Redo last edit")
@@ -210,12 +234,13 @@ public struct ContentView: View {
 
       Menu {
         Button("Export Copy…", systemImage: "square.and.arrow.down") {
+          hapticFeedback(.generic)
           model.export()
         }
         Button("Export Flattened Copy…", systemImage: "printer.dotmatrix") {
           let panel = NSSavePanel()
           panel.allowedContentTypes = [.pdf]
-          panel.nameFieldStringValue = "Flattened-\(model.inspection?.source.name ?? "document.pdf")"
+          panel.nameFieldStringValue = "Flattened-\(model.inspection?.source.fileName ?? "document.pdf")"
           panel.begin { response in
             if response == .OK, let url = panel.url {
               model.exportFlattenedCopy(destination: url)
@@ -243,7 +268,7 @@ public struct ContentView: View {
         }
       }
       .pickerStyle(.segmented)
-      .frame(width: 260)
+      .fixedSize()
       .disabled(model.inspection == nil)
       .help("Choose intent: Read, Fill, Sign, or Edit.")
     }
@@ -285,7 +310,7 @@ public struct ContentView: View {
         Text("Two-page").tag(ReaderViewMode.twoPage)
       }
       .pickerStyle(.segmented)
-      .frame(width: 210)
+      .fixedSize()
     }
 
     ToolbarItem {
@@ -410,16 +435,18 @@ private struct RecoveryStatusBanner: View {
         Text("Recovery session active")
           .font(.caption.weight(.semibold))
         Text("(\(model.recoveryRecords.count) record(s))")
-          .font(.caption2)
+          .font(.caption2.monospacedDigit())
           .foregroundStyle(.secondary)
         Spacer()
       }
       .padding(.horizontal, 14)
       .padding(.vertical, 6)
-      .background(Color.orange.opacity(0.12))
+      /* Apple Design §12: translucent material for status banner */
+      .background(.ultraThinMaterial)
       .overlay(alignment: .bottom) {
         Divider()
       }
+      .transition(.move(edge: .top).combined(with: .opacity))
     }
   }
 }
@@ -435,7 +462,7 @@ private struct WelcomeView: View {
           .fill(Color.accentColor.opacity(0.12))
           .frame(width: 88, height: 88)
         Image(systemName: "sparkle.magnifyingglass")
-          .font(.system(size: 42, weight: .light))
+          .font(.largeTitle.weight(.light))
           .foregroundStyle(Color.accentColor)
       }
 

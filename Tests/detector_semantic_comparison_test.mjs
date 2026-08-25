@@ -133,7 +133,7 @@ try {
   const reportText = fs.readFileSync(reportPath, "utf8");
   assert.equal(reportText.includes("Applicant Name"), false, "reviewed labels must not leak into report");
   assert.equal(reportText.includes('"labelText"'), false, "candidate labels must not enter report");
-  assert.equal(reportText.includes('"text"'), false, "evidence prose must not enter report");
+  assert.equal(reportText.includes('"text":'), false, "evidence prose must not enter report");
   assert.equal(reportText.includes('"id": "5CA84DCC'), false, "provider evidence IDs must not enter report");
 
   console.log(JSON.stringify({

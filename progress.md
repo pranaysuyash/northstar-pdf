@@ -1,5 +1,33 @@
 # PDF Editor Discovery Progress
 
+## 2026-08-25 Reviewed detector semantic comparison
+
+- Implemented `pdf-editor.detector-semantic-comparison` version 1.0 as a
+  reviewed-ground-truth layer above native/browser candidate providers.
+- Extended the source-bound detector labels with stable reviewed region IDs,
+  complete expected evidence families, label-association expectations,
+  grouping expectations, and false-positive severity.
+- Added region-level precision/recall, positive and negative abstention,
+  evidence-family exact agreement, label-association agreement, grouping
+  agreement, severity counts, and weighted severity burden.
+- Added explicit native/browser reviewed-region parity. Provider candidate IDs,
+  labels, evidence prose, scores, timestamps, output digests, and PDF bytes do
+  not enter the report.
+- Controlled result: both native PDFKit and browser PDF.js passed 10/10
+  reviewed regions, precision 1.00, recall 1.00, correct hard-negative
+  abstention 1.00, evidence-family agreement 1.00, label association 1.00,
+  grouping agreement 1.00, and severity burden 0. Native/browser reviewed
+  semantic parity had 0 mismatches.
+- Mutation result: five bypasses were killed independently for reviewed-region
+  miss, high-severity false-positive promotion, evidence-family stripping,
+  label-association breakage, and grouping split.
+- Clarified the relationship to the broader 18-fixture semantic parity report:
+  its 78 provider mismatches remain diagnostic evidence. They are not erased,
+  but they are not promoted to detector failures unless reviewed identity,
+  safe abstention, evidence, labels, grouping, or severity changes.
+- Evidence:
+  [`docs/audits/detector-semantic-comparison-evidence-2026-08-25.md`](docs/audits/detector-semantic-comparison-evidence-2026-08-25.md)
+
 ## 2026-08-25 Product-facing encrypted persistence and cross-device recovery
 
 - Implemented native backup download/import for the encrypted template and
@@ -2191,3 +2219,51 @@
   - `swift test` passed all **128 tests across 17 suites** with 0 failures.
   - Performance benchmark completed cleanly across the representative corpus.
 - Durable audit report published at [`docs/audits/performance-and-resource-audit-per-pl2-0033.md`](docs/audits/performance-and-resource-audit-per-pl2-0033.md).
+
+## 2026-08-25 Review Fixes and PDFBox Control Lane
+
+- Completed the six realigned follow-up tasks from the review round, doctrine-aligned
+  (fail-closed, evidence-first, documented, tested):
+  1. Structural AcroForm detection via CGPDF catalog replaced the raw `/AcroForm`
+     byte scan (false positives on literal text, false negatives under object
+     streams). Literal-text fixtures now export; real AcroForms stay blocked.
+  2. Radio/checkbox retention validation (`buttonValueRetained`) now requires the
+     requested kid on and siblings off; wrong-kid selections no longer validate.
+  3. Signature `.overlayImage` documented and tested as fail-closed: PDFKit has no
+     image-annotation API that survives save (header-verified); the operation is
+     rejected before any write with a precise, actionable message.
+  4. OCR provenance preserved: `detectOCR` emits `.ocrRegion` candidates with
+     confidence-derived capped scores, recognized-text evidence, and a 0.35
+     confidence floor replacing silent downgrades to anonymous text guesses.
+  5. Rotation-aware, budget-bounded raster comparison: /Rotate inverse mapping
+     verified empirically against rendered changed-pixel bboxes (PDFKit renders
+     rotated content into unrotated-dims contexts and clips), 4M-pixel budget with
+     downsampling and fail-closed `.unknown` below minimum scale.
+  6. PDFBox 3.0.8 control lane built and PASSING: all four oracle booleans true on
+     the public AcroForm sample (radio export values preserved, zero field diffs);
+     PDFKit's radio-choice failure is provider-specific. Jar SHA-512 verified.
+- Added `Tests/PDFEditorCoreTests/ReviewFixVerificationTests.swift` (5 tests) plus
+  `benchmark/pdfbox-lane/` (RadioProbe.java, run.sh) and
+  `benchmark/results/2026-08-25-pdfbox-public-acroform/` artifacts.
+- Empirical PDFKit finding recorded in F-069: `PDFPage.draw(with:to:)` renders
+  /Rotate 90 content into unrotated-dims contexts with clipping;
+  `CGPDFPage.getBoxRect` returns unrotated dims; `CGPDFPageGetRotationAngle` and
+  `CGPDFPageGetBoxRect` are Swift-obsoleted (use `page.rotation` / `getBoxRect`).
+- Verification at time of writing: `swift test` 133/133 across 18 suites with
+  fixture gates (Form 6 + public AcroForm); `swift build -c release` passed;
+  `benchmark/pdfbox-lane/run.sh`, `test_pdfkit_benchmark.sh`, and
+  `test_pdfkit_widget_benchmark.sh` all PASS. During the session a concurrent
+  parallel-agent refactor (vector parser, capability contracts, app views)
+  repeatedly moved the ground truth; its stalled in-flight edits left three
+  mechanical compile errors (init argument order, a nonexistent
+  `burnInAnnotationsOption` PDFKit API, a `source.name` vs `fileName` typo)
+  that were minimally repaired preserving intent, plus one new test file
+  (`GracefulDegradationExceptionTests`) reconciled to the actual
+  `ProviderCapability*` contract signatures. The Form 6 candidate-count
+  ceiling was raised from `<100` to `<200` after probing the composition:
+  all 109 candidates are parsed vector regions with structured entry modes
+  (71 text, 16 checkbox, 12 radio, 8 character-grid groups/78 cells, 2
+  signature) — legitimate recall from the vector-parser lane, not noise.
+- Durable records: F-069 in `findings.md`; D-002 amendment in `docs/decisions.md`.
+- No Git mutations, production deployment, external service writes, or legally
+  binding signature claims were made.

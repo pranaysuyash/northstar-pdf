@@ -1,0 +1,45 @@
+{
+  "fixture": "public-acroform + synthetic signed/xfa/attachment corpora",
+  "inputSHA256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8 (base fixture)",
+  "provider": "pikepdf-backed companion guards",
+  "deliverables": {
+    "signatureGuard": {
+      "module": "web/pdf-signature-guard.mjs",
+      "detection": ["AcroForm /SigFields", "/SigFlags", "signature dictionaries (/ByteRange + /Contents)"],
+      "gate": "edits blocked until signatureAcknowledged=true",
+      "results": { "unsignedFixture": "not flagged", "syntheticSigned": "flags=1 sigFields=1 sigDicts=1", "falsifier": "malformed facts rejected" },
+      "gates": ["RG-014"]
+    },
+    "xfaGuard": {
+      "module": "web/pdf-xfa-guard.mjs",
+      "detection": ["/XFA presence", "kind stream|array", "packet names", "dynamic hint"],
+      "gate": "assertNoXfaFormEdits refuses field edits with explicit reason",
+      "results": { "acroformFixture": "no false XFA claim", "syntheticXfa": "kind=stream dynamicHint=true", "falsifier": "malformed facts rejected" },
+      "gates": ["RG-015"]
+    },
+    "attachmentScanner": {
+      "module": "web/pdf-attachment-scanner.mjs",
+      "inventory": "EmbeddedFiles name tree incl. Kids; filename/dosName/size/duplicates",
+      "security": "traversal, absolutePath, driveLetter, controlCharacters, oversizedName, executableExtension flags + boundary verdict",
+      "results": { "corpusEntries": 8, "flaggedUnsafe": 5, "duplicates": ["dup.bin"], "falsifier": "malformed facts rejected" },
+      "gates": ["RG-024", "RG-049", "RG-067"]
+    },
+    "auditedSanitization": {
+      "module": "web/pdf-sanitize-audited.mjs",
+      "policy": "refuse-by-default on hidden-revision remnants; acknowledge destroys evidence explicitly; post-write chain collapse verified",
+      "results": { "cleanSource": "sanitized", "remnantSource": "refused by default", "acknowledged": "historyCollapsed=true remnants=0" },
+      "gates": ["RG-097"]
+    }
+  },
+  "scopeBoundaries": [
+    "signature cryptographic validity NOT verified",
+    "XFA full static/dynamic/hybrid taxonomy not classified",
+    "attachment payload execution sandboxing out of scope"
+  ],
+  "evidence": [
+    "Tests/pdf-signature-guard_test.mjs",
+    "Tests/pdf-xfa-guard_test.mjs",
+    "Tests/pdf-attachment-scanner_test.mjs",
+    "Tests/pdf-sanitize-audited_test.mjs"
+  ]
+}

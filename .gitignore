@@ -41,3 +41,10 @@ tmp/
 
 # Agent-generated reports and task outputs
 outputs/
+
+# Local web app dependencies and build output
+web/app/node_modules/
+web/app/dist/
+
+# Downloaded PDF validation tool payloads
+tools/verapdf-cli-*/

@@ -201,6 +201,7 @@
     applyOverlayButton: document.getElementById("applyOverlayButton"),
     synthesizeFieldButton: document.getElementById("synthesizeFieldButton"),
     undoEditButton: document.getElementById("undoEditButton"),
+    redoEditButton: document.getElementById("redoEditButton"),
     exportButton: document.getElementById("exportButton"),
     diffToggleButton: document.getElementById("diffToggleButton"),
     editList: document.getElementById("editList"),
@@ -278,6 +279,7 @@
   let formOptionMap = new Map();
   let candidates = [];
   let operations = [];
+  let redoStack = [];
   let reviews = [];
   let selectedField = null;
   let selectedCandidate = null;
@@ -532,6 +534,7 @@
     }
     // Restore operations
     operations.length = 0;
+    redoStack.length = 0;
     for (const op of (record.operations || [])) {
       operations.push(op);
     }
@@ -1054,7 +1057,7 @@
             ((name.includes("employer") || name.includes("company")) && key.includes("employer")) ||
             (name.includes("title") && key.includes("jobtitle"))) {
           usedKeys.add(pv.semanticKey);
-          operations.push(makeOperation({
+          pushOperation(makeOperation({
             pageIndex: field.pageIndex,
             kind: "nativeFieldValue",
             value: pv.textValue,
@@ -1090,7 +1093,7 @@
           const payload = candidate.entryMode === "characterGrid"
             ? { kind: "characterGrid", text: pv.textValue, cells: candidate.memberBounds || [] }
             : { kind: "text", text: pv.textValue };
-          operations.push(makeOperation({
+          pushOperation(makeOperation({
             pageIndex: candidate.pageIndex,
             kind: "overlayText",
             value: pv.textValue,
@@ -2420,7 +2423,7 @@
       return;
     }
     try {
-      operations.push(...materializeCompletionOperations({ proposal: templateProposal, currentSourceDigest: sourceDigest }));
+      pushOperation(...materializeCompletionOperations({ proposal: templateProposal, currentSourceDigest: sourceDigest }));
       lastAppliedTemplateProposal = templateProposal;
       templateCompletionOperationIDs = operations.slice(-templateProposal.entries.length).map((operation) => operation.id);
       pendingValidatedTemplateRevision = null;
@@ -2451,7 +2454,7 @@
       header.appendChild(profileName);
       const switchBtn = document.createElement("button");
       switchBtn.textContent = "Switch";
-      switchBtn.style.cssText = "font-size:11px;margin-left:auto;";
+      switchBtn.style.cssText = "font-size:var(--type-xs);margin-left:auto;";
       switchBtn.onclick = () => { currentProfile = null; renderProfilePanel(); };
       header.appendChild(switchBtn);
       panel.appendChild(header);
@@ -2463,12 +2466,12 @@
         row.style.cssText = "display:flex;gap:4px;align-items:center;margin:2px 0;";
         const label = document.createElement("span");
         label.textContent = sk.label;
-        label.style.cssText = "width:80px;text-align:right;font-size:11px;color:#64748b;flex-shrink:0;";
+        label.className = "profile-label";
         const input = document.createElement("input");
         input.type = "text";
         input.value = val;
         input.placeholder = "—";
-        input.style.cssText = "flex:1;font-size:11px;padding:2px 4px;border:1px solid #d1d5db;border-radius:4px;";
+        input.className = "profile-input";
         input.onchange = () => {
           profileSetValue(currentProfile, sk.key, input.value);
           saveProfile(currentProfile);
@@ -2489,7 +2492,7 @@
         if (result.totalMatches > 0) {
           // Apply matched operations
           for (const op of result.operations) {
-            operations.push(op);
+            pushOperation(op);
             if (op.candidateID) {
               reviews.push({
                 id: makeID("review"), candidateID: op.candidateID, kind: "confirmed",
@@ -2539,10 +2542,10 @@
       listProfiles().then(profiles => {
         for (const p of profiles) {
           const row = document.createElement("div");
-          row.style.cssText = "display:flex;align-items:center;gap:6px;padding:4px 0;border-top:1px solid #e5e7eb;";
+          row.className = "profile-row";
           const btn = document.createElement("button");
           btn.textContent = p.displayName;
-          btn.style.cssText = "flex:1;text-align:left;font-size:12px;";
+          btn.style.cssText = "flex:1;text-align:left;font-size:var(--type-sm);";
           btn.onclick = () => { currentProfile = p; renderProfilePanel(); };
           row.appendChild(btn);
           panel.appendChild(row);
@@ -2555,11 +2558,11 @@
       const nameInput = document.createElement("input");
       nameInput.type = "text";
       nameInput.placeholder = "Profile name";
-      nameInput.style.cssText = "flex:1;font-size:12px;padding:4px;border:1px solid #d1d5db;border-radius:4px;";
+      nameInput.className = "profile-name-input";
       const createBtn = document.createElement("button");
       createBtn.textContent = "Create";
       createBtn.className = "primary";
-      createBtn.style.cssText = "font-size:12px;";
+      createBtn.style.cssText = "font-size:var(--type-sm);";
       createBtn.onclick = async () => {
         const name = nameInput.value.trim();
         if (!name) return;
@@ -2602,6 +2605,7 @@
       setHidden(ui.choiceCellControl, true);
       setHidden(ui.choiceCellSelect, true);
       ui.undoEditButton.disabled = true;
+      ui.redoEditButton.disabled = true;
       ui.exportButton.disabled = true;
       renderTemplateReview();
       return;
@@ -2620,7 +2624,7 @@
       nativeFields.forEach((field) => {
         const row = document.createElement("div");
         row.className = "completion-item";
-        if (selectedField?.id === field.id) { row.style.background = "#dbeafe"; }
+        if (selectedField?.id === field.id) { row.classList.add("field-row-selected"); }
         const detail = document.createElement("div");
         detail.className = "small";
         detail.textContent = `p${field.pageIndex + 1} ${field.kind}: ${field.name}`;
@@ -2661,7 +2665,7 @@
       visibleCandidates.forEach((candidate) => {
         const row = document.createElement("div");
         row.className = "completion-item";
-        if (selectedCandidate?.id === candidate.id) { row.style.background = "#e7f0ff"; }
+        if (selectedCandidate?.id === candidate.id) { row.classList.add("field-row-selected"); }
         if (candidate.status === "rejected") { row.style.opacity = "0.65"; }
         const detail = document.createElement("div");
         detail.className = "small";
@@ -2738,6 +2742,7 @@
     setHidden(ui.restoreDismissedButton, !candidates.some((candidate) => candidate.status === "rejected"));
     ui.completionValue.disabled = !selectedField && !selectedCandidate && !manualPlacement && !selectedOperation;
     ui.undoEditButton.disabled = operations.length === 0;
+    ui.redoEditButton.disabled = redoStack.length === 0;
     ui.exportButton.disabled = !pdfData;
     ui.diffToggleButton.disabled = !pdfData;
     ui.editList.innerHTML = "";
@@ -2817,7 +2822,7 @@
           : { kind: "boolean", value },
       coordinate: selectedField.coordinate
     });
-    operations.push(operation);
+    pushOperation(operation);
     selectedField.value = value;
     nativeFields = nativeFields.map((field) => field.id === selectedField.id ? { ...field, value } : field);
     setStatus(`Queued native field fill for ${selectedField.name}.`);
@@ -2842,7 +2847,7 @@
       payload: { kind: "nativeField", fieldType: selectedCandidate.suggestedFieldType || "text" },
       coordinate: selectedCandidate.coordinate
     });
-    operations.push(operation);
+    pushOperation(operation);
     reviews.push({
       id: makeID("review"),
       candidateID: selectedCandidate.id,
@@ -2877,7 +2882,7 @@
         payload: { kind: "choiceMark", cell },
         coordinate: coordinateFor(selectedCandidate.pageIndex, cell, rotation)
       });
-      operations.push(operation);
+      pushOperation(operation);
       reviews.push({
         id: makeID("review"),
         candidateID: selectedCandidate.id,
@@ -2949,7 +2954,7 @@
       payload,
       coordinate: reviewTarget.coordinate
     });
-    operations.push(operation);
+    pushOperation(operation);
     if (selectedCandidate) {
       reviews.push({
         id: makeID("review"),
@@ -2993,9 +2998,27 @@
     renderVisiblePages();
   }
 
+  // --- Undo / Redo ---
+  // pushOperation clears the redo stack on every new operation (standard behavior).
+  function pushOperation(...ops) {
+    redoStack.length = 0;
+    for (const op of ops) { operations.push(op); }
+  }
+  function snapshotUndoState() {
+    return {
+      operation: operations[operations.length - 1],
+      candidateStatuses: Object.fromEntries(candidates.map((c) => [c.id, c.status])),
+      reviewSnapshot: reviews.length,
+      nativeFieldValues: Object.fromEntries(nativeFields.map((f) => [f.name, f.value || ""]))
+    };
+  }
+
   function undoLastOperation() {
     const operation = operations.pop();
     if (!operation) { return; }
+    // Save snapshot so redo can restore this exact state
+    const snapshot = snapshotUndoState();
+    redoStack.push(snapshot);
     if (operation.candidateID) {
       const reviewIndex = reviews.findLastIndex((review) => review.candidateID === operation.candidateID);
       if (reviewIndex >= 0) { reviews.splice(reviewIndex, 1); }
@@ -3007,6 +3030,34 @@
     }
     if (selectedOperation?.id === operation.id) { selectedOperation = null; }
     setStatus("Removed the last pending edit.");
+    renderCompletionPanel();
+    renderVisiblePages();
+    saveWebSession();
+  }
+
+  function redoOperation() {
+    if (!redoStack.length) { return; }
+    const snapshot = redoStack.pop();
+    const op = snapshot.operation;
+    if (!op) { return; }
+    // Push the operation back onto the active stack
+    operations.push(op);
+    // Restore candidate statuses from before the undo
+    if (snapshot.candidateStatuses) {
+      for (const c of candidates) {
+        if (snapshot.candidateStatuses[c.id]) {
+          c.status = snapshot.candidateStatuses[c.id];
+        }
+      }
+    }
+    if (op.candidateID) {
+      selectedCandidate = candidates.find((candidate) => candidate.id === op.candidateID) || null;
+    }
+    // Re-apply native field value
+    if (op.kind === "nativeFieldValue" && op.targetID) {
+      nativeFields = nativeFields.map((field) => field.name === op.targetID ? { ...field, value: op.value } : field);
+    }
+    setStatus("Re-applied the undone edit.");
     renderCompletionPanel();
     renderVisiblePages();
     saveWebSession();
@@ -3087,7 +3138,7 @@
           preview.style.height = `${Math.max(8, rect.height)}px`;
           preview.style.background = "rgba(219, 234, 254, 0.30)";
           preview.style.border = "1px solid rgba(37, 99, 235, 0.55)";
-          preview.style.color = "#0f172a";
+          preview.classList.add("preview-text");
           preview.style.fontWeight = "600";
           preview.style.padding = "0";
           preview.style.textAlign = "center";
@@ -3108,7 +3159,7 @@
       preview.style.height = `${Math.max(8, rect.height)}px`;
       preview.style.background = "rgba(219, 234, 254, 0.30)";
       preview.style.border = "1px solid rgba(37, 99, 235, 0.55)";
-      preview.style.color = "#0f172a";
+      preview.classList.add("preview-text");
       preview.style.fontWeight = "600";
       preview.textContent = operation.value;
       preview.title = operation.kind === "overlayText" ? "Click to edit this pending text" : "Native field preview";
@@ -3271,6 +3322,7 @@
     nativeFields = [];
     candidates = [];
     operations = [];
+    redoStack = [];
     reviews = [];
     showDiffOverlay = false;
     sourceFieldSnapshot.clear();
@@ -4045,6 +4097,26 @@
       validation: lastValidation
     });
     const outputDocument = await pdfLib.PDFDocument.load(pdfData);
+    // pdf-lib can normalize non-default page boxes while loading/saving. The
+    // shared operation contract is crop-box-relative, so replay every
+    // inspected page box and rotation before applying any edit. Otherwise a
+    // non-zero crop origin silently changes the meaning of operation bounds.
+    const replayBox = (page, method, value) => {
+      if (!value || typeof page[method] !== "function") return;
+      page[method](value.x, value.y, value.width, value.height);
+    };
+    for (const [pageIndex, fact] of pageFacts.entries()) {
+      console.warn("pdf-editor-replay-page-facts", pageIndex, JSON.stringify(fact.boxes), fact.rotate);
+      const outputPage = outputDocument.getPage(pageIndex);
+      replayBox(outputPage, "setMediaBox", fact.boxes?.media);
+      replayBox(outputPage, "setCropBox", fact.boxes?.crop);
+      replayBox(outputPage, "setBleedBox", fact.boxes?.bleed);
+      replayBox(outputPage, "setTrimBox", fact.boxes?.trim);
+      replayBox(outputPage, "setArtBox", fact.boxes?.art);
+      if (typeof outputPage.setRotation === "function" && typeof pdfLib.degrees === "function") {
+        outputPage.setRotation(pdfLib.degrees(fact.rotate || 0));
+      }
+    }
     const formOperations = operations.filter((operation) => ["nativeFieldValue", "synthesizeNativeField"].includes(operation.kind));
     const overlayOperations = operations.filter((operation) => operation.kind === "overlayText");
     let form = null;
@@ -4860,6 +4932,7 @@
   ui.synthesizeFieldButton.addEventListener("click", synthesizeNativeField);
   ui.applyOverlayButton.addEventListener("click", applyOverlayOperation);
   ui.undoEditButton.addEventListener("click", undoLastOperation);
+  ui.redoEditButton.addEventListener("click", redoOperation);
   ui.exportButton.addEventListener("click", exportAndValidate);
 
   ui.diffToggleButton.addEventListener("click", () => {
@@ -4917,3 +4990,81 @@
   // Initial mode surface render happens only after every state binding above
   // exists (the controller reads them through its getState snapshot).
   modeStage.selectMode("reader");
+
+  // MARK: - Keyboard Shortcuts
+  const shortcutsHelpButton = document.getElementById("shortcutsHelpButton");
+  const shortcutsHelpPanel = document.getElementById("shortcutsHelpPanel");
+
+  if (shortcutsHelpButton && shortcutsHelpPanel) {
+    shortcutsHelpButton.addEventListener("click", () => {
+      const isVisible = shortcutsHelpPanel.hidden === false;
+      shortcutsHelpPanel.hidden = isVisible;
+      shortcutsHelpButton.setAttribute("aria-expanded", isVisible ? "false" : "true");
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    const mod = event.metaKey || event.ctrlKey;
+    if (!mod) { return; }
+
+    // Skip shortcuts when typing in an input/textarea/select
+    const tag = event.target?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || event.target?.isContentEditable) {
+      // Allow Escape to blur even inside inputs
+      if (event.key === "Escape") { event.target.blur(); event.preventDefault(); }
+      return;
+    }
+
+    const key = event.key.toLowerCase();
+
+    // Ctrl/Cmd + Z → Undo
+    if (key === "z" && !event.shiftKey) {
+      event.preventDefault();
+      undoLastOperation();
+      return;
+    }
+
+    // Ctrl/Cmd + Shift + Z → Redo
+    if (key === "z" && event.shiftKey) {
+      event.preventDefault();
+      redoOperation();
+      return;
+    }
+
+    // Ctrl/Cmd + E → Export + validate
+    if (key === "e") {
+      event.preventDefault();
+      if (!ui.exportButton.disabled) { exportAndValidate(); }
+      return;
+    }
+
+    // Ctrl/Cmd + D → Toggle diff overlay
+    if (key === "d") {
+      event.preventDefault();
+      if (!ui.diffToggleButton.disabled) {
+        showDiffOverlay = !showDiffOverlay;
+        ui.diffToggleButton.textContent = showDiffOverlay ? "Hide diff" : "Show diff";
+        renderVisiblePages();
+        setStatus(showDiffOverlay
+          ? "Visual diff overlay enabled. Green = inside operation, red = outside."
+          : "Visual diff overlay disabled.");
+      }
+      return;
+    }
+
+    // Ctrl/Cmd + F → Focus search (override browser find)
+    if (key === "f") {
+      event.preventDefault();
+      ui.searchInput.focus();
+      return;
+    }
+
+    // Escape → Close help panel / blur
+    if (event.key === "Escape") {
+      if (shortcutsHelpPanel && shortcutsHelpPanel.hidden === false) {
+        shortcutsHelpPanel.hidden = true;
+        shortcutsHelpButton?.setAttribute("aria-expanded", "false");
+      }
+      return;
+    }
+  });

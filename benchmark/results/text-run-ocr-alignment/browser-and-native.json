@@ -4,7 +4,7 @@
     "major": 1,
     "minor": 0
   },
-  "generatedAt": "2026-08-24T22:51:05.318Z",
+  "generatedAt": "2026-08-25T13:58:01.047Z",
   "corpusManifest": "docs/fixtures/manifest.md",
   "nativeEvidence": "benchmark/results/text-run-ocr-alignment/native.json",
   "browserProvider": "pdfjs-pdflib",
@@ -15,10 +15,10 @@
     "inspectedFixtureCount": 16,
     "expectedFailureCount": 2,
     "pageCount": 81,
-    "textMeasuredPageCount": 29,
-    "ocrMeasuredPageCount": 10,
-    "ocrAbstainedPageCount": 71,
-    "textHashAgreementMean": 0.6592759694918895,
+    "textMeasuredPageCount": 28,
+    "ocrMeasuredPageCount": 9,
+    "ocrAbstainedPageCount": 72,
+    "textHashAgreementMean": 0.6590120160213617,
     "textGeometryAgreementMean": 0,
     "ocrGeometryAgreementMean": 0,
     "replacementStates": [
@@ -26,7 +26,7 @@
       "abstained-no-text-run"
     ],
     "gates": {
-      "sourceDigestBinding": true,
+      "sourceDigestBinding": false,
       "noRawContentLogging": true,
       "noSilentTextReplacement": true,
       "textGeometryWithinTwoPoints": false,
@@ -35,30 +35,6 @@
     }
   },
   "firstMismatches": [
-    {
-      "pageIndex": 0,
-      "text": {
-        "state": "measured",
-        "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-        "nativeRunCount": 7,
-        "browserRunCount": 9,
-        "nativeCharacterCount": 157,
-        "browserCharacterCount": 155,
-        "exactTextHashMatches": 6,
-        "textRunRecall": 0.6666666666666666,
-        "geometryMatchCount": 0,
-        "geometryAgreement": 0,
-        "unmatchedNative": [
-          {
-            "pageIndex": 0,
-            "sequence": 5,
-            "textHash": "357100405dcc7be9c63b61948df318db8e1c0d10fa193a30509bc15631520e37"
-          }
-        ],
-        "tolerancePoints": 2
-      },
-      "sourcePath": "benchmark/results/public-sample-form.pdf"
-    },
     {
       "pageIndex": 0,
       "text": {
@@ -535,6 +511,30 @@
         "unmatchedNative": [
           {
             "pageIndex": 4,
+            "sequence": 5,
+            "textHash": "357100405dcc7be9c63b61948df318db8e1c0d10fa193a30509bc15631520e37"
+          }
+        ],
+        "tolerancePoints": 2
+      },
+      "sourcePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf"
+    },
+    {
+      "pageIndex": 6,
+      "text": {
+        "state": "measured",
+        "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+        "nativeRunCount": 7,
+        "browserRunCount": 9,
+        "nativeCharacterCount": 157,
+        "browserCharacterCount": 155,
+        "exactTextHashMatches": 6,
+        "textRunRecall": 0.6666666666666666,
+        "geometryMatchCount": 0,
+        "geometryAgreement": 0,
+        "unmatchedNative": [
+          {
+            "pageIndex": 6,
             "sequence": 5,
             "textHash": "357100405dcc7be9c63b61948df318db8e1c0d10fa193a30509bc15631520e37"
           }
@@ -1256,7 +1256,7 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
                 "hasEOL": false
               },
               {
@@ -1268,7 +1268,7 @@
                 "bounds": {
                   "x": 56,
                   "y": 747.89,
-                  "width": 290.11,
+                  "width": 290.1100000000001,
                   "height": 10
                 },
                 "pageBounds": {
@@ -1282,7 +1282,7 @@
                   "rect": {
                     "x": 56,
                     "y": 747.89,
-                    "width": 290.11,
+                    "width": 290.1100000000001,
                     "height": 10
                   },
                   "coordinateSpace": {
@@ -1295,13 +1295,13 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-                "hasEOL": false
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+                "hasEOL": true
               },
               {
-                "runID": "0:4:f13a64ba2fea87ef",
+                "runID": "0:3:f13a64ba2fea87ef",
                 "pageIndex": 0,
-                "sequence": 4,
+                "sequence": 3,
                 "textHash": "f13a64ba2fea87ef6360c1f2e9bcd3286cc1551a90cb62a8d9345ebf97fbc29f",
                 "characterCount": 9,
                 "bounds": {
@@ -1334,19 +1334,19 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-                "hasEOL": false
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+                "hasEOL": true
               },
               {
-                "runID": "0:6:b9f5e766d84e28ed",
+                "runID": "0:4:b9f5e766d84e28ed",
                 "pageIndex": 0,
-                "sequence": 6,
+                "sequence": 4,
                 "textHash": "b9f5e766d84e28edecf80243762d4214efc22b1baa0f4dab885a066eccfeb69d",
                 "characterCount": 17,
                 "bounds": {
                   "x": 56,
                   "y": 661.89,
-                  "width": 72.23,
+                  "width": 72.23000000000002,
                   "height": 10
                 },
                 "pageBounds": {
@@ -1360,7 +1360,7 @@
                   "rect": {
                     "x": 56,
                     "y": 661.89,
-                    "width": 72.23,
+                    "width": 72.23000000000002,
                     "height": 10
                   },
                   "coordinateSpace": {
@@ -1373,19 +1373,19 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-                "hasEOL": false
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+                "hasEOL": true
               },
               {
-                "runID": "0:8:cc0e38da9c41790b",
+                "runID": "0:5:cc0e38da9c41790b",
                 "pageIndex": 0,
-                "sequence": 8,
+                "sequence": 5,
                 "textHash": "cc0e38da9c41790bffef1b88af32d39ac285edce93da766810edc237cb2f1625",
                 "characterCount": 9,
                 "bounds": {
                   "x": 56,
                   "y": 565.89,
-                  "width": 44.46,
+                  "width": 44.459999999999994,
                   "height": 10
                 },
                 "pageBounds": {
@@ -1399,7 +1399,7 @@
                   "rect": {
                     "x": 56,
                     "y": 565.89,
-                    "width": 44.46,
+                    "width": 44.459999999999994,
                     "height": 10
                   },
                   "coordinateSpace": {
@@ -1412,13 +1412,13 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-                "hasEOL": false
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+                "hasEOL": true
               },
               {
-                "runID": "0:10:fc12c57a09cbd8d7",
+                "runID": "0:6:fc12c57a09cbd8d7",
                 "pageIndex": 0,
-                "sequence": 10,
+                "sequence": 6,
                 "textHash": "fc12c57a09cbd8d77741defcb765587daabcbbe077b794405260ab9b98e9a6d5",
                 "characterCount": 11,
                 "bounds": {
@@ -1451,19 +1451,19 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
                 "hasEOL": false
               },
               {
-                "runID": "0:12:82244417f956ac7c",
+                "runID": "0:8:82244417f956ac7c",
                 "pageIndex": 0,
-                "sequence": 12,
+                "sequence": 8,
                 "textHash": "82244417f956ac7c599f191593f7e441a4fafa20a4158fd52e154f1dc4c8ed92",
                 "characterCount": 5,
                 "bounds": {
                   "x": 208,
                   "y": 519.89,
-                  "width": 21.501000000000005,
+                  "width": 21.501,
                   "height": 9
                 },
                 "pageBounds": {
@@ -1477,7 +1477,7 @@
                   "rect": {
                     "x": 208,
                     "y": 519.89,
-                    "width": 21.501000000000005,
+                    "width": 21.501,
                     "height": 9
                   },
                   "coordinateSpace": {
@@ -1490,13 +1490,13 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
                 "hasEOL": false
               },
               {
-                "runID": "0:14:45569da57f4b7bf4",
+                "runID": "0:10:45569da57f4b7bf4",
                 "pageIndex": 0,
-                "sequence": 14,
+                "sequence": 10,
                 "textHash": "45569da57f4b7bf472d7a864ef4781451cae6383fee9fb0ae40c59aa1ce475b7",
                 "characterCount": 5,
                 "bounds": {
@@ -1529,13 +1529,13 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-                "hasEOL": false
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+                "hasEOL": true
               },
               {
-                "runID": "0:16:701d021d08c54579",
+                "runID": "0:11:701d021d08c54579",
                 "pageIndex": 0,
-                "sequence": 16,
+                "sequence": 11,
                 "textHash": "701d021d08c54579f23343581e45b65ffb1150b2c99f94352fdac4b7036dbbd5",
                 "characterCount": 7,
                 "bounds": {
@@ -1568,7 +1568,7 @@
                 "geometryStatus": "insidePage",
                 "origin": "pdfjs.textContent",
                 "providerID": "pdfjs",
-                "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+                "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
                 "hasEOL": false
               }
             ],
@@ -1597,34 +1597,62 @@
             "browser": 0
           },
           "textRuns": {
-            "state": "measured",
+            "state": "providerDivergence",
             "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
             "nativeRunCount": 7,
-            "browserRunCount": 9,
+            "browserRunCount": 0,
             "nativeCharacterCount": 157,
-            "browserCharacterCount": 155,
-            "exactTextHashMatches": 6,
-            "textRunRecall": 0.6666666666666666,
+            "browserCharacterCount": 0,
+            "exactTextHashMatches": 0,
+            "textRunRecall": 0,
             "geometryMatchCount": 0,
             "geometryAgreement": 0,
             "unmatchedNative": [
               {
                 "pageIndex": 0,
+                "sequence": 0,
+                "textHash": "e8f17feece6ddb1d0cef41f9a183dfa284214e5b187affb3d8897ec066119481"
+              },
+              {
+                "pageIndex": 0,
+                "sequence": 1,
+                "textHash": "d745055adccbf4d7d9a01ffc31013fd0efab2f5fd1fdcb0306589d3925980d1e"
+              },
+              {
+                "pageIndex": 0,
+                "sequence": 2,
+                "textHash": "f13a64ba2fea87ef6360c1f2e9bcd3286cc1551a90cb62a8d9345ebf97fbc29f"
+              },
+              {
+                "pageIndex": 0,
+                "sequence": 3,
+                "textHash": "b9f5e766d84e28edecf80243762d4214efc22b1baa0f4dab885a066eccfeb69d"
+              },
+              {
+                "pageIndex": 0,
+                "sequence": 4,
+                "textHash": "cc0e38da9c41790bffef1b88af32d39ac285edce93da766810edc237cb2f1625"
+              },
+              {
+                "pageIndex": 0,
                 "sequence": 5,
                 "textHash": "357100405dcc7be9c63b61948df318db8e1c0d10fa193a30509bc15631520e37"
+              },
+              {
+                "pageIndex": 0,
+                "sequence": 6,
+                "textHash": "701d021d08c54579f23343581e45b65ffb1150b2c99f94352fdac4b7036dbbd5"
               }
             ],
             "tolerancePoints": 2
           },
           "ocrAlignment": {
-            "state": "measured",
+            "state": "abstainedNoReference",
             "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
             "ocrObservationCount": 9,
-            "referenceRunCount": 9,
-            "matchedTextCount": 6,
-            "textRecall": 0.6666666666666666,
-            "geometryMatchCount": 0,
-            "geometryAgreement": 0,
+            "referenceRunCount": 0,
+            "matchedTextCount": 0,
+            "geometryAgreement": null,
             "tolerancePoints": 3
           }
         }

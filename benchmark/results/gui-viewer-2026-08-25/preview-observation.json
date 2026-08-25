@@ -1,0 +1,20 @@
+{
+  "contract": "pdf-editor.gui-viewer-observation",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "provider": "Preview",
+  "platform": "macOS",
+  "sourcePath": "benchmark/results/public-sample-form.pdf",
+  "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+  "status": "passed",
+  "observedWindowNames": [
+    "public-sample-form.pdf"
+  ],
+  "observedFrontDocument": "public-sample-form.pdf",
+  "pageCountObserved": 1,
+  "screenshotRetained": false,
+  "diagnostic": null,
+  "rawDocumentContentInReport": false
+}

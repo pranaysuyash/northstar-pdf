@@ -126,19 +126,19 @@ public struct DocumentCanvasView: View {
         model.setZoom(max(0.25, model.readerZoom - 0.1))
       } label: {
         Image(systemName: "minus")
-          .font(.system(size: 11, weight: .bold))
+          .font(.caption.weight(.bold))
       }
       .buttonStyle(.plain)
 
       Text("\(Int(model.readerZoom * 100))%")
-        .font(.system(size: 11, weight: .semibold).monospacedDigit())
+        .font(.caption.weight(.semibold).monospacedDigit())
         .frame(width: 38)
 
       Button {
         model.setZoom(min(3.0, model.readerZoom + 0.1))
       } label: {
         Image(systemName: "plus")
-          .font(.system(size: 11, weight: .bold))
+          .font(.caption.weight(.bold))
       }
       .buttonStyle(.plain)
 
@@ -149,7 +149,7 @@ public struct DocumentCanvasView: View {
         model.rotateLeft()
       } label: {
         Image(systemName: "arrow.counterclockwise")
-          .font(.system(size: 11))
+          .font(.caption)
       }
       .buttonStyle(.plain)
       .help("Rotate Left 90°")
@@ -158,7 +158,7 @@ public struct DocumentCanvasView: View {
         model.rotateRight()
       } label: {
         Image(systemName: "arrow.clockwise")
-          .font(.system(size: 11))
+          .font(.caption)
       }
       .buttonStyle(.plain)
       .help("Rotate Right 90°")
@@ -226,7 +226,7 @@ public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
 
     textField.isBordered = false
     textField.drawsBackground = false
-    textField.font = NSFont.systemFont(ofSize: 13)
+    textField.font = NSFont.preferredFont(forTextStyle: .callout)
     textField.focusRingType = .none
     textField.delegate = self
     textField.autoresizingMask = [.width, .height]

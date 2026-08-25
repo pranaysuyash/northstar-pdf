@@ -13,7 +13,7 @@
       "id": "E-001-C-001",
       "experimentID": "E-001",
       "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
       "operationKind": "textRunReplacement",
       "coordinate": {
         "unit": "points",
@@ -58,7 +58,7 @@
       "id": "E-002-C-001",
       "experimentID": "E-002",
       "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
-      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "operationKind": "ocrLayerProposal",
       "coordinate": {
         "unit": "points",
@@ -104,7 +104,7 @@
       "id": "E-003-C-001",
       "experimentID": "E-003",
       "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
       "operationKind": "privacyPreflight",
       "coordinate": {
         "unit": "points",
@@ -193,7 +193,7 @@
       "id": "E-005-C-001",
       "experimentID": "E-005",
       "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
       "operationKind": "adaptiveResourcePolicy",
       "coordinate": {
         "unit": "points",
@@ -237,7 +237,7 @@
       "id": "E-006-C-001",
       "experimentID": "E-006",
       "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
       "operationKind": "compareImpactMap",
       "coordinate": {
         "unit": "points",

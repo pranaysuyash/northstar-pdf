@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Typography Regression — Viewport Widths</title>
+  <style>
+    /* Inline design system tokens for preview server compatibility */
+    :root {
+      --type-3xs: 0.5625rem;
+      --type-2xs: 0.625rem;
+      --type-xs: 0.6875rem;
+      --type-sm: 0.75rem;
+      --type-body: 0.8125rem;
+      --type-heading: 1.0625rem;
+      --type-display: 1.1875rem;
+      --pdf-ink: oklch(0.22 0.03 255);
+      --pdf-ink-soft: oklch(0.42 0.035 255);
+      --pdf-ink-faint: oklch(0.58 0.025 255);
+      --pdf-paper: oklch(0.985 0.009 90);
+      --pdf-canvas: oklch(0.93 0.018 255);
+      --pdf-shell: oklch(0.18 0.035 255);
+      --pdf-shell-raised: oklch(0.23 0.038 255);
+      --pdf-shell-line: oklch(0.33 0.035 255);
+      --pdf-shell-text: oklch(0.88 0.02 255);
+      --pdf-shell-muted: oklch(0.68 0.025 255);
+      --pdf-accent-soft: oklch(0.78 0.1 258);
+      --pdf-surface: oklch(0.99 0.006 255);
+      --pdf-surface-soft: oklch(0.965 0.012 255);
+      --pdf-border: oklch(0.86 0.02 255);
+      --pdf-accent: oklch(0.57 0.19 258);
+      --pdf-accent-deep: oklch(0.43 0.16 258);
+      --pdf-accent-wash: oklch(0.92 0.055 258);
+      --pdf-amber: oklch(0.73 0.14 80);
+      --pdf-amber-wash: oklch(0.95 0.05 90);
+      --pdf-amber-line: oklch(0.82 0.11 82);
+      --pdf-green: oklch(0.57 0.13 155);
+      --pdf-green-ink: oklch(0.38 0.09 155);
+      --pdf-red: oklch(0.56 0.16 25);
+      --pdf-red-ink: oklch(0.5 0.13 25);
+      --pdf-display: Iowan Old Style, Baskerville, Palatino Linotype, Georgia, serif;
+      --pdf-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --pdf-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --pdf-shadow: 0 18px 45px oklch(0.17 0.04 255 / 0.14);
+      --pdf-motion: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    html, body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin: 0; background: #1a1a2e; color: var(--pdf-ink); font-family: var(--pdf-body);
+    }
+
+    .page-header { padding: 24px 32px; background: var(--pdf-shell); color: var(--pdf-shell-text); border-bottom: 1px solid var(--pdf-shell-line); }
+    .page-header h1 { font: 600 var(--type-display)/1.1 var(--pdf-display); letter-spacing: -0.03em; margin: 0 0 8px; color: oklch(0.97 0.01 255); }
+    .page-header p { font: var(--type-xs)/1.5 var(--pdf-body); color: var(--pdf-shell-muted); margin: 0; }
+    .page-header code { font: var(--type-2xs)/1 var(--pdf-mono); background: var(--pdf-shell-raised); padding: 2px 6px; border-radius: 3px; color: var(--pdf-accent-soft); }
+
+    .test-grid { display: grid; gap: 24px; padding: 24px 32px 48px; }
+
+    .width-label {
+      font: 600 var(--type-2xs)/1 var(--pdf-mono);
+      color: var(--pdf-accent-soft);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .width-label .px { color: var(--pdf-shell-muted); font-weight: 400; }
+    .width-label .bp { color: var(--pdf-amber); font-weight: 400; font-size: 9px; }
+
+    .viewport-frame {
+      background: var(--pdf-paper);
+      border: 1px solid var(--pdf-border);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: var(--pdf-shadow);
+    }
+
+    /* Toolbar replica */
+    .tb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      align-items: center;
+      padding: 9px 14px;
+      color: var(--pdf-shell-text);
+      background: var(--pdf-shell);
+      border-bottom: 1px solid var(--pdf-shell-line);
+    }
+    .tb-title { display: flex; flex-direction: column; min-width: 174px; margin-right: 4px; }
+    .tb-title strong { color: oklch(0.97 0.01 255); font: 600 16px/1.05 var(--pdf-display); letter-spacing: -0.015em; }
+    .tb-title span { color: var(--pdf-shell-muted); font: var(--type-xs)/1.3 var(--pdf-body); }
+    .tb label { font: var(--type-2xs) var(--pdf-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--pdf-shell-muted); }
+    .tb-btn {
+      min-height: 34px; padding: 6px 9px;
+      font: var(--type-xs) inherit;
+      color: oklch(0.9 0.015 255);
+      background: var(--pdf-shell-raised);
+      border: 1px solid var(--pdf-shell-line);
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .tb-btn.primary { color: oklch(0.98 0.01 255); background: var(--pdf-accent-deep); border-color: var(--pdf-accent); }
+    .tb-pill {
+      padding: 4px 10px;
+      font: 500 var(--type-xs) inherit;
+      border-radius: 6px;
+      background: var(--pdf-shell-raised);
+      border: 1px solid var(--pdf-shell-line);
+      color: oklch(0.9 0.015 255);
+    }
+    .tb-pill.active { background: var(--pdf-accent); border-color: var(--pdf-accent-soft); color: #fff; }
+    .tb-input {
+      min-height: 30px; padding: 0 8px;
+      font: inherit;
+      color: oklch(0.9 0.015 255);
+      background: var(--pdf-shell-raised);
+      border: 1px solid var(--pdf-shell-line);
+      border-radius: 5px;
+    }
+    .tb-status { font: var(--type-sm) var(--pdf-body); color: var(--pdf-shell-muted); }
+    .tb-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .tb-small { font: var(--type-xs)/1 var(--pdf-mono); color: var(--pdf-shell-muted); font-variant-numeric: tabular-nums; }
+
+    /* Sidebar replica */
+    .sb { background: var(--pdf-surface); border-left: 1px solid var(--pdf-border); padding: 0; min-height: 200px; }
+    .sb-header {
+      margin: 0; padding: 21px 20px 15px;
+      color: var(--pdf-ink);
+      border-bottom: 1px solid var(--pdf-border);
+      font: 18px/1.05 var(--pdf-display);
+      letter-spacing: -0.025em;
+    }
+    .sb-header::before {
+      display: block; margin-bottom: 8px;
+      color: var(--pdf-ink-faint);
+      content: "INSPECTOR";
+      font: 700 10px var(--pdf-mono);
+      letter-spacing: 0.1em;
+    }
+    .sb-section {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--pdf-border);
+    }
+    .sb-label {
+      font: 700 var(--type-sm) var(--pdf-body);
+      color: var(--pdf-ink);
+      margin-bottom: 6px;
+    }
+    .sb-text { font: var(--type-sm)/1.4 var(--pdf-body); color: var(--pdf-ink-soft); margin-bottom: 4px; }
+    .sb-mono { font: var(--type-2xs)/1.3 var(--pdf-mono); color: var(--pdf-ink-faint); }
+    .sb-meta { display: flex; gap: 12px; font: var(--type-sm)/1 var(--pdf-body); color: var(--pdf-ink-soft); }
+    .sb-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font: 600 var(--type-3xs)/1 var(--pdf-mono);
+      padding: 3px 8px; border-radius: 99px;
+      background: var(--pdf-surface-soft); border: 1px solid var(--pdf-border);
+      color: var(--pdf-ink-faint);
+    }
+    .sb-badge.ok { border-color: color-mix(in oklch, var(--pdf-green) 55%, transparent); color: var(--pdf-green-ink); }
+    .sb-badge.warn { border-color: var(--pdf-amber-line); color: oklch(0.45 0.11 80); background: var(--pdf-amber-wash); }
+    .sb-item {
+      display: flex; justify-content: space-between; gap: 10px;
+      padding: 4px 0; border-bottom: 1px solid var(--pdf-surface-soft);
+      font: var(--type-xs)/1.3 var(--pdf-body);
+    }
+    .sb-item-label { color: var(--pdf-ink-soft); }
+    .sb-item-value { color: var(--pdf-ink); font-variant-numeric: tabular-nums; text-align: right; }
+    .sb-btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .sb-btn {
+      min-height: 34px; padding: 6px 9px;
+      font: var(--type-xs) var(--pdf-body);
+      border: 1px solid var(--pdf-border); border-radius: 5px;
+      background: var(--pdf-surface); color: var(--pdf-ink); cursor: pointer;
+    }
+    .sb-btn.primary { color: oklch(0.98 0.01 255); background: var(--pdf-accent-deep); border-color: var(--pdf-accent-deep); }
+
+    /* Workspace layout */
+    .ws { display: grid; min-height: 0; overflow: hidden; }
+    .ws-full { grid-template-columns: 232px minmax(0,1fr) 310px; }
+    .ws-med { grid-template-columns: 180px minmax(0,1fr); }
+    .ws-small { grid-template-columns: 150px minmax(0,1fr); }
+    .ws-tiny { display: flex; flex-direction: column; }
+    .ws-stage { background: var(--pdf-canvas); min-height: 120px; display: flex; align-items: center; justify-content: center; color: var(--pdf-ink-faint); font: var(--type-xs)/1.3 var(--pdf-mono); }
+
+    .note { font: var(--type-2xs)/1.5 var(--pdf-body); color: var(--pdf-ink-faint); padding: 8px 20px; background: var(--pdf-surface-soft); border-top: 1px solid var(--pdf-border); }
+
+    /* Mode rail (thumbnail sidebar) */
+    .rail { background: var(--pdf-shell); color: var(--pdf-shell-text); padding: 12px; border-right: 1px solid var(--pdf-shell-line); min-height: 120px; }
+    .rail-title { font: 700 var(--type-3xs) var(--pdf-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--pdf-shell-muted); margin-bottom: 10px; padding: 0 4px; }
+    .rail-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 4px; border-radius: 5px; margin-bottom: 2px;
+    }
+    .rail-item.active { background: var(--pdf-shell-raised); }
+    .rail-icon { font: var(--type-3xs) var(--pdf-mono); color: var(--pdf-shell-muted); width: 18px; text-align: center; }
+    .rail-label { font: 600 var(--type-xs) var(--pdf-body); color: var(--pdf-shell-text); }
+    .rail-sub { font: var(--type-2xs)/1.2 var(--pdf-body); color: var(--pdf-shell-muted); }
+    .rail-state { margin-left: auto; font: 600 var(--type-3xs) var(--pdf-mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--pdf-shell-muted); white-space: nowrap; }
+    .rail-state.active { color: var(--pdf-accent-soft); }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Typography Regression — Viewport Widths</h1>
+  <p>Toolbar + sidebar rendered at 5 widths. Verify font sizes, wrapping, truncation, and responsive layout at each breakpoint.</p>
+</div>
+
+<div class="test-grid">
+
+  <!-- 1200px — Above all breakpoints -->
+  <section>
+    <div class="width-label">
+      <span>1200px</span>
+      <span class="px">3-column layout</span>
+      <span class="bp">≥ 1100px — full workspace</span>
+    </div>
+    <div class="viewport-frame">
+      <div class="tb">
+        <div class="tb-title"><strong>PDF Editor</strong><span>Local document workspace</span></div>
+        <div class="tb-row">
+          <button class="tb-pill active">Read</button>
+          <button class="tb-pill">Fill</button>
+          <button class="tb-pill">Sign</button>
+          <button class="tb-pill">Edit</button>
+        </div>
+        <div class="tb-row">
+          <label>PDF</label><input class="tb-input" type="file" style="max-width:168px;padding:5px 6px;font-size:var(--type-xs)" disabled>
+          <label>Fit</label><select class="tb-input"><option>Width</option></select>
+          <label>View</label><select class="tb-input"><option>Continuous</option></select>
+        </div>
+        <div class="tb-row">
+          <button class="tb-btn">Rotate -90</button>
+          <button class="tb-btn">Rotate +90</button>
+          <label>Zoom</label><input class="tb-input" type="range" style="width:80px" disabled>
+          <span class="tb-small">100%</span>
+        </div>
+        <div class="tb-row">
+          <label>Page</label><input class="tb-input" type="number" style="width:72px" value="1">
+          <button class="tb-btn">Go</button>
+          <label>Search</label><input class="tb-input" type="text" style="width:200px" placeholder="Search...">
+          <button class="tb-btn">Find</button>
+        </div>
+        <div class="tb-row">
+          <button class="tb-btn">Copy current page text</button>
+          <button class="tb-btn primary">Add text</button>
+          <span class="tb-status">Ready</span>
+        </div>
+      </div>
+      <div class="ws ws-full">
+        <div class="rail">
+          <div class="rail-title">Document workbench</div>
+          <div class="rail-item active"><span class="rail-icon">01</span><div><div class="rail-label">Reader</div><div class="rail-sub">Navigate and inspect</div></div><span class="rail-state active">Ready</span></div>
+          <div class="rail-item"><span class="rail-icon">02</span><div><div class="rail-label">Understand</div><div class="rail-sub">Map evidence</div></div><span class="rail-state">Partial</span></div>
+          <div class="rail-item"><span class="rail-icon">03</span><div><div class="rail-label">Complete</div><div class="rail-sub">Review and fill</div></div><span class="rail-state">Partial</span></div>
+        </div>
+        <div class="ws-stage">Document viewer — 820px max-width</div>
+        <div class="sb">
+          <div class="sb-header">INSPECTOR</div>
+          <div class="sb-section">
+            <div class="sb-label">Document Metadata</div>
+            <div class="sb-item"><span class="sb-item-label">Title</span><span class="sb-item-value">Not declared</span></div>
+            <div class="sb-item"><span class="sb-item-label">Author</span><span class="sb-item-value">Not declared</span></div>
+            <div class="sb-item"><span class="sb-item-label">Producer</span><span class="sb-item-value">Adobe Acrobat</span></div>
+          </div>
+          <div class="sb-section">
+            <div class="sb-label">Permissions &amp; Security</div>
+            <div class="sb-item"><span class="sb-item-label">Encrypted</span><span class="sb-item-value">No</span></div>
+            <div class="sb-item"><span class="sb-item-label">Can copy text</span><span class="sb-item-value">Yes</span></div>
+            <div class="sb-item"><span class="sb-item-label">Can modify</span><span class="sb-item-value">Yes</span></div>
+          </div>
+          <div class="sb-section">
+            <div class="sb-label">Source Preflight</div>
+            <div class="sb-mono">Digest: a3f8c2e1b4...</div>
+            <div style="display:flex;gap:8px;margin-top:6px">
+              <span class="sb-badge ok">3 Findings</span>
+              <span class="sb-badge">12 Meta</span>
+              <span class="sb-badge warn">2 Embeds</span>
+            </div>
+          </div>
+          <div class="sb-section">
+            <div class="sb-label">Native Fields</div>
+            <div class="sb-meta"><span>5 fields</span><span>3 suggestions</span></div>
+            <div class="sb-btn-row">
+              <button class="sb-btn primary">Preview Fill</button>
+              <button class="sb-btn">Apply 3 Field(s)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1000px — Below 1100px breakpoint -->
+  <section>
+    <div class="width-label">
+      <span>1000px</span>
+      <span class="px">2-column + stacked inspector</span>
+      <span class="bp">&lt; 1100px — inspector moves to bottom</span>
+    </div>
+    <div class="viewport-frame">
+      <div class="tb">
+        <div class="tb-title"><strong>PDF Editor</strong><span>Local document workspace</span></div>
+        <div class="tb-row">
+          <button class="tb-pill active">Read</button>
+          <button class="tb-pill">Fill</button>
+          <button class="tb-pill">Sign</button>
+          <button class="tb-pill">Edit</button>
+        </div>
+        <div class="tb-row">
+          <label>PDF</label><input class="tb-input" type="file" style="max-width:168px;padding:5px 6px;font-size:var(--type-xs)" disabled>
+          <button class="tb-btn">Rotate -90</button>
+          <button class="tb-btn">Rotate +90</button>
+          <label>Zoom</label><input class="tb-input" type="range" style="width:80px" disabled>
+          <span class="tb-small">100%</span>
+        </div>
+        <div class="tb-row">
+          <button class="tb-btn primary">Add text</button>
+          <span class="tb-status">Ready</span>
+        </div>
+      </div>
+      <div class="ws ws-med">
+        <div class="rail">
+          <div class="rail-title">Document workbench</div>
+          <div class="rail-item active"><span class="rail-icon">01</span><div><div class="rail-label">Reader</div></div><span class="rail-state active">Ready</span></div>
+          <div class="rail-item"><span class="rail-icon">02</span><div><div class="rail-label">Understand</div></div><span class="rail-state">Partial</span></div>
+        </div>
+        <div class="ws-stage">Document viewer</div>
+      </div>
+      <div class="sb" style="max-height:200px;border-left:0;border-top:1px solid var(--pdf-border)">
+        <div class="sb-header">INSPECTOR</div>
+        <div class="sb-section">
+          <div class="sb-label">Native Fields</div>
+          <div class="sb-meta"><span>5 fields</span><span>3 suggestions</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="note">At &lt;1100px: sidebar drops to 180px, inspector stacks below as a 380px max-height panel.</div>
+  </section>
+
+  <!-- 750px — Below 760px breakpoint (mobile input floor) -->
+  <section>
+    <div class="width-label">
+      <span>750px</span>
+      <span class="px">Mobile toolbar, stacked layout</span>
+      <span class="bp">&lt; 760px — iOS input zoom floor (16px)</span>
+    </div>
+    <div class="viewport-frame">
+      <div class="tb" style="align-items:stretch;max-height:none;">
+        <div class="tb-title" style="flex:1 1 100%"><strong>PDF Editor</strong><span>Local document workspace</span></div>
+        <div class="tb-row" style="flex:1 1 100%;flex-wrap:wrap">
+          <button class="tb-pill active">Read</button>
+          <button class="tb-pill">Fill</button>
+          <button class="tb-pill">Sign</button>
+          <button class="tb-pill">Edit</button>
+        </div>
+        <div class="tb-row" style="flex:1 1 100%;flex-wrap:wrap">
+          <label>PDF</label><input class="tb-input" type="file" style="max-width:100%;padding:5px 6px;font-size:16px" disabled>
+          <button class="tb-btn">Rotate -90</button>
+          <button class="tb-btn">Rotate +90</button>
+          <label>Zoom</label><input class="tb-input" type="range" style="width:80px" disabled>
+          <span class="tb-small">100%</span>
+        </div>
+        <div class="tb-row" style="flex:1 1 100%;flex-wrap:wrap">
+          <label>Page</label><input class="tb-input" type="number" style="width:72px;font-size:16px" value="1">
+          <button class="tb-btn">Go</button>
+          <label>Search</label><input class="tb-input" type="text" style="width:min(200px,60vw);font-size:16px" placeholder="Search...">
+          <button class="tb-btn">Find</button>
+        </div>
+        <div class="tb-row" style="flex:1 1 100%">
+          <button class="tb-btn primary">Add text</button>
+          <span class="tb-status">Ready</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;min-height:160px;">
+        <div class="ws-stage" style="order:1;min-height:120px">Document viewer — min-height: 540px</div>
+        <div class="rail" style="order:2;max-height:160px;border-top:1px solid var(--pdf-shell-line);border-right:0">
+          <div class="rail-title">Document workbench</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px">
+            <div class="rail-item active" style="display:block;text-align:center;min-height:50px;padding:6px 3px"><span class="rail-icon" style="display:block;margin-bottom:3px">01</span><div class="rail-label" style="font-size:10px">Reader</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:50px;padding:6px 3px"><span class="rail-icon" style="display:block;margin-bottom:3px">02</span><div class="rail-label" style="font-size:10px">Understand</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:50px;padding:6px 3px"><span class="rail-icon" style="display:block;margin-bottom:3px">03</span><div class="rail-label" style="font-size:10px">Complete</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:50px;padding:6px 3px"><span class="rail-icon" style="display:block;margin-bottom:3px">04</span><div class="rail-label" style="font-size:10px">Organize</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:50px;padding:6px 3px"><span class="rail-icon" style="display:block;margin-bottom:3px">05</span><div class="rail-label" style="font-size:10px">Review</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">At &lt;760px: toolbar wraps vertically, inputs forced to 16px (iOS zoom floor), mode rail becomes 5-column grid.</div>
+  </section>
+
+  <!-- 500px — Below 600px breakpoint -->
+  <section>
+    <div class="width-label">
+      <span>500px</span>
+      <span class="px">Compact mobile</span>
+      <span class="bp">&lt; 600px — tightened padding, smaller context</span>
+    </div>
+    <div class="viewport-frame">
+      <div class="tb" style="padding:8px 10px;align-items:stretch;max-height:none;">
+        <div class="tb-title" style="flex:1 1 100%"><strong>PDF Editor</strong><span>Local document workspace</span></div>
+        <div class="tb-row" style="flex:1 1 100%;flex-wrap:wrap">
+          <button class="tb-pill active" style="font-size:10px;padding:3px 8px">Read</button>
+          <button class="tb-pill" style="font-size:10px;padding:3px 8px">Fill</button>
+          <button class="tb-pill" style="font-size:10px;padding:3px 8px">Sign</button>
+          <button class="tb-pill" style="font-size:10px;padding:3px 8px">Edit</button>
+        </div>
+        <div class="tb-row" style="flex:1 1 100%;flex-wrap:wrap">
+          <button class="tb-btn">Rotate -90</button>
+          <button class="tb-btn">Rotate +90</button>
+          <span class="tb-small">100%</span>
+        </div>
+        <div class="tb-row" style="flex:1 1 100%">
+          <button class="tb-btn primary">Add text</button>
+          <span class="tb-status" style="font-size:10px">Ready</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;min-height:120px;">
+        <div class="ws-stage" style="order:1;min-height:100px;font-size:10px">Document viewer</div>
+        <div class="rail" style="order:2;max-height:120px;border-top:1px solid var(--pdf-shell-line);border-right:0;padding:10px">
+          <div class="rail-title" style="font-size:8px">Document workbench</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:2px">
+            <div class="rail-item active" style="display:block;text-align:center;min-height:40px;padding:4px 2px"><span class="rail-icon" style="display:block;margin-bottom:2px;font-size:8px">01</span><div class="rail-label" style="font-size:9px">Reader</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:40px;padding:4px 2px"><span class="rail-icon" style="display:block;margin-bottom:2px;font-size:8px">02</span><div class="rail-label" style="font-size:9px">Understand</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:40px;padding:4px 2px"><span class="rail-icon" style="display:block;margin-bottom:2px;font-size:8px">03</span><div class="rail-label" style="font-size:9px">Complete</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:40px;padding:4px 2px"><span class="rail-icon" style="display:block;margin-bottom:2px;font-size:8px">04</span><div class="rail-label" style="font-size:9px">Organize</div></div>
+            <div class="rail-item" style="display:block;text-align:center;min-height:40px;padding:4px 2px"><span class="rail-icon" style="display:block;margin-bottom:2px;font-size:8px">05</span><div class="rail-label" style="font-size:9px">Review</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">At &lt;600px: tighter padding (8px 10px), mode rail labels visible but compressed, context line at 10px.</div>
+  </section>
+
+  <!-- BEFORE/AFTER: Font size comparison -->
+  <section>
+    <div class="width-label">
+      <span>Before → After</span>
+      <span class="px">Font size token comparison</span>
+    </div>
+    <div class="viewport-frame" style="padding:20px">
+      <table style="width:100%;border-collapse:collapse;font:var(--type-xs)/1.4 var(--pdf-body)">
+        <thead>
+          <tr style="border-bottom:2px solid var(--pdf-border)">
+            <th style="text-align:left;padding:8px;font:600 var(--type-2xs)/1 var(--pdf-mono);color:var(--pdf-accent-deep);letter-spacing:0.05em;text-transform:uppercase">Element</th>
+            <th style="text-align:left;padding:8px;font:600 var(--type-2xs)/1 var(--pdf-mono);color:var(--pdf-red-ink);letter-spacing:0.05em;text-transform:uppercase">Before (px)</th>
+            <th style="text-align:left;padding:8px;font:600 var(--type-2xs)/1 var(--pdf-mono);color:var(--pdf-green-ink);letter-spacing:0.05em;text-transform:uppercase">After (rem)</th>
+            <th style="text-align:left;padding:8px;font:600 var(--type-2xs)/1 var(--pdf-mono);color:var(--pdf-ink-faint);letter-spacing:0.05em;text-transform:uppercase">Token</th>
+          </tr>
+        </thead>
+        <tbody id="comparisonBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const rows = [
+  ['.small', '12px', 'var(--type-sm)', '--type-sm', '0.75rem'],
+  ['.status', '12px', 'var(--type-sm)', '--type-sm', '0.75rem'],
+  ['.toolbar button', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.toolbar input[type="file"]', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.review-card h3', '13px', 'var(--type-body)', '--type-body', '0.8125rem'],
+  ['.mode-panel-title', '17px', 'var(--type-heading)', '--type-heading', '1.0625rem'],
+  ['.analysis-title', '19px', 'var(--type-display)', '--type-display', '1.1875rem'],
+  ['.mode-return-button', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.docmap-row / .evidence-row', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.next-action-card', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.next-action-card button', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.next-action-empty', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.guardrail-label', '12px', 'var(--type-sm)', '--type-sm', '0.75rem'],
+  ['.guardrail-note', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.vr-row', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.vr-note', '10px', 'var(--type-2xs)', '--type-2xs', '0.625rem'],
+  ['.organize-boundary', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.analysis-skip-button', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.analysis-copy', '11.5px', '11.5px (kept)', '—', '—'],
+  ['.toolbar label', '10px', 'var(--type-2xs)', '--type-2xs', '0.625rem'],
+  ['.candidate-preview', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.overlay-preview', '12px', 'var(--type-sm)', '--type-sm', '0.75rem'],
+  ['.mode-context-line', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.product-mode-copy strong', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['.product-mode-copy small', '9px', 'var(--type-3xs)', '--type-3xs', '0.5625rem'],
+  ['.product-mode-status', '10px', 'var(--type-2xs)', '--type-2xs', '0.625rem'],
+  ['.analysis-kicker', '9px', 'var(--type-3xs)', '--type-3xs', '0.5625rem'],
+  ['.mode-panel-kicker', '9px', 'var(--type-3xs)', '--type-3xs', '0.5625rem'],
+  ['.product-mode-kicker', '9px', 'var(--type-3xs)', '--type-3xs', '0.5625rem'],
+  ['.product-mode-index', '9px', 'var(--type-3xs)', '--type-3xs', '0.5625rem'],
+  ['.product-mode-state', '8px', '8px (kept)', '—', '—'],
+  ['app.js profile inputs', '11px', 'var(--type-xs)', '--type-xs', '0.6875rem'],
+  ['app.js profile buttons', '12px', 'var(--type-sm)', '--type-sm', '0.75rem'],
+];
+
+const tbody = document.getElementById('comparisonBody');
+rows.forEach(([el, before, after, token, rem]) => {
+  const tr = document.createElement('tr');
+  tr.style.borderBottom = '1px solid var(--pdf-surface-soft)';
+  const changed = before !== after;
+  tr.innerHTML = `
+    <td style="padding:6px 8px;font:var(--type-2xs)/1.3 var(--pdf-mono);color:var(--pdf-ink)">${el}</td>
+    <td style="padding:6px 8px;font:var(--type-2xs)/1.3 var(--pdf-mono);color:var(--pdf-red-ink);text-decoration:line-through">${before}</td>
+    <td style="padding:6px 8px;font:var(--type-2xs)/1.3 var(--pdf-mono);color:${changed ? 'var(--pdf-green-ink)' : 'var(--pdf-ink-faint)'}">${after}</td>
+    <td style="padding:6px 8px;font:var(--type-2xs)/1.3 var(--pdf-mono);color:var(--pdf-accent-deep)">${token}</td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>

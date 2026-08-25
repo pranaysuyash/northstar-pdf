@@ -1,0 +1,78 @@
+/*
+ * React-entry additions on top of web/design-system.css (the single token
+ * source). Every rule here consumes var(--pdf-*) / --type-* tokens only;
+ * no second palette, no ad-hoc colors.
+ */
+
+.capability-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--type-2xs);
+  letter-spacing: 0.03em;
+  border: 1px solid var(--pdf-border);
+  color: var(--pdf-ink-soft);
+  background: var(--pdf-surface);
+}
+
+.capability-available,
+.capability-validated {
+  color: var(--pdf-green-ink);
+  border-color: var(--pdf-green);
+}
+
+.capability-loading {
+  color: var(--pdf-accent-deep);
+  border-color: var(--pdf-accent);
+}
+
+.capability-partial {
+  color: var(--pdf-amber-wash) ;
+  background: var(--pdf-amber-wash);
+  color: oklch(0.45 0.09 80);
+  border-color: var(--pdf-amber-line);
+}
+
+.capability-blocked,
+.capability-failed {
+  color: var(--pdf-red-ink);
+  border-color: var(--pdf-red);
+}
+
+.capability-reader_only {
+  color: var(--pdf-ink-faint);
+  background: var(--pdf-canvas);
+}
+
+.pdf-stage {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--pdf-canvas);
+  border-radius: 10px;
+  margin: 0 14px 14px;
+}
+
+.pdf-stage canvas {
+  max-width: 100%;
+  height: auto;
+  box-shadow: var(--pdf-shadow);
+  background: var(--pdf-paper);
+}
+
+.pdf-stage-empty {
+  align-self: center;
+  padding: 32px;
+}
+
+#viewerMain.panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.is-active-match {
+  outline: 1px solid var(--pdf-accent);
+}

@@ -34,7 +34,7 @@ public struct PageThumbnailRailView: View {
         .help("Insert page")
 
         Text("\(inspection.pages.count)")
-          .font(.caption2.weight(.medium))
+          .font(.caption2.weight(.medium).monospacedDigit())
           .padding(.horizontal, 6)
           .padding(.vertical, 2)
           .background(Color.secondary.opacity(0.15))
@@ -57,7 +57,8 @@ public struct PageThumbnailRailView: View {
         .padding(10)
       }
     }
-    .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+    /* Apple Design §12: heavier material for structural sidebar */
+    .background(.thinMaterial)
   }
 
   @ViewBuilder
@@ -82,11 +83,11 @@ public struct PageThumbnailRailView: View {
 
           VStack(spacing: 2) {
             Image(systemName: isSelected ? "doc.fill" : "doc")
-              .font(.system(size: 16))
+              .font(.title3)
               .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
 
             Text("\(page.pageLabel)")
-              .font(.system(size: 9, weight: .bold))
+              .font(.caption2.weight(.bold))
               .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
           }
         }
@@ -96,14 +97,14 @@ public struct PageThumbnailRailView: View {
         VStack(alignment: .leading, spacing: 3) {
           HStack {
             Text("Page \(page.pageLabel)")
-              .font(.system(size: 12, weight: isSelected ? .semibold : .medium))
+              .font(.caption.weight(isSelected ? .semibold : .medium))
               .foregroundStyle(isSelected ? Color.primary : Color.primary.opacity(0.85))
 
             Spacer()
 
             if page.hasSelectableText {
               Image(systemName: "text.alignleft")
-                .font(.system(size: 10))
+                .font(.caption2)
                 .foregroundStyle(.secondary)
                 .help("Selectable text layer available")
             }
@@ -118,7 +119,7 @@ public struct PageThumbnailRailView: View {
           HStack(spacing: 4) {
             if fieldCount > 0 {
               Text("\(fieldCount) field\(fieldCount == 1 ? "" : "s")")
-                .font(.system(size: 9, weight: .medium))
+                .font(.caption2.weight(.medium))
                 .padding(.horizontal, 4)
                 .padding(.vertical, 1)
                 .background(Color.blue.opacity(0.12))
@@ -128,7 +129,7 @@ public struct PageThumbnailRailView: View {
 
             if candidateCount > 0 {
               Text("\(candidateCount) sugg")
-                .font(.system(size: 9, weight: .medium))
+                .font(.caption2.weight(.medium))
                 .padding(.horizontal, 4)
                 .padding(.vertical, 1)
                 .background(Color.orange.opacity(0.15))
@@ -138,7 +139,7 @@ public struct PageThumbnailRailView: View {
 
             if redactionCount > 0 {
               Text("\(redactionCount) redact")
-                .font(.system(size: 9, weight: .medium))
+                .font(.caption2.weight(.medium))
                 .padding(.horizontal, 4)
                 .padding(.vertical, 1)
                 .background(Color.red.opacity(0.15))

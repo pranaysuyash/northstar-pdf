@@ -2,119 +2,119 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: 93dc8e76f2c264898cd5adaa3ccd3bbd045275b653696460bc32ed5064479823
-- Generated: 2026-08-25T10:22:29Z
+- Generated: 2026-08-25T14:06:01Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
 
 - Label: §0 Start from live truth
 - Reviewed: True
-- Evidence: Rechecked live main checkout, worktree, branch, and staged paths including .gitignore, Sources/PDFEditorApp/ContentView.swift, web/app.js, and benchmark evidence before commit.
+- Evidence: Rechecked the live main checkout, origin/main, staged .gitignore, Sources/PDFEditorApp/AgentCommandHUD.swift, web/app/package.json, and benchmark/results evidence before commit.
 
 ## SECTION_00_INTEGRATED
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Cross-section audit of the staged diff: .gitignore and docs changes control artifact ownership (§9, §14, §17); native and web source/test changes require Tier 3 evidence (§3, §11); browser, PDF, and Swift gates were run separately and their failures remain open (§2, §13, §15). The commit is a scoped checkpoint, not unrestricted release proof.
+- Evidence: Completed the integrated audit across the staged source, tests, benchmark/results, documentation, web/app, and tools/verapdf changes; retained the observed Swift, PDF, parity, qpdf, and browser gate failures in the evidence.
 
 ## SECTION_1
 
 - Label: §1 Outcomes and retained value
 - Reviewed: True
-- Evidence: The staged .gitignore, native UI views, web/app.js, and performance audit preserve the current document-workbench value while keeping generated agent reports out of future commits.
+- Evidence: The staged web/app/src, native UI, PDF guard, test, and docs/release-runbook.md changes retain user-visible editor and validation value.
 
 ## SECTION_10
 
 - Label: §10 Parallel work and contested state
 - Reviewed: True
-- Evidence: Rechecked current dirty state, main tracking origin/main, worktree list, and stash list before staging; no concurrent owner or contested worktree was overwritten.
+- Evidence: Rechecked the live branch, origin/main, worktree status, and staged path list before mutation; no branch, worktree, stash, reset, or force-push operation was used.
 
 ## SECTION_11
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Reviewed Sources/PDFEditorCore/, Sources/PDFEditorRecovery/AppModel.swift, Tests/PDFEditorCoreTests/, web/pdf-hidden-revision-analyzer.mjs, and benchmark/results/; current Swift initializer and AppModel API errors remain explicit residual failures.
+- Evidence: Reviewed Sources/PDFEditorApp/AgentCommandHUD.swift, Sources/PDFEditorRecovery/AppModel.swift, web/app/src, Tests, and benchmark/results; recorded current compiler and preservation failures rather than masking them.
 
 ## SECTION_12
 
 - Label: §12 AI output boundary
 - Reviewed: True
-- Evidence: Reviewed staged non-markdown source paths for AI co-author trailers and claim inflation; web/app.js and docs/release-gates.md retain evidence status while stale or timed-out gates remain unverified.
+- Evidence: Reviewed staged AI-assisted work in web/app/src, Sources/PDFEditorApp, Tests, benchmark/results, and docs against explicit evidence and user-visible capability boundaries.
 
 ## SECTION_13
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: docs/implementation-status.md, docs/release-gates.md, and the performance audit retain supported scope, failure states, user-facing boundaries, and remaining operator recovery obligations.
+- Evidence: docs/release-gates.md, docs/release-runbook.md, and benchmark/results retain the distinction between a pushed checkpoint and release readiness, including unresolved integrity and parity gates.
 
 ## SECTION_14
 
 - Label: §14 Documentation and decisions
 - Reviewed: True
-- Evidence: Durable changes are recorded in docs/audits/performance-and-resource-audit-per-pl2-0033.md, docs/release-gates.md, docs/context/agent-start/SESSION_CONTEXT.md, and progress.md.
+- Evidence: docs/decisions.md, docs/runbooks/local-preview.md, docs/release-runbook.md, docs/reviews/motto_review.md, and progress.md preserve the current decisions, runbooks, review, and residuals.
 
 ## SECTION_15
 
 - Label: §15 Completion contract
 - Reviewed: True
-- Evidence: The requested lifecycle is represented by staged .gitignore, source, evidence, docs, and web paths; docs/release-gates.md and progress.md preserve exact test, browser, hook, commit, and push outcomes without release-readiness inflation.
+- Evidence: The requested lifecycle is represented by staged .gitignore, source, tests, evidence, documentation, commit trailers, hook verification, and the planned origin/main push.
 
 ## SECTION_16
 
 - Label: §16 Specialist doctrine routing
 - Reviewed: True
-- Evidence: Testing, release-readiness, documentation, and browser capability methods were routed for this gate task; docs/context/agent-start/SESSION_CONTEXT.md records the controlling Operating Doctrine route.
+- Evidence: Routed native, browser, PDF, accessibility, security, and release methods to Tests/, benchmark/, docs/, and web/ evidence paths.
 
 ## SECTION_17
 
 - Label: §17 Propagation contract
 - Reviewed: True
-- Evidence: agent-start refreshed docs/context/agent-start/AGENT_KICKOFF_PROMPT.txt, SESSION_CONTEXT.md, STEP1_ENV.sh, and OPERATING_DOCTRINE.md from the canonical doctrine family before the staged audit.
+- Evidence: agent-start refreshed docs/context/agent-start/SESSION_CONTEXT.md and the current doctrine family before commit; the hook will recheck propagation and context drift.
 
 ## SECTION_2
 
 - Label: §2 Truth taxonomy
 - Reviewed: True
-- Evidence: Observed and inferred states remain separated in docs/release-gates.md and benchmark/results/semantic-parity/2026-08-25/candidate-parity-report.json; failed Swift and browser gates are reported as failures.
+- Evidence: The staged docs/release-gates.md, docs/release-runbook.md, benchmark/results, and test updates distinguish source, browser, native, provider, and release evidence.
 
 ## SECTION_3
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Ran git diff --check and the gates named in docs/runbooks/release-gates.md, including swift test, swift build -c release, PDF validators, web contracts, fixture gates, and live browser checks with individual outcomes and evidence tiers.
+- Evidence: Ran the full Tests/*_test.mjs sweep, web/app typecheck/build, swift test, swift build -c release, PDFKit, qpdf, independent viewer, and contract gates; staged benchmark/results reports preserve outcomes.
 
 ## SECTION_4
 
 - Label: §4 Authorization and side effects
 - Reviewed: True
-- Evidence: The current user explicitly authorized update gitignore, git add -A, full hook/gate, commit, and push; staged effects are limited to this pdf_editor checkout and origin/main.
+- Evidence: The user explicitly authorized git add -A, commit, full hook/gate, and push; only the current pdf_editor checkout and origin/main are in scope.
 
 ## SECTION_5
 
 - Label: §5 Canonical paths and ownership
 - Reviewed: True
-- Evidence: Extended canonical Sources/PDFEditorApp views, web/app.js, and web/pdf-hidden-revision-analyzer.mjs; no versioned route or shadow pipeline was added.
+- Evidence: Used canonical web/app/src and existing web paths, while .gitignore owns web/app/node_modules, web/app/dist, and tools/verapdf-cli-* exclusions; tools/verapdf remains the tracked wrapper.
 
 ## SECTION_6
 
 - Label: §6 Semantic salvage and supersession
 - Reviewed: True
-- Evidence: Preserved the existing dirty feature and documentation work, compared staged changes in Sources/PDFEditorApp/ContentView.swift and Sources/PDFEditorRecovery/AppModel.swift, and retained prior benchmark evidence rather than resetting it.
+- Evidence: Preserved current contested work in Sources/PDFEditorApp, Sources/PDFEditorRecovery, Tests, benchmark/results, docs, web, and task_plan.md without reset, checkout, stash, or overwrite.
 
 ## SECTION_7
 
 - Label: §7 Capability routing
 - Reviewed: True
-- Evidence: Used the repository Browser Daemon skill for the isolated web gate and used benchmark/test_independent_viewer.sh, qpdf, Node, and Swift validators for their matching evidence surfaces.
+- Evidence: Routed Tests/web_pdf_contract_mutation_test.mjs through the isolated local HTTP server and Browser Daemon skill, native checks through Sources/PDFEditorApp, and structural checks through benchmark/qpdf validation.
 
 ## SECTION_8
 
 - Label: §8 Skills lifecycle
 - Reviewed: True
-- Evidence: Used /Users/pranay/.agents/skills/testing/playwright-skill/SKILL.md for the live browser gate, inspected its instructions first, and kept browser evidence separate from static and source tests.
+- Evidence: Used the required /Users/pranay/.agents/skills/testing/playwright-skill/SKILL.md Browser Daemon workflow for browser evidence and retained live browser gate results.
 
 ## SECTION_9
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: Classified every staged artifact under Sources/, Tests/, benchmark/results/, docs/, and web/ as source, test, tracked evidence, or durable documentation; .build/, .agent/, tmp/, logs, and outputs/ reports remain ignored.
+- Evidence: Classified staged Sources, Tests, benchmark/results, docs, web/app/src, web guards, and tools/verapdf; verified ignored web/app/node_modules, web/app/dist, and tools/verapdf-cli-* were not staged.

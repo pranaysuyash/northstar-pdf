@@ -57,15 +57,16 @@ struct GracefulDegradationExceptionTests {
     let capabilityID = "text.runReplacement"
     let manifest = ProviderCapabilityManifest(
       providerID: "com.pdfeditor.experimental",
-      name: "Experimental Provider",
-      version: "1.0.0",
+      engineFamily: "pdfkit",
+      providerVersion: "1.0.0",
+      runtimeKind: "native",
+      artifactDigest: String(repeating: "b", count: 64),
       installState: .enabled,
       license: ProviderLicenseRecord(name: "MIT", status: .approved),
       capabilities: [
         ProviderCapabilityRecord(
           capabilityID: capabilityID,
-          lane: .textRunReplacement,
-          state: .revoked, // Revoked capability
+          state: .revoked,  // Revoked capability
           limits: ProviderCapabilityLimits(
             maxBytes: 10_000_000,
             maxPages: 100,
@@ -79,28 +80,31 @@ struct GracefulDegradationExceptionTests {
       revocations: [
         ProviderRevocationRecord(
           revocationID: "REV-001",
-          capabilityID: capabilityID,
-          reason: "Security audit failed",
-          revokedAt: Date()
+          reasonCode: "security-audit-failed",
+          effectiveAt: Date()
         )
       ]
     )
 
-    let registry = ProviderCapabilityRegistry(providers: [manifest])
+    let registry = ProviderCapabilityRegistry(registryID: "degradation-registry", providers: [manifest])
     let request = ProviderCapabilityRequest(
       capability: capabilityID,
+      operationKinds: ["nativeFieldValue"],
       source: ProviderSourceFacts(byteCount: 5000, pageCount: 1, isEncrypted: false, isScanned: false),
       policy: ProviderCapabilityPolicy(
-        preferredProviderIDs: ["com.pdfeditor.experimental"],
+        localOnly: true,
         minimumState: .enabled,
-        allowExperimental: false
+        allowExperimental: false,
+        preferredProviderIDs: ["com.pdfeditor.experimental"]
       )
     )
 
     let decision = try ProviderCapabilityNegotiator.negotiate(registry: registry, request: request)
     #expect(decision.decision == .abstained)
-    #expect(decision.selectedProviderID == nil)
-    #expect(decision.rejectionReasons.contains { $0.contains("providerRevoked") || $0.contains("capabilityState:revoked") })
+    #expect(decision.providerID == nil)
+    #expect(
+      decision.reasonCodes.contains { $0.contains("providerRevoked") || $0.contains("capabilityState:revoked") }
+    )
   }
 
   // MARK: - 2. Template Resolution Ambiguity & Tie Abstention (PER-0925 / PER-0929)

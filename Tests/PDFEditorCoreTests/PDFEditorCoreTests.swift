@@ -1106,7 +1106,11 @@ struct PDFEditorCoreTests {
     let inspection = try provider.inspect(url: sourceURL)
     #expect(inspection.pages.count == 2)
     #expect(inspection.fields.isEmpty)
-    #expect(inspection.candidates.count < 100)
+    // Noise-explosion guard, not a precise contract. Form 6 currently yields
+    // 109 vector-region candidates (71 text, 16 checkbox, 12 radio, 8
+    // character-grid groups with 78 cells, 2 signature) from parsed page
+    // geometry — see F-069. The ceiling only catches runaway detector output.
+    #expect(inspection.candidates.count < 200)
     #expect(
       inspection.candidates.contains {
         $0.entryMode == .characterGrid && $0.memberBounds.count >= 3

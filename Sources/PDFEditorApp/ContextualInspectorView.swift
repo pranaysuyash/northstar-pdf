@@ -68,7 +68,8 @@ public struct ContextualInspectorView: View {
         .padding(14)
       }
     }
-    .background(Color(NSColor.controlBackgroundColor).opacity(0.4))
+    /* Apple Design §12: light material for content panel */
+    .background(.regularMaterial)
     .onChange(of: model.selectedFieldID, initial: true) { _, _ in
       fieldDraft = model.selectedField.map { model.currentValue(for: $0) } ?? ""
       if model.selectedFieldID != nil {

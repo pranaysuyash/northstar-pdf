@@ -57,12 +57,6 @@ function ratio(numerator, denominator) {
   return denominator === 0 ? null : numerator / denominator;
 }
 
-function rounded(value, places = 4) {
-  if (!Number.isFinite(value)) return value;
-  const factor = 10 ** places;
-  return Math.round(value * factor) / factor;
-}
-
 function evidenceItems(candidate) {
   return candidate?.evidenceItems || [];
 }
@@ -370,29 +364,4 @@ export function buildDetectorSemanticComparisonReport({ labels, sourceDigest, na
     semanticParity: parity,
     passed: native.passed && browser.passed && parity.passed
   };
-}
-
-export function mutateDetectorComparisonReport(report, mutation) {
-  const copy = structuredClone(report);
-  if (mutation === "remove-reviewed-region") {
-    copy.adapters.browser.cases = copy.adapters.browser.cases.slice(1);
-  } else if (mutation === "promote-high-severity-negative") {
-    const target = copy.adapters.browser.cases.find((entry) => entry.hardNegative && entry.falsePositiveSeverity === "high");
-    if (target) target.detected = true;
-  } else if (mutation === "strip-evidence-family") {
-    const target = copy.adapters.browser.cases.find((entry) => entry.detected);
-    if (target) {
-      target.evidenceFamilyAgreement.exact = false;
-      target.evidenceFamilyAgreement.missing = ["geometry"];
-    }
-  } else if (mutation === "break-label-association") {
-    const target = copy.adapters.browser.cases.find((entry) => entry.labelAssociation.expected === "associated");
-    if (target) target.labelAssociation.state = "mismatch";
-  } else if (mutation === "split-group") {
-    const target = copy.adapters.browser.cases.find((entry) => entry.grouping.actual);
-    if (target) target.grouping.state = "mismatch";
-  } else {
-    throw new Error(`unknown detector comparison mutation: ${mutation}`);
-  }
-  return copy;
 }

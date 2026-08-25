@@ -1970,8 +1970,8 @@ public final class AppModel {
       kind: kind,
       value: value,
       bounds: bounds,
-      sourceDigest: inspection?.source.sha256,
-      sessionID: currentSessionID
+      sessionID: currentSessionID,
+      sourceDigest: inspection?.source.sha256
     )
     do {
       try provider.apply(operation, to: liveDocument)
@@ -2863,18 +2863,16 @@ public final class AppModel {
   }
 
   /// Export a flattened copy where all form fields, annotations, and visual stamps are rasterized/baked.
+  ///
+  /// Fail-closed by design: system PDFKit exposes no public API that bakes
+  /// annotations or widget appearances into page content on save (the same
+  /// serialization limit as image annotations). Rasterizing pages into image
+  /// pages would destroy the text layer and violate the preservation contract,
+  /// so this stays unavailable until the form-aware provider lane lands.
   public func exportFlattenedCopy(destination: URL) {
-    guard let doc = liveDocument else { return }
-    guard let data = doc.dataRepresentation(options: [.burnInAnnotationsOption: true]) else {
-      alertMessage = "Failed to generate flattened PDF representation."
-      return
-    }
-    do {
-      try data.write(to: destination, options: .atomic)
-      statusMessage = "Exported flattened copy to \(destination.lastPathComponent)."
-    } catch {
-      alertMessage = error.localizedDescription
-    }
+    alertMessage =
+      "Flattened export is not available in the PDFKit adapter: system PDFKit cannot bake fields and annotations into page content. The source file was not modified; flattening requires the form-aware provider lane."
+    statusMessage = "Flattened export unavailable (fail-closed)."
   }
 
   // MARK: - Session Persistence

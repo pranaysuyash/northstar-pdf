@@ -1,0 +1,235 @@
+{
+  "created": "2026-08-25",
+  "generator": "Tests/fixtures/generate_corpus_sweep.py",
+  "baseFixture": "public-sample-form.pdf",
+  "baseSHA256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "scopeBoundaries": [
+    "RG-060 ligature glyph substitution not exercised (ASCII 'fi' only); font-shaping-level review remains open",
+    "RG-070 structure-level only: qpdf does NOT validate ByteRange/Contents consistency (invalid-structure passes qpdf clean); cryptographic verification remains open",
+    "RG-071 heuristic classification: dynamicHint flags config/dynamicRender packets; full static/dynamic/hybrid taxonomy remains open"
+  ],
+  "fixtures": {
+    "plain-text.pdf": {
+      "category": "plain-text",
+      "sha256": "2b1cc207133e5a36eaa21e19f8f3affc6e3199702e718a75deaa7b7846f45764",
+      "qpdf": "clean",
+      "expected": {
+        "pages": 3
+      }
+    },
+    "multi-column.pdf": {
+      "category": "multi-column",
+      "sha256": "20b17effe095e6c9fdd73179a25e9d0d41762093fcbd43fdb9ce58e743ac44a8",
+      "qpdf": "clean",
+      "expected": {
+        "pages": 2
+      }
+    },
+    "geometry.pdf": {
+      "category": "geometry",
+      "sha256": "82f18e47e5400ced20b35704a752abb53a4eaf4afa6129b16aa91edbfafda849",
+      "qpdf": "clean",
+      "expected": {
+        "pages": 4,
+        "rotate": 0,
+        "facts": {
+          "rotations": [
+            0,
+            0,
+            90,
+            0
+          ],
+          "cropBoxes": [
+            null,
+            null,
+            null,
+            [
+              36,
+              36,
+              400,
+              700
+            ]
+          ],
+          "sizes": [
+            [
+              0,
+              0,
+              595.28,
+              841.89
+            ],
+            [
+              0,
+              0,
+              200,
+              2000
+            ],
+            [
+              0,
+              0,
+              612,
+              792
+            ],
+            [
+              0,
+              0,
+              612,
+              792
+            ]
+          ]
+        }
+      }
+    },
+    "navigation.pdf": {
+      "category": "navigation",
+      "sha256": "0cc83d560144528b8093870bcfa85fa8251d71e70056b5af14e3a7537a4827f0",
+      "qpdf": "clean",
+      "expected": {
+        "pages": 3,
+        "outlinesCount": 2,
+        "annots": 6,
+        "lastPageAnnots": 3,
+        "linkUris": [
+          "https://example.test/"
+        ],
+        "goToNames": [
+          "/NoSuchNamedDest"
+        ],
+        "rootNamesPresent": false
+      }
+    },
+    "metadata-complete.pdf": {
+      "category": "metadata",
+      "sha256": "a2eadf0235c6d3b84ba41849029d3e7133d9645c308ebac9aa26bbf0ef978200",
+      "qpdf": "clean",
+      "expected": {
+        "title": "Complete Metadata Fixture",
+        "weirdType": null
+      }
+    },
+    "metadata-absent.pdf": {
+      "category": "metadata",
+      "sha256": "bd8f526a4baed05cce7604d10dd6892c92fff8edc3e3fbcaba53a5c9af61af5d",
+      "qpdf": "clean",
+      "expected": {
+        "infoKeys": [],
+        "title": null
+      }
+    },
+    "metadata-unicode.pdf": {
+      "category": "metadata",
+      "sha256": "402e9f037713209e260cafa0e648cf6be390f82c9535e2d0367f12c7b85c03cc",
+      "qpdf": "clean",
+      "expected": {
+        "title": "Título — Ünïcødé ✓ 日本語"
+      }
+    },
+    "metadata-custom.pdf": {
+      "category": "metadata",
+      "sha256": "1d9ecc0a3875386aae38963ed6f932e8030237dc43000864635bbc382927454a",
+      "qpdf": "clean",
+      "expected": {}
+    },
+    "metadata-malformed.pdf": {
+      "category": "metadata",
+      "sha256": "c10a91cb7cb6c563fcd46f3cc3603374742272ec2e51d209f5677efd3bc8d9e4",
+      "qpdf": "clean",
+      "expected": {
+        "weirdType": "int"
+      }
+    },
+    "signed-valid-structure.pdf": {
+      "category": "signed",
+      "sha256": "6857700569bde72314b0ab8d8afb8386aca0fddf447b9229e77fa7fb846c1b39",
+      "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
+      "expected": {
+        "pages": 1
+      },
+      "signatureDetection": {
+        "hasAcroForm": true,
+        "sigFlags": 1,
+        "sigFieldCount": 1,
+        "signatureDictionaries": 1,
+        "detected": true,
+        "scope": "detection-only; cryptographic validity NOT verified (open sub-gate)"
+      }
+    },
+    "signed-invalid-structure.pdf": {
+      "category": "signed",
+      "sha256": "1340812cacd84a316bb75ac5b2ef8f54d1ba76b16c843d7192feb1c961170866",
+      "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
+      "expected": {
+        "pages": 1
+      },
+      "signatureDetection": {
+        "hasAcroForm": true,
+        "sigFlags": 1,
+        "sigFieldCount": 1,
+        "signatureDictionaries": 1,
+        "detected": true,
+        "scope": "detection-only; cryptographic validity NOT verified (open sub-gate)"
+      }
+    },
+    "signed-multiple.pdf": {
+      "category": "signed",
+      "sha256": "766c8e5d870a17783cdccc39c8e9cf2318ed993cc0b9c089d08897d10edef791",
+      "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
+      "expected": {
+        "pages": 1
+      },
+      "signatureDetection": {
+        "hasAcroForm": true,
+        "sigFlags": 1,
+        "sigFieldCount": 2,
+        "signatureDictionaries": 2,
+        "detected": true,
+        "scope": "detection-only; cryptographic validity NOT verified (open sub-gate)"
+      }
+    },
+    "xfa-static.pdf": {
+      "category": "xfa",
+      "sha256": "ed996e1db1bbd7453ff2ca6d924a8097d2568475836e24a8b2ddd53fa111f9ba",
+      "qpdf": "clean",
+      "expected": {
+        "pages": 1
+      },
+      "xfa": {
+        "acroFormPresent": true,
+        "xfaPresent": true,
+        "xfaKind": "stream",
+        "packetNames": [],
+        "dynamicHint": false
+      }
+    },
+    "xfa-dynamic.pdf": {
+      "category": "xfa",
+      "sha256": "ab77206a55508f9fc28c4bfad94e83b97fd3e0e50d7109eab727cc97ad01160d",
+      "qpdf": "clean",
+      "expected": {
+        "pages": 1
+      },
+      "xfa": {
+        "acroFormPresent": true,
+        "xfaPresent": true,
+        "xfaKind": "stream",
+        "packetNames": [],
+        "dynamicHint": true
+      }
+    },
+    "xfa-hybrid.pdf": {
+      "category": "xfa",
+      "sha256": "111686fa22c78743da00d38e2fba64273164a55e4b3d442c3d753a02e34215c5",
+      "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
+      "expected": {
+        "pages": 1,
+        "acroFormFieldCount": 1
+      },
+      "xfa": {
+        "acroFormPresent": true,
+        "xfaPresent": true,
+        "xfaKind": "stream",
+        "packetNames": [],
+        "dynamicHint": false
+      }
+    }
+  }
+}

@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
-      "generatedAt": "2026-08-25T05:28:00.923Z",
+      "generatedAt": "2026-08-25T14:01:43.561Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -902,9 +902,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 0,
@@ -1030,9 +1030,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 1,
@@ -1158,9 +1158,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 2,
@@ -1286,9 +1286,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 3,
@@ -1414,9 +1414,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 4,
@@ -1542,9 +1542,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 5,
@@ -1670,9 +1670,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 6,
@@ -1798,9 +1798,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 7,
@@ -1926,9 +1926,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 8,
@@ -2054,9 +2054,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 9,
@@ -2182,9 +2182,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 10,
@@ -2310,9 +2310,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 11,
@@ -2438,9 +2438,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 12,
@@ -2566,9 +2566,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 13,
@@ -2694,9 +2694,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 14,
@@ -2822,9 +2822,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 15,
@@ -2950,9 +2950,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 16,
@@ -3078,9 +3078,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 17,
@@ -3206,9 +3206,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 18,
@@ -3334,9 +3334,9 @@
           },
           "value": "India",
           "choices": [
-            "India",
-            "Ireland",
-            "United States"
+            "IN",
+            "IE",
+            "US"
           ],
           "coordinate": {
             "pageIndex": 19,
@@ -3405,7 +3405,7 @@
       "minor": 0
     },
     "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
-    "generatedAt": "2026-08-25T05:28:00.923Z",
+    "generatedAt": "2026-08-25T14:01:43.561Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -3792,7 +3792,7 @@
         "minor": 1
       },
       "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
-      "generatedAt": "2026-08-25T05:28:00.923Z",
+      "generatedAt": "2026-08-25T14:01:43.561Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -4208,9 +4208,9 @@
         "major": 1,
         "minor": 0
       },
-      "sessionID": "b40128b6-4a3a-4c20-a8e7-19abf03f0e66",
+      "sessionID": "f4b561c9-7eaa-4e77-80f8-32af4ad40b15",
       "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
-      "generatedAt": "2026-08-25T05:28:00.955Z",
+      "generatedAt": "2026-08-25T14:01:43.591Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -4274,7 +4274,7 @@
         "major": 1,
         "minor": 0
       },
-      "generatedAt": "2026-08-25T05:28:00.923Z",
+      "generatedAt": "2026-08-25T14:01:43.561Z",
       "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
       "provider": {
         "id": "pdfjs-pdflib",
@@ -4305,7 +4305,7 @@
         },
         "memory": {
           "state": "available",
-          "usedJSHeapSize": 12149841,
+          "usedJSHeapSize": 17222271,
           "jsHeapSizeLimit": 4395630592
         },
         "storage": {
@@ -4452,7 +4452,7 @@
         "minor": 0
       },
       "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
-      "generatedAt": "2026-08-25T05:28:00.923Z",
+      "generatedAt": "2026-08-25T14:01:43.561Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -4491,7 +4491,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "93614e6d-e514-4fcd-917f-1a3356e066c4",
+        "id": "74160b69-c649-42ff-988b-b9fffba7be0d",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -4499,7 +4499,7 @@
         "operationIDs": []
       },
       {
-        "id": "542dc8a9-71da-4d8f-a9db-cf32298f7532",
+        "id": "f77cc61a-a9dd-415f-a8b5-8e512b0aefa4",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 20 page(s).",
@@ -4507,7 +4507,7 @@
         "operationIDs": []
       },
       {
-        "id": "25b07135-8b13-462a-a604-75a1da1d1f8f",
+        "id": "1542c0bc-a698-4540-994d-520ccbfb080f",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -4515,7 +4515,7 @@
         "operationIDs": []
       },
       {
-        "id": "e35b41f6-d4af-4dc6-91f0-7aa62db07dc4",
+        "id": "a579d3ed-e2fc-4b20-a014-5450efc77c0e",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -4523,7 +4523,7 @@
         "operationIDs": []
       },
       {
-        "id": "239d91c3-9dcd-4888-b601-7d1fb44a4e12",
+        "id": "e4c46b9d-e7ee-4a15-8e07-8e04722f3146",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -4531,7 +4531,7 @@
         "operationIDs": []
       },
       {
-        "id": "9da1efff-10f8-4c36-a42e-9dba5520e79b",
+        "id": "7f9a3bcc-ec97-4831-b5d5-224fa581ef7d",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -4547,7 +4547,7 @@
         }
       },
       {
-        "id": "873e99df-8469-4c0f-93ac-9c50d295d5ad",
+        "id": "7f031df5-be4c-44f2-a8b4-9cd0e7fd7143",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -4571,7 +4571,7 @@
         }
       },
       {
-        "id": "dcddd98e-4473-446c-bbff-a63499014c58",
+        "id": "b1bfcf6b-c6e5-43d5-a7e4-c761e814d2dc",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -4594,7 +4594,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-25T05:28:00.950Z",
+    "validatedAt": "2026-08-25T14:01:43.583Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",

@@ -43,6 +43,16 @@ The browser workflow is intentionally local and air-gapped. It loads the
 vendored PDF.js and pdf-lib bundles from `web/vendor/`; it does not upload the
 PDF.
 
+### Design system verification
+
+After any typography, color, spacing, or layout change, open the living specimen
+pages to visually verify the tokens:
+
+- http://127.0.0.1:4173/web/typography-specimen.html — type scale, weights, font stacks
+- http://127.0.0.1:4173/web/typography-regression.html — responsive viewport widths
+
+See [`docs/design-system-specimen.md`](../design-system-specimen.md) for details.
+
 Open a PDF, inspect native fields or tentative suggestions, select a highlighted
 suggestion, review its evidence, add text, dismiss/restore candidates, or choose
 `Add text manually` and click a page. Use `Undo` to recover the last operation,

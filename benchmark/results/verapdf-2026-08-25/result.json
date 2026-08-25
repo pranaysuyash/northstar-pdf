@@ -1,0 +1,284 @@
+{
+  "tool": "veraPDF 1.30.2 (greenfield CLI)",
+  "profile": "PDF/UA-1 (ISO 14289-1:2014)",
+  "provenance": {
+    "source": "https://software.verapdf.org/releases/verapdf-installer.zip",
+    "pack": "resources/packs/pack-veraPDF CLI",
+    "extracted": "flat classpath at tools/verapdf-cli-1.30.2",
+    "wrapper": "tools/verapdf",
+    "java": "OpenJDK 17.0.15"
+  },
+  "results": {
+    "geometry": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 506,
+      "failedChecks": 47,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "geometry-ua1.xml"
+    },
+    "metadata-absent": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 310,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "metadata-absent-ua1.xml"
+    },
+    "metadata-complete": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 310,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "metadata-complete-ua1.xml"
+    },
+    "metadata-custom": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 310,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "metadata-custom-ua1.xml"
+    },
+    "metadata-malformed": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 310,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "metadata-malformed-ua1.xml"
+    },
+    "metadata-unicode": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 310,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "metadata-unicode-ua1.xml"
+    },
+    "multi-column": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 502,
+      "failedChecks": 55,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "multi-column-ua1.xml"
+    },
+    "navigation": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 92,
+      "failedRules": 14,
+      "passedChecks": 444,
+      "failedChecks": 56,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.18.5",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "navigation-ua1.xml"
+    },
+    "plain-text": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 604,
+      "failedChecks": 62,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "plain-text-ua1.xml"
+    },
+    "signed-invalid-structure": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 305,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "signed-invalid-structure-ua1.xml"
+    },
+    "signed-multiple": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 306,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "signed-multiple-ua1.xml"
+    },
+    "signed-valid-structure": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 305,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "signed-valid-structure-ua1.xml"
+    },
+    "xfa-dynamic": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 304,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "xfa-dynamic-ua1.xml"
+    },
+    "xfa-hybrid": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 305,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "xfa-hybrid-ua1.xml"
+    },
+    "xfa-static": {
+      "profile": "PDF/UA-1 validation profile",
+      "isCompliant": false,
+      "passedRules": 96,
+      "failedRules": 10,
+      "passedChecks": 304,
+      "failedChecks": 38,
+      "failedClauses": [
+        "ISO 14289-1:2014:6.2",
+        "ISO 14289-1:2014:7.1",
+        "ISO 14289-1:2014:7.18.1",
+        "ISO 14289-1:2014:7.18.3",
+        "ISO 14289-1:2014:7.18.4",
+        "ISO 14289-1:2014:7.2",
+        "ISO 14289-1:2014:7.21.4.1"
+      ],
+      "report": "xfa-static-ua1.xml"
+    }
+  }
+}

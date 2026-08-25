@@ -12,35 +12,64 @@
 /* Tokens (design handoff: color and brand contract)                    */
 /* ------------------------------------------------------------------ */
 :root {
-  --pdf-ink: oklch(0.22 0.03 255);
-  --pdf-ink-soft: oklch(0.42 0.035 255);
-  --pdf-ink-faint: oklch(0.58 0.025 255);
-  --pdf-paper: oklch(0.985 0.009 90);
-  --pdf-canvas: oklch(0.93 0.018 255);
-  --pdf-shell: oklch(0.18 0.035 255);
-  --pdf-shell-raised: oklch(0.23 0.038 255);
-  --pdf-shell-line: oklch(0.33 0.035 255);
-  --pdf-shell-text: oklch(0.88 0.02 255);
-  --pdf-shell-muted: oklch(0.68 0.025 255);
+  /* Type scale (principle 5): named sizes replace ad-hoc px values */
+  --type-3xs: 0.5625rem;   /* 9px  — kickers, index numbers */
+  --type-2xs: 0.625rem;    /* 10px — status labels, small meta */
+  --type-xs: 0.6875rem;    /* 11px — buttons, labels, body-sm */
+  --type-sm: 0.75rem;      /* 12px — captions, list titles */
+  --type-body: 0.8125rem;  /* 13px — body UI text */
+  --type-heading: 1.0625rem; /* 17px — panel headings */
+  --type-display: 1.1875rem; /* 19px — overlay titles */
+
+  /* Ink (text hierarchy) */
+  --pdf-ink: oklch(0.22 0.025 260);
+  --pdf-ink-soft: oklch(0.42 0.03 260);
+  --pdf-ink-faint: oklch(0.56 0.025 260);
+  /* Paper & canvas — warm-tinted, not pure gray */
+  --pdf-paper: oklch(0.985 0.008 80);
+  --pdf-canvas: oklch(0.94 0.012 75);
+  /* Shell (dark sidebar) — warm charcoal, not cold navy */
+  --pdf-shell: oklch(0.17 0.015 50);
+  --pdf-shell-raised: oklch(0.22 0.018 50);
+  --pdf-shell-line: oklch(0.30 0.015 50);
+  --pdf-shell-text: oklch(0.88 0.012 70);
+  --pdf-shell-muted: oklch(0.65 0.018 60);
+  /* Accent (cobalt blue — primary actions, selection) */
   --pdf-accent-soft: oklch(0.78 0.1 258);
-  --pdf-surface: oklch(0.99 0.006 255);
-  --pdf-surface-soft: oklch(0.965 0.012 255);
-  --pdf-border: oklch(0.86 0.02 255);
+  /* Surfaces — warm white, not blue-white */
+  --pdf-surface: oklch(0.99 0.005 80);
+  --pdf-surface-soft: oklch(0.97 0.008 80);
+  --pdf-border: oklch(0.88 0.012 75);
   --pdf-accent: oklch(0.57 0.19 258);
   --pdf-accent-deep: oklch(0.43 0.16 258);
-  --pdf-accent-wash: oklch(0.92 0.055 258);
+  --pdf-accent-wash: oklch(0.94 0.04 258);
+  /* Semantic states — warm-shifted to match canvas temperature */
   --pdf-amber: oklch(0.73 0.14 80);
-  --pdf-amber-wash: oklch(0.95 0.05 90);
+  --pdf-amber-wash: oklch(0.96 0.04 85);
   --pdf-amber-line: oklch(0.82 0.11 82);
-  --pdf-green: oklch(0.57 0.13 155);
-  --pdf-green-ink: oklch(0.38 0.09 155);
-  --pdf-red: oklch(0.56 0.16 25);
-  --pdf-red-ink: oklch(0.5 0.13 25);
+  --pdf-green: oklch(0.55 0.14 150);
+  --pdf-green-ink: oklch(0.36 0.10 150);
+  --pdf-green-wash: oklch(0.95 0.04 150);
+  --pdf-red: oklch(0.55 0.17 25);
+  --pdf-red-ink: oklch(0.48 0.14 25);
+  --pdf-red-wash: oklch(0.95 0.04 25);
+  /* Info (warm indigo — for informational badges and links) */
+  --pdf-info: oklch(0.50 0.12 270);
+  --pdf-info-wash: oklch(0.94 0.035 270);
   --pdf-display: Iowan Old Style, Baskerville, Palatino Linotype, Georgia, serif;
   --pdf-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --pdf-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --pdf-shadow: 0 18px 45px oklch(0.17 0.04 255 / 0.14);
+  /* Apple Design: critically-damped spring timing (response ~0.3s) */
   --pdf-motion: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pdf-spring: 300ms cubic-bezier(0.25, 0.1, 0.25, 1.0);
+  --pdf-spring-snap: 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Material layers — Apple Design §12 */
+  --pdf-material-bg: oklch(0.22 0.035 255 / 0.72);
+  --pdf-material-blur: blur(24px) saturate(180%);
+  --pdf-material-border: oklch(1 0 0 / 0.08);
+  --pdf-material-sidebar: oklch(0.99 0.006 255 / 0.82);
+  --pdf-material-sidebar-blur: blur(20px) saturate(160%);
 }
 
 /* ------------------------------------------------------------------ */
@@ -53,6 +82,8 @@ body {
   background: var(--pdf-canvas);
   color: var(--pdf-ink);
   font-family: var(--pdf-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -62,7 +93,7 @@ body {
 #app {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   min-height: 100vh;
 }
@@ -100,8 +131,9 @@ body {
 }
 
 .small {
-  font-size: 12px;
+  font-size: var(--type-sm);
   color: var(--pdf-ink-soft);
+  letter-spacing: 0.01em;
 }
 
 .muted {
@@ -117,7 +149,7 @@ body {
 }
 
 .status {
-  font-size: 12px;
+  font-size: var(--type-sm);
   color: var(--pdf-ink-soft);
 }
 
@@ -128,7 +160,7 @@ body {
 }
 
 .outline-item {
-  margin-left: 8px;
+  margin-inline-start: 8px;
 }
 
 .inline {
@@ -150,7 +182,7 @@ body {
 }
 
 .item button {
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 
 /* ------------------------------------------------------------------ */
@@ -163,16 +195,19 @@ body {
   align-items: center;
   padding: 9px 14px;
   color: var(--pdf-shell-text);
-  background: var(--pdf-shell);
-  border-bottom: 1px solid var(--pdf-shell-line);
+  /* Apple Design §12: translucent material — content scrolls under */
+  background: var(--pdf-material-bg);
+  backdrop-filter: var(--pdf-material-blur);
+  -webkit-backdrop-filter: var(--pdf-material-blur);
+  border-bottom: 1px solid var(--pdf-material-border);
   z-index: 3;
 }
 
 .toolbar-title {
   display: flex;
   flex-direction: column;
-  min-width: 174px;
-  margin-right: 4px;
+  min-width: 140px;
+  margin-inline-end: 4px;
 }
 
 .toolbar-title strong {
@@ -189,7 +224,7 @@ body {
 }
 
 .toolbar label {
-  font: 10px var(--pdf-mono);
+  font: var(--type-2xs) var(--pdf-mono);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
@@ -208,7 +243,14 @@ body {
   padding: 4px 10px !important;
   font-weight: 500 !important;
   border-radius: 6px !important;
-  transition: all var(--pdf-motion);
+  /* Apple Design: spring-like transition for mode switching */
+  transition-property: background-color, border-color, color, scale;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.mode-pill-btn:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .mode-pill-btn.is-active {
@@ -220,7 +262,7 @@ body {
 .toolbar input[type="file"] {
   max-width: 168px;
   padding: 5px 6px;
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 .toolbar input[type="text"],
@@ -232,8 +274,16 @@ body {
 .toolbar button {
   min-height: 34px;
   padding: 6px 9px;
-  font-size: 11px;
+  font-size: var(--type-xs);
   cursor: pointer;
+  transition-property: scale;
+  transition-duration: 150ms;
+  /* Apple Design §4: spring-like response on press */
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toolbar button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .toolbar button:hover:not(:disabled) {
@@ -290,16 +340,19 @@ body {
 
 .workspace > aside:first-child {
   color: oklch(0.82 0.02 255);
-  background: var(--pdf-shell);
+  /* Apple Design §12: heavier material for structural region */
+  background: var(--pdf-material-bg);
+  backdrop-filter: var(--pdf-material-blur);
+  -webkit-backdrop-filter: var(--pdf-material-blur);
   border: 0;
-  border-right: 1px solid var(--pdf-shell-line);
+  border-right: 1px solid var(--pdf-material-border);
 }
 
 .workspace > aside:first-child .list-title {
   margin: 0 0 14px;
   padding: 0 10px;
   color: var(--pdf-shell-muted);
-  font: 700 10px var(--pdf-mono);
+  font: 700 var(--type-2xs) var(--pdf-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -339,7 +392,6 @@ body {
 #viewerCanvasWrap {
   position: relative;
   flex: 1;
-  min-height: 0;
   min-height: 100%;
   padding: 28px;
   overflow: auto;
@@ -348,6 +400,28 @@ body {
   border-radius: 0;
   display: flex;
   justify-content: center;
+  /* Apple Design §9: rubber-band edge — gentle overscroll resistance */
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Apple Design §12: scroll-edge effect — gradient mask where chrome meets content */
+#viewerCanvasWrap::before {
+  content: "";
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  height: 8px;
+  margin: -28px -28px 0;
+  background: linear-gradient(
+    to bottom,
+    oklch(0.93 0.018 255 / 0.6),
+    oklch(0.93 0.018 255 / 0)
+  );
+  pointer-events: none;
+  z-index: 1;
 }
 
 #viewerStack {
@@ -413,9 +487,12 @@ body {
 /* ------------------------------------------------------------------ */
 .workspace > aside:last-child {
   padding: 0;
-  background: var(--pdf-surface);
+  /* Apple Design §12: light material for content panel */
+  background: var(--pdf-material-sidebar);
+  backdrop-filter: var(--pdf-material-sidebar-blur);
+  -webkit-backdrop-filter: var(--pdf-material-sidebar-blur);
   border: 0;
-  border-left: 1px solid var(--pdf-border);
+  border-left: 1px solid var(--pdf-material-border);
 }
 
 .workspace > aside:last-child > .list-title {
@@ -432,7 +509,7 @@ body {
   margin-bottom: 8px;
   color: var(--pdf-ink-faint);
   content: "INSPECTOR";
-  font: 700 10px var(--pdf-mono);
+  font: 700 var(--type-2xs) var(--pdf-mono);
   letter-spacing: 0.1em;
 }
 
@@ -443,8 +520,7 @@ body {
 .workspace > aside:last-child > .small,
 .workspace > aside:last-child .list-title ~ .small,
 .workspace > aside:last-child .list-title[style] {
-  margin-right: 20px;
-  margin-left: 20px;
+  margin-inline: 20px;
 }
 
 .workspace > aside:last-child > .small + .list-title,
@@ -477,7 +553,7 @@ body {
 
 .completion-card .list-title {
   color: var(--pdf-ink-faint);
-  font: 700 10px var(--pdf-mono);
+  font: 700 var(--type-2xs) var(--pdf-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
@@ -501,6 +577,11 @@ body {
   color: var(--pdf-accent-deep);
 }
 
+/* Zoom percentage updates on slider drag — tabular digits prevent layout shift */
+#zoomValue {
+  font-variant-numeric: tabular-nums;
+}
+
 /* Candidate overlays on the document: restrained cobalt language.
    Character-grid candidates render the union as a thin dashed boundary only
    (no fill) and paint each cell individually, preserving the printed text
@@ -515,7 +596,7 @@ body {
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
-  font: 11px/1.1 var(--pdf-body);
+  font: var(--type-xs)/1.1 var(--pdf-body);
   z-index: 5;
   border-radius: 4px;
 }
@@ -570,7 +651,7 @@ body {
   cursor: pointer;
   white-space: pre-wrap;
   overflow: hidden;
-  font: 600 12px/1.1 var(--pdf-body);
+  font: 600 var(--type-sm)/1.1 var(--pdf-body);
   z-index: 6;
   border-radius: 3px;
 }
@@ -583,8 +664,9 @@ body {
 .review-card {
   background: var(--pdf-surface-soft);
   border: 1px solid var(--pdf-border);
-  border-radius: 5px;
-  padding: 10px;
+  border-left: 3px solid var(--pdf-accent);
+  border-radius: 10px;
+  padding: 10px 10px 10px 13px;
   margin: 8px 0;
 }
 
@@ -594,7 +676,7 @@ body {
 }
 
 .review-card h3 {
-  font-size: 13px;
+  font-size: var(--type-body);
   margin: 0 0 4px;
 }
 
@@ -611,12 +693,31 @@ body {
 
 .review-actions button {
   min-height: 34px;
-  border: 1px solid var(--pdf-border);
+  border: none;
   border-radius: 5px;
   background: var(--pdf-surface);
   color: var(--pdf-ink);
   padding: 6px 9px;
   cursor: pointer;
+  box-shadow:
+    0px 0px 0px 1px oklch(0 0 0 / 0.06),
+    0px 1px 2px -1px oklch(0 0 0 / 0.06),
+    0px 2px 4px 0px oklch(0 0 0 / 0.04);
+  transition-property: scale, box-shadow;
+  transition-duration: 200ms;
+  /* Apple Design §4: spring-like response */
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.review-actions button:active:not(:disabled) {
+  scale: 0.96;
+}
+
+.review-actions button:hover:not(:disabled) {
+  box-shadow:
+    0px 0px 0px 1px oklch(0 0 0 / 0.08),
+    0px 1px 2px -1px oklch(0 0 0 / 0.08),
+    0px 2px 4px 0px oklch(0 0 0 / 0.06);
 }
 
 .review-actions button.primary {
@@ -650,7 +751,7 @@ body {
 .impact-metric-value {
   color: var(--pdf-ink);
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  text-align: end;
 }
 
 .impact-metric-value.success {
@@ -717,7 +818,7 @@ body {
 .product-mode-kicker {
   padding: 0 7px 10px;
   color: var(--pdf-shell-muted);
-  font: 600 9px var(--pdf-mono);
+  font: 600 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
@@ -738,8 +839,15 @@ body {
   border-radius: 5px;
   background: transparent;
   color: var(--pdf-shell-text);
-  text-align: left;
+  text-align: start;
   cursor: pointer;
+  transition-property: scale, background-color;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.product-mode-button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .product-mode-button:hover,
@@ -748,14 +856,14 @@ body {
 }
 
 .product-mode-button.is-active {
-  background: var(--pdf-shell-raised);
+  background: oklch(0.26 0.03 55);
   border-color: color-mix(in oklch, var(--pdf-accent) 50%, transparent);
   box-shadow: inset 3px 0 var(--pdf-accent);
 }
 
 .product-mode-index {
   color: var(--pdf-shell-muted);
-  font: 600 9px var(--pdf-mono);
+  font: 600 var(--type-3xs) var(--pdf-mono);
 }
 
 .product-mode-copy {
@@ -767,7 +875,7 @@ body {
 .product-mode-copy strong {
   overflow: hidden;
   color: var(--pdf-shell-text);
-  font-size: 11px;
+  font-size: var(--type-xs);
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -776,7 +884,7 @@ body {
 .product-mode-copy small {
   overflow: hidden;
   color: var(--pdf-shell-muted);
-  font-size: 9px;
+  font-size: var(--type-3xs);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -796,7 +904,7 @@ body {
 .product-mode-status {
   margin: 12px 7px 0;
   color: var(--pdf-shell-muted);
-  font-size: 10px;
+  font-size: var(--type-2xs);
   line-height: 1.45;
 }
 
@@ -827,7 +935,7 @@ body {
 
 .mode-context-line {
   color: var(--pdf-ink-soft);
-  font: 11px/1.4 var(--pdf-mono);
+  font: var(--type-xs)/1.4 var(--pdf-mono);
   font-variant-numeric: tabular-nums;
 }
 
@@ -841,7 +949,7 @@ body {
 
 .mode-panel-kicker {
   color: var(--pdf-ink-faint);
-  font: 700 9px var(--pdf-mono);
+  font: 700 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
@@ -849,20 +957,28 @@ body {
 .mode-panel-title {
   margin: 0;
   color: var(--pdf-ink);
-  font: 600 17px/1.15 var(--pdf-display);
+  font: 600 var(--type-heading)/1.15 var(--pdf-display);
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .mode-return-button {
-  margin-left: auto;
+  margin-inline-start: auto;
   min-height: 28px;
   padding: 4px 10px;
   background: transparent;
   border: 1px solid var(--pdf-border);
   border-radius: 5px;
   color: var(--pdf-ink-soft);
-  font-size: 11px;
+  font-size: var(--type-xs);
   cursor: pointer;
+  transition-property: scale;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.mode-return-button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .mode-return-button:hover,
@@ -886,7 +1002,7 @@ body {
   display: block;
   margin-bottom: 6px;
   color: var(--pdf-ink-faint);
-  font: 700 9px var(--pdf-mono);
+  font: 700 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.11em;
   text-transform: uppercase;
 }
@@ -898,7 +1014,7 @@ body {
   gap: 10px;
   padding: 3px 0;
   border-bottom: 1px solid var(--pdf-surface-soft);
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 .docmap-row .docmap-count,
@@ -918,7 +1034,7 @@ body {
   background: var(--pdf-amber-wash);
   border: 1px solid var(--pdf-amber-line);
   border-radius: 5px;
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 .next-action-card .next-action-copy {
@@ -933,13 +1049,20 @@ body {
   border: 1px solid var(--pdf-accent-deep);
   border-radius: 5px;
   color: oklch(0.98 0.01 255);
-  font-size: 11px;
+  font-size: var(--type-xs);
   cursor: pointer;
+  transition-property: scale;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.next-action-card button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .next-action-empty {
   color: var(--pdf-ink-faint);
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 /* Review panel: export guardrail + validation report */
@@ -964,12 +1087,12 @@ body {
 .guardrail-decision .guardrail-label {
   color: var(--pdf-ink);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--type-sm);
 }
 
 .guardrail-decision .guardrail-note {
   color: var(--pdf-ink-soft);
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 .validation-report {
@@ -984,7 +1107,7 @@ body {
   justify-content: space-between;
   padding: 4px 0;
   border-bottom: 1px solid var(--pdf-surface-soft);
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 .vr-state {
@@ -993,7 +1116,7 @@ body {
   border-radius: 99px;
   border: 1px solid var(--pdf-border);
   color: var(--pdf-ink-soft);
-  font: 600 9px var(--pdf-mono);
+  font: 600 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1005,7 +1128,7 @@ body {
 
 .vr-state.warning {
   border-color: var(--pdf-amber-line);
-  color: oklch(0.45 0.11 80);
+  color: oklch(0.40 0.12 80);
   background: var(--pdf-amber-wash);
 }
 
@@ -1021,7 +1144,7 @@ body {
 
 .vr-note {
   color: var(--pdf-ink-faint);
-  font-size: 10px;
+  font-size: var(--type-2xs);
 }
 
 /* Organize panel inventory rows reuse docmap-row styling. */
@@ -1031,7 +1154,7 @@ body {
   border-radius: 5px;
   background: var(--pdf-amber-wash);
   color: var(--pdf-ink-soft);
-  font-size: 11px;
+  font-size: var(--type-xs);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1055,23 +1178,29 @@ body {
   pointer-events: auto;
   width: min(430px, 88%);
   padding: 16px 18px 14px;
-  background: var(--pdf-paper);
-  border: 1px solid var(--pdf-border);
-  border-radius: 7px;
-  box-shadow: var(--pdf-shadow);
-  text-align: left;
-  transition: opacity var(--pdf-motion), transform var(--pdf-motion);
+  /* Apple Design §12: lighter material for floating interactive element */
+  background: oklch(0.99 0.006 255 / 0.88);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid var(--pdf-material-border);
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px oklch(0.17 0.04 255 / 0.12),
+    0 2px 8px oklch(0.17 0.04 255 / 0.06);
+  text-align: start;
+  /* Apple Design §4: spring-like enter/exit */
+  transition: opacity 300ms cubic-bezier(0.25, 0.1, 0.25, 1.0), transform 300ms cubic-bezier(0.25, 0.1, 0.25, 1.0);
 }
 
 .analysis-overlay.is-leaving .analysis-console {
   opacity: 0;
-  transform: translateY(-6px);
+  transform: translateY(-8px) scale(0.97);
 }
 
 .analysis-kicker {
   margin-bottom: 5px;
   color: var(--pdf-accent-deep);
-  font: 700 9px var(--pdf-mono);
+  font: 700 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -1079,8 +1208,9 @@ body {
 .analysis-title {
   margin: 0 0 4px;
   color: var(--pdf-ink);
-  font: 600 19px/1.12 var(--pdf-display);
+  font: 600 var(--type-display)/1.12 var(--pdf-display);
   letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .analysis-copy {
@@ -1088,6 +1218,7 @@ body {
   color: var(--pdf-ink-soft);
   font-size: 11.5px;
   line-height: 1.5;
+  text-wrap: pretty;
 }
 
 .analysis-progress {
@@ -1122,7 +1253,7 @@ body {
   border: 1px solid var(--pdf-border);
   border-radius: 99px;
   color: var(--pdf-ink-faint);
-  font: 600 9px var(--pdf-mono);
+  font: 600 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
@@ -1165,8 +1296,15 @@ body {
   border: 1px solid var(--pdf-border);
   border-radius: 5px;
   color: var(--pdf-ink-soft);
-  font-size: 11px;
+  font-size: var(--type-xs);
   cursor: pointer;
+  transition-property: scale;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.analysis-skip-button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .analysis-skip-button:hover,
@@ -1181,10 +1319,10 @@ body {
   display: inline-flex;
   gap: 7px;
   align-items: center;
-  margin-left: auto;
+  margin-inline-start: auto;
   padding: 2px 4px 2px 0;
   color: var(--pdf-ink-faint);
-  font: 600 10px var(--pdf-mono);
+  font: 600 var(--type-2xs) var(--pdf-mono);
   letter-spacing: 0.03em;
 }
 
@@ -1201,7 +1339,7 @@ body {
 }
 
 .analysis-pill.is-partial {
-  color: oklch(0.45 0.11 80);
+  color: oklch(0.40 0.12 80);
 }
 
 .analysis-pill.is-skipped,
@@ -1221,16 +1359,155 @@ body {
   border: 1px solid var(--pdf-border);
   border-radius: 99px;
   color: var(--pdf-ink-soft);
-  font: 600 9px var(--pdf-mono);
+  font: 600 var(--type-3xs) var(--pdf-mono);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
+  transition-property: scale;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+.analysis-pill button:active:not(:disabled) {
+  scale: 0.96;
 }
 
 .analysis-pill button:hover,
 .analysis-pill button:focus-visible {
   border-color: var(--pdf-accent);
   color: var(--pdf-accent-deep);
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyboard shortcuts help                                             */
+/* ------------------------------------------------------------------ */
+#shortcutsHelpButton {
+  min-height: 28px;
+  min-width: 28px;
+  padding: 2px 8px;
+  font: 600 var(--type-xs)/1 var(--pdf-mono);
+  color: var(--pdf-shell-muted);
+  background: var(--pdf-shell-raised);
+  border: 1px solid var(--pdf-shell-line);
+  border-radius: 99px;
+  cursor: pointer;
+  transition-property: scale;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+}
+
+#shortcutsHelpButton:active {
+  scale: 0.96;
+}
+
+#shortcutsHelpButton:hover {
+  color: var(--pdf-shell-text);
+  border-color: var(--pdf-accent-soft);
+}
+
+.shortcuts-help {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--pdf-shell);
+  border-bottom: 1px solid var(--pdf-shell-line);
+}
+
+.shortcuts-help-title {
+  font: 600 var(--type-2xs)/1 var(--pdf-mono);
+  color: var(--pdf-shell-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.shortcuts-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: var(--type-xs)/1.3 var(--pdf-body);
+  color: var(--pdf-shell-text);
+}
+
+.shortcut-row kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  font: 600 var(--type-2xs)/1 var(--pdf-mono);
+  color: var(--pdf-shell-text);
+  background: var(--pdf-shell-raised);
+  border: 1px solid var(--pdf-shell-line);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.shortcut-row span {
+  color: var(--pdf-shell-muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Input sizing (replaces inline styles)                               */
+/* ------------------------------------------------------------------ */
+.input-page {
+  width: 72px;
+}
+
+.input-search {
+  width: 200px;
+}
+
+.input-password {
+  width: 240px;
+  margin-top: 10px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Profile panel dynamic element styles (replaces hardcoded hex)        */
+/* ------------------------------------------------------------------ */
+.profile-label {
+  width: 80px;
+  text-align: end;
+  font-size: var(--type-xs);
+  color: var(--pdf-ink-faint);
+  flex-shrink: 0;
+}
+
+.profile-input {
+  flex: 1;
+  font-size: var(--type-xs);
+  padding: 2px 4px;
+  border: 1px solid var(--pdf-border);
+  border-radius: 4px;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-top: 1px solid var(--pdf-surface-soft);
+}
+
+.profile-name-input {
+  flex: 1;
+  font-size: var(--type-sm);
+  padding: 4px;
+  border: 1px solid var(--pdf-border);
+  border-radius: 4px;
+}
+
+.field-row-selected {
+  background: var(--pdf-accent-wash);
+}
+
+.preview-text {
+  color: var(--pdf-ink);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1266,6 +1543,14 @@ body {
 @media (max-width: 760px) {
   #app {
     height: auto;
+  }
+
+  /* iOS Safari zooms when input text < 16px (principle 15) */
+  .toolbar input,
+  .completion-card input,
+  .completion-card select,
+  #passwordInput {
+    font-size: 16px;
   }
 
   .toolbar {
@@ -1383,6 +1668,9 @@ body {
 /* ------------------------------------------------------------------ */
 /* Reduced motion (design §7)                                           */
 /* ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ */
+/* Apple Design §14: reduced motion — cross-fade, not slide/spring      */
+/* ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -1395,5 +1683,43 @@ body {
 
   .analysis-overlay.is-leaving .analysis-console {
     transform: none;
+    transition: opacity 200ms ease;
+  }
+
+  .analysis-console {
+    transition: opacity 200ms ease;
+  }
+
+  .mode-pill-btn,
+  .toolbar button,
+  .review-actions button,
+  .analysis-skip-button,
+  .analysis-pill button,
+  #shortcutsHelpButton {
+    transition: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Apple Design §14: reduced translucency — solid surfaces              */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-transparency: reduce) {
+  .toolbar {
+    background: var(--pdf-shell);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: var(--pdf-shell-line);
+  }
+
+  .workspace > aside:first-child {
+    background: var(--pdf-shell);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-right-color: var(--pdf-shell-line);
+  }
+
+  .analysis-console {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }

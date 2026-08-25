@@ -538,7 +538,7 @@
       encryptedBrowserStore = createEncryptedTemplateStore({
         dbName: LOCAL_VAULT_DB_NAME,
         passphrase: browserStorePassphrase,
-        logger: createZeroContentLogger()
+        logger: browserStoreLogger
       });
     }
     try {
@@ -548,6 +548,141 @@
       browserStorePassphrase = null;
       if (error instanceof TemplateStoreError) throw error;
       throw new Error("The encrypted local store could not be unlocked.");
+    }
+  }
+
+  async function refreshBrowserStoreHealth() {
+    try {
+      if (!encryptedBrowserStore) {
+        encryptedBrowserStore = createEncryptedTemplateStore({
+          dbName: LOCAL_VAULT_DB_NAME,
+          passphrase: browserStorePassphrase,
+          logger: browserStoreLogger
+        });
+      }
+      browserStoreHealth = await encryptedBrowserStore.inspectHealth();
+      renderCompletionPanel();
+      return browserStoreHealth;
+    } catch (error) {
+      browserStoreHealth = {
+        mode: "indexeddb-aes-gcm",
+        state: "unknown",
+        recordCount: 0,
+        auditEventCount: 0,
+        recovery: null,
+        recoveryEnvelopeAvailable: false,
+        evictionWarning: error.message || "health-check-failed",
+        sourceRetention: "none",
+        contentLogging: "zero-content"
+      };
+      renderCompletionPanel();
+      throw error;
+    }
+  }
+
+  function downloadJSON(value, filename) {
+    const blob = new Blob([JSON.stringify(value, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function exportBrowserVaultBackup() {
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const backup = await store.exportEncryptedBackup({ storePassphrase: browserStorePassphrase });
+      downloadJSON(backup, "pdf-editor-browser-vault-backup.json");
+      browserStoreHealth = await store.inspectHealth();
+      setStatus("Exported an encrypted browser vault backup. Keep it outside browser storage.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Encrypted vault backup export failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function restoreBrowserVaultBackup(file) {
+    if (!file) return;
+    const passphrase = browserStorePassphrase || templatePassphrasePrompt();
+    if (!passphrase) return;
+    browserStorePassphrase = passphrase;
+    try {
+      if (!encryptedBrowserStore) {
+        encryptedBrowserStore = createEncryptedTemplateStore({ dbName: LOCAL_VAULT_DB_NAME, passphrase, logger: browserStoreLogger });
+      }
+      const backup = JSON.parse(await file.text());
+      if (!window.confirm("Restore this encrypted vault backup and replace the current local vault records?")) return;
+      browserStoreHealth = await encryptedBrowserStore.restoreEncryptedBackup(backup, {
+        storePassphrase: passphrase,
+        replace: true
+      });
+      setStatus("Restored the encrypted browser vault. Review templates and profiles before use.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Encrypted vault restore failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function exportBrowserRecoveryEnvelope() {
+    const recoveryPassphrase = window.prompt(
+      "Export a separate key-recovery envelope. Use at least 12 characters and keep this passphrase separate from the vault backup.",
+      ""
+    );
+    if (!recoveryPassphrase) return;
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const envelope = await store.exportPassphraseRecovery(recoveryPassphrase);
+      downloadJSON(envelope, "pdf-editor-browser-vault-key-recovery.json");
+      browserStoreHealth = await store.inspectHealth();
+      setStatus("Exported the encrypted browser key-recovery envelope. The recovery passphrase is never stored.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Key-recovery export failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function importBrowserRecoveryEnvelope(file) {
+    if (!file) return;
+    const recoveryPassphrase = window.prompt(
+      "Enter the separate passphrase for this browser-vault key-recovery envelope.",
+      ""
+    );
+    if (!recoveryPassphrase) return;
+    try {
+      if (!encryptedBrowserStore) {
+        encryptedBrowserStore = createEncryptedTemplateStore({ dbName: LOCAL_VAULT_DB_NAME, logger: browserStoreLogger });
+      }
+      const envelope = JSON.parse(await file.text());
+      browserStoreHealth = await encryptedBrowserStore.recoverPassphraseRecovery(envelope, recoveryPassphrase);
+      setStatus(browserStoreHealth.state === "evicted"
+        ? "Recovered the browser vault key, but records were evicted. Restore the encrypted backup before writing."
+        : "Recovered the browser vault key. Existing records remain encrypted and review-gated.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Key-recovery import failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function deleteBrowserVault() {
+    if (!window.confirm("Delete all local browser template and profile records? Keep an encrypted backup first if recovery is required.")) return;
+    try {
+      const store = encryptedBrowserStore || createEncryptedTemplateStore({ dbName: LOCAL_VAULT_DB_NAME, logger: browserStoreLogger });
+      encryptedBrowserStore = store;
+      await store.deleteStore();
+      browserStorePassphrase = null;
+      browserProfilePassphrase = null;
+      currentProfile = null;
+      browserStoreHealth = await store.inspectHealth();
+      setStatus("Deleted the browser vault. The value-free deletion audit remains in this browser profile when storage permits.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Browser vault deletion failed: ${error.message || "unknown error"}.`, "danger");
     }
   }
 
@@ -1270,6 +1405,9 @@
     sessionProvenance = buildSessionPrivacyProvenance();
     renderPreflightReport();
     renderCompletionPanel();
+    refreshBrowserStoreHealth().catch(() => {
+      // The visible template panel will render the unknown/evicted state.
+    });
     modeStage.completeAnalysis({
       nativeFieldCount: nativeFields.length,
       candidateCount: candidates.length,
@@ -1676,8 +1814,19 @@
     ui.activateTemplateButton.disabled = true;
     ui.prepareTemplateButton.disabled = true;
     ui.applyTemplateButton.disabled = true;
+    if (ui.templateHealthButton) ui.templateHealthButton.textContent = browserStoreHealth
+      ? `Store health: ${browserStoreHealth.state}`
+      : "Store health";
+    if (browserStoreHealth?.state === "evicted") {
+      const warning = browserStoreHealth.evictionWarning || "Browser storage was evicted. Restore an encrypted backup before writing.";
+      ui.templateSummary.textContent = `${warning} ${browserStoreHealth.recordCount} encrypted record(s) are currently visible. Source PDFs are not stored in this vault.`;
+    }
     if (!templateContract) {
-      ui.templateSummary.textContent = "No template captured. Capture the current layout to create review-only mapping proposals.";
+      if (browserStoreHealth?.state !== "evicted") {
+        ui.templateSummary.textContent = browserStoreHealth
+          ? `No template captured. Vault ${browserStoreHealth.state}, ${browserStoreHealth.recordCount} encrypted record(s), ${browserStoreHealth.auditEventCount || 0} value-free audit event(s). Source PDFs are not stored in this vault.`
+          : "No template captured. Capture the current layout to create review-only mapping proposals.";
+      }
       return;
     }
     const mappings = templateContract.payload.mappings || [];
@@ -3227,6 +3376,19 @@
     status.className = "item small";
     status.textContent = `Sanitization: ${payload.sanitization.status}; clean claim: no; source unchanged: yes.`;
     ui.preflightBox.appendChild(status);
+    const provenance = buildSessionPrivacyProvenance()?.payload;
+    const locality = document.createElement("div");
+    locality.className = "item small";
+    locality.textContent = `Processing locality: ${provenance?.processing?.locality || "local-browser"}; network egress: ${provenance?.processing?.dataEgress || "unknown"}; companion requests: ${provenance?.processing?.companionRequestCount ?? 0}.`;
+    ui.preflightBox.appendChild(locality);
+    const ocr = document.createElement("div");
+    ocr.className = "small muted";
+    ocr.textContent = `OCR: ${provenance?.ocr?.state || "not-used"}; recognized text retained: ${provenance?.ocr?.recognizedTextRetained ? "yes" : "no"}; source retention: ${provenance?.sourceRetention?.state || "in-memory-session"}.`;
+    ui.preflightBox.appendChild(ocr);
+    const logging = document.createElement("div");
+    logging.className = "small muted";
+    logging.textContent = "Diagnostics: zero-content events only. Filenames, page text, field values, source bytes, screenshots, and OCR text are excluded from the privacy log.";
+    ui.preflightBox.appendChild(logging);
     const categories = [
       ["Metadata fields present", payload.summary.metadataFieldCount],
       ["Embedded-data observations", payload.summary.embeddedDataCount],
@@ -4051,6 +4213,27 @@
     await importTemplateSync(event.target.files?.[0] || null);
     event.target.value = "";
   });
+  ui.templateHealthButton?.addEventListener("click", async () => {
+    try {
+      await refreshBrowserStoreHealth();
+      setStatus(`Browser vault health: ${browserStoreHealth.state}. Source retention is ${browserStoreHealth.sourceRetention}; logging is ${browserStoreHealth.contentLogging}.`);
+    } catch (error) {
+      setStatus(`Browser vault health is unknown: ${error.message || "health-check-failed"}.`, "danger");
+    }
+  });
+  ui.templateBackupButton?.addEventListener("click", exportBrowserVaultBackup);
+  ui.templateRestoreButton?.addEventListener("click", () => ui.templateBackupInput.click());
+  ui.templateBackupInput?.addEventListener("change", async (event) => {
+    await restoreBrowserVaultBackup(event.target.files?.[0] || null);
+    event.target.value = "";
+  });
+  ui.templateRecoveryButton?.addEventListener("click", exportBrowserRecoveryEnvelope);
+  ui.templateRecoveryRestoreButton?.addEventListener("click", () => ui.templateRecoveryInput.click());
+  ui.templateRecoveryInput?.addEventListener("change", async (event) => {
+    await importBrowserRecoveryEnvelope(event.target.files?.[0] || null);
+    event.target.value = "";
+  });
+  ui.templateDeleteStoreButton?.addEventListener("click", deleteBrowserVault);
   ui.activateTemplateButton.addEventListener("click", activateReviewedTemplate);
   ui.prepareTemplateButton.addEventListener("click", prepareTemplateCompletion);
   ui.applyTemplateButton.addEventListener("click", applyTemplateCompletion);

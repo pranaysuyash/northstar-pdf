@@ -143,6 +143,7 @@ current product claim is blocked.
   - First-class mode selection segmented control in `ContentView` toolbar.
   - Mode persistence preference (UserDefaults-backed) supporting both casual (resets to Read) and professional (preserves mode) workflows.
   - Fill progress calculation, dynamic status bar chips, and keyboard tab-order navigation across native fields and active candidates in page reading order.
+  - **Inline Canvas Text Editor**: Contextual floating in-place editor spawned directly at page viewport coordinates for tapped native fields and candidates; pressing Return commits the value and advances tab-order focus to the next field.
   - Full-featured `SignatureSheet` with multi-modal input (Draw canvas, Type with typography styles, Image file upload, and Saved signatures store).
   - Explicit two-phase redaction workflow with hard confirmation gate (L3) alerting the user of permanent data destruction before committing `.applyRedaction`.
   - Intent inference engine routing page clicks to inline editors, sign sheets, or direct placements based on active mode and tapped element semantics.

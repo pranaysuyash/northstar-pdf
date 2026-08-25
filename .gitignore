@@ -18,8 +18,23 @@ xcuserdata/
 .agent/
 .freebuff/
 .vscode/
+.idea/
 .workbuddy-ai/
 mcp-shell.log
+*.log
+
+# Editor and temporary files
+*.swp
+*.swo
+*~
+
+# Testing, coverage, and playwright artifacts
+test-results/
+playwright-report/
+.playwright-artifacts/
+coverage/
+.nyc_output/
+*.tsbuildinfo
 
 # Local generated fixtures and scratch outputs
 tmp/

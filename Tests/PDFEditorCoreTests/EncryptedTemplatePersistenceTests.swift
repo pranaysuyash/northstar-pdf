@@ -240,4 +240,67 @@ struct EncryptedTemplatePersistenceTests {
         #expect(conflictResult.history == nil)
         #expect(conflictResult.conflicts.count == 1)
     }
+
+    @Test func encryptedVaultBackupsRoundTripAndCrossDeviceBundlesStaySeparated() throws {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent("pdf-editor-cross-device-(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let sourceTemplateDirectory = root.appendingPathComponent("SourceTemplates", isDirectory: true)
+        let destinationTemplateDirectory = root.appendingPathComponent("DestinationTemplates", isDirectory: true)
+        let sourceProfileDirectory = root.appendingPathComponent("SourceProfiles", isDirectory: true)
+        let destinationProfileDirectory = root.appendingPathComponent("DestinationProfiles", isDirectory: true)
+        let key = Data(repeating: 0x2A, count: 32)
+        let recoveryPassphrase = "cross-device-recovery-passphrase"
+
+        let sourceTemplates = EncryptedPDFTemplateStore(directory: sourceTemplateDirectory, keyData: key)
+        _ = try sourceTemplates.append(revision: template(
+            revisionID: UUID(uuidString: "30303030-3030-3030-3030-303030303030")!))
+        _ = try sourceTemplates.append(learningEvent: PDFTemplateLearningEvent(
+            templateID: templateID,
+            baseRevisionID: UUID(uuidString: "30303030-3030-3030-3030-303030303030")!,
+            sourceDigest: String(repeating: "f", count: 64),
+            kind: .completionValidated,
+            completionSessionID: UUID(uuidString: "31313131-3131-3131-3131-313131313131")!))
+
+        let encryptedTemplateBackup = try sourceTemplates.exportEncryptedBackup()
+        let encryptedTemplateText = String(decoding: encryptedTemplateBackup, as: UTF8.self)
+        #expect(!encryptedTemplateText.contains("Private recurring form"))
+        #expect(!encryptedTemplateText.contains("completionValidated"))
+
+        let recoveryData = try sourceTemplates.exportRecoveryEnvelope(passphrase: recoveryPassphrase)
+        let backupBundle = try PDFLocalCrossDeviceRecoveryCodec.decode(encryptedTemplateBackup)
+        let recoveryDecoder = JSONDecoder()
+        recoveryDecoder.dateDecodingStrategy = .iso8601
+        let recovery = try recoveryDecoder.decode(PDFLocalStoreRecoveryEnvelope.self, from: recoveryData)
+        let crossDevice = PDFLocalCrossDeviceRecoveryBundle(
+            storeKind: .template,
+            backup: backupBundle,
+            recovery: recovery)
+        let crossDeviceData = try PDFLocalCrossDeviceBundleCodec.encode(crossDevice)
+        let decoded = try PDFLocalCrossDeviceBundleCodec.decode(crossDeviceData)
+        // Normalize both sides to whole-second precision because ISO8601
+        // encoding truncates sub-second fractional seconds.
+        #expect(PDFLocalCrossDeviceBundleCodec.normalized(decoded) == PDFLocalCrossDeviceBundleCodec.normalized(crossDevice))
+
+        let destinationTemplates = EncryptedPDFTemplateStore(directory: destinationTemplateDirectory, keyData: key)
+        try destinationTemplates.recoverKey(from: recoveryData, passphrase: recoveryPassphrase)
+        try destinationTemplates.importEncryptedBackup(encryptedTemplateBackup, replacing: true)
+        #expect(try destinationTemplates.load(templateID: templateID) != nil)
+        #expect(try destinationTemplates.learningEvents(templateID: templateID).count == 1)
+
+        let sourceProfiles = EncryptedPDFProfileVault(directory: sourceProfileDirectory, keyData: key)
+        _ = try sourceProfiles.append(revision: profile(
+            revisionID: UUID(uuidString: "32323232-3232-3232-3232-323232323232")!))
+        let encryptedProfileBackup = try sourceProfiles.exportEncryptedBackup()
+        let encryptedProfileText = String(decoding: encryptedProfileBackup, as: UTF8.self)
+        #expect(!encryptedProfileText.contains("Ada Lovelace Secret"))
+
+        let destinationProfiles = EncryptedPDFProfileVault(directory: destinationProfileDirectory, keyData: key)
+        try destinationProfiles.importEncryptedBackup(encryptedProfileBackup, replacing: true)
+        #expect(try destinationProfiles.load(profileID: profileID)?.latestRevision?.payload.values.first?.value == .text("Ada Lovelace Secret"))
+        #expect(throws: PDFTemplatePersistenceError.encodingFailed("profile backup store kind mismatch")) {
+            try destinationProfiles.importEncryptedBackup(encryptedTemplateBackup, replacing: true)
+        }
+    }
 }

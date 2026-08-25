@@ -400,6 +400,12 @@ public struct FillHighlight: Equatable, Hashable, Sendable {
     case signatureRegion
     /// Currently focused / selected region: accent fill overlay.
     case focused
+    /// Diff: change detected outside authorized operation regions (red).
+    case outsideRegionChange
+    /// Diff: change detected inside authorized operation regions (green).
+    case insideRegionChange
+    /// Diff: region preserved (no change).
+    case preserved
   }
 
   public let id: String
@@ -457,6 +463,26 @@ public struct EditableRegionRef: Equatable, Sendable {
     self.kind = kind
     self.pageIndex = pageIndex
     self.bounds = bounds
+  }
+}
+
+/// State for an inline text editor placed on top of the PDF canvas at a target region.
+public struct InlineEditorState: Equatable, Sendable {
+  public let target: EditableRegionRef
+  public var draftText: String
+  public let initialValue: String
+  public let label: String?
+
+  public init(
+    target: EditableRegionRef,
+    draftText: String,
+    initialValue: String = "",
+    label: String? = nil
+  ) {
+    self.target = target
+    self.draftText = draftText
+    self.initialValue = initialValue
+    self.label = label
   }
 }
 

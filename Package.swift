@@ -12,9 +12,17 @@ let package = Package(
             name: "PDFEditorCore",
             targets: ["PDFEditorCore"]
         ),
+        .library(
+            name: "PDFEditorRecovery",
+            targets: ["PDFEditorRecovery"]
+        ),
         .executable(
             name: "PDFEditor",
             targets: ["PDFEditorApp"]
+        ),
+        .executable(
+            name: "PDFRecoveryInterruptionHarness",
+            targets: ["PDFRecoveryInterruptionHarness"]
         ),
         .executable(
             name: "PDFContractHarness",
@@ -45,9 +53,17 @@ let package = Package(
         .target(
             name: "PDFEditorCore"
         ),
+        .target(
+            name: "PDFEditorRecovery",
+            dependencies: ["PDFEditorCore"]
+        ),
         .executableTarget(
             name: "PDFEditorApp",
-            dependencies: ["PDFEditorCore"]
+            dependencies: ["PDFEditorCore", "PDFEditorRecovery"]
+        ),
+        .executableTarget(
+            name: "PDFRecoveryInterruptionHarness",
+            dependencies: ["PDFEditorRecovery"]
         ),
         .executableTarget(
             name: "PDFContractHarness",
@@ -76,6 +92,10 @@ let package = Package(
         .testTarget(
             name: "PDFEditorCoreTests",
             dependencies: ["PDFEditorCore"]
+        ),
+        .testTarget(
+            name: "PDFEditorAppRecoveryTests",
+            dependencies: ["PDFEditorRecovery"]
         )
     ]
 )

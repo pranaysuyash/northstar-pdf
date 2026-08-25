@@ -365,7 +365,7 @@ the existing PDFKit evidence or weaken a failed preservation gate.
 ## D-008: Privacy-First Recurring Template System
 
 - **Date:** 2026-08-24
-- **Status:** Accepted design direction; T1 contract/runtime, immutable local capture/revisions, and browser review surface implemented, native review UI and adapter wiring pending
+- **Status:** Accepted design direction; native and browser capture/review surfaces, encrypted persistence, profile-vault separation, automatic profile-resolution abstention, revision migration review, and adapter parity implemented. Provider fidelity, device stress, and production UI automation remain active evidence lanes.
 - **Context:** The reader/editor can now inspect native fields, detect static
   candidates, queue reviewed operations, preserve source bytes, and validate
   exports. Recurring forms need faster completion without turning a template
@@ -2183,4 +2183,121 @@ Implementation and evidence:
 - [`Tests/fixtures/pdf_fingerprint_parity_fixture.json`](../Tests/fixtures/pdf_fingerprint_parity_fixture.json)
 - [`benchmark/results/semantic-parity/2026-08-25/fingerprint-parity-report.json`](../benchmark/results/semantic-parity/2026-08-25/fingerprint-parity-report.json)
 - [`Tests/native_browser_fingerprint_parity_test.mjs`](../Tests/native_browser_fingerprint_parity_test.mjs)
-- [`docs/audits/native-browser-fingerprint-parity-evidence-2026-08-25.md`](audits/native-browser-fingerprint-parity-evidence-2026-08-25.md)
+  - [`docs/audits/native-browser-fingerprint-parity-evidence-2026-08-25.md`](audits/native-browser-fingerprint-parity-evidence-2026-08-25.md)
+
+## D-048: RG-002 form-writer direction — incremental custom writer, not PDFKit for external forms
+
+- **Date:** 2026-08-25
+- **Status:** Adopted implementation, validated 2026-08-25 (RG-002 moved to
+  `PASS`; exploration-grade only for the optional PDFium/PDFBox companion paths)
+- **Context:** `RG-001` FAIL proves PDFKit drops external AcroForm radio-choice
+  metadata on save (`F-016`). The product invariant is immutable source bytes,
+  reversible edits, local-first, no egress, and unchanged-region digest
+  invariance (`RG-017`/`RG-018`). The question is "what satisfies the
+  source-preserving form-writer invariant without leaving local-first or taking a
+  copyleft/commercial dependency," not "which PDF library is best."
+- **Selected path:** Build a minimal **form-aware writer as an incremental PDF
+  update serializer** (append only changed field `/V`/`/AS`/`/AP` via chained
+  `/Prev` xref). Original byte stream is prefix-identical by construction, so
+  `RG-017`/`RG-018` hold; edits are reversible by stripping the appended section
+  or replaying the `EditOperation` inverse. Render with PDFKit; validate with the
+  already-installed qpdf/Poppler. Evaluate **PDFium** (permissive, native dylib +
+  web WASM, closes XFA/JS gap) as the fallback engine and **PDFBox** (Apache-2.0
+  JVM companion) as the preservation oracle, only after L2 license/supply-chain
+  review and after the falsifiable §2 checks in the exploration pass.
+- **Alternatives considered:** pdf-lib as external-form writer — rejected
+  (rewrites `/AP` with Helvetica on field touch). pdfcpu — rejected (corrupts
+  external Adobe forms, Iss #861). Full parse+re-serialize via qpdf/pikepdf —
+  rejected (violates source-integrity; already stated insufficient in `RG-002`).
+  Poppler/iText/Aspose as shipped writers — rejected (GPL/commercial/AGPL gates).
+  MuPDF/itext — deferred (capability-strong, AGPL/commercial until a licensing
+  decision).
+- **Invariants:** Original byte-prefix digest must match source after every
+  edit. Unchanged-object digests must not change. Signatures (`RG-014`) and XFA
+  (`RG-015`) remain abstain states. Local-first, no egress, and license-clean
+  shipped binary are non-negotiable.
+- **Validation:** Smallest safe experiment on `benchmark/results/public-sample-form.pdf`
+  — incremental append of one radio value, reopened by Poppler (choice preserved)
+  and PDFKit (read-back), with original-prefix + unrelated-object digests
+  asserted unchanged (Tier 3 / S3). Falsifier: run the same value set through a
+  full-rewrite writer; assert original-prefix digest does NOT match → proves
+  `RG-017` violation and falsifies the rejected (b)/(d-non-incremental) paths.
+- **Falsifiers:** A chosen radio value is lost on Poppler reopen; the original
+  prefix digest changes after an edit; a sibling widget or its `/AP`/font is
+  mutated; a new runtime dependency is adopted without L2 license review; a
+  shipped binary becomes GPL/AGPL/commercial-encumbered.
+- **Rollback:** Discard the incremental appender and revert to PDFKit bounded
+  edits for the Form 6 lane only; keep qpdf/Poppler validators. No shared contract
+  migration required.
+- **Owner:** Form-writer implementation, PDFKit render/review surface, qpdf/Poppler
+  validation, `PDFImpactValidator`, corpus governance, license review (L2).
+
+Implementation and evidence:
+
+- [`docs/explorations/provider-custom-oss-exploration-2026-08-25.md`](../docs/explorations/provider-custom-oss-exploration-2026-08-25.md)
+- [`benchmark/results/public-sample-form.pdf`](../benchmark/results/public-sample-form.pdf)
+- Existing validators: [`benchmark/test_pdfkit_benchmark.sh`](../benchmark/test_pdfkit_benchmark.sh),
+  qpdf/Poppler in-environment reopen checks (RG-003/RG-016)
+
+## D-049: Separate local recovery from portable cross-device recovery
+
+- **Date:** 2026-08-25
+- **Status:** Accepted implementation decision; browser runtime evidence
+  passed; native package-wide execution awaits an unrelated app-target repair
+- **Context:** Encrypted template and profile persistence needs product-facing
+  backup, import, lost-passphrase, quota, deletion, Keychain, profile unlock,
+  worker, and cross-device behavior. A single recovery artifact cannot safely
+  serve both same-store recovery and portable transfer because local store
+  identities are useful anti-mix-up bindings while cross-device transfer must
+  intentionally change the destination identity.
+- **Selected path:** Keep two artifacts conceptually separate. An encrypted
+  backup contains opaque authenticated records. A recovery envelope contains
+  the vault key encrypted with a separate passphrase. A cross-device bundle
+  carries both, requires explicit user confirmation, restores the key and
+  records, then re-keys the destination browser vault to the recovery
+  passphrase. Native Keychain-backed stores use their configured app identity
+  and typed store kind checks. Browser ordinary recovery remains IndexedDB-name
+  bound; browser cross-device recovery is the only explicit portability path.
+- **Worker boundary:** Validate backup shape, record count, and serialized size
+  in a module worker without passing a passphrase, CryptoKey, IndexedDB handle,
+  PDF bytes, or decrypted payload. The worker result includes an explicit
+  `plaintextInspected: false` fact.
+- **Invariants:** Source PDF bytes are never persisted by the template/profile
+  vault; template and profile stores remain separate; profiles remain locked
+  after template recovery; malformed, wrong-kind, stale, or unauthenticated
+  artifacts are rejected before replacement; deletion retains only value-free
+  audit data; wrong passphrases never silently create an empty store.
+- **Alternatives considered:** Bind every recovery envelope to its source
+  database, rejected for portable recovery. Make the backup self-decrypting,
+  rejected because one leaked file would contain both records and key access.
+  Send backup validation through the main UI thread, rejected because it
+  widens the plaintext/key handling surface without benefit.
+- **Validation:** Browser Chrome proof restored a bundle into a different
+  IndexedDB name, passed worker ciphertext validation, recovered encrypted
+  template/profile records, preserved profile locking, re-keyed the
+  destination, and reopened it. Native core target build passed; native tests
+  are present but package-wide execution is blocked by unrelated existing
+  AppKit/PDFKit errors in `DiffComparisonView.swift`.
+- **Falsifiers:** A portable bundle can be imported without explicit recovery
+  confirmation; destination unlock fails after re-key; profile values are
+  readable before profile unlock; backup JSON contains plaintext; worker
+  receives a decryption key or PDF bytes; wrong-store artifacts replace local
+  records; or deletion audit contains values.
+- **Rollback:** Disable cross-device UI while retaining same-store encrypted
+  backup and recovery. Disable worker acceleration and run the same structural
+  validator synchronously. No PDF document or edit-operation contract change
+  is required.
+- **Owner:** Native/browser persistence adapters, Keychain/profile vault
+  integration, recovery UI, worker isolation, corpus privacy governance, and
+  release evidence.
+
+Implementation and evidence:
+
+- [`Sources/PDFEditorCore/LocalPersistenceContracts.swift`](../Sources/PDFEditorCore/LocalPersistenceContracts.swift)
+- [`Sources/PDFEditorCore/EncryptedTemplatePersistence.swift`](../Sources/PDFEditorCore/EncryptedTemplatePersistence.swift)
+- [`web/pdf-template-store.mjs`](../web/pdf-template-store.mjs)
+- [`web/pdf-cross-device-recovery.mjs`](../web/pdf-cross-device-recovery.mjs)
+- [`web/pdf-vault-worker.mjs`](../web/pdf-vault-worker.mjs)
+- [`Tests/PDFEditorCoreTests/EncryptedTemplatePersistenceTests.swift`](../Tests/PDFEditorCoreTests/EncryptedTemplatePersistenceTests.swift)
+- [`Tests/web_template_security_browser_test.mjs`](../Tests/web_template_security_browser_test.mjs)
+- [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](audits/local-persistence-product-surface-evidence-2026-08-25.md)

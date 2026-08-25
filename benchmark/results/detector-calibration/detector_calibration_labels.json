@@ -24,6 +24,7 @@
   "cases": [
     {
       "id": "p0-vector-rectangle",
+      "reviewedRegionID": "reviewed:p0:applicant-name-box",
       "pageIndex": 0,
       "class": "vectorRectangle",
       "expected": "detected",
@@ -37,10 +38,21 @@
       "requiredEvidence": [
         "vectorRectangle"
       ],
+      "expectedEvidenceFamilies": [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedLabelAssociation": "associated",
+      "expectedGrouping": {
+        "state": "single",
+        "memberCount": 1
+      },
       "rationale": "Labeled rectangular entry region after Applicant Name."
     },
     {
       "id": "p0-checkbox",
+      "reviewedRegionID": "reviewed:p0:agreement-checkbox",
       "pageIndex": 0,
       "class": "checkbox",
       "expected": "detected",
@@ -54,11 +66,22 @@
       "requiredEvidence": [
         "vectorRectangle"
       ],
+      "expectedEvidenceFamilies": [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedLabelAssociation": "associated",
+      "expectedGrouping": {
+        "state": "single",
+        "memberCount": 1
+      },
       "requiredFieldType": "checkbox",
       "rationale": "Small square is labeled Agree to terms and must not be suppressed as cell noise."
     },
     {
       "id": "p0-underline",
+      "reviewedRegionID": "reviewed:p0:date-underline",
       "pageIndex": 0,
       "class": "underline",
       "expected": "detected",
@@ -72,10 +95,21 @@
       "requiredEvidence": [
         "underline"
       ],
+      "expectedEvidenceFamilies": [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedLabelAssociation": "associated",
+      "expectedGrouping": {
+        "state": "single",
+        "memberCount": 1
+      },
       "rationale": "Horizontal entry stroke is associated with the Date label."
     },
     {
       "id": "p0-whitespace",
+      "reviewedRegionID": "reviewed:p0:address-whitespace",
       "pageIndex": 0,
       "class": "whitespace",
       "expected": "detected",
@@ -89,10 +123,21 @@
       "requiredEvidence": [
         "whitespace"
       ],
+      "expectedEvidenceFamilies": [
+        "whitespace",
+        "label",
+        "relationship"
+      ],
+      "expectedLabelAssociation": "associated",
+      "expectedGrouping": {
+        "state": "single",
+        "memberCount": 1
+      },
       "rationale": "Address label has no vector box and should produce a reviewable whitespace suggestion."
     },
     {
       "id": "p0-label-association",
+      "reviewedRegionID": "reviewed:p0:applicant-name-label-link",
       "pageIndex": 0,
       "class": "labelAssociation",
       "expected": "detected",
@@ -107,11 +152,22 @@
         "textLabel",
         "spatialRelationship"
       ],
+      "expectedEvidenceFamilies": [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedLabelAssociation": "associated",
+      "expectedGrouping": {
+        "state": "single",
+        "memberCount": 1
+      },
       "requiredCandidateKind": "vectorRegion",
       "rationale": "The Applicant Name text must be retained as explainable association evidence."
     },
     {
       "id": "p1-decorative-rectangle",
+      "reviewedRegionID": "reviewed:p1:decorative-section-box",
       "pageIndex": 1,
       "class": "vectorRectangle",
       "expected": "abstain",
@@ -125,10 +181,17 @@
       "requiredEvidence": [
         "vectorRectangle"
       ],
+      "expectedLabelAssociation": "none",
+      "expectedGrouping": {
+        "state": "abstain",
+        "memberCount": 0
+      },
+      "falsePositiveSeverity": "medium",
       "rationale": "A Section label is layout text, not field intent."
     },
     {
       "id": "p1-isolated-square",
+      "reviewedRegionID": "reviewed:p1:isolated-square",
       "pageIndex": 1,
       "class": "checkbox",
       "expected": "abstain",
@@ -142,10 +205,17 @@
       "requiredEvidence": [
         "vectorRectangle"
       ],
+      "expectedLabelAssociation": "none",
+      "expectedGrouping": {
+        "state": "abstain",
+        "memberCount": 0
+      },
+      "falsePositiveSeverity": "high",
       "rationale": "An isolated unlabeled square is decorative or structural noise."
     },
     {
       "id": "p1-bare-rule",
+      "reviewedRegionID": "reviewed:p1:bare-rule",
       "pageIndex": 1,
       "class": "underline",
       "expected": "abstain",
@@ -159,10 +229,17 @@
       "requiredEvidence": [
         "underline"
       ],
+      "expectedLabelAssociation": "none",
+      "expectedGrouping": {
+        "state": "abstain",
+        "memberCount": 0
+      },
+      "falsePositiveSeverity": "low",
       "rationale": "A bare horizontal rule is not sufficient evidence of an entry region."
     },
     {
       "id": "p1-generic-box",
+      "reviewedRegionID": "reviewed:p1:generic-note-box",
       "pageIndex": 1,
       "class": "labelAssociation",
       "expected": "abstain",
@@ -178,10 +255,17 @@
         "spatialRelationship"
       ],
       "requiredCandidateKind": "vectorRegion",
+      "expectedLabelAssociation": "none",
+      "expectedGrouping": {
+        "state": "abstain",
+        "memberCount": 0
+      },
+      "falsePositiveSeverity": "high",
       "rationale": "Note is not a semantically plausible field label."
     },
     {
       "id": "p1-generic-whitespace",
+      "reviewedRegionID": "reviewed:p1:generic-section-whitespace",
       "pageIndex": 1,
       "class": "whitespace",
       "expected": "abstain",
@@ -195,6 +279,12 @@
       "requiredEvidence": [
         "whitespace"
       ],
+      "expectedLabelAssociation": "none",
+      "expectedGrouping": {
+        "state": "abstain",
+        "memberCount": 0
+      },
+      "falsePositiveSeverity": "medium",
       "rationale": "Section followed by a delimiter is generic layout text."
     }
   ]

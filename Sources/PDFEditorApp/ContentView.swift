@@ -1,3 +1,4 @@
+import PDFEditorRecovery
 import PDFEditorCore
 import PDFKit
 import SwiftUI
@@ -79,11 +80,6 @@ struct ContentView: View {
   @Binding private var searchFocusEvent: Int
   @State private var searchProjectionState: SearchProjectionState = .none
 
-  // Recovery view state is encoded by AppModel, but the model currently does
-  // not expose a public coalesced view-state autosave hook. Do not call its
-  // private saveDurableRecovery/autoSaveSession methods from the view layer.
-  // The missing seam is a public model-owned scheduleViewStateAutosave() API.
-
   init(model: AppModel, searchFocusEvent: Binding<Int> = .constant(0)) {
     self.model = model
     self._searchFocusEvent = searchFocusEvent
@@ -105,24 +101,55 @@ struct ContentView: View {
         WelcomeView(open: requestOpenDocument)
       }
     }
+    .onChange(of: model.selectedPageIndex) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.selectedFieldID) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.selectedCandidateID) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.selectedSearchMatchIndex) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.searchQuery) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.readerViewMode) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.readerScaleMode) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.readerZoom) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
+    .onChange(of: model.readerRotation) { _, _ in
+      model.scheduleViewStateAutosave()
+    }
     .toolbar {
       ToolbarItemGroup {
         Button("Open", systemImage: "folder") {
           requestOpenDocument()
         }
+        .accessibilityLabel("Open PDF")
         .help("Open another PDF. The current document remains open until the new PDF is admitted.")
         .accessibilityHelp("Open another PDF without discarding the current document before the new PDF is admitted.")
         Button("Undo", systemImage: "arrow.uturn.backward") {
           model.undoLastEdit()
         }
+        .accessibilityLabel("Undo last edit")
         .disabled(!model.canUndo)
         Button("Redo", systemImage: "arrow.uturn.forward") {
           model.redoLastEdit()
         }
+        .accessibilityLabel("Redo last edit")
         .disabled(!model.canRedo)
         Button("Export Copy", systemImage: "square.and.arrow.down") {
           model.export()
         }
+        .accessibilityLabel("Export edited PDF copy")
         .disabled(!canExportCopy(model))
         .help(exportCopyHelp(model))
         .accessibilityHelp(exportCopyHelp(model))
@@ -174,6 +201,33 @@ struct ContentView: View {
         }
         .pickerStyle(.menu)
         .frame(width: 140)
+      }
+      ToolbarItem {
+        Menu {
+          Button {
+            model.toggleDiffView()
+          } label: {
+            Label(
+              model.showDiff ? "Hide Overlay" : "Show Overlay",
+              systemImage: model.showDiff ? "rectangle.dashed" : "rectangle.fill"
+            )
+          }
+          .disabled(model.sourceInspection == nil)
+
+          Button {
+            model.openDiffComparison()
+          } label: {
+            Label("Side-by-Side Comparison", systemImage: "rectangle.split.2x1")
+          }
+          .disabled(model.sourceInspection == nil)
+        } label: {
+          Label(
+            "Diff",
+            systemImage: model.showDiff ? "doc.text.magnifyingglass.fill" : "doc.text.magnifyingglass"
+          )
+        }
+        .disabled(model.sourceInspection == nil)
+        .help("Visual diff: overlay highlights on the page, or open a side-by-side comparison.")
       }
       ToolbarItem(placement: .status) {
         HStack(spacing: 6) {
@@ -271,6 +325,20 @@ struct ContentView: View {
       let count = model.operations.filter { $0.kind == .redactMark }.count
       Text(
         "This will permanently remove the content under \(count) marked region\(count == 1 ? "" : "s") from a new PDF copy. The original file is never overwritten.\n\nThis action cannot be undone."
+      )
+    }
+    // Visual diff comparison sheet
+    .sheet(isPresented: $model.showDiffSheet) {
+      DiffComparisonView(
+        sourceDocument: model.sourceDocument,
+        currentDocument: model.liveDocument,
+        sourceInspection: model.sourceInspection,
+        currentInspection: model.inspection,
+        operations: model.operations,
+        diff: model.currentDiff,
+        selectedPageIndex: model.selectedPageIndex,
+        onPageChange: { model.selectedPageIndex = $0 },
+        onExportReport: { model.exportDiffReport() }
       )
     }
   }
@@ -433,6 +501,8 @@ private struct WelcomeView: View {
       .frame(maxWidth: 520)
       Button("Open a PDF…", action: open)
         .keyboardShortcut(.defaultAction)
+        .accessibilityLabel("Open a PDF")
+        .accessibilityHint("Choose a PDF to review without changing the source file.")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(40)
@@ -995,7 +1065,8 @@ private struct EditorView: View {
       selectedCandidate: model.selectedCandidate,
       selectedField: model.selectedField,
       isManualPlacementMode: model.isManualPlacementMode,
-      fillHighlights: model.fillHighlightRegions,
+      fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
+      activeInlineEditor: model.activeInlineEditor,
       onManualPlacement: { pageIndex, point in
         model.receiveManualPlacement(pageIndex: pageIndex, point: point)
       },
@@ -1004,6 +1075,12 @@ private struct EditorView: View {
       },
       onPageTap: { pageIndex, point in
         model.handlePageTap(pageIndex: pageIndex, point: point)
+      },
+      onCommitInlineEditor: { text in
+        model.commitInlineEditor(text: text, andAdvance: true)
+      },
+      onDismissInlineEditor: {
+        model.dismissInlineEditor()
       }
     )
     .accessibilityElement(children: .contain)
@@ -1305,6 +1382,16 @@ private struct InspectorView: View {
           .disabled(!model.isTemplateVaultUnlocked)
         Button("Import template recovery") { model.importTemplateRecoveryEnvelope() }
           .buttonStyle(.bordered)
+        Button("Export template backup") { model.exportTemplateVaultBackup() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isTemplateVaultUnlocked)
+        Button("Import template backup") { model.importTemplateVaultBackup() }
+          .buttonStyle(.bordered)
+        Button("Export template cross-device") { model.exportTemplateCrossDeviceRecovery() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isTemplateVaultUnlocked)
+        Button("Import template cross-device") { model.importTemplateCrossDeviceRecovery() }
+          .buttonStyle(.bordered)
         Button("Delete template records") { model.deleteAllTemplateVaultRecords() }
           .buttonStyle(.bordered)
           .disabled(!model.isTemplateVaultUnlocked)
@@ -1314,6 +1401,16 @@ private struct InspectorView: View {
           .buttonStyle(.bordered)
           .disabled(!model.isProfileVaultUnlocked)
         Button("Import profile recovery") { model.importProfileRecoveryEnvelope() }
+          .buttonStyle(.bordered)
+        Button("Export profile backup") { model.exportProfileVaultBackup() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isProfileVaultUnlocked)
+        Button("Import profile backup") { model.importProfileVaultBackup() }
+          .buttonStyle(.bordered)
+        Button("Export profile cross-device") { model.exportProfileCrossDeviceRecovery() }
+          .buttonStyle(.bordered)
+          .disabled(!model.isProfileVaultUnlocked)
+        Button("Import profile cross-device") { model.importProfileCrossDeviceRecovery() }
           .buttonStyle(.bordered)
         Button("Delete profile records") { model.deleteAllProfileVaultRecords() }
           .buttonStyle(.bordered)
@@ -1327,6 +1424,9 @@ private struct InspectorView: View {
       Text("Recovery envelopes protect keys; encrypted backups or value-free template exports protect records. Browser storage may be evicted, so keep an explicit export outside the browser.")
         .font(.caption2)
         .foregroundStyle(.secondary)
+      Text("Native storage is protected by the macOS Keychain. A lost Keychain item requires the separate recovery envelope and its passphrase. Losing both the encrypted backup and recovery envelope is unrecoverable; the app never stores that passphrase.")
+        .font(.caption2)
+        .foregroundStyle(.orange)
     }
     .padding(10)
     .background(Color.orange.opacity(0.05))
@@ -1425,11 +1525,11 @@ private struct InspectorView: View {
 
       } else {
         if !model.isProfileVaultUnlocked {
-          Button("Unlock encrypted profile vault") {
+          Button("Unlock profile vault with Keychain") {
             model.unlockProfileVault()
           }
           .buttonStyle(.borderedProminent)
-          Text("Profile values remain unavailable until the local vault is explicitly unlocked.")
+          Text("Profile values remain unavailable until the macOS Keychain-backed vault is explicitly unlocked. The Keychain does not provide a recoverable passphrase; use the separate recovery envelope for device migration.")
             .font(.caption)
             .foregroundStyle(.secondary)
         }
@@ -1568,6 +1668,29 @@ private struct InspectorView: View {
         .padding(8)
         .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
 
+        if let history = model.templateRevisionHistory, history.revisions.count > 1 {
+          VStack(alignment: .leading, spacing: 5) {
+            Text("Revision history")
+              .font(.caption.weight(.semibold))
+            ForEach(history.revisions, id: \.payload.revisionID) { revision in
+              HStack {
+                Text("r\(revision.payload.revisionID.uuidString.prefix(8)) · \(revision.payload.lifecycle.rawValue)")
+                  .font(.caption2)
+                Spacer()
+                if revision.payload.revisionID != template.payload.revisionID {
+                  Button("Compare / migrate") {
+                    model.prepareTemplateMigration(toRevisionID: revision.payload.revisionID)
+                  }
+                  .buttonStyle(.bordered)
+                  .font(.caption2)
+                }
+              }
+            }
+          }
+          .padding(8)
+          .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
+        }
+
         if let diff = model.templateRevisionDiff {
           Text("Revision diff: +\(diff.exactSourceDigestsAdded.count) source variant(s), \(diff.mappingChanges.count) mapping change(s)")
             .font(.caption2)
@@ -1577,6 +1700,34 @@ private struct InspectorView: View {
               .font(.caption2)
               .foregroundStyle(.secondary)
           }
+        }
+
+        if let migration = model.templateMigrationProposal {
+          VStack(alignment: .leading, spacing: 6) {
+            Text("Migration review: \(migration.state.rawValue)")
+              .font(.caption.weight(.semibold))
+            ForEach(migration.reasons, id: \.self) { reason in
+              Text(reason).font(.caption2).foregroundStyle(.secondary)
+            }
+            ForEach(migration.decisions) { decision in
+              Toggle(
+                isOn: Binding(
+                  get: { decision.reviewed && decision.approved },
+                  set: { model.reviewTemplateMigration(decision.id, approved: $0) }
+                )
+              ) {
+                Text("\(decision.change.rawValue) mapping \(decision.id.uuidString.prefix(8))")
+              }
+              .font(.caption2)
+            }
+            Button("Save reviewed migration") {
+              model.saveTemplateMigration()
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!migration.canMaterialize)
+          }
+          .padding(8)
+          .background(.orange.opacity(0.10), in: RoundedRectangle(cornerRadius: 6))
         }
 
         if !model.templateLearningEvents.isEmpty {
@@ -1627,11 +1778,32 @@ private struct InspectorView: View {
           }
           .buttonStyle(.borderedProminent)
           .disabled(!model.isProfileVaultUnlocked || model.currentProfile == nil)
+          Button("Resolve profile automatically") {
+            model.resolveTemplateProfileAutomatically()
+          }
+          .buttonStyle(.bordered)
+          .disabled(!model.isProfileVaultUnlocked)
           Text(model.isProfileVaultUnlocked
             ? "Current profile: \(model.currentProfile?.displayName ?? "none")"
             : "Unlock the profile vault and select a profile before resolving values.")
             .font(.caption2)
             .foregroundStyle(.secondary)
+          if let resolution = model.templateProfileResolution {
+            VStack(alignment: .leading, spacing: 3) {
+              Text("Automatic profile resolution: \(resolution.state.rawValue)\(resolution.abstained ? " · abstained" : "")")
+                .font(.caption.weight(.semibold))
+              ForEach(resolution.reasons, id: \.self) { reason in
+                Text(reason).font(.caption2).foregroundStyle(.secondary)
+              }
+              ForEach(resolution.candidates.prefix(3)) { candidate in
+                Text("\(candidate.displayName) · score \(candidate.score, specifier: "%.3f") · \(candidate.matchedMappingIDs.count) matched")
+                  .font(.caption2)
+                  .foregroundStyle(candidate.profileID == resolution.selectedProfileID ? .green : .secondary)
+              }
+            }
+            .padding(8)
+            .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 6))
+          }
         }
       }
 
@@ -2364,6 +2536,9 @@ private struct PDFPresentationHighlight {
     case candidateFilled
     case signatureRegion
     case focused
+    case outsideRegionChange
+    case insideRegionChange
+    case preserved
   }
 
   let kind: Kind
@@ -2376,6 +2551,69 @@ private struct PDFPresentationHighlight {
     self.page = page
     self.bounds = bounds
     self.memberBounds = memberBounds
+  }
+}
+
+// MARK: - Inline Editor TextField Host (D-010 / Task 2)
+private final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
+  let textField: NSTextField
+  var onCommit: (String) -> Void
+  var onDismiss: () -> Void
+
+  init(onCommit: @escaping (String) -> Void, onDismiss: @escaping () -> Void) {
+    self.onCommit = onCommit
+    self.onDismiss = onDismiss
+    self.textField = NSTextField()
+    super.init(frame: .zero)
+
+    wantsLayer = true
+    layer?.cornerRadius = 4
+    layer?.masksToBounds = true
+    layer?.borderColor = NSColor.controlAccentColor.cgColor
+    layer?.borderWidth = 1.5
+    layer?.backgroundColor = NSColor.textBackgroundColor.cgColor
+
+    textField.isBordered = false
+    textField.drawsBackground = false
+    textField.font = NSFont.systemFont(ofSize: 13)
+    textField.focusRingType = .none
+    textField.delegate = self
+    textField.autoresizingMask = [.width, .height]
+    textField.frame = bounds.insetBy(dx: 4, dy: 2)
+
+    addSubview(textField)
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  override func resizeSubviews(withOldSize oldSize: NSSize) {
+    super.resizeSubviews(withOldSize: oldSize)
+    textField.frame = bounds.insetBy(dx: 4, dy: 2)
+  }
+
+  func updateText(_ text: String) {
+    if textField.stringValue != text {
+      textField.stringValue = text
+    }
+  }
+
+  func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+    if commandSelector == #selector(NSResponder.insertNewline(_:)) {
+      onCommit(textField.stringValue)
+      return true
+    } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
+      onDismiss()
+      return true
+    }
+    return false
+  }
+
+  func controlTextDidEndEditing(_ obj: Notification) {
+    if let field = obj.object as? NSTextField {
+      onCommit(field.stringValue)
+    }
   }
 }
 
@@ -2458,6 +2696,19 @@ private final class PDFPresentationOverlayView: NSView {
         fillColor = NSColor.systemYellow.withAlphaComponent(0.10)
         strokeColor = NSColor.systemOrange.withAlphaComponent(0.70)
         lineWidth = 1.0
+      case .outsideRegionChange:
+        fillColor = NSColor.systemRed.withAlphaComponent(0.15)
+        strokeColor = NSColor.systemRed
+        lineWidth = 2.5
+      case .insideRegionChange:
+        fillColor = NSColor.systemGreen.withAlphaComponent(0.12)
+        strokeColor = NSColor.systemGreen
+        lineWidth = 1.5
+      case .preserved:
+        fillColor = NSColor.clear
+        strokeColor = NSColor.systemGreen.withAlphaComponent(0.3)
+        lineWidth = 0.5
+        isDashed = true
       }
 
       fillColor.setFill()
@@ -2574,9 +2825,12 @@ private struct PDFKitView: NSViewRepresentable {
   let selectedField: NativeField?
   let isManualPlacementMode: Bool
   let fillHighlights: [FillHighlight]
+  let activeInlineEditor: InlineEditorState?
   let onManualPlacement: (Int, CGPoint) -> Void
   let onDirectEdit: (Int, CGPoint) -> Void
   let onPageTap: (Int, CGPoint) -> Void
+  let onCommitInlineEditor: (String) -> Void
+  let onDismissInlineEditor: () -> Void
 
   private final class ProjectionObserverTokenStore {
     var tokens: [NSObjectProtocol] = []
@@ -2597,6 +2851,7 @@ private struct PDFKitView: NSViewRepresentable {
     weak var observedRootView: NSView?
     weak var observedScrollContentView: NSView?
     weak var observedDocumentView: NSView?
+    weak var inlineEditorHostView: NSView?
     private let projectionObserverTokenStore = ProjectionObserverTokenStore()
     var lastNavigatedPageIndex: Int?
     var lastSearchSignature: String?
@@ -2769,6 +3024,9 @@ private struct PDFKitView: NSViewRepresentable {
           case .candidateFilled: kind = .candidateFilled
           case .signatureRegion: kind = .signatureRegion
           case .focused: kind = .focused
+          case .outsideRegionChange: kind = .outsideRegionChange
+          case .insideRegionChange: kind = .insideRegionChange
+          case .preserved: kind = .preserved
           }
           highlights.append(
             PDFPresentationHighlight(
@@ -2858,6 +3116,42 @@ private struct PDFKitView: NSViewRepresentable {
 
     context.coordinator.overlayView?.highlights = highlights
     context.coordinator.invalidateOverlay()
+
+    // MARK: - Inline Canvas Text Editor (D-010 / Task 2)
+    if let inlineEditor = activeInlineEditor,
+       let page = view.document?.page(at: inlineEditor.target.pageIndex) {
+      let pageBounds = inlineEditor.target.bounds.cgRect
+      let viewBounds = view.convert(pageBounds, from: page)
+
+      let hostView: InlineEditorTextFieldHost
+      if let existing = context.coordinator.inlineEditorHostView as? InlineEditorTextFieldHost {
+        hostView = existing
+      } else {
+        context.coordinator.inlineEditorHostView?.removeFromSuperview()
+        let newHost = InlineEditorTextFieldHost(
+          onCommit: { text in onCommitInlineEditor(text) },
+          onDismiss: { onDismissInlineEditor() }
+        )
+        view.addSubview(newHost)
+        context.coordinator.inlineEditorHostView = newHost
+        hostView = newHost
+      }
+
+      // Ensure minimum size for comfortable editing
+      let editorFrame = CGRect(
+        x: max(8, viewBounds.origin.x),
+        y: max(8, viewBounds.origin.y),
+        width: max(140, viewBounds.size.width),
+        height: max(28, viewBounds.size.height)
+      )
+      hostView.frame = editorFrame
+      hostView.updateText(inlineEditor.draftText)
+      hostView.isHidden = false
+      view.window?.makeFirstResponder(hostView.textField)
+    } else {
+      context.coordinator.inlineEditorHostView?.removeFromSuperview()
+      context.coordinator.inlineEditorHostView = nil
+    }
   }
 
   private func searchSignature(for match: SearchMatch) -> String {

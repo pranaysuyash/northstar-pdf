@@ -142,23 +142,24 @@ public enum DocumentDiffBuilder {
     output: DocumentInspection,
     operations: [EditOperation]
   ) -> DocumentDiff {
-    guard source.pages.count == output.pages.count else {
-      return DocumentDiff(
-        sourceDigest: source.source.sha256,
-        outputDigest: output.source.sha256,
-        pageCount: source.pages.count,
-        pages: [],
-        summary: DiffSummary(
-          totalRegionsCompared: 0,
-          operationRegionsMatched: 0,
-          unexpectedChanges: 0,
-          pagesWithChanges: 0,
-          overallStatus: .incomplete
+    PerformanceTelemetry.shared.measureDiff {
+      guard source.pages.count == output.pages.count else {
+        return DocumentDiff(
+          sourceDigest: source.source.sha256,
+          outputDigest: output.source.sha256,
+          pageCount: source.pages.count,
+          pages: [],
+          summary: DiffSummary(
+            totalRegionsCompared: 0,
+            operationRegionsMatched: 0,
+            unexpectedChanges: 0,
+            pagesWithChanges: 0,
+            overallStatus: .incomplete
+          )
         )
-      )
-    }
+      }
 
-    var pageDiffs: [PageDiff] = []
+      var pageDiffs: [PageDiff] = []
     var totalRegions = 0
     var matchedRegions = 0
     var unexpectedChanges = 0
@@ -266,5 +267,6 @@ public enum DocumentDiffBuilder {
         overallStatus: status
       )
     )
+    }
   }
 }

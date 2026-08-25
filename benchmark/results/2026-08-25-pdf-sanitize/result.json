@@ -1,0 +1,13 @@
+{
+  "fixture": "public-acroform",
+  "inputSHA256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "provider": "qpdf+pikepdf sanitize",
+  "pages": 1,
+  "transform": "sanitize (metadata/attachment/info/structure removal)",
+  "metadataStripped": true,
+  "infoEmptied": true,
+  "pagesPreserved": true,
+  "qpdfCheck": "no-errors",
+  "scope": "Metadata/attachment/info/structure removal via installed qpdf + pikepdf. Does NOT cover JS/OpenAction/Launch neutralization or image-EXIF; those remain a custom pass (RG-097 active).",
+  "evidence": "Tests/pdf-sanitize_test.mjs"
+}

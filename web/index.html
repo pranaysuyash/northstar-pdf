@@ -251,15 +251,25 @@
               <button id="templateBackupButton" type="button">Export encrypted vault backup</button>
               <button id="templateRestoreButton" type="button">Restore encrypted vault backup</button>
               <input id="templateBackupInput" type="file" accept="application/json,.json" hidden>
+              <button id="templateCrossDeviceButton" type="button">Export cross-device recovery</button>
+              <button id="templateCrossDeviceRestoreButton" type="button">Import cross-device recovery</button>
+              <input id="templateCrossDeviceInput" type="file" accept="application/json,.json" hidden>
               <button id="templateRecoveryButton" type="button">Export key recovery</button>
               <button id="templateRecoveryRestoreButton" type="button">Import key recovery</button>
               <input id="templateRecoveryInput" type="file" accept="application/json,.json" hidden>
               <button id="templateDeleteStoreButton" type="button" class="danger">Delete local vault</button>
               <button id="activateTemplateButton" type="button" class="primary" disabled>Activate reviewed template</button>
+              <button id="resolveTemplateProfileButton" type="button" disabled>Resolve profile automatically</button>
               <button id="prepareTemplateButton" type="button" disabled>Prepare completion</button>
             </div>
             <div id="templateMappingList" class="small"></div>
             <div id="templateIndexResults" class="small"></div>
+            <div id="templateProfileResolution" class="small"></div>
+            <div id="templateMigrationPanel" class="small"></div>
+            <details class="small" id="templatePersistenceEducation">
+              <summary>Storage, recovery, and privacy</summary>
+              <div id="templatePersistenceEducationBody" class="small muted"></div>
+            </details>
             <div id="templateCompletionList" class="small"></div>
             <button id="applyTemplateButton" type="button" class="primary" disabled>Apply reviewed completion</button>
           </div>
@@ -280,6 +290,7 @@
           <div class="inline" style="margin-top: 6px;">
             <button id="undoEditButton" disabled>Undo last</button>
             <button id="exportButton" disabled>Export + validate</button>
+            <button id="diffToggleButton" disabled>Show diff</button>
           </div>
           <div id="editList" class="small" style="margin-top: 8px;"></div>
           <div id="validationBox" class="small" role="status" aria-live="polite" style="margin-top: 8px;">No export validation yet.</div>

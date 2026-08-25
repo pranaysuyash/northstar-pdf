@@ -6226,7 +6226,7 @@
     },
     {
       "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
-      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
       "expectedFailure": false,
       "nativeStatus": "inspected",
       "browserStatus": "inspected",
@@ -6282,7 +6282,7 @@
     },
     {
       "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "sourceDigest": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
       "expectedFailure": false,
       "nativeStatus": "inspected",
       "browserStatus": "inspected",
@@ -6310,7 +6310,7 @@
     },
     {
       "sourcePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
-      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "expectedFailure": false,
       "nativeStatus": "inspected",
       "browserStatus": "inspected",
@@ -12733,5 +12733,5 @@
     }
   ],
   "status": "measured",
-  "passed": true
+  "passed": false
 }

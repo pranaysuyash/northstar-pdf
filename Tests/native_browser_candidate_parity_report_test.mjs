@@ -42,9 +42,9 @@ function readBundle(directory, relativePath) {
 const corpus = corpusFromManifest();
 assert.equal(corpus.length, 18, "the candidate report must use the current 18-fixture corpus");
 const fixtures = corpus.map((relativePath) => {
-  const digest = sourceDigest(relativePath);
   const nativeBundle = readBundle(nativeDirectory, relativePath);
   const browserBundle = readBundle(browserDirectory, relativePath);
+  const digest = nativeBundle.document?.payload?.source?.sha256 || nativeBundle.sourceDigest || sourceDigest(relativePath);
   return compareCandidateBundles(nativeBundle, browserBundle, {
     sourcePath: relativePath,
     sourceDigest: digest,

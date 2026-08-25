@@ -105,6 +105,12 @@ Current durable research artifacts:
   and [`web/pdf-template-store.mjs`](web/pdf-template-store.mjs): encrypted
   native/browser template revision history, separate profile-vault storage,
   deletion, recovery, eviction handling, and zero-content persistence tests.
+- [`docs/audits/local-persistence-privacy-hardening-evidence-2026-08-25.md`](docs/audits/local-persistence-privacy-hardening-evidence-2026-08-25.md): passphrase
+  key recovery, explicit encrypted backup import/export, visible native/browser
+  privacy preflight, eviction warnings, and value-free deletion audit evidence.
+- [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](docs/audits/local-persistence-product-surface-evidence-2026-08-25.md): native and browser
+  backup UI, lost-passphrase guidance, quota education, Keychain/profile
+  unlock, ciphertext-only worker validation, and portable cross-device recovery.
 - [`docs/audits/template-review-workflow-evidence-2026-08-25.md`](docs/audits/template-review-workflow-evidence-2026-08-25.md),
   [`Sources/PDFEditorCore/TemplateRuntimeContracts.swift`](Sources/PDFEditorCore/TemplateRuntimeContracts.swift),
   and [`web/pdf-template-contract.mjs`](web/pdf-template-contract.mjs): native
@@ -129,6 +135,12 @@ Current durable research artifacts:
   encrypted-store recovery controls, learning/revision review visibility, and
   named source-bound lanes for OCR, text editing, redaction, signatures, XFA,
   PDF/UA, and independent-viewer validation.
+- [`docs/audits/template-runtime-integration-evidence-2026-08-25.md`](docs/audits/template-runtime-integration-evidence-2026-08-25.md),
+  [`Sources/PDFEditorCore/TemplateProfileResolver.swift`](Sources/PDFEditorCore/TemplateProfileResolver.swift),
+  [`web/pdf-template-profile-resolver.mjs`](web/pdf-template-profile-resolver.mjs),
+  and [`web/pdf-template-migration.mjs`](web/pdf-template-migration.mjs): native/browser
+  value-free automatic profile-resolution abstention, immutable revision
+  migration review, removed-mapping semantics, and parity tests.
 - [`web/template-match-benchmark.mjs`](web/template-match-benchmark.mjs) and
   [`Tests/web_template_match_benchmark_test.mjs`](Tests/web_template_match_benchmark_test.mjs):
   reviewer-labeled 24-case exact, known-variant, family, ambiguous, stale, and

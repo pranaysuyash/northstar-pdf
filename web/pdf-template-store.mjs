@@ -530,9 +530,9 @@ export function createEncryptedTemplateStore({
     return structuredClone(envelope);
   }
 
-  async function recoverPassphraseRecovery(envelope, recoveryPassphrase) {
+  async function recoverPassphraseRecovery(envelope, recoveryPassphrase, { crossDevice = false } = {}) {
     validateRecoveryEnvelope(envelope);
-    if (envelope.dbName !== dbName || envelope.keyIdentifier !== `indexeddb:${dbName}`) {
+    if (!crossDevice && (envelope.dbName !== dbName || envelope.keyIdentifier !== `indexeddb:${dbName}`)) {
       throw new TemplateStoreError("recovery_wrong_store", "This recovery envelope belongs to another local store.");
     }
     requirePassphrase(recoveryPassphrase, "recovery");
@@ -547,7 +547,7 @@ export function createEncryptedTemplateStore({
         iv: envelope.iv,
         ciphertext: envelope.ciphertext
       });
-      if (payload.storeVersion !== STORE_VERSION || payload.dbName !== dbName) {
+      if (payload.storeVersion !== STORE_VERSION || (!crossDevice && payload.dbName !== dbName)) {
         throw new TemplateStoreError("recovery_invalid", "The recovery envelope store version is unsupported.");
       }
       const recoveredKey = await importRawKey(base64ToBytes(payload.storeKey));
@@ -832,9 +832,10 @@ export function createEncryptedTemplateStore({
     return structuredClone(backup);
   }
 
-  async function restoreEncryptedBackup(backup, { storePassphrase = passphrase, replace = false } = {}) {
+  async function restoreEncryptedBackup(backup, { storePassphrase = passphrase, replace = false, preserveRecoveredKey = false } = {}) {
     validateBackup(backup);
-    requirePassphrase(storePassphrase);
+    if (!preserveRecoveredKey) requirePassphrase(storePassphrase);
+    const recoveredKey = preserveRecoveredKey ? storeKey : null;
     const existing = await rawGetAll();
     if (existing.length && !replace) {
       throw new TemplateStoreError("restore_requires_empty_store", "Restore requires an empty local store unless replace is explicit.");
@@ -852,10 +853,68 @@ export function createEncryptedTemplateStore({
     });
     storeKey = null;
     initialized = true;
-    await ensureUnlocked(storePassphrase, { allowEvictionRecovery: true });
+    if (recoveredKey) {
+      try {
+        await decryptJSON(recoveredKey, backup.metaRecord);
+        storeKey = recoveredKey;
+        storeState = "unlocked";
+      } catch {
+        throw new TemplateStoreError("restore_authentication_failed", "The recovered key does not authenticate this encrypted backup.");
+      }
+    } else {
+      await ensureUnlocked(storePassphrase, { allowEvictionRecovery: true });
+    }
     setPresenceMarker(dbName);
     logger.record({ event: "backup_restored", code: "backup_restore_ok", mode: "indexeddb-aes-gcm", state: "unlocked", count: backup.records.length });
     await recordAudit("backup-import", { state: "unlocked", reasonCode: "encrypted-backup-restored" });
+    return inspectHealth();
+  }
+
+  async function rekeyStore(newPassphrase) {
+    requirePassphrase(newPassphrase);
+    const currentKey = await ensureUnlocked();
+    const records = await rawGetAll();
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const nextKey = await deriveKey(newPassphrase, salt);
+    const meta = {
+      contractName: "pdf-editor.template-store-meta",
+      version: { major: 1, minor: 0 },
+      storeID: crypto.randomUUID(),
+      createdAt: new Date().toISOString()
+    };
+    const encryptedMeta = await encryptJSON(nextKey, meta);
+    const nextRecords = [];
+    for (const record of records.filter((entry) => entry.key !== META_KEY)) {
+      const payload = await decryptJSON(currentKey, record);
+      const encrypted = await encryptJSON(nextKey, payload);
+      nextRecords.push({
+        ...record,
+        ...encrypted,
+        updatedAt: new Date().toISOString()
+      });
+    }
+    const db = await database();
+    await new Promise((resolve, reject) => {
+      const transaction = db.transaction("records", "readwrite");
+      const objectStore = transaction.objectStore("records");
+      objectStore.clear();
+      objectStore.put({
+        key: META_KEY,
+        schemaVersion: STORE_VERSION,
+        kind: "meta",
+        id: META_KEY,
+        salt: bytesToBase64(salt),
+        ...encryptedMeta,
+        updatedAt: new Date().toISOString()
+      });
+      for (const record of nextRecords) objectStore.put(record);
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(new TemplateStoreError("rekey_failed", "The encrypted vault could not be re-keyed."));
+      transaction.onabort = () => reject(new TemplateStoreError("rekey_failed", "The encrypted vault re-key was aborted."));
+    });
+    storeKey = nextKey;
+    storeState = "unlocked";
+    await recordAudit("store-rekey", { state: storeState, reasonCode: "recovery-passphrase-adopted" });
     return inspectHealth();
   }
 
@@ -894,6 +953,7 @@ export function createEncryptedTemplateStore({
     inspectHealth,
     exportEncryptedBackup,
     restoreEncryptedBackup,
+    rekeyStore,
     exportPassphraseRecovery,
     recoverPassphraseRecovery,
     close,
@@ -1082,6 +1142,7 @@ export function createEncryptedOPFSTemplateStore({
   let rootPromise;
   let storeKey = null;
   let storeState = "locked";
+  let recoveryEnvelopeAvailable = false;
   const unlockedProfiles = new Map();
   const getRoot = async () => {
     if (!globalThis.navigator?.storage?.getDirectory) {
@@ -1127,6 +1188,7 @@ export function createEncryptedOPFSTemplateStore({
       });
       await writeEnvelope({ mode: "opfs-aes-gcm", version: STORE_VERSION, salt: bytesToBase64(salt), meta, records: [] });
       storeState = "unlocked";
+      setPresenceMarker(`opfs:${fileName}`);
       logger.record({ event: "store_unlocked", code: "store_initialized", mode: "opfs-aes-gcm", state: storeState });
       return true;
     }
@@ -1136,6 +1198,7 @@ export function createEncryptedOPFSTemplateStore({
       if (meta.contractName !== "pdf-editor.template-opfs-meta" || existing.version !== STORE_VERSION) throw new Error("metadata");
       storeKey = key;
       storeState = "unlocked";
+      setPresenceMarker(`opfs:${fileName}`);
       logger.record({ event: "store_unlocked", code: "store_authenticated", mode: "opfs-aes-gcm", state: storeState });
       return true;
     } catch {
@@ -1297,6 +1360,7 @@ export function createEncryptedOPFSTemplateStore({
     storeKey = null;
     storeState = "deleted";
     unlockedProfiles.clear();
+    clearPresenceMarker(`opfs:${fileName}`);
     logger.record({ event: "store_deleted", code: "store_delete_ok", mode: "opfs-aes-gcm", state: storeState });
   }
   async function exportEncryptedBackup() {
@@ -1321,7 +1385,18 @@ export function createEncryptedOPFSTemplateStore({
       || !backup.metaRecord?.salt || !backup.metaRecord?.meta || !Array.isArray(backup.records)) {
       throw new TemplateStoreError("backup_invalid", "Encrypted OPFS backup is invalid.");
     }
-    requirePassphrase(storePassphrase);
+    if (!storeKey) requirePassphrase(storePassphrase);
+    if (storeKey) {
+      try {
+        const recoveredMeta = await decryptJSON(storeKey, backup.metaRecord.meta);
+        if (recoveredMeta.contractName !== "pdf-editor.template-opfs-meta") {
+          throw new TemplateStoreError("recovery_invalid", "The recovered OPFS key does not authenticate this backup.");
+        }
+      } catch (error) {
+        if (error instanceof TemplateStoreError && error.code === "recovery_invalid") throw error;
+        throw new TemplateStoreError("recovery_failed", "The current OPFS key cannot authenticate this backup.");
+      }
+    }
     await writeEnvelope({
       mode: "opfs-aes-gcm",
       version: STORE_VERSION,
@@ -1330,10 +1405,85 @@ export function createEncryptedOPFSTemplateStore({
       records: backup.records || [],
       updatedAt: new Date().toISOString()
     });
-    storeKey = null;
-    await unlock(storePassphrase);
+    if (!storeKey) await unlock(storePassphrase);
+    setPresenceMarker(`opfs:${fileName}`);
     logger.record({ event: "backup_restored", code: "backup_restore_ok", mode: "opfs-aes-gcm", state: "unlocked", count: backup.records.length });
     return inspectHealth();
+  }
+  async function exportPassphraseRecovery(recoveryPassphrase) {
+    await requireUnlocked();
+    requirePassphrase(recoveryPassphrase, "recovery");
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const recoveryKey = await deriveKey(recoveryPassphrase, salt, "recovery", {
+      iterations: RECOVERY_ITERATIONS,
+      extractable: false
+    });
+    const encrypted = await encryptJSON(recoveryKey, {
+      storeKey: bytesToBase64(await exportRawKey(storeKey)),
+      storeVersion: STORE_VERSION,
+      dbName: `opfs:${fileName}`
+    });
+    const envelope = {
+      contractName: RECOVERY_CONTRACT_NAME,
+      version: { ...RECOVERY_VERSION },
+      dbName: `opfs:${fileName}`,
+      keyIdentifier: `opfs:${fileName}`,
+      kdf: "PBKDF2-HMAC-SHA256",
+      iterations: RECOVERY_ITERATIONS,
+      salt: bytesToBase64(salt),
+      iv: encrypted.iv,
+      ciphertext: encrypted.ciphertext,
+      createdAt: new Date().toISOString()
+    };
+    validateRecoveryEnvelope(envelope);
+    recoveryEnvelopeAvailable = true;
+    return structuredClone(envelope);
+  }
+  async function recoverPassphraseRecovery(envelope, recoveryPassphrase) {
+    validateRecoveryEnvelope(envelope);
+    if (envelope.dbName !== `opfs:${fileName}` || envelope.keyIdentifier !== `opfs:${fileName}`) {
+      throw new TemplateStoreError("recovery_wrong_store", "This recovery envelope belongs to another OPFS store.");
+    }
+    requirePassphrase(recoveryPassphrase, "recovery");
+    try {
+      const recoveryKey = await deriveKey(recoveryPassphrase, base64ToBytes(envelope.salt), "recovery", {
+        iterations: envelope.iterations,
+        extractable: false
+      });
+      const payload = await decryptJSON(recoveryKey, { iv: envelope.iv, ciphertext: envelope.ciphertext });
+      if (payload.storeVersion !== STORE_VERSION || payload.dbName !== `opfs:${fileName}`) {
+        throw new TemplateStoreError("recovery_invalid", "The OPFS recovery envelope store version is unsupported.");
+      }
+      const recoveredKey = await importRawKey(base64ToBytes(payload.storeKey));
+      const existing = await readEnvelope();
+      if (existing) {
+        const meta = await decryptJSON(recoveredKey, existing.meta);
+        if (meta.contractName !== "pdf-editor.template-opfs-meta") {
+          throw new TemplateStoreError("recovery_invalid", "The recovered key does not authenticate this OPFS store.");
+        }
+        storeState = "unlocked";
+      } else {
+        storeState = "evicted";
+      }
+      storeKey = recoveredKey;
+      setPresenceMarker(`opfs:${fileName}`);
+      return {
+        mode: "opfs-aes-gcm",
+        state: storeState,
+        recordCount: existing?.records?.length || 0,
+        auditEventCount: 0,
+        quotaBytes: null,
+        usageBytes: null,
+        recovery: storeState === "evicted" ? "restoreEncryptedBackup" : "exportEncryptedBackup",
+        recoveryEnvelopeAvailable: true,
+        evictionWarning: storeState === "evicted" ? "OPFS storage is missing. Restore an encrypted backup before writing." : null,
+        sourceRetention: "none",
+        contentLogging: "zero-content"
+      };
+    } catch (error) {
+      if (error instanceof TemplateStoreError && ["recovery_invalid", "recovery_wrong_store"].includes(error.code)) throw error;
+      throw new TemplateStoreError("recovery_failed", "The OPFS recovery passphrase was not accepted.");
+    }
   }
   const api = {
     mode: "opfs-aes-gcm",
@@ -1347,9 +1497,43 @@ export function createEncryptedOPFSTemplateStore({
       return { profileID, unlocked: true };
     },
     lockProfile(profileID) { unlockedProfiles.delete(profileID); logger.record({ event: "profile_locked", code: "profile_locked", kind: "profile", mode: "opfs-aes-gcm", state: "locked" }); },
-    async inspectHealth() { const { records, opaqueRecords } = await readRecords({ allowLockedProfiles: true }); return { mode: "opfs-aes-gcm", state: storeState, recordCount: records.length + opaqueRecords.length, quotaBytes: null, usageBytes: null, recovery: "exportEncryptedBackup" }; },
+    async inspectHealth() {
+      const envelope = await readEnvelope();
+      if (!envelope) {
+        const state = hasPresenceMarker(`opfs:${fileName}`) ? "evicted" : storeState === "deleted" ? "deleted" : "uninitialized";
+        return {
+          mode: "opfs-aes-gcm",
+          state,
+          recordCount: 0,
+          auditEventCount: 0,
+          quotaBytes: null,
+          usageBytes: null,
+          recovery: state === "evicted" ? "restoreEncryptedBackup" : null,
+          recoveryEnvelopeAvailable,
+          evictionWarning: state === "evicted" ? "OPFS storage is missing. Restore an encrypted backup before writing." : null,
+          sourceRetention: "none",
+          contentLogging: "zero-content"
+        };
+      }
+      const { records, opaqueRecords } = await readRecords({ allowLockedProfiles: true });
+      return {
+        mode: "opfs-aes-gcm",
+        state: storeState,
+        recordCount: records.length + opaqueRecords.length,
+        auditEventCount: 0,
+        quotaBytes: null,
+        usageBytes: null,
+        recovery: "exportEncryptedBackup",
+        recoveryEnvelopeAvailable,
+        evictionWarning: null,
+        sourceRetention: "none",
+        contentLogging: "zero-content"
+      };
+    },
     exportEncryptedBackup,
     restoreEncryptedBackup,
+    exportPassphraseRecovery,
+    recoverPassphraseRecovery,
     async put(kind, id, value, options) { return put(kind, id, value, options); },
     async get(kind, id, options) { return get(kind, id, options); },
     async remove(kind, id, options) { return remove(kind, id, options); },

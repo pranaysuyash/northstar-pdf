@@ -96,58 +96,64 @@ public struct VisionOCRProvider: OCRProvider {
   }
 
   public func recognize(image: CGImage) throws -> [OCRObservation] {
-    var requestError: Error?
-    var observations: [OCRObservation] = []
-    let request = VNRecognizeTextRequest { request, error in
-      requestError = error
-      guard error == nil,
-        let results = request.results as? [VNRecognizedTextObservation]
-      else { return }
-      observations = results.compactMap { observation in
-        guard let candidate = observation.topCandidates(1).first else { return nil }
-        return OCRObservation(
-          text: candidate.string,
-          normalizedBounds: PDFRect(observation.boundingBox),
-          confidence: Double(candidate.confidence)
-        )
+    try PerformanceTelemetry.shared.measureOCR {
+      try autoreleasepool {
+        var requestError: Error?
+        var observations: [OCRObservation] = []
+        let request = VNRecognizeTextRequest { request, error in
+          requestError = error
+          guard error == nil,
+            let results = request.results as? [VNRecognizedTextObservation]
+          else { return }
+          observations = results.compactMap { observation in
+            guard let candidate = observation.topCandidates(1).first else { return nil }
+            return OCRObservation(
+              text: candidate.string,
+              normalizedBounds: PDFRect(observation.boundingBox),
+              confidence: Double(candidate.confidence)
+            )
+          }
+        }
+        request.recognitionLevel = recognitionLevel
+        request.usesLanguageCorrection = true
+
+        let handler = VNImageRequestHandler(cgImage: image, options: [:])
+        try handler.perform([request])
+        if let requestError {
+          throw requestError
+        }
+        return observations
       }
     }
-    request.recognitionLevel = recognitionLevel
-    request.usesLanguageCorrection = true
-
-    let handler = VNImageRequestHandler(cgImage: image, options: [:])
-    try handler.perform([request])
-    if let requestError {
-      throw requestError
-    }
-    return observations
   }
 
   public func recognize(page: PDFPage, pageIndex: Int, scale: CGFloat = 2.0) throws
     -> [OCRObservation]
   {
-    let bounds = page.bounds(for: .mediaBox)
-    let pixelSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
-    guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
-      let context = CGContext(
-        data: nil,
-        width: Int(pixelSize.width),
-        height: Int(pixelSize.height),
-        bitsPerComponent: 8,
-        bytesPerRow: 0,
-        space: colorSpace,
-        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-      )
-    else {
-      return []
+    try autoreleasepool {
+      let bounds = page.bounds(for: .mediaBox)
+      let pixelSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
+      guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
+        let context = CGContext(
+          data: nil,
+          width: Int(pixelSize.width),
+          height: Int(pixelSize.height),
+          bitsPerComponent: 8,
+          bytesPerRow: 0,
+          space: colorSpace,
+          bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        )
+      else {
+        return []
+      }
+
+      context.setFillColor(NSColor.white.cgColor)
+      context.fill(CGRect(origin: .zero, size: pixelSize))
+      context.scaleBy(x: scale, y: scale)
+      page.draw(with: .mediaBox, to: context)
+
+      guard let image = context.makeImage() else { return [] }
+      return try recognize(image: image)
     }
-
-    context.setFillColor(NSColor.white.cgColor)
-    context.fill(CGRect(origin: .zero, size: pixelSize))
-    context.scaleBy(x: scale, y: scale)
-    page.draw(with: .mediaBox, to: context)
-
-    guard let image = context.makeImage() else { return [] }
-    return try recognize(image: image)
   }
 }

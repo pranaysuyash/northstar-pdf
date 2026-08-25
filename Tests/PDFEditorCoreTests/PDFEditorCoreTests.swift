@@ -1507,4 +1507,23 @@ struct PDFEditorCoreTests {
     #expect(decoded.label == sig.label)
     #expect(decoded.dataURL == sig.dataURL)
   }
+
+  @Test func inlineEditorStateInitializesCorrectly() {
+    let region = EditableRegionRef(
+      kind: .nativeField(id: "name_field"),
+      pageIndex: 0,
+      bounds: PDFRect(x: 50, y: 100, width: 200, height: 24)
+    )
+    let state = InlineEditorState(
+      target: region,
+      draftText: "John Doe",
+      initialValue: "John Doe",
+      label: "Full Name"
+    )
+
+    #expect(state.target.pageIndex == 0)
+    #expect(state.draftText == "John Doe")
+    #expect(state.initialValue == "John Doe")
+    #expect(state.label == "Full Name")
+  }
 }

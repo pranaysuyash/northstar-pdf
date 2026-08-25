@@ -33,7 +33,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | ID | Gate | Lane | Current state | Completion oracle |
 |---|---|---|---|---|
 | RG-001 | Public AcroForm fidelity | Native/provider | `FAIL` | Product no-op export preserves source bytes; any edit against a document-level AcroForm is now rejected before PDFKit mutation with an explicit read-only capability boundary; a form-aware writer is still required |
-| RG-002 | AcroForm provider decision | Shared/provider | `OPEN` | Adopt a form-aware provider or restrict supported form types with an explicit product boundary; qpdf rewrite is insufficient for widget reachability |
+| RG-002 | AcroForm provider decision | Shared/provider | `PASS` | Resolved 2026-08-25: adopted a custom incremental-update form writer (`web/pdf-incremental-form-writer.mjs`). Source-prefix bytes preserved (RG-017/RG-018 hold by construction), external AcroForm radio choice survives independent reopen (pikepdf/Poppler), qpdf `--check` clean. Full rewrite falsified as RG-017 violation. Companion/PDFium/PDFBox paths remain optional (D-048). |
 | RG-003 | Independent PDF structural validation | Validation | `PARTIAL` | Generated-output gate passes qpdf 12.4.0 for 39 PDFs with 0 hard failures; 6 Form 6 artifacts retain classified recoverable offset warnings and are not structurally clean |
 | RG-004 | PDF/UA validation | Validation | `BLOCKED` | A validator-backed PDF/UA report exists for supported output |
 | RG-005 | Authored tag-tree preservation | Native/web/provider | `OPEN` | Source structure tree is preserved or explicitly rejected with evidence |
@@ -143,7 +143,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-094 | Privacy and provenance governed corpus | `PASS` | The manifest verifies 16 artifact digests, required privacy/provenance fields, scanned/rotated/malformed/encrypted/handwritten/mixed-content coverage, qpdf status, encrypted password handling, malformed safe-failure expectations, and zero-content reporting |
 | RG-095 | Reviewed completion safety metrics | `PARTIAL` | Versioned metrics and mutation guards pass the controlled value-free benchmark: 5/5 correction lift, 14/14 abstention, 0/7 hard-negative selections, 35/35 hard-negative replay abstentions, 5/5 source-bound safe-completion guards, and 0 silent autofills; held-out recurring documents, value correctness, reviewer agreement, and materialized-output fidelity remain open |
 | RG-096 | OCR and companion provider bake-off | `PARTIAL` | Native Vision, local Tesseract CLI, and browser WASM Tesseract.js are measured on six governed OCR inputs with normalized bounds, confidence, latency, union alignment, and zero-content reporting; Vision passes the provisional class gate, both Tesseract lanes fail the noisy-scan gate, browser assets make no external requests in the measured run, malformed/encrypted/large recovery checks pass, and OCRmyPDF/PDFBox/MuPDF companion runtime, licensing, cancellation, and partial-output gates remain open |
-| RG-097 | Privacy-first PDF preflight and sanitization boundary | `PARTIAL` | Native PDFKit and browser PDF.js emit source-bound value-minimized preflight reports with metadata, embedded-data, network, active-content, encryption, zero-content, stale-digest, and explicit-limit evidence; metadata removal, embedded-data removal, action neutralization, hidden-revision analysis, signature effects, XFA/rich-media policy, independent post-sanitize reopening, and partial-output recovery remain active implementation gates |
+| RG-097 | Privacy-first PDF preflight and sanitization boundary | `PARTIAL` | Delivered 2026-08-25: (1) metadata/attachment sanitization (`web/pdf-sanitize.mjs`) — qpdf removes unreferenced resources/attachments, pikepdf strips XMP `/Metadata` and empties trailer `/Info`; (2) active-content neutralization (`web/pdf-action-neutralize.mjs`) — custom pikepdf pass deletes `/OpenAction`, `/AA`, `/JS`, `/JavaScript` and annotation `/A`/`/Launch`/`/SubmitForm`, leaving user `/URI` links. Remaining active gates: hidden-revision analysis, signature effects, XFA/rich-media policy, partial-output recovery, native PDFKit/PDF.js preflight reporting surface |
 | RG-098 | Device-adaptive browser resource governance | `PARTIAL` | Versioned browser resource policy chooses bounded render, high-DPI, OCR, batch, cancellation, and source-digest recovery budgets across five device profiles and six document classes; 242 browser checks, 30 value-free benchmark rows, native serialized decoding, and isolated Chrome evidence pass. Physical-device calibration, browser-version drift, real OCR worker memory, companion crash recovery, and long-run throughput remain open |
 | RG-099 | Text-run replacement and OCR-layer alignment | `PARTIAL` | Native PDFKit/Vision and browser PDF.js projections run across all 18 current fixtures with source binding, zero-content logging, safe malformed failure, 29 measurable text pages, 10 measured OCR/reference pages, and 71 explicit OCR abstentions. Text geometry at 2 points and OCR geometry at 3 points currently fail; true replacement remains abstained until independent text, raster, reopen, and viewer gates pass |
 | RG-100 | Native/browser semantic parity report | `PARTIAL` | Fresh PDFKit versus browser PDF.js/pdf-lib contract report runs across all 18 manifest fixtures with provider IDs, timestamps, generated IDs, diagnostic messages, and output digests normalized out of semantic equality; 16 readable source bindings match in both lanes, 2 malformed failures agree, 6 declared mismatches remain, and 0 unexpected mismatches remain. Static-candidate reconciliation, encrypted-hybrid point precision, non-noop edit sessions, OCR observations, companion providers, and independent-viewer semantics remain open |
@@ -154,7 +154,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-106 | Independent browser-export renderer comparison | `PARTIAL` | Poppler independently extracts text, renders raster pages, reopens, and compares 16 readable browser no-op exports with the PDF.js `outsideRegionText` and `visualDiff` gates; all 16 text and raster agreements pass with 0 unexpected divergences, while malformed inputs remain expected-failure/unknown and edited-operation, MuPDF three-way, GUI-viewer, redaction, signature, XFA, and PDF/UA evidence remain open |
 | RG-107 | Browser preservation metrics review surface | `PARTIAL` | The browser review/export panel exposes value-minimized outside-region text and raster status, compared/changed pages, changed/compared pixels, ratios, channel deltas, scale/tolerance, and evidence basis for both passing and failed exports; static Form 6 overlay preservation remains a deliberate failed validator case and independent-viewer/UI parity remains separate |
 | RG-108 | Independent browser-export measurement and operation binding | `PARTIAL` | Poppler and PDF.js verdicts are joined with separate normalized metrics and explicit comparable/notComparable/notMeasured states; serialized browser operation regions are passed to Poppler and missing/mismatched regions abstain. Readable no-op corpus evidence is 16/16 agreement with 2 malformed expected failures; fresh current-browser full-corpus metric regeneration and edited-operation promotion remain open |
-| RG-109 | Encrypted local template history and separate profile vault | `PARTIAL` | Native AES-GCM template/profile stores and browser encrypted IndexedDB template/profile-history APIs pass focused round-trip, wrong-key, parent, deletion, eviction-recovery, and zero-content tests. Secure deletion across OS/browser backups, Keychain-loss recovery, quota/concurrency stress, passphrase recovery, encrypted-backup cross-platform parity, and native persistence controls remain open |
+| RG-109 | Encrypted local template history and separate profile vault | `PARTIAL` | Native AES-GCM template/profile stores and the active browser IndexedDB adapter now pass focused round-trip, wrong-key, parent, deletion-audit, eviction-recovery, passphrase-recovery, explicit backup import/export, visible preflight, and zero-content tests. The OPFS adapter now exposes passphrase key recovery and eviction state, but its recovery UI, durable audit persistence, and cross-browser evidence are not promoted. Secure deletion across OS/browser backups, Keychain-loss recovery, quota/concurrency stress, encrypted-backup cross-platform parity, profile-value transfer policy, and native UI automation remain open |
 
 ## Current disposition
 
@@ -209,20 +209,28 @@ Documentation is part of completion. A gate is not complete until its implementa
 - **Scope:** Durable local template revisions and recurring profile values on
   native macOS and in the browser.
 - **Required evidence:** Authenticated encryption, separate template/profile
-  boundaries, immutable parent-linked revisions, deletion of primary and
-  recovery artifacts, explicit recovery state, wrong-key rejection, source-byte
-  exclusion, zero-content diagnostics, and browser eviction recovery.
-- **Current evidence:** Native `EncryptedTemplatePersistenceTests` pass 2/2.
-  Browser Node store/contract tests and isolated Chrome security/template tests
-  pass. The live page has removed its plaintext profile IndexedDB path and adds
-  explicit encrypted template save and profile unlock actions. Native
-  `PDFEditorApp.AppModel` now uses the revision-preserving profile vault through
-  its existing `UserProfile` projection.
-- **Disposition:** Implemented for current local native/browser adapters;
-  partial for the full product gate because secure OS/browser backup erasure,
-  Keychain-loss recovery, passphrase recovery, quota/concurrency stress,
-  encrypted-backup cross-platform parity, and native SwiftUI controls remain
-  active.
+  boundaries, immutable parent-linked revisions, explicit encrypted backup
+  import/export, separate passphrase key recovery, deletion audit, explicit
+  recovery and eviction states, wrong-key rejection, source-byte exclusion,
+  visible privacy preflight, zero-content diagnostics, and browser eviction
+  recovery.
+- **Current evidence:** Native `EncryptedTemplatePersistenceTests` pass 5/5;
+  the last green full Swift suite passed 102 tests in 12 suites. The active browser
+  IndexedDB adapter and isolated Chrome security fixture pass encrypted backup
+  restore, key-recovery export/import, wrong-recovery rejection, simulated
+  eviction, deletion audit, visible preflight, and zero-content checks. The
+  native SwiftUI inspector exposes the same health, recovery, deletion, and
+  preflight state families. The OPFS adapter exposes the recovery API and
+  stateful envelope availability, but its UI and durable audit/runtime parity
+  are not promoted yet. A later whole-package rerun in the current dirty
+  checkout is blocked by a separate `PDFEditorRecovery` public/internal
+  visibility compile error, so the 102-test result remains the last green
+  full-suite evidence rather than a fresh release claim.
+- **Disposition:** Implemented for the native and active browser IndexedDB
+  persistence paths; partial for the full product gate because OPFS recovery,
+  secure OS/browser backup erasure, Keychain-loss recovery, quota/concurrency
+  stress, encrypted-backup cross-adapter parity, profile-value transfer policy,
+  and native UI automation remain active.
 - **Falsifier:** A persisted envelope contains a profile value or PDF bytes, a
   wrong key yields a value, deletion leaves a readable recovery copy, primary
   corruption is presented as healthy, or the UI silently persists a secret.

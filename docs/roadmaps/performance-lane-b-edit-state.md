@@ -25,7 +25,7 @@ the staged output.
 
 ## Current architecture observed
 
-- [`AppModel.swift`](/Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/AppModel.swift) owns the live `PDFDocument`, the applied `operations` array, cached source bytes, and the native undo/redo actions.
+- [`AppModel.swift`](../../Sources/PDFEditorRecovery/AppModel.swift) owns the live `PDFDocument`, the applied `operations` array, cached source bytes, and the native undo/redo actions.
 - Each successful native-field, synthesized-field, or overlay mutation applies directly to the live PDFKit document and then appends its typed `EditOperation`.
 - Before this lane, undo removed the last operation, reopened a new `PDFDocument` from cached source bytes, replayed every remaining operation, and replaced the live document.
 - [`DocumentModel.swift`](/Users/pranay/Projects/pdf_editor/Sources/PDFEditorCore/DocumentModel.swift) defines the provider-neutral `EditOperation` and `PDFProvider` contracts. `EditOperation` carries `previousValue`, but that is sufficient only for some native field inverses, not for every supported mutation.
@@ -109,5 +109,5 @@ before the checkpoint path can be promoted beyond its fallback role.
 
 ## Changed files
 
-- [`Sources/PDFEditorApp/AppModel.swift`](/Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/AppModel.swift): bounded replay checkpoint ring, source fallback, atomic undo commit, and rotation preservation.
+- [`Sources/PDFEditorRecovery/AppModel.swift`](../../Sources/PDFEditorRecovery/AppModel.swift): bounded replay checkpoint ring, source fallback, atomic undo commit, and rotation preservation.
 - [`docs/roadmaps/performance-lane-b-edit-state.md`](/Users/pranay/Projects/pdf_editor/docs/roadmaps/performance-lane-b-edit-state.md): this design, implementation record, invariants, integration seam, and risks.

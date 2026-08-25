@@ -35,6 +35,9 @@ public struct PDFImpactResult: Sendable, Equatable {
 }
 
 public enum PDFImpactValidator {
+    private static let maximumComparedPixelsPerPage = 4_000_000
+    private static let minimumDownsampleScale: CGFloat = 0.25
+
     public static func compareTextOutsideRegions(
         source: PDFDocument,
         output: PDFDocument,
@@ -91,7 +94,9 @@ public enum PDFImpactValidator {
         operations: [EditOperation],
         scale: CGFloat = 1.0,
         channelTolerance: Int = 8,
-        maxAllowedOutsidePixelRatio: Double = 0
+        maxAllowedOutsidePixelRatio: Double = 0,
+        maximumComparedPixelsPerPage: Int = 4_000_000,
+        minimumDownsampleScale: CGFloat = 0.2
     ) -> PDFImpactResult {
         guard source.pageCount == output.pageCount else {
             return PDFImpactResult(
@@ -116,66 +121,114 @@ public enum PDFImpactValidator {
         var maximumDelta = 0
 
         for pageIndex in 0..<source.pageCount {
-            guard let sourcePage = source.page(at: pageIndex),
-                  let outputPage = output.page(at: pageIndex) else {
-                return PDFImpactResult(
-                    status: .failed,
-                    message: "Raster comparison could not reopen page \(pageIndex + 1)."
-                )
+            enum PageComparisonOutcome {
+                case result(PDFImpactResult)
+                case pageData(changedPixels: Int, comparedPixels: Int, pageMaxDelta: Int, pageChanged: Bool)
             }
-            guard let sourceRaster = raster(for: sourcePage, scale: scale),
-                  let outputRaster = raster(for: outputPage, scale: scale) else {
-                return PDFImpactResult(
-                    status: .failed,
-                    message:
-                        "Raster comparison could not render page \(pageIndex + 1); failing closed rather than passing without evidence."
-                )
-            }
-            guard sourceRaster.width == outputRaster.width,
-                  sourceRaster.height == outputRaster.height,
-                  sourceRaster.samplesPerPixel == outputRaster.samplesPerPixel else {
-                return PDFImpactResult(
-                    status: .failed,
-                    message: "Rendered page dimensions changed on page \(pageIndex + 1)."
+
+            let outcome: PageComparisonOutcome = autoreleasepool {
+                guard let sourcePage = source.page(at: pageIndex),
+                      let outputPage = output.page(at: pageIndex) else {
+                    return .result(PDFImpactResult(
+                        status: .failed,
+                        message: "Raster comparison could not reopen page \(pageIndex + 1)."
+                    ))
+                }
+                let sourceDisplayBounds = Self.displayBounds(for: sourcePage)
+                let outputDisplayBounds = Self.displayBounds(for: outputPage)
+                guard sourceDisplayBounds.size == outputDisplayBounds.size else {
+                    return .result(PDFImpactResult(
+                        status: .failed,
+                        message: "Rendered page dimensions changed on page \(pageIndex + 1)."
+                    ))
+                }
+                let pagePixelCount = Int(ceil(sourceDisplayBounds.width * scale))
+                    * Int(ceil(sourceDisplayBounds.height * scale))
+                let effectiveScale: CGFloat
+                if CGFloat(pagePixelCount) > CGFloat(Self.maximumComparedPixelsPerPage) {
+                    let downscale = sqrt(
+                        CGFloat(Self.maximumComparedPixelsPerPage) / CGFloat(pagePixelCount))
+                    if downscale < Self.minimumDownsampleScale {
+                        return .result(PDFImpactResult(
+                            status: .unknown,
+                            message:
+                                "Raster comparison was not completed for page \(pageIndex + 1): it exceeds the pixel budget even at the minimum comparison scale."
+                        ))
+                    }
+                    effectiveScale = scale * downscale
+                } else {
+                    effectiveScale = scale
+                }
+                guard let sourceRaster = raster(for: sourcePage, scale: effectiveScale),
+                      let outputRaster = raster(for: outputPage, scale: effectiveScale) else {
+                    return .result(PDFImpactResult(
+                        status: .failed,
+                        message:
+                            "Raster comparison could not render page \(pageIndex + 1); failing closed rather than passing without evidence."
+                    ))
+                }
+                guard sourceRaster.width == outputRaster.width,
+                      sourceRaster.height == outputRaster.height,
+                      sourceRaster.samplesPerPixel == outputRaster.samplesPerPixel else {
+                    return .result(PDFImpactResult(
+                        status: .failed,
+                        message: "Rendered page dimensions changed on page \(pageIndex + 1)."
+                    ))
+                }
+
+                let authorizationPadding = max(1.0 / effectiveScale, 0.5)
+                let regions = operations
+                    .filter { $0.pageIndex == pageIndex }
+                    .compactMap { $0.coordinate?.rect.cgRect.insetBy(dx: -authorizationPadding, dy: -authorizationPadding) }
+                let displayHeight = sourceDisplayBounds.height
+                let displayToUser = sourcePage.transform(for: .cropBox).inverted()
+                var pageChangedPixels = 0
+                var pageComparedPixels = 0
+                var pageMaxDelta = 0
+                for y in 0..<sourceRaster.height {
+                    for x in 0..<sourceRaster.width {
+                        let rx = CGFloat(x) / effectiveScale
+                        let ry = displayHeight - CGFloat(y + 1) / effectiveScale
+                        let userPoint = CGPoint(x: rx, y: ry).applying(displayToUser)
+                        if regions.contains(where: { $0.contains(userPoint) }) {
+                            continue
+                        }
+                        pageComparedPixels += 1
+                        let sourceOffset = y * sourceRaster.bytesPerRow + x * sourceRaster.samplesPerPixel
+                        let outputOffset = y * outputRaster.bytesPerRow + x * outputRaster.samplesPerPixel
+                        var changed = false
+                        for channel in 0..<min(sourceRaster.samplesPerPixel, 4) {
+                            let delta = abs(Int(sourceRaster.bytes[sourceOffset + channel]) - Int(outputRaster.bytes[outputOffset + channel]))
+                            pageMaxDelta = max(pageMaxDelta, delta)
+                            if delta > channelTolerance {
+                                changed = true
+                            }
+                        }
+                        if changed {
+                            pageChangedPixels += 1
+                        }
+                    }
+                }
+                let ratio = pageComparedPixels == 0 ? 0 : Double(pageChangedPixels) / Double(pageComparedPixels)
+                let pageChanged = ratio > maxAllowedOutsidePixelRatio
+                return .pageData(
+                    changedPixels: pageChangedPixels,
+                    comparedPixels: pageComparedPixels,
+                    pageMaxDelta: pageMaxDelta,
+                    pageChanged: pageChanged
                 )
             }
 
-            let regions = operations
-                .filter { $0.pageIndex == pageIndex }
-                .compactMap { $0.coordinate?.rect.cgRect }
-            let pageBounds = sourcePage.bounds(for: .cropBox)
-            var pageChangedPixels = 0
-            var pageComparedPixels = 0
-            for y in 0..<sourceRaster.height {
-                for x in 0..<sourceRaster.width {
-                    let point = CGPoint(
-                        x: pageBounds.minX + CGFloat(x) / scale,
-                        y: pageBounds.maxY - CGFloat(y + 1) / scale
-                    )
-                    if regions.contains(where: { $0.contains(point) }) {
-                        continue
-                    }
-                    pageComparedPixels += 1
-                    let sourceOffset = y * sourceRaster.bytesPerRow + x * sourceRaster.samplesPerPixel
-                    let outputOffset = y * outputRaster.bytesPerRow + x * outputRaster.samplesPerPixel
-                    var changed = false
-                    for channel in 0..<min(sourceRaster.samplesPerPixel, 4) {
-                        let delta = abs(Int(sourceRaster.bytes[sourceOffset + channel]) - Int(outputRaster.bytes[outputOffset + channel]))
-                        maximumDelta = max(maximumDelta, delta)
-                        if delta > channelTolerance {
-                            changed = true
-                        }
-                    }
-                    if changed {
-                        pageChangedPixels += 1
-                    }
+            switch outcome {
+            case .result(let earlyResult):
+                return earlyResult
+            case .pageData(let pChanged, let pCompared, let pDelta, let isChanged):
+                comparedPixels += pCompared
+                changedPixels += pChanged
+                maximumDelta = max(maximumDelta, pDelta)
+                if isChanged {
+                    changedPages.append(pageIndex)
                 }
-            }
-            comparedPixels += pageComparedPixels
-            changedPixels += pageChangedPixels
-            let ratio = pageComparedPixels == 0 ? 0 : Double(pageChangedPixels) / Double(pageComparedPixels)
-            if ratio > maxAllowedOutsidePixelRatio {
-                changedPages.append(pageIndex)
             }
         }
 
@@ -214,8 +267,19 @@ public enum PDFImpactValidator {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    /// Display-space bounds after applying the page's /Rotate transform.
+    /// CGPDFPageGetBoxRect applies rotation; the PDFKit fallback assumes 0°.
+    private static func displayBounds(for page: PDFPage) -> CGRect {
+        if let pageRef = page.pageRef {
+            return pageRef.getBoxRect(.cropBox)
+        }
+        return page.bounds(for: .cropBox)
+    }
+
     private static func raster(for page: PDFPage, scale: CGFloat) -> Raster? {
-        let bounds = page.bounds(for: .cropBox)
+        // Render in display space: for /Rotate 90/270 the rendered bitmap
+        // dimensions are swapped relative to the unrotated crop box.
+        let bounds = Self.displayBounds(for: page)
         let width = max(1, Int(ceil(bounds.width * scale)))
         let height = max(1, Int(ceil(bounds.height * scale)))
         guard let bitmap = NSBitmapImageRep(

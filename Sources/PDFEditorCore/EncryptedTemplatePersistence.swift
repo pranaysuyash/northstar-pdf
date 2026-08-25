@@ -298,6 +298,40 @@ private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unch
         return try encoder.encode(envelope)
     }
 
+    func exportBackup() throws -> PDFLocalStoreBackupEnvelope {
+        let records = try ids().map { id -> PDFEncryptedTemplateStoreRecord in
+            let data = try Data(contentsOf: fileURL(id: id))
+            do {
+                return try decoder.decode(PDFEncryptedTemplateStoreRecord.self, from: data)
+            } catch {
+                throw PDFTemplatePersistenceError.encodingFailed("encrypted backup contains an unreadable record")
+            }
+        }
+        let envelope = PDFLocalStoreBackupEnvelope(
+            storeKind: localStoreKind,
+            keyIdentifier: keyIdentifier,
+            records: records)
+        try envelope.validate()
+        return envelope
+    }
+
+    func restoreBackup(_ envelope: PDFLocalStoreBackupEnvelope, replacing: Bool) throws {
+        try envelope.validate()
+        guard envelope.storeKind == localStoreKind,
+              envelope.keyIdentifier == keyIdentifier
+        else {
+            throw PDFTemplatePersistenceError.keychainFailed("encrypted backup belongs to another local store")
+        }
+        if replacing {
+            try deleteAllRecords()
+        }
+        for record in envelope.records {
+            let data = try encoder.encode(record)
+            try write(data, id: record.recordID)
+        }
+        _ = try decodeExistingRecordIfPresent()
+    }
+
     func recoverKey(from data: Data, passphrase: String) throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
@@ -524,6 +558,27 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
         return data
     }
 
+    public func exportEncryptedBackup() throws -> Data {
+        let envelope = try PDFLocalCrossDeviceRecoveryCodec.encode(
+            backup: store.exportBackup(),
+            learning: learningStore.exportBackup())
+        try appendAudit(action: .backupExport, outcome: .succeeded, state: .ready, reasonCode: "encrypted-vault-backup-exported")
+        return envelope
+    }
+
+    public func importEncryptedBackup(_ data: Data, replacing: Bool = false) throws {
+        let parts = try PDFLocalCrossDeviceRecoveryCodec.decode(data)
+        guard parts.backup.storeKind == .template,
+              parts.learning?.storeKind == .template else {
+            throw PDFTemplatePersistenceError.encodingFailed("template backup store kind mismatch")
+        }
+        try store.restoreBackup(parts.backup, replacing: replacing)
+        if let learning = parts.learning {
+            try learningStore.restoreBackup(learning, replacing: replacing)
+        }
+        try appendAudit(action: .backupImport, outcome: .succeeded, state: .ready, reasonCode: "encrypted-vault-backup-imported")
+    }
+
     public func recoverKey(from data: Data, passphrase: String) throws {
         try store.recoverKey(from: data, passphrase: passphrase)
         try appendAudit(action: .recoveryImport, outcome: .succeeded, state: .recovered, reasonCode: "passphrase-envelope-imported")
@@ -717,6 +772,23 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
     public func recoverKey(from data: Data, passphrase: String) throws {
         try store.recoverKey(from: data, passphrase: passphrase)
         try appendAudit(action: .recoveryImport, outcome: .succeeded, state: .recovered, reasonCode: "passphrase-envelope-imported")
+    }
+
+    public func exportEncryptedBackup() throws -> Data {
+        let envelope = try PDFLocalCrossDeviceRecoveryCodec.encode(
+            backup: store.exportBackup(),
+            learning: nil)
+        try appendAudit(action: .backupExport, outcome: .succeeded, state: .ready, reasonCode: "encrypted-vault-backup-exported")
+        return envelope
+    }
+
+    public func importEncryptedBackup(_ data: Data, replacing: Bool = false) throws {
+        let parts = try PDFLocalCrossDeviceRecoveryCodec.decode(data)
+        guard parts.backup.storeKind == .profile, parts.learning == nil else {
+            throw PDFTemplatePersistenceError.encodingFailed("profile backup store kind mismatch")
+        }
+        try store.restoreBackup(parts.backup, replacing: replacing)
+        try appendAudit(action: .backupImport, outcome: .succeeded, state: .ready, reasonCode: "encrypted-vault-backup-imported")
     }
 
     public func health() throws -> PDFLocalStoreHealth {

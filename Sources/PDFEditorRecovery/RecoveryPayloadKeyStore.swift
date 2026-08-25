@@ -24,25 +24,32 @@ enum RecoveryPayloadKeyStoreError: Error, LocalizedError {
 /// The key is deliberately not derived from a document, session, or source
 /// digest. Those values are authenticated as associated data; the key itself
 /// is a per-user Keychain secret that remains stable across app launches.
-final class RecoveryPayloadKeyStore: @unchecked Sendable {
-  static let shared = RecoveryPayloadKeyStore()
+public final class RecoveryPayloadKeyStore: @unchecked Sendable {
+  public static let shared = RecoveryPayloadKeyStore()
 
-  private static let defaultService = "com.pdfeditor.recovery-payload"
-  private static let defaultAccount = "aes-gcm-256-v1"
+  public static let defaultService = "com.pdfeditor.recovery-payload"
+  public static let defaultAccount = "aes-gcm-256-v1"
 
   private let service: String
   private let account: String
+  private let testKeyData: Data?
   private let lock = NSLock()
 
-  init(
+  public init(
     service: String = RecoveryPayloadKeyStore.defaultService,
-    account: String = RecoveryPayloadKeyStore.defaultAccount
+    account: String = RecoveryPayloadKeyStore.defaultAccount,
+    testKeyData: Data? = nil
   ) {
     self.service = service
     self.account = account
+    self.testKeyData = testKeyData
   }
 
   func loadOrCreateKey() throws -> SymmetricKey {
+    if let testKeyData {
+      return try makeKey(from: testKeyData)
+    }
+
     lock.lock()
     defer { lock.unlock() }
 

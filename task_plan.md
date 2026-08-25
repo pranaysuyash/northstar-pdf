@@ -50,6 +50,26 @@ enabled or claimed for a source class.
 
 ## Phases
 
+### Current continuation: reconcile, implement, and verify every long-term lane
+
+**Status:** active, with provider-specific evidence still being closed
+
+- Reconcile handoff claims against the actual native and browser source before
+  adding duplicate surfaces.
+- Keep retrieval advisory and preserve mapping approval, profile-value approval,
+  source-digest binding, operation lineage, and export validation as the only
+  completion path.
+- Exercise exact, variant, family, ambiguous, stale, unsupported, and no-match
+  template states in both visible adapters.
+- Preserve typed text, choice, boolean, and asset-reference values across native
+  and browser serialization.
+- Resolve provider fidelity failures one fixture at a time, beginning with the
+  native radio/choice retention regression, then continue OCR, text replacement,
+  redaction, signatures, XFA, PDF/UA, independent viewers, companions,
+  collaboration, and hosted/batch lanes.
+- Record implementation, runtime, provider, privacy, recovery, and release
+  evidence separately. No evidence label is a permanent product exclusion.
+
 ### Phase 1: Workspace and problem framing
 
 **Status:** complete
@@ -150,11 +170,12 @@ lineage. The browser capture path and native/web contract round-trip are
 implemented. The reviewed matching benchmark now covers exact, known variant,
 family, ambiguous, stale, and hard-negative no-match cases with a deliberate
 threshold mutation gate. The reviewed corpus now has class-aware calibration,
-but real recurring-family versions, hold-out evaluation, reviewer agreement, and
-live PDF-derived native/browser fingerprint parity remain open. The next
-template unit is native review UI plus store/adapter wiring, not automatic
-completion, while provider fidelity and independent outside-region comparison
-remain open.
+but genuine recurring-family versions, hold-out evaluation, reviewer agreement,
+and live PDF-derived fingerprint expansion remain active evidence lanes. Native
+review UI, encrypted store/profile adapter wiring, automatic profile-resolution
+abstention, and reviewed revision migration are now implemented. Provider
+fidelity and independent outside-region comparison remain active long-term
+measurement lanes.
 
 - The provider-neutral core, PDFKit adapter, and native SwiftUI/AppKit shell are
   already present in this workspace and documented in
@@ -305,15 +326,20 @@ round-trip and matcher tests. The runtime layer now includes encrypted local
 record primitives, review-gated operation materialization, and strict learning
 promotion. The browser mapping/value review surface is now implemented against
 the shared contracts. The browser encrypted-store lifecycle now includes
-explicit store/profile unlock, deletion, eviction health, ciphertext backup
-restore, and zero-content diagnostics. The next template slice is local-index
-retrieval, recovery hardening, adapter integration, and held-out recurring-
-version calibration, not automatic completion. The
+explicit store/profile unlock, deletion audit, eviction health, ciphertext
+backup restore, separate passphrase key recovery, visible privacy preflight,
+and zero-content diagnostics for the active IndexedDB adapter. The next
+template slice is local-index retrieval, OPFS recovery parity, adapter
+integration, and held-out recurring-version calibration, not automatic
+completion. The OPFS adapter now exposes the same passphrase recovery and
+evicted-record state contract, while its UI, durable audit persistence, and
+cross-browser evidence remain open. The
 controlled correction-event measurement now shows a bounded reviewed-target
 coverage lift while preserving rollback, privacy, and hard-negative abstention;
 genuine held-out recurring families, reviewer agreement, value correctness, and
-user-time benefit remain required. Lost-passphrase recovery and production
-persistence UX remain bounded work.
+user-time benefit remain required. Keychain-loss recovery, secure deletion,
+quota/concurrency stress, cross-adapter backup parity, and production
+recovery UX remain active work.
 The initial PDFKit lane remains documented in [`docs/pdfkit-benchmark.md`](docs/pdfkit-benchmark.md);
 it is evidence for the adapter, not a final provider clearance.
 
@@ -831,9 +857,11 @@ Implementation and evidence:
 ### Phase 30: Encrypted local template persistence and separate profile vaults
 
 **Status:** Native and browser persistence implemented and focused-tested;
-secure deletion, Keychain-loss recovery, quota/concurrency stress, backup
-cross-platform parity, passphrase recovery, and native persistence controls
-remain active long-term implementation lanes
+passphrase recovery and native persistence controls are implemented for the
+current native and active browser IndexedDB paths. Secure deletion,
+Keychain-loss recovery, quota/concurrency stress, backup cross-platform
+parity, OPFS UI and audit parity, and production recovery UX remain active
+long-term implementation lanes
 
 - Persist the existing reviewed template revision contract as an encrypted,
   append-only history with parent and identity validation.
@@ -847,8 +875,8 @@ remain active long-term implementation lanes
 - Preserve zero-content diagnostics and reject source PDF bytes in template
   records.
 - Continue into OS/browser backup erasure, Keychain recovery, quota and
-  multi-tab conflict behavior, passphrase recovery, encrypted-backup parity,
-  and native SwiftUI controls without changing the shared PDF contracts.
+  multi-tab conflict behavior, encrypted-backup parity, OPFS UI/audit parity,
+  and production recovery UX without changing the shared PDF contracts.
 
 Implementation and evidence:
 
@@ -885,7 +913,7 @@ and export-audit approval projections remain active long-term hardening lanes
 Implementation and evidence:
 
 - [`Sources/PDFEditorCore/TemplateRuntimeContracts.swift`](Sources/PDFEditorCore/TemplateRuntimeContracts.swift)
-- [`Sources/PDFEditorApp/AppModel.swift`](Sources/PDFEditorApp/AppModel.swift)
+- [`Sources/PDFEditorRecovery/AppModel.swift`](Sources/PDFEditorRecovery/AppModel.swift)
 - [`Sources/PDFEditorApp/ContentView.swift`](Sources/PDFEditorApp/ContentView.swift)
 - [`web/pdf-template-contract.mjs`](web/pdf-template-contract.mjs)
 - [`web/index.html`](web/index.html)
@@ -973,3 +1001,36 @@ Implementation and evidence:
 - [`benchmark/browser-export-independent-viewer-validator.mjs`](benchmark/browser-export-independent-viewer-validator.mjs)
 - [`Tests/browser_export_independent_viewer_validator_test.mjs`](Tests/browser_export_independent_viewer_validator_test.mjs)
 - [`docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md`](docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md)
+
+### Phase 35: Product-facing encrypted persistence and cross-device recovery
+
+**Status:** Native and browser product surfaces implemented; browser runtime
+evidence passed; native package-wide test execution remains blocked by an
+unrelated app-target compile failure
+
+- Expose native encrypted template/profile backup export and import through
+  save/open panels with explicit replacement confirmation.
+- Expose browser encrypted backup download/import, quota and eviction
+  education, lost-passphrase messaging, and value-free deletion presentation.
+- Keep native Keychain custody and profile unlock distinct from template
+  mapping approval and PDF completion.
+- Validate backup structure in a worker that receives ciphertext structure only.
+- Support cross-device bundles containing encrypted records plus a separate
+  passphrase-protected key-recovery envelope.
+- Make ordinary recovery strict to its local store identity while making
+  cross-device recovery explicitly portable and destination-rekeyed.
+- Continue signed native Keychain loss/reinstall testing, browser quota and
+  multi-tab stress, import corruption mutation tests, and production UI
+  automation as evidence lanes. These are hardening gates, not scope cuts.
+
+Implementation and evidence:
+
+- [`Sources/PDFEditorCore/LocalPersistenceContracts.swift`](Sources/PDFEditorCore/LocalPersistenceContracts.swift)
+- [`Sources/PDFEditorCore/EncryptedTemplatePersistence.swift`](Sources/PDFEditorCore/EncryptedTemplatePersistence.swift)
+- [`Sources/PDFEditorRecovery/AppModel.swift`](Sources/PDFEditorRecovery/AppModel.swift)
+- [`Sources/PDFEditorApp/ContentView.swift`](Sources/PDFEditorApp/ContentView.swift)
+- [`web/pdf-vault-worker.mjs`](web/pdf-vault-worker.mjs)
+- [`web/pdf-vault-worker-client.mjs`](web/pdf-vault-worker-client.mjs)
+- [`web/pdf-cross-device-recovery.mjs`](web/pdf-cross-device-recovery.mjs)
+- [`Tests/web_template_security_browser_test.mjs`](Tests/web_template_security_browser_test.mjs)
+- [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](docs/audits/local-persistence-product-surface-evidence-2026-08-25.md)

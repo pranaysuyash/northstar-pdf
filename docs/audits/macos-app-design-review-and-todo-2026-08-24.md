@@ -736,7 +736,7 @@ Non-fatal runtime warnings observed during browser evidence include PDF.js font/
 
 - Native UI runtime evidence remains required for actual AppKit multi-window behavior, Cmd-W and native close-button behavior, rejected-close rollback, Cmd-F focus routing, PDFKit overlay projection after in-place revision changes, VoiceOver traversal, and reduced-motion behavior. Command-line compilation and PDFKit harness evidence do not prove those interactions.
 - Recovery crash-interruption evidence remains required. The metadata envelope, sensitive payload, pair manifest, generation retention, schema quarantine, and source-digest binding are implemented, but an interrupted native process must still be observed to prove that the previous commit pointer remains readable.
-- The sensitive payload store currently uses restrictive filesystem permissions but is not encrypted. A long-term security decision is still required: local-trust threat model with explicit documented boundary, or Keychain-backed key management and authenticated encryption.
+- Sensitive payload encryption is closed in Section 15: AES-GCM with a stable Keychain-backed key, identity-bound associated data, quarantine on failure, and no plaintext fallback. The remaining evidence gap is controlled crash interruption, not the encryption design.
 - Permanent redaction remains intentionally unavailable until a provider exposes a measured `redaction.permanent` capability and a validated `applyRedaction` implementation. The UI now states that limitation explicitly and fails closed.
 - The native/web parity report continues to expose semantic differences in native field choice encodings, accessibility reading-order claims, candidate sets, encrypted security metadata, and page geometry precision. Each difference remains a review item; parity is not claimed merely because the harness exits successfully.
 - Historical generated evidence reports retain their original digests. They are not rewritten to conceal the encrypted-fixture refresh; the governance manifest and executable provenance contract are the current anchors.
@@ -744,3 +744,82 @@ Non-fatal runtime warnings observed during browser evidence include PDF.js font/
 ### 14.4 Current completion status
 
 The implementation and command-line/browser validation waves are complete. The overall macOS design goal remains open because native UI runtime proof, recovery interruption proof, and the payload-encryption policy decision are not yet verified or resolved. No `Complete` claim should be made until those evidence and policy items are closed.
+## 15. Recovery payload encryption closure, 2026-08-25
+
+- Added `RecoveryPayloadKeyStore.swift` with a stable Keychain-backed 256-bit key for sensitive recovery payloads.
+- Updated `SessionPayloadStore.swift` to use AES-GCM authenticated encryption for new value-bearing payload records.
+- Associated data authenticates session identity, autosave generation, source digest, encrypted format version, and payload schema version.
+- Keychain failure, authentication failure, or malformed encrypted records fail closed and quarantine the record. There is no plaintext fallback and no regenerated replacement key.
+- Existing plaintext payload schema is intentionally unsupported and quarantined rather than migrated unsafely.
+- Payload file permissions, generation retention, source binding, deletion, and quarantine cleanup remain in force.
+- Current direct validation: `swift build -c debug`, strict `PDFEditorApp` build, `swift test` with 102 tests across 12 suites, and `swift build -c release` all passed after this change.
+
+The remaining completion ceiling is now limited to runtime observation and provider capability rather than an unresolved local payload-security design:
+
+- Real native AppKit window, menu, focus, VoiceOver, reduced-motion, and close-interruption observation is still not available from the current raw SwiftPM executable session. AppleScript found the process but no discoverable window, so no native UI claim is made.
+- Crash-interruption recovery durability still needs a controlled process-kill/relaunch experiment to prove the previous commit pointer remains readable under interruption.
+- Permanent redaction remains fail-closed until a provider exposes measured `redaction.permanent` capability and validated destructive implementation. This is an explicit capability boundary, not an accidental no-op.
+## 16. Current controlled interruption proof and remaining native ceiling (2026-08-25)
+
+### Verified implementation closure
+
+- `Sources/PDFEditorRecovery/RecoveryInterruptionTestSupport.swift` and `Sources/PDFRecoveryInterruptionHarness/main.swift` now provide a test-only subprocess seam. It is inert unless the explicit interruption environment is present, emits phase labels only, and blocks only after a successful store write.
+- `Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift` now proves the real `AppModel` recovery path across payload, pair-manifest, and metadata-envelope interruption boundaries. The child is terminated with `SIGKILL`; the parent reopens the source with fresh model state and asserts only value-minimized generation, envelope, operation-count, and status outcomes.
+- The payload and pair stores use generation-specific immutable filenames. A failed prepare cannot overwrite the last committed generation. The metadata envelope remains the commit pointer.
+- Recovery payloads remain AES-GCM authenticated and Keychain-backed in production. The interruption harness injects a deterministic test-only 256-bit key so crash-boundary evidence does not depend on a live Keychain transaction; encryption and Keychain behavior remain covered separately.
+- Recovery identity hashing now uses one explicit ISO-8601 canonical encoder for operation, metadata, and payload identities. This closes the date-precision mismatch that previously made a valid persisted operation ledger fail after decrypt/decode.
+
+### Current evidence
+
+- Verified: `swift test` passed 106 tests across 13 suites on 2026-08-25.
+- Verified: payload interruption during an update preserved generation 1 and replayed 1 operation.
+- Verified: pair-manifest interruption during an update preserved generation 1 and replayed 1 operation.
+- Verified: metadata-envelope interruption during an update made generation 2 authoritative and replayed 2 operations.
+- Verified: first-save interruption before the metadata commit left no discoverable recovery; interruption after the metadata commit made generation 1 with 1 operation authoritative.
+- Verified: the prior recovery false negative was a real canonical identity defect, not a test-only artifact; the persisted date representation and digest representation are now aligned.
+
+### Remaining TODO and evidence boundary
+
+- `Unknown`: native AppKit runtime proof remains outstanding for a packaged `.app`, visible document window, standard menu bar, menu command routing, and accessibility tree. The raw SwiftPM executable is not sufficient evidence for these claims.
+- `Unknown`: controlled application termination evidence remains outstanding. The current source has recovery autosave paths and view-state debounce, but no independently observed `applicationShouldTerminate` or scene teardown flush proof.
+- `Proposed`: package the release executable in an isolated temporary `.app`, launch it without a document, then launch/open a public fixture and capture window, menu, and accessibility observations. Record failures as scoped runtime limitations rather than converting source or test evidence into runtime claims.
+- `Proposed`: add a native termination harness only after the packaged runtime is observable, using the same generation-specific recovery contract and a controlled termination signal rather than a browser or raw executable proxy.
+
+## 17. Packaged native runtime probe (2026-08-25)
+
+- Verified: `swift build -c release --product PDFEditor` completed successfully.
+- Observed: a temporary `.app` wrapper around the release executable launched as a native macOS process from `/tmp/PDFEditorRuntimeProbe-923364DB-7F04-438B-81CE-3F266017B99F.app`.
+- Observed: System Events reported zero windows for the exact packaged process after launch.
+- Observed: the menu-bar query did not return a usable menu-bar surface, and opening `benchmark/results/public-sample-form.pdf` did not produce a visible accessible document window in the bounded probe.
+- Status: native window, standard-menu, command-routing, and accessibility claims remain `Unknown`. The probe is evidence that the raw executable can be launched through a temporary bundle, not evidence that the product is usable as a native app.
+- TODO: inspect `PDFEditorApp.swift` scene/window lifecycle and add a packaged-runtime launch path that intentionally creates an observable document window before repeating menu and accessibility capture.
+- TODO: add independently observed termination flushing after a usable native window exists. Do not treat the current raw process or temporary probe as release evidence.
+
+## 18. Native shell hardening closure wave (2026-08-25)
+
+### Implemented
+
+- `AppModel()` no longer performs synchronous template/profile vault health and Keychain enumeration during native window construction. Vault state is lazy and explicit; the window can appear before optional encrypted-vault diagnostics.
+- `AppModel.flushRecoveryForTermination()` cancels pending view-state debounce work and synchronously commits dirty or pending recovery state. It returns failure rather than allowing the caller to claim durable recovery when the write did not complete.
+- `PDFEditorAppDelegate.applicationShouldTerminate` now calls the flush for every registered window controller and returns `.terminateCancel` if any model cannot commit recovery.
+- Window controllers register weakly, retain their focused model reference, and route Finder/open-document URL events to the focused document model.
+- The window has an explicit default size and the existing coalesced view-state autosave is now wired to page selection, field/candidate selection, search state, reader mode, scale mode, zoom, and rotation changes.
+- Core toolbar and welcome actions have explicit accessibility labels and hints rather than relying on implicit system-image label inference.
+
+### Current authoritative evidence
+
+- Verified: `swift test` passed 112 tests across 15 suites on 2026-08-25.
+- Verified: `RecoveryTerminationFlushTests` passed. A pending edit was flushed synchronously and replayed from fresh model state as generation 1 with one operation.
+- Verified: `RecoveryCrashInterruptionTests` passed all payload, pair, metadata, and first-save boundary cases.
+- Verified: `swift build -c debug --target PDFEditorApp -Xswiftc -strict-concurrency=complete` passed.
+- Verified: isolated release product build passed with `swift build -c release --product PDFEditor` using a separate scratch path because another worker was mutating the shared SwiftPM cache.
+- Verified: the current release binary, packaged in `/tmp/PDFEditorReleaseProbe-8248E8B5-F94E-4353-B795-846714123EAF.app`, created one frontmost `AXWindow` with `AXStandardWindow` subrole and title `PDF Editor`.
+- Verified: System Events observed the release menu bar as `Apple, PDF Editor Release Probe, File, Edit, View, Window, Help`.
+- Verified: the release File menu exposed `New Document`, `Open...`, `Close Window`, `Close`, `Close All`, and `Export Copy...`.
+
+### Remaining scoped evidence
+
+- `Verified at shell level, Unknown end to end`: the termination flush method and AppKit termination delegate compile and pass the model-level transaction test, but a real dirty native window has not yet been quit through the AppKit menu while an external observer verifies the resulting recovery generation.
+- `Partial`: the native window and menu accessibility tree is observed. Direct `System Events` button-name enumeration still returns missing values for some SwiftUI-rendered controls, so full control-level accessibility naming remains unproven even though source labels and hints are explicit.
+- `TODO`: add a controlled packaged-app termination probe that creates one known local edit, activates the standard Quit command, observes the delegate flush result, and reopens the resulting recovery state without printing payload values.
+- `TODO`: add a native accessibility capture that asserts explicit labels for toolbar, welcome, reader-mode, editor-mode, field, candidate, search, and recovery controls through the actual AX tree rather than source-level modifiers alone.

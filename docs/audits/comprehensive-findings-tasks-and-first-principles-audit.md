@@ -139,3 +139,11 @@ This document presents an exhaustive inventory and first-principles audit of eve
   - `docs/decisions.md`
 
 *Report compiled and verified under Operating Doctrine 8.0/6.1.*
+
+## Current native hardening evidence addendum (2026-08-25)
+
+- Native startup no longer blocks window creation on optional encrypted-vault health checks.
+- AppKit termination now has a synchronous recovery flush path with cancellation on persistence failure.
+- The current release bundle produced an observable standard window and menu tree under System Events.
+- Package evidence is current at 112 tests across 15 suites, plus strict native compilation and an isolated release build.
+- Remaining gaps are intentionally scoped to real dirty-window termination observation and control-level AX naming, not general window or menu existence.

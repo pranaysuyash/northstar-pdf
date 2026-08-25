@@ -137,7 +137,7 @@ enum SessionPayloadStoreError: Error, LocalizedError {
 /// not value-free. The on-disk representation is an authenticated AES-GCM
 /// envelope whose key is stable in the user's Keychain. Filesystem
 /// permissions remain a second, independent local access-control boundary.
-final class SessionPayloadStore: @unchecked Sendable {
+public final class SessionPayloadStore: @unchecked Sendable {
   private struct EncryptedPayloadRecord: Codable {
     static let contractName = "pdf-editor.document-session-recovery-payload-encrypted"
     static let formatVersion = 1
@@ -167,7 +167,7 @@ final class SessionPayloadStore: @unchecked Sendable {
   private let keyStore: RecoveryPayloadKeyStore
   private let lock = NSLock()
 
-  init(
+  public init(
     directory: URL = SessionPayloadStore.defaultDirectory,
     fileManager: FileManager = .default,
     keyStore: RecoveryPayloadKeyStore = .shared
@@ -182,7 +182,7 @@ final class SessionPayloadStore: @unchecked Sendable {
     self.keyStore = keyStore
   }
 
-  static var defaultDirectory: URL {
+  public static var defaultDirectory: URL {
     let appSupport = FileManager.default.urls(
       for: .applicationSupportDirectory,
       in: .userDomainMask
@@ -329,7 +329,7 @@ final class SessionPayloadStore: @unchecked Sendable {
     } catch {
       try quarantine(fileURL)
       throw SessionPayloadStoreError.quarantinedRecord(
-        reason: "The authenticated recovery payload is invalid."
+        reason: "The authenticated recovery payload is invalid: \(String(describing: error))"
       )
     }
   }
@@ -592,8 +592,7 @@ enum RecoveryLedgerIdentity {
   }
 
   static func operationDigest(_ operations: [EditOperation]) -> String {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys]
+    let encoder = identityEncoder()
     guard let data = try? encoder.encode(operations) else {
       return "operation-count:\(operations.count)"
     }
@@ -601,8 +600,7 @@ enum RecoveryLedgerIdentity {
   }
 
   static func metadataDigest(_ metadata: [DocumentSessionOperationMetadata]) -> String {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys]
+    let encoder = identityEncoder()
     guard let data = try? encoder.encode(metadata) else {
       return "metadata-count:\(metadata.count)"
     }
@@ -617,8 +615,7 @@ enum RecoveryLedgerIdentity {
     let material = statuses
       .map { CandidateStatusIdentity(id: $0.key, status: $0.value) }
       .sorted { $0.id.uuidString < $1.id.uuidString }
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys]
+    let encoder = identityEncoder()
     guard let data = try? encoder.encode(material) else {
       return "candidate-status-count:\(statuses.count)"
     }
@@ -626,8 +623,7 @@ enum RecoveryLedgerIdentity {
   }
 
   static func viewStateDigest(_ viewState: DocumentSessionViewState) -> String {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys]
+    let encoder = identityEncoder()
     guard let data = try? encoder.encode(viewState) else {
       return "view-state-page:\(viewState.selectedPageIndex)"
     }
@@ -676,8 +672,7 @@ enum RecoveryLedgerIdentity {
       operations: operations,
       selectedPageIndex: selectedPageIndex
     )
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys]
+    let encoder = identityEncoder()
     guard let data = try? encoder.encode(material) else {
       return "payload-count:\(operations.count):generation:\(autosaveSequence)"
     }
@@ -686,5 +681,16 @@ enum RecoveryLedgerIdentity {
 
   private static func digest(_ data: Data) -> String {
     SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+  }
+
+  /// Identity hashes must not depend on Foundation's default date encoding.
+  /// ISO-8601 is explicit and stable across the write, decrypt, decode, and
+  /// replay boundaries while the authenticated payload still retains its full
+  /// Codable representation.
+  private static func identityEncoder() -> JSONEncoder {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys]
+    encoder.dateEncodingStrategy = .iso8601
+    return encoder
   }
 }

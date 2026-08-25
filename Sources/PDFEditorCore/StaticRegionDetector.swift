@@ -14,6 +14,46 @@ public struct TextLineEvidence: Equatable, Hashable, Sendable {
 }
 
 public enum StaticRegionDetector {
+  /// OCR output below this Vision confidence is discarded rather than merged as
+  /// label evidence. The floor mirrors the CV geometry provider's default.
+  public static let ocrConfidenceFloor: Double = 0.35
+
+  /// Builds OCR-origin candidates with preserved provenance.
+  ///
+  /// OCR text is supporting evidence, never a field contract: candidates carry
+  /// the `.ocrRegion` kind, a score derived from (and capped by) recognition
+  /// confidence, and the observed text plus confidence in the evidence list.
+  /// The same conservative blank/label gate as text detection applies so OCR
+  /// noise does not flood the review queue.
+  public static func detectOCR(
+    observations: [OCRObservation],
+    pageIndex: Int,
+    pageBounds: PDFRect
+  ) -> [RegionCandidate] {
+    observations
+      .filter { $0.confidence >= ocrConfidenceFloor }
+      .compactMap { observation -> RegionCandidate? in
+        let normalized = observation.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !normalized.isEmpty else { return nil }
+        let hasBlankMarker = normalized.contains("_")
+        let looksLikeLabel = normalized.hasSuffix(":")
+        guard hasBlankMarker || looksLikeLabel else { return nil }
+        let line = observation.toPageSpace(pageBounds: pageBounds, pageIndex: pageIndex)
+        return RegionCandidate(
+          pageIndex: pageIndex,
+          bounds: line.bounds,
+          kind: .ocrRegion,
+          score: min(0.6, observation.confidence * 0.6),
+          evidence: [
+            "Vision OCR text: \(normalized)",
+            String(
+              format: "confidence %.2f (floor %.2f)", observation.confidence, ocrConfidenceFloor),
+            "OCR is evidence, not a field contract.",
+          ]
+        )
+      }
+  }
+
   /// Generates suggestions from text-only evidence (backwards-compatible).
   public static func detect(lines: [TextLineEvidence]) -> [RegionCandidate] {
     detect(lines: lines, vectorGeometries: [])

@@ -67,19 +67,27 @@ public final class PDFVectorStreamParser: @unchecked Sendable {
     }
 
     public static func parse(documentURL: URL) -> [ParsedPageGeometry] {
-        guard let doc = CGPDFDocument(documentURL as CFURL), doc.numberOfPages > 0 else { return [] }
-        return (1...doc.numberOfPages).compactMap { pageNumber in
-            guard let page = doc.page(at: pageNumber) else { return nil }
-            return parse(page: page, pageIndex: pageNumber - 1)
+        PerformanceTelemetry.shared.measureVectorParse {
+            guard let doc = CGPDFDocument(documentURL as CFURL), doc.numberOfPages > 0 else { return [] }
+            return (1...doc.numberOfPages).compactMap { pageNumber in
+                autoreleasepool {
+                    guard let page = doc.page(at: pageNumber) else { return nil }
+                    return parse(page: page, pageIndex: pageNumber - 1)
+                }
+            }
         }
     }
 
     public static func parse(data: Data) -> [ParsedPageGeometry] {
-        guard let provider = CGDataProvider(data: data as CFData),
-              let doc = CGPDFDocument(provider), doc.numberOfPages > 0 else { return [] }
-        return (1...doc.numberOfPages).compactMap { pageNumber in
-            guard let page = doc.page(at: pageNumber) else { return nil }
-            return parse(page: page, pageIndex: pageNumber - 1)
+        PerformanceTelemetry.shared.measureVectorParse {
+            guard let provider = CGDataProvider(data: data as CFData),
+                  let doc = CGPDFDocument(provider), doc.numberOfPages > 0 else { return [] }
+            return (1...doc.numberOfPages).compactMap { pageNumber in
+                autoreleasepool {
+                    guard let page = doc.page(at: pageNumber) else { return nil }
+                    return parse(page: page, pageIndex: pageNumber - 1)
+                }
+            }
         }
     }
 

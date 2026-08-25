@@ -1,7 +1,7 @@
 # Privacy-first recurring PDF template system
 
 **Date:** 2026-08-24  
-**Status:** T1 contract/runtime, immutable local capture/revisions, browser capture-review surface, and browser vault lifecycle evidence implemented; native review UI and provider adapter wiring remain pending  
+**Status:** Native and browser T1 capture/review surfaces, encrypted local persistence, profile-vault separation, automatic profile-resolution abstention, revision migration proposals, and contract parity are implemented; provider fidelity, device stress, and production UI automation remain active evidence lanes
 **Scope:** recurring layout recognition, reviewed field mappings, local value references, and safe completion acceleration  
 **Canonical base:** immutable source bytes, versioned document contracts, candidate evidence, append-only edit operations, and export validation
 
@@ -817,7 +817,7 @@ template system should build on that proof rather than bypass it.
 
 ### Slice T1: local reviewed template capture
 
-**Status:** contract, guarded runtime, encrypted record primitives, immutable local capture/revisions, and browser capture/review UI complete; native capture/review UI and adapter wiring pending
+**Status:** contract, guarded runtime, encrypted record primitives, immutable local capture/revisions, native SwiftUI capture/review UI, browser capture/review UI, and adapter round-trip wiring complete
 
 - template family and revision records;
 - exact and structural fingerprints;
@@ -828,7 +828,7 @@ template system should build on that proof rather than bypass it.
 
 ### Slice T2: local matching and review acceleration
 
-**Status:** proposal matcher, completion materialization, reviewed state/false-positive benchmark, and controlled document-class calibration complete; local index, native review UI, adapter wiring, genuine recurring-version calibration, and production promotion remain pending
+**Status:** proposal matcher, encrypted local index, exact/variant/family retrieval, native/browser review UI, profile-resolution abstention, revision-diff review, migration materialization, false-positive benchmark, and controlled document-class calibration complete; genuine recurring-version holdout calibration and production promotion remain active evidence lanes
 
 - local template index;
 - exact/variant/family match states;
@@ -847,7 +847,7 @@ template system should build on that proof rather than bypass it.
 
 ### Slice T4: hardening and optional storage
 
-**Status:** encrypted record lifecycle, explicit profile unlock, ciphertext backup recovery, deletion, eviction detection, and zero-content logging complete; recovery UI, worker isolation, and deletion audit pending
+**Status:** encrypted record lifecycle, explicit profile unlock, ciphertext backup recovery, passphrase key recovery, deletion audit, eviction detection, visible preflight, and zero-content logging are implemented for native and the active browser IndexedDB adapter; the OPFS adapter also exposes passphrase recovery and eviction state, while OPFS UI, durable audit persistence, worker isolation, secure deletion, and cross-adapter recovery parity remain active gates
 
 - encrypted browser persistence;
 - worker isolation and limits;

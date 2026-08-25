@@ -163,6 +163,34 @@ try {
     const restoredProfile = await evictedStore.get("profile", profile.payload.profileID);
     expectEqual(restoredProfile.payload.values[0].value.text, "Ada Lovelace Secret Value", "restored profile value");
 
+    const crossDeviceBundle = fixture.createCrossDeviceRecoveryBundle({
+      backup,
+      recovery: recoveryEnvelope,
+      storeKind: "template"
+    });
+    expectEqual(fixture.validateCrossDeviceRecoveryBundle(crossDeviceBundle), true, "cross-device bundle validation");
+    const workerEvidence = await fixture.validateEncryptedBackupInWorker(crossDeviceBundle.backup);
+    expectEqual(workerEvidence.plaintextInspected, false, "worker plaintext boundary");
+    const crossDeviceDbName = `${dbName}-different-device`;
+    const crossDeviceStore = fixture.createEncryptedTemplateStore({ dbName: crossDeviceDbName, logger });
+    await crossDeviceStore.recoverPassphraseRecovery(crossDeviceBundle.recovery, recoveryPassphrase, { crossDevice: true });
+    await crossDeviceStore.restoreEncryptedBackup(crossDeviceBundle.backup, {
+      replace: true,
+      preserveRecoveredKey: true
+    });
+    await crossDeviceStore.rekeyStore(recoveryPassphrase);
+    crossDeviceStore.lock();
+    await crossDeviceStore.unlock(recoveryPassphrase);
+    const crossDeviceTemplate = await crossDeviceStore.get("template", template.payload.templateID);
+    expectEqual(crossDeviceTemplate.payload.templateID, template.payload.templateID, "cross-device template identity");
+    const crossDeviceProfileLocked = await crossDeviceStore.get("profile", profile.payload.profileID).then(
+      () => false,
+      (error) => error.code === "profile_locked"
+    );
+    await crossDeviceStore.unlockProfile(profile.payload.profileID, profilePassphrase);
+    const crossDeviceProfile = await crossDeviceStore.get("profile", profile.payload.profileID);
+    expectEqual(crossDeviceProfile.payload.values[0].value.text, "Ada Lovelace Secret Value", "cross-device profile value");
+
     const wrongPassphraseStore = fixture.createEncryptedTemplateStore({ dbName, logger });
     await expectRejectCode(() => wrongPassphraseStore.unlock("wrong-store-passphrase"), "unlock_failed");
     wrongPassphraseStore.close();
@@ -183,6 +211,13 @@ try {
       evictedHealth,
       restoredHealth,
       deletedHealth,
+      crossDevice: {
+        worker: workerEvidence.worker,
+        encryptedRecordCount: workerEvidence.encryptedRecordCount,
+        templateRoundTrip: crossDeviceTemplate.payload.templateID === template.payload.templateID,
+        profileLockedUntilUnlock: crossDeviceProfileLocked,
+        profileRoundTrip: crossDeviceProfile.payload.profileID === profile.payload.profileID
+      },
       logs,
       zeroContent: !logText.includes("Ada Lovelace Secret Value")
         && !logText.includes("browser-store-security-passphrase")
@@ -197,6 +232,9 @@ try {
   assert.equal(result.evictedHealth.state, "evicted");
   assert.equal(result.restoredHealth.state, "ready");
   assert.equal(result.deletedHealth.state, "uninitialized");
+  assert.equal(result.crossDevice.templateRoundTrip, true);
+  assert.equal(result.crossDevice.profileLockedUntilUnlock, true);
+  assert.equal(result.crossDevice.profileRoundTrip, true);
   assert.equal(result.zeroContent, true);
   assert.ok(result.auditCount >= 1);
   assert.ok(result.logs.some((event) => event.code === "profile_unlock_failed"));

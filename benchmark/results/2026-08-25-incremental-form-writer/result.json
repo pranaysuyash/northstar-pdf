@@ -1,0 +1,22 @@
+{
+  "fixture": "public-acroform",
+  "inputSHA256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "provider": "incremental-custom-writer",
+  "pages": 1,
+  "widgetCount": 6,
+  "widgetTypes": [
+    "/Btn",
+    "/Ch",
+    "/Tx"
+  ],
+  "radioField": "contact",
+  "radioChoiceSet": "/1",
+  "originalUnchanged": true,
+  "prefixDigestPreserved": true,
+  "radioStateEquivalent": true,
+  "independentReopen": true,
+  "qpdfCheck": "no-errors",
+  "method": "Genuine incremental PDF update: changed field objects re-defined at EOF with chained /Prev xref; original byte stream is an unchanged prefix.",
+  "falsifier": "A full rewrite (pdf-lib/PDFKit-style, pikepdf non-incremental save) changes the original prefix and therefore violates RG-017; this is what makes the incremental path required rather than optional.",
+  "evidence": "Tests/pdf-incremental-form-writer_test.mjs"
+}

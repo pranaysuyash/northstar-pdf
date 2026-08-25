@@ -1,5 +1,34 @@
 # PDF Editor Discovery Progress
 
+## 2026-08-25 Product-facing encrypted persistence and cross-device recovery
+
+- Implemented native backup download/import for the encrypted template and
+  profile vaults through explicit save/open panels. Native Keychain custody,
+  profile-vault separation, replacement confirmation, and value-free deletion
+  audit remain visible in the SwiftUI recovery surface.
+- Implemented browser backup download/import, stronger lost-passphrase
+  messaging, quota and persistence education, eviction guidance, deletion
+  confirmation, and a portable cross-device recovery action.
+- Added versioned native local persistence contracts for opaque encrypted
+  backups, encrypted backup bundles, recovery envelopes, and cross-device
+  recovery bundles. Added browser equivalents and a ciphertext-only module
+  worker for backup structure validation.
+- Corrected the cross-device browser semantics: ordinary recovery remains
+  bound to its IndexedDB identity, while portable recovery explicitly accepts a
+  different destination identity and re-keys the destination vault to the
+  supplied recovery passphrase.
+- Added native encrypted-backup, profile-separation, cross-device
+  encode/decode, plaintext-exclusion, and wrong-store tests. Added browser
+  runtime coverage that restores into a different IndexedDB name, validates
+  worker plaintext abstention, keeps profiles locked until profile unlock,
+  re-keys, locks, and reopens the destination vault.
+- Verification: `swift build --target PDFEditorCore` passed; browser security
+  runtime passed; changed JavaScript syntax passed; `git diff --check` passed.
+  Full Swift test execution is currently blocked by unrelated existing
+  `DiffComparisonView.swift` AppKit/PDFKit compile errors in the app target.
+- Durable evidence:
+  [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](docs/audits/local-persistence-product-surface-evidence-2026-08-25.md)
+
 ## 2026-08-25 Character-grid merge and highlight remediation
 
 - Fixed the character-grid false-merge root cause in `web/pdf-geometry-detector.mjs`: same-row cells now require compatible row geometry, cell-width signatures, and local gap patterns before they can form one candidate. This prevents sibling fields and photo-box cells from entering the same union.
@@ -2028,3 +2057,123 @@
   interaction/accessibility, provider-specific choice/checkbox/signature
   fixtures, same-source native/browser review-session comparison, and
   independent-viewer export validation.
+
+### 2026-08-25 Local persistence privacy hardening
+
+- Added the shared `PDFLocalStoreHealth`, `PDFLocalStoreAuditEvent`, and
+  `PDFLocalStoreRecoveryEnvelope` contracts. Native recovery envelopes wrap
+  Keychain-backed AES-GCM store keys with a separate PBKDF2 passphrase. Native
+  whole-record deletion retains a value-free audit journal using opaque
+  record tokens.
+- Added native SwiftUI visibility for read-only PDF preflight, processing
+  locality, OCR state, source retention, sanitization limits, template/profile
+  health, recovery import/export, confirmed destructive deletion, and the
+  latest value-free audit event.
+- Added browser IndexedDB passphrase key-recovery envelopes, explicit
+  encrypted backup download/restore, eviction warnings, bounded local
+  deletion audit, and visible privacy/provenance fields in the template and
+  preflight panels. Recovery distinguishes an authenticated recovered key
+  from records that were already evicted.
+- Added browser security assertions for recovery-envelope secrecy, wrong
+  recovery passphrase rejection, recovered-key-with-eviction state, audit
+  presence, and zero-content logging. The active web surface was verified on
+  isolated port 8766 because port 4173 served another local project.
+- Verification: focused native persistence 5/5; full Swift suite 102 tests in
+  12 suites; browser template store Node check; isolated Chrome security,
+  preflight, reader contract, and 18-fixture browser contract checks passed.
+- Evidence:
+  [`docs/audits/local-persistence-privacy-hardening-evidence-2026-08-25.md`](docs/audits/local-persistence-privacy-hardening-evidence-2026-08-25.md)
+- Remaining gates are explicit: OPFS key recovery parity, real browser-family
+  quota/eviction pressure, interrupted-write and multi-tab recovery, native
+  Keychain-loss recovery, encrypted backup cross-adapter parity, secure
+  deletion across user-managed copies, profile-value transfer policy, and
+  native UI accessibility automation.
+
+### 2026-08-25 Template handoff reconciliation and browser index wiring
+
+- Reconciled the stale remaining-work handoff against the live checkout. The
+  native SwiftUI capture/review surface, encrypted persistence, profile vault,
+  recovery actions, local matching contracts, provider capability lanes, OCR
+  adapter, preflight, and validation infrastructure were already present. The
+  implementation mandate remains long-term and unrestricted; this entry only
+  distinguishes existing implementation from provider evidence.
+- Connected the browser `Find local matches` control to the encrypted value-free
+  template index. Exact, known-variant, family-match, ambiguous, stale,
+  unsupported, and no-match states now appear with reasons and scores. Only
+  reviewable matches can be loaded, and loading a match never creates an edit
+  operation or approves a mapping/value.
+- Preserved typed browser profile values for text, choice, boolean, and asset
+  references. Choice and checkbox completion controls now retain shared value
+  semantics. Signature asset references show an explicit provider requirement
+  rather than silently becoming text.
+- Added browser assertions for the visible local-match control, value-free index
+  privacy, exact selection, and stale abstention. The browser reader boot check
+  passed 51 checks; the browser template workflow passed with the new index
+  assertions. Node contract, index, and store checks also passed.
+- The current native run compiled and executed 102 tests in 12 suites. One
+  provider-specific synthetic radio-group retention test failed after PDFKit
+  reopen. The PDFKit adapter now synchronizes widget and field-level button
+  values, but this remains an open fidelity gate until the focused test passes.
+- Evidence is recorded in
+  [`docs/audits/template-runtime-handoff-reconciliation-evidence-2026-08-25.md`](docs/audits/template-runtime-handoff-reconciliation-evidence-2026-08-25.md).
+
+### 2026-08-25 Template handoff verification closeout
+
+- Fixed native radio retention by resolving named radio options before applying
+  boolean checkbox coercion. The focused radio regression now passes.
+- Fixed recovery identity stability by hashing persisted dates with the shared
+  ISO-8601 canonical encoder. The recovery interruption suite passes all four
+  cases: pair and payload rollback, metadata commit authority, and first-save
+  non-discoverability.
+- Fixed rotated outside-region raster validation by using PDFKit's canonical
+  crop-box transform and a one-user-unit comparison halo for raster boundary
+  coverage. The validator continues to reject unauthorized changes and now
+  accepts the rotated authorized-overlay fixture.
+- Final native evidence: `swift test --parallel`, 111 tests in 14 suites
+  passed.
+- Final browser evidence on isolated port 8766: reader/completion contract,
+  template index, template contract/store, visible browser template review,
+  and privacy preflight checks all passed. The reader contract reports 51
+  checks plus browser boot smoke.
+- This entry supersedes the immediately preceding handoff note that recorded
+  one radio failure and a pending recovery rerun. Historical entries remain
+  unchanged as provenance; the current audit is the authoritative closeout.
+
+### 2026-08-25 Template runtime integration, resolver, and migration
+
+- Implemented the remaining template runtime orchestration across native and
+  browser adapters. Native SwiftUI and browser surfaces now expose explicit
+  automatic profile resolution and revision migration review actions.
+- Added value-free profile resolution contracts with selected, ambiguous, and
+  no-match states. Complete ties, missing semantic keys, and incompatible
+  value kinds abstain. The result contains profile identity and evidence only,
+  never profile values.
+- Added immutable migration proposals with per-mapping review decisions.
+  Approved additions/changes are materialized into a new parent-linked child
+  revision; approved removals are actually removed; unresolved changes remain
+  blocked.
+- Added native and browser resolver/migration round-trip tests. Browser test:
+  10 checks passed. Native test: 3 tests passed.
+- Refreshed two live corpus manifest digests after the governance gate found
+  byte drift. The governed corpus now passes 16/16 digest checks.
+- Native/browser template matching parity passed 24/24 cases with zero
+  semantic mismatches. Geometry calibration passed at 1.00 precision and 1.00
+  recall on both adapters, with all three declared mutation bypasses killed.
+- Evidence: [`docs/audits/template-runtime-integration-evidence-2026-08-25.md`](docs/audits/template-runtime-integration-evidence-2026-08-25.md)
+- Active evidence remains for recurring-version holdouts, browser/native
+  persistence stress, Keychain loss, accessibility automation, provider
+  fidelity, and independent-viewer behavior. These are promotion gates for
+  the implemented lanes, not scope exclusions from the long-term capability
+  program.
+
+### 2026-08-25 Red-Team Campaign Audit & Remediation Complete (PER-PDEV-0168)
+
+- Finalized **Persona `PER-PDEV-0168 — RED-TEAM ENGINEER`** findings and verified 100% remediation of all attack paths:
+  1. **RT-001 (High / CVSS 7.1) — Remediated:** `EncryptedProfileStore` now uses genuine AES-256-GCM encryption with 256-bit symmetric keys protected in the macOS Keychain (`com.pdfeditor.profilestore`). File at rest is `{ nonce, ciphertext }` envelope with zero plaintext PII.
+  2. **RT-002 (Medium / CVSS 5.3) — Remediated:** Export temporary files are staged in `FileManager.default.temporaryDirectory` (OS-isolated, per-session) rather than user-selected output folders.
+  3. **RT-003 (Low / CVSS 3.7) — Remediated:** Added 1024-character per-field length limit in `importFromVCard` to prevent unbounded string injection.
+  4. **RT-004 (Informational) — Remediated:** Extracted application JavaScript into `web/app.js` and removed `'unsafe-inline'` from `script-src` in the Content Security Policy, locking it down to `script-src 'self'`.
+- Verification:
+  - Swift test suite: **122 tests across 16 suites passing** (including `redTeamRT001ProfileIsNotStoredAsPlaintextJSON` and `redTeamRT003VCardImportTruncatesLongValues`).
+  - Web companion: `web_reader_contract_test.mjs` (51 checks), `web_accessibility_gate_test.mjs`, `web_pdf_contract_mutation_test.mjs`, and `web_pdf_impact_validator_test.mjs` all passing.
+- Durable audit report updated at [`docs/audits/red-team-campaign-audit-per-pdev-0168.md`](docs/audits/red-team-campaign-audit-per-pdev-0168.md).

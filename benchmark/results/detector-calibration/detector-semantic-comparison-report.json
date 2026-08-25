@@ -1,0 +1,1171 @@
+{
+  "schema": "pdf-editor.detector-semantic-comparison",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "sourceDigest": "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+  "fixture": "benchmark/results/detector-calibration/detector-calibration.pdf",
+  "reviewedRegionCount": 10,
+  "policy": {
+    "matching": {
+      "minimumIoU": 0.25,
+      "nearIoU": 0.05,
+      "geometryTolerancePoints": 0.5,
+      "strategy": "reviewed-region-first-score-with-one-selected-candidate"
+    },
+    "falsePositiveSeverityWeights": {
+      "low": 1,
+      "medium": 3,
+      "high": 9,
+      "critical": 27
+    },
+    "reviewRequired": true,
+    "noSilentAutofill": true,
+    "rawContentRetention": "none"
+  },
+  "adapters": {
+    "native": {
+      "cases": [
+        {
+          "reviewedRegionID": "reviewed:p0:applicant-name-box",
+          "caseID": "p0-vector-rectangle",
+          "class": "vectorRectangle",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 1,
+          "nearCandidateCount": 2,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "height": 32,
+              "width": 300,
+              "x": 180,
+              "y": 700
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "text",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:agreement-checkbox",
+          "caseID": "p0-checkbox",
+          "class": "checkbox",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 0,
+          "nearCandidateCount": 1,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "height": 16,
+              "width": 16,
+              "x": 72,
+              "y": 600
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "checkbox",
+            "entryMode": "checkbox",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:date-underline",
+          "caseID": "p0-underline",
+          "class": "underline",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 2,
+          "nearCandidateCount": 1,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "height": 18,
+              "width": 140,
+              "x": 180,
+              "y": 520
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "date",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:address-whitespace",
+          "caseID": "p0-whitespace",
+          "class": "whitespace",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 6,
+          "nearCandidateCount": 1,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "label",
+              "relationship",
+              "whitespace"
+            ],
+            "actual": [
+              "label",
+              "relationship",
+              "whitespace"
+            ],
+            "intersection": [
+              "label",
+              "relationship",
+              "whitespace"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "height": 17,
+              "width": 220,
+              "x": 127.352,
+              "y": 447.240234375
+            },
+            "kind": "textAnchored",
+            "suggestedFieldType": "text",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:applicant-name-label-link",
+          "caseID": "p0-label-association",
+          "class": "labelAssociation",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 1,
+          "nearCandidateCount": 2,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "height": 32,
+              "width": 300,
+              "x": 180,
+              "y": 700
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "text",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:decorative-section-box",
+          "caseID": "p1-decorative-rectangle",
+          "class": "vectorRectangle",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "medium",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "geometry"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:isolated-square",
+          "caseID": "p1-isolated-square",
+          "class": "checkbox",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "high",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "geometry"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:bare-rule",
+          "caseID": "p1-bare-rule",
+          "class": "underline",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "low",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "geometry"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:generic-note-box",
+          "caseID": "p1-generic-box",
+          "class": "labelAssociation",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "high",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "label",
+              "relationship"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "label",
+              "relationship"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:generic-section-whitespace",
+          "caseID": "p1-generic-whitespace",
+          "class": "whitespace",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "medium",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "whitespace"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "whitespace"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        }
+      ],
+      "metrics": {
+        "reviewedRegionCount": 10,
+        "positiveRegionCount": 5,
+        "hardNegativeRegionCount": 5,
+        "truePositive": 5,
+        "falseNegative": 0,
+        "falsePositive": 0,
+        "trueNegative": 5,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "correctAbstentionRate": 1,
+        "positiveAbstentionRate": 0,
+        "evidenceFamilyExactRate": 1,
+        "labelAssociationPrecision": 1,
+        "groupingAgreementRate": 1,
+        "falsePositiveSeverityCounts": {},
+        "falsePositiveSeverityBurden": 0
+      },
+      "failureClusters": {},
+      "passed": true
+    },
+    "browser": {
+      "cases": [
+        {
+          "reviewedRegionID": "reviewed:p0:applicant-name-box",
+          "caseID": "p0-vector-rectangle",
+          "class": "vectorRectangle",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 1,
+          "nearCandidateCount": 2,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "x": 180,
+              "y": 700,
+              "width": 300,
+              "height": 32
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "text",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:agreement-checkbox",
+          "caseID": "p0-checkbox",
+          "class": "checkbox",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 0,
+          "nearCandidateCount": 1,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "x": 72,
+              "y": 600,
+              "width": 16,
+              "height": 16
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "checkbox",
+            "entryMode": "checkbox",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:date-underline",
+          "caseID": "p0-underline",
+          "class": "underline",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 2,
+          "nearCandidateCount": 1,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "x": 180,
+              "y": 520,
+              "width": 140,
+              "height": 18
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "date",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:address-whitespace",
+          "caseID": "p0-whitespace",
+          "class": "whitespace",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 6,
+          "nearCandidateCount": 1,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "label",
+              "relationship",
+              "whitespace"
+            ],
+            "actual": [
+              "label",
+              "relationship",
+              "whitespace"
+            ],
+            "intersection": [
+              "label",
+              "relationship",
+              "whitespace"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "x": 127.352,
+              "y": 450,
+              "width": 219.99999999999997,
+              "height": 17
+            },
+            "kind": "textAnchored",
+            "suggestedFieldType": "text",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p0:applicant-name-label-link",
+          "caseID": "p0-label-association",
+          "class": "labelAssociation",
+          "expected": "detected",
+          "hardNegative": false,
+          "falsePositiveSeverity": null,
+          "detected": true,
+          "state": "pass",
+          "selectedCandidateIndex": 1,
+          "nearCandidateCount": 2,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "actual": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "intersection": [
+              "geometry",
+              "label",
+              "relationship"
+            ],
+            "missing": [],
+            "unexpected": [],
+            "exact": true,
+            "recall": 1,
+            "precision": 1
+          },
+          "labelAssociation": {
+            "expected": "associated",
+            "actual": "associated",
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "actual": {
+              "state": "single",
+              "memberCount": 1
+            },
+            "state": "agree"
+          },
+          "candidateIdentity": {
+            "pageIndex": 0,
+            "bounds": {
+              "x": 180,
+              "y": 700,
+              "width": 300,
+              "height": 32
+            },
+            "kind": "vectorRegion",
+            "suggestedFieldType": "text",
+            "entryMode": "singleText",
+            "groupMemberCount": 1
+          }
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:decorative-section-box",
+          "caseID": "p1-decorative-rectangle",
+          "class": "vectorRectangle",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "medium",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "geometry"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:isolated-square",
+          "caseID": "p1-isolated-square",
+          "class": "checkbox",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "high",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "geometry"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:bare-rule",
+          "caseID": "p1-bare-rule",
+          "class": "underline",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "low",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "geometry"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "geometry"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:generic-note-box",
+          "caseID": "p1-generic-box",
+          "class": "labelAssociation",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "high",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "label",
+              "relationship"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "label",
+              "relationship"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        },
+        {
+          "reviewedRegionID": "reviewed:p1:generic-section-whitespace",
+          "caseID": "p1-generic-whitespace",
+          "class": "whitespace",
+          "expected": "abstain",
+          "hardNegative": true,
+          "falsePositiveSeverity": "medium",
+          "detected": false,
+          "state": "pass",
+          "selectedCandidateIndex": null,
+          "nearCandidateCount": 0,
+          "evidenceFamilyAgreement": {
+            "expected": [
+              "whitespace"
+            ],
+            "actual": [],
+            "intersection": [],
+            "missing": [
+              "whitespace"
+            ],
+            "unexpected": [],
+            "exact": false,
+            "recall": 0,
+            "precision": null
+          },
+          "labelAssociation": {
+            "expected": "none",
+            "actual": null,
+            "state": "agree"
+          },
+          "grouping": {
+            "expected": {
+              "state": "abstain",
+              "memberCount": 0
+            },
+            "actual": null,
+            "state": "agree"
+          },
+          "candidateIdentity": null
+        }
+      ],
+      "metrics": {
+        "reviewedRegionCount": 10,
+        "positiveRegionCount": 5,
+        "hardNegativeRegionCount": 5,
+        "truePositive": 5,
+        "falseNegative": 0,
+        "falsePositive": 0,
+        "trueNegative": 5,
+        "precision": 1,
+        "recall": 1,
+        "falsePositiveRate": 0,
+        "correctAbstentionRate": 1,
+        "positiveAbstentionRate": 0,
+        "evidenceFamilyExactRate": 1,
+        "labelAssociationPrecision": 1,
+        "groupingAgreementRate": 1,
+        "falsePositiveSeverityCounts": {},
+        "falsePositiveSeverityBurden": 0
+      },
+      "failureClusters": {},
+      "passed": true
+    }
+  },
+  "semanticParity": {
+    "cases": [
+      {
+        "reviewedRegionID": "reviewed:p0:applicant-name-box",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p0:agreement-checkbox",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p0:date-underline",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p0:address-whitespace",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p0:applicant-name-label-link",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p1:decorative-section-box",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p1:isolated-square",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p1:bare-rule",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p1:generic-note-box",
+        "state": "pass",
+        "mismatchKinds": []
+      },
+      {
+        "reviewedRegionID": "reviewed:p1:generic-section-whitespace",
+        "state": "pass",
+        "mismatchKinds": []
+      }
+    ],
+    "mismatchCounts": {},
+    "mismatchCount": 0,
+    "passed": true
+  },
+  "passed": true
+}

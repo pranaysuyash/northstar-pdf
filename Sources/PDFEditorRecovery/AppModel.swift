@@ -5,28 +5,28 @@ import PDFEditorCore
 import PDFKit
 import UniformTypeIdentifiers
 
-struct SearchMatch: Identifiable, Equatable, Sendable {
-  let pageIndex: Int
-  let query: String
-  let snippet: String
-  let charStart: Int
-  let charLength: Int
+public struct SearchMatch: Identifiable, Equatable, Sendable {
+  public let pageIndex: Int
+  public let query: String
+  public let snippet: String
+  public let charStart: Int
+  public let charLength: Int
 
   // The PDF text position is the durable identity. A generated UUID made
   // every search refresh look like a different hit and made selection drift.
-  var id: String {
+  public var id: String {
     "\(pageIndex):\(charStart):\(charLength):\(query.lowercased()):\(snippet)"
   }
 }
 
-struct ManualTextPlacement: Equatable, Sendable {
-  let pageIndex: Int
-  let bounds: PDFRect
+public struct ManualTextPlacement: Equatable, Sendable {
+  public let pageIndex: Int
+  public let bounds: PDFRect
 }
 
 @Observable
 @MainActor
-final class AppModel {
+public final class AppModel {
   private let provider = PDFKitProvider()
   private let sessionStore: FileSessionStore
   private let recoveryStore: SessionRecoveryStore
@@ -35,102 +35,127 @@ final class AppModel {
   private let profileStore: EncryptedPDFProfileVault
   private let templateStore: EncryptedPDFTemplateStore
 
-  var inspection: DocumentInspection?
-  private(set) var liveDocument: PDFDocument?
-  private(set) var documentProjectionRevision: UInt64 = 0
-  var sourceURL: URL?
-  var operations: [EditOperation] = []
-  var selectedPageIndex = 0
-  var selectedFieldID: String?
-  var selectedCandidateID: UUID?
-  var isManualPlacementMode = false
-  var manualTextPlacement: ManualTextPlacement?
-  var isManualTextSheetPresented = false
-  var manualTextDraft = ""
-  var isImporterPresented = false
-  var statusMessage: String?
-  var alertMessage: String?
+  public var inspection: DocumentInspection?
+  /// The inspection captured at document open, before any operations are applied.
+  /// Used to compute the document diff showing original vs current state.
+  public private(set) var sourceInspection: DocumentInspection?
+  public private(set) var liveDocument: PDFDocument?
+  public private(set) var documentProjectionRevision: UInt64 = 0
+
+  // MARK: - Visual Diff
+  /// When true, the document view overlays outside-region highlights.
+  public var showDiff: Bool = false
+  /// When true, the side-by-side diff comparison sheet is presented.
+  public var showDiffSheet: Bool = false
+  /// Cached diff computed from sourceInspection vs current inspection.
+  public private(set) var currentDiff: DocumentDiff?
+  /// The original source PDF as a PDFDocument, used for the diff comparison
+  /// left panel to show the pre-edit state.
+  public var sourceDocument: PDFDocument? {
+    guard let data = cachedSourceData else { return nil }
+    return PDFDocument(data: data)
+  }
+  public var sourceURL: URL?
+  public var operations: [EditOperation] = []
+  public var selectedPageIndex = 0
+  public var selectedFieldID: String?
+  public var selectedCandidateID: UUID?
+  public var isManualPlacementMode = false
+  public var manualTextPlacement: ManualTextPlacement?
+  public var isManualTextSheetPresented = false
+  public var manualTextDraft = ""
+  public var isImporterPresented = false
+  public var statusMessage: String?
+  public var alertMessage: String?
 
   // Profile state
-  var currentProfile: UserProfile?
-  var availableProfiles: [UserProfile] = []
-  var isProfilePanelOpen = false
-  var bulkFillResult: ProfileBulkFillResult?
+  public var currentProfile: UserProfile?
+  public var availableProfiles: [UserProfile] = []
+  public var isProfilePanelOpen = false
+  public var bulkFillResult: ProfileBulkFillResult?
   // Template completion is a review session, not a profile shortcut. Mapping
   // and profile-value approvals remain in memory until both gates pass.
-  var templateContract: PDFTemplateContract?
-  var templateRevisionHistory: PDFTemplateRevisionSet?
-  var templateCompletionProposal: PDFTemplateCompletionProposal?
-  var templateValueDrafts: [UUID: String] = [:]
-  var templateLearningEvents: [PDFTemplateLearningEvent] = []
-  var pendingValidatedTemplateRevision: PDFTemplateContract?
-  var templateRevisionDiff: PDFTemplateRevisionDiff?
-  var templateIndexMatch: PDFTemplateIndexQueryResult?
-  var availableTemplateIDs: [UUID] = []
-  var isTemplateVaultUnlocked = false
-  var isProfileVaultUnlocked = false
+  public var templateContract: PDFTemplateContract?
+  public var templateRevisionHistory: PDFTemplateRevisionSet?
+  public var templateCompletionProposal: PDFTemplateCompletionProposal?
+  public var templateValueDrafts: [UUID: String] = [:]
+  public var templateLearningEvents: [PDFTemplateLearningEvent] = []
+  public var pendingValidatedTemplateRevision: PDFTemplateContract?
+  public var templateRevisionDiff: PDFTemplateRevisionDiff?
+  public var templateProfileResolution: PDFTemplateProfileResolutionResult?
+  public var templateMigrationProposal: PDFTemplateMigrationProposal?
+  public var templateIndexMatch: PDFTemplateIndexQueryResult?
+  public var availableTemplateIDs: [UUID] = []
+  public var isTemplateVaultUnlocked = false
+  public var isProfileVaultUnlocked = false
   /// Read-only, value-minimized source preflight shown before any export.
-  var preflightReport: PDFPreflightReport?
-  var templateStoreHealth: PDFLocalStoreHealth?
-  var profileStoreHealth: PDFLocalStoreHealth?
-  var templateAuditEvents: [PDFLocalStoreAuditEvent] = []
-  var profileAuditEvents: [PDFLocalStoreAuditEvent] = []
+  public var preflightReport: PDFPreflightReport?
+  public var templateStoreHealth: PDFLocalStoreHealth?
+  public var profileStoreHealth: PDFLocalStoreHealth?
+  public var templateAuditEvents: [PDFLocalStoreAuditEvent] = []
+  public var profileAuditEvents: [PDFLocalStoreAuditEvent] = []
   private var lastAppliedTemplateCompletion: PDFTemplateCompletionProposal?
   private var templateCompletionOperationIDs: [UUID] = []
-  var exportReport: ValidationReport?
-  private(set) var lastActionDenial: ActionDenial?
+  public var exportReport: ValidationReport?
+  public private(set) var lastActionDenial: ActionDenial?
 
-  var readerViewMode: ReaderViewMode = .continuous
-  var readerScaleMode: ReaderScaleMode = .fitWidth
-  var readerZoom = 1.0
-  var readerRotation = 0
-  var pageJumpInput = ""
+  public var readerViewMode: ReaderViewMode = .continuous
+  public var readerScaleMode: ReaderScaleMode = .fitWidth
+  public var readerZoom = 1.0
+  public var readerRotation = 0
+  public var pageJumpInput = ""
 
   // MARK: - Editor mode (D-010)
   /// Current intent mode. Resets to `.read` on open unless `persistModeAcrossDocuments` is true.
-  var editorMode: EditorMode = .read
+  public var editorMode: EditorMode = .read
   /// User preference: when true, the mode chosen by the user persists when a new document is
   /// opened. Default false (reset to .read on each open) per D-010 owner decision 2026-08-25.
-  var persistModeAcrossDocuments: Bool {
+  public var persistModeAcrossDocuments: Bool {
     get { UserDefaults.standard.bool(forKey: "persistModeAcrossDocuments") }
     set { UserDefaults.standard.set(newValue, forKey: "persistModeAcrossDocuments") }
   }
   /// When true, the status bar shows a "This document has fields — fill them?" chip.
-  var isFillOfferVisible = false
+  public var isFillOfferVisible = false
   /// Pending signature region when Sign mode is active (nil = free placement).
-  var pendingSignatureRegion: RegionCandidate?
+  public var pendingSignatureRegion: RegionCandidate?
   /// Whether the signature sheet is presented.
-  var isSignatureSheetPresented = false
+  public var isSignatureSheetPresented = false
   /// Saved signatures (interim: app-sandboxed store; v2 migrates to Keychain per D-010).
-  var savedSignatures: [SavedSignature] = []
+  public var savedSignatures: [SavedSignature] = []
   /// Whether the redaction commit confirmation is presented (L3 gate).
-  var isRedactionCommitPresented = false
+  public var isRedactionCommitPresented = false
   /// Tab-order cursor: index into `editableRegions` for the current tab position.
   private var tabCursorIndex: Int = 0
 
+  /// Active inline editor state positioned directly on the PDF canvas.
+  public var activeInlineEditor: InlineEditorState?
 
-  var isPasswordSheetPresented = false
-  var passwordAttempt = ""
+
+  public var isPasswordSheetPresented = false
+  public var passwordAttempt = ""
   private var passwordPendingURL: URL?
   private var cachedSourceData: Data?
   private var ocrProcessedPageIndices: Set<Int> = []
 
-  var searchQuery = ""
-  var searchMatches: [SearchMatch] = []
-  var selectedSearchMatchIndex: Int?
+  public var searchQuery = ""
+  public var searchMatches: [SearchMatch] = []
+  public var selectedSearchMatchIndex: Int?
 
   // Session persistence
   private var currentSessionID: UUID?
-  var hasSavedSession: Bool = false
-  var lastSessionInfo: String?
-  var recoveryRecords: [DocumentSessionRecoveryEnvelope] = []
-  var recoveryDiagnostics: [String] = []
-  var recoveryStatus: RecoveryStatus = .none
+  public var hasSavedSession: Bool = false
+  public var lastSessionInfo: String?
+  public var recoveryRecords: [DocumentSessionRecoveryEnvelope] = []
+  public var recoveryDiagnostics: [String] = []
+  /// Value-free diagnostic retained for controlled recovery evidence. It is
+  /// not rendered in the user-facing recovery message.
+  public private(set) var recoveryFailureDiagnostic: String?
+  public var recoveryStatus: RecoveryStatus = .none
   private var recoveryAutosaveSequence = 0
   private var viewStateAutosaveTask: Task<Void, Never>?
   private var lastPersistedViewStateDigest: String?
 
-  enum RecoveryStatus: String, Sendable {
+  public enum RecoveryStatus: String, Sendable {
     case none
     case available
     case replayable
@@ -139,9 +164,9 @@ final class AppModel {
     case saveFailed
   }
 
-  var sessionID: UUID? { currentSessionID }
+  public var sessionID: UUID? { currentSessionID }
 
-  var canSaveValidatedTemplateRevision: Bool {
+  public var canSaveValidatedTemplateRevision: Bool {
     guard pendingValidatedTemplateRevision != nil,
           let report = exportReport,
           report.status == .validated,
@@ -151,28 +176,28 @@ final class AppModel {
       && Set(report.operationIDs) == Set(templateCompletionOperationIDs)
   }
 
-  var templateSaveButtonTitle: String {
+  public var templateSaveButtonTitle: String {
     canSaveValidatedTemplateRevision ? "Save validated template revision" : "Persist encrypted working capture"
   }
 
-  enum LifecycleAction: String, Sendable {
+  public enum LifecycleAction: String, Sendable {
     case newDocument
     case openDocument
     case closeWindow
   }
 
-  enum LifecycleDisposition: String, Sendable {
+  public enum LifecycleDisposition: String, Sendable {
     case proceed
     case confirmBeforeDiscardingChanges
   }
 
-  struct LifecycleDecisionInfo: Equatable, Sendable {
-    let action: LifecycleAction
-    let hasDocument: Bool
-    let isDirty: Bool
-    let hasRecoverableSession: Bool
-    let canExportChanges: Bool
-    let disposition: LifecycleDisposition
+  public struct LifecycleDecisionInfo: Equatable, Sendable {
+    public let action: LifecycleAction
+    public let hasDocument: Bool
+    public let isDirty: Bool
+    public let hasRecoverableSession: Bool
+    public let canExportChanges: Bool
+    public let disposition: LifecycleDisposition
   }
 
   private struct ReplayCheckpoint {
@@ -180,14 +205,14 @@ final class AppModel {
     let document: PDFDocument
   }
 
-  enum PermissionRequirement: String, Sendable {
+  public enum PermissionRequirement: String, Sendable {
     case copy = "copy or extract text"
     case modify = "modify form data"
     case addAnnotations = "add annotations or overlays"
   }
 
-  struct ActionDenial: Identifiable, Equatable, Sendable {
-    let id: String
+  public struct ActionDenial: Identifiable, Equatable, Sendable {
+    public let id: String
     let action: String
     let requirement: PermissionRequirement?
     let message: String
@@ -200,7 +225,7 @@ final class AppModel {
     }
   }
 
-  struct InMemoryRecoverySnapshot: Equatable, Sendable {
+  public struct InMemoryRecoverySnapshot: Equatable, Sendable {
     let sessionID: UUID
     let sourceDigest: String
     let operationLedgerDigest: String
@@ -245,7 +270,45 @@ final class AppModel {
   private var replayCheckpoints: [ReplayCheckpoint] = []
   private var operationViewStates: [OperationViewState] = []
   private var redoEntries: [RedoEntry] = []
-  private(set) var inMemoryRecoverySnapshot: InMemoryRecoverySnapshot?
+  public private(set) var inMemoryRecoverySnapshot: InMemoryRecoverySnapshot?
+
+  public convenience init() {
+    let environment = ProcessInfo.processInfo.environment
+    if environment["PDF_EDITOR_NATIVE_TERMINATION_PROBE"] == "1",
+      let rootPath = environment["PDF_EDITOR_NATIVE_TERMINATION_ROOT"],
+      let encodedKeyData = environment["PDF_EDITOR_NATIVE_TERMINATION_KEY_DATA"],
+      let keyData = Data(base64Encoded: encodedKeyData)
+    {
+      let rootURL = URL(fileURLWithPath: rootPath, isDirectory: true)
+      let keyStore = RecoveryPayloadKeyStore(
+        service: "com.pdfeditor.recovery-payload.native-probe",
+        account: "native-termination-probe",
+        testKeyData: keyData
+      )
+      self.init(
+        sessionStore: FileSessionStore(directory: rootURL.appendingPathComponent("sessions", isDirectory: true)),
+        recoveryStore: SessionRecoveryStore(directory: rootURL.appendingPathComponent("metadata", isDirectory: true)),
+        recoveryPayloadStore: SessionPayloadStore(
+          directory: rootURL.appendingPathComponent("payload", isDirectory: true),
+          keyStore: keyStore
+        ),
+        recoveryPairStore: RecoveryPairStore(directory: rootURL.appendingPathComponent("pair", isDirectory: true)),
+        profileStore: EncryptedPDFProfileVault(directory: rootURL.appendingPathComponent("profiles", isDirectory: true)),
+        templateStore: EncryptedPDFTemplateStore(directory: rootURL.appendingPathComponent("templates", isDirectory: true)),
+        initializeLocalVaultState: false
+      )
+    } else {
+      self.init(
+        sessionStore: FileSessionStore(directory: FileSessionStore.defaultDirectory),
+        recoveryStore: SessionRecoveryStore(directory: SessionRecoveryStore.defaultDirectory),
+        recoveryPayloadStore: SessionPayloadStore(),
+        recoveryPairStore: RecoveryPairStore(),
+        profileStore: EncryptedPDFProfileVault(directory: EncryptedPDFProfileVault.defaultDirectory),
+        templateStore: EncryptedPDFTemplateStore(directory: EncryptedPDFTemplateStore.defaultDirectory),
+        initializeLocalVaultState: false
+      )
+    }
+  }
 
   init(
     sessionStore: FileSessionStore = FileSessionStore(directory: FileSessionStore.defaultDirectory),
@@ -253,7 +316,8 @@ final class AppModel {
     recoveryPayloadStore: SessionPayloadStore = SessionPayloadStore(),
     recoveryPairStore: RecoveryPairStore = RecoveryPairStore(),
     profileStore: EncryptedPDFProfileVault = EncryptedPDFProfileVault(directory: EncryptedPDFProfileVault.defaultDirectory),
-    templateStore: EncryptedPDFTemplateStore = EncryptedPDFTemplateStore(directory: EncryptedPDFTemplateStore.defaultDirectory)
+    templateStore: EncryptedPDFTemplateStore = EncryptedPDFTemplateStore(directory: EncryptedPDFTemplateStore.defaultDirectory),
+    initializeLocalVaultState: Bool = true
   ) {
     self.sessionStore = sessionStore
     self.recoveryStore = recoveryStore
@@ -261,15 +325,17 @@ final class AppModel {
     self.recoveryPairStore = recoveryPairStore
     self.profileStore = profileStore
     self.templateStore = templateStore
-    refreshProfiles()
-    refreshTemplateIDs()
-    refreshLocalPersistenceHealth()
+    if initializeLocalVaultState {
+      refreshProfiles()
+      refreshTemplateIDs()
+      refreshLocalPersistenceHealth()
+    }
     refreshRecoveryDiscovery()
   }
 
   /// Keychain-backed local vault access is explicit in the UI. No template
   /// or profile values are exposed merely because a store directory exists.
-  func unlockTemplateVault() {
+  public func unlockTemplateVault() {
     do {
       availableTemplateIDs = try templateStore.unlock()
       isTemplateVaultUnlocked = true
@@ -282,7 +348,7 @@ final class AppModel {
     }
   }
 
-  func lockTemplateVault() {
+  public func lockTemplateVault() {
     isTemplateVaultUnlocked = false
     templateContract = nil
     templateRevisionHistory = nil
@@ -293,7 +359,7 @@ final class AppModel {
     statusMessage = "Locked the local template vault."
   }
 
-  func unlockProfileVault() {
+  public func unlockProfileVault() {
     do {
       _ = try profileStore.unlock()
       isProfileVaultUnlocked = true
@@ -307,7 +373,7 @@ final class AppModel {
     }
   }
 
-  func lockProfileVault() {
+  public func lockProfileVault() {
     isProfileVaultUnlocked = false
     currentProfile = nil
     availableProfiles = []
@@ -319,7 +385,7 @@ final class AppModel {
   /// Refreshes value-free persistence health and audit summaries. Any failure
   /// is surfaced as an unknown state rather than exposing a storage error's
   /// path, identifier, or profile value in the UI.
-  func refreshLocalPersistenceHealth() {
+  public func refreshLocalPersistenceHealth() {
     do {
       templateStoreHealth = try templateStore.health()
       templateAuditEvents = (try? templateStore.auditEvents()) ?? []
@@ -367,7 +433,33 @@ final class AppModel {
     return passphrase.isEmpty ? nil : passphrase
   }
 
-  func exportTemplateRecoveryEnvelope() {
+  private func makeCrossDeviceBundle(
+    storeKind: PDFLocalStoreKind,
+    backupData: Data,
+    recoveryData: Data
+  ) throws -> Data {
+    let backup = try PDFLocalCrossDeviceRecoveryCodec.decode(backupData)
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    let recovery = try decoder.decode(PDFLocalStoreRecoveryEnvelope.self, from: recoveryData)
+    try recovery.validate()
+    let bundle = PDFLocalCrossDeviceRecoveryBundle(
+      storeKind: storeKind,
+      backup: backup,
+      recovery: recovery)
+    return try PDFLocalCrossDeviceBundleCodec.encode(bundle)
+  }
+
+  private func splitCrossDeviceBundle(_ data: Data) throws -> (backup: Data, recovery: Data) {
+    let bundle = try PDFLocalCrossDeviceBundleCodec.decode(data)
+    let backup = try PDFLocalCrossDeviceRecoveryCodec.encodeBundle(bundle.backup)
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    encoder.outputFormatting = [.sortedKeys]
+    return (backup, try encoder.encode(bundle.recovery))
+  }
+
+  public func exportTemplateRecoveryEnvelope() {
     guard isTemplateVaultUnlocked else {
       statusMessage = "Unlock the local template vault before exporting recovery material."
       return
@@ -395,7 +487,7 @@ final class AppModel {
     }
   }
 
-  func importTemplateRecoveryEnvelope() {
+  public func importTemplateRecoveryEnvelope() {
     guard let passphrase = requestLocalPassphrase(
       title: "Import template-vault recovery envelope",
       message: "Enter the passphrase used when this recovery envelope was exported. No PDF bytes or profile values are read by this operation.") else { return }
@@ -416,7 +508,122 @@ final class AppModel {
     }
   }
 
-  func exportProfileRecoveryEnvelope() {
+  public func exportTemplateVaultBackup() {
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before exporting its encrypted backup."
+      return
+    }
+    do {
+      let data = try templateStore.exportEncryptedBackup()
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "pdf-editor-template-vault-backup.json"
+      panel.begin { [weak self] response in
+        guard response == .OK, let url = panel.url else { return }
+        do {
+          try data.write(to: url, options: .atomic)
+          self?.refreshLocalPersistenceHealth()
+          self?.statusMessage = "Exported an encrypted template-vault backup. It contains ciphertext records, not source PDF bytes or readable profile values."
+        } catch {
+          self?.alertMessage = "Could not export the encrypted template backup: \(error.localizedDescription)"
+        }
+      }
+    } catch {
+      alertMessage = "Could not prepare the encrypted template backup: \(error.localizedDescription)"
+    }
+  }
+
+  public func importTemplateVaultBackup() {
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before importing its encrypted backup."
+      return
+    }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.json]
+    panel.allowsMultipleSelection = false
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      let alert = NSAlert()
+      alert.messageText = "Replace local template-vault records?"
+      alert.informativeText = "The encrypted backup will replace local template and learning records. The source PDFs and profile vault are not included."
+      alert.alertStyle = .warning
+      alert.addButton(withTitle: "Replace Records")
+      alert.addButton(withTitle: "Cancel")
+      guard alert.runModal() == .alertFirstButtonReturn else { return }
+      do {
+        try self?.templateStore.importEncryptedBackup(Data(contentsOf: url), replacing: true)
+        self?.isTemplateVaultUnlocked = true
+        self?.refreshTemplateIDs()
+        self?.refreshLocalPersistenceHealth()
+        self?.statusMessage = "Restored the encrypted template vault. Review the imported revisions before use."
+      } catch {
+        self?.alertMessage = "Could not import the encrypted template backup: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  public func exportTemplateCrossDeviceRecovery() {
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before exporting cross-device recovery."
+      return
+    }
+    guard let passphrase = requestLocalPassphrase(
+      title: "Create template cross-device recovery passphrase",
+      message: "This passphrase protects the key-recovery envelope. Keep it separate from the downloaded bundle. The app cannot recover it.") else { return }
+    do {
+      let data = try makeCrossDeviceBundle(
+        storeKind: .template,
+        backupData: templateStore.exportEncryptedBackup(),
+        recoveryData: templateStore.exportRecoveryEnvelope(passphrase: passphrase))
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "pdf-editor-template-cross-device-recovery.json"
+      panel.begin { [weak self] response in
+        guard response == .OK, let url = panel.url else { return }
+        do {
+          try data.write(to: url, options: .atomic)
+          self?.statusMessage = "Exported an encrypted template cross-device recovery bundle. Keep the file and passphrase separate."
+        } catch {
+          self?.alertMessage = "Could not export template cross-device recovery: \(error.localizedDescription)"
+        }
+      }
+    } catch {
+      alertMessage = "Could not prepare template cross-device recovery: \(error.localizedDescription)"
+    }
+  }
+
+  public func importTemplateCrossDeviceRecovery() {
+    guard let passphrase = requestLocalPassphrase(
+      title: "Open template cross-device recovery",
+      message: "Enter the recovery passphrase. The bundle will replace local template records after confirmation.") else { return }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.json]
+    panel.allowsMultipleSelection = false
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      let alert = NSAlert()
+      alert.messageText = "Replace local template records from recovery bundle?"
+      alert.informativeText = "This restores encrypted templates and learning records. Profile values and source PDFs are not included."
+      alert.alertStyle = .warning
+      alert.addButton(withTitle: "Restore")
+      alert.addButton(withTitle: "Cancel")
+      guard alert.runModal() == .alertFirstButtonReturn else { return }
+      do {
+        let parts = try self?.splitCrossDeviceBundle(Data(contentsOf: url))
+        guard let parts else { return }
+        try self?.templateStore.recoverKey(from: parts.recovery, passphrase: passphrase)
+        try self?.templateStore.importEncryptedBackup(parts.backup, replacing: true)
+        self?.isTemplateVaultUnlocked = true
+        self?.refreshTemplateIDs()
+        self?.refreshLocalPersistenceHealth()
+        self?.statusMessage = "Restored the encrypted template vault from the cross-device bundle. Review imported revisions before use."
+      } catch {
+        self?.alertMessage = "Could not restore template cross-device recovery: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  public func exportProfileRecoveryEnvelope() {
     guard isProfileVaultUnlocked else {
       statusMessage = "Unlock the local profile vault before exporting recovery material."
       return
@@ -444,7 +651,7 @@ final class AppModel {
     }
   }
 
-  func importProfileRecoveryEnvelope() {
+  public func importProfileRecoveryEnvelope() {
     guard let passphrase = requestLocalPassphrase(
       title: "Import profile-vault recovery envelope",
       message: "Enter the passphrase used when this recovery envelope was exported. Profile values remain inside the encrypted native vault.") else { return }
@@ -465,7 +672,124 @@ final class AppModel {
     }
   }
 
-  func deleteAllTemplateVaultRecords() {
+  public func exportProfileVaultBackup() {
+    guard isProfileVaultUnlocked else {
+      statusMessage = "Unlock the local profile vault before exporting its encrypted backup."
+      return
+    }
+    do {
+      let data = try profileStore.exportEncryptedBackup()
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "pdf-editor-profile-vault-backup.json"
+      panel.begin { [weak self] response in
+        guard response == .OK, let url = panel.url else { return }
+        do {
+          try data.write(to: url, options: .atomic)
+          self?.refreshLocalPersistenceHealth()
+          self?.statusMessage = "Exported an encrypted profile-vault backup. Keep it separate from the key-recovery envelope."
+        } catch {
+          self?.alertMessage = "Could not export the encrypted profile backup: \(error.localizedDescription)"
+        }
+      }
+    } catch {
+      alertMessage = "Could not prepare the encrypted profile backup: \(error.localizedDescription)"
+    }
+  }
+
+  public func importProfileVaultBackup() {
+    guard isProfileVaultUnlocked else {
+      statusMessage = "Unlock the local profile vault before importing its encrypted backup."
+      return
+    }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.json]
+    panel.allowsMultipleSelection = false
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      let alert = NSAlert()
+      alert.messageText = "Replace local profile-vault records?"
+      alert.informativeText = "The encrypted backup will replace profile revisions. This does not include source PDFs or template mappings."
+      alert.alertStyle = .warning
+      alert.addButton(withTitle: "Replace Profiles")
+      alert.addButton(withTitle: "Cancel")
+      guard alert.runModal() == .alertFirstButtonReturn else { return }
+      do {
+        try self?.profileStore.importEncryptedBackup(Data(contentsOf: url), replacing: true)
+        self?.isProfileVaultUnlocked = true
+        self?.currentProfile = nil
+        self?.refreshProfiles()
+        self?.refreshLocalPersistenceHealth()
+        self?.statusMessage = "Restored the encrypted profile vault. Select a profile before resolving values."
+      } catch {
+        self?.alertMessage = "Could not import the encrypted profile backup: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  public func exportProfileCrossDeviceRecovery() {
+    guard isProfileVaultUnlocked else {
+      statusMessage = "Unlock the local profile vault before exporting cross-device recovery."
+      return
+    }
+    guard let passphrase = requestLocalPassphrase(
+      title: "Create profile cross-device recovery passphrase",
+      message: "This passphrase protects the key-recovery envelope. Keep it separate from the downloaded bundle. The app cannot recover it.") else { return }
+    do {
+      let data = try makeCrossDeviceBundle(
+        storeKind: .profile,
+        backupData: profileStore.exportEncryptedBackup(),
+        recoveryData: profileStore.exportRecoveryEnvelope(passphrase: passphrase))
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "pdf-editor-profile-cross-device-recovery.json"
+      panel.begin { [weak self] response in
+        guard response == .OK, let url = panel.url else { return }
+        do {
+          try data.write(to: url, options: .atomic)
+          self?.statusMessage = "Exported an encrypted profile cross-device recovery bundle. Keep the file and passphrase separate."
+        } catch {
+          self?.alertMessage = "Could not export profile cross-device recovery: \(error.localizedDescription)"
+        }
+      }
+    } catch {
+      alertMessage = "Could not prepare profile cross-device recovery: \(error.localizedDescription)"
+    }
+  }
+
+  public func importProfileCrossDeviceRecovery() {
+    guard let passphrase = requestLocalPassphrase(
+      title: "Open profile cross-device recovery",
+      message: "Enter the recovery passphrase. The bundle will replace local profile records after confirmation.") else { return }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.json]
+    panel.allowsMultipleSelection = false
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      let alert = NSAlert()
+      alert.messageText = "Replace local profile records from recovery bundle?"
+      alert.informativeText = "This restores encrypted profile revisions. Template mappings and source PDFs are not included."
+      alert.alertStyle = .warning
+      alert.addButton(withTitle: "Restore")
+      alert.addButton(withTitle: "Cancel")
+      guard alert.runModal() == .alertFirstButtonReturn else { return }
+      do {
+        let parts = try self?.splitCrossDeviceBundle(Data(contentsOf: url))
+        guard let parts else { return }
+        try self?.profileStore.recoverKey(from: parts.recovery, passphrase: passphrase)
+        try self?.profileStore.importEncryptedBackup(parts.backup, replacing: true)
+        self?.isProfileVaultUnlocked = true
+        self?.currentProfile = nil
+        self?.refreshProfiles()
+        self?.refreshLocalPersistenceHealth()
+        self?.statusMessage = "Restored the encrypted profile vault from the cross-device bundle. Select a profile before resolving values."
+      } catch {
+        self?.alertMessage = "Could not restore profile cross-device recovery: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  public func deleteAllTemplateVaultRecords() {
     guard isTemplateVaultUnlocked else {
       statusMessage = "Unlock the local template vault before deleting its records."
       return
@@ -490,7 +814,7 @@ final class AppModel {
     }
   }
 
-  func deleteAllProfileVaultRecords() {
+  public func deleteAllProfileVaultRecords() {
     guard isProfileVaultUnlocked else {
       statusMessage = "Unlock the local profile vault before deleting its records."
       return
@@ -513,14 +837,14 @@ final class AppModel {
     }
   }
 
-  func refreshTemplateIDs() {
+  public func refreshTemplateIDs() {
     availableTemplateIDs = (try? templateStore.templateIDs()) ?? []
   }
 
   /// Rebuild the value-free local index from encrypted histories and query it
   /// against the current source. Retrieval never mutates the active template
   /// or creates operations.
-  func findLocalTemplateMatches() {
+  public func findLocalTemplateMatches() {
     guard let inspection else {
       statusMessage = "Open a PDF before searching local templates."
       return
@@ -548,17 +872,17 @@ final class AppModel {
     }
   }
 
-  var selectedField: NativeField? {
+  public var selectedField: NativeField? {
     guard let selectedFieldID else { return nil }
     return inspection?.fields.first { $0.id == selectedFieldID }
   }
 
-  var selectedCandidate: RegionCandidate? {
+  public var selectedCandidate: RegionCandidate? {
     guard let selectedCandidateID else { return nil }
     return inspection?.candidates.first { $0.id == selectedCandidateID }
   }
 
-  var selectedSearchMatch: SearchMatch? {
+  public var selectedSearchMatch: SearchMatch? {
     guard let index = selectedSearchMatchIndex,
       index >= 0,
       index < searchMatches.count
@@ -566,32 +890,32 @@ final class AppModel {
     return searchMatches[index]
   }
 
-  var canClearSearch: Bool {
+  public var canClearSearch: Bool {
     !searchQuery.isEmpty || !searchMatches.isEmpty
   }
 
-  var selectedPageLabel: String {
+  public var selectedPageLabel: String {
     inspection?.pages[safe: selectedPageIndex]?.pageLabel ?? "\(selectedPageIndex + 1)"
   }
 
-  var currentPageCount: Int {
+  public var currentPageCount: Int {
     inspection?.pages.count ?? 0
   }
 
-  var canUndo: Bool { !operations.isEmpty }
+  public var canUndo: Bool { !operations.isEmpty }
 
-  var canRedo: Bool { !redoEntries.isEmpty }
+  public var canRedo: Bool { !redoEntries.isEmpty }
 
   /// A session is dirty when it has a live source and operations that have
   /// not been committed back to the source file. Export Copy is intentionally
   /// separate from this predicate because it does not replace the source.
-  var isDirty: Bool {
+  public var isDirty: Bool {
     liveDocument != nil && !operations.isEmpty
   }
 
-  var hasUnexportedChanges: Bool { isDirty }
+  public var hasUnexportedChanges: Bool { isDirty }
 
-  func lifecycleDecision(for action: LifecycleAction) -> LifecycleDecisionInfo {
+  public func lifecycleDecision(for action: LifecycleAction) -> LifecycleDecisionInfo {
     LifecycleDecisionInfo(
       action: action,
       hasDocument: liveDocument != nil,
@@ -602,7 +926,7 @@ final class AppModel {
     )
   }
 
-  var canExportCurrentOperations: Bool {
+  public var canExportCurrentOperations: Bool {
     guard inspection != nil else { return false }
     return operations.allSatisfy { operation in
       permissionRequirements(for: operation).allSatisfy {
@@ -613,53 +937,53 @@ final class AppModel {
 
   // Compatibility names for the native command surface. Keeping these as
   // model-owned actions prevents menus from maintaining a second history.
-  func reset() { resetDocument() }
+  public func reset() { resetDocument() }
 
-  func undo() { PerformanceTelemetry.shared.measureUndo { undoLastEdit() } }
+  public func undo() { PerformanceTelemetry.shared.measureUndo { undoLastEdit() } }
 
-  func redo() { PerformanceTelemetry.shared.measureRedo { redoLastEdit() } }
+  public func redo() { PerformanceTelemetry.shared.measureRedo { redoLastEdit() } }
 
-  func goToPage(_ index: Int) {
+  public func goToPage(_ index: Int) {
     jumpToPage(index)
   }
 
-  func goToFirstPage() {
+  public func goToFirstPage() {
     goToPage(0)
   }
 
-  func goToPreviousPage() {
+  public func goToPreviousPage() {
     goToPage(selectedPageIndex - 1)
   }
 
-  func goToNextPage() {
+  public func goToNextPage() {
     goToPage(selectedPageIndex + 1)
   }
 
-  func goToLastPage() {
+  public func goToLastPage() {
     goToPage(max(0, currentPageCount - 1))
   }
 
-  func setScaleMode(_ mode: ReaderScaleMode) {
+  public func setScaleMode(_ mode: ReaderScaleMode) {
     setReaderScaleMode(mode)
   }
 
-  func setActualSize() {
+  public func setActualSize() {
     setReaderScaleMode(.zoom)
     setZoom(1.0)
   }
 
-  func setFitPage() {
+  public func setFitPage() {
     setReaderScaleMode(.fitPage)
   }
 
-  func setFitWidth() {
+  public func setFitWidth() {
     setReaderScaleMode(.fitWidth)
   }
 
   /// Typed entry point for the standard Find command. The shell can provide
   /// a query when it owns the field, while the model remains the sole search
   /// authority and preserves the selected hit when possible.
-  func routeSearchCommand(query: String? = nil) {
+  public func routeSearchCommand(query: String? = nil) {
     if let query {
       searchQuery = query
     }
@@ -670,15 +994,15 @@ final class AppModel {
     runSearch()
   }
 
-  func routeNextSearchCommand() {
+  public func routeNextSearchCommand() {
     selectNextSearchMatch()
   }
 
-  func routePreviousSearchCommand() {
+  public func routePreviousSearchCommand() {
     selectPreviousSearchMatch()
   }
 
-  func open(url: URL, password: String? = nil) {
+  public func open(url: URL, password: String? = nil) {
     cancelViewStateAutosave()
     do {
       let hasSecurityScope = url.startAccessingSecurityScopedResource()
@@ -697,6 +1021,7 @@ final class AppModel {
       }
 
       inspection = nextInspection
+      sourceInspection = nextInspection
       replaceLiveDocument(document)
       sourceURL = url
       cachedSourceData = data
@@ -743,6 +1068,8 @@ final class AppModel {
       lastAppliedTemplateCompletion = nil
       templateCompletionOperationIDs = []
       templateRevisionDiff = nil
+      templateProfileResolution = nil
+      templateMigrationProposal = nil
       exportReport = nil
       passwordAttempt = ""
       isPasswordSheetPresented = false
@@ -785,7 +1112,7 @@ final class AppModel {
     }
   }
 
-  func submitPassword() {
+  public func submitPassword() {
     guard let url = passwordPendingURL else { return }
     let attempted = passwordAttempt
     passwordAttempt = ""
@@ -793,22 +1120,25 @@ final class AppModel {
     open(url: url, password: attempted)
   }
 
-  func dismissPasswordPrompt() {
+  public func dismissPasswordPrompt() {
     passwordPendingURL = nil
     passwordAttempt = ""
     isPasswordSheetPresented = false
   }
 
-  func resetDocument() {
+  public func resetDocument() {
     cancelViewStateAutosave()
     discardCurrentRecovery()
     inspection = nil
+    sourceInspection = nil
     replaceLiveDocument(nil)
     sourceURL = nil
     cachedSourceData = nil
     preflightReport = nil
     ocrProcessedPageIndices = []
     operations = []
+    showDiff = false
+    currentDiff = nil
     replayCheckpoints = []
     operationViewStates = []
     redoEntries = []
@@ -838,7 +1168,7 @@ final class AppModel {
     resetReaderState()
   }
 
-  func currentValue(for field: NativeField) -> String {
+  public func currentValue(for field: NativeField) -> String {
     guard let page = liveDocument?.page(at: field.pageIndex) else { return field.value ?? "" }
     let widgets = page.annotations.filter {
       $0.type == "Widget"
@@ -851,7 +1181,7 @@ final class AppModel {
     return widgets.first?.widgetStringValue ?? field.value ?? ""
   }
 
-  func buttonOptions(for field: NativeField) -> [String] {
+  public func buttonOptions(for field: NativeField) -> [String] {
     guard let page = liveDocument?.page(at: field.pageIndex) else { return [] }
     var seen = Set<String>()
     return page.annotations
@@ -864,7 +1194,7 @@ final class AppModel {
       }
   }
 
-  func applyFieldValue(_ value: String) {
+  public func applyFieldValue(_ value: String) {
     guard requirePermission(.modify, action: "Edit form field") else { return }
     guard let field = selectedField, let liveDocument else { return }
     guard field.kind != .signature else {
@@ -891,7 +1221,7 @@ final class AppModel {
     }
   }
 
-  func applyOverlay(_ value: String) {
+  public func applyOverlay(_ value: String) {
     guard requirePermission(.modify, action: "Add text overlay"),
       requirePermission(.addAnnotations, action: "Add text overlay")
     else { return }
@@ -920,7 +1250,7 @@ final class AppModel {
     )
   }
 
-  func applyStaticChoiceMark(cellIndex: Int) {
+  public func applyStaticChoiceMark(cellIndex: Int) {
     guard requirePermission(.modify, action: "Add choice mark"),
       requirePermission(.addAnnotations, action: "Add choice mark")
     else { return }
@@ -942,7 +1272,7 @@ final class AppModel {
     )
   }
 
-  func synthesizeNativeField() {
+  public func synthesizeNativeField() {
     guard requirePermission(.modify, action: "Create native field"),
       requirePermission(.addAnnotations, action: "Create native field")
     else { return }
@@ -976,7 +1306,7 @@ final class AppModel {
     }
   }
 
-  func applyManualText() {
+  public func applyManualText() {
     guard requirePermission(.modify, action: "Place manual text"),
       requirePermission(.addAnnotations, action: "Place manual text")
     else { return }
@@ -999,7 +1329,7 @@ final class AppModel {
     isManualTextSheetPresented = false
   }
 
-  func beginManualTextPlacement() {
+  public func beginManualTextPlacement() {
     guard requirePermission(.modify, action: "Place manual text"),
       requirePermission(.addAnnotations, action: "Place manual text")
     else { return }
@@ -1014,7 +1344,7 @@ final class AppModel {
     statusMessage = "Click the document where the new text should begin."
   }
 
-  func cancelManualTextPlacement() {
+  public func cancelManualTextPlacement() {
     isManualPlacementMode = false
     manualTextPlacement = nil
     manualTextDraft = ""
@@ -1022,14 +1352,14 @@ final class AppModel {
     statusMessage = "Manual text placement cancelled."
   }
 
-  func receiveManualPlacement(pageIndex: Int, point: CGPoint) {
+  public func receiveManualPlacement(pageIndex: Int, point: CGPoint) {
     guard isManualPlacementMode else { return }
     receiveTextPlacement(pageIndex: pageIndex, point: point)
   }
 
   /// Double-click placement is the direct-on-page path. It uses the same
   /// page-space bounds and reversible overlay operation as toolbar placement.
-  func beginDirectTextPlacement(pageIndex: Int, point: CGPoint) {
+  public func beginDirectTextPlacement(pageIndex: Int, point: CGPoint) {
     guard requirePermission(.modify, action: "Place manual text"),
       requirePermission(.addAnnotations, action: "Place manual text")
     else { return }
@@ -1059,14 +1389,14 @@ final class AppModel {
     statusMessage = "Enter the text for the selected document area."
   }
 
-  func rejectSelectedCandidate() {
+  public func rejectSelectedCandidate() {
     guard let candidate = selectedCandidate else { return }
     updateCandidate(candidate.id, status: .rejected)
     selectedCandidateID = nil
     statusMessage = "Dismissed the suggested area. The source PDF was not changed."
   }
 
-  func restoreCandidate(_ candidateID: UUID) {
+  public func restoreCandidate(_ candidateID: UUID) {
     updateCandidate(candidateID, status: .suggested)
     statusMessage = "Restored the suggested area for review."
   }
@@ -1134,11 +1464,11 @@ final class AppModel {
     )
   }
 
-  var activeCandidates: [RegionCandidate] {
+  public var activeCandidates: [RegionCandidate] {
     inspection?.candidates.filter { $0.status != .rejected } ?? []
   }
 
-  var dismissedCandidates: [RegionCandidate] {
+  public var dismissedCandidates: [RegionCandidate] {
     inspection?.candidates.filter { $0.status == .rejected } ?? []
   }
 
@@ -1146,7 +1476,7 @@ final class AppModel {
 
   /// All editable regions in reading order (top-to-bottom, left-to-right, page-by-page).
   /// Native fields appear first on each page, then active candidates.
-  var editableRegions: [EditableRegionRef] {
+  public var editableRegions: [EditableRegionRef] {
     guard let inspection else { return [] }
     var regions: [EditableRegionRef] = []
     for pageIndex in 0..<inspection.pages.count {
@@ -1176,7 +1506,7 @@ final class AppModel {
 
   /// FillHighlight descriptors for the PDFKitView overlay layer.
   /// Empty unless editorMode is .fill or .sign.
-  var fillHighlightRegions: [FillHighlight] {
+  public var fillHighlightRegions: [FillHighlight] {
     guard let inspection, editorMode == .fill || editorMode == .sign else { return [] }
     var highlights: [FillHighlight] = []
 
@@ -1225,7 +1555,7 @@ final class AppModel {
   }
 
   /// Fill progress as a 0..1 fraction. Nil when there is nothing to fill.
-  var fillProgress: Double? {
+  public var fillProgress: Double? {
     guard let inspection else { return nil }
     let totalFields = inspection.fields.filter { $0.kind != .signature }.count
     let totalCandidates = activeCandidates.filter {
@@ -1242,7 +1572,7 @@ final class AppModel {
   }
 
   /// Human-readable "3 / 9 fields filled" string. Nil when nothing to fill.
-  var fillProgressLabel: String? {
+  public var fillProgressLabel: String? {
     guard let inspection else { return nil }
     let totalFields = inspection.fields.filter { $0.kind != .signature }.count
     let totalCandidates = activeCandidates.filter {
@@ -1258,8 +1588,126 @@ final class AppModel {
     return "\(filled) / \(total) fields filled"
   }
 
+  // MARK: - Visual Diff
+
+  /// Toggle the diff overlay on/off and recompute the diff when enabling.
+  public func toggleDiffView() {
+    showDiff.toggle()
+    if showDiff {
+      recomputeDiff()
+    } else {
+      currentDiff = nil
+    }
+  }
+
+  /// Open the side-by-side diff comparison sheet.
+  public func openDiffComparison() {
+    recomputeDiff()
+    showDiffSheet = true
+  }
+
+  /// Export the visual diff as a standalone PDF report.
+  public func exportDiffReport() {
+    guard let diff = currentDiff else {
+      recomputeDiff()
+      guard let diff = currentDiff else {
+        statusMessage = "No diff data available. Open a document first."
+        return
+      }
+      exportDiffReportData(diff)
+      return
+    }
+    exportDiffReportData(diff)
+  }
+
+  private func exportDiffReportData(_ diff: DocumentDiff) {
+    guard let sourceDoc = sourceDocument, let currentDoc = liveDocument else {
+      statusMessage = "Cannot generate diff report: source or current document is unavailable."
+      return
+    }
+    let panel = NSSavePanel()
+    panel.allowedContentTypes = [.pdf]
+    panel.canCreateDirectories = true
+    panel.nameFieldStringValue = "diff-report.pdf"
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      do {
+        let data = try DocumentDiffReport.generate(
+          sourceDocument: sourceDoc,
+          currentDocument: currentDoc,
+          diff: diff,
+          operations: self?.operations ?? []
+        )
+        try data.write(to: url, options: .atomic)
+        self?.statusMessage = "Exported diff report to \(url.lastPathComponent)."
+      } catch {
+        self?.alertMessage = "Could not export diff report: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  /// Recompute the document diff from sourceInspection vs current inspection.
+  /// The diff highlights outside-region changes with red/orange overlays.
+  public func recomputeDiff() {
+    guard let source = sourceInspection, let current = inspection else {
+      currentDiff = nil
+      return
+    }
+    currentDiff = DocumentDiffBuilder.build(
+      source: source,
+      output: current,
+      operations: operations
+    )
+    statusMessage = diffStatusMessage
+  }
+
+  /// Human-readable summary of the current diff.
+  public var diffStatusMessage: String {
+    guard let diff = currentDiff else { return "No diff computed." }
+    let changedPages = diff.pages.filter { $0.hasChanges }.count
+    let unexpected = diff.summary.unexpectedChanges
+    switch diff.summary.overallStatus {
+    case .preserved:
+      return "Diff: all changes are inside authorized regions. Source preserved outside."
+    case .warnings:
+      return "Diff: \(changedPages) page(s) changed. \(unexpected) unexpected change(s)."
+    case .violations:
+      return "Diff: \(unexpected) unexpected change(s) detected outside operation regions."
+    case .incomplete:
+      return "Diff: could not be computed (page count changed)."
+    }
+  }
+
+  /// Diff overlay highlights for the PDFKitView.
+  /// Shows outside-region changes in red and authorized changes in green.
+  public var diffHighlightRegions: [FillHighlight] {
+    guard showDiff, let diff = currentDiff else { return [] }
+    var highlights: [FillHighlight] = []
+    for pageDiff in diff.pages where pageDiff.hasChanges {
+      for region in pageDiff.regions {
+        let state: FillHighlight.State
+        switch region.kind {
+        case .unexpectedTextChange, .geometryChanged:
+          state = .outsideRegionChange
+        case .operationApplied, .nativeFieldChanged, .overlayAdded:
+          state = .insideRegionChange
+        case .preserved:
+          state = .preserved
+        }
+        highlights.append(FillHighlight(
+          id: "diff:\(pageDiff.pageIndex):\(region.region.rect.x):\(region.region.rect.y)",
+          pageIndex: pageDiff.pageIndex,
+          bounds: region.region.rect,
+          state: state,
+          label: region.description
+        ))
+      }
+    }
+    return highlights
+  }
+
   /// Next unfilled region in reading order from the current tab cursor.
-  var nextUnfilledRegion: EditableRegionRef? {
+  public var nextUnfilledRegion: EditableRegionRef? {
     let regions = editableRegions.filter { region in
       switch region.kind {
       case .nativeField(let id):
@@ -1275,7 +1723,7 @@ final class AppModel {
   }
 
   /// Set editor mode. Resets tap inference and status appropriately.
-  func setEditorMode(_ mode: EditorMode) {
+  public func setEditorMode(_ mode: EditorMode) {
     editorMode = mode
     isFillOfferVisible = false
     tabCursorIndex = 0
@@ -1296,7 +1744,7 @@ final class AppModel {
   }
 
   /// Advance tab focus to the next unfilled region (Tab / Return handler).
-  func advanceToNextField() {
+  public func advanceToNextField() {
     guard editorMode == .fill else { return }
     let regions = editableRegions
     guard !regions.isEmpty else { return }
@@ -1306,7 +1754,7 @@ final class AppModel {
   }
 
   /// Retreat tab focus to the previous unfilled region (Shift+Tab).
-  func retreatToPreviousField() {
+  public func retreatToPreviousField() {
     guard editorMode == .fill else { return }
     let regions = editableRegions
     guard !regions.isEmpty else { return }
@@ -1321,17 +1769,72 @@ final class AppModel {
       selectedFieldID = id
       selectedCandidateID = nil
       jumpToPage(region.pageIndex)
+      if let field = inspection?.fields.first(where: { $0.id == id }) {
+        let val = currentValue(for: field)
+        activeInlineEditor = InlineEditorState(
+          target: region,
+          draftText: val,
+          initialValue: val,
+          label: field.name
+        )
+      }
     case .candidate(let id):
       selectedCandidateID = id
       selectedFieldID = nil
       jumpToPage(region.pageIndex)
+      if let candidate = activeCandidates.first(where: { $0.id == id }) {
+        activeInlineEditor = InlineEditorState(
+          target: region,
+          draftText: "",
+          initialValue: "",
+          label: candidate.labelText ?? "Suggested Area"
+        )
+      }
     }
+  }
+
+  /// Open an inline editor for a specific region.
+  public func openInlineEditor(for region: EditableRegionRef) {
+    activateRegion(region)
+  }
+
+  /// Commit the active inline editor text and advance to the next field.
+  public func commitInlineEditor(text: String? = nil, andAdvance: Bool = true) {
+    guard var editor = activeInlineEditor else { return }
+    if let overrideText = text {
+      editor.draftText = overrideText
+    }
+    let value = editor.draftText.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    switch editor.target.kind {
+    case .nativeField:
+      if let field = selectedField {
+        applyFieldValue(value)
+      }
+    case .candidate:
+      if let candidate = selectedCandidate {
+        if !value.isEmpty {
+          applyOverlay(value)
+        }
+      }
+    }
+
+    activeInlineEditor = nil
+
+    if andAdvance {
+      advanceToNextField()
+    }
+  }
+
+  /// Dismiss the inline editor without applying uncommitted changes.
+  public func dismissInlineEditor() {
+    activeInlineEditor = nil
   }
 
   /// Intent-inference router: called when the user taps a point on a page.
   /// In Read mode, infers likely intent and offers the appropriate mode.
   /// In Fill/Sign/Edit mode, routes to the correct action for what was tapped.
-  func handlePageTap(pageIndex: Int, point: CGPoint) {
+  public func handlePageTap(pageIndex: Int, point: CGPoint) {
     guard liveDocument != nil, let inspection else { return }
 
     // Check if the tap hit a native field
@@ -1345,9 +1848,13 @@ final class AppModel {
         selectedFieldID = field.id
         selectedCandidateID = nil
         isFillOfferVisible = true
+        let region = EditableRegionRef(kind: .nativeField(id: field.id), pageIndex: pageIndex, bounds: field.bounds)
+        activateRegion(region)
       case .fill, .edit:
         selectedFieldID = field.id
         selectedCandidateID = nil
+        let region = EditableRegionRef(kind: .nativeField(id: field.id), pageIndex: pageIndex, bounds: field.bounds)
+        activateRegion(region)
       case .sign:
         break // Signature mode ignores non-signature taps
       }
@@ -1369,9 +1876,13 @@ final class AppModel {
         selectedCandidateID = candidate.id
         selectedFieldID = nil
         isFillOfferVisible = true
+        let region = EditableRegionRef(kind: .candidate(id: candidate.id), pageIndex: pageIndex, bounds: candidate.bounds)
+        activateRegion(region)
       case .fill, .edit:
         selectedCandidateID = candidate.id
         selectedFieldID = nil
+        let region = EditableRegionRef(kind: .candidate(id: candidate.id), pageIndex: pageIndex, bounds: candidate.bounds)
+        activateRegion(region)
       case .sign:
         break
       }
@@ -1381,18 +1892,21 @@ final class AppModel {
     // Tapped free space
     switch editorMode {
     case .edit:
+      dismissInlineEditor()
       // Edit mode: begin text placement (existing path)
       beginDirectTextPlacement(pageIndex: pageIndex, point: point)
     case .sign:
+      dismissInlineEditor()
       // Free placement signature
       beginSign(for: nil)
     case .read, .fill:
+      dismissInlineEditor()
       break // No action on free-space tap in read/fill
     }
   }
 
   /// Show the fill offer chip in the status bar (called after document open).
-  func showFillOfferIfNeeded() {
+  public func showFillOfferIfNeeded() {
     guard let inspection else { return }
     let hasFields = !inspection.fields.isEmpty
     let hasCandidates = !activeCandidates.isEmpty
@@ -1404,7 +1918,7 @@ final class AppModel {
   }
 
   /// Begin sign workflow for a specific candidate region (or nil for free placement).
-  func beginSign(for candidate: RegionCandidate?) {
+  public func beginSign(for candidate: RegionCandidate?) {
     pendingSignatureRegion = candidate
     if editorMode != .sign {
       setEditorMode(.sign)
@@ -1413,7 +1927,7 @@ final class AppModel {
   }
 
   /// Apply a signature image to the pending region or a free-placed location.
-  func applySignature(_ imageData: Data, to bounds: PDFRect, on pageIndex: Int) {
+  public func applySignature(_ imageData: Data, to bounds: PDFRect, on pageIndex: Int) {
     guard requirePermission(.modify, action: "Place signature"),
       requirePermission(.addAnnotations, action: "Place signature")
     else { return }
@@ -1609,13 +2123,13 @@ final class AppModel {
   /// Returns a lightweight view/history checkpoint. It never stores PDF bytes
   /// or edit values; the source digest is the binding for a future
   /// DocumentSession recovery adapter.
-  func captureInMemoryRecoverySnapshot() -> InMemoryRecoverySnapshot? {
+  public func captureInMemoryRecoverySnapshot() -> InMemoryRecoverySnapshot? {
     refreshInMemoryRecoverySnapshot()
     return inMemoryRecoverySnapshot
   }
 
   @discardableResult
-  func restoreInMemoryRecoverySnapshot(_ snapshot: InMemoryRecoverySnapshot) -> Bool {
+  public func restoreInMemoryRecoverySnapshot(_ snapshot: InMemoryRecoverySnapshot) -> Bool {
     guard currentSessionID == snapshot.sessionID else {
       statusMessage = "Recovery snapshot belongs to a different editing session."
       return false
@@ -1737,7 +2251,7 @@ final class AppModel {
     return (rebuilt, false)
   }
 
-  func undoLastEdit() {
+  public func undoLastEdit() {
     guard !operations.isEmpty else { return }
     searchMatches = []
     selectedSearchMatchIndex = nil
@@ -1765,6 +2279,7 @@ final class AppModel {
       // after restoring a source or checkpoint document.
       autoSaveSession()
       refreshInMemoryRecoverySnapshot()
+      if showDiff { recomputeDiff() }
       statusMessage = replay.usedCheckpoint
         ? "Removed the last edit and restored the preview from an in-memory checkpoint."
         : "Removed the last edit and rebuilt the preview from the cached source."
@@ -1792,7 +2307,7 @@ final class AppModel {
     }
   }
 
-  func redoLastEdit() {
+  public func redoLastEdit() {
     guard let entry = redoEntries.last else { return }
     for requirement in permissionRequirements(for: entry.operation) {
       guard requirePermission(requirement, action: "Redo edit") else { return }
@@ -1819,6 +2334,7 @@ final class AppModel {
         updateCandidate(candidateID, status: .confirmed)
       }
       autoSaveSession()
+      if showDiff { recomputeDiff() }
       statusMessage = "Reapplied the previously undone edit."
       refreshInMemoryRecoverySnapshot()
     } catch {
@@ -1826,7 +2342,7 @@ final class AppModel {
     }
   }
 
-  func selectNextCandidate() {
+  public func selectNextCandidate() {
     let candidates = activeCandidates
     guard !candidates.isEmpty else { return }
     let currentID = selectedCandidateID
@@ -1840,7 +2356,7 @@ final class AppModel {
       "Selected candidate \(nextIndex + 1) of \(candidates.count) (\(next.suggestedFieldType?.rawValue ?? "field"))"
   }
 
-  func selectPreviousCandidate() {
+  public func selectPreviousCandidate() {
     let candidates = activeCandidates
     guard !candidates.isEmpty else { return }
     let currentID = selectedCandidateID
@@ -1854,7 +2370,7 @@ final class AppModel {
       "Selected candidate \(prevIndex + 1) of \(candidates.count) (\(prev.suggestedFieldType?.rawValue ?? "field"))"
   }
 
-  func runOCROnSelectedPage() {
+  public func runOCROnSelectedPage() {
     guard requirePermission(.copy, action: "Run OCR") else { return }
     guard let page = liveDocument?.page(at: selectedPageIndex),
       let pageSnapshot = inspection?.pages[safe: selectedPageIndex]
@@ -1869,10 +2385,15 @@ final class AppModel {
         statusMessage = "No additional text recognized by OCR on page \(selectedPageIndex + 1)."
         return
       }
-      let pageLines = observations.map {
-        $0.toPageSpace(pageBounds: pageSnapshot.bounds, pageIndex: selectedPageIndex)
-      }
-      let ocrCandidates = StaticRegionDetector.detect(lines: pageLines)
+      // OCR provenance stays intact: candidates keep the .ocrRegion kind, a
+      // confidence-derived score, and the recognized text as evidence. The
+      // confidence floor drops low-quality recognitions before they can pollute
+      // the review queue.
+      let ocrCandidates = StaticRegionDetector.detectOCR(
+        observations: observations,
+        pageIndex: selectedPageIndex,
+        pageBounds: pageSnapshot.bounds
+      )
 
       if let current = inspection {
         var existingCandidates = current.candidates
@@ -1907,7 +2428,7 @@ final class AppModel {
     }
   }
 
-  func export() {
+  public func export() {
     guard let sourceURL else { return }
     guard ensureExportPermission() else { return }
     let panel = NSSavePanel()
@@ -1924,7 +2445,7 @@ final class AppModel {
   /// measured permanent-redaction implementation. The current PDFKit lane
   /// exposes neither the capability nor an implementation for
   /// `EditKind.applyRedaction`, so this action must remain a visible denial.
-  func commitRedactions() {
+  public func commitRedactions() {
     let markedOperations = operations.filter { $0.kind == .redactMark }
     guard !markedOperations.isEmpty else {
       denyAction(
@@ -1942,7 +2463,7 @@ final class AppModel {
     )
   }
 
-  func jumpToPage(_ index: Int) {
+  public func jumpToPage(_ index: Int) {
     jumpToPage(index, preservingSearchMatch: false)
   }
 
@@ -1955,7 +2476,7 @@ final class AppModel {
     scheduleViewStateAutosave()
   }
 
-  func runPageJump() {
+  public func runPageJump() {
     guard let index = Int(pageJumpInput.trimmingCharacters(in: .whitespacesAndNewlines)) else {
       statusMessage = "Enter a valid page number."
       return
@@ -1963,14 +2484,14 @@ final class AppModel {
     jumpToPage(index - 1)
   }
 
-  func clearSearch() {
+  public func clearSearch() {
     searchQuery = ""
     searchMatches = []
     selectedSearchMatchIndex = nil
     scheduleViewStateAutosave()
   }
 
-  func runSearch() {
+  public func runSearch() {
     guard let document = liveDocument else {
       searchMatches = []
       selectedSearchMatchIndex = nil
@@ -2033,7 +2554,7 @@ final class AppModel {
     scheduleViewStateAutosave()
   }
 
-  func copyCurrentPageText() {
+  public func copyCurrentPageText() {
     guard requirePermission(.copy, action: "Copy page text") else { return }
     guard let page = liveDocument?.page(at: selectedPageIndex) else {
       statusMessage = "Open a page first before copying."
@@ -2049,7 +2570,7 @@ final class AppModel {
     }
   }
 
-  func setSearchMatch(_ index: Int) {
+  public func setSearchMatch(_ index: Int) {
     guard index >= 0 && index < searchMatches.count else { return }
     selectedSearchMatchIndex = index
     if let match = selectedSearchMatch {
@@ -2058,21 +2579,21 @@ final class AppModel {
     scheduleViewStateAutosave()
   }
 
-  func selectNextSearchMatch() {
+  public func selectNextSearchMatch() {
     guard !searchMatches.isEmpty else { return }
     let next = (selectedSearchMatchIndex ?? -1) + 1
     let index = next >= searchMatches.count ? 0 : next
     setSearchMatch(index)
   }
 
-  func selectPreviousSearchMatch() {
+  public func selectPreviousSearchMatch() {
     guard !searchMatches.isEmpty else { return }
     let previous = (selectedSearchMatchIndex ?? 0) - 1
     let index = previous < 0 ? searchMatches.count - 1 : previous
     setSearchMatch(index)
   }
 
-  func openLink(_ link: PDFLink) {
+  public func openLink(_ link: PDFLink) {
     switch link.kind {
     case .internalPage, .outline, .namedDestination:
       if let targetPage = link.targetPageIndex {
@@ -2091,7 +2612,7 @@ final class AppModel {
     }
   }
 
-  func setReaderViewMode(_ mode: ReaderViewMode) {
+  public func setReaderViewMode(_ mode: ReaderViewMode) {
     readerViewMode = mode
     if mode == .continuous {
       readerScaleMode = .fitWidth
@@ -2099,7 +2620,7 @@ final class AppModel {
     scheduleViewStateAutosave()
   }
 
-  func setReaderScaleMode(_ mode: ReaderScaleMode) {
+  public func setReaderScaleMode(_ mode: ReaderScaleMode) {
     readerScaleMode = mode
     if mode == .zoom && readerZoom == 1.0 {
       readerZoom = 1.0
@@ -2107,24 +2628,24 @@ final class AppModel {
     scheduleViewStateAutosave()
   }
 
-  func setZoom(_ value: Double) {
+  public func setZoom(_ value: Double) {
     readerZoom = max(0.25, min(3.0, value))
     scheduleViewStateAutosave()
   }
 
-  func rotateLeft() {
+  public func rotateLeft() {
     readerRotation = (readerRotation + 270) % 360
     refreshRotation()
     scheduleViewStateAutosave()
   }
 
-  func rotateRight() {
+  public func rotateRight() {
     readerRotation = (readerRotation + 90) % 360
     refreshRotation()
     scheduleViewStateAutosave()
   }
 
-  func resetReaderState() {
+  public func resetReaderState() {
     readerViewMode = .continuous
     readerScaleMode = .fitWidth
     readerZoom = 1.0
@@ -2167,12 +2688,12 @@ final class AppModel {
   // MARK: - Session Persistence
 
   /// Save the current editing session to disk.
-  func saveSession() {
+  public func saveSession() {
     saveDurableRecovery()
   }
 
   /// Load a saved session for the current document.
-  func loadSavedSession() {
+  public func loadSavedSession() {
     guard let currentInspection = inspection else { return }
     refreshRecoveryDiscovery()
     guard restoreDurableRecovery(for: currentInspection.source.sha256) else {
@@ -2193,7 +2714,7 @@ final class AppModel {
   /// useful to restore without representing an edit to the source PDF. The
   /// settled state is persisted as one metadata, payload, and pair generation
   /// through the same commit-pointer protocol as content autosave.
-  func scheduleViewStateAutosave() {
+  public func scheduleViewStateAutosave() {
     guard inspection != nil, sourceURL != nil, currentSessionID != nil else { return }
     guard let currentDigest = currentViewStateDigest(),
       currentDigest != lastPersistedViewStateDigest
@@ -2215,18 +2736,39 @@ final class AppModel {
     }
   }
 
+  /// Flushes pending recovery work before AppKit terminates the application.
+  ///
+  /// Startup intentionally avoids synchronous vault health checks so the
+  /// native window can appear. Termination has the opposite requirement: any
+  /// dirty edit or pending view-state write must complete synchronously, and a
+  /// failed write must be allowed to cancel termination rather than silently
+  /// claim that recovery is durable.
+  @discardableResult
+  public func flushRecoveryForTermination() -> Bool {
+    let hasPendingViewStateSave = viewStateAutosaveTask != nil
+    cancelViewStateAutosave()
+
+    guard inspection != nil, sourceURL != nil, currentSessionID != nil else {
+      return true
+    }
+    guard isDirty || hasSavedSession || lastPersistedViewStateDigest != nil || hasPendingViewStateSave else {
+      return true
+    }
+    return saveDurableRecovery()
+  }
+
   private func cancelViewStateAutosave() {
     viewStateAutosaveTask?.cancel()
     viewStateAutosaveTask = nil
   }
 
   /// List all saved sessions.
-  func listSavedSessions() -> [PDFSessionRecord] {
+  public func listSavedSessions() -> [PDFSessionRecord] {
     (try? sessionStore.listAll()) ?? []
   }
 
   /// Delete a saved session.
-  func deleteSession(sourceDigest: String) {
+  public func deleteSession(sourceDigest: String) {
     do {
       refreshRecoveryDiscovery()
       for envelope in recoveryRecords where envelope.sourceDigest == sourceDigest {
@@ -2322,6 +2864,15 @@ final class AppModel {
     return RecoveryLedgerIdentity.viewStateDigest(recoveryViewState())
   }
 
+  /// Test-only entry point for the controlled recovery interruption harness.
+  /// The support facade checks the explicit test environment gate before this
+  /// method can be called, and this method never exists on a normal UI path.
+  @discardableResult
+  public func saveRecoveryForInterruptionTest() -> Bool {
+    guard RecoveryInterruptionTestSupport.isTestModeEnabled else { return false }
+    return saveDurableRecovery()
+  }
+
   /// Commits a generation-specific payload and pair manifest before replacing
   /// the metadata envelope. The metadata envelope is the commit pointer. If
   /// the final write fails, the previous envelope still selects its previous
@@ -2394,8 +2945,14 @@ final class AppModel {
 
     do {
       try recoveryPayloadStore.save(payload)
+      RecoveryInterruptionTestSupport.emit(.payload)
       try recoveryPairStore.save(manifest)
+      RecoveryInterruptionTestSupport.emit(.pairManifest)
+      // Metadata is the commit pointer. Once it has been atomically written,
+      // the generation is authoritative even on a first save; payload and pair
+      // interruptions remain non-discoverable because the pointer is absent.
       try recoveryStore.save(envelope)
+      RecoveryInterruptionTestSupport.emit(.metadataEnvelope)
       currentSessionID = sessionID
       recoveryAutosaveSequence = nextSequence
       hasSavedSession = true
@@ -2516,6 +3073,7 @@ final class AppModel {
   /// workflow instead.
   @discardableResult
   private func restoreDurableRecovery(for sourceDigest: String) -> Bool {
+    recoveryFailureDiagnostic = nil
     guard let envelope = recoveryRecords
       .filter({ $0.sourceDigest == sourceDigest })
       .max(by: { $0.session.recovery.updatedAt < $1.session.recovery.updatedAt })
@@ -2656,7 +3214,10 @@ final class AppModel {
           "Recovery metadata is available, but its edit payload could not be trusted. No edits were applied. Re-open the matching source PDF and re-apply the listed edits manually."
       }
       recoveryStatus = .metadataOnly
-      recoveryDiagnostics = [message]
+      recoveryFailureDiagnostic = String(describing: error)
+      recoveryDiagnostics = RecoveryInterruptionTestSupport.isTestModeEnabled
+        ? ["recovery-restore-failed:\(String(describing: error))"]
+        : [message]
       statusMessage = recoveryDiagnostics[0]
       return true
     }
@@ -2733,7 +3294,7 @@ final class AppModel {
   /// want to discard the active document should follow this with
   /// `resetDocument()` or their own lifecycle transition.
   @discardableResult
-  func discardRecovery() -> Bool {
+  public func discardRecovery() -> Bool {
     cancelViewStateAutosave()
     guard let sessionID = currentSessionID else {
       hasSavedSession = false
@@ -2767,17 +3328,17 @@ final class AppModel {
 
   // MARK: - Reviewed Template Completion
 
-  var hasTemplateReview: Bool { templateContract != nil }
+  public var hasTemplateReview: Bool { templateContract != nil }
 
-  var templateMappings: [PDFTemplateMapping] {
+  public var templateMappings: [PDFTemplateMapping] {
     templateContract?.payload.mappings ?? []
   }
 
-  var templateReviewableEntries: [PDFTemplateCompletionEntry] {
+  public var templateReviewableEntries: [PDFTemplateCompletionEntry] {
     templateCompletionProposal?.entries ?? []
   }
 
-  enum TemplateValueEditorKind: String, Sendable {
+  public enum TemplateValueEditorKind: String, Sendable {
     case text
     case choice
     case boolean
@@ -2787,7 +3348,7 @@ final class AppModel {
 
   /// Capture an immutable, value-free layout proposal from the current native
   /// inspection. Profile data is intentionally not consulted in this phase.
-  func captureTemplateReview(displayName: String = "Reviewed local layout") {
+  public func captureTemplateReview(displayName: String = "Reviewed local layout") {
     guard let inspection else {
       statusMessage = "Open a PDF before capturing a completion template."
       return
@@ -2811,13 +3372,15 @@ final class AppModel {
       lastAppliedTemplateCompletion = nil
       templateCompletionOperationIDs = []
       templateRevisionDiff = nil
+      templateProfileResolution = nil
+      templateMigrationProposal = nil
       statusMessage = "Captured \(draft.payload.mappings.count) mapping proposal(s). Review mappings before activation."
     } catch {
       alertMessage = "Could not capture the template review: \(error.localizedDescription)"
     }
   }
 
-  func reviewTemplateMapping(_ mappingID: UUID, approved: Bool) {
+  public func reviewTemplateMapping(_ mappingID: UUID, approved: Bool) {
     guard let template = templateContract, template.payload.lifecycle == .draft else { return }
     let mappings = template.payload.mappings.map { mapping in
       mapping.id == mappingID
@@ -2827,7 +3390,7 @@ final class AppModel {
     templateContract = replacingTemplate(template, mappings: mappings)
   }
 
-  func activateTemplateReview() {
+  public func activateTemplateReview() {
     guard let draft = templateContract else { return }
     do {
       let reviewedIDs = Set(draft.payload.mappings.filter { $0.status != .proposed }.map(\.id))
@@ -2847,7 +3410,7 @@ final class AppModel {
     }
   }
 
-  func saveTemplateRevision() {
+  public func saveTemplateRevision() {
     guard templateContract != nil else { return }
     if canSaveValidatedTemplateRevision,
        let pending = pendingValidatedTemplateRevision,
@@ -2895,7 +3458,7 @@ final class AppModel {
     }
   }
 
-  func loadTemplate(templateID: UUID) {
+  public func loadTemplate(templateID: UUID) {
     guard isTemplateVaultUnlocked else {
       statusMessage = "Unlock the local template vault before loading a template."
       return
@@ -2910,13 +3473,15 @@ final class AppModel {
       templateLearningEvents = (try? templateStore.learningEvents(templateID: templateID)) ?? []
       pendingValidatedTemplateRevision = nil
       templateRevisionDiff = nil
+      templateProfileResolution = nil
+      templateMigrationProposal = nil
       statusMessage = "Loaded the encrypted template revision history. Completion still requires review for this source."
     } catch {
       alertMessage = "Could not load the encrypted template: \(error.localizedDescription)"
     }
   }
 
-  func loadTemplateRevision(templateID: UUID, revisionID: UUID) {
+  public func loadTemplateRevision(templateID: UUID, revisionID: UUID) {
     guard isTemplateVaultUnlocked else {
       statusMessage = "Unlock the local template vault before loading a template revision."
       return
@@ -2940,7 +3505,7 @@ final class AppModel {
     }
   }
 
-  func deleteTemplate(templateID: UUID) {
+  public func deleteTemplate(templateID: UUID) {
     guard isTemplateVaultUnlocked else {
       statusMessage = "Unlock the local template vault before deleting a template."
       return
@@ -2960,7 +3525,7 @@ final class AppModel {
     }
   }
 
-  func exportTemplate(templateID: UUID? = nil) {
+  public func exportTemplate(templateID: UUID? = nil) {
     let id = templateID ?? templateContract?.payload.templateID
     guard let id else { return }
     guard isTemplateVaultUnlocked else {
@@ -2986,7 +3551,7 @@ final class AppModel {
     }
   }
 
-  func importTemplate() {
+  public func importTemplate() {
     guard isTemplateVaultUnlocked else {
       statusMessage = "Unlock the local template vault before importing a template."
       return
@@ -3013,7 +3578,7 @@ final class AppModel {
 
   /// Build a completion proposal from an active template and the selected
   /// profile revision. This only resolves candidate values as unreviewed.
-  func prepareTemplateCompletionReview() {
+  public func prepareTemplateCompletionReview() {
     guard let template = templateContract,
           template.payload.lifecycle == .active,
           let inspection,
@@ -3059,15 +3624,96 @@ final class AppModel {
     statusMessage = "Review mappings first, then approve each exact profile value before applying."
   }
 
-  var templateCompletionApprovedMappingCount: Int {
+  /// Selects a profile identity from the unlocked local vault without exposing
+  /// values in the resolver result. Completion still requires the existing
+  /// mapping and exact-value review gates.
+  public func resolveTemplateProfileAutomatically() {
+    guard isProfileVaultUnlocked, let template = templateContract else {
+      statusMessage = "Unlock the profile vault and load an active template before resolving a profile."
+      return
+    }
+    do {
+      let profiles = try profileStore.profileIDs().compactMap { profileID in
+        try profileStore.load(profileID: profileID)?.latestRevision
+      }
+      let result = PDFTemplateProfileResolver.resolve(template: template, profiles: profiles)
+      templateProfileResolution = result
+      if result.state == .selected, let profileID = result.selectedProfileID {
+        loadProfile(profileID: profileID)
+        statusMessage = "Selected a type-compatible profile for review. No values were applied."
+      } else {
+        statusMessage = "Profile resolution (result.state.rawValue): selection abstained until the candidates are reviewed."
+      }
+    } catch {
+      templateProfileResolution = nil
+      alertMessage = "Could not resolve a local profile: (error.localizedDescription)"
+    }
+  }
+
+  public func prepareTemplateMigration(toRevisionID: UUID) {
+    guard let current = templateContract,
+          let history = templateRevisionHistory,
+          let target = history.revisions.first(where: { $0.payload.revisionID == toRevisionID }),
+          let inspection
+    else {
+      statusMessage = "Load two revisions and an open source PDF before preparing migration."
+      return
+    }
+    guard target.payload.revisionID != current.payload.revisionID else {
+      statusMessage = "The selected revision is already current."
+      return
+    }
+    do {
+      templateMigrationProposal = try PDFTemplateMigrationPlanner.make(
+        from: current,
+        to: target,
+        sourceDigest: inspection.source.sha256)
+      statusMessage = templateMigrationProposal?.state == .ready
+        ? "No mapping changes require migration review."
+        : "Review every proposed mapping migration before saving a child revision."
+    } catch {
+      templateMigrationProposal = nil
+      alertMessage = "Could not prepare template migration: (error.localizedDescription)"
+    }
+  }
+
+  public func reviewTemplateMigration(_ decisionID: UUID, approved: Bool) {
+    guard let proposal = templateMigrationProposal else { return }
+    templateMigrationProposal = proposal.reviewing(mappingID: decisionID, approved: approved)
+  }
+
+  public func saveTemplateMigration() {
+    guard let proposal = templateMigrationProposal,
+          proposal.canMaterialize,
+          let history = templateRevisionHistory
+    else {
+      statusMessage = "Every mapping migration decision must be reviewed before saving."
+      return
+    }
+    do {
+      let migrated = try proposal.materialize()
+      let updated = try history.appending(migrated)
+      try templateStore.save(history: updated)
+      templateRevisionHistory = updated
+      templateContract = migrated
+      templateRevisionDiff = try PDFTemplateRevisionDiff.make(from: proposal.fromRevision, to: migrated)
+      templateMigrationProposal = nil
+      refreshTemplateIDs()
+      statusMessage = "Saved an immutable migrated template revision. The source PDF and profile vault remain separate."
+    } catch {
+      alertMessage = "Could not save the migrated template revision: (error.localizedDescription)"
+    }
+  }
+
+  public var templateCompletionApprovedMappingCount: Int {
     templateReviewableEntries.filter { $0.mappingReview == .approved }.count
   }
 
-  var templateCompletionApprovedValueCount: Int {
+  public var templateCompletionApprovedValueCount: Int {
     templateReviewableEntries.filter { $0.valueReview == .approved }.count
   }
 
-  func templateValueEditorKind(for mappingID: UUID) -> TemplateValueEditorKind {
+  public func templateValueEditorKind(for mappingID: UUID) -> TemplateValueEditorKind {
     guard let entry = templateCompletionProposal?.entries.first(where: { $0.mappingID == mappingID }) else {
       return .missing
     }
@@ -3080,19 +3726,19 @@ final class AppModel {
     }
   }
 
-  func templateCompletionBooleanValue(for mappingID: UUID) -> Bool {
+  public func templateCompletionBooleanValue(for mappingID: UUID) -> Bool {
     guard let entry = templateCompletionProposal?.entries.first(where: { $0.mappingID == mappingID }),
           case .boolean(let value) = entry.value
     else { return false }
     return value
   }
 
-  func reviewTemplateCompletionMapping(_ mappingID: UUID, approved: Bool) {
+  public func reviewTemplateCompletionMapping(_ mappingID: UUID, approved: Bool) {
     guard let proposal = templateCompletionProposal else { return }
     templateCompletionProposal = proposal.reviewingMapping(mappingID, approved: approved)
   }
 
-  func reviewTemplateCompletionValue(_ mappingID: UUID, approved: Bool) {
+  public func reviewTemplateCompletionValue(_ mappingID: UUID, approved: Bool) {
     guard let proposal = templateCompletionProposal,
           let entry = proposal.entries.first(where: { $0.mappingID == mappingID })
     else { return }
@@ -3110,7 +3756,7 @@ final class AppModel {
     }
   }
 
-  func updateTemplateCompletionValue(_ mappingID: UUID, value: String) {
+  public func updateTemplateCompletionValue(_ mappingID: UUID, value: String) {
     templateValueDrafts[mappingID] = value
     guard let proposal = templateCompletionProposal else { return }
     guard let entry = proposal.entries.first(where: { $0.mappingID == mappingID }) else { return }
@@ -3120,7 +3766,7 @@ final class AppModel {
     templateCompletionProposal = proposal.reviewingValue(mappingID, value: nextValue, approved: false)
   }
 
-  func updateTemplateCompletionBoolean(_ mappingID: UUID, value: Bool) {
+  public func updateTemplateCompletionBoolean(_ mappingID: UUID, value: Bool) {
     templateValueDrafts[mappingID] = value ? "true" : "false"
     guard let proposal = templateCompletionProposal,
           let entry = proposal.entries.first(where: { $0.mappingID == mappingID })
@@ -3149,7 +3795,7 @@ final class AppModel {
     }
   }
 
-  func applyTemplateCompletion() {
+  public func applyTemplateCompletion() {
     guard let proposal = templateCompletionProposal, let liveDocument else {
       statusMessage = "Prepare a template completion review first."
       return
@@ -3234,12 +3880,12 @@ final class AppModel {
   }
 
   /// Refresh the list of available profiles from disk.
-  func refreshProfiles() {
+  public func refreshProfiles() {
     availableProfiles = isProfileVaultUnlocked ? ((try? profileStore.listUserProfiles()) ?? []) : []
   }
 
   /// Create a new empty profile and select it.
-  func createProfile(displayName: String) {
+  public func createProfile(displayName: String) {
     if !isProfileVaultUnlocked { unlockProfileVault() }
     guard isProfileVaultUnlocked else { return }
     let profile = UserProfile.standard(displayName: displayName)
@@ -3254,7 +3900,7 @@ final class AppModel {
   }
 
   /// Load a profile by ID and make it current.
-  func loadProfile(profileID: UUID) {
+  public func loadProfile(profileID: UUID) {
     guard isProfileVaultUnlocked else {
       statusMessage = "Unlock the local profile vault before selecting a profile."
       return
@@ -3272,7 +3918,7 @@ final class AppModel {
   }
 
   /// Save the current profile to disk.
-  func saveCurrentProfile() {
+  public func saveCurrentProfile() {
     guard isProfileVaultUnlocked else {
       statusMessage = "Unlock the local profile vault before saving profile values."
       return
@@ -3289,7 +3935,7 @@ final class AppModel {
   }
 
   /// Delete a profile by ID.
-  func deleteProfile(profileID: UUID) {
+  public func deleteProfile(profileID: UUID) {
     guard isProfileVaultUnlocked else {
       statusMessage = "Unlock the local profile vault before deleting a profile."
       return
@@ -3307,14 +3953,14 @@ final class AppModel {
   }
 
   /// Update a value in the current profile.
-  func updateProfileValue(_ value: String, for key: String) {
+  public func updateProfileValue(_ value: String, for key: String) {
     guard var profile = currentProfile else { return }
     profile.setValue(value, for: key)
     currentProfile = profile
   }
 
   /// Import a vCard into the current profile.
-  func importVCard(_ vCard: String) {
+  public func importVCard(_ vCard: String) {
     guard var profile = currentProfile else { return }
     profile.importFromVCard(vCard)
     currentProfile = profile
@@ -3324,7 +3970,7 @@ final class AppModel {
 
   /// Run bulk fill: match profile values against the current document's fields and candidates.
   /// Returns the result but does NOT apply operations — the user must review and confirm.
-  func previewBulkFill() {
+  public func previewBulkFill() {
     guard let profile = currentProfile, let inspection else {
       statusMessage = "Open a document and select a profile before bulk fill."
       return
@@ -3343,7 +3989,7 @@ final class AppModel {
   }
 
   /// Apply all matched operations from the last bulk fill preview.
-  func applyBulkFill() {
+  public func applyBulkFill() {
     guard let result = bulkFillResult, let liveDocument else {
       statusMessage = "Run a bulk fill preview first."
       return

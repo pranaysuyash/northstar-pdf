@@ -1,0 +1,15 @@
+{
+  "fixture": "synthetic-dirty-acroform",
+  "inputSHA256": "synthetic (OpenAction JS + Launch annotation injected from public-sample-form.pdf)",
+  "provider": "pikepdf action-neutralize",
+  "pages": 1,
+  "transform": "neutralize active content",
+  "openActionRemoved": true,
+  "aaRemoved": true,
+  "launchActionStripped": true,
+  "uriLinksPreserved": true,
+  "pagesPreserved": true,
+  "qpdfCheck": "no-errors",
+  "scope": "Auto-executing JS/OpenAction/AA/Launch/SubmitForm neutralized. Hidden-revision analysis, signature effects, XFA/rich-media policy remain active.",
+  "evidence": "Tests/pdf-action-neutralize_test.mjs"
+}

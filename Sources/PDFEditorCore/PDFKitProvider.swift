@@ -87,7 +87,11 @@ public struct PDFKitProvider: PDFProvider {
         "Choose a new output copy; the original source cannot be overwritten.")
     }
 
-    if !operations.isEmpty && sourceData.range(of: Data("/AcroForm".utf8)) != nil {
+    // Structural detection via the CGPDF catalog. Unlike the previous raw byte
+    // scan for "/AcroForm", this cannot be fooled by the literal string appearing
+    // in content/annotation strings, and it sees through cross-reference and
+    // object streams where the catalog dictionary is compressed.
+    if !operations.isEmpty && hasDocumentLevelAcroForm(sourceData) {
       throw PDFEditorError.exportFailed(
         "This PDF contains an existing document-level AcroForm. The PDFKit writer cannot safely preserve its widget tree during edits; the source remains read-only until a form-aware provider is available."
       )
@@ -282,8 +286,13 @@ public struct PDFKitProvider: PDFProvider {
       page.addAnnotation(annotation)
 
     default:
+      // Fail closed with the real constraint: system PDFKit exposes no image
+      // annotation that survives save (stamps are name-only; custom appearance
+      // streams are not serializable through the public API). Silently faking a
+      // placement would violate the review-before-trust contract, so signature
+      // placement stays unavailable until a form-aware provider lane lands.
       throw PDFEditorError.invalidOperation(
-        "The PDFKit adapter does not implement \(operation.kind.rawValue) yet."
+        "The PDFKit adapter cannot serialize \(operation.kind.rawValue) operations: system PDFKit has no image-annotation API that survives save. The edit was rejected before any file was written; signature placement requires the form-aware provider lane."
       )
     }
   }
@@ -498,8 +507,59 @@ public struct PDFKitProvider: PDFProvider {
     }
   }
 
-  private func nativeValue(for annotation: PDFAnnotation) -> String? {
-    if annotation.widgetFieldType == .button {
+  /// Structural AcroForm presence check against the parsed CGPDF catalog.
+  private func hasDocumentLevelAcroForm(_ data: Data) -> Bool {
+    guard let provider = CGDataProvider(data: data as CFData),
+      let document = CGPDFDocument(provider),
+      let catalog = document.catalog
+    else { return false }
+    var acroForm: CGPDFDictionaryRef?
+    return CGPDFDictionaryGetDictionary(catalog, "AcroForm", &acroForm)
+  }
+
+  /// Button retention contract.
+  ///
+  /// A single checkbox kid answers to boolean tokens. A radio group (multiple
+  /// kids sharing one field name) may have exactly one kid on — the kid whose
+  /// state string matches the requested value — and every sibling must be off.
+  /// The previous "any kid off matches a request for off" rule could validate a
+  /// document with the wrong kid selected. Text/choice fields compare trimmed.
+  static func buttonValueRetained(fields: [NativeField], requested rawValue: String) -> Bool {
+    let trimmedRequest = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
+    let requested = trimmedRequest.lowercased()
+    let onTokens: Set<String> = ["1", "true", "yes", "on", "checked"]
+    let offTokens: Set<String> = ["", "0", "false", "no", "off", "unchecked"]
+    let kids = fields.filter { $0.kind == .button }
+    let others = fields.filter { $0.kind != .button }
+    let othersRetained = others.allSatisfy { $0.value == trimmedRequest }
+    if kids.isEmpty { return othersRetained }
+    if kids.count == 1, onTokens.contains(requested) || offTokens.contains(requested) {
+      return ((kids[0].value != nil) == onTokens.contains(requested)) && othersRetained
+    }
+    // A radio group's option can legitimately be named "no", "off", or
+    // "false". Resolve a named kid before applying the single-checkbox
+    // boolean vocabulary, otherwise a valid radio selection is misclassified
+    // as an unchecked checkbox.
+    if kids.count > 1 {
+      if let target = kids.first(where: {
+        $0.value?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == requested
+      }) {
+        return kids.allSatisfy { kid in
+          kid.id == target.id ? kid.value != nil : kid.value == nil
+        } && othersRetained
+      }
+      if offTokens.contains(requested) {
+        return kids.allSatisfy { $0.value == nil } && othersRetained
+      }
+      return false
+    }
+    if offTokens.contains(requested) {
+      return kids.allSatisfy { $0.value == nil } && othersRetained
+    }
+    return false
+  }
+
+  private func nativeValue(for annotation: PDFAnnotation) -> String? {    if annotation.widgetFieldType == .button {
       let state = annotation.buttonWidgetStateString
       if !state.isEmpty, annotation.buttonWidgetState == PDFWidgetCellState(rawValue: 1) {
         return state
@@ -700,13 +760,7 @@ public struct PDFKitProvider: PDFProvider {
           )
           continue
         }
-        let normalized = operation.value.trimmingCharacters(in: .whitespacesAndNewlines)
-        let retained = matching.contains { field in
-          guard field.kind == .button else { return field.value == normalized }
-          let requestedIsOn = ["1", "true", "yes", "on", "checked"].contains(
-            normalized.lowercased())
-          return (field.value != nil) == requestedIsOn
-        }
+        let retained = Self.buttonValueRetained(fields: matching, requested: operation.value)
         if !retained {
           messages.append(
             "Native field \(operation.targetID ?? "unknown") did not retain the requested value.")
@@ -771,11 +825,20 @@ public struct PDFKitProvider: PDFProvider {
       }
     }
 
-    let textImpact = PDFImpactValidator.compareTextOutsideRegions(
-      source: sourceDocument,
-      output: outputDocument,
-      operations: operations
-    )
+    let (textImpact, rasterImpact) = PerformanceTelemetry.shared.measureImpactValidation {
+      let tImpact = PDFImpactValidator.compareTextOutsideRegions(
+        source: sourceDocument,
+        output: outputDocument,
+        operations: operations
+      )
+      let rImpact = PDFImpactValidator.compareRasterOutsideRegions(
+        source: sourceDocument,
+        output: outputDocument,
+        operations: operations,
+        scale: 1.0
+      )
+      return (tImpact, rImpact)
+    }
     checks.append(
       ValidationCheck(
         kind: .outsideRegionText,
@@ -787,12 +850,6 @@ public struct PDFKitProvider: PDFProvider {
       messages.append(textImpact.message)
     }
 
-    let rasterImpact = PDFImpactValidator.compareRasterOutsideRegions(
-      source: sourceDocument,
-      output: outputDocument,
-      operations: operations,
-      scale: 1.0
-    )
     checks.append(
       ValidationCheck(
         kind: .visualDiff,

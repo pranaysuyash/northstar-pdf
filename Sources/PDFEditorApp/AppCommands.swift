@@ -1,4 +1,5 @@
 import AppKit
+import PDFEditorRecovery
 import SwiftUI
 
 private struct PDFEditorWindowControllerFocusedValueKey: FocusedValueKey {

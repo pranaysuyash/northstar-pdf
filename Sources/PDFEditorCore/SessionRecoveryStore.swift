@@ -187,16 +187,7 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
       throw SessionRecoveryStoreError.encodingFailed(error.localizedDescription)
     }
 
-    do {
-      let fileURL = url(for: envelope.session.sessionID)
-      try data.write(to: fileURL, options: [.atomic])
-      try fileManager.setAttributes(
-        [.posixPermissions: NSNumber(value: Int16(0o600))],
-        ofItemAtPath: fileURL.path
-      )
-    } catch {
-      throw SessionRecoveryStoreError.fileOperationFailed(error.localizedDescription)
-    }
+    try write(data, to: url(for: envelope.session.sessionID))
   }
 
   public func load(sessionID: UUID) throws -> DocumentSessionRecoveryEnvelope? {
@@ -319,6 +310,18 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
     }
   }
 
+  private func write(_ data: Data, to fileURL: URL) throws {
+    do {
+      try data.write(to: fileURL, options: [.atomic])
+      try fileManager.setAttributes(
+        [.posixPermissions: NSNumber(value: Int16(0o600))],
+        ofItemAtPath: fileURL.path
+      )
+    } catch {
+      throw SessionRecoveryStoreError.fileOperationFailed(error.localizedDescription)
+    }
+  }
+
   private func validate(
     _ envelope: DocumentSessionRecoveryEnvelope,
     expectedSessionID: UUID? = nil
@@ -415,4 +418,5 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
       isDirectory: false
     )
   }
+
 }

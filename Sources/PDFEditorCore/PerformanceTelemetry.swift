@@ -15,6 +15,11 @@ public enum PerformanceStage: String, Codable, CaseIterable, Sendable {
   case undo = "undo"
   case redo = "redo"
   case save
+  case impactValidation = "impact_validation"
+  case ocr
+  case vectorParse = "vector_parse"
+  case diff
+  case templateMatch = "template_match"
 }
 
 public enum PerformanceOutcome: String, Codable, Sendable {
@@ -140,6 +145,26 @@ public final class PerformanceTelemetry: @unchecked Sendable {
 
   public func measureSave<T>(_ operation: () throws -> T) rethrows -> T {
     try measure(.save, operation: operation)
+  }
+
+  public func measureImpactValidation<T>(_ operation: () throws -> T) rethrows -> T {
+    try measure(.impactValidation, operation: operation)
+  }
+
+  public func measureOCR<T>(_ operation: () throws -> T) rethrows -> T {
+    try measure(.ocr, operation: operation)
+  }
+
+  public func measureVectorParse<T>(_ operation: () throws -> T) rethrows -> T {
+    try measure(.vectorParse, operation: operation)
+  }
+
+  public func measureDiff<T>(_ operation: () throws -> T) rethrows -> T {
+    try measure(.diff, operation: operation)
+  }
+
+  public func measureTemplateMatch<T>(_ operation: () throws -> T) rethrows -> T {
+    try measure(.templateMatch, operation: operation)
   }
 
   public func begin(_ stage: PerformanceStage) -> PerformanceMeasurement {

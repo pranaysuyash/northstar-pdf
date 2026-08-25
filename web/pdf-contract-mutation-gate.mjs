@@ -240,3 +240,100 @@ export async function guardedPdfLibExport({
   }
   return writer();
 }
+
+/**
+ * RG-002 source-preserving lane selection. An operation qualifies for the
+ * incremental form writer only when it is a native field-value write that
+ * carries a fully resolved object-level edit plan ({objNum, key, value}).
+ * Anything else (overlayText, synthesizeNativeField, unresolved refs) falls
+ * back to the pdf-lib lane.
+ */
+export const WRITER_LANES = Object.freeze(["pdf-lib", "incremental-form-writer"]);
+
+function validIncrementalEdits(operation) {
+  const edits = operation?.incrementalEdits;
+  if (!Array.isArray(edits) || edits.length === 0) return false;
+  return edits.every((edit) =>
+    Number.isInteger(edit?.objNum) && edit.objNum > 0
+    && Array.isArray(edit?.pairs) && edit.pairs.length > 0
+    && edit.pairs.every((pair) =>
+      typeof pair?.k === "string" && pair.k.startsWith("/")
+      && pair?.v !== undefined
+    )
+  );
+}
+
+export function selectWriterLane(operations = []) {
+  const ops = Array.isArray(operations) ? operations : [];
+  if (!ops.length) return "pdf-lib";
+  return ops.every((op) => op.kind === "nativeFieldValue" && validIncrementalEdits(op))
+    ? "incremental-form-writer"
+    : "pdf-lib";
+}
+
+/**
+ * Source-preserving export seam for external AcroForm documents. Preflight
+ * runs first (identical contract to guardedPdfLibExport), then the incremental
+ * writer callback executes, then the output is verified against the
+ * RG-017/RG-018 invariant: the original byte stream MUST be a byte-exact
+ * prefix of the output. A violation throws before any caller can persist the
+ * result — this guard is what makes the lane safe to adopt.
+ */
+export async function guardedSourcePreservingExport({
+  currentSourceDigest,
+  operations = [],
+  pageCoordinates = [],
+  validation = null,
+  sourceBytes,
+  writeIncremental
+} = {}) {
+  assertExportableContract({ currentSourceDigest, operations, pageCoordinates, validation });
+  if (!(sourceBytes instanceof Uint8Array) || sourceBytes.length === 0) {
+    throw new ContractMutationError(issue(
+      "invalidOperation",
+      "Source-preserving export requires the immutable source bytes."
+    ));
+  }
+  const lane = selectWriterLane(operations);
+  if (lane !== "incremental-form-writer") {
+    throw new ContractMutationError(issue(
+      "unsupportedOperation",
+      "Operations do not qualify for the source-preserving lane; route them through guardedPdfLibExport."
+    ));
+  }
+  if (typeof writeIncremental !== "function") {
+    throw new TypeError("An incremental writer callback is required after contract preflight.");
+  }
+
+  const edits = operations.flatMap((op) => op.incrementalEdits);
+  const outBytes = await writeIncremental(sourceBytes, edits);
+
+  if (!(outBytes instanceof Uint8Array)) {
+    throw new ContractMutationError(issue(
+      "writerInvariantViolation",
+      "The incremental writer must return bytes (Uint8Array)."
+    ));
+  }
+  if (outBytes.length < sourceBytes.length) {
+    throw new ContractMutationError(issue(
+      "writerInvariantViolation",
+      "RG-017 violated: output is shorter than the source; original stream is not preserved as a prefix."
+    ));
+  }
+  for (let i = 0; i < sourceBytes.length; i++) {
+    if (outBytes[i] !== sourceBytes[i]) {
+      throw new ContractMutationError(issue(
+        "writerInvariantViolation",
+        `RG-017 violated at byte ${i}: output diverges from the original prefix.`
+      ));
+    }
+  }
+  return {
+    ok: true,
+    lane,
+    provider: "incremental-form-writer",
+    bytes: outBytes,
+    preservedPrefixLength: sourceBytes.length,
+    operationIDs: operations.map((operation) => operation.id).filter(Boolean)
+  };
+}

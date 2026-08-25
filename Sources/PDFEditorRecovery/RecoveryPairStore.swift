@@ -71,14 +71,14 @@ enum RecoveryPairStoreError: Error, LocalizedError {
 /// Stores generation-specific pair manifests. A new generation never
 /// overwrites the previous manifest, so a failed envelope write leaves the
 /// previous metadata, payload, and manifest generation recoverable together.
-final class RecoveryPairStore: @unchecked Sendable {
+public final class RecoveryPairStore: @unchecked Sendable {
   private let directory: URL
   private let fileManager: FileManager
   private let encoder: JSONEncoder
   private let decoder: JSONDecoder
   private let lock = NSLock()
 
-  init(
+  public init(
     directory: URL = RecoveryPairStore.defaultDirectory,
     fileManager: FileManager = .default
   ) {
@@ -91,7 +91,7 @@ final class RecoveryPairStore: @unchecked Sendable {
     self.decoder.dateDecodingStrategy = .iso8601
   }
 
-  static var defaultDirectory: URL {
+  public static var defaultDirectory: URL {
     SessionRecoveryStore.defaultDirectory
       .appendingPathComponent("PairManifests", isDirectory: true)
   }

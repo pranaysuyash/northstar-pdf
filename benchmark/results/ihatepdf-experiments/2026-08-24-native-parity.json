@@ -1,44 +1,44 @@
 {
-  "caseCount": 6,
-  "cases": [
+  "caseCount" : 6,
+  "cases" : [
     {
-      "abstainIfUnsupported": true,
-      "coordinate": {
-        "origin": "lowerLeft",
-        "pageBox": "crop",
-        "rotationDegrees": 0,
-        "unit": "points"
+      "abstainIfUnsupported" : true,
+      "coordinate" : {
+        "origin" : "lowerLeft",
+        "pageBox" : "crop",
+        "rotationDegrees" : 0,
+        "unit" : "points"
       },
-      "executionState": "planned",
-      "experimentID": "E-001",
-      "id": "E-001-C-001",
-      "ledgerVersion": {
-        "major": 1,
-        "minor": 0
+      "executionState" : "planned",
+      "experimentID" : "E-001",
+      "id" : "E-001-C-001",
+      "ledgerVersion" : {
+        "major" : 1,
+        "minor" : 0
       },
-      "operationKind": "textRunReplacement",
-      "privacyClass": "document-content",
-      "reviewRequired": true,
-      "semanticParity": {
-        "coordinateSpace": {
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0,
-          "unit": "points"
+      "operationKind" : "textRunReplacement",
+      "privacyClass" : "document-content",
+      "reviewRequired" : true,
+      "semanticParity" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
         },
-        "operationKind": "textRunReplacement",
-        "reviewPolicy": {
-          "allowsSilentMutation": false,
-          "requiresAbstentionOnUnsupported": true,
-          "requiresSourceRunEvidence": true,
-          "requiresUserConfirmation": true
+        "operationKind" : "textRunReplacement",
+        "reviewPolicy" : {
+          "allowsSilentMutation" : false,
+          "requiresAbstentionOnUnsupported" : true,
+          "requiresSourceRunEvidence" : true,
+          "requiresUserConfirmation" : true
         },
-        "sourceFixture": "benchmark/results/public-sample-form.pdf"
+        "sourceFixture" : "benchmark\/results\/public-sample-form.pdf"
       },
-      "sourceBound": true,
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-      "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "validationKinds": [
+      "sourceBound" : true,
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceFixture" : "benchmark\/results\/public-sample-form.pdf",
+      "validationKinds" : [
         "independentViewer",
         "outputReopen",
         "outsideRegionText",
@@ -47,43 +47,43 @@
       ]
     },
     {
-      "abstainIfUnsupported": true,
-      "coordinate": {
-        "origin": "lowerLeft",
-        "pageBox": "crop",
-        "rotationDegrees": 0,
-        "unit": "points"
+      "abstainIfUnsupported" : true,
+      "coordinate" : {
+        "origin" : "lowerLeft",
+        "pageBox" : "crop",
+        "rotationDegrees" : 0,
+        "unit" : "points"
       },
-      "executionState": "planned",
-      "experimentID": "E-002",
-      "id": "E-002-C-001",
-      "ledgerVersion": {
-        "major": 1,
-        "minor": 0
+      "executionState" : "planned",
+      "experimentID" : "E-002",
+      "id" : "E-002-C-001",
+      "ledgerVersion" : {
+        "major" : 1,
+        "minor" : 0
       },
-      "operationKind": "ocrLayerProposal",
-      "privacyClass": "document-content",
-      "reviewRequired": true,
-      "semanticParity": {
-        "coordinateSpace": {
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0,
-          "unit": "points"
+      "operationKind" : "ocrLayerProposal",
+      "privacyClass" : "document-content",
+      "reviewRequired" : true,
+      "semanticParity" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
         },
-        "operationKind": "ocrLayerProposal",
-        "reviewPolicy": {
-          "allowsSilentMutation": false,
-          "requiresAbstentionOnUnsupported": true,
-          "requiresSourceRunEvidence": false,
-          "requiresUserConfirmation": true
+        "operationKind" : "ocrLayerProposal",
+        "reviewPolicy" : {
+          "allowsSilentMutation" : false,
+          "requiresAbstentionOnUnsupported" : true,
+          "requiresSourceRunEvidence" : false,
+          "requiresUserConfirmation" : true
         },
-        "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf"
+        "sourceFixture" : "benchmark\/results\/ocr-corpus\/printed-scan.pdf"
       },
-      "sourceBound": true,
-      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
-      "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
-      "validationKinds": [
+      "sourceBound" : true,
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
+      "sourceFixture" : "benchmark\/results\/ocr-corpus\/printed-scan.pdf",
+      "validationKinds" : [
         "accessibility",
         "outputReopen",
         "outsideRegionText",
@@ -93,43 +93,43 @@
       ]
     },
     {
-      "abstainIfUnsupported": true,
-      "coordinate": {
-        "origin": "lowerLeft",
-        "pageBox": "crop",
-        "rotationDegrees": 0,
-        "unit": "points"
+      "abstainIfUnsupported" : true,
+      "coordinate" : {
+        "origin" : "lowerLeft",
+        "pageBox" : "crop",
+        "rotationDegrees" : 0,
+        "unit" : "points"
       },
-      "executionState": "planned",
-      "experimentID": "E-003",
-      "id": "E-003-C-001",
-      "ledgerVersion": {
-        "major": 1,
-        "minor": 0
+      "executionState" : "planned",
+      "experimentID" : "E-003",
+      "id" : "E-003-C-001",
+      "ledgerVersion" : {
+        "major" : 1,
+        "minor" : 0
       },
-      "operationKind": "privacyPreflight",
-      "privacyClass": "sensitive-metadata",
-      "reviewRequired": true,
-      "semanticParity": {
-        "coordinateSpace": {
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0,
-          "unit": "points"
+      "operationKind" : "privacyPreflight",
+      "privacyClass" : "sensitive-metadata",
+      "reviewRequired" : true,
+      "semanticParity" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
         },
-        "operationKind": "privacyPreflight",
-        "reviewPolicy": {
-          "allowsSilentMutation": false,
-          "requiresAbstentionOnUnsupported": true,
-          "requiresSourceRunEvidence": false,
-          "requiresUserConfirmation": true
+        "operationKind" : "privacyPreflight",
+        "reviewPolicy" : {
+          "allowsSilentMutation" : false,
+          "requiresAbstentionOnUnsupported" : true,
+          "requiresSourceRunEvidence" : false,
+          "requiresUserConfirmation" : true
         },
-        "sourceFixture": "benchmark/results/public-sample-form.pdf"
+        "sourceFixture" : "benchmark\/results\/public-sample-form.pdf"
       },
-      "sourceBound": true,
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-      "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "validationKinds": [
+      "sourceBound" : true,
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceFixture" : "benchmark\/results\/public-sample-form.pdf",
+      "validationKinds" : [
         "independentViewer",
         "outputReopen",
         "security",
@@ -137,43 +137,43 @@
       ]
     },
     {
-      "abstainIfUnsupported": true,
-      "coordinate": {
-        "origin": "lowerLeft",
-        "pageBox": "crop",
-        "rotationDegrees": 0,
-        "unit": "points"
+      "abstainIfUnsupported" : true,
+      "coordinate" : {
+        "origin" : "lowerLeft",
+        "pageBox" : "crop",
+        "rotationDegrees" : 0,
+        "unit" : "points"
       },
-      "executionState": "planned",
-      "experimentID": "E-004",
-      "id": "E-004-C-001",
-      "ledgerVersion": {
-        "major": 1,
-        "minor": 0
+      "executionState" : "planned",
+      "experimentID" : "E-004",
+      "id" : "E-004-C-001",
+      "ledgerVersion" : {
+        "major" : 1,
+        "minor" : 0
       },
-      "operationKind": "repairRecovery",
-      "privacyClass": "document-content",
-      "reviewRequired": true,
-      "semanticParity": {
-        "coordinateSpace": {
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0,
-          "unit": "points"
+      "operationKind" : "repairRecovery",
+      "privacyClass" : "document-content",
+      "reviewRequired" : true,
+      "semanticParity" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
         },
-        "operationKind": "repairRecovery",
-        "reviewPolicy": {
-          "allowsSilentMutation": false,
-          "requiresAbstentionOnUnsupported": true,
-          "requiresSourceRunEvidence": false,
-          "requiresUserConfirmation": true
+        "operationKind" : "repairRecovery",
+        "reviewPolicy" : {
+          "allowsSilentMutation" : false,
+          "requiresAbstentionOnUnsupported" : true,
+          "requiresSourceRunEvidence" : false,
+          "requiresUserConfirmation" : true
         },
-        "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf"
+        "sourceFixture" : "benchmark\/results\/security-corpus\/truncated-128-bytes.pdf"
       },
-      "sourceBound": true,
-      "sourceDigest": "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
-      "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
-      "validationKinds": [
+      "sourceBound" : true,
+      "sourceDigest" : "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
+      "sourceFixture" : "benchmark\/results\/security-corpus\/truncated-128-bytes.pdf",
+      "validationKinds" : [
         "independentViewer",
         "outputReopen",
         "pageGeometry",
@@ -182,43 +182,43 @@
       ]
     },
     {
-      "abstainIfUnsupported": true,
-      "coordinate": {
-        "origin": "lowerLeft",
-        "pageBox": "crop",
-        "rotationDegrees": 0,
-        "unit": "points"
+      "abstainIfUnsupported" : true,
+      "coordinate" : {
+        "origin" : "lowerLeft",
+        "pageBox" : "crop",
+        "rotationDegrees" : 0,
+        "unit" : "points"
       },
-      "executionState": "planned",
-      "experimentID": "E-005",
-      "id": "E-005-C-001",
-      "ledgerVersion": {
-        "major": 1,
-        "minor": 0
+      "executionState" : "planned",
+      "experimentID" : "E-005",
+      "id" : "E-005-C-001",
+      "ledgerVersion" : {
+        "major" : 1,
+        "minor" : 0
       },
-      "operationKind": "adaptiveResourcePolicy",
-      "privacyClass": "operational-metadata",
-      "reviewRequired": false,
-      "semanticParity": {
-        "coordinateSpace": {
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0,
-          "unit": "points"
+      "operationKind" : "adaptiveResourcePolicy",
+      "privacyClass" : "operational-metadata",
+      "reviewRequired" : false,
+      "semanticParity" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
         },
-        "operationKind": "adaptiveResourcePolicy",
-        "reviewPolicy": {
-          "allowsSilentMutation": false,
-          "requiresAbstentionOnUnsupported": true,
-          "requiresSourceRunEvidence": false,
-          "requiresUserConfirmation": false
+        "operationKind" : "adaptiveResourcePolicy",
+        "reviewPolicy" : {
+          "allowsSilentMutation" : false,
+          "requiresAbstentionOnUnsupported" : true,
+          "requiresSourceRunEvidence" : false,
+          "requiresUserConfirmation" : false
         },
-        "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf"
+        "sourceFixture" : "benchmark\/results\/security-corpus\/repeated-20-pages.pdf"
       },
-      "sourceBound": true,
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-      "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
-      "validationKinds": [
+      "sourceBound" : true,
+      "sourceDigest" : "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
+      "sourceFixture" : "benchmark\/results\/security-corpus\/repeated-20-pages.pdf",
+      "validationKinds" : [
         "appliedOperations",
         "outputReopen",
         "pageGeometry",
@@ -226,43 +226,43 @@
       ]
     },
     {
-      "abstainIfUnsupported": true,
-      "coordinate": {
-        "origin": "lowerLeft",
-        "pageBox": "crop",
-        "rotationDegrees": 0,
-        "unit": "points"
+      "abstainIfUnsupported" : true,
+      "coordinate" : {
+        "origin" : "lowerLeft",
+        "pageBox" : "crop",
+        "rotationDegrees" : 0,
+        "unit" : "points"
       },
-      "executionState": "planned",
-      "experimentID": "E-006",
-      "id": "E-006-C-001",
-      "ledgerVersion": {
-        "major": 1,
-        "minor": 0
+      "executionState" : "planned",
+      "experimentID" : "E-006",
+      "id" : "E-006-C-001",
+      "ledgerVersion" : {
+        "major" : 1,
+        "minor" : 0
       },
-      "operationKind": "compareImpactMap",
-      "privacyClass": "document-content",
-      "reviewRequired": true,
-      "semanticParity": {
-        "coordinateSpace": {
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0,
-          "unit": "points"
+      "operationKind" : "compareImpactMap",
+      "privacyClass" : "document-content",
+      "reviewRequired" : true,
+      "semanticParity" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
         },
-        "operationKind": "compareImpactMap",
-        "reviewPolicy": {
-          "allowsSilentMutation": false,
-          "requiresAbstentionOnUnsupported": true,
-          "requiresSourceRunEvidence": false,
-          "requiresUserConfirmation": true
+        "operationKind" : "compareImpactMap",
+        "reviewPolicy" : {
+          "allowsSilentMutation" : false,
+          "requiresAbstentionOnUnsupported" : true,
+          "requiresSourceRunEvidence" : false,
+          "requiresUserConfirmation" : true
         },
-        "sourceFixture": "benchmark/results/public-sample-form.pdf"
+        "sourceFixture" : "benchmark\/results\/public-sample-form.pdf"
       },
-      "sourceBound": true,
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-      "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "validationKinds": [
+      "sourceBound" : true,
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceFixture" : "benchmark\/results\/public-sample-form.pdf",
+      "validationKinds" : [
         "independentViewer",
         "outputReopen",
         "outsideRegionText",
@@ -271,13 +271,13 @@
       ]
     }
   ],
-  "entryCount": 6,
-  "harness": "pdf-editor-native-ihatepdf-experiment-parity",
-  "ledgerName": "pdf-editor.ihatepdf-experiment-ledger",
-  "passed": true,
-  "sourceDocument": "docs/competitor-ihatepdf-cv-exploration-2026-08-24.md",
-  "version": {
-    "major": 1,
-    "minor": 0
+  "entryCount" : 6,
+  "harness" : "pdf-editor-native-ihatepdf-experiment-parity",
+  "ledgerName" : "pdf-editor.ihatepdf-experiment-ledger",
+  "passed" : true,
+  "sourceDocument" : "docs\/competitor-ihatepdf-cv-exploration-2026-08-24.md",
+  "version" : {
+    "major" : 1,
+    "minor" : 0
   }
 }

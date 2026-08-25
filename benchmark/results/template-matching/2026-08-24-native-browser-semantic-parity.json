@@ -82,7 +82,7 @@
     "class policy"
   ],
   "browser": {
-    "baseURL": "http://127.0.0.1:4174/web/index.html",
+    "baseURL": "http://127.0.0.1:8767/web/index.html",
     "consoleErrors": [],
     "pageErrors": []
   },

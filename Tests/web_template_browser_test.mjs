@@ -23,6 +23,7 @@ try {
     undefined,
     { timeout: 30_000 }
   );
+  assert.equal(await page.locator("#findTemplateMatchesButton").count(), 1, "local template search must be visible");
   await page.locator("#fileInput").setInputFiles(sourcePath);
   await page.waitForFunction(
     () => Boolean(window.__pdfEditorContractFixture.snapshot()?.document?.payload?.source?.sha256),
@@ -100,6 +101,20 @@ try {
       }
     };
     fixture.validateTemplateContract(template);
+    const templateIndex = fixture.buildTemplateIndex([{ templateID: template.payload.templateID, revisions: [template] }]);
+    const exactIndexMatch = fixture.queryTemplateIndex({
+      index: templateIndex,
+      fingerprint,
+      sourceDigest: snapshot.document.payload.source.sha256
+    });
+    const staleIndexMatch = fixture.queryTemplateIndex({
+      index: fixture.buildTemplateIndex([{
+        templateID: template.payload.templateID,
+        revisions: [{ ...template, payload: { ...template.payload, lifecycle: "revoked" } }]
+      }]),
+      fingerprint,
+      sourceDigest: snapshot.document.payload.source.sha256
+    });
     const match = fixture.matchTemplate({
       template,
       fingerprint,
@@ -187,6 +202,13 @@ try {
     }
     return {
       match,
+      index: {
+        privacy: templateIndex.privacy,
+        exactState: exactIndexMatch.state,
+        exactSelected: Boolean(exactIndexMatch.selected),
+        staleState: staleIndexMatch.state,
+        staleAbstained: staleIndexMatch.abstained
+      },
       targetKind: target?.kind || null,
       targetPresent: Boolean(target),
       gate,
@@ -213,6 +235,11 @@ try {
   assert.equal(result.operations.length, 1);
   assert.equal(result.operations[0].sourceDigest.length, 64);
   assert.equal(result.operations[0].destructive, false);
+  assert.equal(result.index.privacy, "value-free-keyed-layout-only");
+  assert.equal(result.index.exactState, "exact");
+  assert.equal(result.index.exactSelected, true);
+  assert.equal(result.index.staleState, "stale");
+  assert.equal(result.index.staleAbstained, true);
   assert.equal(result.storage.mode, "indexeddb-aes-gcm");
   assert.equal(result.storage.templateRoundTrip, true);
   assert.equal(result.storage.profileRoundTrip, true);

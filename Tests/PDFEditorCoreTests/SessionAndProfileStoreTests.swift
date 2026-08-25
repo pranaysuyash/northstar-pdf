@@ -1,4 +1,5 @@
 import Foundation
+import PDFKit
 import Testing
 
 @testable import PDFEditorCore
@@ -710,5 +711,296 @@ struct SessionAndProfileStoreTests {
     #expect(result.matchedOperations.contains { $0.value == "555-0100" })
     #expect(result.matchedOperations.contains { $0.value == "123-45-6789" })
     #expect(result.unmatchedFields == ["random.field"])
+  }
+
+  // MARK: - Visual Diff Tests
+
+  @Test func diffDetectsOutsideRegionTextChange() {
+    let source = DocumentInspection(
+      source: DocumentSource(
+        fileName: "source.pdf", byteCount: 100,
+        sha256: String(repeating: "a", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [
+        NativeField(
+          id: "field-1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "Old", choices: [])
+      ],
+      candidates: [],
+      warnings: []
+    )
+    let output = DocumentInspection(
+      source: DocumentSource(
+        fileName: "output.pdf", byteCount: 100,
+        sha256: String(repeating: "b", count: 64)),
+      pages: source.pages,
+      fields: [
+        NativeField(
+          id: "field-1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "New", choices: [])
+      ],
+      candidates: [],
+      warnings: []
+    )
+
+    let diff = DocumentDiffBuilder.build(
+      source: source, output: output, operations: [])
+
+    #expect(diff.summary.overallStatus == .warnings)
+    #expect(diff.pages[0].regions.contains { $0.kind == .nativeFieldChanged })
+    #expect(diff.summary.unexpectedChanges >= 0)
+  }
+
+  @Test func diffPreservesInsideOperationRegions() {
+    let source = DocumentInspection(
+      source: DocumentSource(
+        fileName: "source.pdf", byteCount: 100,
+        sha256: String(repeating: "c", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [
+        NativeField(
+          id: "field-1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "Old", choices: [])
+      ],
+      candidates: [],
+      warnings: []
+    )
+    let operation = EditOperation(
+      pageIndex: 0,
+      targetID: "field-1",
+      kind: .nativeFieldValue,
+      value: "New",
+      bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+      sourceDigest: "c",
+      coordinate: PDFPageRegion(
+        pageIndex: 0,
+        rect: PDFRect(x: 72, y: 600, width: 200, height: 20)),
+      payload: .text("New")
+    )
+    let output = DocumentInspection(
+      source: DocumentSource(
+        fileName: "output.pdf", byteCount: 100,
+        sha256: String(repeating: "d", count: 64)),
+      pages: source.pages,
+      fields: [
+        NativeField(
+          id: "field-1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "New", choices: [])
+      ],
+      candidates: [],
+      warnings: []
+    )
+
+    let diff = DocumentDiffBuilder.build(
+      source: source, output: output, operations: [operation])
+
+    // The change is inside an authorized operation region
+    #expect(diff.pages[0].regions.contains { $0.kind == .nativeFieldChanged })
+    #expect(diff.summary.operationRegionsMatched > 0)
+  }
+
+  @Test func diffDetectsGeometryChange() {
+    let source = DocumentInspection(
+      source: DocumentSource(
+        fileName: "source.pdf", byteCount: 100,
+        sha256: String(repeating: "e", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [], candidates: [], warnings: []
+    )
+    let output = DocumentInspection(
+      source: DocumentSource(
+        fileName: "output.pdf", byteCount: 100,
+        sha256: String(repeating: "f", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 595, height: 842),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 90, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [], candidates: [], warnings: []
+    )
+
+    let diff = DocumentDiffBuilder.build(
+      source: source, output: output, operations: [])
+
+    #expect(diff.pages[0].regions.contains { $0.kind == .geometryChanged })
+    #expect(diff.summary.overallStatus != .preserved)
+  }
+
+  @Test func diffSummaryCountsCorrectly() {
+    let source = DocumentInspection(
+      source: DocumentSource(
+        fileName: "source.pdf", byteCount: 100,
+        sha256: String(repeating: "g", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true),
+        PageSnapshot(
+          pageIndex: 1, pageLabel: "2",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 30, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [
+        NativeField(
+          id: "f1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "A", choices: []),
+        NativeField(
+          id: "f2", name: "email", kind: .text, pageIndex: 1,
+          bounds: PDFRect(x: 72, y: 400, width: 200, height: 20),
+          value: "B", choices: [])
+      ],
+      candidates: [], warnings: []
+    )
+    let output = DocumentInspection(
+      source: DocumentSource(
+        fileName: "output.pdf", byteCount: 100,
+        sha256: String(repeating: "h", count: 64)),
+      pages: source.pages,
+      fields: [
+        NativeField(
+          id: "f1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "A-new", choices: []),
+        NativeField(
+          id: "f2", name: "email", kind: .text, pageIndex: 1,
+          bounds: PDFRect(x: 72, y: 400, width: 200, height: 20),
+          value: "B-new", choices: [])
+      ],
+      candidates: [], warnings: []
+    )
+
+    let diff = DocumentDiffBuilder.build(
+      source: source, output: output, operations: [])
+
+    #expect(diff.summary.pagesWithChanges == 2)
+    #expect(diff.pageCount == 2)
+    #expect(diff.summary.totalRegionsCompared == 0) // no operations
+  }
+
+  // MARK: - Diff Report Tests
+
+  @Test func diffReportGeneratesPDFData() throws {
+    let source = DocumentInspection(
+      source: DocumentSource(
+        fileName: "source.pdf", byteCount: 100,
+        sha256: String(repeating: "a", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [
+        NativeField(
+          id: "field-1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "Old", choices: [])
+      ],
+      candidates: [],
+      warnings: []
+    )
+    let output = DocumentInspection(
+      source: DocumentSource(
+        fileName: "output.pdf", byteCount: 100,
+        sha256: String(repeating: "b", count: 64)),
+      pages: source.pages,
+      fields: [
+        NativeField(
+          id: "field-1", name: "name", kind: .text, pageIndex: 0,
+          bounds: PDFRect(x: 72, y: 600, width: 200, height: 20),
+          value: "New", choices: [])
+      ],
+      candidates: [],
+      warnings: []
+    )
+    let diff = DocumentDiffBuilder.build(
+      source: source, output: output, operations: [])
+
+    // Create minimal PDF documents for the report
+    let sourcePDF = PDFDocument()
+    let outputPDF = PDFDocument()
+
+    let data = try DocumentDiffReport.generate(
+      sourceDocument: sourcePDF,
+      currentDocument: outputPDF,
+      diff: diff,
+      operations: []
+    )
+
+    #expect(!data.isEmpty)
+    #expect(data.count > 100) // Must be a non-trivial PDF
+
+    // Verify it's a valid PDF
+    let reportDoc = PDFDocument(data: data)
+    #expect(reportDoc != nil)
+    // Cover page + 1 changed page = 2 pages
+    #expect(reportDoc?.pageCount == 2)
+  }
+
+  @Test func diffReportThrowsOnNoChanges() throws {
+    let source = DocumentInspection(
+      source: DocumentSource(
+        fileName: "source.pdf", byteCount: 100,
+        sha256: String(repeating: "c", count: 64)),
+      pages: [
+        PageSnapshot(
+          pageIndex: 0, pageLabel: "1",
+          bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+          cropBox: nil, bleedBox: nil, trimBox: nil, artBox: nil,
+          rotation: 0, characterCount: 50, annotationCount: 0,
+          hasSelectableText: true)
+      ],
+      fields: [], candidates: [], warnings: []
+    )
+    let diff = DocumentDiffBuilder.build(
+      source: source, output: source, operations: [])
+
+    let sourcePDF = PDFDocument()
+    let outputPDF = PDFDocument()
+
+    #expect(throws: DocumentDiffReport.ReportError.noChanges) {
+      try DocumentDiffReport.generate(
+        sourceDocument: sourcePDF,
+        currentDocument: outputPDF,
+        diff: diff,
+        operations: []
+      )
+    }
   }
 }

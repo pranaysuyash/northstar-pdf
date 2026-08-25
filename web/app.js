@@ -11,6 +11,11 @@
     classifyTemplateIndex,
     scoreTemplateFingerprints
   } from "./template-match-benchmark.mjs";
+  import {
+    buildTemplateIndex,
+    findTemplateRevision,
+    queryTemplateIndex
+  } from "./template-index.mjs";
   import { runReviewedCorrectionBenchmark } from "./template-correction-benchmark.mjs";
   import {
     canMaterializeCompletion,
@@ -33,6 +38,13 @@
     validateProfileContract,
     validateTemplateContract
   } from "./pdf-template-contract.mjs";
+  import { resolveTemplateProfile } from "./pdf-template-profile-resolver.mjs";
+  import {
+    canMaterializeTemplateMigration,
+    createTemplateMigrationProposal,
+    materializeTemplateMigration,
+    reviewTemplateMigration
+  } from "./pdf-template-migration.mjs";
   import {
     createEncryptedTemplateStore,
     createEncryptedOPFSTemplateStore,
@@ -51,6 +63,11 @@
     encryptTemplateSyncEnvelope,
     mergeTemplateHistories
   } from "./pdf-template-sync.mjs";
+  import {
+    createCrossDeviceRecoveryBundle,
+    validateCrossDeviceRecoveryBundle
+  } from "./pdf-cross-device-recovery.mjs";
+  import { validateEncryptedBackupInWorker } from "./pdf-vault-worker-client.mjs";
   import {
     chooseBrowserResourcePolicy,
     collectBrowserResourceEnvironment,
@@ -139,6 +156,7 @@
     templateCard: document.getElementById("templateCard"),
     templateSummary: document.getElementById("templateSummary"),
     captureTemplateButton: document.getElementById("captureTemplateButton"),
+    findTemplateMatchesButton: document.getElementById("findTemplateMatchesButton"),
     saveTemplateButton: document.getElementById("saveTemplateButton"),
     exportTemplateButton: document.getElementById("exportTemplateButton"),
     importTemplateButton: document.getElementById("importTemplateButton"),
@@ -150,13 +168,21 @@
     templateBackupButton: document.getElementById("templateBackupButton"),
     templateRestoreButton: document.getElementById("templateRestoreButton"),
     templateBackupInput: document.getElementById("templateBackupInput"),
+    templateCrossDeviceButton: document.getElementById("templateCrossDeviceButton"),
+    templateCrossDeviceRestoreButton: document.getElementById("templateCrossDeviceRestoreButton"),
+    templateCrossDeviceInput: document.getElementById("templateCrossDeviceInput"),
     templateRecoveryButton: document.getElementById("templateRecoveryButton"),
     templateRecoveryRestoreButton: document.getElementById("templateRecoveryRestoreButton"),
     templateRecoveryInput: document.getElementById("templateRecoveryInput"),
     templateDeleteStoreButton: document.getElementById("templateDeleteStoreButton"),
     activateTemplateButton: document.getElementById("activateTemplateButton"),
+    resolveTemplateProfileButton: document.getElementById("resolveTemplateProfileButton"),
     prepareTemplateButton: document.getElementById("prepareTemplateButton"),
     templateMappingList: document.getElementById("templateMappingList"),
+    templateIndexResults: document.getElementById("templateIndexResults"),
+    templateProfileResolution: document.getElementById("templateProfileResolution"),
+    templateMigrationPanel: document.getElementById("templateMigrationPanel"),
+    templatePersistenceEducationBody: document.getElementById("templatePersistenceEducationBody"),
     templateCompletionList: document.getElementById("templateCompletionList"),
     applyTemplateButton: document.getElementById("applyTemplateButton"),
     fieldList: document.getElementById("fieldList"),
@@ -176,6 +202,7 @@
     synthesizeFieldButton: document.getElementById("synthesizeFieldButton"),
     undoEditButton: document.getElementById("undoEditButton"),
     exportButton: document.getElementById("exportButton"),
+    diffToggleButton: document.getElementById("diffToggleButton"),
     editList: document.getElementById("editList"),
     validationBox: document.getElementById("validationBox"),
     impactMetricsContent: document.getElementById("impactMetricsContent"),
@@ -261,8 +288,18 @@
   let lastValidation = null;
   let preflightReport = null;
   let sessionProvenance = null;
+
+  // Visual diff overlay state
+  let showDiffOverlay = false;
+  // Snapshot of original field values captured at document load, before any
+  // operations. Used to compute which regions changed and whether the change
+  // is inside or outside an authorized operation region.
+  let sourceFieldSnapshot = new Map();
   let resourcePolicy = null;
   let templateFingerprint = null;
+  let templateIndex = null;
+  let templateIndexResult = null;
+  let templateIndexHistories = new Map();
   let templateContract = null;
   let templateRevisionHistory = null;
   let templateProposal = null;
@@ -270,6 +307,8 @@
   let templateLearningEvents = [];
   let pendingValidatedTemplateRevision = null;
   let templateRevisionDiff = null;
+  let templateProfileResolution = null;
+  let templateMigrationProposal = null;
   let lastAppliedTemplateProposal = null;
   let templateCompletionOperationIDs = [];
   let browserStoreLogger = createZeroContentLogger();
@@ -515,14 +554,14 @@
 
   function profilePassphrasePrompt() {
     return window.prompt(
-      "Unlock the encrypted local profile vault. Use at least 12 characters. The vault is local to this browser profile.",
+      "Unlock the encrypted local profile vault. Use at least 12 characters. The vault is local to this browser profile. If this passphrase is lost, only a separately exported recovery envelope can restore access.",
       ""
     );
   }
 
   function templatePassphrasePrompt() {
     return window.prompt(
-      "Unlock the encrypted local template store. Use at least 12 characters. This protects layout history, not PDF bytes.",
+      "Unlock the encrypted local template store. Use at least 12 characters. This protects layout history, not PDF bytes. If the passphrase is lost, use a separately exported recovery envelope or backup pair.",
       ""
     );
   }
@@ -546,6 +585,9 @@
       return encryptedBrowserStore;
     } catch (error) {
       browserStorePassphrase = null;
+      if (error instanceof TemplateStoreError && error.code === "unlock_failed") {
+        setStatus("The vault passphrase was not accepted. Do not delete the browser store. Use the separately exported recovery envelope or cross-device bundle if the passphrase is lost.", "danger");
+      }
       if (error instanceof TemplateStoreError) throw error;
       throw new Error("The encrypted local store could not be unlocked.");
     }
@@ -597,9 +639,10 @@
       const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
       if (!store) return;
       const backup = await store.exportEncryptedBackup({ storePassphrase: browserStorePassphrase });
+      const workerEvidence = await validateEncryptedBackupInWorker(backup);
       downloadJSON(backup, "pdf-editor-browser-vault-backup.json");
       browserStoreHealth = await store.inspectHealth();
-      setStatus("Exported an encrypted browser vault backup. Keep it outside browser storage.");
+      setStatus(`Exported an encrypted browser vault backup (${workerEvidence.encryptedRecordCount} ciphertext records). Keep it outside browser storage.`);
       renderCompletionPanel();
     } catch (error) {
       setStatus(`Encrypted vault backup export failed: ${error.message || "unknown error"}.`, "danger");
@@ -608,7 +651,10 @@
 
   async function restoreBrowserVaultBackup(file) {
     if (!file) return;
-    const passphrase = browserStorePassphrase || templatePassphrasePrompt();
+    const passphrase = window.prompt(
+      "Enter the vault passphrase used when this encrypted backup was exported. This may differ from the current browser vault passphrase.",
+      ""
+    );
     if (!passphrase) return;
     browserStorePassphrase = passphrase;
     try {
@@ -616,6 +662,7 @@
         encryptedBrowserStore = createEncryptedTemplateStore({ dbName: LOCAL_VAULT_DB_NAME, passphrase, logger: browserStoreLogger });
       }
       const backup = JSON.parse(await file.text());
+      await validateEncryptedBackupInWorker(backup);
       if (!window.confirm("Restore this encrypted vault backup and replace the current local vault records?")) return;
       browserStoreHealth = await encryptedBrowserStore.restoreEncryptedBackup(backup, {
         storePassphrase: passphrase,
@@ -630,7 +677,7 @@
 
   async function exportBrowserRecoveryEnvelope() {
     const recoveryPassphrase = window.prompt(
-      "Export a separate key-recovery envelope. Use at least 12 characters and keep this passphrase separate from the vault backup.",
+      "Export a separate key-recovery envelope. Use at least 12 characters and keep this passphrase separate from the vault backup. The app cannot recover this passphrase.",
       ""
     );
     if (!recoveryPassphrase) return;
@@ -650,7 +697,7 @@
   async function importBrowserRecoveryEnvelope(file) {
     if (!file) return;
     const recoveryPassphrase = window.prompt(
-      "Enter the separate passphrase for this browser-vault key-recovery envelope.",
+      "Enter the separate passphrase for this browser-vault key-recovery envelope. If it is lost, this envelope cannot be opened.",
       ""
     );
     if (!recoveryPassphrase) return;
@@ -666,6 +713,55 @@
       renderCompletionPanel();
     } catch (error) {
       setStatus(`Key-recovery import failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function exportBrowserCrossDeviceRecovery() {
+    const recoveryPassphrase = window.prompt(
+      "Create a recovery passphrase for the cross-device bundle. Keep it separate from the downloaded file. The app cannot recover it.",
+      ""
+    );
+    if (!recoveryPassphrase) return;
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const backup = await store.exportEncryptedBackup({ storePassphrase: browserStorePassphrase });
+      await validateEncryptedBackupInWorker(backup);
+      const recovery = await store.exportPassphraseRecovery(recoveryPassphrase);
+      const bundle = createCrossDeviceRecoveryBundle({ backup, recovery, storeKind: "template" });
+      downloadJSON(bundle, "pdf-editor-cross-device-recovery.json");
+      setStatus("Exported a cross-device recovery bundle containing encrypted records and a separate passphrase-protected key envelope. Store both safely.");
+    } catch (error) {
+      setStatus(`Cross-device recovery export failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function importBrowserCrossDeviceRecovery(file) {
+    if (!file) return;
+    const recoveryPassphrase = window.prompt(
+      "Enter the recovery passphrase for this cross-device bundle. It is never stored by the app.",
+      ""
+    );
+    if (!recoveryPassphrase) return;
+    try {
+      const bundle = JSON.parse(await file.text());
+      validateCrossDeviceRecoveryBundle(bundle);
+      await validateEncryptedBackupInWorker(bundle.backup);
+      if (!window.confirm("Restore this cross-device bundle and replace the current local vault records?")) return;
+      const store = encryptedBrowserStore || createEncryptedTemplateStore({ dbName: LOCAL_VAULT_DB_NAME, logger: browserStoreLogger });
+      encryptedBrowserStore = store;
+      await store.recoverPassphraseRecovery(bundle.recovery, recoveryPassphrase, { crossDevice: true });
+      browserStoreHealth = await store.restoreEncryptedBackup(bundle.backup, {
+        storePassphrase: null,
+        replace: true,
+        preserveRecoveredKey: true
+      });
+      await store.rekeyStore(recoveryPassphrase);
+      browserStorePassphrase = recoveryPassphrase;
+      setStatus("Restored the cross-device encrypted vault. Review templates and unlock profiles separately before use.");
+      renderCompletionPanel();
+    } catch (error) {
+      setStatus(`Cross-device recovery import failed: ${error.message || "unknown error"}. The current vault was not intentionally changed unless the confirmation completed.`, "danger");
     }
   }
 
@@ -693,13 +789,20 @@
     if (!passphrase) return false;
     browserProfilePassphrase = passphrase;
     const profiles = await store.list("profileHistory", { storePassphrase: browserStorePassphrase });
+    let failures = 0;
     for (const entry of profiles) {
       try {
         await store.unlockProfile(entry.id, browserProfilePassphrase, { storePassphrase: browserStorePassphrase });
       } catch {
         // A profile-specific unlock failure remains local and value-free. The
         // panel lists only profiles that can be authenticated explicitly.
+        failures += 1;
       }
+    }
+    if (failures) {
+      setStatus(`${failures} encrypted profile record(s) could not be unlocked. The passphrase was not accepted. Use a profile-vault backup or recovery bundle if the original passphrase is lost.`, "danger");
+    } else {
+      setStatus("Profile vault unlocked locally. Select a profile before resolving values.");
     }
     return true;
   }
@@ -750,7 +853,7 @@
           values: (profile.values || []).map((value) => ({
             id: value.id || makeID("profile-value"),
             semanticKey: value.semanticKey,
-            value: { kind: "text", text: value.textValue || "" }
+            value: value.value || { kind: "text", text: value.textValue || "" }
           }))
         }
       };
@@ -782,14 +885,16 @@
         displayName: latest.payload.displayName,
         values: (latest.payload.values || []).map((entry) => ({
           semanticKey: entry.semanticKey,
-          textValue: entry.value?.text || entry.value?.choice || "",
+          value: entry.value || { kind: "text", text: "" },
+          textValue: entry.value?.text || entry.value?.choice || (entry.value?.boolean ? "true" : "false") || "",
           label: entry.semanticKey,
           category: "general"
         })),
         createdAt: latest.header.generatedAt,
         lastModifiedAt: latest.header.generatedAt,
         __profileRevisionID: latest.payload.revisionID,
-        __profileRevisionNumber: latest.payload.revisionNumber
+        __profileRevisionNumber: latest.payload.revisionNumber,
+        __contract: latest
       };
     } catch {
       return null;
@@ -825,7 +930,8 @@
 
   function profileGetValue(profile, key) {
     const entry = (profile.values || []).find(v => v.semanticKey === key);
-    return entry ? entry.textValue : "";
+    if (!entry) return "";
+    return entry.textValue || entry.value?.text || entry.value?.choice || (entry.value?.boolean ? "true" : "false") || "";
   }
 
   function profileSetValue(profile, key, value) {
@@ -833,10 +939,93 @@
     const idx = profile.values.findIndex(v => v.semanticKey === key);
     if (idx >= 0) {
       profile.values[idx].textValue = value;
+      profile.values[idx].value = { kind: "text", text: value };
     } else {
-      profile.values.push({ semanticKey: key, textValue: value, label: key, category: "general" });
+      profile.values.push({ semanticKey: key, textValue: value, value: { kind: "text", text: value }, label: key, category: "general" });
     }
     profile.lastModifiedAt = new Date().toISOString();
+  }
+
+  function profileGetContractValue(profile, key) {
+    const entry = (profile?.values || []).find((value) => value.semanticKey === key);
+    if (entry?.value) return entry.value;
+    const text = entry?.textValue || "";
+    return text ? { kind: "text", text } : null;
+  }
+
+  function completionTargetField(mapping) {
+    if (mapping.target?.kind !== "nativeField") return null;
+    return nativeFields.find((field) => field.pageIndex === mapping.target.pageIndex
+      && field.coordinate?.rect?.x === mapping.target.region?.rect?.x
+      && field.coordinate?.rect?.y === mapping.target.region?.rect?.y)
+      || nativeFields.find((field) => field.name === mapping.target.nativeFieldName);
+  }
+
+  function coerceTemplateValue(mapping, value, field = completionTargetField(mapping)) {
+    const source = value || { kind: "text", text: "" };
+    if (mapping.suggestedFieldType === "signature" || field?.kind === "signature") {
+      return source.kind === "assetReference"
+        ? source
+        : { kind: "assetReference", assetID: source.assetID || "" };
+    }
+    if (field?.kind === "choice" || mapping.suggestedFieldType === "choice") {
+      return source.kind === "choice"
+        ? source
+        : { kind: "choice", choice: source.choice ?? source.text ?? "" };
+    }
+    if (field?.kind === "button" || mapping.suggestedFieldType === "checkbox") {
+      return source.kind === "boolean"
+        ? source
+        : { kind: "boolean", boolean: /^(1|true|yes|on|checked)$/i.test(String(source.text ?? source.choice ?? "")) };
+    }
+    return source.kind === "text" ? source : { kind: "text", text: source.text ?? source.choice ?? "" };
+  }
+
+  function completionValueText(value) {
+    if (!value) return "";
+    if (value.kind === "boolean") return value.boolean ? "true" : "false";
+    return value.text ?? value.choice ?? value.assetID ?? "";
+  }
+
+  function makeTemplateValueControl(entry, onChange) {
+    const value = entry.value || { kind: "text", text: "" };
+    const field = nativeFields.find((candidate) => candidate.name === entry.resolvedTargetID);
+    const choices = field?.choices || [];
+    if (value.kind === "choice") {
+      const select = document.createElement("select");
+      select.setAttribute("aria-label", `Value for ${entry.semanticKey}`);
+      const empty = document.createElement("option");
+      empty.value = "";
+      empty.textContent = "Choose an option";
+      select.appendChild(empty);
+      for (const choice of choices) {
+        const option = document.createElement("option");
+        option.value = choice;
+        option.textContent = choice;
+        select.appendChild(option);
+      }
+      select.value = value.choice || "";
+      select.addEventListener("change", () => onChange({ kind: "choice", choice: select.value }));
+      return select;
+    }
+    if (value.kind === "boolean") {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = Boolean(value.boolean);
+      checkbox.setAttribute("aria-label", `Value for ${entry.semanticKey}`);
+      checkbox.addEventListener("change", () => onChange({ kind: "boolean", boolean: checkbox.checked }));
+      label.append(checkbox, " Checked");
+      return label;
+    }
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = completionValueText(value);
+    input.setAttribute("aria-label", `Value for ${entry.semanticKey}`);
+    input.addEventListener("input", () => onChange(value.kind === "assetReference"
+      ? { kind: "assetReference", assetID: input.value }
+      : { kind: "text", text: input.value }));
+    return input;
   }
 
   function matchProfileToFields(profile, fields, candidates) {
@@ -1085,8 +1274,26 @@
     const isGroup = entries.length > 1;
     return [...new Set(values.filter((value) => {
       if (!value || /^off$/i.test(String(value).trim())) { return false; }
+      // In groups, keep all export values. For single buttons, filter numeric
+      // indices that are widget-state placeholders, not user-facing values.
       return isGroup || !/^\d+$/.test(String(value).trim());
     }))];
+  }
+
+  /**
+   * Resolve a button field value to its export value using the choices array.
+   * When the value is a numeric widget state index (e.g., "0", "1"), map it
+   * to the corresponding export value at that index position.
+   */
+  function resolveButtonExportValue(field, value) {
+    if (!value || !field || field.kind !== "button") { return value; }
+    if (!/^\d+$/.test(String(value).trim())) { return value; }
+    const options = nativeButtonOptions(field);
+    const index = parseInt(String(value).trim(), 10);
+    if (index >= 0 && index < options.length) {
+      return options[index];
+    }
+    return value;
   }
 
   function renderNativeFieldControl() {
@@ -1179,7 +1386,7 @@
         }
         const choices = rawChoices.map((option) => {
           if (typeof option === "string") { return option; }
-          return option.displayValue || option.exportValue || option.value || "";
+          return option.exportValue || option.displayValue || option.value || "";
         }).filter((option) => {
           if (!option) return false;
           // pdf-lib can expose numeric widget indices as radio options. They
@@ -1188,7 +1395,19 @@
           return !((annotation.fieldFlags & 32768) && /^\d+$/.test(String(option).trim()));
         });
         const rawValue = stringValue(annotation.fieldValue);
-        const value = annotation.fieldType === "Btn" && /^off$/i.test(rawValue) ? "" : rawValue;
+        let value = annotation.fieldType === "Btn" && /^off$/i.test(rawValue) ? "" : rawValue;
+
+        // Resolve numeric widget state indices to export values.
+        // PDFKit exposes export values (e.g., "email", "phone") while PDF.js
+        // may expose widget state indices (e.g., "0", "1"). When the current
+        // value is a numeric index and we have resolved choices, map it to the
+        // corresponding export value to achieve parity with the native contract.
+        if (annotation.fieldType === "Btn" && /^\d+$/.test(String(value).trim()) && choices.length > 0) {
+          const index = parseInt(String(value).trim(), 10);
+          if (index >= 0 && index < choices.length) {
+            value = choices[index];
+          }
+        }
         return {
           id: name,
           name,
@@ -1348,6 +1567,11 @@
       cancelledPage = 1;
     }
     nativeFields = fields;
+    // Snapshot original field values for diff comparison.
+    sourceFieldSnapshot.clear();
+    for (const field of fields) {
+      sourceFieldSnapshot.set(field.id, field.value || "");
+    }
     candidates = staticCandidates;
     textRunProjections = projectedTextRuns;
     documentContract = {
@@ -1498,12 +1722,17 @@
       templateLearningEvents = [];
       pendingValidatedTemplateRevision = null;
       templateRevisionDiff = null;
+      templateProfileResolution = null;
+      templateMigrationProposal = null;
       lastAppliedTemplateProposal = null;
       templateCompletionOperationIDs = [];
       templateRevisionHistory = {
         templateID: templateContract.payload.templateID,
         revisions: [templateContract]
       };
+      templateIndex = null;
+      templateIndexResult = null;
+      templateIndexHistories = new Map();
       validateTemplateContract(templateContract);
       setStatus(`Captured ${mappings.length} mapping proposal(s). Review them before activation.`);
       renderCompletionPanel();
@@ -1535,6 +1764,113 @@
       && [...currentIDs].every((id) => validatedIDs.has(id))
       && currentIDs.size === completionIDs.size
       && [...currentIDs].every((id) => completionIDs.has(id));
+  }
+
+  async function findLocalTemplateMatchesBrowser() {
+    if (!documentContract || !sourceDigest) {
+      setStatus("Load a PDF before searching the local template index.", "danger");
+      return;
+    }
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const fingerprint = templateFingerprint || await createTemplateFingerprint({
+        document: documentContract,
+        workspaceKey: "browser-local-template-key",
+        includeExactSourceDigest: true
+      });
+      templateFingerprint = fingerprint;
+      const entries = await store.list("templateHistory", {
+        storePassphrase: browserStorePassphrase
+      });
+      templateIndexHistories = new Map();
+      for (const entry of entries) {
+        const history = await store.getTemplateHistory(entry.id, {
+          storePassphrase: browserStorePassphrase
+        });
+        if (history) templateIndexHistories.set(history.templateID, history);
+      }
+      templateIndex = buildTemplateIndex([...templateIndexHistories.values()]);
+      templateIndexResult = queryTemplateIndex({
+        index: templateIndex,
+        fingerprint,
+        sourceDigest
+      });
+      const selectedState = templateIndexResult.selected?.state || templateIndexResult.state;
+      setStatus(`Local template index: ${selectedState}. Review evidence before loading a revision.`);
+      renderCompletionPanel();
+    } catch (error) {
+      templateIndex = null;
+      templateIndexResult = null;
+      templateIndexHistories = new Map();
+      setStatus(`Local template search failed: ${error.message || "unknown error"}.`, "danger");
+      renderCompletionPanel();
+    }
+  }
+
+  function loadIndexedTemplateRevision(result) {
+    const history = result?.templateID ? templateIndexHistories.get(result.templateID) : null;
+    const revision = findTemplateRevision(history, { selected: result });
+    if (!revision) {
+      setStatus("The selected local template revision is unavailable or stale.", "danger");
+      return;
+    }
+    if (!["exact", "knownVariant", "familyMatch"].includes(result.state)) {
+      setStatus(`The ${result.state} match abstains. Resolve it manually before review.`, "danger");
+      return;
+    }
+    templateRevisionHistory = history;
+    templateContract = revision;
+    templateFingerprint = revision.payload.fingerprint;
+    templateProposal = null;
+    templateValueDrafts = {};
+    templateLearningEvents = [];
+    pendingValidatedTemplateRevision = null;
+    templateRevisionDiff = null;
+    templateProfileResolution = null;
+    templateMigrationProposal = null;
+    lastAppliedTemplateProposal = null;
+    templateCompletionOperationIDs = [];
+    setStatus(`Loaded ${result.state} revision for review. No mapping or value was applied.`);
+    renderCompletionPanel();
+  }
+
+  function renderTemplateIndexResults() {
+    if (!ui.templateIndexResults) return;
+    ui.templateIndexResults.innerHTML = "";
+    if (!templateIndexResult) return;
+    const heading = document.createElement("div");
+    heading.className = "list-title";
+    heading.textContent = `Local match state: ${templateIndexResult.state}`;
+    ui.templateIndexResults.appendChild(heading);
+    const note = document.createElement("div");
+    note.className = "small muted";
+    note.textContent = templateIndexResult.abstained
+      ? "No revision was selected automatically. Review the evidence and resolve the document manually."
+      : "A revision may be loaded for review. It cannot apply values without two approvals.";
+    ui.templateIndexResults.appendChild(note);
+    for (const reason of templateIndexResult.reasons || []) {
+      const item = document.createElement("div");
+      item.className = "item small";
+      item.textContent = reason;
+      ui.templateIndexResults.appendChild(item);
+    }
+    for (const candidate of templateIndexResult.candidates || []) {
+      const row = document.createElement("div");
+      row.className = "template-mapping";
+      const label = document.createElement("span");
+      const history = templateIndexHistories.get(candidate.templateID);
+      const revision = history?.revisions?.find((entry) => entry.payload.revisionID === candidate.revisionID);
+      label.textContent = `${candidate.state} · ${(candidate.score * 100).toFixed(1)}% · ${revision?.payload?.displayName || candidate.templateID}`;
+      row.appendChild(label);
+      const review = document.createElement("button");
+      review.type = "button";
+      review.textContent = candidate.state === "stale" ? "Resolve stale" : "Review revision";
+      review.disabled = !["exact", "knownVariant", "familyMatch"].includes(candidate.state);
+      review.addEventListener("click", () => loadIndexedTemplateRevision(candidate));
+      row.appendChild(review);
+      ui.templateIndexResults.appendChild(row);
+    }
   }
 
   async function saveTemplateRevisionLocally() {
@@ -1672,6 +2008,8 @@
       pendingValidatedTemplateRevision = null;
       templateProposal = null;
       templateRevisionDiff = null;
+      templateProfileResolution = null;
+      templateMigrationProposal = null;
       const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
       if (store && templateRevisionHistory) {
         for (const revision of templateRevisionHistory.revisions) {
@@ -1767,12 +2105,18 @@
     const profileID = currentProfile?.profileID || makeID("session-profile");
     const revisionID = currentProfile?.__profileRevisionID || makeID("session-profile-revision");
     const profileValues = approvedMappings
-      .map((mapping) => ({
-        id: makeID("profile-value"),
-        semanticKey: mapping.semanticKey,
-        value: { kind: "text", text: currentProfile ? profileGetValue(currentProfile, mapping.semanticKey) : templateValueDrafts[mapping.id] || "" }
-      }))
-      .filter((entry) => entry.value.text);
+      .map((mapping) => {
+        const draft = templateValueDrafts[mapping.id];
+        const source = currentProfile
+          ? profileGetContractValue(currentProfile, mapping.semanticKey)
+          : (typeof draft === "object" ? draft : { kind: "text", text: draft || "" });
+        return {
+          id: makeID("profile-value"),
+          semanticKey: mapping.semanticKey,
+          value: coerceTemplateValue(mapping, source, completionTargetField(mapping))
+        };
+      })
+      .filter((entry) => completionValueText(entry.value) || entry.value.kind === "boolean");
     const profile = {
       header: { contractName: "pdf-editor.profile", version: { major: 1, minor: 0 }, profileID, revisionID, generatedAt: new Date().toISOString(), provider: providerDescriptor() },
       payload: { profileID, revisionID, displayName: currentProfile?.displayName || "Session values", revisionNumber: currentProfile?.__profileRevisionNumber || 0, storageScope: currentProfile ? "deviceLocal" : "deviceLocal", requiresUnlock: Boolean(currentProfile), values: profileValues }
@@ -1795,6 +2139,72 @@
     renderCompletionPanel();
   }
 
+  async function resolveTemplateProfileAutomaticallyBrowser() {
+    if (!templateContract) return;
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const profiles = (await listProfiles()).map((profile) => profile.__contract).filter(Boolean);
+      templateProfileResolution = resolveTemplateProfile({ template: templateContract, profiles });
+      if (templateProfileResolution.state === "selected") {
+        const selected = (await listProfiles()).find((profile) => profile.profileID === templateProfileResolution.selectedProfileID);
+        if (selected) {
+          currentProfile = selected;
+          renderProfilePanel();
+          setStatus("Selected a type-compatible profile for review. No values were applied.");
+        }
+      } else {
+        setStatus(`Profile resolution ${templateProfileResolution.state}: selection abstained until candidates are reviewed.`);
+      }
+      renderTemplateReview();
+    } catch (error) {
+      templateProfileResolution = null;
+      setStatus(`Automatic profile resolution failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  function prepareTemplateMigrationBrowser(revisionID) {
+    const target = templateRevisionHistory?.revisions?.find((revision) => revision.payload.revisionID === revisionID);
+    if (!templateContract || !target) return;
+    try {
+      templateMigrationProposal = createTemplateMigrationProposal({
+        from: templateContract,
+        to: target,
+        sourceDigest
+      });
+      setStatus(templateMigrationProposal.state === "ready"
+        ? "No mapping changes require migration review."
+        : "Review every proposed mapping migration before saving a child revision.");
+      renderTemplateReview();
+    } catch (error) {
+      templateMigrationProposal = null;
+      setStatus(`Template migration preparation failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
+  async function saveTemplateMigrationBrowser() {
+    if (!canMaterializeTemplateMigration(templateMigrationProposal)) {
+      setStatus("Every mapping migration decision must be reviewed before saving.", "danger");
+      return;
+    }
+    try {
+      const store = await ensureEncryptedBrowserStore({ promptForPassphrase: true });
+      if (!store) return;
+      const migrated = materializeTemplateMigration(templateMigrationProposal);
+      templateRevisionHistory = await store.saveTemplateRevision(migrated, {
+        storePassphrase: browserStorePassphrase
+      });
+      templateRevisionDiff = diffTemplateRevisions(templateMigrationProposal.fromRevision, migrated);
+      templateContract = migrated;
+      templateFingerprint = migrated.payload.fingerprint;
+      templateMigrationProposal = null;
+      setStatus("Saved an immutable migrated template revision. Profile values remain outside template history.");
+      renderTemplateReview();
+    } catch (error) {
+      setStatus(`Template migration save failed: ${error.message || "unknown error"}.`, "danger");
+    }
+  }
+
   function renderTemplateReview() {
     if (!ui.templateCard) return;
     if (!pdfDoc || !documentContract) {
@@ -1804,6 +2214,7 @@
     setHidden(ui.templateCard, false);
     ui.templateMappingList.innerHTML = "";
     ui.templateCompletionList.innerHTML = "";
+    renderTemplateIndexResults();
     ui.captureTemplateButton.disabled = false;
     ui.saveTemplateButton.disabled = !templateContract;
     ui.saveTemplateButton.textContent = canSaveValidatedTemplateRevision()
@@ -1812,8 +2223,11 @@
     ui.exportTemplateButton.disabled = !templateContract;
     ui.exportTemplateSyncButton.disabled = !templateContract || !templateRevisionHistory;
     ui.activateTemplateButton.disabled = true;
+    if (ui.resolveTemplateProfileButton) ui.resolveTemplateProfileButton.disabled = !templateContract || !browserStorePassphrase || !browserProfilePassphrase;
     ui.prepareTemplateButton.disabled = true;
     ui.applyTemplateButton.disabled = true;
+    if (ui.templateProfileResolution) ui.templateProfileResolution.innerHTML = "";
+    if (ui.templateMigrationPanel) ui.templateMigrationPanel.innerHTML = "";
     if (ui.templateHealthButton) ui.templateHealthButton.textContent = browserStoreHealth
       ? `Store health: ${browserStoreHealth.state}`
       : "Store health";
@@ -1843,6 +2257,79 @@
         + ` / -${templateRevisionDiff.exactSourceDigestsRemoved.length} source variant(s)`
       : "";
     ui.templateSummary.textContent = `${templateContract.payload.lifecycle} revision · ${mappings.length} mapping(s) · source-bound ${sourceDigest.slice(0, 12)}...${diffState}${promotionState}`;
+    if (ui.templateProfileResolution && templateProfileResolution) {
+      const heading = document.createElement("div");
+      heading.className = "list-title";
+      heading.textContent = `Automatic profile resolution: ${templateProfileResolution.state}${templateProfileResolution.abstained ? " · abstained" : ""}`;
+      ui.templateProfileResolution.appendChild(heading);
+      for (const reason of templateProfileResolution.reasons || []) {
+        const item = document.createElement("div");
+        item.className = "small muted";
+        item.textContent = reason;
+        ui.templateProfileResolution.appendChild(item);
+      }
+      for (const candidate of (templateProfileResolution.candidates || []).slice(0, 3)) {
+        const item = document.createElement("div");
+        item.className = "small";
+        item.textContent = `${candidate.displayName} · ${(candidate.score * 100).toFixed(1)}% · ${candidate.matchedMappingIDs.length} matched`;
+        ui.templateProfileResolution.appendChild(item);
+      }
+    }
+    if (ui.templateMigrationPanel && templateRevisionHistory?.revisions?.length > 1) {
+      const heading = document.createElement("div");
+      heading.className = "list-title";
+      heading.textContent = "Revision history";
+      ui.templateMigrationPanel.appendChild(heading);
+      for (const revision of templateRevisionHistory.revisions) {
+        if (revision.payload.revisionID === templateContract.payload.revisionID) continue;
+        const row = document.createElement("div");
+        row.className = "template-mapping";
+        row.textContent = `Revision ${revision.payload.revisionID.slice(0, 12)} · ${revision.payload.lifecycle}`;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "Compare / migrate";
+        button.addEventListener("click", () => prepareTemplateMigrationBrowser(revision.payload.revisionID));
+        row.appendChild(button);
+        ui.templateMigrationPanel.appendChild(row);
+      }
+    }
+    if (ui.templateMigrationPanel && templateMigrationProposal) {
+      const heading = document.createElement("div");
+      heading.className = "list-title";
+      heading.textContent = `Migration review: ${templateMigrationProposal.state}`;
+      ui.templateMigrationPanel.appendChild(heading);
+      for (const reason of templateMigrationProposal.reasons || []) {
+        const item = document.createElement("div");
+        item.className = "small muted";
+        item.textContent = reason;
+        ui.templateMigrationPanel.appendChild(item);
+      }
+      for (const decision of templateMigrationProposal.decisions || []) {
+        const row = document.createElement("label");
+        row.className = "template-mapping";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = decision.reviewed && decision.approved;
+        checkbox.addEventListener("change", () => {
+          templateMigrationProposal = reviewTemplateMigration(templateMigrationProposal, decision.id, checkbox.checked);
+          renderTemplateReview();
+        });
+        row.append(checkbox, ` Review ${decision.change} mapping ${String(decision.id).slice(0, 12)}`);
+        ui.templateMigrationPanel.appendChild(row);
+      }
+      const save = document.createElement("button");
+      save.type = "button";
+      save.textContent = "Save reviewed migration";
+      save.disabled = !canMaterializeTemplateMigration(templateMigrationProposal);
+      save.addEventListener("click", saveTemplateMigrationBrowser);
+      ui.templateMigrationPanel.appendChild(save);
+    }
+    if (ui.templatePersistenceEducationBody) {
+      const usage = Number.isFinite(browserStoreHealth?.usageBytes) ? `${Math.round(browserStoreHealth.usageBytes / 1024)} KiB used` : "usage unknown";
+      const quota = Number.isFinite(browserStoreHealth?.quotaBytes) ? `${Math.round(browserStoreHealth.quotaBytes / (1024 * 1024))} MiB quota` : "quota unknown";
+      const state = browserStoreHealth?.state || "not checked";
+      ui.templatePersistenceEducationBody.textContent = `State: ${state}. ${usage}; ${quota}. Templates and profile records are encrypted locally. Source PDF bytes are not retained by this vault. Browser storage can be evicted without notice, so an encrypted backup should live outside this browser. Losing the vault passphrase is recoverable only with a separate recovery envelope or cross-device bundle. The recovery passphrase is never stored. Backup inspection runs in a worker that receives ciphertext structure only.`;
+    }
     mappings.forEach((mapping) => {
       const row = document.createElement("div");
       row.className = "template-mapping";
@@ -1898,18 +2385,23 @@
       });
       const mappingLabel = document.createElement("label");
       mappingLabel.append(mappingReview, ` Approve mapping ${entry.semanticKey}`);
-      const value = document.createElement("input");
-      value.type = "text";
-      value.value = entry.value?.text || "";
-      value.addEventListener("input", () => {
-        templateProposal = reviewCompletionValue(templateProposal, entry.mappingID, { kind: "text", text: value.value }, false);
+      let reviewedValue = entry.value;
+      const value = makeTemplateValueControl(entry, (nextValue) => {
+        reviewedValue = nextValue;
+        templateProposal = reviewCompletionValue(templateProposal, entry.mappingID, nextValue, false);
         ui.applyTemplateButton.disabled = true;
       });
+      if (entry.value?.kind === "assetReference" && !entry.value.assetID) {
+        const unsupported = document.createElement("span");
+        unsupported.className = "small muted";
+        unsupported.textContent = " Signature asset provider required before export.";
+        row.appendChild(unsupported);
+      }
       const valueReview = document.createElement("input");
       valueReview.type = "checkbox";
       valueReview.checked = entry.valueReview === "approved";
       valueReview.addEventListener("change", () => {
-        templateProposal = reviewCompletionValue(templateProposal, entry.mappingID, { kind: "text", text: value.value }, valueReview.checked);
+        templateProposal = reviewCompletionValue(templateProposal, entry.mappingID, reviewedValue, valueReview.checked);
         renderTemplateReview();
       });
       const valueLabel = document.createElement("label");
@@ -1953,7 +2445,10 @@
       // Active profile
       const header = document.createElement("div");
       header.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:8px;";
-      header.innerHTML = `<strong style="font-size:13px;">${currentProfile.displayName}</strong>`;
+      const profileName = document.createElement("strong");
+      profileName.style.fontSize = "13px";
+      profileName.textContent = currentProfile.displayName || "Local profile";
+      header.appendChild(profileName);
       const switchBtn = document.createElement("button");
       switchBtn.textContent = "Switch";
       switchBtn.style.cssText = "font-size:11px;margin-left:auto;";
@@ -2244,6 +2739,7 @@
     ui.completionValue.disabled = !selectedField && !selectedCandidate && !manualPlacement && !selectedOperation;
     ui.undoEditButton.disabled = operations.length === 0;
     ui.exportButton.disabled = !pdfData;
+    ui.diffToggleButton.disabled = !pdfData;
     ui.editList.innerHTML = "";
     if (!operations.length) {
       ui.editList.textContent = "No pending edits.";
@@ -2632,6 +3128,98 @@
     });
   }
 
+  // --- Visual diff overlay ---
+
+  /**
+   * Render colored diff overlays on the page shell.
+   *
+   * For each native field that was changed by an operation, show a green
+   * overlay (inside authorized region). For each native field that changed
+   * WITHOUT an associated operation, show a red overlay (outside region).
+   *
+   * For filled candidates (status confirmed), show a green overlay.
+   */
+  function renderDiffOverlays(pageNum, viewport, shell) {
+    if (!showDiffOverlay || sourceFieldSnapshot.size === 0) { return; }
+
+    const pageIndex = pageNum - 1;
+
+    // Build a set of operation target IDs for this page
+    const pageOps = new Set();
+    for (const op of operations) {
+      if (op.pageIndex === pageIndex) {
+        pageOps.add(op.targetID);
+      }
+    }
+
+    // Check each native field for changes
+    for (const field of nativeFields) {
+      if (field.pageIndex !== pageIndex) { continue; }
+      const originalValue = sourceFieldSnapshot.get(field.id) || "";
+      const currentValue = field.value || "";
+      if (originalValue === currentValue) { continue; }
+
+      const bounds = field.bounds;
+      if (!bounds) { continue; }
+      const viewportRect = viewport.convertToViewportRectangle(
+        [bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height]
+      );
+      const rect = normalizeRect(viewportRect);
+
+      const isInsideOp = pageOps.has(field.id);
+      const preview = document.createElement("div");
+      preview.className = "diff-overlay";
+      preview.style.left = `${rect.x}px`;
+      preview.style.top = `${rect.y}px`;
+      preview.style.width = `${Math.max(8, rect.width)}px`;
+      preview.style.height = `${Math.max(8, rect.height)}px`;
+      preview.style.position = "absolute";
+      preview.style.pointerEvents = "none";
+      preview.style.zIndex = "15";
+
+      if (isInsideOp) {
+        // Green: change inside authorized operation region
+        preview.style.background = "rgba(34, 197, 94, 0.14)";
+        preview.style.border = "1.5px solid rgba(34, 197, 94, 0.8)";
+        preview.title = `Changed (inside operation): "${originalValue}" → "${currentValue}"`;
+      } else {
+        // Red: change outside authorized region (unexpected)
+        preview.style.background = "rgba(239, 68, 68, 0.18)";
+        preview.style.border = "2.5px solid rgba(239, 68, 68, 0.8)";
+        preview.title = `Unexpected change: "${originalValue}" → "${currentValue}"`;
+      }
+
+      shell.appendChild(preview);
+    }
+
+    // Show green overlays for confirmed candidates
+    for (const candidate of candidates) {
+      if (candidate.pageIndex !== pageIndex) { continue; }
+      if (candidate.status !== "confirmed") { continue; }
+      if (!candidate.bounds) { continue; }
+
+      const bounds = candidate.bounds;
+      const viewportRect = viewport.convertToViewportRectangle(
+        [bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height]
+      );
+      const rect = normalizeRect(viewportRect);
+
+      const preview = document.createElement("div");
+      preview.className = "diff-overlay";
+      preview.style.left = `${rect.x}px`;
+      preview.style.top = `${rect.y}px`;
+      preview.style.width = `${Math.max(8, rect.width)}px`;
+      preview.style.height = `${Math.max(8, rect.height)}px`;
+      preview.style.position = "absolute";
+      preview.style.pointerEvents = "none";
+      preview.style.zIndex = "15";
+      preview.style.background = "rgba(34, 197, 94, 0.12)";
+      preview.style.border = "1.5px solid rgba(34, 197, 94, 0.7)";
+      preview.title = `Candidate filled: ${candidateEntryMode(candidate)}`;
+      shell.appendChild(preview);
+    }
+  }
+
   function updateZoomFromSlider() {
     scaleState.zoom = ui.zoomSlider.value / 100;
     ui.zoomValue.textContent = `${ui.zoomSlider.value}%`;
@@ -2684,7 +3272,13 @@
     candidates = [];
     operations = [];
     reviews = [];
+    showDiffOverlay = false;
+    sourceFieldSnapshot.clear();
+    ui.diffToggleButton.textContent = "Show diff";
     templateFingerprint = null;
+    templateIndex = null;
+    templateIndexResult = null;
+    templateIndexHistories = new Map();
     templateContract = null;
     templateRevisionHistory = null;
     templateProposal = null;
@@ -3031,6 +3625,7 @@
       await buildTextLayer(page, viewport, pageNum, shell);
       renderCandidatePreviews(pageNum, viewport, shell);
       renderOperationPreviews(pageNum, viewport, shell);
+      renderDiffOverlays(pageNum, viewport, shell);
     }
     updateThumbSelection();
   }
@@ -4079,6 +4674,9 @@
       return createTemplateFingerprint({ document: documentContract, workspaceKey, includeExactSourceDigest });
     },
     classifyTemplateIndex,
+    buildTemplateIndex,
+    queryTemplateIndex,
+    findTemplateRevision,
     calibrateDocumentClassPolicies,
     scoreTemplateFingerprints,
     runReviewedCorrectionBenchmark,
@@ -4123,11 +4721,19 @@
     canPromoteTemplateRevision,
     makeValidatedTemplateRevision,
     diffTemplateRevisions,
+    resolveTemplateProfile,
+    createTemplateMigrationProposal,
+    reviewTemplateMigration,
+    canMaterializeTemplateMigration,
+    materializeTemplateMigration,
     exportTemplateHistory,
     importTemplateHistory,
     encryptTemplateSyncEnvelope,
     decryptTemplateSyncEnvelope,
     mergeTemplateHistories,
+    createCrossDeviceRecoveryBundle,
+    validateCrossDeviceRecoveryBundle,
+    validateEncryptedBackupInWorker,
     captureTemplateDraft,
     activateTemplateRevision,
     appendTemplateRevision,
@@ -4200,6 +4806,7 @@
   });
   ui.dismissCandidateButton.addEventListener("click", dismissSelectedCandidate);
   ui.captureTemplateButton.addEventListener("click", captureTemplateLayout);
+  ui.findTemplateMatchesButton?.addEventListener("click", findLocalTemplateMatchesBrowser);
   ui.saveTemplateButton.addEventListener("click", saveTemplateRevisionLocally);
   ui.exportTemplateButton.addEventListener("click", exportTemplateTransfer);
   ui.importTemplateButton.addEventListener("click", () => ui.templateImportInput.click());
@@ -4227,6 +4834,12 @@
     await restoreBrowserVaultBackup(event.target.files?.[0] || null);
     event.target.value = "";
   });
+  ui.templateCrossDeviceButton?.addEventListener("click", exportBrowserCrossDeviceRecovery);
+  ui.templateCrossDeviceRestoreButton?.addEventListener("click", () => ui.templateCrossDeviceInput.click());
+  ui.templateCrossDeviceInput?.addEventListener("change", async (event) => {
+    await importBrowserCrossDeviceRecovery(event.target.files?.[0] || null);
+    event.target.value = "";
+  });
   ui.templateRecoveryButton?.addEventListener("click", exportBrowserRecoveryEnvelope);
   ui.templateRecoveryRestoreButton?.addEventListener("click", () => ui.templateRecoveryInput.click());
   ui.templateRecoveryInput?.addEventListener("change", async (event) => {
@@ -4235,6 +4848,7 @@
   });
   ui.templateDeleteStoreButton?.addEventListener("click", deleteBrowserVault);
   ui.activateTemplateButton.addEventListener("click", activateReviewedTemplate);
+  ui.resolveTemplateProfileButton?.addEventListener("click", resolveTemplateProfileAutomaticallyBrowser);
   ui.prepareTemplateButton.addEventListener("click", prepareTemplateCompletion);
   ui.applyTemplateButton.addEventListener("click", applyTemplateCompletion);
   ui.restoreDismissedButton.addEventListener("click", () => {
@@ -4247,6 +4861,15 @@
   ui.applyOverlayButton.addEventListener("click", applyOverlayOperation);
   ui.undoEditButton.addEventListener("click", undoLastOperation);
   ui.exportButton.addEventListener("click", exportAndValidate);
+
+  ui.diffToggleButton.addEventListener("click", () => {
+    showDiffOverlay = !showDiffOverlay;
+    ui.diffToggleButton.textContent = showDiffOverlay ? "Hide diff" : "Show diff";
+    renderVisiblePages();
+    setStatus(showDiffOverlay
+      ? "Visual diff overlay enabled. Green = inside operation, red = outside."
+      : "Visual diff overlay disabled.");
+  });
 
   ui.passwordForm.addEventListener("submit", async (event) => {
     event.preventDefault();

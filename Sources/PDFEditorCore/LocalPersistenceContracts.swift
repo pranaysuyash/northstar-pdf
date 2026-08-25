@@ -182,6 +182,224 @@ public struct PDFLocalStoreRecoveryEnvelope: Codable, Equatable, Hashable, Senda
   }
 }
 
+/// An opaque encrypted record backup. It contains ciphertext records and
+/// authenticated metadata only. The Keychain key is never included here.
+public struct PDFLocalStoreBackupEnvelope: Codable, Equatable, Hashable, Sendable {
+  public let contractName: String
+  public let version: PDFContractVersion
+  public let storeKind: PDFLocalStoreKind
+  public let keyIdentifier: String
+  public let records: [PDFEncryptedTemplateStoreRecord]
+  public let createdAt: Date
+
+  public init(
+    storeKind: PDFLocalStoreKind,
+    keyIdentifier: String,
+    records: [PDFEncryptedTemplateStoreRecord],
+    createdAt: Date = Date()
+  ) {
+    self.contractName = "pdf-editor.local-store-backup"
+    self.version = .current
+    self.storeKind = storeKind
+    self.keyIdentifier = keyIdentifier
+    self.records = records
+    self.createdAt = createdAt
+  }
+
+  public func validate() throws {
+    guard contractName == "pdf-editor.local-store-backup",
+          version.isReadableBy(),
+          !keyIdentifier.isEmpty,
+          Set(records.map(\.recordID)).count == records.count
+    else {
+      throw PDFTemplatePersistenceError.encodingFailed("invalid encrypted local-store backup")
+    }
+    let expectedKinds: Set<PDFTemplateStoreRecordKind> = storeKind == .template
+      ? [.template, .learningEvent]
+      : [.profile]
+    guard records.allSatisfy({ expectedKinds.contains($0.recordKind) }) else {
+      throw PDFTemplatePersistenceError.encodingFailed("backup record kind does not match store kind")
+    }
+  }
+}
+
+/// A cross-device transfer keeps the encrypted record backup and the separate
+/// passphrase recovery envelope together, but does not combine their keys.
+/// Import still requires the recovery passphrase and an explicitly selected
+/// destination store.
+public struct PDFLocalCrossDeviceRecoveryBundle: Codable, Equatable, Hashable, Sendable {
+  public let contractName: String
+  public let version: PDFContractVersion
+  public let storeKind: PDFLocalStoreKind
+  public let backup: PDFLocalEncryptedBackupBundle
+  public let recovery: PDFLocalStoreRecoveryEnvelope
+  public let createdAt: Date
+
+  public init(
+    storeKind: PDFLocalStoreKind,
+    backup: PDFLocalEncryptedBackupBundle,
+    recovery: PDFLocalStoreRecoveryEnvelope,
+    createdAt: Date = Date()
+  ) {
+    self.contractName = "pdf-editor.local-cross-device-recovery"
+    self.version = .current
+    self.storeKind = storeKind
+    self.backup = backup
+    self.recovery = recovery
+    self.createdAt = createdAt
+  }
+
+  public func validate() throws {
+    guard contractName == "pdf-editor.local-cross-device-recovery",
+          version.isReadableBy(),
+          backup.storeKind == storeKind,
+          recovery.storeKind == storeKind
+    else {
+      throw PDFTemplatePersistenceError.encodingFailed("invalid cross-device recovery bundle")
+    }
+    try backup.validate()
+    try recovery.validate()
+  }
+}
+
+/// The native backup file may contain more than one encrypted record stream,
+/// such as templates plus their learning journal. It is not a key-recovery
+/// artifact and cannot be opened without the destination Keychain key.
+public struct PDFLocalEncryptedBackupBundle: Codable, Equatable, Hashable, Sendable {
+  public let contractName: String
+  public let version: PDFContractVersion
+  public let storeKind: PDFLocalStoreKind
+  public let backup: PDFLocalStoreBackupEnvelope
+  public let learning: PDFLocalStoreBackupEnvelope?
+  public let createdAt: Date
+
+  public init(
+    storeKind: PDFLocalStoreKind,
+    backup: PDFLocalStoreBackupEnvelope,
+    learning: PDFLocalStoreBackupEnvelope? = nil,
+    createdAt: Date = Date()
+  ) {
+    self.contractName = "pdf-editor.encrypted-backup-bundle"
+    self.version = .current
+    self.storeKind = storeKind
+    self.backup = backup
+    self.learning = learning
+    self.createdAt = createdAt
+  }
+
+  public func validate() throws {
+    guard contractName == "pdf-editor.encrypted-backup-bundle",
+          version.isReadableBy(),
+          backup.storeKind == storeKind,
+          storeKind == .template ? learning?.storeKind == .template : learning == nil
+    else {
+      throw PDFTemplatePersistenceError.encodingFailed("invalid encrypted backup bundle")
+    }
+    try backup.validate()
+    try learning?.validate()
+  }
+}
+
+public enum PDFLocalCrossDeviceRecoveryCodec {
+  public static func encode(
+    backup: PDFLocalStoreBackupEnvelope,
+    learning: PDFLocalStoreBackupEnvelope?
+  ) throws -> Data {
+    let bundle = PDFLocalEncryptedBackupBundle(
+      storeKind: backup.storeKind,
+      backup: backup,
+      learning: learning)
+    try bundle.validate()
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    encoder.outputFormatting = [.sortedKeys]
+    return try encoder.encode(bundle)
+  }
+
+  public static func decode(_ data: Data) throws -> PDFLocalEncryptedBackupBundle {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    do {
+      let bundle = try decoder.decode(PDFLocalEncryptedBackupBundle.self, from: data)
+      try bundle.validate()
+      return bundle
+    } catch let error as PDFTemplatePersistenceError {
+      throw error
+    } catch {
+      throw PDFTemplatePersistenceError.encodingFailed("invalid encrypted backup bundle")
+    }
+  }
+
+  public static func encodeBundle(_ bundle: PDFLocalEncryptedBackupBundle) throws -> Data {
+    try bundle.validate()
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    encoder.outputFormatting = [.sortedKeys]
+    return try encoder.encode(bundle)
+  }
+}
+
+public enum PDFLocalCrossDeviceBundleCodec {
+  public static func encode(_ bundle: PDFLocalCrossDeviceRecoveryBundle) throws -> Data {
+    try bundle.validate()
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    encoder.outputFormatting = [.sortedKeys]
+    return try encoder.encode(bundle)
+  }
+
+  public static func decode(_ data: Data) throws -> PDFLocalCrossDeviceRecoveryBundle {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    do {
+      let bundle = try decoder.decode(PDFLocalCrossDeviceRecoveryBundle.self, from: data)
+      try bundle.validate()
+      return bundle
+    } catch let error as PDFTemplatePersistenceError {
+      throw error
+    } catch {
+      throw PDFTemplatePersistenceError.encodingFailed("invalid cross-device recovery bundle")
+    }
+  }
+
+  /// Truncate all Date fields in the bundle to whole-second precision.
+  /// ISO8601 without fractional seconds loses sub-second precision during
+  /// roundtrip. This normalizes both sides for equality comparison.
+  public static func normalized(_ bundle: PDFLocalCrossDeviceRecoveryBundle) -> PDFLocalCrossDeviceRecoveryBundle {
+    let truncate: (Date) -> Date = { date in
+      let interval = date.timeIntervalSinceReferenceDate
+      return Date(timeIntervalSinceReferenceDate: floor(interval))
+    }
+    return PDFLocalCrossDeviceRecoveryBundle(
+      storeKind: bundle.storeKind,
+      backup: PDFLocalEncryptedBackupBundle(
+        storeKind: bundle.backup.storeKind,
+        backup: PDFLocalStoreBackupEnvelope(
+          storeKind: bundle.backup.backup.storeKind,
+          keyIdentifier: bundle.backup.backup.keyIdentifier,
+          records: bundle.backup.backup.records,
+          createdAt: truncate(bundle.backup.backup.createdAt)),
+        learning: bundle.backup.learning.map { env in
+          PDFLocalStoreBackupEnvelope(
+            storeKind: env.storeKind,
+            keyIdentifier: env.keyIdentifier,
+            records: env.records,
+            createdAt: truncate(env.createdAt))
+        },
+        createdAt: truncate(bundle.backup.createdAt)),
+      recovery: PDFLocalStoreRecoveryEnvelope(
+        storeKind: bundle.recovery.storeKind,
+        keyIdentifier: bundle.recovery.keyIdentifier,
+        iterations: bundle.recovery.iterations,
+        salt: bundle.recovery.salt,
+        nonce: bundle.recovery.nonce,
+        ciphertext: bundle.recovery.ciphertext,
+        tag: bundle.recovery.tag,
+        createdAt: truncate(bundle.recovery.createdAt)),
+      createdAt: truncate(bundle.createdAt))
+  }
+}
+
 public enum PDFLocalStoreRecoveryCrypto {
   public static let minimumPassphraseLength = 12
   public static let defaultIterations = 150_000

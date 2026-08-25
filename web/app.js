@@ -146,6 +146,14 @@
     exportTemplateSyncButton: document.getElementById("exportTemplateSyncButton"),
     importTemplateSyncButton: document.getElementById("importTemplateSyncButton"),
     templateSyncImportInput: document.getElementById("templateSyncImportInput"),
+    templateHealthButton: document.getElementById("templateHealthButton"),
+    templateBackupButton: document.getElementById("templateBackupButton"),
+    templateRestoreButton: document.getElementById("templateRestoreButton"),
+    templateBackupInput: document.getElementById("templateBackupInput"),
+    templateRecoveryButton: document.getElementById("templateRecoveryButton"),
+    templateRecoveryRestoreButton: document.getElementById("templateRecoveryRestoreButton"),
+    templateRecoveryInput: document.getElementById("templateRecoveryInput"),
+    templateDeleteStoreButton: document.getElementById("templateDeleteStoreButton"),
     activateTemplateButton: document.getElementById("activateTemplateButton"),
     prepareTemplateButton: document.getElementById("prepareTemplateButton"),
     templateMappingList: document.getElementById("templateMappingList"),
@@ -264,6 +272,8 @@
   let templateRevisionDiff = null;
   let lastAppliedTemplateProposal = null;
   let templateCompletionOperationIDs = [];
+  let browserStoreLogger = createZeroContentLogger();
+  let browserStoreHealth = null;
   let loadGeneration = 0;
   let productSurfaceState = createProductSurfaceState();
   const scaleState = {

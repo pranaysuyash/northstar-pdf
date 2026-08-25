@@ -277,11 +277,6 @@ final class SessionPayloadStore: @unchecked Sendable {
     let data: Data
     do {
       data = try Data(contentsOf: fileURL)
-    } catch is DecodingError {
-      try quarantine(fileURL)
-      throw SessionPayloadStoreError.quarantinedRecord(
-        reason: "The recovery payload format is unsupported."
-      )
     } catch {
       throw SessionPayloadStoreError.fileOperationFailed(
         "Recovery payload file operation failed."
@@ -292,6 +287,9 @@ final class SessionPayloadStore: @unchecked Sendable {
     do {
       encryptedRecord = try decoder.decode(EncryptedPayloadRecord.self, from: data)
       try validate(encryptedRecord, sessionID: sessionID, autosaveSequence: autosaveSequence)
+    } catch let error as SessionPayloadStoreError {
+      try quarantine(fileURL)
+      throw error
     } catch {
       try quarantine(fileURL)
       throw SessionPayloadStoreError.quarantinedRecord(
@@ -306,7 +304,7 @@ final class SessionPayloadStore: @unchecked Sendable {
       plaintext = try AES.GCM.open(
         sealedBox,
         using: key,
-        authenticating: authenticatedContext(for: encryptedRecord)
+        authenticating: try authenticatedContext(for: encryptedRecord)
       )
     } catch is RecoveryPayloadKeyStoreError {
       throw SessionPayloadStoreError.keyUnavailable
@@ -463,8 +461,8 @@ final class SessionPayloadStore: @unchecked Sendable {
     )
   }
 
-  private func authenticatedContext(for record: EncryptedPayloadRecord) -> Data {
-    (try? encoder.encode(
+  private func authenticatedContext(for record: EncryptedPayloadRecord) throws -> Data {
+    try encoder.encode(
       AuthenticatedContext(
         contract: record.contract,
         formatVersion: record.formatVersion,
@@ -473,7 +471,7 @@ final class SessionPayloadStore: @unchecked Sendable {
         sourceDigest: record.sourceDigest,
         payloadSchemaVersion: record.payloadSchemaVersion
       )
-    )) ?? Data()
+    )
   }
 
   private func validate(

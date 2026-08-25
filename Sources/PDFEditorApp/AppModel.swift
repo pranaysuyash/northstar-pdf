@@ -69,6 +69,12 @@ final class AppModel {
   var availableTemplateIDs: [UUID] = []
   var isTemplateVaultUnlocked = false
   var isProfileVaultUnlocked = false
+  /// Read-only, value-minimized source preflight shown before any export.
+  var preflightReport: PDFPreflightReport?
+  var templateStoreHealth: PDFLocalStoreHealth?
+  var profileStoreHealth: PDFLocalStoreHealth?
+  var templateAuditEvents: [PDFLocalStoreAuditEvent] = []
+  var profileAuditEvents: [PDFLocalStoreAuditEvent] = []
   private var lastAppliedTemplateCompletion: PDFTemplateCompletionProposal?
   private var templateCompletionOperationIDs: [UUID] = []
   var exportReport: ValidationReport?
@@ -257,6 +263,7 @@ final class AppModel {
     self.templateStore = templateStore
     refreshProfiles()
     refreshTemplateIDs()
+    refreshLocalPersistenceHealth()
     refreshRecoveryDiscovery()
   }
 
@@ -266,9 +273,11 @@ final class AppModel {
     do {
       availableTemplateIDs = try templateStore.unlock()
       isTemplateVaultUnlocked = true
+      refreshLocalPersistenceHealth()
       statusMessage = "Unlocked the encrypted local template vault."
     } catch {
       isTemplateVaultUnlocked = false
+      refreshLocalPersistenceHealth()
       alertMessage = "Could not unlock the local template vault: \(error.localizedDescription)"
     }
   }
@@ -280,6 +289,7 @@ final class AppModel {
     templateLearningEvents = []
     pendingValidatedTemplateRevision = nil
     templateIndexMatch = nil
+    refreshLocalPersistenceHealth()
     statusMessage = "Locked the local template vault."
   }
 
@@ -288,9 +298,11 @@ final class AppModel {
       _ = try profileStore.unlock()
       isProfileVaultUnlocked = true
       refreshProfiles()
+      refreshLocalPersistenceHealth()
       statusMessage = "Unlocked the encrypted local profile vault."
     } catch {
       isProfileVaultUnlocked = false
+      refreshLocalPersistenceHealth()
       alertMessage = "Could not unlock the local profile vault: \(error.localizedDescription)"
     }
   }
@@ -300,7 +312,205 @@ final class AppModel {
     currentProfile = nil
     availableProfiles = []
     templateCompletionProposal = nil
+    refreshLocalPersistenceHealth()
     statusMessage = "Locked the local profile vault."
+  }
+
+  /// Refreshes value-free persistence health and audit summaries. Any failure
+  /// is surfaced as an unknown state rather than exposing a storage error's
+  /// path, identifier, or profile value in the UI.
+  func refreshLocalPersistenceHealth() {
+    do {
+      templateStoreHealth = try templateStore.health()
+      templateAuditEvents = (try? templateStore.auditEvents()) ?? []
+    } catch {
+      templateStoreHealth = PDFLocalStoreHealth(
+        storeKind: .template,
+        state: .unknown,
+        primaryAvailable: false,
+        backupAvailable: false,
+        recordCount: 0,
+        auditEventCount: templateAuditEvents.count,
+        recoveryEnvelopeAvailable: false,
+        encryptedBackupRecommended: true,
+        messageCode: "health-check-failed")
+    }
+    do {
+      profileStoreHealth = try profileStore.health()
+      profileAuditEvents = (try? profileStore.auditEvents()) ?? []
+    } catch {
+      profileStoreHealth = PDFLocalStoreHealth(
+        storeKind: .profile,
+        state: .unknown,
+        primaryAvailable: false,
+        backupAvailable: false,
+        recordCount: 0,
+        auditEventCount: profileAuditEvents.count,
+        recoveryEnvelopeAvailable: false,
+        encryptedBackupRecommended: true,
+        messageCode: "health-check-failed")
+    }
+  }
+
+  private func requestLocalPassphrase(title: String, message: String) -> String? {
+    let alert = NSAlert()
+    alert.messageText = title
+    alert.informativeText = message
+    alert.alertStyle = .informational
+    let field = NSSecureTextField(frame: NSRect(x: 0, y: 0, width: 280, height: 24))
+    field.placeholderString = "At least 12 characters"
+    alert.accessoryView = field
+    alert.addButton(withTitle: "Continue")
+    alert.addButton(withTitle: "Cancel")
+    guard alert.runModal() == .alertFirstButtonReturn else { return nil }
+    let passphrase = field.stringValue
+    return passphrase.isEmpty ? nil : passphrase
+  }
+
+  func exportTemplateRecoveryEnvelope() {
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before exporting recovery material."
+      return
+    }
+    guard let passphrase = requestLocalPassphrase(
+      title: "Export template-vault recovery envelope",
+      message: "This encrypted envelope protects the vault key. Store it separately from the encrypted backup. The passphrase cannot be recovered by the app.") else { return }
+    do {
+      let data = try templateStore.exportRecoveryEnvelope(passphrase: passphrase)
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "pdf-editor-template-vault-recovery.json"
+      panel.begin { [weak self] response in
+        guard response == .OK, let url = panel.url else { return }
+        do {
+          try data.write(to: url, options: .atomic)
+          self?.refreshLocalPersistenceHealth()
+          self?.statusMessage = "Exported encrypted template-vault recovery material. Keep the passphrase separate."
+        } catch {
+          self?.alertMessage = "Could not export template-vault recovery material: \(error.localizedDescription)"
+        }
+      }
+    } catch {
+      alertMessage = "Could not prepare template-vault recovery material: \(error.localizedDescription)"
+    }
+  }
+
+  func importTemplateRecoveryEnvelope() {
+    guard let passphrase = requestLocalPassphrase(
+      title: "Import template-vault recovery envelope",
+      message: "Enter the passphrase used when this recovery envelope was exported. No PDF bytes or profile values are read by this operation.") else { return }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.json]
+    panel.allowsMultipleSelection = false
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      do {
+        try self?.templateStore.recoverKey(from: Data(contentsOf: url), passphrase: passphrase)
+        self?.isTemplateVaultUnlocked = true
+        self?.refreshTemplateIDs()
+        self?.refreshLocalPersistenceHealth()
+        self?.statusMessage = "Recovered the template-vault key. Existing records remain encrypted and require normal review."
+      } catch {
+        self?.alertMessage = "Could not import template-vault recovery material: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  func exportProfileRecoveryEnvelope() {
+    guard isProfileVaultUnlocked else {
+      statusMessage = "Unlock the local profile vault before exporting recovery material."
+      return
+    }
+    guard let passphrase = requestLocalPassphrase(
+      title: "Export profile-vault recovery envelope",
+      message: "This encrypted envelope protects the profile-vault key. It does not contain a readable profile export.") else { return }
+    do {
+      let data = try profileStore.exportRecoveryEnvelope(passphrase: passphrase)
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.json]
+      panel.nameFieldStringValue = "pdf-editor-profile-vault-recovery.json"
+      panel.begin { [weak self] response in
+        guard response == .OK, let url = panel.url else { return }
+        do {
+          try data.write(to: url, options: .atomic)
+          self?.refreshLocalPersistenceHealth()
+          self?.statusMessage = "Exported encrypted profile-vault recovery material. Keep the passphrase separate."
+        } catch {
+          self?.alertMessage = "Could not export profile-vault recovery material: \(error.localizedDescription)"
+        }
+      }
+    } catch {
+      alertMessage = "Could not prepare profile-vault recovery material: \(error.localizedDescription)"
+    }
+  }
+
+  func importProfileRecoveryEnvelope() {
+    guard let passphrase = requestLocalPassphrase(
+      title: "Import profile-vault recovery envelope",
+      message: "Enter the passphrase used when this recovery envelope was exported. Profile values remain inside the encrypted native vault.") else { return }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.json]
+    panel.allowsMultipleSelection = false
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      do {
+        try self?.profileStore.recoverKey(from: Data(contentsOf: url), passphrase: passphrase)
+        self?.isProfileVaultUnlocked = true
+        self?.refreshProfiles()
+        self?.refreshLocalPersistenceHealth()
+        self?.statusMessage = "Recovered the profile-vault key. Select a profile before resolving any values."
+      } catch {
+        self?.alertMessage = "Could not import profile-vault recovery material: \(error.localizedDescription)"
+      }
+    }
+  }
+
+  func deleteAllTemplateVaultRecords() {
+    guard isTemplateVaultUnlocked else {
+      statusMessage = "Unlock the local template vault before deleting its records."
+      return
+    }
+    let alert = NSAlert()
+    alert.messageText = "Delete all local template records?"
+    alert.informativeText = "This removes encrypted templates, learning events, and mappings. The value-free deletion audit remains. This cannot be undone without an encrypted backup."
+    alert.alertStyle = .warning
+    alert.addButton(withTitle: "Delete Records")
+    alert.addButton(withTitle: "Cancel")
+    guard alert.runModal() == .alertFirstButtonReturn else { return }
+    do {
+      try templateStore.deleteAllRecords()
+      templateContract = nil
+      templateRevisionHistory = nil
+      templateCompletionProposal = nil
+      refreshTemplateIDs()
+      refreshLocalPersistenceHealth()
+      statusMessage = "Deleted all encrypted template records. The deletion audit was retained without values."
+    } catch {
+      alertMessage = "Could not delete local template records: \(error.localizedDescription)"
+    }
+  }
+
+  func deleteAllProfileVaultRecords() {
+    guard isProfileVaultUnlocked else {
+      statusMessage = "Unlock the local profile vault before deleting its records."
+      return
+    }
+    let alert = NSAlert()
+    alert.messageText = "Delete all local profile records?"
+    alert.informativeText = "This removes encrypted profile values. The value-free deletion audit remains. This cannot be undone without a separate encrypted recovery path."
+    alert.alertStyle = .warning
+    alert.addButton(withTitle: "Delete Profiles")
+    alert.addButton(withTitle: "Cancel")
+    guard alert.runModal() == .alertFirstButtonReturn else { return }
+    do {
+      try profileStore.deleteAllRecords()
+      currentProfile = nil
+      refreshProfiles()
+      refreshLocalPersistenceHealth()
+      statusMessage = "Deleted all encrypted profile records. The deletion audit was retained without values."
+    } catch {
+      alertMessage = "Could not delete local profile records: \(error.localizedDescription)"
+    }
   }
 
   func refreshTemplateIDs() {
@@ -490,6 +700,23 @@ final class AppModel {
       replaceLiveDocument(document)
       sourceURL = url
       cachedSourceData = data
+      let builtPreflight = PDFPreflightBuilder.build(
+        inspection: nextInspection,
+        data: data,
+        provider: PDFProviderDescriptor(
+          id: "pdfkit",
+          version: ProcessInfo.processInfo.operatingSystemVersionString,
+          platform: "macOS",
+          capabilities: ["read-only-preflight", "metadata-presence", "embedded-data-counts", "network-boundary-counts", "bounded-token-scan"]))
+      do {
+        try PDFPreflightValidator.validate(
+          builtPreflight,
+          expectedSourceDigest: nextInspection.source.sha256)
+        preflightReport = builtPreflight
+      } catch {
+        preflightReport = nil
+        statusMessage = "Opened the PDF, but the read-only privacy preflight is unknown: \(error.localizedDescription)"
+      }
       ocrProcessedPageIndices = []
       operations = []
       replayCheckpoints = []
@@ -579,6 +806,7 @@ final class AppModel {
     replaceLiveDocument(nil)
     sourceURL = nil
     cachedSourceData = nil
+    preflightReport = nil
     ocrProcessedPageIndices = []
     operations = []
     replayCheckpoints = []

@@ -188,7 +188,7 @@ public enum PDFLocalStoreRecoveryCrypto {
 
   public static func validatePassphrase(_ passphrase: String) throws {
     guard passphrase.count >= minimumPassphraseLength else {
-      throw PDFTemplatePersistenceError.keychainFailed("passphrase must contain at least 12 characters")
+      throw PDFTemplatePersistenceError.invalidPassphrase("passphrase must contain at least 12 characters")
     }
   }
 

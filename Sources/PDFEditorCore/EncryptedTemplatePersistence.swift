@@ -30,6 +30,7 @@ public enum PDFTemplatePersistenceError: Error, LocalizedError, Equatable, Senda
     case fileOperationFailed(String)
     case corruptedPrimaryAndBackup
     case decryptionFailed
+    case invalidPassphrase(String)
 
     public var errorDescription: String? {
         switch self {
@@ -41,6 +42,7 @@ public enum PDFTemplatePersistenceError: Error, LocalizedError, Equatable, Senda
         case .fileOperationFailed(let message): "Local persistence file operation failed: \(message)"
         case .corruptedPrimaryAndBackup: "Both the primary and recovery copies are unavailable or unauthenticated."
         case .decryptionFailed: "The local persistence record could not be authenticated."
+        case .invalidPassphrase(let message): "The local persistence passphrase is invalid: \(message)"
         }
     }
 }
@@ -256,6 +258,15 @@ private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unch
             } catch {
                 throw PDFTemplatePersistenceError.fileOperationFailed(error.localizedDescription)
             }
+        }
+    }
+
+    /// Deletes all data records while leaving the separate audit record intact.
+    /// The caller can therefore record the destructive action after the data
+    /// deletion without recreating the deleted values or source identifiers.
+    func deleteAllRecords(excluding excludedIDs: Set<String> = []) throws {
+        for id in try ids() where !excludedIDs.contains(id) {
+            try delete(id)
         }
     }
 
@@ -519,11 +530,22 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
     }
 
     public func health() throws -> PDFLocalStoreHealth {
+        let events = try auditEvents()
         let result = try store.health(
-            auditEventCount: auditEvents().count,
-            recoveryEnvelopeAvailable: false)
+            auditEventCount: events.count,
+            recoveryEnvelopeAvailable: events.contains {
+                $0.action == .recoveryExport && $0.outcome == .succeeded
+            })
         try appendAudit(action: .healthCheck, outcome: .succeeded, state: result.state, reasonCode: result.messageCode)
         return result
+    }
+
+    /// Explicitly deletes all template, learning, and revision records. The
+    /// value-free audit journal is retained and records the destructive action.
+    public func deleteAllRecords() throws {
+        try store.deleteAllRecords()
+        try learningStore.deleteAllRecords()
+        try appendAudit(action: .storeDelete, outcome: .succeeded, state: .deleted, reasonCode: "template-vault-records-deleted")
     }
 
     public func auditEvents() throws -> [PDFLocalStoreAuditEvent] {
@@ -698,11 +720,21 @@ public final class EncryptedPDFProfileVault: @unchecked Sendable {
     }
 
     public func health() throws -> PDFLocalStoreHealth {
+        let events = try auditEvents()
         let result = try store.health(
-            auditEventCount: auditEvents().count,
-            recoveryEnvelopeAvailable: false)
+            auditEventCount: events.count,
+            recoveryEnvelopeAvailable: events.contains {
+                $0.action == .recoveryExport && $0.outcome == .succeeded
+            })
         try appendAudit(action: .healthCheck, outcome: .succeeded, state: result.state, reasonCode: result.messageCode)
         return result
+    }
+
+    /// Explicitly deletes all profile records while retaining the value-free
+    /// deletion audit journal.
+    public func deleteAllRecords() throws {
+        try store.deleteAllRecords()
+        try appendAudit(action: .storeDelete, outcome: .succeeded, state: .deleted, reasonCode: "profile-vault-records-deleted")
     }
 
     public func auditEvents() throws -> [PDFLocalStoreAuditEvent] {

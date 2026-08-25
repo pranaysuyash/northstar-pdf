@@ -334,6 +334,30 @@ to be populated by their real adapters.
   records. Two declared malformed fixtures correctly emitted no session record.
 - Evidence and remaining provider-specific retention/egress work are recorded
   in [`audits/session-privacy-provenance-evidence-2026-08-25.md`](audits/session-privacy-provenance-evidence-2026-08-25.md).
+
+## Reusable template lifecycle
+
+**Status:** Implemented across native Swift and browser adapters. The complete
+evidence record is [`audits/template-lifecycle-evidence-2026-08-25.md`](audits/template-lifecycle-evidence-2026-08-25.md).
+
+- Native template and profile persistence use separate encrypted local vaults,
+  Keychain-backed keys, recovery copies, explicit unlock, deletion, transfer,
+  learning journals, and client-encrypted sync contracts.
+- Browser persistence supports encrypted IndexedDB and encrypted OPFS adapters,
+  encrypted backup/recovery, eviction state, deletion, explicit profile
+  unlock, value-free transfer, learning journals, and zero-content diagnostics.
+- Native and browser review surfaces implement template capture, mapping
+  approval, activation, profile selection/unlock, exact value approval,
+  source-bound operation materialization, export validation, child revision
+  preparation, revision-diff status, import/export, and sync transfer.
+- Strict validation automatically materializes a pending immutable child
+  revision and learning event in session memory. Explicit save is still
+  required before the child changes persistent future matching behavior.
+- Silent autofill remains prohibited by the shared materialization gate and
+  mutation-tested approval, source-digest, coordinate, and validation rules.
+- Remaining items are operational hardening and provider evidence: browser
+  quota tests, Keychain/passphrase-loss recovery, sync-service retention and
+  revocation, native UI accessibility, and independent-viewer export evidence.
 6. Profile the native app on representative hardware and complete exact dependency,
    packaging, accessibility, and security review.
 7. If a declared workflow triggers the companion admission gate, implement the

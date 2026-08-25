@@ -111,6 +111,13 @@ Current durable research artifacts:
   and browser reviewed completion workflow with separate mapping approval and
   exact profile-value approval, target/value invalidation, source binding, and
   mutation-tested materialization gates.
+- [`docs/audits/template-lifecycle-evidence-2026-08-25.md`](docs/audits/template-lifecycle-evidence-2026-08-25.md),
+  [`Sources/PDFEditorCore/TemplateLifecycleContracts.swift`](Sources/PDFEditorCore/TemplateLifecycleContracts.swift),
+  [`Sources/PDFEditorCore/TemplateSyncContracts.swift`](Sources/PDFEditorCore/TemplateSyncContracts.swift),
+  and [`web/pdf-template-sync.mjs`](web/pdf-template-sync.mjs): complete
+  encrypted native/browser template lifecycle with OPFS, IndexedDB, Keychain,
+  separate profile unlock, deletion and recovery, value-free transfer,
+  revision diffs, learning journals, and client-encrypted sync.
 - [`web/template-match-benchmark.mjs`](web/template-match-benchmark.mjs) and
   [`Tests/web_template_match_benchmark_test.mjs`](Tests/web_template_match_benchmark_test.mjs):
   reviewer-labeled 24-case exact, known-variant, family, ambiguous, stale, and

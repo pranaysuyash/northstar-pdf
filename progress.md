@@ -1939,3 +1939,34 @@
   normalization, encrypted page-box precision, rotation transform
   reconciliation, candidate grouping/classification parity, and fresh native
   plus isolated-browser regeneration after those changes.
+
+### 2026-08-25 Complete encrypted reviewed-template lifecycle
+
+- Implemented the previously documented template boundary rather than leaving
+  it as design-only: encrypted native Keychain/local vaults, encrypted browser
+  IndexedDB, encrypted OPFS, separate profile storage, explicit unlock,
+  deletion, recovery, transfer, learning journal, revision diff, and
+  client-encrypted sync are now wired through the existing canonical contracts.
+- Native and browser review surfaces now cover capture, mapping approval,
+  activation, profile selection/unlock, exact profile-value approval,
+  source-bound materialization, validated export promotion, and explicit child
+  revision persistence. No silent autofill path was added.
+- Strict validation creates a pending immutable child revision and learning
+  event automatically in session memory. Explicit save is required before
+  persistent future matching behavior changes.
+- Hardened OPFS so locked profile ciphertext survives unrelated template writes,
+  health checks, and deletion. Profile values remain inaccessible until the
+  profile passphrase is explicitly supplied.
+- Browser revision-diff counts are now visible in the template review summary.
+- Verification: `swift test` passed 94 tests in 10 suites. The isolated Chrome
+  template workflow passed IndexedDB and OPFS round-trip, encrypted backup,
+  locked-profile preservation, explicit profile unlock, deletion, and zero
+  console/page errors. Contract, sync, security, matching, correction,
+  provenance, preflight, and native/browser parity checks passed.
+- Evidence is recorded in
+  [`docs/audits/template-lifecycle-evidence-2026-08-25.md`](docs/audits/template-lifecycle-evidence-2026-08-25.md).
+- Remaining unknowns are runtime hardening and provider gates: browser-family
+  quota/eviction stress, interrupted OPFS writes, Keychain/passphrase loss,
+  native interactive accessibility, sync-service retention/revocation, secure
+  deletion across backups, and independent-viewer evidence after completion
+  export.

@@ -765,6 +765,38 @@ Implementation and evidence:
 - [`Tests/browser_export_independent_viewer_validator_test.mjs`](Tests/browser_export_independent_viewer_validator_test.mjs)
 - [`docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md`](docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md)
 
+### Phase 33: Complete encrypted reviewed-template lifecycle
+
+**Status:** Implemented in native and browser adapters. Operational recovery,
+interactive accessibility, and sync-service gates remain measurable long-term
+hardening work.
+
+- Persist template histories through native encrypted Keychain-backed storage,
+  browser encrypted IndexedDB, and encrypted OPFS.
+- Keep profile values in separate encrypted vault namespaces and require
+  explicit unlock before value resolution.
+- Provide capture, mapping review, activation, profile-value review,
+  source-bound operation materialization, validated child revision creation,
+  and explicit persistence without silent autofill.
+- Journal value-free learning events and promote them only after strict export,
+  reopen, source, coordinate, and operation-lineage validation.
+- Support value-free template transfer import/export, revision diff summaries,
+  encrypted backup/recovery, deletion, eviction detection, and client-encrypted
+  sync merge with conflict abstention.
+- Verify native/browser semantic parity and preserve expected provider
+  mismatches instead of normalizing them away.
+
+Implementation and evidence:
+
+- [`Sources/PDFEditorCore/TemplateLifecycleContracts.swift`](Sources/PDFEditorCore/TemplateLifecycleContracts.swift)
+- [`Sources/PDFEditorCore/TemplateSyncContracts.swift`](Sources/PDFEditorCore/TemplateSyncContracts.swift)
+- [`Sources/PDFEditorCore/EncryptedTemplatePersistence.swift`](Sources/PDFEditorCore/EncryptedTemplatePersistence.swift)
+- [`web/pdf-template-store.mjs`](web/pdf-template-store.mjs)
+- [`web/pdf-template-sync.mjs`](web/pdf-template-sync.mjs)
+- [`Tests/PDFEditorCoreTests/EncryptedTemplatePersistenceTests.swift`](Tests/PDFEditorCoreTests/EncryptedTemplatePersistenceTests.swift)
+- [`Tests/web_template_browser_test.mjs`](Tests/web_template_browser_test.mjs)
+- [`docs/audits/template-lifecycle-evidence-2026-08-25.md`](docs/audits/template-lifecycle-evidence-2026-08-25.md)
+
 ### Phase 30: Encrypted local template persistence and separate profile vaults
 
 **Status:** Native and browser persistence implemented and focused-tested;

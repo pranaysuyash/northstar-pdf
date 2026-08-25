@@ -357,6 +357,7 @@ public final class EncryptedPDFTemplateStore: @unchecked Sendable {
 
     public func delete(templateID: UUID) throws {
         try store.delete(templateID.uuidString)
+        try learningStore.delete(templateID.uuidString)
     }
 
     public func templateIDs() throws -> [UUID] {

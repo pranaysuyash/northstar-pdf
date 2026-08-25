@@ -885,3 +885,21 @@ require review before operations, bind every operation to the current source
 digest, and learn only from explicitly confirmed, validated sessions. Defer
 cloud sync, silent autofill, and arbitrary content editing until separate
 privacy, fidelity, and recovery gates are passed.
+
+## Implementation addendum, 2026-08-25
+
+The formerly proposed persistence and review boundary is now implemented in
+the native and browser adapters. Native uses encrypted Keychain-backed template
+and profile vaults. The browser supports encrypted IndexedDB and OPFS stores,
+with encrypted backup/recovery, deletion, eviction state, and zero-content
+diagnostics. Both adapters expose capture, mapping approval, profile unlock,
+exact value approval, source-bound operations, validated child revision
+preparation, value-free transfer, learning journals, revision diffs, and
+client-encrypted sync contracts.
+
+The implementation preserves the original safety decision. Strict validation
+creates a pending immutable child revision automatically in the current
+session, but persistent future matching changes only after explicit reviewer
+save. This is automatic audit materialization, not silent autofill or silent
+template mutation. The implementation evidence and remaining runtime gates are
+recorded in [`audits/template-lifecycle-evidence-2026-08-25.md`](audits/template-lifecycle-evidence-2026-08-25.md).

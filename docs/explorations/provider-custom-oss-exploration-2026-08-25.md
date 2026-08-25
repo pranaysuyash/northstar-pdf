@@ -243,10 +243,19 @@ via L2. Everything safety-/review-critical stays custom-built.
 - **Status of claim:** `Verified` (independent re-read + independent qpdf check +
   deliberate falsifier). Closing `RG-001`/`RG-002` without leaving local-first or
   taking a copyleft/commercial dependency.
-- **Integration next step (not yet wired):** route external-AcroForm fill in
-  `web/pdf-contract-mutation-gate.mjs` through `incrementalFieldUpdate` instead of
-  pdf-lib; keep PDFKit for render/UI. This swap is deferred to a follow-up so the
-  existing bounded-edit lane is not disturbed (regression guard).
+- **Integration (wired 2026-08-25):** `web/pdf-contract-mutation-gate.mjs` now
+  exposes `selectWriterLane` + `guardedSourcePreservingExport`. External-AcroForm
+  `nativeFieldValue` operations with resolved object-level edit plans route
+  through the incremental writer; everything else falls back to the pdf-lib
+  lane. The gate re-verifies the byte-exact prefix invariant on every output
+  before it can be persisted, and contract preflight still runs before any
+  writer execution. Validated by `Tests/pdf-source-preserving-lane_test.mjs`
+  (lane selection, stale-digest rejection before writer, lane fallback,
+  end-to-end prefix preservation, independent pikepdf reopen, and a tampered-
+  writer invariant guard). Pre-existing browser gate test
+  (`Tests/web_pdf_contract_mutation_test.mjs`) still passes — note it needs
+  `PDF_PROOF_BASE_URL` pointing at a free port; :4173 is squatted by an
+  unrelated local Vite process.
 
 ## 8. Provenance
 

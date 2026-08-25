@@ -1,0 +1,17 @@
+{
+  "fixture": "public-acroform + synthetic-dirty-acroform",
+  "inputSHA256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8 (base fixture)",
+  "provider": "custom /Prev-chain analyzer",
+  "transform": "hidden-revision analysis",
+  "revisionChainWalk": true,
+  "shadowInventory": true,
+  "activeContentRemnantScan": ["/JS", "/JavaScript", "/Launch", "/OpenAction", "/SubmitForm", "/EmbeddedFile"],
+  "results": {
+    "singleRevisionFixture": { "revisions": 1, "shadowed": 0 },
+    "incrementalUpdate": { "revisions": 2, "shadowed": [24, 25, 30] },
+    "remnantCase": { "currentRevision": "clean (/OpenAction null)", "flagged": "object 1 revision 1 marker=/JS" },
+    "falsifierFullRewrite": { "revisions": 1, "note": "rewrite destroys history — rewriting cannot detect what only analysis can" }
+  },
+  "scope": "Detects revisions and shadowed objects via /Prev chain; scans unreachable bodies for active-content remnants. Remediation of flagged remnants is a separate bounded decision.",
+  "evidence": "Tests/pdf-hidden-revision-analyzer_test.mjs"
+}

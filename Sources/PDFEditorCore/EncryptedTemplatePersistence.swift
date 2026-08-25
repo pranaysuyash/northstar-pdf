@@ -171,6 +171,58 @@ private struct KeychainPersistenceKeyProvider {
     }
 }
 
+// MARK: - Keychain Signature Store (D-010 / Task 1)
+/// Hardware/Keychain-backed persistent custody for user signature stamps.
+public struct KeychainSignatureStore: Sendable {
+    public static let serviceName = "com.northstar.pdf.signatures"
+    public static let accountName = "user-signatures-vault"
+
+    public init() {}
+
+    public func loadSignatures() -> [SavedSignature] {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: Self.serviceName,
+            kSecAttrAccount as String: Self.accountName,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne,
+        ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess, let data = result as? Data else { return [] }
+        return (try? JSONDecoder().decode([SavedSignature].self, from: data)) ?? []
+    }
+
+    public func saveSignatures(_ signatures: [SavedSignature]) {
+        guard let data = try? JSONEncoder().encode(signatures) else { return }
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: Self.serviceName,
+            kSecAttrAccount as String: Self.accountName,
+        ]
+
+        let checkStatus = SecItemCopyMatching(query as CFDictionary, nil)
+        if checkStatus == errSecSuccess {
+            let updateAttrs: [String: Any] = [kSecValueData as String: data]
+            SecItemUpdate(query as CFDictionary, updateAttrs as CFDictionary)
+        } else {
+            var addQuery = query
+            addQuery[kSecValueData as String] = data
+            addQuery[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            SecItemAdd(addQuery as CFDictionary, nil)
+        }
+    }
+
+    public func clearSignatures() {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: Self.serviceName,
+            kSecAttrAccount as String: Self.accountName,
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+}
+
 private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unchecked Sendable {
     private let directory: URL
     private let recordKind: PDFTemplateStoreRecordKind

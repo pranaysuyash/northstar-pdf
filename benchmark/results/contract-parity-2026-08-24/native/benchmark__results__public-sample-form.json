@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-25T09:45:12Z",
+    "generatedAt" : "2026-08-25T10:12:11Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -48,7 +48,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-25T09:45:12Z",
+      "generatedAt" : "2026-08-25T10:12:11Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -265,7 +265,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-25T09:45:12Z",
+      "generatedAt" : "2026-08-25T10:12:11Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -828,7 +828,7 @@
   "validation" : {
     "checks" : [
       {
-        "id" : "8F676033-B8E0-405D-95B2-A98FBFB793B6",
+        "id" : "EB6DA20F-2F26-46DC-9E8A-3DF6F840237A",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -837,7 +837,7 @@
         "status" : "passed"
       },
       {
-        "id" : "B267AAA2-F599-492E-AD06-950ECACAB596",
+        "id" : "CF0A6D03-6946-495D-BFA8-46EC75E79937",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 1 page(s).",
         "operationIDs" : [
@@ -846,7 +846,7 @@
         "status" : "passed"
       },
       {
-        "id" : "8291FAFB-A1F9-4A9F-B2CF-5E99A2E17198",
+        "id" : "6233C983-F9EF-40CB-AC69-937BF091EF25",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -855,7 +855,7 @@
         "status" : "passed"
       },
       {
-        "id" : "124E4E1B-BDD6-4659-9AA5-4030D01A589F",
+        "id" : "07396662-589E-4B49-A7E9-D4927201E3A9",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -864,7 +864,7 @@
         "status" : "passed"
       },
       {
-        "id" : "D64C4555-D811-4D32-87B0-60DF5EF4880B",
+        "id" : "5E2956B0-6065-4544-8258-0A59B1F30395",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -873,7 +873,7 @@
         "status" : "passed"
       },
       {
-        "id" : "FD7E8B0C-AA59-4AE4-9017-78EC31D0A0DE",
+        "id" : "C708CD2D-6EE7-418E-9C19-CB2498C5D853",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -882,7 +882,7 @@
         "status" : "passed"
       },
       {
-        "id" : "EF07DF9D-D071-46B0-9C28-1A67BE92D509",
+        "id" : "DE97242C-5F0D-4B8B-B07E-FFC8246604DB",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -913,7 +913,7 @@
     "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-25T09:45:14Z"
+    "validatedAt" : "2026-08-25T10:12:12Z"
   },
   "version" : {
     "major" : 1,

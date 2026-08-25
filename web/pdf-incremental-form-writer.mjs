@@ -142,7 +142,7 @@ function dictClose(text) {
 function extractTrailerKeys(dictText) {
   const keys = {};
   for (const k of ["/Root", "/Encrypt", "/Info", "/ID", "/Size", "/Prev"]) {
-    const re = new RegExp(k + "\\s*(\\<\\<[\\s\\S]*?\\>\\>|\\[[\\s\\S]*?\\]|/[^\\s\\]]+|\\d+\\s+\\d+\\s+R)");
+    const re = new RegExp(k + "\\s*(\\<\\<[\\s\\S]*?\\>\\>|\\[[\\s\\S]*?\\]|/[^\\s\\]]+|\\d+\\s+\\d+\\s+R|-?\\d+)");
     const m = dictText.match(re);
     if (m) keys[k] = m[1];
   }
@@ -241,6 +241,10 @@ function readInt(buf, pos, len) {
 
 export function readSourceXref(buf) {
   const off = findLastStartxref(buf);
+  return readXrefAt(buf, off);
+}
+
+export function readXrefAt(buf, off) {
   if (isXrefTable(buf, off)) return { type: "table", offset: off, ...parseClassicXref(buf, off) };
   return { type: "stream", offset: off, ...parseXrefStream(buf, off) };
 }

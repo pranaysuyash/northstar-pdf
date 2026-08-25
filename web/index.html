@@ -39,6 +39,12 @@
         <strong>PDF Editor</strong>
         <span>Local document workspace</span>
       </div>
+      <div class="control-row" role="radiogroup" aria-label="Editor Mode" id="webEditorModePill">
+        <button type="button" class="mode-pill-btn is-active" id="webModeRead" data-mode="read" aria-checked="true" role="radio">Read</button>
+        <button type="button" class="mode-pill-btn" id="webModeFill" data-mode="fill" aria-checked="false" role="radio">Fill</button>
+        <button type="button" class="mode-pill-btn" id="webModeSign" data-mode="sign" aria-checked="false" role="radio">Sign</button>
+        <button type="button" class="mode-pill-btn" id="webModeEdit" data-mode="edit" aria-checked="false" role="radio">Edit</button>
+      </div>
       <div class="control-row">
         <label for="fileInput">PDF</label>
         <input id="fileInput" type="file" accept=".pdf">

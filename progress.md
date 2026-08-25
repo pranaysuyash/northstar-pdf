@@ -2177,3 +2177,17 @@
   - Swift test suite: **122 tests across 16 suites passing** (including `redTeamRT001ProfileIsNotStoredAsPlaintextJSON` and `redTeamRT003VCardImportTruncatesLongValues`).
   - Web companion: `web_reader_contract_test.mjs` (51 checks), `web_accessibility_gate_test.mjs`, `web_pdf_contract_mutation_test.mjs`, and `web_pdf_impact_validator_test.mjs` all passing.
 - Durable audit report updated at [`docs/audits/red-team-campaign-audit-per-pdev-0168.md`](docs/audits/red-team-campaign-audit-per-pdev-0168.md).
+
+### 2026-08-25 Performance & Resource Architecture Audit (PER-PL2-0033)
+
+- Adopted **Persona `PER-PL2-0033 — PERFORMANCE TEST ENGINEER`** (supported by `PER-PDEV-0158 — STRESS TEST ENGINEER` and `PER-PDEV-0160 — CAPACITY TEST ENGINEER`).
+- Executed comprehensive performance and resource telemetry evaluation across the 28-fixture corpus using `PDFPerformanceBenchmark` and `NativeMemoryTelemetry`.
+- **Memory Footprint Optimization:** Identified critical memory accumulation in multi-page CoreGraphics and Vision pipelines due to missing per-page autorelease pool drainage. Wrapped page loops in `PDFImpactValidator.compareRasterOutsideRegions`, `PDFVectorStreamParser.parse`, and `OCR.VisionOCRProvider.recognize` with `autoreleasepool { ... }`.
+  - Peak physical memory footprint reduced from **529.9 MB to 26.3 MB (-95.0%)**.
+  - Resident memory (RSS) reduced from **788.5 MB to 275.7 MB (-65.0%)**.
+- **Granular Performance Telemetry:** Expanded `PerformanceStage` with 5 new discrete stages: `.impactValidation`, `.ocr`, `.vectorParse`, `.diff`, and `.templateMatch`, along with corresponding `measure*` methods in `PerformanceTelemetry`.
+- **Regression Test Suite:** Added `Tests/PDFEditorCoreTests/PerformanceTelemetryTests.swift` (6 tests covering stage dispatch, percentile mathematics, memory counter extraction, and memory stability under loop stress).
+- **Verification:**
+  - `swift test` passed all **128 tests across 17 suites** with 0 failures.
+  - Performance benchmark completed cleanly across the representative corpus.
+- Durable audit report published at [`docs/audits/performance-and-resource-audit-per-pl2-0033.md`](docs/audits/performance-and-resource-audit-per-pl2-0033.md).

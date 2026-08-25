@@ -204,6 +204,19 @@ body {
   border-radius: 5px;
 }
 
+.mode-pill-btn {
+  padding: 4px 10px !important;
+  font-weight: 500 !important;
+  border-radius: 6px !important;
+  transition: all var(--pdf-motion);
+}
+
+.mode-pill-btn.is-active {
+  background: var(--pdf-accent) !important;
+  border-color: var(--pdf-accent-soft) !important;
+  color: #ffffff !important;
+}
+
 .toolbar input[type="file"] {
   max-width: 168px;
   padding: 5px 6px;

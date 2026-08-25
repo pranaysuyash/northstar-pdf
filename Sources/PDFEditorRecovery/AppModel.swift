@@ -330,6 +330,7 @@ public final class AppModel {
       refreshTemplateIDs()
       refreshLocalPersistenceHealth()
     }
+    loadVaultSignatures()
     refreshRecoveryDiscovery()
   }
 
@@ -1959,6 +1960,57 @@ public final class AppModel {
     }
   }
 
+  /// Apply a visual annotation (highlight, note, rectangle, or freehand drawing).
+  public func applyVisualAnnotation(kind: EditKind, bounds: PDFRect, value: String, pageIndex: Int) {
+    guard requirePermission(.addAnnotations, action: "Add visual annotation") else { return }
+    guard let liveDocument else { return }
+
+    let operation = EditOperation(
+      pageIndex: pageIndex,
+      kind: kind,
+      value: value,
+      bounds: bounds,
+      sourceDigest: inspection?.source.sha256,
+      sessionID: currentSessionID
+    )
+    do {
+      try provider.apply(operation, to: liveDocument)
+      recordAppliedOperation(operation)
+      statusMessage = "Added \(kind.rawValue) annotation on page \(pageIndex + 1)."
+    } catch {
+      alertMessage = error.localizedDescription
+    }
+  }
+
+  // MARK: - Keychain Signature Vault Operations (D-010 / Task 1)
+
+  /// Refresh signatures in memory from hardware/Keychain store.
+  public func loadVaultSignatures() {
+    let store = KeychainSignatureStore()
+    savedSignatures = store.loadSignatures()
+  }
+
+  /// Persist a newly drawn/typed/imported signature into the Keychain-backed vault.
+  public func saveSignatureToVault(label: String, dataURL: String) {
+    let newSig = SavedSignature(label: label, dataURL: dataURL)
+    var current = savedSignatures
+    current.append(newSig)
+    let store = KeychainSignatureStore()
+    store.saveSignatures(current)
+    savedSignatures = current
+    statusMessage = "Saved signature to secure Keychain vault."
+  }
+
+  /// Delete a saved signature from Keychain custody.
+  public func deleteSignatureFromVault(id: UUID) {
+    var current = savedSignatures
+    current.removeAll { $0.id == id }
+    let store = KeychainSignatureStore()
+    store.saveSignatures(current)
+    savedSignatures = current
+    statusMessage = "Removed signature from Keychain vault."
+  }
+
   private func requirePermission(_ requirement: PermissionRequirement, action: String) -> Bool {
     guard let permissions = inspection?.permissions else {
       denyAction(
@@ -2645,6 +2697,131 @@ public final class AppModel {
     scheduleViewStateAutosave()
   }
 
+  /// Permanent per-page rotation committed as an EditOperation.
+  public func rotatePage(at index: Int, by degrees: Int) {
+    guard let doc = liveDocument, index >= 0, index < doc.pageCount else { return }
+    guard requirePermission(.modify, action: "Rotate page") else { return }
+    let page = doc.page(at: index)
+    let currentRotation = page?.rotation ?? 0
+    let newRotation = (currentRotation + degrees + 360) % 360
+    page?.rotation = newRotation
+
+    let op = EditOperation(
+      pageIndex: index,
+      kind: .pageTransform,
+      value: "\(newRotation)",
+      sessionID: currentSessionID,
+      sourceDigest: inspection?.source.sha256
+    )
+    recordAppliedOperation(op)
+    statusMessage = "Rotated page \(index + 1) to \(newRotation)°."
+  }
+
+  /// Move/reorder a page in the active live document.
+  public func movePage(from sourceIndex: Int, to destinationIndex: Int) {
+    guard let doc = liveDocument else { return }
+    guard sourceIndex >= 0, sourceIndex < doc.pageCount,
+          destinationIndex >= 0, destinationIndex < doc.pageCount,
+          sourceIndex != destinationIndex else { return }
+    guard requirePermission(.modify, action: "Move page") else { return }
+
+    guard let page = doc.page(at: sourceIndex) else { return }
+    doc.removePage(at: sourceIndex)
+    doc.insert(page, at: destinationIndex)
+
+    let op = EditOperation(
+      pageIndex: sourceIndex,
+      kind: .pageMove,
+      value: "\(sourceIndex) -> \(destinationIndex)",
+      sessionID: currentSessionID,
+      sourceDigest: inspection?.source.sha256
+    )
+    recordAppliedOperation(op)
+    selectedPageIndex = destinationIndex
+    statusMessage = "Moved page \(sourceIndex + 1) to position \(destinationIndex + 1)."
+  }
+
+  /// Remove a page from the active document (retains source immutability).
+  public func deletePage(at index: Int) {
+    guard let doc = liveDocument else { return }
+    guard doc.pageCount > 1 else {
+      statusMessage = "Cannot delete the only page in the document."
+      return
+    }
+    guard index >= 0, index < doc.pageCount else { return }
+    guard requirePermission(.modify, action: "Delete page") else { return }
+
+    doc.removePage(at: index)
+
+    let op = EditOperation(
+      pageIndex: index,
+      kind: .pageDelete,
+      value: "\(index)",
+      sessionID: currentSessionID,
+      sourceDigest: inspection?.source.sha256
+    )
+    recordAppliedOperation(op)
+    selectedPageIndex = min(index, doc.pageCount - 1)
+    statusMessage = "Deleted page \(index + 1)."
+  }
+
+  /// Insert a blank page at the target index (or end of document).
+  public func insertBlankPage(at targetIndex: Int? = nil, size: CGSize = CGSize(width: 612, height: 792)) {
+    guard let doc = liveDocument else { return }
+    guard requirePermission(.modify, action: "Insert blank page") else { return }
+
+    let index = targetIndex ?? doc.pageCount
+    let clampedIndex = min(max(index, 0), doc.pageCount)
+
+    let blankPage = PDFPage()
+    blankPage.setBounds(CGRect(origin: .zero, size: size), for: .mediaBox)
+    blankPage.setBounds(CGRect(origin: .zero, size: size), for: .cropBox)
+    doc.insert(blankPage, at: clampedIndex)
+
+    let op = EditOperation(
+      pageIndex: clampedIndex,
+      kind: .pageInsert,
+      value: "blank:\(Int(size.width))x\(Int(size.height))",
+      sessionID: currentSessionID,
+      sourceDigest: inspection?.source.sha256
+    )
+    recordAppliedOperation(op)
+    selectedPageIndex = clampedIndex
+    statusMessage = "Inserted blank page at position \(clampedIndex + 1)."
+  }
+
+  /// Insert pages from an imported external PDF file.
+  public func insertPages(from sourceURL: URL, at targetIndex: Int? = nil) {
+    guard let doc = liveDocument else { return }
+    guard let importedDoc = PDFDocument(url: sourceURL) else {
+      alertMessage = "Could not open the selected PDF for page insertion."
+      return
+    }
+    guard requirePermission(.modify, action: "Insert pages") else { return }
+
+    let index = targetIndex ?? doc.pageCount
+    var insertionIndex = min(max(index, 0), doc.pageCount)
+    let pageCount = importedDoc.pageCount
+
+    for pageNum in 0..<pageCount {
+      if let page = importedDoc.page(at: pageNum)?.copy() as? PDFPage {
+        doc.insert(page, at: insertionIndex)
+        insertionIndex += 1
+      }
+    }
+
+    let op = EditOperation(
+      pageIndex: index,
+      kind: .pageInsert,
+      value: "import:\(pageCount):\(sourceURL.lastPathComponent)",
+      sessionID: currentSessionID,
+      sourceDigest: inspection?.source.sha256
+    )
+    recordAppliedOperation(op)
+    selectedPageIndex = index
+    statusMessage = "Inserted \(pageCount) page\(pageCount == 1 ? "" : "s") from \(sourceURL.lastPathComponent)."
+  }
+
   public func resetReaderState() {
     readerViewMode = .continuous
     readerScaleMode = .fitWidth
@@ -2680,6 +2857,21 @@ public final class AppModel {
       }
       // Save session after successful export
       saveSession()
+    } catch {
+      alertMessage = error.localizedDescription
+    }
+  }
+
+  /// Export a flattened copy where all form fields, annotations, and visual stamps are rasterized/baked.
+  public func exportFlattenedCopy(destination: URL) {
+    guard let doc = liveDocument else { return }
+    guard let data = doc.dataRepresentation(options: [.burnInAnnotationsOption: true]) else {
+      alertMessage = "Failed to generate flattened PDF representation."
+      return
+    }
+    do {
+      try data.write(to: destination, options: .atomic)
+      statusMessage = "Exported flattened copy to \(destination.lastPathComponent)."
     } catch {
       alertMessage = error.localizedDescription
     }

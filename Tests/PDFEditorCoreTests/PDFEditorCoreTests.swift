@@ -1526,4 +1526,24 @@ struct PDFEditorCoreTests {
     #expect(state.initialValue == "John Doe")
     #expect(state.label == "Full Name")
   }
+
+  @Test func keychainSignatureStoreRoundTrips() {
+    let store = KeychainSignatureStore()
+    store.clearSignatures()
+
+    let testSig = SavedSignature(
+      label: "Official Seal",
+      dataURL: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+    )
+
+    store.saveSignatures([testSig])
+    let loaded = store.loadSignatures()
+
+    #expect(loaded.count == 1)
+    #expect(loaded.first?.id == testSig.id)
+    #expect(loaded.first?.label == "Official Seal")
+
+    store.clearSignatures()
+    #expect(store.loadSignatures().isEmpty)
+  }
 }

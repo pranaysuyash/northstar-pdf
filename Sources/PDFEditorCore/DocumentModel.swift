@@ -441,6 +441,15 @@ public struct SavedSignature: Codable, Equatable, Hashable, Identifiable, Sendab
   public let dataURL: String
   public let createdAt: Date
 
+  public var rawImageData: Data? {
+    let prefix = "base64,"
+    if let range = dataURL.range(of: prefix) {
+      let base64 = String(dataURL[range.upperBound...])
+      return Data(base64Encoded: base64)
+    }
+    return Data(base64Encoded: dataURL)
+  }
+
   public init(id: UUID = UUID(), label: String, dataURL: String, createdAt: Date = Date()) {
     self.id = id
     self.label = label

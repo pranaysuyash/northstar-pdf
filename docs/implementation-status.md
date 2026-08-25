@@ -144,6 +144,9 @@ current product claim is blocked.
   - Mode persistence preference (UserDefaults-backed) supporting both casual (resets to Read) and professional (preserves mode) workflows.
   - Fill progress calculation, dynamic status bar chips, and keyboard tab-order navigation across native fields and active candidates in page reading order.
   - **Inline Canvas Text Editor**: Contextual floating in-place editor spawned directly at page viewport coordinates for tapped native fields and candidates; pressing Return commits the value and advances tab-order focus to the next field.
+  - **Interactive Page Operations Workspace**: Contextual menus and actions on thumbnail items in `PageThumbnailRailView` for 90° clockwise/counter-clockwise rotation, Move Page Up, Move Page Down, and permanent page deletion (preserving original file immutability).
+  - **Web Companion Intent Parity**: Segmented intent mode control (`Read`, `Fill`, `Sign`, `Edit`) in `web/` companion with accessible ARIA radio semantics and coordinated viewport highlights.
+  - **Keychain-Backed Signature Vault**: Full macOS Security framework integration (`kSecClassGenericPassword`, `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`) providing hardware-backed, encrypted custody for user signature stamps across sessions.
   - Full-featured `SignatureSheet` with multi-modal input (Draw canvas, Type with typography styles, Image file upload, and Saved signatures store).
   - Explicit two-phase redaction workflow with hard confirmation gate (L3) alerting the user of permanent data destruction before committing `.applyRedaction`.
   - Intent inference engine routing page clicks to inline editors, sign sheets, or direct placements based on active mode and tapped element semantics.

@@ -4871,6 +4871,33 @@
       : "Visual diff overlay disabled.");
   });
 
+  // MARK: - Editor Mode Pill (D-010 / Web Parity)
+  const modePillButtons = {
+    read: document.getElementById("webModeRead"),
+    fill: document.getElementById("webModeFill"),
+    sign: document.getElementById("webModeSign"),
+    edit: document.getElementById("webModeEdit")
+  };
+
+  let currentWebEditorMode = "read";
+
+  function setWebEditorMode(mode) {
+    currentWebEditorMode = mode;
+    Object.entries(modePillButtons).forEach(([key, btn]) => {
+      if (btn) {
+        const isActive = key === mode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-checked", isActive ? "true" : "false");
+      }
+    });
+    setStatus(`Switched to ${mode.toUpperCase()} mode.`);
+    renderVisiblePages();
+  }
+
+  Object.entries(modePillButtons).forEach(([mode, btn]) => {
+    btn?.addEventListener("click", () => setWebEditorMode(mode));
+  });
+
   ui.passwordForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     await loadPdf(pdfData, ui.passwordInput.value);

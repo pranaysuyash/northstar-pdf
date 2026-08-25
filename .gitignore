@@ -38,3 +38,6 @@ coverage/
 
 # Local generated fixtures and scratch outputs
 tmp/
+
+# Agent-generated reports and task outputs
+outputs/

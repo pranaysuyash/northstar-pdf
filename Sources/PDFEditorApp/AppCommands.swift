@@ -41,6 +41,7 @@ private enum PDFEditorCommand: Hashable {
     case singlePage
     case continuous
     case twoUp
+    case compareDiff
 }
 
 @MainActor
@@ -82,7 +83,7 @@ private struct PDFEditorCommandRouter {
         case .firstPage, .previousPage, .nextPage, .lastPage:
             return (model?.currentPageCount ?? 0) > 0
         case .zoomIn, .zoomOut, .actualSize, .fitPage, .fitWidth,
-             .singlePage, .continuous, .twoUp:
+             .singlePage, .continuous, .twoUp, .compareDiff:
             return model?.liveDocument != nil
         }
     }
@@ -148,6 +149,8 @@ private struct PDFEditorCommandRouter {
             model?.setReaderViewMode(.continuous)
         case .twoUp:
             model?.setReaderViewMode(.twoPage)
+        case .compareDiff:
+            model?.showDiffSheet = true
         }
     }
 
@@ -378,6 +381,14 @@ struct AppCommands: Commands {
                 }
                 .disabled(!router.isEnabled(.twoUp))
             }
+
+            Divider()
+
+            Button("Compare Visual Diff...") {
+                router.perform(.compareDiff)
+            }
+            .keyboardShortcut("d", modifiers: [.command, .option])
+            .disabled(!router.isEnabled(.compareDiff))
         }
 
         CommandGroup(after: .windowArrangement) {

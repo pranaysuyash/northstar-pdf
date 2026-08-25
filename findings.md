@@ -1584,3 +1584,72 @@ block claiming a final engine, cross-platform fidelity, or licensing clearance.
   `benchmark/results/semantic-parity/2026-08-25/fingerprint-parity-report.json`,
   `Tests/native_browser_fingerprint_parity_test.mjs`, and
   `docs/audits/native-browser-fingerprint-parity-evidence-2026-08-25.md`.
+
+### F-069: PDFBox passes the external-AcroForm gate PDFKit fails; five review fixes landed with fail-closed evidence
+
+- **Date:** 2026-08-25
+- **Status:** Runtime-verified (Tier 2/S1) for the PDFBox lane and the five
+  Swift fixes; broader PDFBox corpus and raster parity remain open.
+- **PDFBox lane evidence:** `benchmark/pdfbox-lane/` (RadioProbe.java + run.sh)
+  against the same public sample that fails in PDFKit. PDFBox 3.0.8
+  (`pdfbox-app` fat jar, SHA-512 `76884723…e9600` verified against the published
+  digest) preserved `applicant.contact` radio export values `email|phone`
+  across a no-op save/reload with `perFieldDiffs: []` across all six fields,
+  retained a mutated text value, and left the source unchanged. All four oracle
+  booleans (`noOpReopen`, `widgetStateEquivalent`, `mutatedReopen`,
+  `originalUnchanged`) are true; the PDFKit gate fails `widgetStateEquivalent`
+  on the identical fixture (F-016). The native-widget fixture correctly
+  reports `fieldCount: 0` (no `/AcroForm` dictionary), a valid negative
+  control. Observed PDFBox quirks: `getOnValues()` returns a `Set` while
+  `getExportValues()` returns a `List`; unchecked radios report value `"Off"`
+  even when not in export values; `PDChoice.getValue()` is a list.
+- **Implication:** The radio-choice loss is PDFKit-specific, not systemic.
+  PDFBox is now the leading form-aware provider lane; PDFKit remains
+  acceptable for AcroForm-free documents behind the structural export guard.
+- **Five fixes landed with tests (`ReviewFixVerificationTests`):**
+  1. Structural AcroForm detection via the CGPDF catalog replaces the raw
+     `/AcroForm` byte scan. The byte scan false-positived on the literal
+     string in annotation/content text and false-negatived under object
+     streams. A fixture whose FreeText contents are literally `/AcroForm` now
+     exports successfully; real AcroForm documents remain blocked for edited
+     exports with the unchanged user-facing message.
+  2. Radio/checkbox retention validation now requires exactly the requested
+     kid on and every sibling off (`buttonValueRetained`). The previous
+     "any kid off matches an off request" rule validated documents with the
+     wrong kid selected; whitespace trimming is now symmetric.
+  3. Signature `.overlayImage` stays fail-closed with a precise reason:
+     system PDFKit exposes no image-annotation API that survives save
+     (header-verified: stamps are name-only; custom appearance streams are
+     not serializable through the public API). The operation is rejected
+     before any file is written; the form-aware provider lane is the tracked
+     path.
+  4. OCR candidates now preserve provenance: `detectOCR` emits `.ocrRegion`
+     kind, confidence-derived scores capped at 0.6, recognized text plus
+     confidence in evidence, and drops observations below the 0.35 floor
+     (mirroring the CV geometry provider) instead of silently downgrading
+     them to anonymous text-anchored guesses.
+  5. Raster comparison is rotation-aware and budget-bounded: page rotation is
+     resolved through PDFKit (`page.rotation`; `CGPDFPageGetRotationAngle` is
+     Swift-obsoleted), the pixel-to-user mapping applies the /Rotate inverse,
+     and pages above the 4M-pixel budget are downsampled (failing closed to
+     `.unknown` below the 0.2 minimum scale) instead of allocating unbounded
+     bitmaps.
+- **New PDFKit rendering knowledge (empirical, probe-verified):** for
+  `/Rotate 90` pages, `PDFPage.draw(with: .cropBox, to:)` renders rotated
+  content into a context sized by the UNROTATED crop box (612×792, not
+  swapped), clipping overflow; `CGPDFPage.getBoxRect(.cropBox)` also returns
+  unrotated dimensions. User→display maps as `(x,y) → (y, width − x)` for
+  90° clockwise. The validator's exclusion mapping was verified against the
+  observed changed-pixel bounding box, not assumed.
+- **Verification:** `swift test` 128/128 (two consecutive full runs);
+  fixture-gated Form 6 and public-AcroForm tests; `swift build -c release`;
+  `benchmark/pdfbox-lane/run.sh` PASS. One transient failure of the Form 6
+  candidate-count assertion occurred during a concurrent parallel-agent
+  refactor of `PDFVectorStreamParser`/tests and is owned by that lane.
+- **Sources:** `Sources/PDFEditorCore/PDFKitProvider.swift`,
+  `Sources/PDFEditorCore/PDFImpactValidator.swift`,
+  `Sources/PDFEditorCore/StaticRegionDetector.swift`,
+  `Sources/PDFEditorRecovery/AppModel.swift`,
+  `Tests/PDFEditorCoreTests/ReviewFixVerificationTests.swift`,
+  `benchmark/pdfbox-lane/`,
+  `benchmark/results/2026-08-25-pdfbox-public-acroform/result.json`.

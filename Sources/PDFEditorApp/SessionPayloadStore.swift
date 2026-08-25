@@ -308,7 +308,7 @@ final class SessionPayloadStore: @unchecked Sendable {
         using: key,
         authenticating: authenticatedContext(for: encryptedRecord)
       )
-    } catch let error as RecoveryPayloadKeyStoreError {
+    } catch is RecoveryPayloadKeyStoreError {
       throw SessionPayloadStoreError.keyUnavailable
     } catch {
       try quarantine(fileURL)

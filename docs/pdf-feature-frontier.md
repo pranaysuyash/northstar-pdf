@@ -1,11 +1,27 @@
 # PDF Feature Frontier
 
-**Status:** Discovery artifact; no new feature implementation authorized by this document
+**Status:** Canonical full-capability implementation map; all feature lanes are implementation targets and evidence-gated for activation
 **Date:** 2026-08-24
 **Project:** `/Users/pranay/Projects/pdf_editor`
 **Purpose:** Explore the useful PDF feature space for one native application and one local-first web application before choosing the next implementation slice.
 
-## Executive recommendation
+## Full-capability implementation doctrine
+
+This document is not a release-scope limiter. It is the complete implementation
+map for the native application, browser application, and explicitly installed
+local provider lanes. Every capability listed here is to be explored, built,
+tested, documented, and assigned an honest runtime state. Provider, safety,
+licensing, privacy, accessibility, and fidelity gates control activation and
+claims for a document class. They do not authorize deleting a capability from
+the build program.
+
+The phrase “first shared product boundary” below describes implementation
+ordering and the initial contract substrate. It is not a permanent promise
+boundary and must not be read as a non-goal for arbitrary reflow, OCR,
+redaction, signatures, XFA, collaboration, hosted processing, or companion
+execution.
+
+## Implementation ordering recommendation
 
 Build the product around a privacy-first, reversible completion workflow:
 
@@ -16,7 +32,11 @@ Build the product around a privacy-first, reversible completion workflow:
 5. Represent every change as an operation over immutable source bytes.
 6. Export a new copy and validate it by reopening, extracting, rendering, and comparing the result.
 
-The first shared product boundary should be **reader + form completion + reviewed overlays + page operations + annotations + export validation**. It should not initially promise arbitrary text reflow or perfect semantic editing of every existing PDF object. Those are materially different capabilities and need a separate corpus and fidelity program.
+The first shared contract substrate is **reader + form completion + reviewed
+overlays + page operations + annotations + export validation**. Arbitrary text
+reflow and semantic editing of existing objects are separate implementation
+lanes with their own corpus and fidelity programs. They are not excluded from
+the product.
 
 The recommended platform composition is:
 
@@ -29,7 +49,10 @@ The recommended platform composition is:
 
 ## Feature taxonomy
 
-The same feature can have different implementation status on native and web. The feature list below is deliberately broader than the first release so that product scope is chosen consciously rather than by accidental library availability.
+The same feature can have different implementation status on native and web. The
+feature list below is the complete long-term program so that implementation is
+sequenced consciously rather than being limited by accidental library
+availability.
 
 ### 1. Reading and navigation
 
@@ -176,15 +199,23 @@ The product should promise parity at the intent and safety level, not identical 
 - Shareable, explicit export artifact; collaboration should be a later mode with a server authority.
 - Optional local companion/server lane for OCR, large files, conversion, and high-fidelity operations.
 
-## Deliberate non-goals for the first build
+## Evidence-gated capability lanes, not product non-goals
 
-- Perfect editing of arbitrary existing text with automatic line reflow.
-- Silent conversion of static boxes into AcroForm fields.
-- Silent flattening or destructive whiteout.
-- Claims that visual signatures are legally binding or identity-verified.
-- Public upload of sensitive documents by default.
-- Treating OCR output as authoritative without user review.
-- Claiming PDF/A, PDF/UA, or digital-signature compliance without an independent validator.
+The following are not safe to claim until their implementation and validation
+lanes pass, but they remain long-term build targets:
+
+- arbitrary existing-text editing with automatic line reflow;
+- conversion of reviewed static boxes into AcroForm fields;
+- flattening, destructive whiteout, permanent redaction, and sanitization;
+- visual and cryptographic signatures with their distinct trust semantics;
+- local, hosted, and companion processing modes;
+- OCR-derived searchable layers, scanned-box detection, and extraction;
+- collaboration, conflict resolution, retention, and audit workflows;
+- PDF/A, PDF/UA, XFA, and independent signature validation where supported by
+  an appropriate provider and validator.
+
+The product must never silently claim these capabilities before their gates.
+That is a claim boundary, not a build boundary.
 
 ## Discovery exit criteria
 

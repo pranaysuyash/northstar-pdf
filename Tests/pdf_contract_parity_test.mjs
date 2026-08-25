@@ -6,17 +6,32 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
 import { compareIndependentPreservation, independentViewerReopen } from "../benchmark/independent-preservation-validator.mjs";
+import { buildBrowserExportIndependentViewerReport } from "../benchmark/browser-export-independent-viewer-validator.mjs";
+import { comparePreflightReports } from "../web/pdf-preflight.mjs";
+import {
+  compareNormalizedContractBundles,
+  normalizeContractBundle,
+  PARITY_CONTRACT,
+  representationFacts
+} from "../web/pdf-contract-parity.mjs";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
 const baseURL = process.env.PDF_PROOF_BASE_URL || "http://127.0.0.1:4173/web/index.html";
 const manifestPath = path.join(projectRoot, "docs/fixtures/manifest.md");
-const resultRoot = path.join(projectRoot, "benchmark/results/contract-parity-2026-08-24");
+const parityFixturePath = path.join(projectRoot, "Tests/fixtures/pdf_corpus_semantic_parity_fixture.json");
+const parityFixtureDescriptor = JSON.parse(fs.readFileSync(parityFixturePath, "utf8"));
+const resultRoot = path.resolve(
+  projectRoot,
+  process.env.PDF_PARITY_RESULT_ROOT || "benchmark/results/contract-parity-2026-08-24"
+);
 const nativeDirectory = path.join(resultRoot, "native");
 const webDirectory = path.join(resultRoot, "web");
 const webExportDirectory = path.join(resultRoot, "web-exports");
 const reportPath = path.join(resultRoot, "parity-report.json");
 const independentReportPath = path.join(resultRoot, "independent-preservation-report.json");
+const independentBrowserViewerReportPath = path.join(resultRoot, "independent-browser-viewer-report.json");
+const preflightReportPath = path.join(resultRoot, "privacy-preflight-parity-report.json");
 
 function corpusFromManifest() {
   const manifest = fs.readFileSync(manifestPath, "utf8");
@@ -32,15 +47,25 @@ function pdfFileNameFor(relativePath, suffix) {
 }
 
 function expectedFailure(relativePath) {
-  return relativePath.includes("truncated-128-bytes.pdf");
+  return relativePath.includes("truncated-128-bytes.pdf") || relativePath.includes("malformed-");
 }
 
 function passwordFor(relativePath) {
-  return relativePath.includes("encrypted-reader.pdf") ? "reader-password" : null;
+  return relativePath.includes("encrypted-reader.pdf") || relativePath.includes("encrypted-") ? "reader-password" : null;
 }
 
 function sourceDigest(relativePath) {
   return crypto.createHash("sha256").update(fs.readFileSync(path.join(projectRoot, relativePath))).digest("hex");
+}
+
+function semanticProjectionDigest(bundle) {
+  return crypto.createHash("sha256")
+    .update(JSON.stringify(normalizeContractBundle(bundle)))
+    .digest("hex");
+}
+
+function parityCaseFor(relativePath) {
+  return parityFixtureDescriptor.cases.find((entry) => entry.sourceFixture === relativePath) || null;
 }
 
 function readNativeBundle(relativePath) {
@@ -49,254 +74,8 @@ function readNativeBundle(relativePath) {
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
 
-function round(value, places = 2) {
-  if (typeof value !== "number" || !Number.isFinite(value)) return value;
-  const factor = 10 ** places;
-  return Math.round(value * factor) / factor;
-}
-
-function rectProjection(rect) {
-  if (!rect) return null;
-  return {
-    x: round(rect.x),
-    y: round(rect.y),
-    width: round(rect.width),
-    height: round(rect.height)
-  };
-}
-
-function coordinateProjection(region) {
-  if (!region) return null;
-  return {
-    pageIndex: region.pageIndex,
-    rect: rectProjection(region.rect),
-    coordinateSpace: {
-      unit: region.coordinateSpace.unit,
-      origin: region.coordinateSpace.origin,
-      pageBox: region.coordinateSpace.pageBox,
-      rotationDegrees: region.coordinateSpace.rotationDegrees
-    }
-  };
-}
-
-function multiset(values) {
-  return values.map((value) => JSON.stringify(value)).sort();
-}
-
-function fieldProjection(field) {
-  return {
-    pageIndex: field.pageIndex,
-    name: field.name,
-    kind: field.kind,
-    bounds: rectProjection(field.bounds),
-    valuePresent: Boolean(field.value),
-    choices: [...(field.choices || [])].sort()
-  };
-}
-
-function candidateProjection(candidate) {
-  return {
-    pageIndex: candidate.pageIndex,
-    kind: candidate.kind,
-    suggestedFieldType: candidate.suggestedFieldType || null,
-    entryMode: candidate.entryMode || "unknown",
-    groupMemberCount: candidate.groupMemberCount || 1,
-    bounds: rectProjection(candidate.bounds),
-    coordinate: coordinateProjection(candidate.coordinate),
-    evidenceKinds: [...new Set((candidate.evidenceItems || []).map((item) => item.kind))].sort(),
-    labelPresent: Boolean(candidate.labelText)
-  };
-}
-
-function pageProjection(page) {
-  return {
-    pageIndex: page.pageIndex,
-    bounds: rectProjection(page.bounds),
-    rotation: page.rotation,
-    characterCount: page.characterCount,
-    annotationCount: page.annotationCount,
-    hasSelectableText: page.hasSelectableText
-  };
-}
-
-function linkProjection(link) {
-  return {
-    pageIndex: link.pageIndex,
-    label: link.label || "",
-    kind: link.kind || "unknown",
-    targetPageIndex: link.targetPageIndex ?? null,
-    destination: link.destination ?? null,
-    destinationBounds: rectProjection(link.destinationBounds),
-    isSafeExternal: Boolean(link.isSafeExternal)
-  };
-}
-
-function outlineProjection(items) {
-  return (items || []).map((item) => ({
-    title: item.title || "",
-    level: item.level || 0,
-    destinationPageIndex: item.destinationPageIndex ?? null,
-    children: outlineProjection(item.children)
-  }));
-}
-
-function accessibilityProjection(value) {
-  if (!value) return null;
-  return {
-    hasTaggedContent: Boolean(value.hasTaggedContent),
-    hasReadingOrder: Boolean(value.hasReadingOrder)
-  };
-}
-
 function pushMismatch(mismatches, kind, pathName, nativeValue, webValue) {
-  mismatches.push({
-    kind,
-    path: pathName,
-    native: nativeValue,
-    web: webValue
-  });
-}
-
-function compareArray(mismatches, kind, pathName, nativeValues, webValues) {
-  if (JSON.stringify(nativeValues) !== JSON.stringify(webValues)) {
-    pushMismatch(mismatches, kind, pathName, nativeValues, webValues);
-  }
-}
-
-function compareBundles(nativeBundle, webBundle) {
-  const mismatches = [];
-  const nativeDocument = nativeBundle.document;
-  const webDocument = webBundle.document;
-  if (!nativeDocument || !webDocument) {
-    if (Boolean(nativeDocument) !== Boolean(webDocument)) {
-      pushMismatch(mismatches, "document.presence", "document", Boolean(nativeDocument), Boolean(webDocument));
-    }
-    return mismatches;
-  }
-
-  const nativePayload = nativeDocument.payload;
-  const webPayload = webDocument.payload;
-  if (nativePayload.source.sha256 !== webPayload.source.sha256) {
-    pushMismatch(mismatches, "source.digest", "document.payload.source.sha256", nativePayload.source.sha256, webPayload.source.sha256);
-  }
-  compareArray(
-    mismatches,
-    "source.metadata",
-    "document.payload.source",
-    { fileName: nativePayload.source.fileName, byteCount: nativePayload.source.byteCount },
-    { fileName: webPayload.source.fileName, byteCount: webPayload.source.byteCount }
-  );
-
-  const nativePages = (nativePayload.pages || []).map(pageProjection);
-  const webPages = (webPayload.pages || []).map(pageProjection);
-  compareArray(mismatches, "page.count", "document.payload.pages.length", nativePages.length, webPages.length);
-  const pageCount = Math.min(nativePages.length, webPages.length);
-  for (let index = 0; index < pageCount; index += 1) {
-    const nativePage = nativePages[index];
-    const webPage = webPages[index];
-    for (const key of ["bounds", "rotation", "hasSelectableText"]) {
-      if (JSON.stringify(nativePage[key]) !== JSON.stringify(webPage[key])) {
-        pushMismatch(mismatches, "page.geometry-or-text", `document.payload.pages[${index}].${key}`, nativePage[key], webPage[key]);
-      }
-    }
-    for (const key of ["characterCount", "annotationCount"]) {
-      if (nativePage[key] !== webPage[key]) {
-        pushMismatch(mismatches, "page.provider-count", `document.payload.pages[${index}].${key}`, nativePage[key], webPage[key]);
-      }
-    }
-  }
-
-  const nativeFields = multiset((nativePayload.fields || []).map(fieldProjection));
-  const webFields = multiset((webPayload.fields || []).map(fieldProjection));
-  compareArray(mismatches, "native-fields", "document.payload.fields", nativeFields, webFields);
-
-  const nativeCandidates = multiset((nativePayload.candidates || []).map(candidateProjection));
-  const webCandidates = multiset((webPayload.candidates || []).map(candidateProjection));
-  compareArray(mismatches, "candidate-semantic-set", "document.payload.candidates", nativeCandidates, webCandidates);
-  if ((nativePayload.candidates || []).length !== (webPayload.candidates || []).length) {
-    pushMismatch(
-      mismatches,
-      "candidate.count",
-      "document.payload.candidates.length",
-      nativePayload.candidates?.length || 0,
-      webPayload.candidates?.length || 0
-    );
-  }
-
-  const nativeCoordinates = (nativeBundle.coordinates?.pages || []).map((entry) => ({
-    pageIndex: entry.pageIndex,
-    region: coordinateProjection(entry.region)
-  }));
-  const webCoordinates = (webBundle.coordinates?.pages || []).map((entry) => ({
-    pageIndex: entry.pageIndex,
-    region: coordinateProjection(entry.region)
-  }));
-  compareArray(mismatches, "coordinates", "coordinates.pages", nativeCoordinates, webCoordinates);
-
-  const nativeOperations = nativeBundle.editSession?.operations || [];
-  const webOperations = webBundle.editSession?.operations || [];
-  compareArray(mismatches, "operation.lineage", "editSession.operations.length", nativeOperations.length, webOperations.length);
-  if (nativeOperations.length || webOperations.length) {
-    compareArray(
-      mismatches,
-      "operation.semantic-set",
-      "editSession.operations",
-      multiset(nativeOperations.map((operation) => ({
-        pageIndex: operation.pageIndex,
-        kind: operation.kind,
-        targetIDPresent: Boolean(operation.targetID),
-        coordinate: coordinateProjection(operation.coordinate),
-        sourceDigest: operation.sourceDigest
-      }))),
-      multiset(webOperations.map((operation) => ({
-        pageIndex: operation.pageIndex,
-        kind: operation.kind,
-        targetIDPresent: Boolean(operation.targetID),
-        coordinate: coordinateProjection(operation.coordinate),
-        sourceDigest: operation.sourceDigest
-      })))
-    );
-  }
-
-  const nativeValidation = nativeBundle.validation;
-  const webValidation = webBundle.validation;
-  if (Boolean(nativeValidation) !== Boolean(webValidation)) {
-    pushMismatch(mismatches, "validation.presence", "validation", Boolean(nativeValidation), Boolean(webValidation));
-  } else if (nativeValidation && webValidation) {
-    for (const key of ["status", "sourceUnchanged", "outputReopenable"]) {
-      if (nativeValidation[key] !== webValidation[key]) {
-        pushMismatch(mismatches, "validation.status", `validation.${key}`, nativeValidation[key], webValidation[key]);
-      }
-    }
-    const nativeChecks = Object.fromEntries((nativeValidation.checks || []).map((check) => [check.kind, check.status]));
-    const webChecks = Object.fromEntries((webValidation.checks || []).map((check) => [check.kind, check.status]));
-    compareArray(mismatches, "validation.check-kinds", "validation.checks", Object.keys(nativeChecks).sort(), Object.keys(webChecks).sort());
-    for (const kind of new Set([...Object.keys(nativeChecks), ...Object.keys(webChecks)])) {
-      if (nativeChecks[kind] !== webChecks[kind]) {
-        pushMismatch(mismatches, "validation.check-status", `validation.checks.${kind}.status`, nativeChecks[kind] || null, webChecks[kind] || null);
-      }
-    }
-  }
-
-  const metadataComparisons = [
-    ["links", (value) => (value || []).map(linkProjection)],
-    ["outlines", outlineProjection],
-    ["attachments", (value) => [...(value || [])].sort()],
-    ["accessibility", accessibilityProjection],
-    ["security", (value) => value ? {
-      isEncrypted: Boolean(value.isEncrypted),
-      isLocked: Boolean(value.isLocked),
-      requiresPassword: Boolean(value.requiresPassword)
-    } : null]
-  ];
-  for (const [key, project] of metadataComparisons) {
-    const nativeValue = project(nativePayload[key]);
-    const webValue = project(webPayload[key]);
-    if (JSON.stringify(nativeValue) !== JSON.stringify(webValue)) {
-      pushMismatch(mismatches, `document.${key}`, `document.payload.${key}`, nativeValue, webValue);
-    }
-  }
-  return mismatches;
+  mismatches.push({ kind, path: pathName, native: nativeValue, web: webValue });
 }
 
 async function waitForDigest(page, digest) {
@@ -333,6 +112,7 @@ async function loadBrowserFixture(page, relativePath) {
       coordinates: null,
       candidates: null,
       editSession: null,
+      preflight: null,
       validation: null,
       error: await page.locator("#status").textContent()
     };
@@ -375,7 +155,7 @@ execFileSync("swift", [
   "--manifest",
   "docs/fixtures/manifest.md",
   "--output-dir",
-  "benchmark/results/contract-parity-2026-08-24/native"
+  path.relative(projectRoot, nativeDirectory)
 ], { cwd: projectRoot, stdio: "inherit" });
 
 const nativeBundles = Object.fromEntries(corpus.map((relativePath) => [relativePath, readNativeBundle(relativePath)]));
@@ -431,10 +211,13 @@ fs.writeFileSync(independentReportPath, `${JSON.stringify({
   validator: "benchmark/independent-preservation-validator.mjs",
   reports: independentReports
 }, null, 2)}\n`);
+const independentBrowserViewerReport = buildBrowserExportIndependentViewerReport({ projectRoot, resultRoot });
+fs.writeFileSync(independentBrowserViewerReportPath, `${JSON.stringify(independentBrowserViewerReport, null, 2)}\n`);
 
 const fixtureReports = corpus.map((relativePath) => {
   const nativeBundle = nativeBundles[relativePath];
   const webBundle = webBundles[relativePath];
+  const parityCase = parityCaseFor(relativePath);
   const mismatches = [];
   if ((nativeBundle.sourceDigest ?? null) !== (webBundle.sourceDigest ?? null)) {
     pushMismatch(mismatches, "source.digest", "sourceDigest", nativeBundle.sourceDigest ?? null, webBundle.sourceDigest ?? null);
@@ -445,13 +228,41 @@ const fixtureReports = corpus.map((relativePath) => {
   if (nativeBundle.expectedFailure !== webBundle.expectedFailure) {
     pushMismatch(mismatches, "fixture.expected-failure", "expectedFailure", nativeBundle.expectedFailure, webBundle.expectedFailure);
   }
-  mismatches.push(...compareBundles(nativeBundle, webBundle));
+  mismatches.push(...compareNormalizedContractBundles(nativeBundle, webBundle));
+  const allowedMismatchKinds = parityCase?.allowedOpenMismatchKinds || [];
+  const allowedMismatches = mismatches.filter((mismatch) => allowedMismatchKinds.includes(mismatch.kind));
+  const unexpectedMismatches = mismatches.filter((mismatch) => !allowedMismatchKinds.includes(mismatch.kind));
+  const nativeProjectionDigest = semanticProjectionDigest(nativeBundle);
+  const browserProjectionDigest = semanticProjectionDigest(webBundle);
   return {
+    parityCaseID: parityCase?.id || null,
     sourcePath: relativePath,
     sourceDigest: sourceDigest(relativePath),
+    sourceBinding: {
+      liveSourceDigest: sourceDigest(relativePath),
+      nativeSourceDigest: nativeBundle.sourceDigest ?? nativeBundle.document?.payload?.source?.sha256 ?? null,
+      browserSourceDigest: webBundle.sourceDigest ?? webBundle.document?.payload?.source?.sha256 ?? null,
+      nativeMatchesLive: expectedFailure(relativePath) ? null : (nativeBundle.sourceDigest ?? nativeBundle.document?.payload?.source?.sha256 ?? null) === sourceDigest(relativePath),
+      browserMatchesLive: expectedFailure(relativePath) ? null : (webBundle.sourceDigest ?? webBundle.document?.payload?.source?.sha256 ?? null) === sourceDigest(relativePath),
+      expectedFailure: expectedFailure(relativePath)
+    },
     nativeStatus: nativeBundle.status,
     webStatus: webBundle.status,
     expectedFailure: expectedFailure(relativePath),
+    normalization: {
+      native: representationFacts(nativeBundle),
+      browser: representationFacts(webBundle),
+      semanticProjectionDigest: {
+        native: nativeProjectionDigest,
+        browser: browserProjectionDigest,
+        exactDigestEquality: nativeProjectionDigest === browserProjectionDigest,
+        comparatorEquivalent: mismatches.length === 0
+      }
+    },
+    allowedMismatchKinds,
+    allowedMismatchCount: allowedMismatches.length,
+    unexpectedMismatchCount: unexpectedMismatches.length,
+    unexpectedMismatches: unexpectedMismatches.slice(0, 12),
     mismatchCount: mismatches.length,
     mismatches,
     firstMismatches: mismatches.slice(0, 12)
@@ -462,16 +273,81 @@ const mismatchCounts = fixtureReports.reduce((counts, report) => {
   for (const mismatch of report.mismatches) counts[mismatch.kind] = (counts[mismatch.kind] || 0) + 1;
   return counts;
 }, {});
+const unexpectedMismatchCounts = fixtureReports.reduce((counts, report) => {
+  for (const mismatch of report.unexpectedMismatches) counts[mismatch.kind] = (counts[mismatch.kind] || 0) + 1;
+  return counts;
+}, {});
+const preflightFixtureReports = corpus.map((relativePath) => {
+  const nativeReport = nativeBundles[relativePath].preflight || null;
+  const webReport = webBundles[relativePath].preflight || null;
+  const differences = [];
+  if (nativeReport && webReport) {
+    differences.push(...comparePreflightReports(nativeReport, webReport).differences);
+  } else if (nativeReport || webReport) {
+    differences.push({ path: "preflight.presence", native: Boolean(nativeReport), web: Boolean(webReport) });
+  }
+  return {
+    sourcePath: relativePath,
+    expectedFailure: expectedFailure(relativePath),
+    sourceDigest: sourceDigest(relativePath),
+    nativeStatus: nativeReport ? "observed" : "unavailable",
+    browserStatus: webReport ? "observed" : "unavailable",
+    mismatchCount: differences.length,
+    mismatches: differences.slice(0, 100)
+  };
+});
+const preflightMismatchCounts = preflightFixtureReports.reduce((counts, fixture) => {
+  for (const mismatch of fixture.mismatches) {
+    const key = mismatch.path || "unknown";
+    counts[key] = (counts[key] || 0) + 1;
+  }
+  return counts;
+}, {});
+const privacyPreflightReport = {
+  harness: "pdf-editor-native-web-privacy-preflight-parity",
+  version: { major: 1, minor: 0 },
+  contract: { name: "pdf-editor.preflight", version: { major: 1, minor: 1 } },
+  corpusManifest: "docs/fixtures/manifest.md",
+  normalization: {
+    excludes: ["header.provider", "header.generatedAt", "provider-specific finding IDs", "output file digests"],
+    retains: ["sourceDigest", "metadata presence", "embedded-data counts", "annotation taxonomy", "script/action counts", "revision evidence", "coverage states", "unknown reasons", "sanitization and execution invariants"]
+  },
+  fixtureCount: preflightFixtureReports.length,
+  mismatchCount: preflightFixtureReports.reduce((total, fixture) => total + fixture.mismatchCount, 0),
+  mismatchCounts: preflightMismatchCounts,
+  fixtures: preflightFixtureReports
+};
+fs.writeFileSync(preflightReportPath, `${JSON.stringify(privacyPreflightReport, null, 2)}\n`);
 const report = {
   harness: "pdf-editor-native-web-contract-parity",
-  version: { major: 1, minor: 0 },
+  version: { major: 1, minor: 1 },
   corpusManifest: "docs/fixtures/manifest.md",
+  normalizationContract: {
+    name: PARITY_CONTRACT.name,
+    version: PARITY_CONTRACT.version,
+    policy: PARITY_CONTRACT.normalizationPolicy,
+    semanticEqualityExcludes: PARITY_CONTRACT.ignoredFields
+  },
   nativeProvider: nativeBundles[corpus[0]]?.document?.header?.provider || null,
   webProvider: webBundles[corpus[0]]?.document?.header?.provider || null,
   fixtureCount: fixtureReports.length,
   mismatchCount: fixtureReports.reduce((total, fixture) => total + fixture.mismatchCount, 0),
   mismatchCounts,
+  unexpectedMismatchCount: fixtureReports.reduce((total, fixture) => total + fixture.unexpectedMismatchCount, 0),
+  unexpectedMismatchCounts,
   independentPreservationReport: path.relative(projectRoot, independentReportPath),
+  independentBrowserViewerReport: path.relative(projectRoot, independentBrowserViewerReportPath),
+  independentBrowserViewer: {
+    statusCounts: independentBrowserViewerReport.statusCounts,
+    agreementCounts: independentBrowserViewerReport.agreementCounts,
+    unexpectedDivergenceCount: independentBrowserViewerReport.unexpectedDivergenceCount
+  },
+  privacyPreflightReport: path.relative(projectRoot, preflightReportPath),
+  privacyPreflight: {
+    fixtureCount: privacyPreflightReport.fixtureCount,
+    mismatchCount: privacyPreflightReport.mismatchCount,
+    mismatchCounts: privacyPreflightReport.mismatchCounts
+  },
   independentPreservation: independentReports.map((entry) => ({
     sourcePath: entry.sourcePath,
     sourceViewerStatus: entry.sourceViewer.reopen.status,
@@ -494,6 +370,7 @@ console.log(JSON.stringify({
   fixtureCount: report.fixtureCount,
   mismatchCount: report.mismatchCount,
   mismatchCounts: report.mismatchCounts,
+  privacyPreflight: report.privacyPreflight,
   firstMismatches: fixtureReports.flatMap((fixture) => fixture.firstMismatches.map((mismatch) => ({
     sourcePath: fixture.sourcePath,
     ...mismatch

@@ -1,11 +1,22 @@
 import AppKit
 import SwiftUI
 
+private struct PDFEditorWindowControllerFocusedValueKey: FocusedValueKey {
+    typealias Value = PDFEditorWindowController
+}
+
+extension FocusedValues {
+    var pdfEditorWindowController: PDFEditorWindowController? {
+        get { self[PDFEditorWindowControllerFocusedValueKey.self] }
+        set { self[PDFEditorWindowControllerFocusedValueKey.self] = newValue }
+    }
+}
+
 /// The command vocabulary owned by the native Mac shell.
 ///
-/// The command layer resolves the model for the focused scene. It does not
-/// mutate PDFKit through the responder chain because PDFKit navigation and
-/// zoom are not yet two-way synchronized with AppModel.
+/// The command layer resolves the model for the focused scene. It routes
+/// document and reader state through typed AppModel actions so the menu does
+/// not become a second authority for PDFKit or document state.
 @MainActor
 private enum PDFEditorCommand: Hashable {
     case newDocument
@@ -15,6 +26,8 @@ private enum PDFEditorCommand: Hashable {
     case undo
     case redo
     case find
+    case nextSearch
+    case previousSearch
     case firstPage
     case previousPage
     case nextPage
@@ -32,67 +45,113 @@ private enum PDFEditorCommand: Hashable {
 @MainActor
 private struct PDFEditorCommandRouter {
     let model: AppModel?
+    let windowController: PDFEditorWindowController?
     let openWindow: OpenWindowAction
 
     func isEnabled(_ command: PDFEditorCommand) -> Bool {
         switch command {
         case .newDocument:
             return true
-        case .openDocument, .closeWindow:
+        case .openDocument:
             return model != nil
+        case .closeWindow:
+            return model != nil && windowController?.window != nil
         case .exportCopy, .undo, .redo:
             guard let model else { return false }
             switch command {
             case .exportCopy:
-                return model.canExportCurrentOperations
+                guard model.canExportCurrentOperations,
+                      let permissions = model.inspection?.permissions
+                else { return false }
+                return permissions.canModify || permissions.canAddAnnotations
             case .undo:
-                return !model.operations.isEmpty
+                return model.canUndo
             case .redo:
                 return model.canRedo
             default:
                 return false
             }
-        case .find, .firstPage, .previousPage, .nextPage, .lastPage,
-             .zoomIn, .zoomOut, .actualSize, .fitPage, .fitWidth,
+        case .find:
+            guard let model else { return false }
+            return model.liveDocument != nil && (model.inspection?.permissions.canCopy ?? false)
+        case .nextSearch, .previousSearch:
+            guard let model else { return false }
+            return !model.searchMatches.isEmpty
+                && (model.inspection?.permissions.canCopy ?? false)
+        case .firstPage, .previousPage, .nextPage, .lastPage:
+            return (model?.currentPageCount ?? 0) > 0
+        case .zoomIn, .zoomOut, .actualSize, .fitPage, .fitWidth,
              .singlePage, .continuous, .twoUp:
-            // Keep the menu vocabulary discoverable, but do not expose a
-            // second state authority through NSApp.sendAction. These become
-            // enabled only after typed AppModel routes exist.
-            return false
+            return model?.liveDocument != nil
         }
     }
 
     func perform(_ command: PDFEditorCommand) {
         switch command {
         case .newDocument:
-            // New is a new scene, so a dirty focused document is not touched.
-            openWindow(id: "pdf-editor")
+            if let model {
+                withNewWindowConfirmation(model: model) {
+                    openWindow(id: "pdf-editor")
+                }
+            } else {
+                openWindow(id: "pdf-editor")
+            }
         case .openDocument:
             guard let model else { return }
-            withDirtyConfirmation(model: model, action: "open another document") {
-                model.resetDocument()
+            withOpenConfirmation(model: model) {
                 model.isImporterPresented = true
             }
         case .closeWindow:
             guard let model else { return }
-            withDirtyConfirmation(model: model, action: "close this window") {
-                NSApp.keyWindow?.performClose(nil)
-            }
+            guard let windowController else { return }
+            withCloseConfirmation(model: model, windowController: windowController)
         case .exportCopy:
             model?.export()
         case .undo:
-            model?.undoLastEdit()
+            model?.undo()
         case .redo:
-            model?.redoLastEdit()
-        case .find, .firstPage, .previousPage, .nextPage, .lastPage,
-             .zoomIn, .zoomOut, .actualSize, .fitPage, .fitWidth,
-             .singlePage, .continuous, .twoUp:
-            break
+            model?.redo()
+        case .find:
+            model?.routeSearchCommand()
+        case .nextSearch:
+            model?.routeNextSearchCommand()
+        case .previousSearch:
+            model?.routePreviousSearchCommand()
+        case .firstPage:
+            model?.goToFirstPage()
+        case .previousPage:
+            model?.goToPreviousPage()
+        case .nextPage:
+            model?.goToNextPage()
+        case .lastPage:
+            model?.goToLastPage()
+        case .zoomIn:
+            if let model {
+                model.setScaleMode(.zoom)
+                model.setZoom(model.readerZoom + 0.1)
+            }
+        case .zoomOut:
+            if let model {
+                model.setScaleMode(.zoom)
+                model.setZoom(model.readerZoom - 0.1)
+            }
+        case .actualSize:
+            model?.setActualSize()
+        case .fitPage:
+            model?.setFitPage()
+        case .fitWidth:
+            model?.setFitWidth()
+        case .singlePage:
+            model?.setReaderViewMode(.singlePage)
+        case .continuous:
+            model?.setReaderViewMode(.continuous)
+        case .twoUp:
+            model?.setReaderViewMode(.twoPage)
         }
     }
 
-    private func withDirtyConfirmation(model: AppModel, action: String, proceed: () -> Void) {
-        guard !model.operations.isEmpty else {
+    private func withNewWindowConfirmation(model: AppModel, proceed: () -> Void) {
+        guard model.isDirty else {
             proceed()
             return
         }
@@ -100,22 +159,76 @@ private struct PDFEditorCommandRouter {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = "This document has unexported changes."
-        alert.informativeText = "Export a copy before you (action), or choose Cancel to keep working."
-        alert.addButton(withTitle: action == "close this window" ? "Close Without Exporting" : "Discard and Continue")
+        alert.informativeText = "New Document opens an independent window and keeps this document and its recoverable work open. Export Copy... remains available if you want a separate edited PDF."
+        alert.addButton(withTitle: "Open New Window")
         alert.addButton(withTitle: "Cancel")
 
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         proceed()
+    }
+
+    private func withOpenConfirmation(model: AppModel, proceed: () -> Void) {
+        guard model.isDirty else {
+            proceed()
+            return
+        }
+
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "This document has unexported changes."
+        alert.informativeText = "Choose Continue to Open to replace this window only after the selected PDF is admitted successfully. Export Copy... creates a separate edited PDF and never overwrites the source."
+        alert.addButton(withTitle: "Continue to Open")
+        alert.addButton(withTitle: "Cancel")
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        proceed()
+    }
+
+    private func withCloseConfirmation(
+        model: AppModel,
+        windowController: PDFEditorWindowController
+    ) {
+        guard model.isDirty else {
+            windowController.close()
+            return
+        }
+
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "This document has unexported changes."
+        alert.informativeText = "Choose whether to keep a recoverable session for this work or discard the recovery session. Export Copy... creates a separate edited PDF and never overwrites the source."
+        alert.addButton(withTitle: "Close and Keep Recovery")
+        alert.addButton(withTitle: "Close and Discard Recovery")
+        alert.addButton(withTitle: "Cancel")
+
+        switch alert.runModal() {
+        case .alertFirstButtonReturn:
+            windowController.close()
+        case .alertSecondButtonReturn:
+            // The dedicated recovery discard method is private in AppModel.
+            // resetDocument() is the existing public model-owned transition
+            // that clears the active document and its recovery pair.
+            model.resetDocument()
+            windowController.close()
+        default:
+            break
+        }
     }
 }
 
 @MainActor
 struct AppCommands: Commands {
     @FocusedValue(\.pdfEditorModel) private var model
+    @FocusedValue(\.pdfEditorSearchFocusEvent) private var searchFocusEvent
+    @FocusedValue(\.pdfEditorWindowController) private var windowController
     @Environment(\.openWindow) private var openWindow
 
     private var router: PDFEditorCommandRouter {
-        PDFEditorCommandRouter(model: model, openWindow: openWindow)
+        PDFEditorCommandRouter(
+            model: model,
+            windowController: windowController,
+            openWindow: openWindow
+        )
     }
 
     var body: some Commands {
@@ -146,6 +259,11 @@ struct AppCommands: Commands {
             }
             .keyboardShortcut("e", modifiers: [.command, .shift])
             .disabled(!router.isEnabled(.exportCopy))
+            .help(
+                router.isEnabled(.exportCopy)
+                    ? "Creates a separate edited PDF without overwriting the source."
+                    : "Unavailable until there are authorized, validated edits to export."
+            )
         }
 
         CommandGroup(replacing: .undoRedo) {
@@ -167,9 +285,22 @@ struct AppCommands: Commands {
 
             Button("Find...") {
                 router.perform(.find)
+                searchFocusEvent?.wrappedValue += 1
             }
             .keyboardShortcut("f", modifiers: .command)
             .disabled(!router.isEnabled(.find))
+
+            Button("Find Next") {
+                router.perform(.nextSearch)
+            }
+            .keyboardShortcut("g", modifiers: .command)
+            .disabled(!router.isEnabled(.nextSearch))
+
+            Button("Find Previous") {
+                router.perform(.previousSearch)
+            }
+            .keyboardShortcut("g", modifiers: [.command, .shift])
+            .disabled(!router.isEnabled(.previousSearch))
 
             Divider()
 

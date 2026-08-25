@@ -19,6 +19,17 @@ async function waitForDigest(page, digest = null) {
   );
 }
 
+async function waitForDifferentDigest(page, previousDigest) {
+  await page.waitForFunction(
+    (previous) => {
+      const actual = window.__pdfEditorContractFixture?.snapshot?.()?.document?.payload?.source?.sha256;
+      return Boolean(actual) && actual !== previous;
+    },
+    previousDigest,
+    { timeout: 30_000 }
+  );
+}
+
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 const consoleErrors = [];
@@ -31,7 +42,11 @@ page.on("pageerror", (error) => pageErrors.push(error.message));
 try {
   await page.goto(baseURL, { waitUntil: "networkidle" });
   await page.waitForFunction(
-    () => Boolean(window.pdfjsLib && window.__pdfEditorContractFixture?.classifyTemplateIndex),
+    () => Boolean(
+      window.pdfjsLib
+      && window.__pdfEditorContractFixture?.classifyTemplateIndex
+      && window.__pdfEditorContractFixture?.calibrateDocumentClassPolicies
+    ),
     undefined,
     { timeout: 30_000 }
   );
@@ -84,7 +99,14 @@ try {
     const family = fixture.classifyTemplateIndex({
       templates: [template],
       fingerprint: familyFingerprint,
-      sourceDigest: "sha256:browser-family"
+      sourceDigest: "sha256:browser-family",
+      documentClass: "staticPrintedForm"
+    });
+    const scannedFamilyDisabled = fixture.classifyTemplateIndex({
+      templates: [template],
+      fingerprint: familyFingerprint,
+      sourceDigest: "sha256:browser-scanned-family",
+      documentClass: "scannedDocument"
     });
     const ambiguousInput = { ...fingerprint, layoutFingerprint: "hmac:browser-ambiguous-input", exactSourceDigests: [] };
     const ambiguous = fixture.classifyTemplateIndex({
@@ -95,17 +117,28 @@ try {
       fingerprint: ambiguousInput,
       sourceDigest: "sha256:browser-ambiguous"
     });
-    return { sourceDigest, fingerprint, template, exact, knownVariant, family, ambiguous };
+    return {
+      sourceDigest,
+      fingerprint,
+      template,
+      exact,
+      knownVariant,
+      family,
+      scannedFamilyDisabled,
+      ambiguous
+    };
   });
 
   assert.equal(publicEvidence.exact.state, "exact");
   assert.equal(publicEvidence.knownVariant.state, "knownVariant");
   assert.equal(publicEvidence.family.state, "familyMatch");
+  assert.equal(publicEvidence.scannedFamilyDisabled.state, "noMatch");
+  assert.equal(publicEvidence.scannedFamilyDisabled.selectedTemplateID, null);
   assert.equal(publicEvidence.ambiguous.state, "ambiguous");
   assert.equal(publicEvidence.ambiguous.selectedTemplateID, null);
 
   await page.locator("#fileInput").setInputFiles(form6Path);
-  await waitForDigest(page);
+  await waitForDifferentDigest(page, publicEvidence.sourceDigest);
   const negative = await page.evaluate(async (template) => {
     const fixture = window.__pdfEditorContractFixture;
     const snapshot = fixture.snapshot();

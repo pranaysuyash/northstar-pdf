@@ -11,6 +11,7 @@
     classifyTemplateIndex,
     scoreTemplateFingerprints
   } from "./template-match-benchmark.mjs";
+  import { runReviewedCorrectionBenchmark } from "./template-correction-benchmark.mjs";
   import {
     canMaterializeCompletion,
     canPromoteTemplateRevision,
@@ -33,6 +34,25 @@
     createZeroContentLogger,
     TemplateStoreError
   } from "./pdf-template-store.mjs";
+  import { runIhatepdfExperimentParity } from "./ihatepdf-experiment-contract.mjs";
+  import { buildPreflightReport, validatePreflightReport } from "./pdf-preflight.mjs";
+  import {
+    chooseBrowserResourcePolicy,
+    collectBrowserResourceEnvironment,
+    validateBrowserResourcePolicy,
+    normalizeResourceDocument,
+    runAdaptiveBatches,
+    createResourceCheckpoint,
+    validateResourceCheckpoint,
+    summarizeResourceEvent
+  } from "./browser-resource-policy.mjs";
+  import {
+    buildTextRunReplacementProbe,
+    compareOCRLayerAlignment,
+    compareTextRunProjections,
+    normalizePdfJsTextItems,
+    validateTextRunOCRAlignmentReport
+  } from "./text-run-ocr-alignment-benchmark.mjs";
 
   const pdfLib = window.PDFLib;
   const WEB_ERROR_CODES = Object.freeze({
@@ -162,6 +182,7 @@
   let sourceName = "document.pdf";
   let sourceDigest = "";
   let documentContract = null;
+  let textRunProjections = [];
   let nativeFields = [];
   let candidates = [];
   let operations = [];
@@ -173,6 +194,8 @@
   let manualPlacement = null;
   let showDismissedCandidates = false;
   let lastValidation = null;
+  let preflightReport = null;
+  let resourcePolicy = null;
   let templateFingerprint = null;
   let templateContract = null;
   let templateRevisionHistory = null;
@@ -544,6 +567,15 @@
     setHidden(ui.fieldControl, true);
   }
 
+  function normalizedAnnotationKind(annotation) {
+    const subtype = annotation?.subtype || annotation?.annotationType || "unknown";
+    if (subtype === "Widget") return "widget";
+    if (subtype === "Link") return "link";
+    if (subtype === "FileAttachment") return "fileAttachment";
+    if (["Text", "FreeText", "Highlight", "Underline", "StrikeOut", "Squiggly", "Ink", "Square", "Circle", "Line", "Polygon", "PolyLine", "Caret", "Stamp", "Popup"].includes(subtype)) return "markup";
+    return "unknown";
+  }
+
   async function inspectNativeFields(pageNum) {
     const page = await pdfDoc.getPage(pageNum);
     const annotations = await page.getAnnotations({ intent: "display" });
@@ -628,20 +660,59 @@
     }));
   }
 
+  function buildResourcePolicy() {
+    const pages = documentContract?.payload?.pages || [];
+    const pageAreas = pages.map((page) => Math.max(0, (page.bounds?.width || 0) * (page.bounds?.height || 0)));
+    resourcePolicy = chooseBrowserResourcePolicy({
+      environment: collectBrowserResourceEnvironment(window),
+      document: normalizeResourceDocument({
+        byteCount: pdfData?.byteLength || 0,
+        pageCount: pages.length || 1,
+        maxPageAreaPoints: Math.max(...pageAreas, 612 * 792),
+        maxPageDimensionPoints: Math.max(...pages.map((page) => Math.max(page.bounds?.width || 0, page.bounds?.height || 0)), 792),
+        rotatedPageCount: pages.filter((page) => page.rotation).length,
+        rasterPageCount: pages.filter((page) => !page.hasSelectableText).length,
+        selectableTextPageCount: pages.filter((page) => page.hasSelectableText).length,
+        nativeFieldCount: nativeFields.length,
+        candidateCount: candidates.length,
+        isEncrypted: isEncryptedDocument
+      }),
+      request: { renderMode: "reader", ocrRequested: false, batchRequested: false },
+      sourceDigest,
+      provider: providerDescriptor()
+    });
+    validateBrowserResourcePolicy(resourcePolicy, { expectedSourceDigest: sourceDigest });
+    return resourcePolicy;
+  }
+
   async function buildCompletionContract() {
     sourceDigest = await sha256Hex(pdfData);
     const fields = [];
     const staticCandidates = [];
     const pages = [];
+    const projectedTextRuns = [];
+    const annotationTypeCounts = {};
     for (let pageNum = 1; pageNum <= scaleState.pageCount; pageNum += 1) {
       const page = await pdfDoc.getPage(pageNum);
       const content = await page.getTextContent();
       const annotations = await page.getAnnotations({ intent: "display" });
+      for (const annotation of annotations) {
+        const kind = normalizedAnnotationKind(annotation);
+        annotationTypeCounts[kind] = (annotationTypeCounts[kind] || 0) + 1;
+      }
       const fact = pageFacts.find((entry) => entry.page === pageNum);
       const view = fact?.view || [0, 0, page.view?.[2] || 0, page.view?.[3] || 0];
       const bounds = fact?.boxes?.crop || normalizeRect(view);
       fields.push(...await inspectNativeFields(pageNum));
       staticCandidates.push(...await detectStaticCandidates(pageNum));
+      projectedTextRuns.push(...await normalizePdfJsTextItems({
+        items: content.items,
+        pageIndex: pageNum - 1,
+        pageBounds: bounds,
+        rotation: page.rotate || 0,
+        providerID: "pdfjs",
+        sourceDigest
+      }));
       pages.push({
         pageIndex: pageNum - 1,
         pageLabel: fact?.label || String(pageNum),
@@ -658,6 +729,7 @@
     }
     nativeFields = fields;
     candidates = staticCandidates;
+    textRunProjections = projectedTextRuns;
     documentContract = {
       header: {
         contractName: "pdf-editor.document",
@@ -692,6 +764,7 @@
           isReadOnly: permissions.modify === false
         },
         attachments,
+        annotationTypeCounts,
         accessibility: { hasTaggedContent: false, hasReadingOrder: false, notes: ["Tagged-content and reading-order validation are outside this browser proof."] },
         security: { isEncrypted: Boolean(pendingPassword), isLocked: Boolean(pendingPassword), requiresPassword: Boolean(pendingPassword) }
       }
@@ -879,6 +952,7 @@
       value.value = entry.value?.text || "";
       value.addEventListener("input", () => {
         templateProposal = reviewCompletionValue(templateProposal, entry.mappingID, { kind: "text", text: value.value }, false);
+        ui.applyTemplateButton.disabled = true;
       });
       const valueReview = document.createElement("input");
       valueReview.type = "checkbox";
@@ -888,7 +962,7 @@
         renderTemplateReview();
       });
       const valueLabel = document.createElement("label");
-      valueLabel.append(valueReview, " Approve current value");
+      valueLabel.append(valueReview, " Approve exact profile value");
       row.append(mappingLabel, value, valueLabel);
       ui.templateCompletionList.appendChild(row);
     });
@@ -1340,12 +1414,18 @@
       const viewportRect = viewport.convertToViewportRectangle([bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height]);
       const rect = normalizeRect(viewportRect);
       const preview = document.createElement("div");
-      preview.className = `candidate-preview${selectedCandidate?.id === candidate.id ? " selected" : ""}`;
+      const isGrid = candidateEntryMode(candidate) === "characterGrid";
+      const selected = selectedCandidate?.id === candidate.id;
+      // Character-grid candidates are rendered as a transparent union outline
+      // plus per-cell tints. The previous behavior painted a single solid
+      // block at 25% opacity that visually obscured the underlying PDF
+      // text and extended across the gaps between cells.
+      preview.className = `candidate-preview${isGrid ? " character-grid" : ""}${selected ? " selected" : ""}`;
       preview.style.left = `${rect.x}px`;
       preview.style.top = `${rect.y}px`;
       preview.style.width = `${Math.max(24, rect.width)}px`;
       preview.style.height = `${Math.max(14, rect.height)}px`;
-      preview.textContent = `${candidateEntryMode(candidate) === "characterGrid" ? "grid" : candidateEntryMode(candidate)} · ${Math.round(candidate.score * 100)}%`;
+      preview.textContent = isGrid ? "" : `${candidateEntryMode(candidate)} · ${Math.round(candidate.score * 100)}%`;
       preview.title = "Select suggested area for review";
       preview.tabIndex = 0;
       const select = () => {
@@ -1371,6 +1451,19 @@
         }
       });
       shell.appendChild(preview);
+      if (isGrid && Array.isArray(candidate.memberBounds)) {
+        for (const cell of candidate.memberBounds) {
+          const cellViewportRect = viewport.convertToViewportRectangle([cell.x, cell.y, cell.x + cell.width, cell.y + cell.height]);
+          const cellRect = normalizeRect(cellViewportRect);
+          const tint = document.createElement("div");
+          tint.className = `candidate-cell-tint${selected ? " selected" : ""}`;
+          tint.style.left = `${cellRect.x}px`;
+          tint.style.top = `${cellRect.y}px`;
+          tint.style.width = `${Math.max(2, cellRect.width)}px`;
+          tint.style.height = `${Math.max(2, cellRect.height)}px`;
+          shell.appendChild(tint);
+        }
+      }
     });
   }
 
@@ -1388,7 +1481,10 @@
           preview.style.top = `${rect.y}px`;
           preview.style.width = `${Math.max(8, rect.width)}px`;
           preview.style.height = `${Math.max(8, rect.height)}px`;
-          preview.style.background = "rgba(187, 247, 208, 0.72)";
+          preview.style.background = "rgba(219, 234, 254, 0.30)";
+          preview.style.border = "1px solid rgba(37, 99, 235, 0.55)";
+          preview.style.color = "#0f172a";
+          preview.style.fontWeight = "600";
           preview.style.padding = "0";
           preview.style.textAlign = "center";
           preview.textContent = character;
@@ -1406,7 +1502,10 @@
       preview.style.top = `${rect.y}px`;
       preview.style.width = `${Math.max(8, rect.width)}px`;
       preview.style.height = `${Math.max(8, rect.height)}px`;
-      preview.style.background = operation.kind === "nativeFieldValue" ? "rgba(187, 247, 208, 0.72)" : "rgba(187, 247, 208, 0.72)";
+      preview.style.background = "rgba(219, 234, 254, 0.30)";
+      preview.style.border = "1px solid rgba(37, 99, 235, 0.55)";
+      preview.style.color = "#0f172a";
+      preview.style.fontWeight = "600";
       preview.textContent = operation.value;
       preview.title = operation.kind === "overlayText" ? "Click to edit this pending text" : "Native field preview";
       if (operation.kind === "overlayText") {
@@ -1468,6 +1567,8 @@
     pdfData = new Uint8Array(sourceBytes);
     sourceDigest = "";
     documentContract = null;
+    resourcePolicy = null;
+    preflightReport = null;
     nativeFields = [];
     candidates = [];
     operations = [];
@@ -2495,8 +2596,15 @@
         provider: providerDescriptor(),
         validatedAt: new Date().toISOString(),
         operationIDs: operations.map((operation) => operation.id)
-      };
-      renderCompletionPanel();
+    };
+    preflightReport = buildPreflightReport({
+      document: documentContract,
+      sourceBytes: pdfData,
+      provider: providerDescriptor()
+    });
+    validatePreflightReport(preflightReport);
+    buildResourcePolicy();
+    renderCompletionPanel();
       displayReaderError(normalized);
     } finally {
       ui.exportButton.disabled = false;
@@ -2532,6 +2640,9 @@
         pages: pageCoordinates
       },
       candidates: cloneContractValue(documentContract.payload.candidates),
+      textRuns: cloneContractValue(textRunProjections),
+      preflight: cloneContractValue(preflightReport),
+      resourcePolicy: cloneContractValue(resourcePolicy),
       editSession: {
         header: {
           contractName: "pdf-editor.edit-session",
@@ -2570,6 +2681,34 @@
     classifyTemplateIndex,
     calibrateDocumentClassPolicies,
     scoreTemplateFingerprints,
+    runReviewedCorrectionBenchmark,
+    runIhatepdfExperimentParity,
+    chooseBrowserResourcePolicy,
+    collectBrowserResourceEnvironment,
+    validateBrowserResourcePolicy,
+    normalizeResourceDocument,
+    runAdaptiveBatches,
+    createResourceCheckpoint,
+    validateResourceCheckpoint,
+    summarizeResourceEvent,
+    normalizePdfJsTextItems,
+    compareTextRunProjections,
+    compareOCRLayerAlignment,
+    buildTextRunReplacementProbe,
+    validateTextRunOCRAlignmentReport,
+    resourcePolicy: () => cloneContractValue(resourcePolicy),
+    buildPreflightReport: ({ sourceBytes, provider, generatedAt } = {}) => {
+      if (!documentContract) throw new Error("Open a PDF before creating a preflight report.");
+      const report = buildPreflightReport({
+        document: documentContract,
+        sourceBytes: sourceBytes || pdfData,
+        provider: provider || providerDescriptor(),
+        generatedAt
+      });
+      validatePreflightReport(report);
+      return report;
+    },
+    validatePreflightReport,
     validateTemplateContract,
     matchTemplate,
     createCompletionProposal,

@@ -151,6 +151,7 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
   public let memberBounds: [PDFRect]
   public let evidenceItems: [CandidateEvidence]
   public let sourceDigest: String?
+  public let fusion: EvidenceFusionResult?
 
   private enum CodingKeys: String, CodingKey {
     case id
@@ -169,6 +170,7 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     case memberBounds
     case evidenceItems
     case sourceDigest
+    case fusion
   }
 
   public init(
@@ -187,7 +189,8 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     groupMemberCount: Int = 1,
     memberBounds: [PDFRect] = [],
     evidenceItems: [CandidateEvidence] = [],
-    sourceDigest: String? = nil
+    sourceDigest: String? = nil,
+    fusion: EvidenceFusionResult? = nil
   ) {
     self.id = id
     self.pageIndex = pageIndex
@@ -205,6 +208,16 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     self.memberBounds = memberBounds
     self.evidenceItems = evidenceItems
     self.sourceDigest = sourceDigest
+    self.fusion = fusion ?? EvidenceFusion.fuse(signals: evidenceItems.enumerated().map { index, item in
+      EvidenceFusionSignal(
+        id: item.id.uuidString,
+        kind: item.kind,
+        origin: item.origin,
+        providerID: item.provider?.id,
+        score: item.score ?? 0,
+        region: item.region?.rect
+      )
+    })
   }
 
   public init(from decoder: Decoder) throws {
@@ -229,6 +242,7 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     self.evidenceItems =
       try container.decodeIfPresent([CandidateEvidence].self, forKey: .evidenceItems) ?? []
     self.sourceDigest = try container.decodeIfPresent(String.self, forKey: .sourceDigest)
+    self.fusion = try container.decodeIfPresent(EvidenceFusionResult.self, forKey: .fusion)
   }
 
   public var isDirectlyEditable: Bool {
@@ -245,6 +259,10 @@ public enum EditKind: String, Codable, CaseIterable, Hashable, Sendable {
   case nativeFieldValue
   case synthesizeNativeField
   case overlayText
+  /// Semantic rewrite of an existing text run. This is distinct from an
+  /// overlay and remains provider-gated until the writer proves glyph/font
+  /// preservation and independent outside-region fidelity.
+  case textRunReplacement
   case overlayImage
   case stamp
   case annotation
@@ -325,6 +343,123 @@ public enum ReaderScaleMode: String, Codable, CaseIterable, Hashable, Sendable {
   case fitPage
   case zoom
 }
+
+// MARK: - Editor Mode (D-010)
+
+/// The four user-facing intent modes for the editor.
+///
+/// Mode is always set by explicit user action (mode pill, keyboard shortcut, or
+/// intent-inferred from a tap). It is never auto-set by document content. Every
+/// call to `open(url:)` resets the mode to `.read`.
+///
+/// - `read`: Passive scroll and zoom. No edit affordances. Zero overlay highlights.
+/// - `fill`: All editable regions highlighted. Tab/Return walks them in reading order.
+/// - `sign`: Signature regions highlighted; draw/type/image sheet is active.
+/// - `edit`: Full authoring palette. L3 ops (redact apply, flatten) require confirmation.
+public enum EditorMode: String, Codable, CaseIterable, Hashable, Sendable {
+  case read
+  case fill
+  case sign
+  case edit
+
+  /// Human-readable label for the mode pill.
+  public var displayName: String {
+    switch self {
+    case .read: return "Read"
+    case .fill: return "Fill"
+    case .sign: return "Sign"
+    case .edit: return "Edit"
+    }
+  }
+
+  /// SF Symbol for the mode pill icon.
+  public var symbolName: String {
+    switch self {
+    case .read: return "doc.text.magnifyingglass"
+    case .fill: return "pencil.and.list.clipboard"
+    case .sign: return "signature"
+    case .edit: return "pencil.tip.crop.circle"
+    }
+  }
+}
+
+/// A region that the Fill-mode highlight overlay should draw.
+///
+/// The overlay layer is a purely visual `CAShapeLayer` on `PDFKitView`; it does
+/// not modify the live `PDFDocument`. No `PDFAnnotation` is created until the
+/// user confirms an edit and `provider.apply(_:to:)` is called.
+public struct FillHighlight: Equatable, Hashable, Sendable {
+  public enum State: String, Equatable, Hashable, Sendable {
+    /// Native field: solid accent border.
+    case nativeField
+    /// Candidate not yet filled: dashed orange border.
+    case candidateUnfilled
+    /// Candidate already filled: solid green border.
+    case candidateFilled
+    /// Signature region: dashed purple border.
+    case signatureRegion
+    /// Currently focused / selected region: accent fill overlay.
+    case focused
+  }
+
+  public let id: String
+  public let pageIndex: Int
+  public let bounds: PDFRect
+  public let state: State
+  public let label: String?
+
+  public init(
+    id: String,
+    pageIndex: Int,
+    bounds: PDFRect,
+    state: State,
+    label: String? = nil
+  ) {
+    self.id = id
+    self.pageIndex = pageIndex
+    self.bounds = bounds
+    self.state = state
+    self.label = label
+  }
+}
+
+/// A user-saved signature stored in the app sandbox.
+///
+/// Signatures are never stored in the source PDF or in any external service.
+/// The user must explicitly check "Save this signature" for the entry to
+/// persist across sessions. Cleared by "Forget all signatures" in Settings.
+public struct SavedSignature: Codable, Equatable, Hashable, Identifiable, Sendable {
+  public let id: UUID
+  public let label: String
+  /// PNG data URL for the signature image.
+  public let dataURL: String
+  public let createdAt: Date
+
+  public init(id: UUID = UUID(), label: String, dataURL: String, createdAt: Date = Date()) {
+    self.id = id
+    self.label = label
+    self.dataURL = dataURL
+    self.createdAt = createdAt
+  }
+}
+
+/// A reference to an editable region used by tab-order navigation.
+public struct EditableRegionRef: Equatable, Sendable {
+  public enum Kind: Equatable, Sendable {
+    case nativeField(id: String)
+    case candidate(id: UUID)
+  }
+  public let kind: Kind
+  public let pageIndex: Int
+  public let bounds: PDFRect
+
+  public init(kind: Kind, pageIndex: Int, bounds: PDFRect) {
+    self.kind = kind
+    self.pageIndex = pageIndex
+    self.bounds = bounds
+  }
+}
+
 
 public enum PDFLinkKind: String, Codable, CaseIterable, Hashable, Sendable {
   case externalURL
@@ -542,6 +677,9 @@ public struct DocumentInspection: Codable, Equatable, Sendable {
   public let attachments: [String]
   public let accessibility: PDFAccessibilitySummary
   public let security: PDFSecuritySummary
+  /// Provider-neutral annotation taxonomy used by the read-only privacy preflight.
+  /// Keys are normalized categories such as widget, link, markup, and unknown.
+  public let annotationTypeCounts: [String: Int]
 
   public init(
     source: DocumentSource,
@@ -555,7 +693,8 @@ public struct DocumentInspection: Codable, Equatable, Sendable {
     permissions: PDFPermissionsSummary = .unknown,
     attachments: [String] = [],
     accessibility: PDFAccessibilitySummary = .unknown,
-    security: PDFSecuritySummary = .unknown
+    security: PDFSecuritySummary = .unknown,
+    annotationTypeCounts: [String: Int] = [:]
   ) {
     self.source = source
     self.pages = pages
@@ -569,6 +708,7 @@ public struct DocumentInspection: Codable, Equatable, Sendable {
     self.attachments = attachments
     self.accessibility = accessibility
     self.security = security
+    self.annotationTypeCounts = annotationTypeCounts
   }
 }
 

@@ -36,6 +36,37 @@ struct ContractMutationTests {
         )
     }
 
+    @Test func semanticTextRunReplacementIsTypedAndProviderGated() throws {
+        let context = try makeExportContext()
+        let bounds = PDFRect(x: 72, y: 700, width: 120, height: 14)
+        let operation = EditOperation(
+            pageIndex: 0,
+            targetID: "0:0:source-run",
+            kind: .textRunReplacement,
+            value: "Reviewed replacement",
+            bounds: bounds,
+            sourceDigest: context.sourceDigest,
+            coordinate: PDFPageRegion(pageIndex: 0, rect: bounds),
+            payload: .textRunReplacement(
+                originalTextHash: String(repeating: "a", count: 64),
+                runID: "0:0:source-run",
+                fontFingerprint: nil
+            )
+        )
+        let roundTripped = try JSONDecoder().decode(
+            EditOperation.self,
+            from: JSONEncoder().encode(operation)
+        )
+        #expect(roundTripped.kind == .textRunReplacement)
+        #expect(roundTripped.payload == operation.payload)
+
+        try expectInvalidOperation(
+            operation,
+            context: context,
+            message: "font/glyph preservation"
+        )
+    }
+
     @Test func destructiveFlagIsRejectedUntilProviderPolicyExists() throws {
         let context = try makeExportContext()
         let bounds = PDFRect(x: 72, y: 700, width: 120, height: 22)

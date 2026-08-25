@@ -38,6 +38,35 @@ public struct PDFKitProvider: PDFProvider {
     return try inspection(for: document, source: makeSource(url: url, data: data), data: data)
   }
 
+  /// Produces a value-minimized privacy preflight without mutating the source.
+  /// The report is observational only. It must not be used as proof that a
+  /// later sanitizer removed or neutralized every PDF risk surface.
+  public func preflight(url: URL, password: String?) throws -> PDFPreflightReport {
+    let data = try loadData(from: url)
+    guard let document = PDFDocument(data: data) else {
+      throw PDFEditorError.cannotOpen(url.lastPathComponent)
+    }
+    if document.isLocked {
+      guard let password, !password.isEmpty else {
+        throw PDFEditorError.passwordRequired(url.lastPathComponent)
+      }
+      guard document.unlock(withPassword: password) else {
+        throw PDFEditorError.passwordIncorrect(url.lastPathComponent)
+      }
+    }
+    let inspection = try inspection(for: document, source: makeSource(url: url, data: data), data: data)
+    return PDFPreflightBuilder.build(
+      inspection: inspection,
+      data: data,
+      provider: PDFProviderDescriptor(
+        id: "pdfkit",
+        version: ProcessInfo.processInfo.operatingSystemVersionString,
+        platform: "macOS",
+        capabilities: ["inspection", "metadata-presence", "embedded-data-counts", "network-boundary-counts", "bounded-token-scan"]
+      )
+    )
+  }
+
   public func export(url: URL, operations: [EditOperation], to outputURL: URL) throws
     -> ExportResult
   {
@@ -207,6 +236,11 @@ public struct PDFKitProvider: PDFProvider {
       widget.border?.lineWidth = 0
       page.addAnnotation(widget)
 
+    case .textRunReplacement:
+      throw PDFEditorError.invalidOperation(
+        "Semantic text-run replacement requires a provider with font/glyph preservation and independent outside-region fidelity evidence."
+      )
+
     case .overlayText, .annotation:
       guard let bounds = operation.bounds else {
         throw PDFEditorError.invalidOperation("An overlay edit requires page bounds.")
@@ -307,12 +341,25 @@ public struct PDFKitProvider: PDFProvider {
     var lines: [TextLineEvidence] = []
     var links: [PDFLink] = []
     var attachments: [String] = []
+    var annotationTypeCounts: [String: Int] = [:]
 
     for pageIndex in 0..<document.pageCount {
       guard let page = document.page(at: pageIndex) else {
         throw PDFEditorError.invalidPage(pageIndex)
       }
       let bounds = page.bounds(for: .cropBox)
+      for annotation in page.annotations {
+        let rawType = annotation.type ?? "unknown"
+        let normalizedType: String
+        switch rawType {
+        case "Widget": normalizedType = "widget"
+        case "Link": normalizedType = "link"
+        case "FileAttachment": normalizedType = "fileAttachment"
+        case "Text", "FreeText", "Highlight", "Underline", "StrikeOut", "Squiggly", "Ink", "Square", "Circle", "Line", "Polygon", "PolyLine", "Caret", "Stamp", "Popup": normalizedType = "markup"
+        default: normalizedType = "unknown"
+        }
+        annotationTypeCounts[normalizedType, default: 0] += 1
+      }
       pages.append(
         PageSnapshot(
           pageIndex: pageIndex,
@@ -329,12 +376,20 @@ public struct PDFKitProvider: PDFProvider {
             .isEmpty
         ))
 
+      // Identity must not embed PDFKit's global annotation enumeration index:
+      // it is not stable across save/reload when non-widget annotations are
+      // interleaved. Use a per-(page, name) occurrence counter instead, keeping
+      // the index only as a tie-breaker for repeated names.
+      var widgetOccurrenceCounts: [String: Int] = [:]
       for (annotationIndex, annotation) in page.annotations.enumerated()
       where annotation.type == "Widget" {
         let name = annotation.fieldName ?? "unnamed-\(pageIndex)-\(annotationIndex)"
+        let occurrence = widgetOccurrenceCounts[name, default: 0]
+        widgetOccurrenceCounts[name] = occurrence + 1
+        let stableID = occurrence == 0 ? "\(name)#\(pageIndex)" : "\(name)#\(pageIndex)#\(occurrence)"
         fields.append(
           NativeField(
-            id: "\(name)#\(pageIndex)#\(annotationIndex)",
+            id: stableID,
             name: name,
             kind: nativeFieldKind(annotation.widgetFieldType),
             pageIndex: pageIndex,
@@ -356,17 +411,37 @@ public struct PDFKitProvider: PDFProvider {
         }
       }
 
-      let pageLines = (page.string ?? "").components(separatedBy: .newlines)
-      let lineHeight = max(14, min(24, bounds.height / CGFloat(max(pageLines.count, 1))))
-      for (lineIndex, text) in pageLines.enumerated() {
-        let lineBounds = CGRect(
-          x: bounds.minX + 48,
-          y: bounds.maxY - CGFloat(lineIndex + 1) * lineHeight,
-          width: max(1, bounds.width - 96),
-          height: lineHeight
-        )
-        lines.append(
-          TextLineEvidence(pageIndex: pageIndex, text: text, bounds: PDFRect(lineBounds)))
+      // Use PDFKit's selection geometry rather than assigning evenly spaced
+      // bands to page.string lines. The latter loses the authored x/y layout
+      // and can associate a label with the wrong rectangle in a dense form.
+      if let selection = page.selection(for: page.bounds(for: .cropBox)) {
+        for line in selection.selectionsByLine() {
+          guard let text = line.string?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !text.isEmpty
+          else { continue }
+          lines.append(
+            TextLineEvidence(
+              pageIndex: pageIndex,
+              text: text,
+              bounds: PDFRect(line.bounds(for: page))
+            ))
+        }
+      } else if let pageString = page.string {
+        // Keep a conservative fallback for providers that cannot construct a
+        // selection. Its bounds are explicitly approximate and candidates
+        // still require semantic label evidence before promotion.
+        let pageLines = pageString.components(separatedBy: .newlines)
+        let lineHeight = max(14, min(24, bounds.height / CGFloat(max(pageLines.count, 1))))
+        for (lineIndex, text) in pageLines.enumerated() {
+          let lineBounds = CGRect(
+            x: bounds.minX + 48,
+            y: bounds.maxY - CGFloat(lineIndex + 1) * lineHeight,
+            width: max(1, bounds.width - 96),
+            height: lineHeight
+          )
+          lines.append(
+            TextLineEvidence(pageIndex: pageIndex, text: text, bounds: PDFRect(lineBounds)))
+        }
       }
     }
 
@@ -395,7 +470,8 @@ public struct PDFKitProvider: PDFProvider {
       permissions: permissions,
       attachments: attachments + embeddedFileNames(from: data),
       accessibility: accessibility,
-      security: security
+      security: security,
+      annotationTypeCounts: annotationTypeCounts
     )
   }
 

@@ -919,7 +919,7 @@
       "expectedFailure": false,
       "sourceViewer": {
         "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/2026-08-23-public-acroform/noop.pdf",
-        "digest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+        "digest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
         "toolVersions": {
           "pdfinfo": "pdfinfo version 26.08.0",
           "pdftotext": "pdftotext version 26.08.0",
@@ -949,16 +949,16 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "failed"
+            "status": "passed"
           },
-          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
+          "diagnostic": null
         }
       },
       "native": {
         "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__2026-08-23-public-acroform__noop-native-noop.pdf",
         "status": "passed",
-        "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-        "outputDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+        "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+        "outputDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
         "sourceReopen": {
           "status": "passed",
           "pageFacts": {
@@ -982,9 +982,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "failed"
+            "status": "passed"
           },
-          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
+          "diagnostic": null
         },
         "outputReopen": {
           "status": "passed",
@@ -1009,9 +1009,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "failed"
+            "status": "passed"
           },
-          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
+          "diagnostic": null
         },
         "text": {
           "status": "passed",
@@ -1053,8 +1053,8 @@
       "browser": {
         "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__2026-08-23-public-acroform__noop-browser-noop.pdf",
         "status": "passed",
-        "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-        "outputDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+        "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+        "outputDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
         "sourceReopen": {
           "status": "passed",
           "pageFacts": {
@@ -1078,9 +1078,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "failed"
+            "status": "passed"
           },
-          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
+          "diagnostic": null
         },
         "outputReopen": {
           "status": "passed",
@@ -1105,9 +1105,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "failed"
+            "status": "passed"
           },
-          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
+          "diagnostic": null
         },
         "text": {
           "status": "passed",
@@ -4760,6 +4760,5812 @@
               "pageIndex": 1,
               "status": "passed",
               "comparedPixelCount": 1159434,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+        "digest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__hybrid-text-raster-form-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+        "outputDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__browser-corpus__hybrid-text-raster-form-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+        "outputDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf",
+        "digest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__scanned-noisy-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+        "outputDigest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__browser-corpus__scanned-noisy-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+        "outputDigest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+        "digest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__rotated-hybrid-90-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+        "outputDigest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "e61c6178c680e9e352e7475ef54a49138043cb1e50041209f95dfd590d487bff"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "e61c6178c680e9e352e7475ef54a49138043cb1e50041209f95dfd590d487bff"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__browser-corpus__rotated-hybrid-90-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+        "outputDigest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 90,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "e61c6178c680e9e352e7475ef54a49138043cb1e50041209f95dfd590d487bff"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "e61c6178c680e9e352e7475ef54a49138043cb1e50041209f95dfd590d487bff"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+        "digest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__encrypted-hybrid-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+        "outputDigest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__browser-corpus__encrypted-hybrid-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+        "outputDigest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+      "expectedFailure": true,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+        "digest": "98f9a51e4cbdef0e146f52f2658b1f2d4d3a1d5b057f85791aae7cf2d8b99bfe",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "failed",
+          "pageFacts": {
+            "status": "failed",
+            "errorCode": "pdfinfo-reopen-failed",
+            "pages": [],
+            "diagnostic": "Poppler pdfinfo could not reopen the PDF."
+          },
+          "textExtraction": {
+            "status": "failed"
+          },
+          "structuralCheck": {
+            "status": "failed"
+          },
+          "diagnostic": "Poppler pdfinfo could not reopen the PDF."
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__malformed-hybrid-truncated-native-noop.pdf",
+        "status": "unknown",
+        "message": "Native validated export was not retained."
+      },
+      "browser": {
+        "outputPath": null,
+        "status": "unknown",
+        "message": "Browser export was not produced by the provider."
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+        "digest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 3,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 4,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 5,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 6,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 7,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 8,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 9,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 10,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 11,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 12,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 13,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 14,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 15,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 16,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 17,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 18,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 19,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 20,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 21,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 22,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 23,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 24,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 25,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 26,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 27,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 28,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 29,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 30,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 31,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 32,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 33,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 34,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 35,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 36,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 37,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 38,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 39,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__large-hybrid-40-pages-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+        "outputDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 3,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 4,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 5,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 6,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 7,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 8,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 9,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 10,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 11,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 12,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 13,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 14,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 15,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 16,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 17,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 18,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 19,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 20,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 21,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 22,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 23,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 24,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 25,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 26,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 27,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 28,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 29,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 30,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 31,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 32,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 33,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 34,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 35,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 36,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 37,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 38,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 39,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 3,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 4,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 5,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 6,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 7,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 8,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 9,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 10,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 11,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 12,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 13,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 14,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 15,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 16,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 17,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 18,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 19,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 20,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 21,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 22,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 23,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 24,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 25,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 26,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 27,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 28,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 29,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 30,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 31,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 32,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 33,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 34,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 35,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 36,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 37,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 38,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 39,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 2,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 3,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 4,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 5,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 6,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 7,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 8,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 9,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 10,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 11,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 12,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 13,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 14,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 15,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 16,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 17,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 18,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 19,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 20,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 21,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 22,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 23,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 24,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 25,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 26,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 27,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 28,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 29,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 30,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 31,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 32,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 33,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 34,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 35,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 36,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 37,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 38,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 39,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 2,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 3,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 4,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 5,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 6,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 7,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 8,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 9,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 10,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 11,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 12,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 13,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 14,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 15,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 16,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 17,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 18,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 19,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 20,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 21,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 22,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 23,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 24,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 25,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 26,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 27,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 28,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 29,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 30,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 31,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 32,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 33,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 34,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 35,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 36,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 37,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 38,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 39,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__browser-corpus__large-hybrid-40-pages-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+        "outputDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 3,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 4,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 5,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 6,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 7,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 8,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 9,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 10,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 11,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 12,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 13,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 14,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 15,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 16,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 17,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 18,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 19,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 20,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 21,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 22,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 23,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 24,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 25,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 26,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 27,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 28,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 29,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 30,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 31,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 32,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 33,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 34,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 35,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 36,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 37,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 38,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 39,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 1,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 2,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 3,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 4,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 5,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 6,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 7,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 8,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 9,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 10,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 11,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 12,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 13,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 14,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 15,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 16,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 17,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 18,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 19,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 20,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 21,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 22,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 23,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 24,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 25,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 26,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 27,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 28,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 29,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 30,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 31,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 32,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 33,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 34,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 35,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 36,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 37,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              },
+              {
+                "pageIndex": 38,
+                "width": 595.28,
+                "height": 841.89,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 595.28,
+                  "height": 841.89
+                }
+              },
+              {
+                "pageIndex": 39,
+                "width": 1600,
+                "height": 700,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1600,
+                  "height": 700
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 1,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 2,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 3,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 4,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 5,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 6,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 7,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 8,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 9,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 10,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 11,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 12,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 13,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 14,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 15,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 16,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 17,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 18,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 19,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 20,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 21,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 22,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 23,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 24,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 25,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 26,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 27,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 28,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 29,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 30,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 31,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 32,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 33,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 34,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 35,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 36,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 37,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 38,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "output": {
+                "wordCount": 23,
+                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+              },
+              "equal": true
+            },
+            {
+              "pageIndex": 39,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 1,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 2,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 3,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 4,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 5,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 6,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 7,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 8,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 9,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 10,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 11,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 12,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 13,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 14,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 15,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 16,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 17,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 18,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 19,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 20,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 21,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 22,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 23,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 24,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 25,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 26,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 27,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 28,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 29,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 30,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 31,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 32,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 33,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 34,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 35,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 36,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 37,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 38,
+              "status": "passed",
+              "comparedPixelCount": 1127859,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            },
+            {
+              "pageIndex": 39,
+              "status": "passed",
+              "comparedPixelCount": 2520000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "sourcePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+      "expectedFailure": false,
+      "sourceViewer": {
+        "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+        "digest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+        "toolVersions": {
+          "pdfinfo": "pdfinfo version 26.08.0",
+          "pdftotext": "pdftotext version 26.08.0",
+          "pdftoppm": "pdftoppm version 26.08.0",
+          "qpdf": "qpdf version 12.4.0"
+        },
+        "reopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1800,
+                "height": 1100,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1800,
+                  "height": 1100
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        }
+      },
+      "native": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__governed-corpus__handwritten-simulated-entries-native-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+        "outputDigest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1800,
+                "height": 1100,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1800,
+                  "height": 1100
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1800,
+                "height": 1100,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1800,
+                  "height": 1100
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 4455000,
+              "changedPixelCount": 0,
+              "outsidePixelRatio": 0,
+              "maximumChannelDelta": 0,
+              "operationIDs": []
+            }
+          ]
+        }
+      },
+      "browser": {
+        "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__governed-corpus__handwritten-simulated-entries-browser-noop.pdf",
+        "status": "passed",
+        "sourceDigest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+        "outputDigest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+        "sourceReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1800,
+                "height": 1100,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1800,
+                  "height": 1100
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "outputReopen": {
+          "status": "passed",
+          "pageFacts": {
+            "status": "passed",
+            "pages": [
+              {
+                "pageIndex": 0,
+                "width": 1800,
+                "height": 1100,
+                "rotation": 0,
+                "cropBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1800,
+                  "height": 1100
+                }
+              }
+            ]
+          },
+          "textExtraction": {
+            "status": "passed"
+          },
+          "structuralCheck": {
+            "status": "passed"
+          },
+          "diagnostic": null
+        },
+        "text": {
+          "status": "passed",
+          "message": "Poppler text outside authorized regions is unchanged.",
+          "pages": [
+            {
+              "pageIndex": 0,
+              "operationIDs": [],
+              "source": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "output": {
+                "wordCount": 0,
+                "textHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              },
+              "equal": true
+            }
+          ]
+        },
+        "raster": {
+          "status": "passed",
+          "message": "Poppler raster output is unchanged outside authorized regions.",
+          "scale": 1.5,
+          "channelTolerance": 8,
+          "pages": [
+            {
+              "pageIndex": 0,
+              "status": "passed",
+              "comparedPixelCount": 4455000,
               "changedPixelCount": 0,
               "outsidePixelRatio": 0,
               "maximumChannelDelta": 0,

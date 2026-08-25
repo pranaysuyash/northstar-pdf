@@ -1,0 +1,51 @@
+{
+  "fixtureName": "pdf-editor.native-web-semantic-parity-corpus",
+  "fixtureVersion": { "major": 1, "minor": 1 },
+  "corpusManifest": "docs/fixtures/manifest.md",
+  "nativeHarness": "PDFContractHarness",
+  "browserHarness": "Tests/pdf_contract_parity_test.mjs",
+  "normalizedComparator": "web/pdf-contract-parity.mjs",
+  "mutationHarness": "Tests/pdf_contract_parity_mutation_test.mjs",
+  "latestReport": "benchmark/results/semantic-parity/2026-08-25/parity-report.json",
+  "sourceIdentity": "sha256",
+  "coordinateContract": {
+    "unit": "points",
+    "origin": "lowerLeft",
+    "pageBox": "crop",
+    "rotation": "explicit-required"
+  },
+  "semanticFields": [
+    "document.payload.source.sha256",
+    "document.payload.pages[].geometry",
+    "document.payload.fields[]",
+    "document.payload.candidates[]",
+    "coordinates.pages[]",
+    "editSession.operations[]",
+    "validation.status",
+    "validation.checks[]",
+    "document.payload.security",
+    "document.payload.accessibility"
+  ],
+  "representationIgnored": ["provider.id", "provider.version", "provider.platform", "generatedAt", "randomIDs", "fieldIDs", "candidateIDs", "evidenceIDs", "operationIDs", "validation.checkIDs", "diagnosticProse", "validation.messages", "validation.outputDigest", "PDFBytes"],
+  "mismatchPolicy": "record-and-classify; do-not-normalize-away-provider-or-detector-differences",
+  "cases": [
+    { "id": "PARITY-001", "sourceFixture": "benchmark/results/public-sample-form.pdf", "population": "external-public", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-002", "CP-003"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-002", "sourceFixture": "benchmark/results/navigation-corpus/navigation-metadata.pdf", "population": "generated-navigation", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-002"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-003", "sourceFixture": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf", "population": "synthetic-native-widgets", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-005", "CP-006"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-004", "sourceFixture": "benchmark/results/2026-08-23-public-acroform/noop.pdf", "population": "generated-external-acroform", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-002", "CP-003"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-005", "sourceFixture": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf", "population": "static-form", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-003", "CP-006"], "allowedOpenMismatchKinds": ["candidate-semantic-set", "candidate.count"] },
+    { "id": "PARITY-006", "sourceFixture": "benchmark/results/security-corpus/encrypted-reader.pdf", "population": "encrypted-security", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-002", "CP-004"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-007", "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf", "population": "malformed-recovery", "expectedFailure": true, "expectedNativeStatus": "inspectionFailed", "expectedBrowserStatus": "inspectionFailed", "evidenceLedgerIDs": ["CP-002", "CP-003"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-008", "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf", "population": "resource-limit", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-003", "CP-004"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-009", "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf", "population": "raster-ocr", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-003", "CP-004"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-010", "sourceFixture": "benchmark/results/rotation-corpus/rotated-widget-90.pdf", "population": "rotated-native-widgets", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-006"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-011", "sourceFixture": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf", "population": "rotated-static-form", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-003", "CP-006"], "allowedOpenMismatchKinds": ["candidate-semantic-set", "candidate.count"] },
+    { "id": "PARITY-012", "sourceFixture": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf", "population": "hybrid-text-raster-form", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-002", "CP-003", "CP-004", "CP-005"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-013", "sourceFixture": "benchmark/results/browser-corpus/scanned-noisy.pdf", "population": "degraded-raster-ocr", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-003", "CP-004"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-014", "sourceFixture": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf", "population": "rotated-hybrid-form", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-003", "CP-004", "CP-006"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-015", "sourceFixture": "benchmark/results/browser-corpus/encrypted-hybrid.pdf", "population": "encrypted-hybrid-form", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-002", "CP-003", "CP-005"], "allowedOpenMismatchKinds": ["page.geometry-or-text", "coordinates"] },
+    { "id": "PARITY-016", "sourceFixture": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf", "population": "malformed-hybrid", "expectedFailure": true, "expectedNativeStatus": "inspectionFailed", "expectedBrowserStatus": "inspectionFailed", "evidenceLedgerIDs": ["CP-002", "CP-003"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-017", "sourceFixture": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf", "population": "large-hybrid-resource-stress", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-002", "CP-003", "CP-004"], "allowedOpenMismatchKinds": [] },
+    { "id": "PARITY-018", "sourceFixture": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf", "population": "synthetic-handwriting-like-raster", "expectedFailure": false, "expectedNativeStatus": "inspected", "expectedBrowserStatus": "inspected", "evidenceLedgerIDs": ["CP-001", "CP-003", "CP-004"], "allowedOpenMismatchKinds": [] }
+  ]
+}

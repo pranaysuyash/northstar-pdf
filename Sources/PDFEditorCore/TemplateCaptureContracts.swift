@@ -2,6 +2,7 @@ import Foundation
 
 public enum PDFTemplateCaptureError: Error, Equatable, Sendable {
     case sourceDigestMissing
+    case invalidTransferEnvelope
     case templateMustBeDraft
     case parentMustBeActive
     case noReviewedMappings
@@ -25,9 +26,9 @@ public struct PDFTemplateRevisionSet: Codable, Equatable, Sendable {
         guard Set(revisionIDs).count == revisionIDs.count else {
             throw PDFTemplateCaptureError.duplicateRevision
         }
-        for revision in revisions {
+        for (index, revision) in revisions.enumerated() {
             if let parentID = revision.payload.parentRevisionID,
-               !revisionIDs.contains(parentID) {
+               !revisionIDs[..<index].contains(parentID) {
                 throw PDFTemplateCaptureError.missingRevisionParent
             }
         }

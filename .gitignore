@@ -19,3 +19,6 @@ xcuserdata/
 .freebuff/
 .vscode/
 mcp-shell.log
+
+# Local generated fixtures and scratch outputs
+tmp/

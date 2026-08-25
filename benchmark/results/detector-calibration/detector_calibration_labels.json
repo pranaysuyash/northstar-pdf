@@ -1,0 +1,201 @@
+{
+  "schema": "pdf-editor.detector-calibration-labels",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "fixture": "benchmark/results/detector-calibration/detector-calibration.pdf",
+  "sourceSha256": "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+  "coordinateSpace": {
+    "unit": "points",
+    "origin": "lowerLeft",
+    "pageBox": "crop"
+  },
+  "policy": {
+    "positiveMatchIoU": 0.25,
+    "hardNegativeFalsePositiveRate": 0,
+    "requiredPositiveRecall": 1,
+    "labelAssociationEvidence": [
+      "textLabel",
+      "spatialRelationship"
+    ],
+    "reviewRequired": true
+  },
+  "cases": [
+    {
+      "id": "p0-vector-rectangle",
+      "pageIndex": 0,
+      "class": "vectorRectangle",
+      "expected": "detected",
+      "hardNegative": false,
+      "target": {
+        "x": 180,
+        "y": 700,
+        "width": 300,
+        "height": 32
+      },
+      "requiredEvidence": [
+        "vectorRectangle"
+      ],
+      "rationale": "Labeled rectangular entry region after Applicant Name."
+    },
+    {
+      "id": "p0-checkbox",
+      "pageIndex": 0,
+      "class": "checkbox",
+      "expected": "detected",
+      "hardNegative": false,
+      "target": {
+        "x": 72,
+        "y": 600,
+        "width": 16,
+        "height": 16
+      },
+      "requiredEvidence": [
+        "vectorRectangle"
+      ],
+      "requiredFieldType": "checkbox",
+      "rationale": "Small square is labeled Agree to terms and must not be suppressed as cell noise."
+    },
+    {
+      "id": "p0-underline",
+      "pageIndex": 0,
+      "class": "underline",
+      "expected": "detected",
+      "hardNegative": false,
+      "target": {
+        "x": 180,
+        "y": 520,
+        "width": 140,
+        "height": 18
+      },
+      "requiredEvidence": [
+        "underline"
+      ],
+      "rationale": "Horizontal entry stroke is associated with the Date label."
+    },
+    {
+      "id": "p0-whitespace",
+      "pageIndex": 0,
+      "class": "whitespace",
+      "expected": "detected",
+      "hardNegative": false,
+      "target": {
+        "x": 125,
+        "y": 445,
+        "width": 220,
+        "height": 24
+      },
+      "requiredEvidence": [
+        "whitespace"
+      ],
+      "rationale": "Address label has no vector box and should produce a reviewable whitespace suggestion."
+    },
+    {
+      "id": "p0-label-association",
+      "pageIndex": 0,
+      "class": "labelAssociation",
+      "expected": "detected",
+      "hardNegative": false,
+      "target": {
+        "x": 180,
+        "y": 700,
+        "width": 300,
+        "height": 32
+      },
+      "requiredEvidence": [
+        "textLabel",
+        "spatialRelationship"
+      ],
+      "requiredCandidateKind": "vectorRegion",
+      "rationale": "The Applicant Name text must be retained as explainable association evidence."
+    },
+    {
+      "id": "p1-decorative-rectangle",
+      "pageIndex": 1,
+      "class": "vectorRectangle",
+      "expected": "abstain",
+      "hardNegative": true,
+      "target": {
+        "x": 180,
+        "y": 700,
+        "width": 300,
+        "height": 32
+      },
+      "requiredEvidence": [
+        "vectorRectangle"
+      ],
+      "rationale": "A Section label is layout text, not field intent."
+    },
+    {
+      "id": "p1-isolated-square",
+      "pageIndex": 1,
+      "class": "checkbox",
+      "expected": "abstain",
+      "hardNegative": true,
+      "target": {
+        "x": 72,
+        "y": 600,
+        "width": 16,
+        "height": 16
+      },
+      "requiredEvidence": [
+        "vectorRectangle"
+      ],
+      "rationale": "An isolated unlabeled square is decorative or structural noise."
+    },
+    {
+      "id": "p1-bare-rule",
+      "pageIndex": 1,
+      "class": "underline",
+      "expected": "abstain",
+      "hardNegative": true,
+      "target": {
+        "x": 180,
+        "y": 520,
+        "width": 140,
+        "height": 18
+      },
+      "requiredEvidence": [
+        "underline"
+      ],
+      "rationale": "A bare horizontal rule is not sufficient evidence of an entry region."
+    },
+    {
+      "id": "p1-generic-box",
+      "pageIndex": 1,
+      "class": "labelAssociation",
+      "expected": "abstain",
+      "hardNegative": true,
+      "target": {
+        "x": 180,
+        "y": 420,
+        "width": 260,
+        "height": 30
+      },
+      "requiredEvidence": [
+        "textLabel",
+        "spatialRelationship"
+      ],
+      "requiredCandidateKind": "vectorRegion",
+      "rationale": "Note is not a semantically plausible field label."
+    },
+    {
+      "id": "p1-generic-whitespace",
+      "pageIndex": 1,
+      "class": "whitespace",
+      "expected": "abstain",
+      "hardNegative": true,
+      "target": {
+        "x": 125,
+        "y": 345,
+        "width": 220,
+        "height": 24
+      },
+      "requiredEvidence": [
+        "whitespace"
+      ],
+      "rationale": "Section followed by a delimiter is generic layout text."
+    }
+  ]
+}

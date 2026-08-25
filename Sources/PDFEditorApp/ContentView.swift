@@ -3,28 +3,115 @@ import PDFKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+private enum SearchProjectionState: Equatable {
+  case none
+  case exact
+  case approximate
+  case unavailable
+
+  var title: String {
+    switch self {
+    case .none: return "No highlight"
+    case .exact: return "Exact highlight"
+    case .approximate: return "Approximate highlight"
+    case .unavailable: return "Highlight unavailable"
+    }
+  }
+
+  var message: String {
+    switch self {
+    case .none: return ""
+    case .exact: return "The selected search result is highlighted at its exact text range."
+    case .approximate: return "The selected result is highlighted approximately because PDFKit could not prove the exact text range."
+    case .unavailable: return "The selected result could not be projected into the PDF view. The result remains selected in the list."
+    }
+  }
+
+  var symbolName: String {
+    switch self {
+    case .none: return "magnifyingglass"
+    case .exact: return "checkmark.circle"
+    case .approximate: return "exclamationmark.triangle"
+    case .unavailable: return "questionmark.circle"
+    }
+  }
+}
+
+@MainActor private func canCopyText(_ model: AppModel) -> Bool {
+  model.inspection?.permissions.canCopy ?? false
+}
+
+@MainActor private func canEditAnnotations(_ model: AppModel) -> Bool {
+  guard let permissions = model.inspection?.permissions else { return false }
+  return permissions.canModify && permissions.canAddAnnotations
+}
+
+@MainActor private func canExportCopy(_ model: AppModel) -> Bool {
+  guard model.canExportCurrentOperations,
+    let permissions = model.inspection?.permissions
+  else { return false }
+  return permissions.canModify || permissions.canAddAnnotations
+}
+
+@MainActor private func exportCopyHelp(_ model: AppModel) -> String {
+  if canExportCopy(model) {
+    return "Creates a separate edited PDF. The source file is never overwritten or saved in place."
+  }
+  if model.inspection == nil {
+    return "Unavailable until a PDF is open and contains exportable edits."
+  }
+  if !(model.inspection?.permissions.canModify ?? false)
+    && !(model.inspection?.permissions.canAddAnnotations ?? false)
+  {
+    return "Unavailable because this PDF does not allow the document changes required for export."
+  }
+  return "Unavailable until there are authorized, validated edits to export."
+}
+
+private extension View {
+  func accessibilityHelp(_ text: String) -> some View {
+    accessibilityHint(text)
+  }
+}
+
 struct ContentView: View {
   @Bindable var model: AppModel
+  @Binding private var searchFocusEvent: Int
+  @State private var searchProjectionState: SearchProjectionState = .none
 
-  init(model: AppModel) {
+  // Recovery view state is encoded by AppModel, but the model currently does
+  // not expose a public coalesced view-state autosave hook. Do not call its
+  // private saveDurableRecovery/autoSaveSession methods from the view layer.
+  // The missing seam is a public model-owned scheduleViewStateAutosave() API.
+
+  init(model: AppModel, searchFocusEvent: Binding<Int> = .constant(0)) {
     self.model = model
+    self._searchFocusEvent = searchFocusEvent
   }
 
   var body: some View {
     Group {
       if let inspection = model.inspection {
-        EditorView(model: model, inspection: inspection)
-      } else {
-        WelcomeView {
-          model.isImporterPresented = true
+        VStack(spacing: 0) {
+          RecoveryStatusView(model: model)
+          EditorView(
+            model: model,
+            inspection: inspection,
+            searchFocusEvent: searchFocusEvent,
+            searchProjectionState: $searchProjectionState
+          )
         }
+      } else {
+        WelcomeView(open: requestOpenDocument)
       }
     }
     .toolbar {
       ToolbarItemGroup {
         Button("Open", systemImage: "folder") {
-          model.isImporterPresented = true
+          requestOpenDocument()
         }
+        .help("Open another PDF. The current document remains open until the new PDF is admitted.")
+        .accessibilityHelp("Open another PDF without discarding the current document before the new PDF is admitted.")
         Button("Undo", systemImage: "arrow.uturn.backward") {
           model.undoLastEdit()
         }
@@ -33,10 +120,12 @@ struct ContentView: View {
           model.redoLastEdit()
         }
         .disabled(!model.canRedo)
-        Button("Export", systemImage: "square.and.arrow.down") {
+        Button("Export Copy", systemImage: "square.and.arrow.down") {
           model.export()
         }
-        .disabled(!model.canExportCurrentOperations)
+        .disabled(!canExportCopy(model))
+        .help(exportCopyHelp(model))
+        .accessibilityHelp(exportCopyHelp(model))
       }
       ToolbarItem {
         Picker(
@@ -82,7 +171,7 @@ struct ContentView: View {
       switch result {
       case .success(let urls):
         if let url = urls.first {
-          model.open(url: url)
+          openImportedPDF(url)
         }
       case .failure(let error):
         model.alertMessage = error.localizedDescription
@@ -108,7 +197,143 @@ struct ContentView: View {
     }
     .sheet(isPresented: $model.isManualTextSheetPresented) {
       ManualTextSheet(model: model)
+  }
+}
+
+private struct RecoveryStatusView: View {
+  @Bindable var model: AppModel
+
+  private var hasRecoveryState: Bool {
+    switch model.recoveryStatus {
+    case .none:
+      return !model.recoveryRecords.isEmpty || !model.recoveryDiagnostics.isEmpty
+    case .available, .replayable, .metadataOnly, .corrupted, .saveFailed:
+      return true
     }
+  }
+
+  private var statusTitle: String {
+    switch model.recoveryStatus {
+    case .none:
+      return "No recovery available"
+    case .available:
+      return "Recovery available"
+    case .replayable:
+      return "Recovery restored"
+    case .metadataOnly:
+      return "Recovery metadata only"
+    case .corrupted:
+      return "Recovery needs attention"
+    case .saveFailed:
+      return "Recovery save failed"
+    }
+  }
+
+  private var statusMessage: String {
+    switch model.recoveryStatus {
+    case .none:
+      return "No readable recovery session is associated with this document."
+    case .available:
+      return "Saved recovery work is available for this document. Review the discovered session before continuing."
+    case .replayable:
+      return "The recovered edit session was trusted and restored."
+    case .metadataOnly:
+      return "Recovery metadata was found, but no edit payload was trusted or applied."
+    case .corrupted:
+      return "One or more recovery records could not be read or validated."
+    case .saveFailed:
+      return "The latest recovery save did not complete. Earlier recovery data may still be available."
+    }
+  }
+
+  private var statusColor: Color {
+    switch model.recoveryStatus {
+    case .none, .available:
+      return .secondary
+    case .replayable:
+      return .green
+    case .metadataOnly, .corrupted, .saveFailed:
+      return .orange
+    }
+  }
+
+  var body: some View {
+    if hasRecoveryState {
+      VStack(alignment: .leading, spacing: 6) {
+        HStack(spacing: 8) {
+          Label("Recovery", systemImage: "arrow.clockwise.circle")
+            .font(.subheadline.weight(.semibold))
+          Text(statusTitle)
+            .font(.caption.weight(.medium))
+            .foregroundStyle(statusColor)
+          Spacer()
+        }
+
+        Text(statusMessage)
+          .font(.caption)
+          .foregroundStyle(.secondary)
+
+        if !model.recoveryRecords.isEmpty {
+          Text("Discovered recovery sessions")
+            .font(.caption.weight(.medium))
+          ForEach(Array(model.recoveryRecords.enumerated()), id: \.offset) { _, record in
+            Text("Session \(record.session.sessionID.uuidString.prefix(8))")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+              .accessibilityLabel("Recovery session \(record.session.sessionID.uuidString)")
+          }
+        }
+
+        ForEach(model.recoveryDiagnostics, id: \.self) { diagnostic in
+          Label(diagnostic, systemImage: "exclamationmark.triangle")
+            .font(.caption)
+            .foregroundStyle(.orange)
+        }
+      }
+      .padding(.horizontal, 12)
+      .padding(.vertical, 8)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background(Color.orange.opacity(0.08))
+      .overlay(alignment: .bottom) {
+        Divider()
+      }
+      .accessibilityElement(children: .contain)
+      .accessibilityLabel("Recovery status")
+      .accessibilityValue("\(statusTitle). \(statusMessage)")
+    }
+  }
+}
+
+private func openImportedPDF(_ url: URL) {
+    // The current session remains untouched while the importer is open. A
+    // lightweight PDFKit admission check also prevents malformed or empty
+    // files from reaching the mutating AppModel load path.
+    guard let candidate = PDFDocument(url: url) else {
+      model.alertMessage = "The selected PDF could not be opened. The current document remains open."
+      return
+    }
+    guard candidate.isLocked || candidate.pageCount > 0 else {
+      model.alertMessage = "The selected PDF contains no readable pages. The current document remains open."
+      return
+    }
+    model.open(url: url)
+  }
+
+  private func requestOpenDocument() {
+    let decision = model.lifecycleDecision(for: .openDocument)
+    guard decision.disposition == .confirmBeforeDiscardingChanges else {
+      model.isImporterPresented = true
+      return
+    }
+
+    let alert = NSAlert()
+    alert.alertStyle = .warning
+    alert.messageText = "This document has unexported changes."
+    alert.informativeText = "PDF Editor uses an export-only workflow: Export Copy... creates a separate edited PDF, never overwrites the source, and does not save changes in place. Choose Continue to Open to select another PDF without discarding this document before the new file is admitted, or Cancel to keep working."
+    alert.addButton(withTitle: "Continue to Open")
+    alert.addButton(withTitle: "Cancel")
+    guard alert.runModal() == .alertFirstButtonReturn else { return }
+    model.isImporterPresented = true
   }
 }
 
@@ -182,6 +407,12 @@ private struct ManualTextSheet: View {
       .fixedSize(horizontal: false, vertical: true)
       TextField("Text to place", text: $model.manualTextDraft)
         .textFieldStyle(.roundedBorder)
+        .disabled(!canEditAnnotations(model))
+        .accessibilityHelp(
+          canEditAnnotations(model)
+            ? "Enter text for a reversible document overlay."
+            : "Unavailable because this PDF does not allow document annotations."
+        )
         .onSubmit { model.applyManualText() }
       HStack {
         Button("Cancel") {
@@ -192,7 +423,15 @@ private struct ManualTextSheet: View {
           model.applyManualText()
         }
         .buttonStyle(.borderedProminent)
-        .disabled(model.manualTextDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        .disabled(
+          !canEditAnnotations(model)
+            || model.manualTextDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        )
+        .accessibilityHelp(
+          canEditAnnotations(model)
+            ? "Adds a reversible text overlay."
+            : "Unavailable because this PDF does not allow document annotations."
+        )
       }
     }
     .padding(24)
@@ -203,21 +442,29 @@ private struct ManualTextSheet: View {
 private struct EditorView: View {
   let model: AppModel
   let inspection: DocumentInspection
+  let searchFocusEvent: Int
+  @Binding var searchProjectionState: SearchProjectionState
 
   var body: some View {
     VStack(spacing: 10) {
-      ReaderControlBar(model: model)
+      ReaderControlBar(
+        model: model,
+        focusEvent: searchFocusEvent,
+        projectionState: searchProjectionState
+      )
       HSplitView {
         PageList(model: model, inspection: inspection)
           .frame(minWidth: 200, idealWidth: 230, maxWidth: 280)
         PDFKitView(
           document: model.liveDocument,
+          projectionRevision: model.documentProjectionRevision,
           pageIndex: model.selectedPageIndex,
           viewMode: model.readerViewMode,
           scaleMode: model.readerScaleMode,
           zoom: model.readerZoom,
           rotation: model.readerRotation,
           selectedSearchMatch: model.selectedSearchMatch,
+          searchProjectionState: $searchProjectionState,
           selectedCandidate: model.selectedCandidate,
           selectedField: model.selectedField,
           isManualPlacementMode: model.isManualPlacementMode,
@@ -227,6 +474,26 @@ private struct EditorView: View {
           onDirectEdit: { pageIndex, point in
             model.beginDirectTextPlacement(pageIndex: pageIndex, point: point)
           }
+        )
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("PDF document page \(model.selectedPageIndex + 1)")
+        .accessibilityValue(
+          model.selectedSearchMatch.map {
+            "Search result on page \($0.pageIndex + 1): \($0.snippet)"
+          }
+            ?? model.selectedCandidate.map {
+              "Selected suggested area on page \($0.pageIndex + 1), \($0.entryMode.rawValue)"
+            }
+            ?? model.selectedField.map {
+              "Selected native field \($0.name) on page \($0.pageIndex + 1)"
+            }
+            ?? "Page \(model.selectedPageIndex + 1)"
+        )
+        .accessibilityHint(
+          (model.isManualPlacementMode
+            ? "Manual placement mode. Press Return or Space to place text at the current page center, or click the page."
+            : "Use the page list, inspector, or search results to change the selected document element.")
+            + " " + searchProjectionState.message
         )
         .frame(minWidth: 520)
         InspectorView(model: model, inspection: inspection)
@@ -239,6 +506,8 @@ private struct EditorView: View {
 
 private struct ReaderControlBar: View {
   @Bindable var model: AppModel
+  let focusEvent: Int
+  let projectionState: SearchProjectionState
 
   var body: some View {
     VStack(spacing: 10) {
@@ -279,9 +548,20 @@ private struct ReaderControlBar: View {
         Button("Copy page text") {
           model.copyCurrentPageText()
         }
+        .disabled(!canCopyText(model))
+        .help(
+          canCopyText(model)
+            ? "Copy text from the selected page."
+            : "This PDF does not allow text copying."
+        )
+        .accessibilityHelp(
+          canCopyText(model)
+            ? "Copies text from the selected page."
+            : "Unavailable because this PDF's permissions do not allow text copying."
+        )
       }
       HStack {
-        SearchField(model: model)
+        SearchField(model: model, focusEvent: focusEvent, projectionState: projectionState)
         Spacer()
         Text("Labels and access")
           .foregroundStyle(.secondary)
@@ -296,15 +576,34 @@ private struct ReaderControlBar: View {
 
 private struct SearchField: View {
   @Bindable var model: AppModel
+  let focusEvent: Int
+  let projectionState: SearchProjectionState
+  @FocusState private var isFocused: Bool
 
   var body: some View {
     HStack(spacing: 8) {
       TextField("Search in document", text: $model.searchQuery)
         .textFieldStyle(.roundedBorder)
+        .focused($isFocused)
+        .disabled(!canCopyText(model))
+        .accessibilityHelp(
+          canCopyText(model)
+            ? "Search text in this PDF."
+            : "Unavailable because this PDF's permissions do not allow text copying."
+        )
         .onSubmit { model.runSearch() }
+        .onChange(of: focusEvent) { _, _ in
+          isFocused = true
+        }
       Button("Find") {
         model.runSearch()
       }
+      .disabled(!canCopyText(model))
+      .accessibilityHelp(
+        canCopyText(model)
+          ? "Run the document search."
+          : "Unavailable because this PDF's permissions do not allow text copying."
+      )
       if model.canClearSearch {
         Button("Clear") {
           model.clearSearch()
@@ -315,7 +614,19 @@ private struct SearchField: View {
           .font(.caption)
           .foregroundStyle(.secondary)
         Button("Prev") { model.selectPreviousSearchMatch() }
+          .disabled(!canCopyText(model))
+          .help(
+            canCopyText(model)
+              ? "Select the previous search result."
+              : "Unavailable because this PDF does not allow text copying."
+          )
         Button("Next") { model.selectNextSearchMatch() }
+          .disabled(!canCopyText(model))
+          .help(
+            canCopyText(model)
+              ? "Select the next search result."
+              : "Unavailable because this PDF does not allow text copying."
+          )
         if let selected = model.selectedSearchMatchIndex {
           Text("#\(selected + 1)")
             .font(.caption.monospacedDigit())
@@ -403,6 +714,7 @@ private struct InspectorView: View {
         Text("Review and edit")
           .font(.title3.weight(.semibold))
 
+        templateSection
         profileSection
         fieldSection
         candidateSection
@@ -435,6 +747,10 @@ private struct InspectorView: View {
           Spacer()
           Button("Switch") {
             model.currentProfile = nil
+          }
+          .font(.caption)
+          Button("Lock") {
+            model.lockProfileVault()
           }
           .font(.caption)
         }
@@ -489,8 +805,19 @@ private struct InspectorView: View {
         .font(.caption)
 
       } else {
+        if !model.isProfileVaultUnlocked {
+          Button("Unlock encrypted profile vault") {
+            model.unlockProfileVault()
+          }
+          .buttonStyle(.borderedProminent)
+          Text("Profile values remain unavailable until the local vault is explicitly unlocked.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
         // No profile selected — show list or create
-        if model.availableProfiles.isEmpty {
+        if !model.isProfileVaultUnlocked {
+          EmptyView()
+        } else if model.availableProfiles.isEmpty {
           Text("No profiles yet. Create one to enable bulk fill.")
             .font(.callout)
             .foregroundStyle(.secondary)
@@ -521,6 +848,157 @@ private struct InspectorView: View {
     }
   }
 
+  private var templateSection: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Label("Reviewed completion template", systemImage: "checklist")
+        .font(.headline)
+      Text("Mapping approval and profile-value approval are separate. No template operation is created until both decisions are bound to this source and profile revision.")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      HStack(spacing: 8) {
+        Button("Capture layout") {
+          model.captureTemplateReview()
+        }
+        .buttonStyle(.bordered)
+        Button(model.templateSaveButtonTitle) {
+          model.saveTemplateRevision()
+        }
+        .buttonStyle(.bordered)
+        .disabled(model.templateContract == nil)
+        Button("Unlock") {
+          model.unlockTemplateVault()
+        }
+        .buttonStyle(.bordered)
+        Button("Import") {
+          model.importTemplate()
+        }
+        .buttonStyle(.bordered)
+        .disabled(!model.isTemplateVaultUnlocked)
+        Button("Export") {
+          model.exportTemplate()
+        }
+        .buttonStyle(.bordered)
+        .disabled(!model.isTemplateVaultUnlocked || model.templateContract == nil)
+      }
+
+      if model.canSaveValidatedTemplateRevision {
+        Text("Strict export validation passed. Saving will create one immutable child revision and append one pending learning event as applied.")
+          .font(.caption)
+          .foregroundStyle(.green)
+      } else if model.pendingValidatedTemplateRevision != nil {
+        Text("A proposed revision exists but is not currently saveable because the edit ledger or validation state changed.")
+          .font(.caption)
+          .foregroundStyle(.orange)
+      }
+
+      if let template = model.templateContract {
+        LabeledContent(
+          "Template state",
+          value: "\(template.payload.lifecycle.rawValue) · \(template.payload.mappings.count) mapping(s)")
+          .font(.caption)
+
+        if let diff = model.templateRevisionDiff {
+          Text("Revision diff: +\(diff.exactSourceDigestsAdded.count) source variant(s), \(diff.mappingChanges.count) mapping change(s)")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+
+        ForEach(model.templateMappings) { mapping in
+          HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Toggle(
+              isOn: Binding(
+                get: { mapping.status == .confirmed },
+                set: { model.reviewTemplateMapping(mapping.id, approved: $0) }
+              )
+            ) {
+              VStack(alignment: .leading, spacing: 2) {
+                Text(mapping.semanticKey)
+                Text("Page \(mapping.target.pageIndex + 1) · \(mapping.target.kind.rawValue) · \(mapping.status.rawValue)")
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+              }
+            }
+            .disabled(template.payload.lifecycle != .draft)
+          }
+          .padding(.vertical, 2)
+        }
+
+        if template.payload.lifecycle == .draft {
+          let reviewed = model.templateMappings.allSatisfy { $0.status != .proposed }
+          Button("Activate reviewed mappings") {
+            model.activateTemplateReview()
+          }
+          .buttonStyle(.borderedProminent)
+          .disabled(!reviewed || !model.templateMappings.contains(where: \.isApproved))
+        } else {
+          Button("Prepare completion review") {
+            model.prepareTemplateCompletionReview()
+          }
+          .buttonStyle(.borderedProminent)
+          .disabled(model.currentProfile == nil)
+        }
+      }
+
+      if !model.templateReviewableEntries.isEmpty {
+        Divider()
+        Text("Completion review")
+          .font(.subheadline.weight(.semibold))
+        ForEach(model.templateReviewableEntries) { entry in
+          VStack(alignment: .leading, spacing: 7) {
+            Toggle(
+              isOn: Binding(
+                get: { entry.mappingReview == .approved },
+                set: { model.reviewTemplateCompletionMapping(entry.mappingID, approved: $0) }
+              )
+            ) {
+              Text("Approve mapping · \(entry.semanticKey)")
+            }
+            .accessibilityHelp("Approve only the target association. This does not approve the profile value.")
+
+            TextField(
+              "Profile value",
+              text: Binding(
+                get: { model.templateValueDrafts[entry.mappingID] ?? "" },
+                set: { model.updateTemplateCompletionValue(entry.mappingID, value: $0) }
+              ))
+              .textFieldStyle(.roundedBorder)
+              .disabled(entry.profileRevisionID == nil)
+
+            Toggle(
+              isOn: Binding(
+                get: { entry.valueReview == .approved && entry.profileValueApproval?.state == .approved },
+                set: { model.reviewTemplateCompletionValue(entry.mappingID, approved: $0) }
+              )
+            ) {
+              Text("Approve exact value for this profile revision")
+            }
+            .accessibilityHelp("Approve the displayed value from the selected profile revision. Editing the value revokes this approval.")
+
+            Text("Mapping: \(entry.mappingReview.rawValue) · Value: \(entry.valueReview.rawValue) · Profile revision: \(entry.profileRevisionID?.uuidString.prefix(8) ?? "none")")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+          .padding(8)
+          .background(Color.accentColor.opacity(0.06))
+          .clipShape(RoundedRectangle(cornerRadius: 8))
+        }
+
+        Button("Apply reviewed completion") {
+          model.applyTemplateCompletion()
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(!(model.templateCompletionProposal?.isReadyToMaterialize ?? false))
+        Text("Apply remains disabled until every mapping and every exact profile value is independently approved.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      }
+    }
+    .padding(10)
+    .background(Color.accentColor.opacity(0.04))
+    .clipShape(RoundedRectangle(cornerRadius: 10))
+  }
+
   private var fieldSection: some View {
     VStack(alignment: .leading, spacing: 10) {
       Label("Native fields", systemImage: "checkmark.square")
@@ -547,6 +1025,11 @@ private struct InspectorView: View {
             }
           }
           .buttonStyle(.plain)
+          .accessibilityElement(children: .combine)
+          .accessibilityLabel("Native field \(field.name)")
+          .accessibilityValue("Page \(field.pageIndex + 1), \(field.kind.rawValue)")
+          .accessibilityHint("Selects this native field for review and editing.")
+          .accessibilityAddTraits(model.selectedFieldID == field.id ? [.isSelected] : [])
         }
         if let field = model.selectedField {
           if field.kind == .button {
@@ -558,6 +1041,12 @@ private struct InspectorView: View {
                 }
               }
               .pickerStyle(.menu)
+              .disabled(!(model.inspection?.permissions.canModify ?? false))
+              .accessibilityHelp(
+                (model.inspection?.permissions.canModify ?? false)
+                  ? "Choose the native button option."
+                  : "Unavailable because this PDF does not allow modifications."
+              )
             } else {
               Toggle(
                 "Checked",
@@ -565,6 +1054,12 @@ private struct InspectorView: View {
                   get: { ["1", "true", "yes", "on", "checked"].contains(fieldDraft.lowercased()) },
                   set: { fieldDraft = $0 ? (options.first ?? "Yes") : "false" }
                 ))
+                .disabled(!(model.inspection?.permissions.canModify ?? false))
+                .accessibilityHelp(
+                  (model.inspection?.permissions.canModify ?? false)
+                    ? "Change the native button value."
+                    : "Unavailable because this PDF does not allow modifications."
+                )
             }
           } else if field.kind == .choice && !field.choices.isEmpty {
             Picker("Selected option", selection: $fieldDraft) {
@@ -574,8 +1069,20 @@ private struct InspectorView: View {
               }
             }
             .pickerStyle(.menu)
+            .disabled(!(model.inspection?.permissions.canModify ?? false))
+            .accessibilityHelp(
+              (model.inspection?.permissions.canModify ?? false)
+                ? "Choose the native field option."
+                : "Unavailable because this PDF does not allow modifications."
+            )
           } else {
             TextField("Field value", text: $fieldDraft)
+              .disabled(!(model.inspection?.permissions.canModify ?? false))
+              .accessibilityHelp(
+                (model.inspection?.permissions.canModify ?? false)
+                  ? "Edit the native field value."
+                  : "Unavailable because this PDF does not allow modifications."
+              )
               .textFieldStyle(.roundedBorder)
               .onSubmit {
                 model.applyFieldValue(fieldDraft)
@@ -584,7 +1091,24 @@ private struct InspectorView: View {
           Button("Apply native field") {
             model.applyFieldValue(fieldDraft)
           }
-          .disabled(field.kind == .signature)
+          .disabled(
+            field.kind == .signature
+              || !(model.inspection?.permissions.canModify ?? false)
+          )
+          .help(
+            field.kind == .signature
+              ? "Signature fields are not edited in this lane."
+              : (model.inspection?.permissions.canModify ?? false
+                ? "Apply the selected native field value."
+                : "Unavailable because this PDF does not allow modifications.")
+          )
+          .accessibilityHelp(
+            field.kind == .signature
+              ? "Unavailable because signature fields are not edited in this lane."
+              : (model.inspection?.permissions.canModify ?? false
+                ? "Applies the selected native field value."
+                : "Unavailable because this PDF does not allow modifications.")
+          )
         }
       }
     }
@@ -601,6 +1125,17 @@ private struct InspectorView: View {
         }
         .font(.caption)
         .buttonStyle(.bordered)
+        .disabled(!canCopyText(model))
+        .help(
+          canCopyText(model)
+            ? "Run local OCR on the selected page."
+            : "Unavailable because this PDF's permissions do not allow text extraction."
+        )
+        .accessibilityHelp(
+          canCopyText(model)
+            ? "Runs local OCR on the selected page."
+            : "Unavailable because this PDF's permissions do not allow text extraction."
+        )
       }
       Text(
         "These are interpreted regions, not guaranteed fields. Review the label and geometry before applying text. Double-click the page to place text directly."
@@ -608,9 +1143,15 @@ private struct InspectorView: View {
       .font(.callout)
       .foregroundStyle(.secondary)
       HStack(spacing: 8) {
-        Button("Add text manually", systemImage: "plus.circle") {
-          model.beginManualTextPlacement()
-        }
+          Button("Add text manually", systemImage: "plus.circle") {
+            model.beginManualTextPlacement()
+          }
+          .disabled(!canEditAnnotations(model))
+          .accessibilityHelp(
+            canEditAnnotations(model)
+              ? "Starts reversible text overlay placement."
+              : "Unavailable because this PDF does not allow document annotations."
+          )
         .buttonStyle(.borderedProminent)
         if model.isManualPlacementMode {
           Button("Cancel placement") {
@@ -639,6 +1180,16 @@ private struct InspectorView: View {
       } else {
         if let candidate = model.selectedCandidate {
           selectedCandidateCard(candidate)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+              "Selected suggested area on page \(candidate.pageIndex + 1), \(candidate.entryMode.rawValue)"
+            )
+            .accessibilityValue(
+              candidate.labelText ?? candidate.evidence.first ?? "Detected from document structure"
+            )
+            .accessibilityHint(
+              "Review this interpreted region before applying text or creating a native field."
+            )
         }
         ScrollView {
           LazyVStack(alignment: .leading, spacing: 4) {
@@ -737,6 +1288,12 @@ private struct InspectorView: View {
           text: $overlayDraft
         )
         .textFieldStyle(.roundedBorder)
+        .disabled(!canEditAnnotations(model))
+        .accessibilityHelp(
+          canEditAnnotations(model)
+            ? "Enter text for a reversible document overlay."
+            : "Unavailable because this PDF does not allow document annotations."
+        )
         .onSubmit {
           model.applyOverlay(overlayDraft)
           overlayDraft = ""
@@ -747,11 +1304,25 @@ private struct InspectorView: View {
             overlayDraft = ""
           }
           .buttonStyle(.borderedProminent)
-          .disabled(overlayDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+          .disabled(
+            !canEditAnnotations(model)
+              || overlayDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+          )
+          .accessibilityHelp(
+            canEditAnnotations(model)
+              ? "Adds a reversible text overlay in the selected region."
+              : "Unavailable because this PDF does not allow document annotations."
+          )
           Button("Create native field", systemImage: "rectangle.and.pencil.and.ellipsis") {
             model.synthesizeNativeField()
           }
           .buttonStyle(.bordered)
+          .disabled(!canEditAnnotations(model))
+          .accessibilityHelp(
+            canEditAnnotations(model)
+              ? "Creates a native field in the selected region."
+              : "Unavailable because this PDF does not allow document annotations."
+          )
           Button("Dismiss", role: .destructive) {
             model.rejectSelectedCandidate()
             overlayDraft = ""
@@ -772,11 +1343,23 @@ private struct InspectorView: View {
               Text("Option (index + 1)").tag(index)
             }
           }
+          .disabled(!canEditAnnotations(model))
+          .accessibilityHelp(
+            canEditAnnotations(model)
+              ? "Choose the detected choice region to mark."
+              : "Unavailable because this PDF does not allow document annotations."
+          )
           HStack {
             Button("Mark selected box", systemImage: "checkmark") {
               model.applyStaticChoiceMark(cellIndex: choiceCellIndex)
             }
             .buttonStyle(.borderedProminent)
+            .disabled(!canEditAnnotations(model))
+            .accessibilityHelp(
+              canEditAnnotations(model)
+                ? "Places a reversible visual choice mark."
+                : "Unavailable because this PDF does not allow document annotations."
+            )
           }
           Text(
             "This places a reversible visual mark. It is not an AcroForm checkbox or radio widget until the source template is explicitly modeled."
@@ -799,6 +1382,12 @@ private struct InspectorView: View {
               model.synthesizeNativeField()
             }
             .buttonStyle(.bordered)
+            .disabled(!canEditAnnotations(model))
+            .accessibilityHelp(
+              canEditAnnotations(model)
+                ? "Creates a native field in the selected region."
+                : "Unavailable because this PDF does not allow document annotations."
+            )
           }
           Button("Dismiss", role: .destructive) {
             model.rejectSelectedCandidate()
@@ -866,6 +1455,15 @@ private struct InspectorView: View {
           }
           .buttonStyle(.plain)
           .padding(.vertical, 2)
+          .accessibilityElement(children: .combine)
+          .accessibilityLabel(
+            "Search result \(offset + 1) of \(model.searchMatches.count), page \(match.pageIndex + 1)"
+          )
+          .accessibilityValue(match.snippet)
+          .accessibilityHint("Selects and highlights this exact search result.")
+          .accessibilityAddTraits(
+            model.selectedSearchMatchIndex == offset ? [.isSelected] : []
+          )
         }
       }
     }
@@ -924,9 +1522,11 @@ private struct InspectorView: View {
                 Button(link.destination ?? "Open destination") {
                   model.openLink(link)
                 }
+                .buttonStyle(.bordered)
                 if link.kind == .externalURL {
                   Image(systemName: link.isSafeExternal ? "lock.open" : "exclamationmark.shield")
                     .foregroundStyle(link.isSafeExternal ? .green : .red)
+                    .help(link.isSafeExternal ? "Safe external URL" : "Blocked or unsafe URL")
                 }
               }
             }
@@ -1024,6 +1624,7 @@ private struct InspectorView: View {
 private struct PDFPresentationHighlight {
   enum Kind {
     case candidate
+    case characterGrid
     case field
     case search
   }
@@ -1031,11 +1632,24 @@ private struct PDFPresentationHighlight {
   let kind: Kind
   let page: PDFPage
   let bounds: CGRect
+  let memberBounds: [CGRect]
+
+  init(kind: Kind, page: PDFPage, bounds: CGRect, memberBounds: [CGRect] = []) {
+    self.kind = kind
+    self.page = page
+    self.bounds = bounds
+    self.memberBounds = memberBounds
+  }
 }
 
 private final class PDFPresentationOverlayView: NSView {
   var highlights: [PDFPresentationHighlight] = [] {
     didSet { needsDisplay = true }
+  }
+
+  func invalidateProjection() {
+    needsDisplay = true
+    layer?.setNeedsDisplay()
   }
 
   override func hitTest(_ point: NSPoint) -> NSView? {
@@ -1050,18 +1664,44 @@ private final class PDFPresentationOverlayView: NSView {
       let overlayBounds = convert(pdfViewBounds, from: pdfView)
       guard overlayBounds.intersects(dirtyRect) else { continue }
 
+      if highlight.kind == .characterGrid {
+        // The union is a hit/attention boundary only. Paint each cell
+        // independently so the printed form text and inter-cell gaps remain
+        // visible instead of becoming one opaque block.
+        let boundary = NSBezierPath(roundedRect: overlayBounds, xRadius: 2, yRadius: 2)
+        boundary.setLineDash([4, 3], count: 2, phase: 0)
+        boundary.lineWidth = 1.5
+        NSColor.controlAccentColor.setStroke()
+        boundary.stroke()
+
+        for memberBounds in highlight.memberBounds {
+          let memberViewBounds = pdfView.convert(memberBounds, from: highlight.page)
+          let cellBounds = convert(memberViewBounds, from: pdfView)
+          guard cellBounds.intersects(dirtyRect) else { continue }
+          let cell = NSBezierPath(rect: cellBounds)
+          NSColor.systemBlue.withAlphaComponent(0.12).setFill()
+          NSColor.controlAccentColor.withAlphaComponent(0.72).setStroke()
+          cell.lineWidth = 1
+          cell.fill()
+          cell.stroke()
+        }
+        continue
+      }
+
       let fillColor: NSColor
       let strokeColor: NSColor
       switch highlight.kind {
       case .candidate:
-        fillColor = NSColor.systemBlue.withAlphaComponent(0.18)
+        fillColor = NSColor.systemBlue.withAlphaComponent(0.12)
         strokeColor = NSColor.controlAccentColor
       case .field:
-        fillColor = NSColor.systemGreen.withAlphaComponent(0.16)
+        fillColor = NSColor.systemGreen.withAlphaComponent(0.10)
         strokeColor = NSColor.systemGreen
+      case .characterGrid:
+        continue
       case .search:
-        fillColor = NSColor.systemYellow.withAlphaComponent(0.28)
-        strokeColor = NSColor.systemOrange
+        fillColor = NSColor.systemYellow.withAlphaComponent(0.10)
+        strokeColor = NSColor.systemOrange.withAlphaComponent(0.70)
       }
 
       fillColor.setFill()
@@ -1071,9 +1711,17 @@ private final class PDFPresentationOverlayView: NSView {
         xRadius: 3,
         yRadius: 3
       )
-      path.lineWidth = 2
+      path.lineWidth = highlight.kind == .search ? 1 : 1.5
       path.fill()
       path.stroke()
+      if highlight.kind == .search {
+        let underline = NSBezierPath()
+        underline.move(to: NSPoint(x: overlayBounds.minX, y: overlayBounds.minY + 1))
+        underline.line(to: NSPoint(x: overlayBounds.maxX, y: overlayBounds.minY + 1))
+        underline.lineWidth = 2
+        NSColor.systemOrange.withAlphaComponent(0.65).setStroke()
+        underline.stroke()
+      }
     }
   }
 }
@@ -1082,6 +1730,7 @@ private final class InteractivePDFView: PDFView {
   var isManualPlacementMode = false
   var onManualPlacement: ((Int, CGPoint) -> Void)?
   var onDirectEdit: ((Int, CGPoint) -> Void)?
+  var onProjectionInvalidated: (@MainActor @Sendable () -> Void)?
   var requestedScaleMode: ReaderScaleMode = .fitWidth
   var requestedRowWidth: CGFloat = 612
   var requestedZoom: CGFloat = 1
@@ -1095,6 +1744,7 @@ private final class InteractivePDFView: PDFView {
   override func layout() {
     super.layout()
     applyRequestedScale()
+    onProjectionInvalidated?()
   }
 
   func applyRequestedScale() {
@@ -1108,6 +1758,7 @@ private final class InteractivePDFView: PDFView {
     case .zoom:
       scaleFactor = requestedZoom
     }
+    onProjectionInvalidated?()
   }
 
   override func mouseDown(with event: NSEvent) {
@@ -1150,25 +1801,116 @@ private final class InteractivePDFView: PDFView {
 
 private struct PDFKitView: NSViewRepresentable {
   let document: PDFDocument?
+  let projectionRevision: UInt64
   let pageIndex: Int
   let viewMode: ReaderViewMode
   let scaleMode: ReaderScaleMode
   let zoom: Double
-  let rotation: Int
-  let selectedSearchMatch: SearchMatch?
-  let selectedCandidate: RegionCandidate?
+    let rotation: Int
+    let selectedSearchMatch: SearchMatch?
+    @Binding var searchProjectionState: SearchProjectionState
+    let selectedCandidate: RegionCandidate?
   let selectedField: NativeField?
   let isManualPlacementMode: Bool
   let onManualPlacement: (Int, CGPoint) -> Void
   let onDirectEdit: (Int, CGPoint) -> Void
 
+  private final class ProjectionObserverTokenStore {
+    var tokens: [NSObjectProtocol] = []
+
+    deinit {
+      let notificationCenter = NotificationCenter.default
+      tokens.forEach { notificationCenter.removeObserver($0) }
+    }
+  }
+
+  @MainActor
   final class Coordinator {
     weak var sourceDocument: PDFDocument?
     var presentationDocument: PDFDocument?
     var presentationRotation: Int?
+    var presentationRevision: UInt64?
     weak var overlayView: PDFPresentationOverlayView?
+    weak var observedRootView: NSView?
+    weak var observedScrollContentView: NSView?
+    weak var observedDocumentView: NSView?
+    private let projectionObserverTokenStore = ProjectionObserverTokenStore()
     var lastNavigatedPageIndex: Int?
     var lastSearchSignature: String?
+
+    func invalidateOverlay() {
+      overlayView?.invalidateProjection()
+    }
+
+    func removeProjectionObservers() {
+      let notificationCenter = NotificationCenter.default
+      projectionObserverTokenStore.tokens.forEach { notificationCenter.removeObserver($0) }
+      projectionObserverTokenStore.tokens.removeAll()
+      observedRootView = nil
+      observedScrollContentView = nil
+      observedDocumentView = nil
+    }
+
+    func installProjectionObservers(for view: InteractivePDFView) {
+      let scrollContentView = view.enclosingScrollView?.contentView
+      let documentView = view.documentView
+      if observedRootView === view,
+        observedScrollContentView === scrollContentView,
+        observedDocumentView === documentView,
+        !projectionObserverTokenStore.tokens.isEmpty
+      {
+        return
+      }
+
+      removeProjectionObservers()
+      observedRootView = view
+      observedScrollContentView = scrollContentView
+      observedDocumentView = documentView
+
+      var observedViews: [NSView] = [view]
+      if let scrollContentView {
+        observedViews.append(scrollContentView)
+      }
+      if let documentView {
+        observedViews.append(documentView)
+      }
+      observedViews.forEach { observedView in
+        observedView.postsBoundsChangedNotifications = true
+        observedView.postsFrameChangedNotifications = true
+        let notificationCenter = NotificationCenter.default
+        for name in [
+          NSView.boundsDidChangeNotification,
+          NSView.frameDidChangeNotification,
+        ] {
+          projectionObserverTokenStore.tokens.append(
+            notificationCenter.addObserver(
+              forName: name,
+              object: observedView,
+              queue: .main
+            ) { [weak self] _ in
+              Task { @MainActor [weak self] in
+                self?.invalidateOverlay()
+              }
+            }
+          )
+        }
+      }
+
+      let notificationCenter = NotificationCenter.default
+      for name in [
+        Notification.Name("PDFViewScaleChanged"),
+        Notification.Name("PDFViewDisplayModeChanged"),
+      ] {
+        projectionObserverTokenStore.tokens.append(
+          notificationCenter.addObserver(forName: name, object: view, queue: .main) {
+            [weak self] _ in
+            Task { @MainActor [weak self] in
+              self?.invalidateOverlay()
+            }
+          }
+        )
+      }
+    }
   }
 
   func makeCoordinator() -> Coordinator {
@@ -1189,15 +1931,21 @@ private struct PDFKitView: NSViewRepresentable {
     overlayView.wantsLayer = true
     view.addSubview(overlayView)
     context.coordinator.overlayView = overlayView
+    view.onProjectionInvalidated = { @MainActor [weak coordinator = context.coordinator] in
+      coordinator?.invalidateOverlay()
+    }
+    context.coordinator.installProjectionObservers(for: view)
     return view
   }
 
   func updateNSView(_ view: InteractivePDFView, context: Context) {
     if context.coordinator.sourceDocument !== document
       || context.coordinator.presentationRotation != rotation
+      || context.coordinator.presentationRevision != projectionRevision
     {
       context.coordinator.sourceDocument = document
       context.coordinator.presentationRotation = rotation
+      context.coordinator.presentationRevision = projectionRevision
       context.coordinator.lastNavigatedPageIndex = nil
       context.coordinator.lastSearchSignature = nil
 
@@ -1220,6 +1968,10 @@ private struct PDFKitView: NSViewRepresentable {
     view.isManualPlacementMode = isManualPlacementMode
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
+    view.onProjectionInvalidated = { @MainActor [weak coordinator = context.coordinator] in
+      coordinator?.invalidateOverlay()
+    }
+    context.coordinator.installProjectionObservers(for: view)
     view.needsLayout = true
     view.layoutSubtreeIfNeeded()
 
@@ -1238,6 +1990,7 @@ private struct PDFKitView: NSViewRepresentable {
     view.requestedRowWidth = viewMode == .twoPage ? pageWidth * 2 + 18 : pageWidth
     view.requestedZoom = CGFloat(zoom)
     view.applyRequestedScale()
+    context.coordinator.invalidateOverlay()
 
     var highlights: [PDFPresentationHighlight] = []
     if let selectedCandidate,
@@ -1245,9 +1998,12 @@ private struct PDFKitView: NSViewRepresentable {
     {
       highlights.append(
         PDFPresentationHighlight(
-          kind: .candidate,
+          kind: selectedCandidate.entryMode == .characterGrid ? .characterGrid : .candidate,
           page: page,
-          bounds: selectedCandidate.bounds.cgRect
+          bounds: selectedCandidate.bounds.cgRect,
+          memberBounds: selectedCandidate.entryMode == .characterGrid
+            ? selectedCandidate.memberBounds.map(\.cgRect)
+            : []
         )
       )
     } else if let selectedField,
@@ -1270,20 +2026,20 @@ private struct PDFKitView: NSViewRepresentable {
         context.coordinator.lastNavigatedPageIndex = pageIndex
       }
 
-      if let selectedSearchMatch,
-        let selection = document.findString(
-          selectedSearchMatch.query, withOptions: [.caseInsensitive]
-        )
-        .first(where: {
-          $0.pages.contains(where: { $0 === document.page(at: selectedSearchMatch.pageIndex) })
-        })
-      {
-        let signature = "\(selectedSearchMatch.query)|\(selectedSearchMatch.pageIndex)"
-        if context.coordinator.lastSearchSignature != signature {
-          view.setCurrentSelection(selection, animate: true)
-          context.coordinator.lastSearchSignature = signature
-        }
-        if let page = document.page(at: selectedSearchMatch.pageIndex) {
+      if let selectedSearchMatch {
+        let projection = searchProjection(for: selectedSearchMatch, in: document)
+        searchProjectionState = projection.state
+        if let selection = projection.selection,
+          let page = document.page(at: selectedSearchMatch.pageIndex)
+        {
+          let signature = searchSignature(for: selectedSearchMatch)
+          if context.coordinator.lastSearchSignature != signature {
+            // Do not ask PDFKit to paint currentSelection: its platform-defined
+            // selection fill is opaque enough to hide small printed glyphs.
+            // The exact selection bounds are rendered by our controlled overlay
+            // below, and the page navigation already happened above.
+            context.coordinator.lastSearchSignature = signature
+          }
           highlights.append(
             PDFPresentationHighlight(
               kind: .search,
@@ -1291,19 +2047,57 @@ private struct PDFKitView: NSViewRepresentable {
               bounds: selection.bounds(for: page)
             )
           )
+          // PDFKit paints currentSelection with its own high-contrast fill.
+          // Keep the exact bounds for our controlled underline cue, then clear
+          // the native selection so search never masks the document text.
+          view.currentSelection = nil
+        } else {
+          if context.coordinator.lastSearchSignature != nil {
+            view.currentSelection = nil
+            context.coordinator.lastSearchSignature = nil
+          }
         }
       } else {
+        searchProjectionState = .none
         if context.coordinator.lastSearchSignature != nil {
           view.currentSelection = nil
           context.coordinator.lastSearchSignature = nil
         }
       }
     } else {
+      searchProjectionState = .none
       context.coordinator.lastNavigatedPageIndex = nil
       context.coordinator.lastSearchSignature = nil
     }
 
     context.coordinator.overlayView?.highlights = highlights
+    context.coordinator.invalidateOverlay()
+  }
+
+  private func searchSignature(for match: SearchMatch) -> String {
+    "\(match.id)|page:\(match.pageIndex)|start:\(match.charStart)|length:\(match.charLength)"
+  }
+
+  private func searchProjection(
+    for match: SearchMatch,
+    in document: PDFDocument
+  ) -> (selection: PDFSelection?, state: SearchProjectionState) {
+    guard let page = document.page(at: match.pageIndex) else {
+      return (nil, .unavailable)
+    }
+    let pageMatches = document.findString(match.query, withOptions: [.caseInsensitive]).filter {
+      $0.pages.contains(where: { $0 === page }) && !$0.bounds(for: page).isEmpty
+    }
+    guard !pageMatches.isEmpty else { return (nil, .unavailable) }
+
+    if let exact = pageMatches.first(where: {
+      let bounds = $0.bounds(for: page)
+      return !bounds.isEmpty
+    }) {
+      return (exact, .exact)
+    }
+
+    return (pageMatches[0], .approximate)
   }
 
 }
@@ -1315,6 +2109,9 @@ struct SettingsView: View {
         LabeledContent("Processing", value: "On this Mac")
         LabeledContent("Source files", value: "Never overwritten")
         LabeledContent("Provider", value: "PDFKit evaluation lane")
+        Text("Export Copy is the save action for this app. It creates a separate edited PDF; closing the window never saves changes into the source file.")
+          .font(.callout)
+          .foregroundStyle(.secondary)
       } header: {
         Text("Safety")
       } footer: {

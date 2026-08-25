@@ -1,0 +1,325 @@
+{
+  "contract": "pdf-editor.ocr-provider-comparison",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "corpusManifest": "pdf-corpus-governance-2026-08-25",
+  "corpusDigest": "de862e182b2b6f9f3e68387cfb20dbeb51fd4bdc6158f0ef53c735d5817971b4",
+  "fixtureDescriptorDigest": "bf595f86ea25f0e6951fa827eb0cadf0bb7e953e707ddad95dbb550942777afd",
+  "accuracyUnit": "ground-truth-line-anchor-recall",
+  "latencyUnit": "milliseconds-per-provider-request",
+  "generatedAt": "2026-08-25",
+  "providers": [
+    {
+      "providerId": "native-vision",
+      "engineFamily": "apple-vision",
+      "runtimeKind": "native-system",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "platform-framework-approved-local-use",
+      "defaultState": "measuredPartial",
+      "installedVersion": "macOS Vision runtime",
+      "artifactDigest": null,
+      "measurementStatus": "measured-below",
+      "licenseGate": "passed-for-local-system-use"
+    },
+    {
+      "providerId": "local-tesseract",
+      "engineFamily": "tesseract-5",
+      "runtimeKind": "installed-local-process",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "Apache-2.0-engine-traineddata-package-review-required",
+      "defaultState": "installedUnmeasured",
+      "installedVersion": "tesseract 5.5.0",
+      "artifactDigest": "b0f2903f4095f770fe490e1880a1728e72376c9a10c52be5a1fc13c06371d8b8",
+      "measurementStatus": "measured-below",
+      "licenseGate": "review-required"
+    },
+    {
+      "providerId": "companion-ocrmypdf",
+      "engineFamily": "ocrmypdf",
+      "runtimeKind": "installed-companion",
+      "capability": "ocr.searchableLayer",
+      "licenseStatus": "MPL-2.0-core-dependency-review-required",
+      "defaultState": "unavailable-uninstalled",
+      "installedVersion": null,
+      "artifactDigest": null,
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required"
+    },
+    {
+      "providerId": "companion-pdfbox",
+      "engineFamily": "apache-pdfbox",
+      "runtimeKind": "installed-companion",
+      "capability": "pdf.text-extraction-and-edit",
+      "licenseStatus": "Apache-2.0-exact-package-review-required",
+      "defaultState": "installedUnmeasured",
+      "installedVersion": null,
+      "artifactDigest": null,
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required"
+    },
+    {
+      "providerId": "companion-mupdf",
+      "engineFamily": "mupdf",
+      "runtimeKind": "installed-companion",
+      "capability": "pdf.high-fidelity-edit",
+      "licenseStatus": "AGPL-3.0-or-commercial-review-required",
+      "defaultState": "quarantined",
+      "installedVersion": null,
+      "artifactDigest": null,
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required"
+    }
+  ],
+  "measurements": {
+    "local-tesseract": {
+      "summary": {
+        "providerId": "local-tesseract",
+        "fixtureCount": 6,
+        "measuredFixtureCount": 6,
+        "accuracyGatePassed": false,
+        "meanAnchorRecall": 0.7777777777777777,
+        "minimumAnchorRecall": 0,
+        "latencyGate": {
+          "maxMillisecondsPerRequest": 15000,
+          "passed": true,
+          "medianMilliseconds": 188.09637499999985,
+          "p95Milliseconds": 417.3141249999999
+        },
+        "handwrittenClaimBlocked": true,
+        "fieldCreationAllowed": false,
+        "status": "failed"
+      },
+      "cases": [
+        {
+          "fixtureId": "printed-scan",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 3,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 93.82241699999997,
+          "confidenceMean": null,
+          "confidenceMinimum": null,
+          "confidenceMaximum": null,
+          "errorCode": null
+        },
+        {
+          "fixtureId": "scanned-noisy",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 2,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 0,
+          "anchorRecall": 0,
+          "latencyMilliseconds": 417.3141249999999,
+          "confidenceMean": null,
+          "confidenceMinimum": null,
+          "confidenceMaximum": null,
+          "errorCode": null
+        },
+        {
+          "fixtureId": "handwritten-simulated-entries",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 7,
+          "requiredAnchorCount": 6,
+          "matchedAnchorCount": 4,
+          "anchorRecall": 0.6666666666666666,
+          "latencyMilliseconds": 220.41058299999986,
+          "confidenceMean": null,
+          "confidenceMinimum": null,
+          "confidenceMaximum": null,
+          "errorCode": null
+        },
+        {
+          "fixtureId": "rotated-hybrid-90-raster-page",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 14,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 218.94429200000013,
+          "confidenceMean": null,
+          "confidenceMinimum": null,
+          "confidenceMaximum": null,
+          "errorCode": null
+        },
+        {
+          "fixtureId": "encrypted-hybrid-raster-page",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 3,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 188.09637499999985,
+          "confidenceMean": null,
+          "confidenceMinimum": null,
+          "confidenceMaximum": null,
+          "errorCode": null
+        },
+        {
+          "fixtureId": "large-hybrid-raster-page-40",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 3,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 187.12804199999982,
+          "confidenceMean": null,
+          "confidenceMinimum": null,
+          "confidenceMaximum": null,
+          "errorCode": null
+        }
+      ]
+    },
+    "native-vision": {
+      "summary": {
+        "providerId": "native-vision",
+        "fixtureCount": 6,
+        "measuredFixtureCount": 6,
+        "accuracyGatePassed": true,
+        "meanAnchorRecall": 0.9444444444444443,
+        "minimumAnchorRecall": 0.6666666666666666,
+        "latencyGate": {
+          "maxMillisecondsPerRequest": 15000,
+          "passed": true,
+          "medianMilliseconds": 92.51870833395515,
+          "p95Milliseconds": 391.00183333357563
+        },
+        "handwrittenClaimBlocked": true,
+        "fieldCreationAllowed": false,
+        "status": "measured-partial"
+      },
+      "cases": [
+        {
+          "anchorRecall": 1,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "fixtureId": "printed-scan",
+          "latencyMilliseconds": 391.00183333357563,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 0.6666666666666666,
+          "confidenceMaximum": 1,
+          "confidenceMean": 0.8333333333333334,
+          "confidenceMinimum": 0.5,
+          "fixtureId": "scanned-noisy",
+          "latencyMilliseconds": 92.51870833395515,
+          "matchedAnchorCount": 2,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "confidenceMaximum": 1,
+          "confidenceMean": 0.9166666666666666,
+          "confidenceMinimum": 0.5,
+          "fixtureId": "handwritten-simulated-entries",
+          "latencyMilliseconds": 170.32154166372493,
+          "matchedAnchorCount": 6,
+          "observationCount": 12,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 6,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "fixtureId": "rotated-hybrid-90-raster-page",
+          "latencyMilliseconds": 98.64129166817293,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "fixtureId": "encrypted-hybrid-raster-page",
+          "latencyMilliseconds": 80.34483333176468,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "fixtureId": "large-hybrid-raster-page-40",
+          "latencyMilliseconds": 81.67737499752548,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        }
+      ]
+    },
+    "preparationFailures": []
+  },
+  "recovery": {
+    "malformed": {
+      "qpdfRejected": true,
+      "rasterizerRejected": true,
+      "noPartialOutputPublished": true,
+      "passed": true
+    },
+    "encrypted": {
+      "rejectsWithoutPassword": true,
+      "opensAfterExplicitUnlock": true,
+      "passwordNotLogged": true,
+      "passed": true
+    },
+    "large": {
+      "declaredPageCount": 40,
+      "pageBudgetObserved": true,
+      "representativeRasterPageRendered": true,
+      "partialOutputPublished": false,
+      "cancellationRecovery": "not-measured",
+      "passed": true
+    },
+    "companionCrashTimeoutRecovery": "not-measured-no-companion-installed",
+    "passed": true
+  },
+  "privacy": {
+    "sourceBytesLogged": false,
+    "pageTextLogged": false,
+    "ocrTextLogged": false,
+    "groundTruthLogged": false,
+    "passwordsLogged": false,
+    "profileValuesLogged": false,
+    "reportContainsContent": false
+  },
+  "gates": {
+    "accuracy": false,
+    "latency": true,
+    "privacy": true,
+    "licensing": false,
+    "recovery": true,
+    "companionRuntime": "not-measured-no-companion-installed",
+    "promotionReady": false
+  },
+  "passed": false
+}

@@ -1,0 +1,128 @@
+{
+  "harness": "pdf-editor-corpus-governance",
+  "manifestId": "pdf-corpus-governance-2026-08-25",
+  "fixtureCount": 16,
+  "digestVerifiedCount": 16,
+  "classes": [
+    "encrypted",
+    "handwritten",
+    "large",
+    "malformed",
+    "malformed-layout-negative",
+    "mixed-content",
+    "native-form",
+    "rotated",
+    "scanned",
+    "static-form"
+  ],
+  "qpdfChecks": [
+    {
+      "fixtureId": "public-sample-form",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "navigation-metadata",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "pdfkit-widget-fixture",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "encrypted-reader",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected-after-explicit-password",
+      "passwordSupplied": true
+    },
+    {
+      "fixtureId": "truncated-128-bytes",
+      "qpdfStatus": 2,
+      "expectedInspection": "inspection-failed-safe",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "repeated-20-pages",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "printed-scan",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected-no-authored-text-layer",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "rotated-widget-90",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "rotated-form6-mixed",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected-with-provider-warning-allowed",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "hybrid-text-raster-form",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "scanned-noisy",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected-no-authored-text-layer",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "rotated-hybrid-90",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "encrypted-hybrid",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected-after-explicit-password",
+      "passwordSupplied": true
+    },
+    {
+      "fixtureId": "malformed-hybrid-truncated",
+      "qpdfStatus": 2,
+      "expectedInspection": "inspection-failed-safe",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "large-hybrid-40-pages",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected",
+      "passwordSupplied": false
+    },
+    {
+      "fixtureId": "handwritten-simulated-entries",
+      "qpdfStatus": 0,
+      "expectedInspection": "inspected-no-authored-text-layer",
+      "passwordSupplied": false
+    }
+  ],
+  "providerProbes": [
+    {
+      "fixtureId": "handwritten-simulated-entries",
+      "provider": "tesseract",
+      "status": "completed",
+      "outputBytes": 221,
+      "contentLogged": false
+    }
+  ],
+  "privacyPolicy": "zero-content logging and local-only default",
+  "contentLogging": "none",
+  "passed": true
+}

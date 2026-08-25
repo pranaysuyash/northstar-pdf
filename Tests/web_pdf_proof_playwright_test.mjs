@@ -57,7 +57,14 @@ async function exportProof(page) {
   const validation = await page.locator("#validationBox").textContent();
   assert.match(validation, /Last export: (validated|validatedWithWarnings)/);
   assert.match(validation, /outputReopen/);
-  return { downloadName: download.suggestedFilename(), validation };
+  const metrics = await page.locator("#impactMetricsContent").textContent();
+  assert.match(metrics, /Outside-region text/);
+  assert.match(metrics, /Outside-region raster/);
+  assert.match(metrics, /Pages compared/);
+  assert.match(metrics, /Changed pixels \/ compared/);
+  assert.match(metrics, /Outside-pixel ratio/);
+  assert.doesNotMatch(metrics, /sourceOutside|outputOutside/);
+  return { downloadName: download.suggestedFilename(), validation, metrics };
 }
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });

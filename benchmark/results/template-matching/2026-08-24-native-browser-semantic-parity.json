@@ -1,0 +1,403 @@
+{
+  "harness": "pdf-editor-native-browser-template-semantic-parity",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "corpusPath": "benchmark/results/template-matching/2026-08-24-reviewed-corpus.json",
+  "nativeRunPath": "benchmark/results/template-matching/2026-08-24-native-run.json",
+  "fixtureCount": 24,
+  "passed": true,
+  "semanticMismatchCount": 0,
+  "mismatchCounts": {},
+  "stateCounts": {
+    "exact": 2,
+    "knownVariant": 2,
+    "familyMatch": 6,
+    "ambiguous": 6,
+    "stale": 1,
+    "noMatch": 7
+  },
+  "stateParity": {
+    "expected": {
+      "exact": 2,
+      "knownVariant": 2,
+      "familyMatch": 6,
+      "ambiguous": 6,
+      "stale": 1,
+      "noMatch": 7
+    },
+    "native": {
+      "exact": 2,
+      "knownVariant": 2,
+      "familyMatch": 6,
+      "ambiguous": 6,
+      "stale": 1,
+      "noMatch": 7
+    },
+    "browser": {
+      "exact": 2,
+      "knownVariant": 2,
+      "familyMatch": 6,
+      "ambiguous": 6,
+      "stale": 1,
+      "noMatch": 7
+    }
+  },
+  "abstentionCounts": {
+    "native": {
+      "abstained": 14,
+      "selected": 10
+    },
+    "browser": {
+      "abstained": 14,
+      "selected": 10
+    }
+  },
+  "evidenceParity": {
+    "compared": [
+      "candidate count",
+      "candidate identity",
+      "candidate state",
+      "candidate reason",
+      "candidate score",
+      "page-count component",
+      "geometry component",
+      "native-field component",
+      "anchor component",
+      "region component",
+      "class policy"
+    ],
+    "mismatchCount": 0,
+    "passed": true
+  },
+  "evidenceCompared": [
+    "match state",
+    "selected template identity",
+    "abstention",
+    "false-positive gate",
+    "score",
+    "candidate identity and reason",
+    "candidate score components",
+    "class policy"
+  ],
+  "browser": {
+    "baseURL": "http://127.0.0.1:4174/web/index.html",
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "cases": [
+    {
+      "id": "exact-public-sample",
+      "documentClass": "publicAcroForm",
+      "expectedState": "exact",
+      "nativeState": "exact",
+      "browserState": "exact",
+      "nativeSelectedTemplateID": "template-public-sample",
+      "browserSelectedTemplateID": "template-public-sample",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "known-variant-public-sample",
+      "documentClass": "publicAcroForm",
+      "expectedState": "knownVariant",
+      "nativeState": "knownVariant",
+      "browserState": "knownVariant",
+      "nativeSelectedTemplateID": "template-public-sample",
+      "browserSelectedTemplateID": "template-public-sample",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "family-form6-drift",
+      "documentClass": "staticPrintedForm",
+      "expectedState": "familyMatch",
+      "nativeState": "familyMatch",
+      "browserState": "familyMatch",
+      "nativeSelectedTemplateID": "template-public-sample",
+      "browserSelectedTemplateID": "template-public-sample",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "ambiguous-family-choice",
+      "documentClass": "staticPrintedForm",
+      "expectedState": "ambiguous",
+      "nativeState": "ambiguous",
+      "browserState": "ambiguous",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "stale-source-session",
+      "documentClass": "publicAcroForm",
+      "expectedState": "stale",
+      "nativeState": "stale",
+      "browserState": "stale",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "near-family-negative",
+      "documentClass": "staticPrintedForm",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "unrelated-corpus-negative",
+      "documentClass": "scannedDocument",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "scanned-exact-source",
+      "documentClass": "scannedDocument",
+      "expectedState": "exact",
+      "nativeState": "exact",
+      "browserState": "exact",
+      "nativeSelectedTemplateID": "template-class-scanned",
+      "browserSelectedTemplateID": "template-class-scanned",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "scanned-known-variant",
+      "documentClass": "scannedDocument",
+      "expectedState": "knownVariant",
+      "nativeState": "knownVariant",
+      "browserState": "knownVariant",
+      "nativeSelectedTemplateID": "template-class-scanned",
+      "browserSelectedTemplateID": "template-class-scanned",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "public-acro-form-family-positive",
+      "documentClass": "publicAcroForm",
+      "expectedState": "familyMatch",
+      "nativeState": "familyMatch",
+      "browserState": "familyMatch",
+      "nativeSelectedTemplateID": "template-class-public-acroform",
+      "browserSelectedTemplateID": "template-class-public-acroform",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "public-acro-form-hard-negative",
+      "documentClass": "publicAcroForm",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "public-acro-form-ambiguous",
+      "documentClass": "publicAcroForm",
+      "expectedState": "ambiguous",
+      "nativeState": "ambiguous",
+      "browserState": "ambiguous",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "static-printed-form-family-positive",
+      "documentClass": "staticPrintedForm",
+      "expectedState": "familyMatch",
+      "nativeState": "familyMatch",
+      "browserState": "familyMatch",
+      "nativeSelectedTemplateID": "template-class-static-printed",
+      "browserSelectedTemplateID": "template-class-static-printed",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "static-printed-form-hard-negative",
+      "documentClass": "staticPrintedForm",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "static-printed-form-ambiguous",
+      "documentClass": "staticPrintedForm",
+      "expectedState": "ambiguous",
+      "nativeState": "ambiguous",
+      "browserState": "ambiguous",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "native-widget-family-positive",
+      "documentClass": "nativeWidget",
+      "expectedState": "familyMatch",
+      "nativeState": "familyMatch",
+      "browserState": "familyMatch",
+      "nativeSelectedTemplateID": "template-class-native-widget",
+      "browserSelectedTemplateID": "template-class-native-widget",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "native-widget-hard-negative",
+      "documentClass": "nativeWidget",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "native-widget-ambiguous",
+      "documentClass": "nativeWidget",
+      "expectedState": "ambiguous",
+      "nativeState": "ambiguous",
+      "browserState": "ambiguous",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "rotated-static-form-family-positive",
+      "documentClass": "rotatedStaticForm",
+      "expectedState": "familyMatch",
+      "nativeState": "familyMatch",
+      "browserState": "familyMatch",
+      "nativeSelectedTemplateID": "template-class-rotated-static",
+      "browserSelectedTemplateID": "template-class-rotated-static",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "rotated-static-form-hard-negative",
+      "documentClass": "rotatedStaticForm",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "rotated-static-form-ambiguous",
+      "documentClass": "rotatedStaticForm",
+      "expectedState": "ambiguous",
+      "nativeState": "ambiguous",
+      "browserState": "ambiguous",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "rotated-native-widget-family-positive",
+      "documentClass": "rotatedNativeWidget",
+      "expectedState": "familyMatch",
+      "nativeState": "familyMatch",
+      "browserState": "familyMatch",
+      "nativeSelectedTemplateID": "template-class-rotated-widget",
+      "browserSelectedTemplateID": "template-class-rotated-widget",
+      "nativeAbstained": false,
+      "browserAbstained": false,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "rotated-native-widget-hard-negative",
+      "documentClass": "rotatedNativeWidget",
+      "expectedState": "noMatch",
+      "nativeState": "noMatch",
+      "browserState": "noMatch",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "rotated-native-widget-ambiguous",
+      "documentClass": "rotatedNativeWidget",
+      "expectedState": "ambiguous",
+      "nativeState": "ambiguous",
+      "browserState": "ambiguous",
+      "nativeSelectedTemplateID": null,
+      "browserSelectedTemplateID": null,
+      "nativeAbstained": true,
+      "browserAbstained": true,
+      "mismatchCount": 0,
+      "mismatches": []
+    }
+  ]
+}

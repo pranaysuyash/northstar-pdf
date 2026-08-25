@@ -42,6 +42,9 @@ try {
   await page.locator("#prepareTemplateButton").click();
   await page.waitForFunction(() => document.querySelectorAll("#templateCompletionList input[type=checkbox]").length > 0);
   assert.equal(await page.locator("#applyTemplateButton").isDisabled(), true, "unreviewed template entries must remain blocked");
+  const reviewText = await page.locator("#templateCompletionList").textContent();
+  assert.match(reviewText, /Approve mapping/, "mapping approval must be visible");
+  assert.match(reviewText, /Approve exact profile value/, "profile-value approval must be a separate visible decision");
 
   const result = await page.evaluate(async () => {
     const fixture = window.__pdfEditorContractFixture;
@@ -52,17 +55,28 @@ try {
     });
     const candidate = snapshot.candidates.find((entry) => entry.coordinate && entry.suggestedFieldType === "text")
       || snapshot.candidates.find((entry) => entry.coordinate);
-    const mapping = candidate ? {
-      id: "mapping-browser-1",
-      semanticKey: "person.fullName",
-      target: {
+    const nativeField = snapshot.document.payload.fields.find((entry) => entry.coordinate);
+    const target = candidate
+      ? {
         kind: "staticRegion",
         pageIndex: candidate.pageIndex,
         region: candidate.coordinate,
         candidateKind: candidate.kind
-      },
+      }
+      : nativeField
+        ? {
+          kind: "nativeField",
+          pageIndex: nativeField.pageIndex,
+          region: nativeField.coordinate,
+          nativeFieldNameToken: nativeField.name
+        }
+        : null;
+    const mapping = target ? {
+      id: "mapping-browser-1",
+      semanticKey: "person.fullName",
+      target,
       suggestedFieldType: "text",
-      evidenceReferences: candidate.id ? [candidate.id] : [],
+      evidenceReferences: candidate?.id ? [candidate.id] : [],
       status: "confirmed",
       reviewPolicy: "alwaysReviewMappingAndValue"
     } : null;
@@ -111,8 +125,11 @@ try {
       }
     };
     const proposal = fixture.createCompletionProposal({ template, match, profile, sessionID: "browser-completion" });
-    const reviewedMapping = fixture.reviewCompletionMapping(proposal, "mapping-browser-1", true);
-    const reviewedValue = fixture.reviewCompletionValue(reviewedMapping, "mapping-browser-1", { kind: "text", text: "Ada Lovelace" });
+    const resolvedTarget = target?.kind === "nativeField"
+      ? fixture.resolveCompletionTarget(proposal, "mapping-browser-1", nativeField.id)
+      : proposal;
+    const reviewedMapping = fixture.reviewCompletionMapping(resolvedTarget, "mapping-browser-1", true);
+    const reviewedValue = fixture.reviewCompletionValue(reviewedMapping, "mapping-browser-1", { kind: "text", text: "Ada Lovelace" }, true);
     const gate = fixture.canMaterializeCompletion({
       proposal: reviewedValue,
       currentSourceDigest: snapshot.document.payload.source.sha256
@@ -136,9 +153,42 @@ try {
     const storedKinds = (await store.list("template")).map((entry) => entry.kind);
     await store.remove("profile", profile.payload.profileID);
     const removedProfile = await store.get("profile", profile.payload.profileID);
+    let opfs = { available: Boolean(navigator.storage?.getDirectory) };
+    if (opfs.available) {
+      const opfsStore = fixture.createEncryptedOPFSTemplateStore({
+        fileName: `pdf-editor-template-browser-test-${Date.now()}.json`,
+        passphrase: "browser-opfs-test-passphrase"
+      });
+      await opfsStore.unlock();
+      await opfsStore.put("template", template.payload.templateID, template);
+      await opfsStore.put("profile", profile.payload.profileID, profile, {
+        profilePassphrase: "browser-opfs-profile-passphrase"
+      });
+      opfsStore.lockProfile(profile.payload.profileID);
+      await opfsStore.put("template", `${template.payload.templateID}-second`, template);
+      const storedOPFSTemplate = await opfsStore.get("template", template.payload.templateID);
+      const encryptedBackup = await opfsStore.exportEncryptedBackup();
+      const opfsProfileLocked = await opfsStore.get("profile", profile.payload.profileID).then(
+        () => false,
+        (error) => error.code === "profile_locked"
+      );
+      await opfsStore.unlockProfile(profile.payload.profileID, "browser-opfs-profile-passphrase");
+      const storedOPFSProfile = await opfsStore.get("profile", profile.payload.profileID);
+      opfs = {
+        available: true,
+        mode: opfsStore.mode,
+        templateRoundTrip: storedOPFSTemplate.payload.templateID === template.payload.templateID,
+        encryptedBackup: encryptedBackup.records.length > 0,
+        plaintextBackupLeak: JSON.stringify(encryptedBackup).includes("Ada Lovelace"),
+        lockedProfilePreserved: opfsProfileLocked,
+        profileRoundTrip: storedOPFSProfile.payload.profileID === profile.payload.profileID
+      };
+      await opfsStore.deleteStore();
+    }
     return {
       match,
-      candidatePresent: Boolean(candidate),
+      targetKind: target?.kind || null,
+      targetPresent: Boolean(target),
       gate,
       operations,
       storage: {
@@ -146,14 +196,16 @@ try {
         templateRoundTrip: storedTemplate.payload.templateID === template.payload.templateID,
         profileRoundTrip: storedProfile.payload.profileID === profile.payload.profileID,
         storedKinds,
-        removedProfile
+        removedProfile,
+        opfs
       }
     };
   });
 
   assert.equal(result.match.state, "exact");
   assert.equal(result.match.score, 1);
-  assert.equal(result.candidatePresent, true);
+  assert.equal(result.targetPresent, true);
+  assert.ok(["nativeField", "staticRegion"].includes(result.targetKind));
   assert.deepEqual(result.match.approvedMappingIDs, ["mapping-browser-1"]);
   assert.equal(result.match.requiresMappingReview, true);
   assert.equal(result.match.requiresValueReview, true);
@@ -166,6 +218,14 @@ try {
   assert.equal(result.storage.profileRoundTrip, true);
   assert.deepEqual(result.storage.storedKinds, ["template"]);
   assert.equal(result.storage.removedProfile, null);
+  if (result.storage.opfs.available) {
+    assert.equal(result.storage.opfs.mode, "opfs-aes-gcm");
+    assert.equal(result.storage.opfs.templateRoundTrip, true);
+    assert.equal(result.storage.opfs.encryptedBackup, true);
+    assert.equal(result.storage.opfs.plaintextBackupLeak, false);
+    assert.equal(result.storage.opfs.lockedProfilePreserved, true);
+    assert.equal(result.storage.opfs.profileRoundTrip, true);
+  }
   assert.deepEqual(consoleErrors, [], `browser console errors: ${consoleErrors.join(" | ")}`);
   assert.deepEqual(pageErrors, [], `browser page errors: ${pageErrors.join(" | ")}`);
   console.log("web template browser adapter: fingerprint creation and exact reviewed proposal passed");

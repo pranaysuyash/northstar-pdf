@@ -35,6 +35,8 @@ and a second reviewer or an explicitly recorded single-reviewer exception.
 
 The fixture ledger is
 [`Tests/fixtures/template_matching_reviewed_fixtures.mjs`](../../Tests/fixtures/template_matching_reviewed_fixtures.mjs).
+The checked-in machine-readable snapshot is
+[`benchmark/results/template-matching/2026-08-24-class-calibration.json`](../../benchmark/results/template-matching/2026-08-24-class-calibration.json).
 Every case contains:
 
 - `documentClass`, so thresholds are not silently shared across unlike inputs.
@@ -170,7 +172,8 @@ The test output records 24 fixtures, all expected states, per-class thresholds,
 the seven false-positive cases, and both global and class-policy mutations. The
 browser fixture exposes `calibrateDocumentClassPolicies` alongside the existing
 classifier so a future live browser corpus run can use the same serialized
-policy artifact.
+policy artifact. The static test also checks that the checked-in JSON snapshot
+matches the executable calibration to its documented precision.
 
 ## What remains open
 

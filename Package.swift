@@ -19,7 +19,23 @@ let package = Package(
         .executable(
             name: "PDFContractHarness",
             targets: ["PDFContractHarness"]
-        )
+        ),
+        .executable(
+            name: "PDFTemplateParityHarness",
+            targets: ["PDFTemplateParityHarness"]
+        ),
+        .executable(
+            name: "PDFExperimentParityHarness",
+            targets: ["PDFExperimentParityHarness"]
+        ),
+        .executable(
+            name: "PDFOCRBenchmark",
+            targets: ["PDFOCRBenchmark"]
+        ),
+        .executable(
+            name: "PDFTextRunOCRBenchmark",
+            targets: ["PDFTextRunOCRBenchmark"]
+        ),
     ],
     targets: [
         .target(
@@ -31,6 +47,22 @@ let package = Package(
         ),
         .executableTarget(
             name: "PDFContractHarness",
+            dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFTemplateParityHarness",
+            dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFExperimentParityHarness",
+            dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFOCRBenchmark",
+            dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFTextRunOCRBenchmark",
             dependencies: ["PDFEditorCore"]
         ),
         .testTarget(

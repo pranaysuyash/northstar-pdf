@@ -25,10 +25,10 @@ async function waitForSnapshot(page, expectedDigest) {
 }
 
 function fixtureExpectation(relativePath) {
-  if (relativePath.includes("encrypted-reader.pdf")) {
+  if (relativePath.includes("encrypted-reader.pdf") || relativePath.includes("encrypted-")) {
     return { password: "reader-password" };
   }
-  if (relativePath.includes("truncated-128-bytes.pdf")) {
+  if (relativePath.includes("truncated-128-bytes.pdf") || relativePath.includes("malformed-")) {
     return { expectedFailure: /cannot-open|failed to load/i };
   }
   return {};

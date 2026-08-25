@@ -8,6 +8,10 @@ import {
   createTemplateFingerprint,
   createCompletionProposal,
   createLearningEvent,
+  diffTemplateRevisions,
+  exportTemplateHistory,
+  importTemplateHistory,
+  makeValidatedTemplateRevision,
   matchTemplate,
   materializeCompletionOperations,
   resolveCompletionTarget,
@@ -101,6 +105,28 @@ assert.equal(revisionHistory.revisions.length, 2);
 assert.equal(revisionHistory.revisions[1].payload.parentRevisionID, revisionHistory.revisions[0].payload.revisionID);
 assert.throws(() => appendTemplateRevision(revisionHistory, activeCapture));
 
+const validatedChild = makeValidatedTemplateRevision({
+  template: activeCapture,
+  sourceDigest: "e".repeat(64),
+  sessionID: "validated-session-1"
+});
+assert.equal(validatedChild.payload.lifecycle, "active");
+assert.equal(validatedChild.payload.parentRevisionID, activeCapture.payload.revisionID);
+assert.ok(validatedChild.payload.fingerprint.exactSourceDigests.includes(sourceDigest));
+assert.equal(JSON.stringify(validatedChild).includes("Ada Lovelace"), false);
+const validatedHistory = appendTemplateRevision(
+  revisionHistory,
+  validatedChild
+);
+const revisionDiff = diffTemplateRevisions(activeCapture, validatedChild);
+assert.deepEqual(revisionDiff.exactSourceDigestsAdded, ["e".repeat(64)]);
+assert.equal(revisionDiff.mappingChanges.length, 0);
+const transfer = exportTemplateHistory(validatedHistory);
+assert.equal(transfer.containsSourceBytes, false);
+assert.equal(transfer.containsProfileValues, false);
+assert.deepEqual(importTemplateHistory(transfer), validatedHistory);
+assert.throws(() => importTemplateHistory({ ...transfer, containsProfileValues: true }));
+
 const mapping = {
   id: "mapping-1",
   semanticKey: "person.fullName",
@@ -178,14 +204,24 @@ validateProfileContract(profile);
 let completion = createCompletionProposal({ template, match: exact, profile, sessionID: "completion-1" });
 assert.equal(completion.entries[0].valueReview, "resolvedUnreviewed");
 assert.equal(canMaterializeCompletion({ proposal: completion, currentSourceDigest: sourceDigest }).code, "mappingReviewRequired");
+const valueOnly = reviewCompletionValue(completion, "mapping-1", { kind: "text", text: "Ada Lovelace" }, true);
+assert.equal(canMaterializeCompletion({ proposal: valueOnly, currentSourceDigest: sourceDigest }).code, "mappingReviewRequired");
 completion = reviewCompletionMapping(completion, "mapping-1", true);
 assert.equal(canMaterializeCompletion({ proposal: completion, currentSourceDigest: sourceDigest }).code, "valueReviewRequired");
-completion = reviewCompletionValue(completion, "mapping-1", { kind: "text", text: "Ada Lovelace" });
+completion = reviewCompletionValue(completion, "mapping-1", { kind: "text", text: "Ada Lovelace" }, true);
 assert.equal(canMaterializeCompletion({ proposal: completion, currentSourceDigest: sourceDigest }).ok, true);
 const completionOperations = materializeCompletionOperations({ proposal: completion, currentSourceDigest: sourceDigest });
 assert.equal(completionOperations[0].kind, "overlayText");
 assert.equal(completionOperations[0].sourceDigest, sourceDigest);
 assert.equal(canMaterializeCompletion({ proposal: completion, currentSourceDigest: "f".repeat(64) }).code, "staleSource");
+const changedValue = {
+  ...completion,
+  entries: [{ ...completion.entries[0], value: { kind: "text", text: "Grace Hopper" } }]
+};
+assert.equal(canMaterializeCompletion({ proposal: changedValue, currentSourceDigest: sourceDigest }).code, "profileValueApprovalRequired");
+const movedTarget = resolveCompletionTarget(completion, "mapping-1", "provider-target");
+assert.equal(movedTarget.entries[0].mappingReview, "pending");
+assert.equal(canMaterializeCompletion({ proposal: movedTarget, currentSourceDigest: sourceDigest }).code, "mappingReviewRequired");
 
 const learningEvent = createLearningEvent({ template, proposal: completion, kind: "completionValidated", mappingID: "mapping-1" });
 const validReport = {

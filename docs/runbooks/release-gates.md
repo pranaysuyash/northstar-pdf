@@ -116,6 +116,39 @@ The native/web parity runner retains validated no-op output bytes and writes
 the machine-readable report to
 `benchmark/results/contract-parity-2026-08-24/independent-preservation-report.json`.
 
+The browser-export cross-renderer gate is a separate comparison report. It
+joins the PDF.js `outsideRegionText` and `visualDiff` checks with Poppler's
+outside-region text/raster result and fails on a provider divergence. It keeps
+malformed expected failures as `expectedFailure` plus `unknown` comparison,
+never as a pass:
+
+```sh
+node Tests/browser_export_independent_viewer_validator_test.mjs
+node benchmark/browser-export-independent-viewer-validator.mjs \
+  --result-root benchmark/results/semantic-parity/2026-08-25 \
+  --report benchmark/results/semantic-parity/2026-08-25/independent-browser-viewer-report.json
+```
+
+The full `Tests/pdf_contract_parity_test.mjs` runner emits this report beside
+the existing independent-preservation report. Poppler is the independent
+renderer for this lane; MuPDF remains a separate control and is not silently
+merged into the result.
+
+The joined report also retains normalized Poppler and PDF.js metrics. A
+`comparable` measurement means both providers rendered comparable pages;
+`notComparable` identifies a source-digest or no-op shortcut, and
+`notMeasured` identifies a missing provider payload. For edited browser
+exports, `editSession.operations` must be serialized and source-bound. Missing
+operation lineage or a coordinate/page mismatch is `unknown`, never an empty
+authorization region or a pass.
+
+The browser review/export panel exposes the same PDF.js outside-region metrics
+to the reviewer. Verify both a passing no-op export and a failed reviewed
+operation. The panel must show text and raster status, compared/changed page
+counts, changed/compared pixels when rendered, ratio, maximum channel delta,
+scale/tolerance, and the evidence basis without displaying extracted outside
+text.
+
 ## 6. Accessibility gate
 
 Capture separate evidence for:

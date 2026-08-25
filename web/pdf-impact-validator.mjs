@@ -47,10 +47,19 @@ function operationRegions(operations, pageCount) {
     } else if (!validRect) {
       issues.push(`Operation ${operation.id} has no usable page-space coordinate rectangle.`);
     } else {
+      // PDF widget appearances can antialias a few pixels beyond their nominal
+      // rectangle. Keep the operation geometry exact, but authorize that small
+      // provider-rendering envelope for synthesized fields during impact proof.
+      const margin = operation.kind === "synthesizeNativeField" ? 3 : 0;
       regions.push({
         operationID: operation.id,
         pageIndex: operation.pageIndex,
-        rect
+        rect: {
+          x: rect.x - margin,
+          y: rect.y - margin,
+          width: rect.width + (margin * 2),
+          height: rect.height + (margin * 2)
+        }
       });
     }
   }

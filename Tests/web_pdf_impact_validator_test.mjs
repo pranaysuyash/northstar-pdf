@@ -9,6 +9,7 @@ const baseURL = process.env.PDF_PROOF_BASE_URL || "http://127.0.0.1:4173/web/ind
 const sourceRelativePath = "benchmark/results/public-sample-form.pdf";
 const sourcePath = path.join(projectRoot, sourceRelativePath);
 assert.equal(fs.existsSync(sourcePath), true, "impact validator source fixture should exist");
+const sourceBase64 = fs.readFileSync(sourcePath).toString("base64");
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
@@ -22,9 +23,10 @@ page.on("pageerror", (error) => pageErrors.push(error.message));
 try {
   await page.goto(baseURL, { waitUntil: "networkidle" });
   await page.waitForFunction(() => Boolean(window.pdfjsLib && window.PDFLib), undefined, { timeout: 30_000 });
-  const result = await page.evaluate(async (relativePath) => {
+  const result = await page.evaluate(async (encodedSource) => {
     const { compareOutsideRegions } = await import("/web/pdf-impact-validator.mjs");
-    const sourceBytes = await (await fetch(`/${relativePath}`)).arrayBuffer();
+    const binary = atob(encodedSource);
+    const sourceBytes = Uint8Array.from(binary, (character) => character.charCodeAt(0)).buffer;
     const sourceDocument = await window.pdfjsLib.getDocument({ data: new Uint8Array(sourceBytes.slice(0)) }).promise;
 
     const noOp = await compareOutsideRegions({
@@ -88,7 +90,7 @@ try {
       missingCoordinate: { text: missingCoordinate.text.status, raster: missingCoordinate.raster.status },
       mismatchedCoordinate: { text: mismatchedCoordinate.text.status, raster: mismatchedCoordinate.raster.status }
     };
-  }, sourceRelativePath);
+  }, sourceBase64);
 
   assert.deepEqual(result.noOp, { text: "passed", raster: "passed" });
   assert.deepEqual(result.unauthorizedMutation, { text: "failed", raster: "failed" });

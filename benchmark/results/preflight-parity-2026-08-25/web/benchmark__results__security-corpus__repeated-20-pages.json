@@ -1,0 +1,4515 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "document": {
+    "header": {
+      "contractName": "pdf-editor.document",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "generatedAt": "2026-08-24T23:30:36.556Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "source": {
+        "fileName": "repeated-20-pages.pdf",
+        "byteCount": 39839,
+        "sha256": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
+      },
+      "pages": [
+        {
+          "pageIndex": 0,
+          "pageLabel": "1",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 1,
+          "pageLabel": "2",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 2,
+          "pageLabel": "3",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 3,
+          "pageLabel": "4",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 4,
+          "pageLabel": "5",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 5,
+          "pageLabel": "6",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 6,
+          "pageLabel": "7",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 7,
+          "pageLabel": "8",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 8,
+          "pageLabel": "9",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 9,
+          "pageLabel": "10",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 10,
+          "pageLabel": "11",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 11,
+          "pageLabel": "12",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 12,
+          "pageLabel": "13",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 13,
+          "pageLabel": "14",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 14,
+          "pageLabel": "15",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 15,
+          "pageLabel": "16",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 16,
+          "pageLabel": "17",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 17,
+          "pageLabel": "18",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 18,
+          "pageLabel": "19",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        },
+        {
+          "pageIndex": 19,
+          "pageLabel": "20",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "trimBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "artBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        }
+      ],
+      "fields": [
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "23R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "24R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "25R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "26R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 1,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 1,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "29R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 1,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 1,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "30R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 1,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 1,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "31R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 1,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 1,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "32R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 2,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 2,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "33R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 2,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 2,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "34R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 2,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 2,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "35R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 2,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 2,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "36R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 3,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 3,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "37R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 3,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 3,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "38R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 3,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 3,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "39R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 3,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 3,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "40R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 4,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 4,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "41R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 4,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 4,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "42R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 4,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 4,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "43R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 4,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 4,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "44R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 5,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 5,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "45R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 5,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 5,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "46R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 5,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 5,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "47R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 5,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 5,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "48R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 6,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 6,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "49R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 6,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 6,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "50R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 6,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 6,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "51R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 6,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 6,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "52R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 7,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 7,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "53R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 7,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 7,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "54R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 7,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 7,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "55R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 7,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 7,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "56R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 8,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 8,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "57R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 8,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 8,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "58R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 8,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 8,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "59R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 8,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 8,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "60R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 9,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 9,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "61R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 9,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 9,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "62R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 9,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 9,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "63R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 9,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 9,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "64R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 10,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 10,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "65R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 10,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 10,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "66R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 10,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 10,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "67R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 10,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 10,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "68R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 11,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 11,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "69R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 11,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 11,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "70R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 11,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 11,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "71R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 11,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 11,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "72R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 12,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 12,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "73R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 12,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 12,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "74R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 12,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 12,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "75R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 12,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 12,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "76R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 13,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 13,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "77R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 13,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 13,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "78R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 13,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 13,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "79R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 13,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 13,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "80R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 14,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 14,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "81R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 14,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 14,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "82R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 14,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 14,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "83R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 14,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 14,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "84R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 15,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 15,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "85R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 15,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 15,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "86R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 15,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 15,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "87R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 15,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 15,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "88R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 16,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 16,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "89R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 16,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 16,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "90R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 16,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 16,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "91R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 16,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 16,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "92R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 17,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 17,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "93R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 17,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 17,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "94R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 17,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 17,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "95R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 17,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 17,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "96R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 18,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 18,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "97R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 18,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 18,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "98R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 18,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 18,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "99R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 18,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 18,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "100R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 19,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 19,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "101R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 19,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 19,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "102R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 19,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 19,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "103R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 19,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 19,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "104R",
+          "fieldFlags": 0
+        }
+      ],
+      "candidates": [],
+      "warnings": [
+        "No static blank-region candidate was inferred from text extraction."
+      ],
+      "links": [],
+      "outlines": [],
+      "metadata": {
+        "title": "",
+        "author": "",
+        "subject": "",
+        "creator": "",
+        "producer": "",
+        "creationDate": "",
+        "modificationDate": "",
+        "keywords": ""
+      },
+      "permissions": {
+        "canPrint": false,
+        "canCopy": false,
+        "canModify": false,
+        "canAddAnnotations": false,
+        "isReadOnly": false
+      },
+      "attachments": [],
+      "annotationTypeCounts": {
+        "widget": 80
+      },
+      "accessibility": {
+        "hasTaggedContent": false,
+        "hasReadingOrder": false,
+        "notes": [
+          "Reading order is derived from PDF.js text extraction and is not an authored-tag guarantee."
+        ]
+      },
+      "security": {
+        "isEncrypted": false,
+        "isLocked": false,
+        "requiresPassword": false
+      }
+    }
+  },
+  "coordinates": {
+    "contractName": "pdf-editor.coordinates",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+    "generatedAt": "2026-08-24T23:30:36.556Z",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "pages": [
+      {
+        "pageIndex": 0,
+        "region": {
+          "pageIndex": 0,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 1,
+        "region": {
+          "pageIndex": 1,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 2,
+        "region": {
+          "pageIndex": 2,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 3,
+        "region": {
+          "pageIndex": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 4,
+        "region": {
+          "pageIndex": 4,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 5,
+        "region": {
+          "pageIndex": 5,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 6,
+        "region": {
+          "pageIndex": 6,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 7,
+        "region": {
+          "pageIndex": 7,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 8,
+        "region": {
+          "pageIndex": 8,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 9,
+        "region": {
+          "pageIndex": 9,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 10,
+        "region": {
+          "pageIndex": 10,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 11,
+        "region": {
+          "pageIndex": 11,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 12,
+        "region": {
+          "pageIndex": 12,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 13,
+        "region": {
+          "pageIndex": 13,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 14,
+        "region": {
+          "pageIndex": 14,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 15,
+        "region": {
+          "pageIndex": 15,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 16,
+        "region": {
+          "pageIndex": 16,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 17,
+        "region": {
+          "pageIndex": 17,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 18,
+        "region": {
+          "pageIndex": 18,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      },
+      {
+        "pageIndex": 19,
+        "region": {
+          "pageIndex": 19,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      }
+    ]
+  },
+  "candidates": [],
+  "textRuns": [],
+  "preflight": {
+    "header": {
+      "contractName": "pdf-editor.preflight",
+      "version": {
+        "major": 1,
+        "minor": 1
+      },
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "generatedAt": "2026-08-24T23:30:36.556Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "summary": {
+        "findingCount": 18,
+        "warningCount": 0,
+        "blockedCount": 0,
+        "unknownCount": 0,
+        "metadataFieldCount": 0,
+        "embeddedDataCount": 0,
+        "networkBoundaryCount": 0,
+        "activeContentCount": 0,
+        "unknownCoverageCount": 1
+      },
+      "metadata": {
+        "fields": {
+          "title": {
+            "present": false
+          },
+          "author": {
+            "present": false
+          },
+          "subject": {
+            "present": false
+          },
+          "creator": {
+            "present": false
+          },
+          "producer": {
+            "present": false
+          },
+          "creationDate": {
+            "present": false
+          },
+          "modificationDate": {
+            "present": false
+          },
+          "keywords": {
+            "present": false
+          }
+        },
+        "rawValuesIncluded": false
+      },
+      "embeddedData": {
+        "attachmentCount": 0,
+        "possibleTokenCounts": {
+          "embeddedFiles": 0,
+          "fileAttachment": 0,
+          "xfa": 0,
+          "richMedia": 0
+        }
+      },
+      "attachments": {
+        "attachmentCount": 0,
+        "fileAttachmentCount": 0,
+        "embeddedFileNameTreeCount": 0,
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
+        }
+      },
+      "annotations": {
+        "totalCount": 80,
+        "byKind": {
+          "widget": 80
+        },
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
+        }
+      },
+      "scripts": {
+        "javaScriptActionCount": 0,
+        "openActionCount": 0,
+        "additionalActionCount": 0,
+        "launchActionCount": 0,
+        "submitFormActionCount": 0,
+        "remoteGoToActionCount": 0,
+        "uriActionCount": 0,
+        "executionAttempted": false,
+        "coverage": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
+        }
+      },
+      "revisions": {
+        "eofMarkerCount": 1,
+        "startxrefCount": 1,
+        "previousRevisionReferenceCount": 0,
+        "incrementalUpdateCountEstimate": 0,
+        "hiddenContentState": "unknown",
+        "coverage": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "coverage": {
+        "metadata": {
+          "state": "observed",
+          "reasonCodes": []
+        },
+        "attachments": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
+        },
+        "annotations": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
+        },
+        "scripts": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
+        },
+        "revisions": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "unknownCoverage": {
+        "categories": {
+          "metadata": {
+            "state": "observed",
+            "reasonCodes": []
+          },
+          "attachments": {
+            "state": "observed",
+            "reasonCodes": [
+              "embeddedPayloadBytesNotRetained"
+            ]
+          },
+          "annotations": {
+            "state": "observed",
+            "reasonCodes": [
+              "pdfjsAnnotationEnumeration"
+            ]
+          },
+          "scripts": {
+            "state": "partial",
+            "reasonCodes": [
+              "tokenScanDoesNotProveReachability"
+            ]
+          },
+          "revisions": {
+            "state": "unknown",
+            "reasonCodes": [
+              "incrementalRevisionParserNotRun"
+            ]
+          }
+        },
+        "unknownCount": 1
+      },
+      "networkBoundaries": {
+        "externalURLCount": 0,
+        "safeExternalURLCount": 0,
+        "unsafeExternalURLCount": 0,
+        "internalPageLinkCount": 0,
+        "unknownDestinationCount": 0,
+        "possibleActionTokenCounts": {
+          "uri": 0,
+          "remoteGoTo": 0,
+          "submitForm": 0
+        }
+      },
+      "activeContent": {
+        "possibleActionTokenCounts": {
+          "javascript": 0,
+          "openAction": 0,
+          "additionalAction": 0,
+          "launch": 0
+        },
+        "executionAttempted": false
+      },
+      "security": {
+        "encrypted": false,
+        "locked": false,
+        "permissionsObserved": true
+      },
+      "sanitization": {
+        "status": "not-run",
+        "safeToClaimClean": false,
+        "sourceUnchanged": true,
+        "supportedModes": [
+          "report-only",
+          "new-copy-required"
+        ],
+        "limits": [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ]
+      },
+      "findings": [
+        {
+          "id": "metadata-presence",
+          "category": "metadata",
+          "code": "metadata.present",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "embedded-attachments",
+          "category": "embeddedData",
+          "code": "embedded.attachments",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "embeddedData-embedded-file-spec-token",
+          "category": "embeddedData",
+          "code": "embedded-file-spec-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-file-attachment-token",
+          "category": "embeddedData",
+          "code": "file-attachment-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-xfa-token",
+          "category": "embeddedData",
+          "code": "xfa-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-rich-media-token",
+          "category": "embeddedData",
+          "code": "rich-media-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "network-external",
+          "category": "networkBoundary",
+          "code": "network.external-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "network-unsafe",
+          "category": "networkBoundary",
+          "code": "network.unsafe-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "networkBoundary-network-uri-action-token",
+          "category": "networkBoundary",
+          "code": "network-uri-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "networkBoundary-network-remote-goto-token",
+          "category": "networkBoundary",
+          "code": "network-remote-goto-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "networkBoundary-network-submit-form-token",
+          "category": "networkBoundary",
+          "code": "network-submit-form-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-launch-token",
+          "category": "activeContent",
+          "code": "active-launch-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-javascript-token",
+          "category": "activeContent",
+          "code": "active-javascript-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-open-action-token",
+          "category": "activeContent",
+          "code": "active-open-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-additional-action-token",
+          "category": "activeContent",
+          "code": "active-additional-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "security-signature-token",
+          "category": "security",
+          "code": "signature-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "security-encryption",
+          "category": "security",
+          "code": "security.encryption",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "byte-scan-state",
+          "category": "preflight",
+          "code": "preflight.byte-scan",
+          "severity": "info",
+          "state": "observed",
+          "count": 39839,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        }
+      ]
+    }
+  },
+  "resourcePolicy": {
+    "header": {
+      "contractName": "pdf-editor.browser-resource-policy",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "generatedAt": "2026-08-24T23:30:36.557Z",
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "environment": {
+        "cpuLogicalCores": 14,
+        "deviceMemoryGB": 32,
+        "devicePixelRatio": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "connection": {
+          "effectiveType": "4g",
+          "saveData": false
+        },
+        "memory": {
+          "state": "available",
+          "usedJSHeapSize": 16005942,
+          "jsHeapSizeLimit": 4395630592
+        },
+        "storage": {
+          "state": "unknown",
+          "quotaBytes": null,
+          "usageBytes": null
+        },
+        "browserFamily": "Not=A?Brand"
+      },
+      "document": {
+        "byteCount": 39839,
+        "pageCount": 20,
+        "maxPageAreaPoints": 484704,
+        "maxPageDimensionPoints": 792,
+        "rotatedPageCount": 0,
+        "rasterPageCount": 20,
+        "selectableTextPageCount": 0,
+        "nativeFieldCount": 80,
+        "candidateCount": 0,
+        "maxImagePixelsPerPage": 0,
+        "hasAttachments": false,
+        "isEncrypted": false,
+        "isMalformed": false
+      },
+      "request": {
+        "renderMode": "reader",
+        "ocrRequested": false,
+        "batchRequested": false,
+        "highDPIRequested": false
+      },
+      "budgets": {
+        "render": {
+          "maxDevicePixelRatio": 3,
+          "maxCanvasPixels": 4362336,
+          "maxPagePixels": 4362336,
+          "maxPageScale": 3,
+          "maxConcurrentPages": 2,
+          "chunkPages": 2,
+          "yieldEveryMs": 16,
+          "workerCount": 2,
+          "allowHighDPI": false,
+          "reasons": [
+            "rasterPixelBudget"
+          ]
+        },
+        "ocr": {
+          "state": "deferred",
+          "enabled": false,
+          "maxConcurrentJobs": 2,
+          "maxPixelsPerPage": 12000000,
+          "maxPagesPerBatch": 4,
+          "maxBatchPixels": 48000000,
+          "yieldEveryMs": 16,
+          "cancellationTimeoutMs": 15000,
+          "requiresUserConfirmation": true,
+          "reasons": [
+            "ocrNeedsExplicitOptIn"
+          ]
+        },
+        "batch": {
+          "state": "deferred",
+          "enabled": false,
+          "maxDocuments": 50,
+          "maxTotalBytes": 500000000,
+          "maxTotalPages": 500,
+          "maxConcurrentDocuments": 2,
+          "checkpointEveryDocuments": 5,
+          "checkpointEveryPages": 20,
+          "reasons": [
+            "batchNeedsExplicitOptIn"
+          ]
+        },
+        "recovery": {
+          "checkpointRequired": true,
+          "retryCount": 2,
+          "backoffMs": 500,
+          "staleDigestRequired": true,
+          "resumeSupported": true,
+          "partialOutputAllowed": false,
+          "cancellationSupported": true,
+          "reasons": [
+            "checkpointRequired",
+            "cancellationCheckpoint",
+            "recoveryResumeFromDigest"
+          ]
+        }
+      },
+      "decisions": [
+        {
+          "id": "render",
+          "capability": "render",
+          "state": "limited",
+          "reasonCode": "rasterPixelBudget",
+          "evidence": {
+            "maxDevicePixelRatio": 3,
+            "maxCanvasPixels": 4362336
+          }
+        },
+        {
+          "id": "ocr",
+          "capability": "ocr",
+          "state": "deferred",
+          "reasonCode": "ocrNeedsExplicitOptIn",
+          "evidence": {
+            "maxPagesPerBatch": 4,
+            "maxPixelsPerPage": 12000000
+          }
+        },
+        {
+          "id": "batch",
+          "capability": "batch",
+          "state": "deferred",
+          "reasonCode": "batchNeedsExplicitOptIn",
+          "evidence": {
+            "maxDocuments": 50,
+            "maxTotalPages": 500
+          }
+        },
+        {
+          "id": "recovery",
+          "capability": "recovery",
+          "state": "limited",
+          "reasonCode": "checkpointRequired",
+          "evidence": {
+            "checkpointRequired": true,
+            "resumeSupported": true
+          }
+        }
+      ],
+      "safety": {
+        "contentLogged": false,
+        "networkAccessAttempted": false,
+        "sourceBytesMutated": false,
+        "partialOutputPromoted": false,
+        "cancellationSupported": true
+      }
+    }
+  },
+  "editSession": {
+    "header": {
+      "contractName": "pdf-editor.edit-session",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "generatedAt": "2026-08-24T23:30:36.556Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "source": {
+      "fileName": "repeated-20-pages.pdf",
+      "byteCount": 39839,
+      "sha256": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
+    },
+    "reviews": [],
+    "operations": []
+  },
+  "validation": {
+    "status": "validated",
+    "messages": [
+      "Source bytes still match the inspected SHA-256.",
+      "Encrypted source remains open in PDF.js with 20 page(s).",
+      "No-op export preserves the already-inspected encrypted page geometry.",
+      "No native field operations were requested.",
+      "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+      "No page content changed because the protected source was copied byte-for-byte.",
+      "No raster content changed because the protected source was copied byte-for-byte.",
+      "No-op export used byte-preserving source download; no PDF writer was invoked."
+    ],
+    "sourceUnchanged": true,
+    "outputReopenable": true,
+    "checks": [
+      {
+        "id": "79585331-800a-4bb4-a899-8581d8d74c8e",
+        "kind": "sourceDigest",
+        "status": "passed",
+        "message": "Source bytes still match the inspected SHA-256.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "f30b8b89-085f-4715-819f-3dc0adea4a69",
+        "kind": "outputReopen",
+        "status": "passed",
+        "message": "Encrypted source remains open in PDF.js with 20 page(s).",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "e4b0bc10-1502-4109-8c39-07e0b31ec960",
+        "kind": "pageGeometry",
+        "status": "passed",
+        "message": "No-op export preserves the already-inspected encrypted page geometry.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "6d1bfb61-f7b2-43c8-9ae4-43f6e95d9755",
+        "kind": "nativeFields",
+        "status": "skipped",
+        "message": "No native field operations were requested.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "f1f34d6d-e239-43eb-a92a-fa829e748043",
+        "kind": "appliedOperations",
+        "status": "passed",
+        "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "db787f41-aeba-488c-918e-eeb866f8a099",
+        "kind": "outsideRegionText",
+        "status": "passed",
+        "message": "No page content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "d16adbd3-5bb9-4b0f-8d65-651266908897",
+        "kind": "visualDiff",
+        "status": "passed",
+        "message": "No raster content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "f2510fab-ccaa-4839-a891-3da4acd62c91",
+        "kind": "providerCapability",
+        "status": "passed",
+        "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
+        "region": null,
+        "operationIDs": []
+      }
+    ],
+    "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+    "outputDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "validatedAt": "2026-08-24T23:30:36.579Z",
+    "operationIDs": []
+  },
+  "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+  "expectedFailure": false,
+  "status": "inspected",
+  "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+  "error": null
+}

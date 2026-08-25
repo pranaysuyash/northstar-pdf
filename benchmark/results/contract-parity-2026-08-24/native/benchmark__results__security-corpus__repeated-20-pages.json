@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-24T16:54:37Z",
+    "generatedAt" : "2026-08-25T04:31:06Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -390,7 +390,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-24T16:54:37Z",
+      "generatedAt" : "2026-08-25T04:31:06Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -419,6 +419,9 @@
           "PDF\/UA conformance and authored tag-tree preservation require a validator-backed lane."
         ]
       },
+      "annotationTypeCounts" : {
+        "widget" : 80
+      },
       "attachments" : [
 
       ],
@@ -436,7 +439,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#0#0",
+          "id" : "fullName#0",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 0,
@@ -452,7 +455,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#0#1",
+          "id" : "consent#0",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 0,
@@ -468,7 +471,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#0#2",
+          "id" : "preferredContact#0",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 0,
@@ -486,7 +489,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#0#3",
+          "id" : "country#0",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 0,
@@ -502,7 +505,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#1#0",
+          "id" : "fullName#1",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 1,
@@ -518,7 +521,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#1#1",
+          "id" : "consent#1",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 1,
@@ -534,7 +537,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#1#2",
+          "id" : "preferredContact#1",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 1,
@@ -552,7 +555,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#1#3",
+          "id" : "country#1",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 1,
@@ -568,7 +571,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#2#0",
+          "id" : "fullName#2",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 2,
@@ -584,7 +587,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#2#1",
+          "id" : "consent#2",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 2,
@@ -600,7 +603,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#2#2",
+          "id" : "preferredContact#2",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 2,
@@ -618,7 +621,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#2#3",
+          "id" : "country#2",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 2,
@@ -634,7 +637,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#3#0",
+          "id" : "fullName#3",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 3,
@@ -650,7 +653,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#3#1",
+          "id" : "consent#3",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 3,
@@ -666,7 +669,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#3#2",
+          "id" : "preferredContact#3",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 3,
@@ -684,7 +687,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#3#3",
+          "id" : "country#3",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 3,
@@ -700,7 +703,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#4#0",
+          "id" : "fullName#4",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 4,
@@ -716,7 +719,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#4#1",
+          "id" : "consent#4",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 4,
@@ -732,7 +735,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#4#2",
+          "id" : "preferredContact#4",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 4,
@@ -750,7 +753,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#4#3",
+          "id" : "country#4",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 4,
@@ -766,7 +769,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#5#0",
+          "id" : "fullName#5",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 5,
@@ -782,7 +785,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#5#1",
+          "id" : "consent#5",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 5,
@@ -798,7 +801,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#5#2",
+          "id" : "preferredContact#5",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 5,
@@ -816,7 +819,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#5#3",
+          "id" : "country#5",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 5,
@@ -832,7 +835,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#6#0",
+          "id" : "fullName#6",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 6,
@@ -848,7 +851,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#6#1",
+          "id" : "consent#6",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 6,
@@ -864,7 +867,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#6#2",
+          "id" : "preferredContact#6",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 6,
@@ -882,7 +885,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#6#3",
+          "id" : "country#6",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 6,
@@ -898,7 +901,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#7#0",
+          "id" : "fullName#7",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 7,
@@ -914,7 +917,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#7#1",
+          "id" : "consent#7",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 7,
@@ -930,7 +933,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#7#2",
+          "id" : "preferredContact#7",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 7,
@@ -948,7 +951,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#7#3",
+          "id" : "country#7",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 7,
@@ -964,7 +967,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#8#0",
+          "id" : "fullName#8",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 8,
@@ -980,7 +983,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#8#1",
+          "id" : "consent#8",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 8,
@@ -996,7 +999,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#8#2",
+          "id" : "preferredContact#8",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 8,
@@ -1014,7 +1017,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#8#3",
+          "id" : "country#8",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 8,
@@ -1030,7 +1033,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#9#0",
+          "id" : "fullName#9",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 9,
@@ -1046,7 +1049,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#9#1",
+          "id" : "consent#9",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 9,
@@ -1062,7 +1065,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#9#2",
+          "id" : "preferredContact#9",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 9,
@@ -1080,7 +1083,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#9#3",
+          "id" : "country#9",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 9,
@@ -1096,7 +1099,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#10#0",
+          "id" : "fullName#10",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 10,
@@ -1112,7 +1115,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#10#1",
+          "id" : "consent#10",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 10,
@@ -1128,7 +1131,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#10#2",
+          "id" : "preferredContact#10",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 10,
@@ -1146,7 +1149,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#10#3",
+          "id" : "country#10",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 10,
@@ -1162,7 +1165,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#11#0",
+          "id" : "fullName#11",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 11,
@@ -1178,7 +1181,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#11#1",
+          "id" : "consent#11",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 11,
@@ -1194,7 +1197,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#11#2",
+          "id" : "preferredContact#11",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 11,
@@ -1212,7 +1215,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#11#3",
+          "id" : "country#11",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 11,
@@ -1228,7 +1231,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#12#0",
+          "id" : "fullName#12",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 12,
@@ -1244,7 +1247,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#12#1",
+          "id" : "consent#12",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 12,
@@ -1260,7 +1263,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#12#2",
+          "id" : "preferredContact#12",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 12,
@@ -1278,7 +1281,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#12#3",
+          "id" : "country#12",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 12,
@@ -1294,7 +1297,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#13#0",
+          "id" : "fullName#13",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 13,
@@ -1310,7 +1313,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#13#1",
+          "id" : "consent#13",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 13,
@@ -1326,7 +1329,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#13#2",
+          "id" : "preferredContact#13",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 13,
@@ -1344,7 +1347,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#13#3",
+          "id" : "country#13",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 13,
@@ -1360,7 +1363,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#14#0",
+          "id" : "fullName#14",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 14,
@@ -1376,7 +1379,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#14#1",
+          "id" : "consent#14",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 14,
@@ -1392,7 +1395,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#14#2",
+          "id" : "preferredContact#14",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 14,
@@ -1410,7 +1413,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#14#3",
+          "id" : "country#14",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 14,
@@ -1426,7 +1429,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#15#0",
+          "id" : "fullName#15",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 15,
@@ -1442,7 +1445,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#15#1",
+          "id" : "consent#15",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 15,
@@ -1458,7 +1461,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#15#2",
+          "id" : "preferredContact#15",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 15,
@@ -1476,7 +1479,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#15#3",
+          "id" : "country#15",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 15,
@@ -1492,7 +1495,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#16#0",
+          "id" : "fullName#16",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 16,
@@ -1508,7 +1511,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#16#1",
+          "id" : "consent#16",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 16,
@@ -1524,7 +1527,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#16#2",
+          "id" : "preferredContact#16",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 16,
@@ -1542,7 +1545,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#16#3",
+          "id" : "country#16",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 16,
@@ -1558,7 +1561,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#17#0",
+          "id" : "fullName#17",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 17,
@@ -1574,7 +1577,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#17#1",
+          "id" : "consent#17",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 17,
@@ -1590,7 +1593,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#17#2",
+          "id" : "preferredContact#17",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 17,
@@ -1608,7 +1611,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#17#3",
+          "id" : "country#17",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 17,
@@ -1624,7 +1627,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#18#0",
+          "id" : "fullName#18",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 18,
@@ -1640,7 +1643,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#18#1",
+          "id" : "consent#18",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 18,
@@ -1656,7 +1659,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#18#2",
+          "id" : "preferredContact#18",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 18,
@@ -1674,7 +1677,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#18#3",
+          "id" : "country#18",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 18,
@@ -1690,7 +1693,7 @@
           "choices" : [
 
           ],
-          "id" : "fullName#19#0",
+          "id" : "fullName#19",
           "kind" : "text",
           "name" : "fullName",
           "pageIndex" : 19,
@@ -1706,7 +1709,7 @@
           "choices" : [
 
           ],
-          "id" : "consent#19#1",
+          "id" : "consent#19",
           "kind" : "button",
           "name" : "consent",
           "pageIndex" : 19,
@@ -1722,7 +1725,7 @@
           "choices" : [
 
           ],
-          "id" : "preferredContact#19#2",
+          "id" : "preferredContact#19",
           "kind" : "button",
           "name" : "preferredContact",
           "pageIndex" : 19,
@@ -1740,7 +1743,7 @@
             "Ireland",
             "United States"
           ],
-          "id" : "country#19#3",
+          "id" : "country#19",
           "kind" : "choice",
           "name" : "country",
           "pageIndex" : 19,
@@ -2550,7 +2553,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-24T16:54:37Z",
+      "generatedAt" : "2026-08-25T04:31:06Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -2583,13 +2586,537 @@
     }
   },
   "expectedFailure" : false,
+  "preflight" : {
+    "header" : {
+      "contractName" : "pdf-editor.preflight",
+      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "provider" : {
+        "capabilities" : [
+          "metadata-presence",
+          "embedded-data-counts",
+          "annotation-counts",
+          "network-boundary-counts",
+          "bounded-token-scan"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "version" : {
+        "major" : 1,
+        "minor" : 1
+      }
+    },
+    "payload" : {
+      "activeContent" : {
+        "executionAttempted" : false,
+        "possibleActionTokenCounts" : {
+          "additionalAction" : 0,
+          "javascript" : 0,
+          "launch" : 0,
+          "openAction" : 0
+        }
+      },
+      "annotations" : {
+        "byKind" : {
+          "widget" : 80
+        },
+        "coverage" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "totalCount" : 80,
+        "unknownCount" : 0
+      },
+      "attachments" : {
+        "attachmentCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "embeddedFileNameTreeCount" : 0,
+        "fileAttachmentCount" : 0,
+        "unknownCount" : 0
+      },
+      "coverage" : {
+        "annotations" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "attachments" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "metadata" : {
+          "reasonCodes" : [
+
+          ],
+          "state" : "observed"
+        },
+        "revisions" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "scripts" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        }
+      },
+      "embeddedData" : {
+        "attachmentCount" : 0,
+        "possibleTokenCounts" : {
+          "embeddedFiles" : 0,
+          "fileAttachment" : 0,
+          "richMedia" : 0,
+          "xfa" : 0
+        }
+      },
+      "findings" : [
+        {
+          "category" : "metadata",
+          "code" : "metadata.present",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "metadata-presence",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded.attachments",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "embedded-attachments",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded-file-spec-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-embedded-file-spec-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "file-attachment-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-file-attachment-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "xfa-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-xfa-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "rich-media-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-rich-media-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.external-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-external",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.unsafe-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-unsafe",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-uri-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-uri-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-remote-goto-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-remote-goto-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-submit-form-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-submit-form-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-launch-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-launch-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-javascript-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-javascript-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-open-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-open-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-additional-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-additional-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "signature-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "security-signature-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "security.encryption",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "security-encryption",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "preflight",
+          "code" : "preflight.byte-scan",
+          "count" : 39839,
+          "evidence" : "boundedTokenScan",
+          "id" : "byte-scan-state",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "observed"
+        }
+      ],
+      "metadata" : {
+        "fields" : {
+          "author" : {
+            "present" : false
+          },
+          "creationDate" : {
+            "present" : false
+          },
+          "creator" : {
+            "present" : false
+          },
+          "keywords" : {
+            "present" : false
+          },
+          "modificationDate" : {
+            "present" : false
+          },
+          "producer" : {
+            "present" : false
+          },
+          "subject" : {
+            "present" : false
+          },
+          "title" : {
+            "present" : false
+          }
+        },
+        "rawValuesIncluded" : false
+      },
+      "networkBoundaries" : {
+        "externalURLCount" : 0,
+        "internalPageLinkCount" : 0,
+        "possibleActionTokenCounts" : {
+          "remoteGoTo" : 0,
+          "submitForm" : 0,
+          "uri" : 0
+        },
+        "safeExternalURLCount" : 0,
+        "unknownDestinationCount" : 0,
+        "unsafeExternalURLCount" : 0
+      },
+      "revisions" : {
+        "coverage" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "eofMarkerCount" : 1,
+        "hiddenContentState" : "unknown",
+        "incrementalUpdateCountEstimate" : 0,
+        "previousRevisionReferenceCount" : 0,
+        "startxrefCount" : 1
+      },
+      "sanitization" : {
+        "limits" : [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ],
+        "safeToClaimClean" : false,
+        "sourceUnchanged" : true,
+        "status" : "not-run",
+        "supportedModes" : [
+          "report-only",
+          "new-copy-required"
+        ]
+      },
+      "scripts" : {
+        "additionalActionCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        },
+        "executionAttempted" : false,
+        "javaScriptActionCount" : 0,
+        "launchActionCount" : 0,
+        "openActionCount" : 0,
+        "remoteGoToActionCount" : 0,
+        "submitFormActionCount" : 0,
+        "uriActionCount" : 0
+      },
+      "security" : {
+        "encrypted" : false,
+        "locked" : false,
+        "permissionsObserved" : true
+      },
+      "summary" : {
+        "activeContentCount" : 0,
+        "blockedCount" : 0,
+        "embeddedDataCount" : 0,
+        "findingCount" : 18,
+        "metadataFieldCount" : 0,
+        "networkBoundaryCount" : 0,
+        "unknownCount" : 0,
+        "unknownCoverageCount" : 1,
+        "warningCount" : 0
+      },
+      "unknownCoverage" : {
+        "categories" : {
+          "annotations" : {
+            "reasonCodes" : [
+              "pdfkitPageAnnotationEnumeration"
+            ],
+            "state" : "observed"
+          },
+          "attachments" : {
+            "reasonCodes" : [
+              "embeddedPayloadBytesNotRetained"
+            ],
+            "state" : "observed"
+          },
+          "metadata" : {
+            "reasonCodes" : [
+
+            ],
+            "state" : "observed"
+          },
+          "revisions" : {
+            "reasonCodes" : [
+              "incrementalRevisionParserNotRun"
+            ],
+            "state" : "unknown"
+          },
+          "scripts" : {
+            "reasonCodes" : [
+              "tokenScanDoesNotProveReachability"
+            ],
+            "state" : "partial"
+          }
+        },
+        "unknownCount" : 1
+      }
+    }
+  },
+  "sessionProvenance" : {
+    "header" : {
+      "contractName" : "pdf-editor.session-provenance",
+      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sessionID" : "native-(inspection.source.sha256.prefix(16))",
+      "sourceDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "export" : {
+        "exporterID" : "pdfkit",
+        "operationCount" : 0,
+        "outputDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+        "outputReopenable" : true,
+        "sourceDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+        "state" : "succeeded",
+        "storage" : "local-file",
+        "validation" : "validated",
+        "validationProviderID" : "pdfkit"
+      },
+      "ocr" : {
+        "processedPageCount" : 0,
+        "providerIDs" : [
+
+        ],
+        "recognizedBoundsRetained" : false,
+        "recognizedTextRetained" : false,
+        "state" : "not-used"
+      },
+      "privacy" : {
+        "URLsIncluded" : false,
+        "documentTextIncluded" : false,
+        "fieldValuesIncluded" : false,
+        "filenamesIncluded" : false,
+        "ocrTextIncluded" : false,
+        "sourceBytesIncluded" : false
+      },
+      "processing" : {
+        "companionRequestCount" : 0,
+        "dataEgress" : "none",
+        "locality" : "local-device",
+        "networkRequestCount" : 0,
+        "sourceInput" : "local-file"
+      },
+      "sourceRetention" : {
+        "deletion" : "pending",
+        "retainedUntilSessionEnd" : true,
+        "sourceCopyCount" : 1,
+        "state" : "in-memory-session"
+      }
+    }
+  },
   "sourceDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
   "sourcePath" : "benchmark\/results\/security-corpus\/repeated-20-pages.pdf",
   "status" : "inspected",
   "validation" : {
     "checks" : [
       {
-        "id" : "BEFCE99D-5DB6-47D0-B2BA-3214D70814AD",
+        "id" : "60E3A10B-6757-4CE5-96D7-B650FD8259F5",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -2598,7 +3125,7 @@
         "status" : "passed"
       },
       {
-        "id" : "267BBB07-9F3A-46D0-8438-D4DE4EEB096F",
+        "id" : "D0ED5968-E70A-4FBD-BE24-1E50A522D036",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 20 page(s).",
         "operationIDs" : [
@@ -2607,7 +3134,7 @@
         "status" : "passed"
       },
       {
-        "id" : "CEFB7AEE-D6E7-43A7-8D64-34E9D6B16AB5",
+        "id" : "2D8D6F27-FEF0-4668-9986-043977BDFB8C",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -2616,7 +3143,7 @@
         "status" : "passed"
       },
       {
-        "id" : "74AD3D65-D571-4EC4-BF9F-EBDFA1AFF9CC",
+        "id" : "E7AA58CB-282A-4CB8-B6D0-87E82E6221AD",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -2625,7 +3152,7 @@
         "status" : "passed"
       },
       {
-        "id" : "D756F108-0A6F-458E-8A3C-861C81BE5978",
+        "id" : "B5649D7A-2EDC-4998-B7FF-4134D92D6814",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -2634,7 +3161,7 @@
         "status" : "passed"
       },
       {
-        "id" : "CCFD4E2B-9A91-4E94-B33A-426444F3D6E8",
+        "id" : "E265FB13-944D-48E4-BA15-8DF31214EEB3",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -2643,7 +3170,7 @@
         "status" : "passed"
       },
       {
-        "id" : "F105196D-5896-4D6F-B615-8B64F1D373A6",
+        "id" : "170F9409-FE7E-409D-B006-DE6FE59CCDB3",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -2674,7 +3201,7 @@
     "sourceDigest" : "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-24T16:54:44Z"
+    "validatedAt" : "2026-08-25T04:31:13Z"
   },
   "version" : {
     "major" : 1,

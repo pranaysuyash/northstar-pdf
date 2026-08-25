@@ -13,7 +13,7 @@ fi
 files=()
 while IFS= read -r -d '' file; do
   case "$file" in
-    "$ROOT/benchmark/results/security-corpus/truncated-128-bytes.pdf") continue ;;
+    "$ROOT/benchmark/results/security-corpus/truncated-128-bytes.pdf"|*"/malformed-"*.pdf) continue ;;
     *) files+=("$file") ;;
   esac
 done < <(find "$ROOT/benchmark/results" "$ROOT/docs/benchmarks" -type f -name '*.pdf' -print0 | sort -z)
@@ -23,7 +23,7 @@ for file in "${files[@]}"; do
   printf '\n--- independent viewer reopen: %s ---\n' "${file#$ROOT/}"
   info_args=()
   text_args=()
-  if [[ "$file" == *"encrypted-reader"*.pdf ]]; then
+  if [[ "$file" == *"encrypted-reader"*.pdf || "$file" == *"encrypted-"*.pdf ]]; then
     info_args+=("-upw" "reader-password")
     text_args+=("-upw" "reader-password")
   fi
@@ -60,7 +60,7 @@ for file in "${files[@]}"; do
     failures=$((failures + 1))
   fi
   mutool_failed=0
-  if [[ "$file" == *"encrypted-reader"*.pdf ]]; then
+  if [[ "$file" == *"encrypted-reader"*.pdf || "$file" == *"encrypted-"*.pdf ]]; then
     if ! "$MUTOOL" info -p reader-password "$file" >/tmp/pdf-editor-mutool-info.$$ 2>&1; then mutool_failed=1; fi
   else
     if ! "$MUTOOL" info "$file" >/tmp/pdf-editor-mutool-info.$$ 2>&1; then mutool_failed=1; fi

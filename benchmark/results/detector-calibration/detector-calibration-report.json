@@ -1,0 +1,587 @@
+{
+  "schema": "pdf-editor.detector-calibration-report",
+  "version": {
+    "major": 1,
+    "minor": 1
+  },
+  "generatedAt": "2026-08-25T00:00:00.000Z",
+  "fixture": "benchmark/results/detector-calibration/detector-calibration.pdf",
+  "sourceSha256": "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+  "policy": {
+    "positiveMatchIoU": 0.25,
+    "hardNegativeFalsePositiveRate": 0,
+    "requiredPositiveRecall": 1,
+    "labelAssociationEvidence": [
+      "textLabel",
+      "spatialRelationship"
+    ],
+    "reviewRequired": true
+  },
+  "adapters": {
+    "native": {
+      "cases": [
+        {
+          "id": "p0-vector-rectangle",
+          "pageIndex": 0,
+          "class": "vectorRectangle",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 2,
+          "scores": [
+            0.8
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-checkbox",
+          "pageIndex": 0,
+          "class": "checkbox",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 1,
+          "scores": [
+            0.85
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-underline",
+          "pageIndex": 0,
+          "class": "underline",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 1,
+          "scores": [
+            0.75
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-whitespace",
+          "pageIndex": 0,
+          "class": "whitespace",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 1,
+          "scores": [
+            0.58
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-label-association",
+          "pageIndex": 0,
+          "class": "labelAssociation",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 2,
+          "scores": [
+            0.8
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p1-decorative-rectangle",
+          "pageIndex": 1,
+          "class": "vectorRectangle",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-isolated-square",
+          "pageIndex": 1,
+          "class": "checkbox",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-bare-rule",
+          "pageIndex": 1,
+          "class": "underline",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-generic-box",
+          "pageIndex": 1,
+          "class": "labelAssociation",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-generic-whitespace",
+          "pageIndex": 1,
+          "class": "whitespace",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        }
+      ],
+      "metrics": {
+        "overall": {
+          "cases": 10,
+          "positiveCases": 5,
+          "hardNegativeCases": 5,
+          "truePositive": 5,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 5,
+          "recall": 1,
+          "precision": 1,
+          "falsePositiveRate": 0,
+          "abstentionRate": 1,
+          "passed": true
+        },
+        "byClass": {
+          "checkbox": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.85,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "labelAssociation": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.8,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "underline": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.75,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "vectorRectangle": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.8,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "whitespace": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.58,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          }
+        }
+      },
+      "failureClusters": {
+        "failureCount": 0,
+        "byCluster": {},
+        "cases": [],
+        "passed": true
+      },
+      "passed": true
+    },
+    "browser": {
+      "cases": [
+        {
+          "id": "p0-vector-rectangle",
+          "pageIndex": 0,
+          "class": "vectorRectangle",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 2,
+          "scores": [
+            0.8
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-checkbox",
+          "pageIndex": 0,
+          "class": "checkbox",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 1,
+          "scores": [
+            0.85
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-underline",
+          "pageIndex": 0,
+          "class": "underline",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 1,
+          "scores": [
+            0.75
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-whitespace",
+          "pageIndex": 0,
+          "class": "whitespace",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 1,
+          "scores": [
+            0.58
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p0-label-association",
+          "pageIndex": 0,
+          "class": "labelAssociation",
+          "expected": "detected",
+          "hardNegative": false,
+          "detected": true,
+          "candidateCount": 1,
+          "nearCandidateCount": 2,
+          "scores": [
+            0.8
+          ],
+          "state": "pass"
+        },
+        {
+          "id": "p1-decorative-rectangle",
+          "pageIndex": 1,
+          "class": "vectorRectangle",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-isolated-square",
+          "pageIndex": 1,
+          "class": "checkbox",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-bare-rule",
+          "pageIndex": 1,
+          "class": "underline",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-generic-box",
+          "pageIndex": 1,
+          "class": "labelAssociation",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        },
+        {
+          "id": "p1-generic-whitespace",
+          "pageIndex": 1,
+          "class": "whitespace",
+          "expected": "abstain",
+          "hardNegative": true,
+          "detected": false,
+          "candidateCount": 0,
+          "nearCandidateCount": 0,
+          "scores": [],
+          "state": "pass"
+        }
+      ],
+      "metrics": {
+        "overall": {
+          "cases": 10,
+          "positiveCases": 5,
+          "hardNegativeCases": 5,
+          "truePositive": 5,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 5,
+          "recall": 1,
+          "precision": 1,
+          "falsePositiveRate": 0,
+          "abstentionRate": 1,
+          "passed": true
+        },
+        "byClass": {
+          "checkbox": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.85,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "labelAssociation": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.8,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "underline": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.75,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "vectorRectangle": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.8,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          },
+          "whitespace": {
+            "cases": 2,
+            "truePositive": 1,
+            "falseNegative": 0,
+            "falsePositive": 0,
+            "trueNegative": 1,
+            "recall": 1,
+            "precision": 1,
+            "falsePositiveRate": 0,
+            "abstentionRate": 1,
+            "threshold": {
+              "minimumAcceptedSuggestionScore": 0.58,
+              "maximumObservedHardNegativeScore": null,
+              "calibration": "reviewed-positive-lower-bound-plus-zero-hard-negative-gate"
+            },
+            "passed": true
+          }
+        }
+      },
+      "failureClusters": {
+        "failureCount": 0,
+        "byCluster": {},
+        "cases": [],
+        "passed": true
+      },
+      "passed": true
+    }
+  },
+  "semanticParity": {
+    "cases": [
+      {
+        "id": "p0-vector-rectangle",
+        "class": "vectorRectangle",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p0-checkbox",
+        "class": "checkbox",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p0-underline",
+        "class": "underline",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p0-whitespace",
+        "class": "whitespace",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p0-label-association",
+        "class": "labelAssociation",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p1-decorative-rectangle",
+        "class": "vectorRectangle",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p1-isolated-square",
+        "class": "checkbox",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p1-bare-rule",
+        "class": "underline",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p1-generic-box",
+        "class": "labelAssociation",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      },
+      {
+        "id": "p1-generic-whitespace",
+        "class": "whitespace",
+        "native": "pass",
+        "browser": "pass",
+        "state": "pass"
+      }
+    ],
+    "mismatches": [],
+    "passed": true
+  },
+  "passed": true
+}

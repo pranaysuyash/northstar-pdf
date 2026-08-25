@@ -1,0 +1,125 @@
+{
+  "artifact": "reviewed-template-class-calibration",
+  "artifactVersion": {
+    "major": 1,
+    "minor": 0
+  },
+  "generatedAt": "2026-08-24T00:00:00.000Z",
+  "generator": "Tests/web_template_match_benchmark_test.mjs",
+  "fixtureModule": "Tests/fixtures/template_matching_reviewed_fixtures.mjs",
+  "evidence": {
+    "fixtureCount": 24,
+    "counts": {
+      "exact": 2,
+      "knownVariant": 2,
+      "familyMatch": 6,
+      "ambiguous": 6,
+      "stale": 1,
+      "noMatch": 7
+    },
+    "reviewer": "corpus-curator",
+    "independentAgreement": "not-measured",
+    "privacy": "value-free keyed structural evidence; no PDF bytes, raw labels, screenshots, or profile values"
+  },
+  "basePolicy": {
+    "geometryWeight": 0.2,
+    "nativeFieldWeight": 0.25,
+    "anchorWeight": 0.25,
+    "regionWeight": 0.3,
+    "familyThreshold": 0.76,
+    "ambiguityMargin": 0.05
+  },
+  "policyByDocumentClass": {
+    "publicAcroForm": {
+      "familyThreshold": 0.8352,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9619172213,
+        "maximumNegativeScore": 0.7083333333,
+        "falsePositiveGate": true
+      }
+    },
+    "staticPrintedForm": {
+      "familyThreshold": 0.8296,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 2,
+        "negativeCaseCount": 2,
+        "ambiguousCaseCount": 2,
+        "minimumPositiveScore": 0.9991022213,
+        "maximumNegativeScore": 0.66,
+        "falsePositiveGate": true
+      }
+    },
+    "nativeWidget": {
+      "familyThreshold": 0.8624,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9747503121,
+        "maximumNegativeScore": 0.75,
+        "falsePositiveGate": true
+      }
+    },
+    "rotatedStaticForm": {
+      "familyThreshold": 0.7772,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9994172213,
+        "maximumNegativeScore": 0.5548085901,
+        "falsePositiveGate": true
+      }
+    },
+    "rotatedNativeWidget": {
+      "familyThreshold": 0.8621,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9741679135,
+        "maximumNegativeScore": 0.75,
+        "falsePositiveGate": true
+      }
+    },
+    "scannedDocument": {
+      "familyThreshold": 1.01,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "disabled",
+      "calibrationStatus": "insufficientEvidence",
+      "evidence": {
+        "positiveCaseCount": 0,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 0,
+        "minimumPositiveScore": null,
+        "maximumNegativeScore": 0.3048085901,
+        "falsePositiveGate": false
+      }
+    }
+  },
+  "mutationGate": {
+    "weakenedThreshold": 0,
+    "weakenedAmbiguityMargin": 0,
+    "weakenedPolicyDetected": true,
+    "requiredFailures": ["hard-negative", "ambiguous-selection"]
+  },
+  "promotionBoundary": "review-only; not a production accuracy claim or automatic completion authorization"
+}

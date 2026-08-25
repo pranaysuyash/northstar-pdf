@@ -33,6 +33,8 @@ private struct ParityBundle: Codable {
     let coordinates: CoordinateEnvelope?
     let candidates: [RegionCandidate]?
     let editSession: EditSessionEnvelope?
+    let preflight: PDFPreflightReport?
+    let sessionProvenance: PDFSessionPrivacyProvenance?
     let validation: ValidationReport?
     let error: String?
 }
@@ -123,11 +125,11 @@ private func manifestPaths(from url: URL) throws -> [String] {
 }
 
 private func isExpectedFailure(_ relativePath: String) -> Bool {
-    relativePath.contains("truncated-128-bytes.pdf")
+    relativePath.contains("truncated-128-bytes.pdf") || relativePath.contains("malformed-")
 }
 
 private func password(for relativePath: String) -> String? {
-    relativePath.contains("encrypted-reader.pdf") ? "reader-password" : nil
+    relativePath.contains("encrypted-reader.pdf") || relativePath.contains("encrypted-") ? "reader-password" : nil
 }
 
 private func writeJSON<T: Encodable>(_ value: T, to url: URL) throws {
@@ -190,6 +192,53 @@ private func makeEditSession(_ inspection: DocumentInspection, generatedAt: Date
     )
 }
 
+private func makeSessionProvenance(
+    inspection: DocumentInspection,
+    validation: ValidationReport?,
+    sessionID: String,
+    operationCount: Int
+) -> PDFSessionPrivacyProvenance {
+    let export: PDFSessionExportProvenance
+    if let validation {
+        let succeeded = validation.status == .validated || validation.status == .validatedWithWarnings
+        export = PDFSessionExportProvenance(
+            state: succeeded ? .succeeded : .failed,
+            sourceDigest: inspection.source.sha256,
+            outputDigest: validation.outputDigest,
+            storage: succeeded ? .localFile : .notApplicable,
+            validation: succeeded
+              ? (validation.status == .validated ? .validated : .validatedWithWarnings)
+              : .failed,
+            outputReopenable: validation.outputReopenable,
+            operationCount: operationCount,
+            exporterID: validation.provider?.id,
+            validationProviderID: validation.provider?.id)
+    } else {
+        export = PDFSessionExportProvenance(
+            state: .failed,
+            sourceDigest: inspection.source.sha256,
+            storage: .notApplicable,
+            validation: .failed,
+            outputReopenable: false,
+            operationCount: operationCount)
+    }
+    return PDFSessionPrivacyProvenanceBuilder.build(
+        sessionID: sessionID,
+        sourceDigest: inspection.source.sha256,
+        provider: providerDescriptor,
+        generatedAt: "2026-08-25T00:00:00.000Z",
+        processing: PDFSessionProcessingProvenance(
+            locality: .localDevice,
+            sourceInput: "local-file",
+            dataEgress: .none),
+        sourceRetention: PDFSessionSourceRetentionProvenance(
+            state: .inMemorySession,
+            retainedUntilSessionEnd: true,
+            deletion: .pending,
+            sourceCopyCount: 1),
+        export: export)
+}
+
 private func inspectFixture(relativePath: String, arguments: Arguments, provider: PDFKitProvider) -> (ParityBundle, SummaryEntry) {
     let sourceURL = arguments.rootURL.appendingPathComponent(relativePath).standardizedFileURL
     let expectedFailure = isExpectedFailure(relativePath)
@@ -199,6 +248,16 @@ private func inspectFixture(relativePath: String, arguments: Arguments, provider
         let document = makeDocumentContract(inspection, generatedAt: generatedAt)
         let coordinates = makeCoordinates(inspection, generatedAt: generatedAt)
         let editSession = makeEditSession(inspection, generatedAt: generatedAt)
+        let preflight = PDFPreflightBuilder.build(
+            inspection: inspection,
+            data: try Data(contentsOf: sourceURL),
+            provider: PDFProviderDescriptor(
+                id: providerDescriptor.id,
+                version: providerDescriptor.version,
+                platform: providerDescriptor.platform,
+                capabilities: ["metadata-presence", "embedded-data-counts", "annotation-counts", "network-boundary-counts", "bounded-token-scan"]
+            ),
+            generatedAt: "2026-08-25T00:00:00.000Z")
         var validation: ValidationReport?
         var exportError: String?
         let exportFilename = relativePath
@@ -213,6 +272,14 @@ private func inspectFixture(relativePath: String, arguments: Arguments, provider
             try? FileManager.default.removeItem(at: outputURL)
         }
         let status = exportError == nil ? "inspected" : "inspectedExportFailed"
+        let sessionProvenance = makeSessionProvenance(
+            inspection: inspection,
+            validation: validation,
+            sessionID: "native-(inspection.source.sha256.prefix(16))",
+            operationCount: 0)
+        try PDFSessionPrivacyProvenanceValidator.validate(
+            sessionProvenance,
+            expectedSourceDigest: inspection.source.sha256)
         let bundle = ParityBundle(
             contractName: "pdf-editor.browser-fixture",
             version: .current,
@@ -224,6 +291,8 @@ private func inspectFixture(relativePath: String, arguments: Arguments, provider
             coordinates: coordinates,
             candidates: inspection.candidates,
             editSession: editSession,
+            preflight: preflight,
+            sessionProvenance: sessionProvenance,
             validation: validation,
             error: exportError
         )
@@ -248,6 +317,8 @@ private func inspectFixture(relativePath: String, arguments: Arguments, provider
             coordinates: nil,
             candidates: nil,
             editSession: nil,
+            preflight: nil,
+            sessionProvenance: nil,
             validation: nil,
             error: message
         )

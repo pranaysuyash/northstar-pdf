@@ -79,6 +79,6 @@ PDF files in the wild frequently lack authored tag trees (ISO 14289-1 PDF/UA). T
 ## 5. Verification & Compliance Sign-Off
 
 - **Automated Web Accessibility Gate:** `node Tests/web_accessibility_gate_test.mjs` (✔ 100% Pass).
-- **Automated Web Reader Contract:** `node Tests/web_reader_contract_test.mjs` (✔ 42 checks Pass).
-- **Automated Swift Test Suite:** `swift test` (✔ 44 tests in 3 suites Pass).
+- **Automated Web Reader Contract:** `node Tests/web_reader_contract_test.mjs` (✔ 44 checks Pass).
+- **Automated Swift Test Suite:** `swift test` (✔ 67 tests in 4 suites Pass).
 - **Static & Runtime A11y Inspection:** Complete.

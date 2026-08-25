@@ -1,5 +1,37 @@
 # PDF Editor Discovery Progress
 
+## 2026-08-25 Character-grid merge and highlight remediation
+
+- Fixed the character-grid false-merge root cause in `web/pdf-geometry-detector.mjs`: same-row cells now require compatible row geometry, cell-width signatures, and local gap patterns before they can form one candidate. This prevents sibling fields and photo-box cells from entering the same union.
+- Mirrored the grouping algorithm in `Sources/PDFEditorCore/StaticRegionDetector.swift` so native and browser detection share the same field-boundary contract.
+- Reworked candidate rendering in `web/index.html` and `web/app.js`: character-grid unions are transparent dashed boundaries, cells receive separate low-opacity tints, and pending glyphs use restrained blue overlays rather than dense fills. Search marks now use a low-opacity amber cue with an inset underline to preserve legibility.
+- Reworked the native presentation overlay in `Sources/PDFEditorApp/ContentView.swift`: character-grid candidates now use a dashed union plus per-cell tint, normal overlays are lighter, and PDFKit's opaque current-selection paint is cleared after exact search bounds are captured.
+- Strengthened `Tests/web_character_grid_workflow_test.mjs` with assertions for Form 6 sibling-field splitting (11 + 12 cells), photo-box exclusion, union-bound invariants, transparent grid rendering, per-cell tint rendering, and reduced search opacity.
+- Verification: focused Chrome workflow passed. Direct DOM inspection observed transparent grid union, dashed boundary, per-cell tints, and `rgba(255, 210, 77, 0.16)` search marks. `swiftc -parse` passed for both updated native sources. Native `swift test` was attempted but blocked by the host SwiftPM sandbox (`sandbox_apply: Operation not permitted`), so native runtime execution remains pending in a normal Xcode/SwiftPM environment.
+- Durable evidence: [`docs/audits/character-grid-merge-and-highlight-evidence-2026-08-25.md`](docs/audits/character-grid-merge-and-highlight-evidence-2026-08-25.md).
+
+## 2026-08-25 Cross-project implementation mandate correction
+
+- Recorded the owner direction that the cross-project exploration is a
+  long-term implementation mandate and moat input, not a shortlist of optional
+  ideas or a reason to narrow PDF Editor to the current browser/native proof.
+- Reconciled `docs/cross-project-document-intelligence-exploration.md` so every
+  transferable lane from SignKit, MetaExtract, Invoice Intelligence,
+  PhotoSearch, `extracted_forms`, and the historical web detector has a PDF
+  Editor build obligation with a named ownership boundary.
+- Preserved the source-project boundaries: no neighboring code, source bytes,
+  private values, database, generated artifact, or Git state was imported or
+  changed. Transfer means reimplementation behind PDF Editor contracts.
+- Clarified that `Deferred`, `Gated`, `Unmeasured`, `Quarantined`, `Blocked`, and
+  `Abstained` are evidence or execution states, not permanent product
+  exclusions. Each lane must eventually carry implementation, contract,
+  governed corpus, provider/license, privacy/security, failure/recovery,
+  benchmark, and validation evidence.
+- Updated the task plan so native/browser parity remains a prerequisite for
+  truthful provider comparison while OCR, parser, signature, companion, batch,
+  security, accessibility, hosted, and collaboration lanes continue as active
+  implementation work.
+
 ## 2026-08-23
 
 - Confirmed the active workspace is `/Users/pranay/Projects/fieldcanvas` but the
@@ -201,6 +233,41 @@
   independent-viewer gates.
 - Confirmed the environment has Xcode 26.3, Swift 6.2.4, and `pdfinfo`; `qpdf`
   remains unavailable.
+- No Git mutations, production deployment, external service writes, or legally
+  binding signature claims were made.
+
+## 2026-08-25 Parallel Review Round and Fixes
+
+- Dispatched three read-only subagent reviews of the implemented slice: core
+  safety/contract conformance, macOS shell/HIG, and the next provider lane.
+  Two initial dispatches hung; the shell review completed, and both remaining
+  reviews were retried successfully after confirming the workspace state.
+- Discovered the workspace had grown in parallel to roughly 15,600 lines
+  (impact validator, session/recovery stores, template contracts, vector stream
+  parser, expanded tests) beyond the initially authored slice; verified the
+  current tree with `ls`/`wc -l` before trusting review findings.
+- Confirmed five review findings by direct inspection and fixed them:
+  fail-closed raster comparison in `PDFImpactValidator` (plus two
+  non-interpolated page-number strings), occurrence-based stable
+  `NativeField.id` instead of the volatile annotation index, parenthesized
+  `ProfileStore` employer/company precedence, a model-level signature guard in
+  `applyFieldValue` closing the `.onSubmit` bypass, and permission-gated,
+  skip-reporting `applyBulkFill`.
+- Confirmed two reported shell issues were already correct in the current code
+  (transactional undo replay; atomic `replaceItemAt` publication) and recorded
+  them as stale findings rather than fixes.
+- Recorded all remaining confirmed findings as tracked follow-ups in F-023
+  (`findings.md`), including the byte-scan AcroForm guard, radio retention
+  validation, unimplemented signature image operation, discarded OCR provenance,
+  fabricated detector line geometry, certainty overstatements, rotation-blind
+  raster exclusion, and the P3 list.
+- Verification: `swift build` passed (13.6 s); `swift test` passed 67/67
+  (including the environment-gated Form 6 and public AcroForm fixture tests);
+  `swift build -c release` passed (27.2 s).
+- Provider-lane assessment (research only): PDFBox 3.0.8 fat-jar + `javac`
+  workflow is viable on this machine (Java 17, no Maven/Gradle needed),
+  Apache-2.0, with a concrete oracle matching the existing public-AcroForm
+  benchmark; recorded as the next lane, not yet run.
 - No Git mutations, production deployment, external service writes, or legally
   binding signature claims were made.
 
@@ -482,7 +549,9 @@
 - Actual editing, OCR, repair, privacy-sanitization, redaction, encryption,
   packet behavior, accessibility, and output fidelity: Unknown; no user document
   was uploaded or processed.
-- Competitor-inspired corpus experiments: Proposed and queued, not implemented.
+- Competitor-inspired corpus contracts: Implemented as six versioned ledger
+  entries and six native/browser semantic parity cases. Capability execution is
+  proposed and queued, not yet implemented.
 
 ## 2026-08-24 Native/Web Fidelity Expansion and Full Capability Program
 
@@ -732,6 +801,109 @@
   production automatic matching. Real recurring-family calibration, reviewer
   agreement, and native/browser semantic parity remain open.
 
+### 2026-08-24 Reviewed recurring-template corpus and class calibration
+
+- Expanded `Tests/fixtures/template_matching_reviewed_fixtures.mjs` from the
+  seven-case controlled benchmark to 24 explicit value-free decisions across
+  `publicAcroForm`, `staticPrintedForm`, `nativeWidget`, `rotatedStaticForm`,
+  `rotatedNativeWidget`, and `scannedDocument`.
+- Added explicit reviewer labels to every case. The current evidence is
+  single-curator evidence and records `independentAgreement: not-measured`
+  instead of claiming unverified reviewer agreement.
+- Added class-aware policy resolution and calibration to
+  `web/template-match-benchmark.mjs`. Exact, known-variant, and stale states
+  remain deterministic precedence rules. Family thresholds are derived only
+  when positive and hard-negative scores are separable.
+- Calibrated five structured classes with thresholds from `0.7772` through
+  `0.8624`. Scanned documents have exact and known-variant coverage, but family
+  acceptance is disabled because the corpus has no family-positive evidence.
+- The benchmark passes with both the fallback policy and the calibrated class
+  policy map. Setting every class threshold to zero and removing the ambiguity
+  margin fails on hard negatives and ambiguous selections.
+- Exposed `calibrateDocumentClassPolicies` through the browser fixture. This is
+  a shared implementation surface, not evidence that browser extraction alone
+  proves native semantic parity.
+- Added the durable calibration record at
+  [`docs/audits/recurring-template-class-calibration-evidence-2026-08-24.md`](docs/audits/recurring-template-class-calibration-evidence-2026-08-24.md).
+  Added the checked-in machine snapshot at
+  [`benchmark/results/template-matching/2026-08-24-class-calibration.json`](benchmark/results/template-matching/2026-08-24-class-calibration.json),
+  with the executable test checking its policy fields and evidence counts.
+  Genuine recurring source versions, hold-out evaluation, reviewer agreement,
+  and class-specific native/browser parity were the next evidence gates at this
+  point in the historical sequence. The following entry records the bounded
+  semantic parity result.
+
+### 2026-08-24 Native Swift and browser reviewed-template semantic parity
+
+- Added `Sources/PDFEditorCore/TemplateBenchmarkContracts.swift` with the
+  native Swift value-free benchmark contracts, class-aware policy projection,
+  candidate evidence, state transitions, stale-source refusal, and abstention
+  behavior used by the parity lane.
+- Added the `PDFTemplateParityHarness` executable target in `Package.swift` and
+  `Sources/PDFTemplateParityHarness/main.swift`. It consumes the canonical
+  reviewed corpus and writes a retained native run under
+  `benchmark/results/template-matching/`.
+- Added `Tests/template_match_native_browser_parity_test.mjs`. It writes one
+  canonical corpus, runs Swift, evaluates the browser adapter in isolated
+  Chrome, and compares state, selection, abstention, false-positive gates,
+  score, candidate identity/reason/components, and class policy.
+- The 24-case run passed with zero semantic mismatches. Both lanes produced
+  exact 2, knownVariant 2, familyMatch 6, ambiguous 6, stale 1, and noMatch 7.
+  Both selected 10 cases and abstained on 14 cases. Candidate evidence and
+  policy projections also had zero mismatches, with no browser console or page
+  errors.
+- The first gate caught two serialization defects before the final pass:
+  omitted native `null` selection identities and raw policy-object key-order
+  comparison. The runner now compares normalized semantic projections and keeps
+  those corrections in the audit history.
+- Durable evidence is recorded in
+  [`docs/audits/template-native-browser-semantic-parity-evidence-2026-08-24.md`](docs/audits/template-native-browser-semantic-parity-evidence-2026-08-24.md)
+  and
+  [`benchmark/results/template-matching/2026-08-24-native-browser-semantic-parity.json`](benchmark/results/template-matching/2026-08-24-native-browser-semantic-parity.json).
+
+### Remaining reviewed-template parity work
+
+- This clears semantic conformance for the value-free reviewed benchmark, not
+  live PDFKit-versus-PDF.js fingerprint extraction, PDF byte fidelity, recall,
+  reviewer agreement, or production automatic completion.
+- The next gate is independent native and browser fingerprint extraction from
+  the same real PDF sources, with geometry, field sequence, anchors, and region
+  evidence compared before classification.
+
+### 2026-08-24 Reviewed correction-event benefit measurement
+
+- Added `web/template-correction-benchmark.mjs` to measure whether an explicit
+  reviewed correction improves recurring completion coverage without turning
+  learning into silent autofill.
+- Defined the primary metric as `reviewedTargetCoverage`: the number of
+  reviewed mappings surfaced in a completion proposal without resolving or
+  storing profile values. Keystroke time, user acceptance, profile-value
+  correctness, and real-world recall remain explicitly unmeasured.
+- Ran five controlled structured variants across `publicAcroForm`,
+  `staticPrintedForm`, `nativeWidget`, `rotatedStaticForm`, and
+  `rotatedNativeWidget`. Every baseline was `noMatch` with zero surfaced
+  targets. Every strict reviewed promotion became `exact` with one surfaced
+  reviewed target, for a coverage lift of 5 across 5 cases.
+- Replayed all seven existing hard-negative fixtures against all five promoted
+  child revisions. The result was 0 selections and 35/35 abstentions.
+- Verified rollback by reselecting the unchanged parent revision. All five
+  cases returned to `noMatch` with zero surfaced targets while promoted child
+  revisions remained auditable in history.
+- Verified value-free correction records: zero profile values, no raw labels,
+  no PDF bytes, no screenshots, and no passphrases. A hard-negative correction
+  mutation was rejected before child revision creation.
+- Added the deterministic Node test and isolated Chrome test:
+  `Tests/web_template_correction_benchmark_test.mjs` and
+  `Tests/web_template_correction_benchmark_browser_test.mjs`. Chrome passed
+  with zero console and page errors on the project-owned port 8183 route.
+- The first run caught an over-broad privacy sentinel that confused the keyed
+  token `hmac:anchor-applicant` with a raw label. The sentinel was narrowed to
+  quoted raw content and the rerun passed. This remains S2 harness evidence.
+- Durable report and interpretation are recorded in
+  [`docs/audits/reviewed-template-correction-benefit-evidence-2026-08-24.md`](docs/audits/reviewed-template-correction-benefit-evidence-2026-08-24.md)
+  and
+  [`benchmark/results/template-matching/2026-08-24-correction-benefit.json`](benchmark/results/template-matching/2026-08-24-correction-benefit.json).
+
 ### 2026-08-24 Native/web serialized contract parity baseline
 
 - Added the `PDFContractHarness` Swift executable target. It reads the existing
@@ -923,3 +1095,847 @@
 - **RT-004 (Informational) — DOCUMENTED:** CSP `'unsafe-inline'` required by current inline module script design. No current exploitability; deferred to RT-004 milestone (extract `web/app.js`).
 - Added two regression tests: `redTeamRT001ProfileIsNotStoredAsPlaintextJSON` (asserts on-disk file not parseable as plaintext `UserProfile`) and `redTeamRT003VCardImportTruncatesLongValues` (asserts 4096-char vCard FN: stored ≤ 1024 chars).
 - Verification: `swift test` passed all **62 tests** across 4 suites with 0 failures; Actor B objective (remote exploit chain) not achieved across all hardened surfaces.
+
+### 2026-08-24 ihatepdf-inspired corpus experiment ledger and parity
+
+- Implemented the six experiment records from the ihatepdf.cv exploration as
+  versioned entries E-001 through E-006 in
+  [`Tests/fixtures/ihatepdf_experiment_ledger.json`](Tests/fixtures/ihatepdf_experiment_ledger.json).
+- Added one semantic parity case per entry covering source fixture and digest,
+  typed operation intent, canonical lower-left crop-box coordinates, review and
+  abstention policy, privacy class, validation obligations, falsifier, and
+  rollback path.
+- Added an independent Swift `PDFExperimentParityHarness` and browser
+  `runIhatepdfExperimentParity` projection. The focused isolated-Chrome run
+  produced 6 cases, 0 native/browser semantic mismatches, 0 console errors,
+  and 0 page errors.
+- Added four mutation checks for missing falsifier, coordinate-origin drift,
+  source unbinding, and operation-kind drift. All 4/4 were rejected.
+- Added the retained native, browser, and combined reports under
+  `benchmark/results/ihatepdf-experiments/`.
+
+#### Evidence status
+
+- Ledger and parity contract: Tier 2/S1 native and Node plus Tier 3/S1
+  isolated Chrome.
+- Contract integrity: S3 mutation evidence, 4/4 mutations killed.
+- Capability execution: still planned. This pass did not claim text-run
+  replacement, OCR, sanitization, repair, adaptive-limit, or complete impact
+  map fidelity.
+- Browser evidence used a project-owned server on port 8183 because port 4173
+  was occupied by another project. The temporary server was stopped after the
+  run.
+
+### 2026-08-24 Cross-project evidence ledger and PDF corpus parity
+
+- Implemented `Tests/fixtures/cross_project_evidence_ledger.json` as the
+  versioned cross-project evidence ledger. It records six bounded entries for
+  SignKit, MetaExtract, Invoice Intelligence, PhotoSearch, extracted_forms,
+  and the historical signature auto-detect web project, with 18 source
+  references, source hashes where applicable, provenance/license status,
+  privacy class, transferable primitives, non-imported boundaries, falsifiers,
+  and rollback paths.
+- Implemented
+  `Tests/fixtures/pdf_corpus_semantic_parity_fixture.json` with 11 cases for the
+  existing PDF corpus. It names the semantic fields, lower-left crop-box
+  coordinate contract, ignored representation details, expected malformed
+  behavior, evidence-ledger links, and per-fixture allowed mismatch kinds.
+- Added `Tests/cross_project_evidence_ledger_parity_test.mjs`, which validates
+  the ledger and fixture, checks all referenced local source files, runs the
+  native `PDFContractHarness`, runs the browser parity consumer through a
+  project-owned temporary server, and writes the combined machine report.
+- Verification passed: 6 ledger entries, 18 source references, 11 corpus
+  cases, 4 retained candidate-detector mismatches, 0 unexpected mismatches,
+  and expected native/browser failure for the truncated fixture. The report is
+  `benchmark/results/cross-project-ledger/2026-08-24-ledger-parity.json`.
+- The wrapper found one existing source-identity drift: the live public
+  AcroForm no-op PDF does not match the SHA-256 in the corpus manifest. This is
+  recorded as `sourceIdentityDrift` and was preserved for review. No binary,
+  manifest, adjacent project, or prior result was rewritten.
+
+#### Evidence status
+
+- Cross-project inventory and transfer boundary: Tier 1/S1 plus Tier 2/S1
+  contract validation.
+- Native semantic projection: Tier 2/S1.
+- Browser semantic projection: Tier 3/S1 isolated Chrome.
+- Capability reuse, OCR accuracy, arbitrary PDF fidelity, and independent
+  viewer parity: not claimed.
+- The next gate is independent native/browser fingerprint extraction and
+  document-class calibration for the four open candidate mismatch cases.
+
+### 2026-08-25 Expanded browser corpus and declared fidelity gates
+
+- Added six reproducible local fixtures through
+  [`benchmark/generate_browser_corpus.sh`](benchmark/generate_browser_corpus.sh):
+  hybrid text/raster/form, noisy scanned, rotated hybrid, AES-256 encrypted
+  hybrid, intentionally malformed truncated hybrid, and 40-page hybrid.
+- Extended the native and browser expected-state handling, semantic parity
+  fixture, independent-viewer sweep, and qpdf output sweep to cover the new
+  classes. The encrypted geometry difference is scoped to that fixture only.
+- Verification passed: browser contract fixture 17 cases with zero console or
+  page errors; native/browser parity 17 cases with 6 classified mismatches and
+  0 unexpected mismatches; Poppler/MuPDF independent reopen 53 eligible PDFs;
+  qpdf output validation 55 PDFs with 6 documented recoverable warnings and 0
+  hard failures; preservation validator authorized checks passed and
+  unauthorized text/raster mutations failed as expected.
+- The malformed fixture is a deliberate safe-failure case, not a reopen pass.
+  The valid new fixtures passed both native and browser no-op preservation
+  reporting. The full evidence classification, hashes, commands, and limits
+  are recorded in
+  [`docs/audits/browser-corpus-fidelity-evidence-2026-08-25.md`](docs/audits/browser-corpus-fidelity-evidence-2026-08-25.md).
+- This remains bounded corpus evidence. OCR quality, arbitrary semantic text
+  editing, signed/XFA/PDF-UA behavior, malformed-object recovery, resource
+  ceilings beyond 40 pages, and universal provider fidelity remain open.
+
+### 2026-08-25 Capability-negotiated local provider plane
+
+- Designed and implemented the separate `pdf-editor.provider-capability` and
+  `pdf-editor.provider-capability-registry` admission model. It deliberately
+  does not change the shared document, coordinate, candidate, edit-session, or
+  validation contracts.
+- Added native Swift Codable records and deterministic negotiation in
+  `Sources/PDFEditorCore/ProviderCapabilityContracts.swift`, plus the browser
+  projection in `web/provider-capability-contract.mjs`.
+- Added a value-free registry fixture representing the enabled browser reader,
+  measured-partial native Vision OCR, installed-but-unmeasured PDFBox, and
+  quarantined MuPDF with unresolved license review. The fixture contains no
+  source bytes, extracted text, OCR output, field values, screenshots, secrets,
+  or command strings.
+- Added install and capability state separation, exact artifact-to-measurement
+  binding, source byte/page/encryption/scan limits, license-state rejection,
+  deterministic selection, abstention reason codes, and revocation/quarantine
+  records.
+- Verification passed: browser registry and negotiation test, 12 checks;
+  native provider capability suite, 7 tests including native decoding of the
+  browser's shared JSON fixture. This is Tier 2/S1 contract
+  evidence with negative coverage, not S3 mutation evidence and not live
+  installer, bridge, OCR, or high-fidelity provider evidence.
+- Durable design and evidence are recorded in
+  [`docs/provider-capability-system-design.md`](docs/provider-capability-system-design.md)
+  and [`docs/audits/provider-capability-system-evidence-2026-08-25.md`](docs/audits/provider-capability-system-evidence-2026-08-25.md).
+
+### 2026-08-25 Companion protocol and full-capability mandate
+
+- Implemented the typed local companion handshake in
+  `Sources/PDFEditorCore/ProviderCompanionProtocol.swift` and
+  `web/provider-companion-protocol.mjs`. The messages cover hello and
+  acceptance, capability requests, typed completion/progress/abstention
+  states, source-digest binding, source-bytes or opaque file-token input, output
+  limits, operation lineage, and cancellation.
+- Added the shared fixture
+  `Tests/fixtures/provider_companion_protocol_fixture.json` and native/browser
+  parity tests. Browser verification passed 11 checks; native verification
+  passed 4 tests, including native decoding of the browser fixture.
+- The protocol explicitly forbids arbitrary commands and requires local-only
+  messages, non-empty session and nonce identity, 64-character source/output
+  digests, positive limits, and exactly one input payload. Source-bytes mode
+  requires bytes; file-token mode requires a non-empty opaque token. This is contract evidence,
+  not live companion transport or sandbox evidence.
+- Corrected the project record after the owner clarified the long-term
+  mandate. Browser-first and optional-companion language describes deployment
+  topology and runtime availability, not a permanent feature boundary. OCR,
+  high-fidelity editing, batch, large-document, security, accessibility,
+  template, and recovery lanes remain implementation targets. Evidence gates
+  control activation and claims, not whether those lanes are built.
+- Recorded the doctrine correction in D-024, RG-092, and the amendment in
+  `docs/web-deployment-decision.md`.
+
+### 2026-08-25 Native/web normalized parity comparator
+
+- Re-ran the consolidated native/browser corpus parity through the current
+  seventeen-entry manifest before adding any new OCR or companion execution.
+  Both emitters completed the expected inspected or safe-failure states, and
+  the live comparison produced 6 classified mismatches with 0 unexpected
+  mismatches.
+- Extracted the semantic comparison policy into
+  `web/pdf-contract-parity.mjs`. The normalized projection compares source
+  identity, page geometry and rotation, field semantics, candidate evidence
+  families, page-space coordinates, operation lineage, validation states and
+  metadata summaries. It ignores only representation noise recorded in the
+  parity contract.
+- Added `Tests/pdf_contract_parity_mutation_test.mjs`, which passed 8 checks
+  for source-digest, coordinate, field-kind, candidate-evidence, validation,
+  and representation-noise mutations. The mutation suite proves the comparator
+  detects semantic drift rather than merely reproducing the fixture report.
+- Linked the comparator and mutation harness from the parity fixture and
+  audit. The current mismatch classes remain visible: two candidate-set and
+  count differences on normal/rotated Form 6, plus encrypted-hybrid page-box
+  precision and coordinate differences.
+
+### 2026-08-25 Full capability scope correction
+
+- Corrected the project record after the owner rejected the phrase “outside the
+  first unrestricted promise” and any interpretation of browser-first rollout
+  language as a product limit.
+- The full target is now explicit: arbitrary paragraph reflow, reviewed
+  visual-to-native field creation, universal OCR, permanent redaction,
+  sanitization, cryptographic signatures, XFA, PDF/UA, collaboration, hosted
+  processing, local companion execution, batch, large-document handling,
+  templates, and recovery all remain implementation targets.
+- Evidence gates still control activation and claims. They do not control
+  whether a capability is explored or built. Incomplete work must emit typed
+  states such as `gated`, `blocked`, `unknown`, `abstained`, `revoked`, or
+  `unsupported-for-source` and retain a provider, corpus, validator, privacy,
+  security, and rollback path.
+- Updated the canonical frontier, feature inventory, capability matrix,
+  full-capability program, deployment decision, task plan, and decisions with
+  D-026. Historical rollout records remain preserved as historical records and
+  are no longer authoritative scope statements.
+
+### 2026-08-25 Full-frontier parity handoff correction
+
+- Reconciled remaining canonical wording so browser, native, companion, and
+  hosted lanes are execution topology and provider-placement choices, not a
+  reduced product promise. Every capability in the frontier remains an active
+  long-term implementation target.
+- Kept the normalized native/web parity comparator as the evidence prerequisite
+  for adding provider outputs. The authoritative cross-project run passed with
+  17 fixtures, 6 classified mismatches, and 0 unexpected mismatches. The
+  mismatch report remains unchanged and visible for detector and encrypted
+  geometry follow-up.
+- Revalidated the mutation suite at 8 checks, the browser contract suite at 44
+  checks, 83 Markdown files with no missing relative links, and `git diff
+  --check`. Agent-start doctrine reconciliation passed; the workspace hook
+  installation warning remains an environment condition.
+
+### 2026-08-25 Privacy and provenance governed corpus
+
+- Added [`Tests/fixtures/pdf_corpus_governance_manifest.json`](Tests/fixtures/pdf_corpus_governance_manifest.json)
+  and [`docs/fixtures/pdf-corpus-governance.md`](docs/fixtures/pdf-corpus-governance.md)
+  as the corpus governance authority. It covers scanned, rotated, malformed,
+  encrypted, handwritten-like, mixed-content, native-form, static-form, and
+  resource-stress classes.
+- Added the synthetic raster-only handwritten-like fixture through
+  [`benchmark/generate_governed_corpus.sh`](benchmark/generate_governed_corpus.sh).
+  Its ground truth and README are local synthetic artifacts. The manifest
+  explicitly forbids treating it as genuine handwriting, biometric, identity,
+  or cryptographic-signature evidence.
+- Added [`Tests/pdf_corpus_governance_test.mjs`](Tests/pdf_corpus_governance_test.mjs),
+  which passed for 16 fixtures and verified every digest, class requirement,
+  ground-truth sidecar, qpdf structural state, encrypted password-policy path,
+  malformed safe-failure expectation, and zero-content governance report.
+- The generated report is
+  [`benchmark/results/governed-corpus/governance-report.json`](benchmark/results/governed-corpus/governance-report.json).
+  The corpus is structural/provenance evidence. OCR accuracy, genuine
+  handwriting recognition, signature validity, arbitrary editing fidelity,
+  PDF/UA, and independent viewer parity remain separate active capability
+  benchmarks.
+
+### 2026-08-25 Reviewed completion safety metrics
+
+- Added the versioned metric contract
+  [`web/reviewed-completion-metrics.mjs`](web/reviewed-completion-metrics.mjs)
+  and integrated it with the reviewed correction benchmark. It separately
+  measures reviewed-correction coverage lift, ambiguous/stale/no-match
+  abstention, hard-negative false-positive rate, rollback restoration, and
+  safe-completion readiness.
+- Safe completion is defined as a source-bound reviewed target ready for
+  explicit value review. The existing `canMaterializeCompletion` guard remains
+  required, and the metric reports materialization without review and silent
+  autofill as forbidden outcomes.
+- Node and isolated Chrome both passed: 5/5 reviewed corrections improved
+  coverage, 14/14 abstention cases abstained, 0/7 hard negatives selected,
+  35/35 promoted hard-negative replays abstained, 5/5 source-bound guards
+  passed, and silent autofill count was 0.
+- Added [`Tests/reviewed_completion_metrics_mutation_test.mjs`](Tests/reviewed_completion_metrics_mutation_test.mjs),
+  which passed five checks and failed the aggregate metric for hard-negative
+  selection, ambiguous selection, privacy degradation, review bypass, and
+  silent-autofill mutation.
+- Added the native Codable mirror
+  [`Sources/PDFEditorCore/ReviewedCompletionMetricsContracts.swift`](Sources/PDFEditorCore/ReviewedCompletionMetricsContracts.swift)
+  and focused Swift tests. Native decoding and safety validation passed for the
+  browser benchmark artifact, while an intentionally selected hard negative was
+  rejected. This is serialized contract parity, not yet native/browser
+  aggregation parity.
+- Recorded D-027, RG-095, and
+  [`docs/audits/reviewed-completion-metrics-evidence-2026-08-25.md`](docs/audits/reviewed-completion-metrics-evidence-2026-08-25.md).
+
+### 2026-08-25 OCR and optional companion corpus comparison
+
+- Added the versioned comparison descriptor
+  [`Tests/fixtures/ocr_provider_comparison_fixture.json`](Tests/fixtures/ocr_provider_comparison_fixture.json)
+  over six governed OCR inputs: clean, noisy, simulated handwriting-like,
+  rotated, encrypted, and representative large-document raster pages.
+- Added the native Vision executable benchmark
+  [`Sources/PDFOCRBenchmark/main.swift`](Sources/PDFOCRBenchmark/main.swift)
+  and the shared Node runner
+  [`benchmark/compare_ocr_providers.mjs`](benchmark/compare_ocr_providers.mjs).
+  Both emit counters, latency, confidence aggregates, statuses, and digests,
+  never OCR text or passwords.
+- Measured native Vision at mean anchor recall `0.944`, median `92.5 ms`, and
+  p95 `391.0 ms`. It passed the provisional class accuracy gate and remains
+  `measuredPartial`, because handwriting, languages, searchable-layer writing,
+  output fidelity, memory, cancellation, and full-corpus accuracy remain open.
+- Measured local Tesseract `5.5.0` at mean anchor recall `0.778`, median
+  `188.1 ms`, and p95 `417.3 ms`. It passed clean, rotated, encrypted, and
+  representative-large inputs but failed the noisy scan at `0/3`; it remains a
+  control lane rather than an enabled general OCR provider.
+- Malformed, encrypted, and large recovery gates passed. Large-document
+  cancellation, companion crash/timeout, revocation during active work, and
+  partial-output recovery remain explicitly unmeasured because no companion
+  runtime is installed.
+- OCRmyPDF, PDFBox, and MuPDF remain represented as uninstalled, unmeasured, or
+  quarantined provider states. Their exact licensing, runtime, searchable-layer
+  or high-fidelity behavior, and recovery gates were not inferred from package
+  names or external availability.
+- `node Tests/ocr_provider_comparison_test.mjs` passed 17 checks. The durable
+  evidence is [`docs/audits/ocr-provider-comparison-evidence-2026-08-25.md`](docs/audits/ocr-provider-comparison-evidence-2026-08-25.md)
+  and [`benchmark/results/ocr-provider-comparison/2026-08-25-local-vs-companion.json`](benchmark/results/ocr-provider-comparison/2026-08-25-local-vs-companion.json).
+  Recorded D-028 and RG-096.
+
+### 2026-08-25 Compounding moat asset registry
+
+- Added the versioned moat registry at
+  [`Tests/fixtures/moat_asset_registry.json`](Tests/fixtures/moat_asset_registry.json)
+  and the human-readable implementation record at
+  [`docs/moat-asset-registry.md`](docs/moat-asset-registry.md).
+- Registered 14 compounding assets: source-digest binding, page-space and
+  crop/rotation fixtures, multi-signal evidence, candidate explanations and
+  abstention, reviewed mappings, hard negatives, typed operation lineage,
+  provider divergence, independent reopen outcomes, template revisions,
+  confidence calibration, corpus governance, workflow completion, and
+  recovery/remediation loops.
+- Each asset now names native, web, shared-contract, fixture, validator, and
+  retained-evidence references, plus privacy class, retention policy, and a
+  completion gate. This makes the moat implementation-addressable rather than
+  a narrative list.
+- Added [`Tests/moat_asset_registry_test.mjs`](Tests/moat_asset_registry_test.mjs),
+  which verifies 14 unique assets, all required references, status vocabulary,
+  privacy rules, and zero-content logging. The test writes a value-free report
+  under `benchmark/results/moat-asset-registry/report.json`.
+- The registry intentionally reports partial status for evidence fusion,
+  calibration, workflow completion, and recovery/remediation. Those are active
+  implementation lanes; the partial state records remaining work without
+  weakening the existing source, privacy, and abstention invariants.
+
+### 2026-08-25 Multi-signal evidence fusion
+
+- Implemented the provider-neutral fusion result in
+  [`Sources/PDFEditorCore/EvidenceFusion.swift`](Sources/PDFEditorCore/EvidenceFusion.swift)
+  and [`web/pdf-evidence-fusion.mjs`](web/pdf-evidence-fusion.mjs).
+- `RegionCandidate` now carries an optional fusion result derived from its
+  existing evidence items. Browser candidates use one normalized evidence list
+  so evidence IDs in the fusion result are the same IDs serialized in the
+  candidate record.
+- The policy combines weighted support, independent evidence-family coverage,
+  and region agreement. Conflicting high-confidence regions abstain. OCR-only,
+  whitespace-only, low-support, and empty evidence cases remain review or
+  abstain states; none can create an operation.
+- Browser 5/5 fusion cases and native 4/4 focused tests passed. The evidence
+  record is [`docs/audits/evidence-fusion-evidence-2026-08-25.md`](docs/audits/evidence-fusion-evidence-2026-08-25.md).
+- MA-003 remains `partial` because live native/browser evidence extraction,
+  class-level threshold calibration, OCR/companion admission, and recovery
+  metrics still need the named corpus gates. The fusion result is not an
+  autofill permission.
+
+### 2026-08-25 Reference local companion host
+
+- Added [`web/provider-companion-host.mjs`](web/provider-companion-host.mjs), a
+  narrow typed runtime around the existing companion handshake. It accepts
+  only hello, capability-request, and cancellation messages and never exposes
+  shell commands, arbitrary paths, network access, or generic JSON execution.
+- The host enforces origin allowlisting and session/nonces through the existing
+  protocol validators, verifies source-byte count and SHA-256 before invoking a
+  handler, enforces output-byte and timeout limits, supports cancellation, and
+  abstains when a capability has no installed handler.
+- [`Tests/provider_companion_host_test.mjs`](Tests/provider_companion_host_test.mjs)
+  passed handshake, source binding, provider abstention, output-limit,
+  cancellation, stale-source, and zero-content diagnostic checks.
+- This is a reference host and typed execution proof, not a packaged or
+  cryptographically authenticated system companion. OCRmyPDF, PDFBox, MuPDF,
+  Vision, and high-fidelity handlers remain separately admitted through the
+  provider capability registry and the shared-corpus bake-off.
+### 2026-08-25 Privacy-first PDF preflight report
+
+- Added the dedicated `pdf-editor.preflight` contract in
+  [`Sources/PDFEditorCore/PreflightContracts.swift`](Sources/PDFEditorCore/PreflightContracts.swift)
+  and [`web/pdf-preflight.mjs`](web/pdf-preflight.mjs). Native PDFKit and the
+  browser PDF.js fixture now produce the same value-minimized report shape for
+  metadata presence, embedded-data indicators, network boundaries, possible
+  active content, encryption, and sanitization limits.
+- Added `PDFKitProvider.preflight(url:password:)` and browser fixture/UI
+  integration. The browser report is rendered as counts and limits only; raw
+  metadata, attachment names, URLs, PDF bytes, page text, OCR text, passwords,
+  and active-content payloads remain outside the report.
+- Added stale-source binding validation, unknown scan states, and mutation
+  guards for false clean claims, attempted execution, unknown finding values,
+  forbidden content fields, and unsupported versions.
+- Evidence passed: Node preflight contract and zero-content mutation test,
+  two native Swift preflight tests, and isolated Chrome report/UI/source-binding
+  test. The evidence record is
+  [`docs/audits/pdf-preflight-evidence-2026-08-25.md`](docs/audits/pdf-preflight-evidence-2026-08-25.md).
+- This implements preflight observation, not sanitization. Metadata removal,
+  embedded-data removal, action neutralization, incremental-revision analysis,
+  signature effects, XFA handling, independent post-sanitize reopening, and
+  adversarial sanitizer recovery remain active long-term build lanes.
+
+### 2026-08-25 Device-adaptive browser resource governance
+
+- Added the versioned browser-resource-policy contract in
+  [`web/browser-resource-policy.mjs`](web/browser-resource-policy.mjs) and its native Codable mirror in
+  [`Sources/PDFEditorCore/BrowserResourcePolicyContracts.swift`](Sources/PDFEditorCore/BrowserResourcePolicyContracts.swift).
+- The policy normalizes device signals, document cost, high-DPI geometry, raster density, rotation, selectable text, OCR intent, batch intent, and storage/connection uncertainty. It returns finite render, OCR, batch, and recovery budgets with explicit state and reason codes.
+- Added source-digest and operation-bound checkpoints, abort-aware adaptive batches, cancellation summaries, and the invariant that partial output can never be promoted. Event summaries omit values, text, OCR content, pixels, URLs, filenames, passwords, and source bytes.
+- Added the governed benchmark fixture at [`Tests/fixtures/browser_resource_policy_benchmark.json`](Tests/fixtures/browser_resource_policy_benchmark.json), the deterministic benchmark at [`benchmark/benchmark_browser_resource_policy.mjs`](benchmark/benchmark_browser_resource_policy.mjs), and the serialized result at [`benchmark/results/browser-resource-policy/2026-08-25-device-adaptive.json`](benchmark/results/browser-resource-policy/2026-08-25-device-adaptive.json).
+- Evidence: browser contract and mutation checks passed 242 checks across five device profiles and six document classes; the benchmark emitted 30 rows; native Swift decoded and validated all 30 policy envelopes; isolated Chrome verified live browser emission, source binding, unknown-signal abstention, explicit OCR admission, cancellation safety, and zero-content summaries.
+- Remaining unknowns are deliberately implementation work: physical-device calibration, browser-version drift, real Web Worker OCR memory, companion crash/timeout recovery, and long-run batch throughput. These are not used to narrow the long-term capability program.
+
+### 2026-08-25 Text-run replacement and OCR-layer alignment
+
+- Added the shared evidence-only projection in
+  [`web/text-run-ocr-alignment-benchmark.mjs`](web/text-run-ocr-alignment-benchmark.mjs).
+  It normalizes PDF.js text items, PDFKit selection lines, and Vision OCR
+  observations into source-bound lower-left crop-space records with hashes,
+  counts, geometry, confidence, origin, and explicit states. Raw text, OCR
+  values, replacement values, bytes, pixels, and passwords are not retained.
+- Added the native `PDFTextRunOCRBenchmark` executable and wired it into
+  `Package.swift`. It ran against the existing 18-entry manifest, including
+  malformed, encrypted, rotated, scanned, hybrid, handwritten-like, and large
+  fixtures.
+- Added the browser full-corpus runner and live PDF.js projection. The combined
+  report is
+  [`benchmark/results/text-run-ocr-alignment/browser-and-native.json`](benchmark/results/text-run-ocr-alignment/browser-and-native.json);
+  native-only evidence is
+  [`benchmark/results/text-run-ocr-alignment/native.json`](benchmark/results/text-run-ocr-alignment/native.json).
+- Runtime result: 18 fixtures, 16 inspected, 2 safe malformed failures, 81
+  pages, 29 pages with comparable text evidence, 10 measured OCR/reference
+  pages, and 71 explicit OCR abstentions. Source binding, zero-content logging,
+  no silent replacement, and missing-browser-OCR abstention passed.
+- The first provider-fidelity mismatch is recorded rather than hidden: mean
+  text-hash agreement was 0.6593, while text geometry at two points and OCR
+  geometry at three points both failed. Native and browser text rectangles are
+  not yet interchangeable for replacement.
+- Added the pure contract test
+  [`Tests/text_run_ocr_alignment_contract_test.mjs`](Tests/text_run_ocr_alignment_contract_test.mjs)
+  and the live browser benchmark
+  [`Tests/text_run_ocr_alignment_browser_test.mjs`](Tests/text_run_ocr_alignment_browser_test.mjs).
+  The decision and release gate are D-033 and RG-099.
+- This is runtime evidence for current local providers, not a universal PDF
+  editing claim. True text-run replacement remains an explicit long-term
+  implementation lane behind independent text, outside-region, raster, reopen,
+  and viewer gates.
+
+### 2026-08-25 Full capability doctrine reconciliation
+
+- Reconciled the product direction after the owner clarified that every serious
+  PDF reader/editor capability is in scope for the long-term build. This
+  includes text-run replacement, OCR-derived layers, reflow, repair, redaction,
+  sanitization, conversion, signatures, XFA, accessibility, collaboration, P2P,
+  AI-assisted workflows, hosted/self-hosted processing, companion providers,
+  batch work, and recovery.
+- Updated the [README](README.md), [task plan](task_plan.md), and ihatepdf
+  exploration so “defer,” “reject,” and “not authorized” mean sequence and
+  govern through contracts, providers, validators, privacy, licensing, and
+  recovery. They no longer mean permanent scope exclusion.
+- Recorded D-034 in [decisions](docs/decisions.md): provider limitations and
+  evidence gates control current routing and claim strength, never whether a
+  capability remains an implementation target.
+- The full-capability program remains the canonical register. Existing
+  abstentions, unknowns, blocked providers, and failed fidelity gates remain
+  append-only evidence that routes implementation to the next provider or
+  validator.
+
+### 2026-08-25 Native/browser normalized semantic parity report
+
+- Extended [`web/pdf-contract-parity.mjs`](web/pdf-contract-parity.mjs) to
+  publish a versioned normalization policy. Provider IDs and versions,
+  platform labels, timestamps, generated IDs, diagnostic and validation prose,
+  and output digests are representation-only; source identity, geometry,
+  fields, evidence, operations, and validation state remain semantic.
+- Updated [`Tests/pdf_contract_parity_test.mjs`](Tests/pdf_contract_parity_test.mjs)
+  to accept a dated result root, emit per-lane representation facts and exact
+  normalized projection digests, and classify mismatch kinds as declared or
+  unexpected using the governed parity fixture descriptor.
+- Generated [`benchmark/results/semantic-parity/2026-08-25/parity-report.json`](benchmark/results/semantic-parity/2026-08-25/parity-report.json)
+  from the native PDFKit harness and isolated browser PDF.js fixture over all
+  18 manifest entries. Sixteen readable source bindings match in both lanes;
+  both malformed fixtures agree on `inspectionFailed`; six declared detector
+  or geometry mismatches remain; no unexpected mismatch was observed.
+- Added the report gate and expanded normalization mutations. The checks pass
+  for provider IDs, timestamps, nested field/candidate/evidence IDs,
+  validation check IDs, diagnostic messages, and output digest mutations while
+  semantic mutations continue to fail.
+- Evidence is recorded in
+  [`docs/audits/native-browser-semantic-parity-evidence-2026-08-25.md`](docs/audits/native-browser-semantic-parity-evidence-2026-08-25.md),
+  release gate RG-100, and decision D-035. This is semantic contract evidence,
+  not byte-level, text-object, raster, OCR, companion, or independent-viewer
+  parity.
+
+### 2026-08-25 Read-only privacy preflight contract and native/browser report
+
+- Extended `pdf-editor.preflight` from 1.0 to 1.1 with explicit attachments,
+  annotation taxonomy, script non-execution, revision markers, coverage states,
+  and derived unknown coverage. Native and browser validators reject stale
+  digests, false clean claims, script execution claims, unsupported versions,
+  unknown finding states, forbidden content, and inconsistent aggregates.
+- Added PDFKit annotation-kind counting and PDF.js annotation-kind counting.
+  Native bounded token matching now respects PDF name boundaries, so longer
+  names do not create false action indicators.
+- Extended the native contract harness and browser fixture snapshot to emit
+  preflight reports for the same 18-entry corpus. The parity comparator
+  excludes provider identity, timestamps, generated IDs, and output digests,
+  while retaining source binding, counts, coverage, unknown states, findings,
+  non-execution, and sanitization invariants.
+- Generated
+  [`benchmark/results/preflight-parity-2026-08-25/privacy-preflight-parity-report.json`](benchmark/results/preflight-parity-2026-08-25/privacy-preflight-parity-report.json): 18 fixtures, 16 readable reports, 2 matching malformed failures, and 3 retained mismatches on `public-sample-form.pdf` caused by PDFKit/PDF.js keyword-presence disagreement. Attachment, annotation, script, revision, coverage, source-binding, and raw-content parity is otherwise green.
+- Added the detailed audit, README/task-plan links, release gate RG-101, and
+  decision D-036. Sanitization, hidden-revision removal, cryptographic effects,
+  XFA/rich-media policy, and independent post-sanitize validation remain
+  long-term build lanes on this same contract spine.
+
+### 2026-08-25 Static geometry hard-negative calibration
+
+- Added a deterministic, privacy-safe two-page PDF fixture with five reviewed
+  positive cases and five labeled hard negatives covering vector rectangles,
+  checkbox shapes, underlines, whitespace, and label association.
+- Added the machine-readable label sidecar, source digest binding, calibration
+  manifest, class-aware matching, precision/recall/abstention metrics, score
+  floors, zero hard-negative false-positive gate, and native/browser semantic
+  parity report.
+- Added shared semantic label-intent gates in native PDFKit and browser PDF.js.
+  Unlabeled and generic geometry now abstains; labeled small checkboxes are
+  eligible for reviewed suggestions. Browser vector lines normalize to the
+  shared underline evidence kind.
+- Replaced native PDFKit's evenly spaced `page.string` line bands with
+  `selection(...).selectionsByLine()` page-space bounds, matching the existing
+  text-run benchmark and preventing wrong-shape label association.
+- Generated
+  [`benchmark/results/detector-calibration/detector-calibration-report.json`](benchmark/results/detector-calibration/detector-calibration-report.json): both adapters pass 5/5 positive recall, 0/5 hard-negative false positives, 5/5 hard-negative abstention, and semantic parity. Observed score floors are checkbox 0.85, vector rectangle 0.80, underline 0.75, whitespace 0.58, and label association 0.80.
+- Verified the PDF visually with `pdftoppm` and `view_image`, checked module
+  syntax, ran the native harness, and ran the isolated Chrome browser harness
+  on port 4174 because port 4173 belonged to another project.
+- Recorded D-037 and RG-102. This is controlled regression evidence, not a
+  universal PDF accuracy or autofill claim; real rotated, multilingual,
+  OCR-only, clipped, table, malformed, and real-world cases remain active.
+
+### 2026-08-25 Browser geometry calibration metrics and failure clusters
+
+- Extended the source-bound detector calibration report with overall and
+  per-class precision, recall, hard-negative false-positive rate, abstention,
+  observed score floors, and a value-free failure-cluster taxonomy.
+- The fresh native/browser run on the reviewed two-page fixture passes overall
+  precision `1.00` and recall `1.00` for both adapters: 5/5 positives detected,
+  0/5 hard negatives promoted, and 5/5 hard negatives abstained. Native and
+  browser semantic parity has no mismatches.
+- Added diagnostic classification for `noCandidateNearTarget`,
+  `evidenceMismatch`, `candidateKindMismatch`, `fieldTypeMismatch`,
+  `geometryMismatch`, and `hardNegativePromotion`. The real run has zero
+  failures, while in-memory mutation evidence kills positive removal,
+  hard-negative promotion, and required-evidence stripping with the expected
+  clusters.
+- Updated the calibration audit, implementation status, task plan, and RG-102.
+  The exact 10-case geometry score remains separate from the broader 33-target
+  Form 6 semantic recall/precision proxy. Rotated, multilingual, OCR-only,
+  clipped, table, malformed, duplicate-candidate, and real-world expansion
+  remain active implementation work.
+- Bumped the detector calibration report envelope to version `1.1` because the
+  serialized metric shape and failure-cluster fields changed.
+
+### 2026-08-25 Local OCR provider bake-off across native, browser WASM, and companion candidates
+
+- Extended the shared-corpus OCR comparison to three measured local lanes:
+  native Vision, local Tesseract 5.5.0, and Tesseract.js 5.1.1 running in a
+  browser worker with locally served core and English model assets. The runner
+  emits source-bound, value-free counters only.
+- Normalized Tesseract percentage confidence into the shared `[0,1]` range and
+  transformed top-left pixel word boxes into `normalizedLowerLeft` page space.
+  Every measured case now records confidence aggregates, valid-bound counts,
+  union bounds, and provider-to-Vision union IoU alignment status.
+- Reran all six governed inputs: printed, noisy, simulated handwriting-like,
+  rotated, encrypted, and representative page 40 of the large hybrid. Vision
+  mean anchor recall is `0.944`; CLI Tesseract and browser WASM are both
+  `0.778`. Vision passes the provisional accuracy gate; both Tesseract lanes
+  fail the noisy-scan hard negative at `0/3`.
+- Browser WASM stayed local in this run: the temporary server served the JS,
+  WASM core, and language artifact, and the browser recorded zero external
+  requests. This is a measured boundary, not a blanket claim for CDN assets,
+  future models, telemetry, or companion IPC.
+- Browser WASM median recognition time is `257.8 ms`, with p95 `11,945.9 ms`
+  against the provisional 15-second resource gate. The noisy input produced
+  `687` valid browser boxes and union IoU `0.083` against Vision, compared with
+  `3` Vision boxes. Other current union comparisons are classified aligned.
+- Companion candidates remain explicit: OCRmyPDF is unavailable, PDFBox has no
+  configured JAR, and installed MuPDF passed only a render control and is not
+  an OCR measurement. Companion crash, timeout, cancellation, licensing, and
+  partial-output recovery remain open.
+- Updated the audit, README, task plan, RG-096, and machine report. The targeted
+  OCR comparison test passes `17/17`; Swift OCR benchmark build and JavaScript
+  syntax checks pass. Promotion remains blocked and no OCR lane can silently
+  create a field or overwrite source content.
+
+### 2026-08-25 Full-capability build obligation reaffirmed
+
+- Reconciled the capability program so the explored and documented frontier is
+  also the active implementation frontier. This includes arbitrary semantic
+  editing, font/glyph-preserving replacement, OCR-derived editable text,
+  browser and multilingual OCR, handwriting abstention, redaction,
+  sanitization, encryption policy, cryptographic signatures and validation,
+  XFA, PDF/UA, independent-viewer and byte-preservation proof, raster parity,
+  page graph operations, conversion, repair, recurring templates, companion
+  lifecycle, collaboration, and synchronization.
+- Formalized the two-axis interpretation in the full-capability program and
+  implementation status: build obligation is separate from claim readiness.
+  “Blocked for claim” means the missing implementation, provider, corpus,
+  validator, recovery, privacy, licensing, or independent evidence must still
+  be built. It does not mean the capability is removed from the product.
+- Preserved the first-principles rule that an unfinished runtime cannot be
+  called built merely because its design exists. Each capability must acquire
+  its own contract projection, adapter, fixtures, validation, privacy and
+  security boundary, failure and recovery behavior, and documentation before
+  its current implementation status is promoted.
+
+### 2026-08-25 Typed semantic text-run replacement lane started
+
+- Added `EditKind.textRunReplacement` as a distinct shared operation. It is not
+  an alias for `overlayText` and cannot be routed through the visual annotation
+  writer.
+- Added typed source-run evidence: run ID, original text hash, optional font
+  fingerprint, source digest, page-space bounds, coordinate convention, and
+  reversible/destructive state. Recovery-safe session metadata classifies the
+  payload without retaining replacement text.
+- Added a browser operation builder that creates the in-memory intent while
+  retaining the replacement value only in the active edit session. The value-
+  free text-run evidence report remains content-safe.
+- Native PDFKit and browser pdf-lib now reject semantic replacement explicitly
+  with provider-gate diagnostics. This prevents a visual overlay from being
+  mislabeled as a semantic text-object rewrite.
+- Added native JSON round-trip and provider-rejection coverage plus browser
+  typed-operation and mutation-gate coverage. The native contract mutation
+  suite passes `7/7`; the browser text-run contract passes `18/18`.
+- The next implementation is the simplest measured writer lane: a same-font,
+  same-run replacement fixture with source text hash, font/glyph identity,
+  outside-region text/raster validation, reopen, and independent viewer proof.
+  Ligatures, embedded fonts, RTL, clipping, transparency, overlap, and
+  abstention cases follow as separate corpus classes.
+
+### 2026-08-25 Bounded semantic text-run writer experiment
+
+- Added [`web/simple-text-run-provider.mjs`](web/simple-text-run-provider.mjs),
+  a deliberately narrow browser provider for classic uncompressed PDF content
+  streams with one unique printable ASCII literal and same-byte-length
+  replacement. It rewrites the existing literal instead of adding an overlay,
+  preserving xref offsets and the existing font/content operators.
+- Added [`Tests/text_run_simple_provider_test.mjs`](Tests/text_run_simple_provider_test.mjs).
+  The provider experiment passes `16/16` checks for source binding, target and
+  original-text hashes, same-width replacement, outside text retention, qpdf
+  structure, Poppler extraction, source/output reopen, independent
+  outside-region text/raster preservation, stale-digest rejection, and
+  unequal-width rejection.
+- This is the first actual semantic replacement writer, but only for its
+  declared PDF class. PDFKit and the general browser writer still reject the
+  operation. Compressed streams, escaped strings, repeated targets, embedded
+  fonts, Unicode, ligatures, RTL, clipping, transparency, overlap, signatures,
+  XFA, incremental updates, and independent GUI-viewer parity remain separate
+  provider gates.
+
+### 2026-08-25 Native/browser semantic candidate parity report
+
+- Added a dedicated value-minimized candidate parity projection instead of
+  leaving candidate divergence buried inside the whole-document set diff.
+  Candidate IDs, label text, evidence prose, scores, timestamps, and output
+  digests are excluded; page-space geometry, candidate semantics, evidence
+  families, review state, grouping, and coordinate space remain visible.
+- Refreshed the native and browser bundles through the current 18-fixture
+  manifest using an isolated server on port 4174. The fresh report measures
+  206 native candidates, 140 browser candidates, 118 geometry pairs, 88
+  native-only candidates, 22 browser-only candidates, 49 fully equivalent
+  pairs, and 69 matched pairs with semantic differences.
+- Native candidate coverage by browser pairs is 57.28% and browser candidate
+  coverage by native pairs is 84.29%; symmetric agreement F1 is 68.21%. The
+  six mismatch clusters are 59
+  coordinate-space, 18 field-type, 14 entry-mode, 2 review-state, 2
+  geometry-precision, and 2 grouping differences.
+- The normal Form 6 fixture has 103 native versus 70 browser candidates with
+  59 geometry pairs and 49 equivalent pairs. The rotated derivative has the
+  same candidate counts and pairs but zero fully equivalent pairs because all
+  pairs retain coordinate-space rotation divergence.
+- Added five mutation checks proving representation-only changes remain
+  equivalent while candidate-kind, evidence-kind, and large-coordinate drift
+  are detected. Updated RG-104, implementation status, task plan, README, and
+  the candidate parity audit.
+
+### 2026-08-25 Session privacy and export provenance
+
+- Added `pdf-editor.session-provenance` 1.0 as a shared native/browser
+  contract above document preflight. It records processing locality, data
+  egress, OCR use, source retention/deletion, export digest identity,
+  validation, reopen evidence, and bounded operation/provider facts.
+- Added zero-content invariants and validators. Source bytes, text, OCR values,
+  field values, filenames, URLs, and screenshots are not serialized; stale
+  source digests, privacy leaks, contradictory OCR states, and successful
+  exports without output digest/reopen provenance are rejected.
+- Attached provenance to native `DocumentSession` recovery envelopes and the
+  browser PDF.js fixture snapshot. Refreshed the 18-fixture corpus: 16
+  readable sessions emitted valid records in each lane and the 2 declared
+  malformed fixtures correctly emitted no session record.
+- Native locality is `local-device`; browser locality is `local-browser`; the
+  current corpus OCR state is explicitly `not-used`. Browser, Swift, preflight,
+  and full parity verification passed; whole-document parity remains 6
+  declared mismatches and 0 unexpected mismatches.
+- Evidence is recorded in
+  [`docs/audits/session-privacy-provenance-evidence-2026-08-25.md`](docs/audits/session-privacy-provenance-evidence-2026-08-25.md).
+
+### 2026-08-25 Independent Poppler comparison for browser exports
+
+- Added `benchmark/browser-export-independent-viewer-validator.mjs` as a
+  separate comparison envelope above the existing Poppler preservation
+  validator. PDF.js remains the browser gate; Poppler independently reopens,
+  extracts text, renders raster pages, and reports outside-region preservation.
+- Integrated the report into `Tests/pdf_contract_parity_test.mjs`, which now
+  emits `independent-browser-viewer-report.json` beside the existing semantic
+  parity and detailed independent-preservation reports.
+- Added focused baseline, divergence-mutation, and missing-gate tests in
+  `Tests/browser_export_independent_viewer_validator_test.mjs`.
+- Fresh corpus evidence: Poppler 26.08.0 and qpdf 12.4.0 measured all 18
+  entries. Sixteen readable exports passed source binding, independent reopen,
+  text, and raster comparison, with 16/16 readable agreements against both
+  PDF.js text and raster gates. Two malformed entries remained explicit
+  expected failures with unknown text/raster states. No unexpected divergence.
+- The evidence is recorded in
+  [`docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md`](docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md).
+- This is a validator and no-op export preservation result, not arbitrary
+  semantic editing, GUI-viewer, MuPDF three-way, redaction, signature, XFA,
+  PDF/UA, or production fidelity proof.
+
+### 2026-08-25 Browser preservation metrics review surface
+
+- Added the accessible `impactMetrics` section to the browser review/export
+  panel in `web/index.html`.
+- Extended the existing validation checks with optional value-minimized metrics
+  for outside-region text and raster evidence. The panel shows status,
+  compared/changed pages, changed/compared pixels, outside-pixel ratio,
+  maximum channel delta, render scale, channel tolerance, operation count, and
+  evidence basis.
+- Raw extracted `sourceOutside` and `outputOutside` content is intentionally not
+  rendered in the UI.
+- Static source checks pass 51/51. Isolated Chrome no-op export evidence shows
+  a passing panel. Isolated Chrome reviewed-overlay evidence shows the panel
+  remains visible with the failed text/raster status and measured `385 / 2,317,088`
+  changed/compared pixels. No console or page errors occurred in either focused
+  run.
+- The complete existing browser proof remains a deliberate failure on the
+  static Form 6 overlay because the underlying validator finds an outside-region
+  change. The metrics surface exposes that failure and does not weaken it.
+- Evidence is recorded in
+  [`docs/audits/browser-preservation-metrics-evidence-2026-08-25.md`](docs/audits/browser-preservation-metrics-evidence-2026-08-25.md).
+
+### 2026-08-25 Independent renderer metrics and operation binding
+
+- Extended the existing Poppler/PDF.js browser-export report instead of adding
+  a second independent validator.
+- Preserved normalized provider metrics for outside-region text and raster
+  evidence, including changed pages, changed/compared pixels, ratios, channel
+  deltas, and provider basis.
+- Added `comparable`, `notComparable`, and `notMeasured` states so source-digest
+  no-op shortcuts are not misrepresented as equivalent raster measurements.
+- Passed serialized browser `editSession.operations` into Poppler. Missing
+  operation lineage and coordinate/page mismatches now abstain as `unknown`.
+- Focused S3 test passes baseline agreement, provider divergence, missing-gate
+  unknown, comparable metrics, valid binding, and mismatch abstention.
+- Regenerated retained report: 16 readable passes, 2 malformed expected
+  failures, 16/16 readable text and raster verdict agreements, and 0
+  unexpected divergences. The retained bundles predate browser metrics, so
+  their measurement comparability remains `notMeasured` by design.
+- A fresh full-corpus browser fixture attempt against the existing 4173 surface
+  timed out before PDF.js initialization. This is recorded as an environment
+  runtime issue, not promoted to a PDF fidelity result.
+
+### 2026-08-25 Encrypted template and profile persistence
+
+- Implemented native encrypted template persistence in
+  `Sources/PDFEditorCore/EncryptedTemplatePersistence.swift` using the
+  existing `PDFTemplateRevisionSet`, AES-GCM envelopes, Keychain-backed
+  template keys, primary/recovery copies, explicit recovery states, deletion,
+  and immutable parent-linked append operations.
+- Implemented a separate native encrypted `PDFProfileRevisionSet` vault with a
+  different directory and Keychain account. Profile values are not part of
+  template records.
+- Extended the browser IndexedDB store with encrypted template-history and
+  profile-history APIs, parent/identity validation, deletion helpers, and
+  profile unlock behavior for history records. The browser profile layer uses
+  a separate profile passphrase-derived key inside the encrypted store.
+- Replaced the live web page's legacy plaintext profile IndexedDB path with the
+  encrypted profile-history adapter. Added explicit `Save encrypted revision`
+  and `Unlock encrypted local profiles` actions; page load does not prompt or
+  silently persist a passphrase.
+- Wired the native `PDFEditorApp.AppModel` profile management path to the new
+  encrypted profile vault through a `UserProfile` compatibility projection, so
+  native create/load/save/list/delete operations now create and read contract
+  revisions rather than using the older single-record profile path.
+- Native persistence tests pass 2/2. Node contract/store tests pass. Isolated
+  Chrome tests pass for encrypted store security, wrong-passphrase rejection,
+  IndexedDB eviction recovery, deletion, zero-content logging, and reviewed
+  template capture. The isolated server and browser were stopped after the
+  run.
+- Evidence is recorded in
+  [`docs/audits/encrypted-template-profile-persistence-evidence-2026-08-25.md`](docs/audits/encrypted-template-profile-persistence-evidence-2026-08-25.md).
+- Remaining long-term lanes are secure deletion across OS/browser backup
+  layers, Keychain-loss recovery, quota/concurrency stress, encrypted backup
+  cross-platform parity, passphrase recovery, and native SwiftUI template
+  persistence controls.
+
+### 2026-08-25 Native and browser dual-approval template completion
+
+- Implemented the shared completion review protocol so mapping approval and
+  profile-value approval are separate source-bound decisions.
+- Added native `mappingApproval` and `profileValueApproval` records. Mapping
+  approval binds the mapping ID, resolved provider target, and page-space
+  coordinate. Profile-value approval binds profile ID, profile revision ID,
+  semantic key, and a SHA-256 digest of the exact typed value.
+- Changed target resolution to invalidate mapping approval and changed values
+  to return to `resolvedUnreviewed`. The core materializer rejects missing,
+  stale, or mismatched records before creating edit operations.
+- Added the native `AppModel` and SwiftUI review flow: capture value-free
+  template draft, review mappings, activate immutable revision, prepare a
+  profile-bound completion, review each mapping, review each exact value, then
+  apply through the shared gate.
+- Updated the browser contract and live review surface with the same two-stage
+  controls. The Apply control remains disabled until both decisions are valid.
+  The browser no-profile path is session-only; selected persistent profiles
+  contribute their encrypted profile revision identity.
+- Added mutation coverage for value-only approval, mapping-only approval,
+  stale direct value mutation, and changed native target resolution.
+- Verification: Swift 92 tests in 10 suites passed; browser template,
+  reader, and store checks passed; isolated Chrome template workflow and
+  encrypted security workflow passed on port 4174 with no console or page
+  errors.
+- Evidence is recorded in
+  [`docs/audits/template-review-workflow-evidence-2026-08-25.md`](docs/audits/template-review-workflow-evidence-2026-08-25.md),
+  decision D-046, finding F-067, and release gate RG-110.
+- Remaining long-term lanes are automated native UI interaction, mid-session
+  profile revision invalidation, export approval provenance, collaborative
+  reviewer authority, and cross-capability reuse of this dual-review protocol.
+
+### 2026-08-25 Native/browser structural fingerprint parity
+
+- Built `web/pdf-fingerprint-parity.mjs`, a versioned value-minimized structural
+  fingerprint projection over the existing native PDFKit and browser
+  PDF.js/pdf-lib contract bundles.
+- The fingerprint compares page geometry and rotation, selectable text and
+  character-count shape, fields, candidates, evidence families, grouping,
+  coordinate spaces, annotations, navigation, permissions, security, and
+  accessibility without retaining raw labels, provider IDs, timestamps, output
+  digests, or PDF bytes.
+- Generated the 18-case fixture and feature-cluster report with
+  `benchmark/generate_fingerprint_parity.mjs`.
+- Aggregate result: 2 equal expected malformed failure states, 8 readable
+  semantic-divergence-only cases, 8 mixed cases containing both semantic and
+  tolerated text representation differences, and 0 representation-only cases.
+- Divergence clusters: permission observability 16/18; character-count
+  representation 8/18; encrypted-hybrid page-box precision 1/18; static Form 6
+  candidate count, field-type, grouping, evidence, label-association,
+  geometry, and coordinate-space divergence 2/18.
+- Added mutation coverage for stale source digest, page rotation, permissions,
+  candidate population, candidate coordinate space, and tolerated text-count
+  drift. The fixture cases are checked for zero raw content and zero provider
+  representation fields.
+- Verification: `node benchmark/generate_fingerprint_parity.mjs` and
+  `node Tests/native_browser_fingerprint_parity_test.mjs` passed.
+- Evidence is recorded in
+  [`docs/audits/native-browser-fingerprint-parity-evidence-2026-08-25.md`](docs/audits/native-browser-fingerprint-parity-evidence-2026-08-25.md),
+  decision D-047, finding F-068, and release gate RG-111.
+- Remaining long-term lanes are permission observed-versus-unknown
+  normalization, encrypted page-box precision, rotation transform
+  reconciliation, candidate grouping/classification parity, and fresh native
+  plus isolated-browser regeneration after those changes.

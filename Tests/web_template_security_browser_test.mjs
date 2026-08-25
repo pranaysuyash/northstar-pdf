@@ -82,6 +82,15 @@ try {
         }]
       }
     };
+    const childTemplate = {
+      ...template,
+      payload: {
+        ...template.payload,
+        revisionID: "revision-security-child",
+        parentRevisionID: template.payload.revisionID,
+        displayName: "Private applicant template child"
+      }
+    };
 
     const store = fixture.createEncryptedTemplateStore({ dbName, logger });
     logger.record({
@@ -95,11 +104,14 @@ try {
     await store.unlock(storePassphrase);
     expectEqual(store.isUnlocked, true, "store unlock state");
     await store.put("template", template.payload.templateID, template);
+    await store.saveTemplateRevision(template);
+    await store.saveTemplateRevision(childTemplate);
     await expectRejectCode(
       () => store.put("profile", profile.payload.profileID, profile),
       "passphrase_too_short"
     );
     await store.put("profile", profile.payload.profileID, profile, { profilePassphrase });
+    await store.saveProfileRevision(profile, { profilePassphrase });
     store.lockProfile(profile.payload.profileID);
     await expectRejectCode(() => store.get("profile", profile.payload.profileID), "profile_locked");
     await expectRejectCode(() => store.unlockProfile(profile.payload.profileID, "wrong-profile-passphrase"), "profile_unlock_failed");
@@ -109,7 +121,7 @@ try {
 
     const healthBefore = await store.inspectHealth();
     expectEqual(healthBefore.state, "ready", "initial health state");
-    expectEqual(healthBefore.recordCount, 2, "initial health count");
+    expectEqual(healthBefore.recordCount, 4, "initial health count");
     const backup = await store.exportEncryptedBackup();
     const backupText = JSON.stringify(backup);
     expectEqual(backupText.includes("Ada Lovelace Secret Value"), false, "backup profile-content exclusion");
@@ -135,7 +147,7 @@ try {
     await expectRejectCode(() => evictedStore.restoreEncryptedBackup({ ...backup, version: { major: 99, minor: 0 } }, { storePassphrase }), "backup_invalid");
     const restoredHealth = await evictedStore.restoreEncryptedBackup(backup, { storePassphrase });
     expectEqual(restoredHealth.state, "ready", "restored health state");
-    expectEqual(restoredHealth.recordCount, 2, "restored health count");
+    expectEqual(restoredHealth.recordCount, 4, "restored health count");
     const restoredTemplate = await evictedStore.get("template", template.payload.templateID);
     expectEqual(restoredTemplate.payload.templateID, template.payload.templateID, "restored template identity");
     await expectRejectCode(() => evictedStore.get("profile", profile.payload.profileID), "profile_locked");
@@ -146,10 +158,12 @@ try {
     const wrongPassphraseStore = fixture.createEncryptedTemplateStore({ dbName, logger });
     await expectRejectCode(() => wrongPassphraseStore.unlock("wrong-store-passphrase"), "unlock_failed");
     wrongPassphraseStore.close();
-    await evictedStore.remove("profile", profile.payload.profileID);
-    await evictedStore.remove("template", template.payload.templateID);
+    await evictedStore.deleteProfile(profile.payload.profileID);
+    await evictedStore.deleteTemplate(template.payload.templateID);
     expectEmpty(await evictedStore.list("profile"), "deleted profile list");
     expectEmpty(await evictedStore.list("template"), "deleted template list");
+    expectEmpty(await evictedStore.list("profileHistory"), "deleted profile history list");
+    expectEmpty(await evictedStore.list("templateHistory"), "deleted template history list");
     await evictedStore.deleteStore();
     const deletedHealth = await evictedStore.inspectHealth();
     expectEqual(deletedHealth.state, "uninitialized", "deleted store health state");

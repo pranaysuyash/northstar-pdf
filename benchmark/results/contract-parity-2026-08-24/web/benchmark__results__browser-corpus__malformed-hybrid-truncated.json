@@ -1,0 +1,18 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "sourcePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+  "expectedFailure": true,
+  "status": "inspectionFailed",
+  "sourceDigest": null,
+  "document": null,
+  "coordinates": null,
+  "candidates": null,
+  "editSession": null,
+  "preflight": null,
+  "validation": null,
+  "error": "cannot-open: Invalid PDF structure."
+}

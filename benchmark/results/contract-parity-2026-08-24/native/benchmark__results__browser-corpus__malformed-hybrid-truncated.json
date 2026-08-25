@@ -1,0 +1,11 @@
+{
+  "contractName" : "pdf-editor.browser-fixture",
+  "error" : "The PDF could not be opened safely: malformed-hybrid-truncated.pdf",
+  "expectedFailure" : true,
+  "sourcePath" : "benchmark\/results\/browser-corpus\/malformed-hybrid-truncated.pdf",
+  "status" : "inspectionFailed",
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

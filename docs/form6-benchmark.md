@@ -1,7 +1,7 @@
 # Form 6 Benchmark
 
-**Status:** Observed benchmark fixture; ground truth drafted
-**Reviewed:** 2026-08-23
+**Status:** Reviewed semantic benchmark fixture with an initial detector baseline
+**Reviewed:** 2026-08-24
 **Input:** `/Users/pranay/Desktop/RAr0Lq2Avu.pdf`
 **SHA-256:** `2cf1421343c22676f15eff0ec6f31a4df6e7f7975dc0f3d88d2b29a1dcc79d34`
 **Reference:** <https://voters.eci.gov.in/formspdf/Form_6_English.pdf>
@@ -99,6 +99,14 @@ The following must not be suggested as fillable regions by default:
 
 ## Future Evaluation Record
 
+The first browser measurement is recorded by
+[`Tests/fixtures/static_region_reviewed_corpus.mjs`](../Tests/fixtures/static_region_reviewed_corpus.mjs)
+and [`Tests/static_region_reviewed_benchmark_browser_test.mjs`](../Tests/static_region_reviewed_benchmark_browser_test.mjs).
+It matched 7 of 33 reviewed semantic targets, producing a label-associated recall
+proxy of 21.21% and a labeled-candidate precision proxy of 11.96%, with 3
+abstentions and 97 candidates. This is a baseline for detector work, not a
+geometric IoU result or a production accuracy claim.
+
 The benchmark harness should record, per candidate run:
 
 - field-group precision, recall, and F1;
@@ -110,6 +118,7 @@ The benchmark harness should record, per candidate run:
 - raster-diff and content-extraction results outside edited regions;
 - latency, memory, warnings, and abstentions.
 
-No detector or editor has been run against this fixture yet. This document is a
-Tier 1 structural inspection record with S0 test sensitivity, not an accuracy
-result.
+The fixture now has a bounded reviewed editor run covering grouped character
+regions, static choice marking, native-field synthesis, export, and reopen
+validation. OCR/CV fallback evidence is covered separately by the native reader
+gate. General detector quality remains an open research and measurement problem.

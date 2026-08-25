@@ -1,4 +1,11 @@
-import { validateProfileContract, validateTemplateContract } from "./pdf-template-contract.mjs";
+import {
+  appendProfileRevision,
+  appendTemplateRevision,
+  exportTemplateHistory as exportTemplateHistoryContract,
+  importTemplateHistory as importTemplateHistoryContract,
+  validateProfileContract,
+  validateTemplateContract
+} from "./pdf-template-contract.mjs";
 
 const STORE_VERSION = 2;
 const BACKUP_CONTRACT_NAME = "pdf-editor.template-store-backup";
@@ -7,7 +14,14 @@ const META_KEY = "__meta__";
 const PRESENCE_PREFIX = "pdf-editor-template-store-present:";
 const PROFILE_SALT_BYTES = 16;
 
-const RECORD_KINDS = new Set(["template", "profile", "learningEvent", "revisionPromotion"]);
+const RECORD_KINDS = new Set([
+  "template",
+  "templateHistory",
+  "profile",
+  "profileHistory",
+  "learningEvent",
+  "revisionPromotion"
+]);
 const PRIVACY_EVENT_FIELDS = new Set(["event", "code", "kind", "mode", "state", "count"]);
 const ALLOWED_PRIVACY_EVENTS = new Set([
   "store_version_changed",
@@ -41,7 +55,8 @@ const ALLOWED_PRIVACY_CODES = new Set([
   "backup_export_ok",
   "backup_restore_ok",
   "store_closed",
-  "store_delete_ok"
+  "store_delete_ok",
+  "delete_ok"
 ]);
 const ALLOWED_PRIVACY_STATES = new Set(["locked", "unlocked", "ready", "evicted", "closed", "deleted"]);
 
@@ -93,7 +108,7 @@ function fixedPrivacyEvent(event) {
   }
   if (!ALLOWED_PRIVACY_EVENTS.has(output.event) || !ALLOWED_PRIVACY_CODES.has(output.code)) return null;
   if (output.kind !== undefined && !RECORD_KINDS.has(output.kind)) delete output.kind;
-  if (output.mode !== undefined && !["indexeddb-aes-gcm", "ephemeral"].includes(output.mode)) delete output.mode;
+  if (output.mode !== undefined && !["indexeddb-aes-gcm", "opfs-aes-gcm", "ephemeral"].includes(output.mode)) delete output.mode;
   if (output.state !== undefined && !ALLOWED_PRIVACY_STATES.has(output.state)) delete output.state;
   if (output.count !== undefined && (!Number.isInteger(output.count) || output.count < 0)) delete output.count;
   return output;
@@ -163,7 +178,53 @@ function validateRecord(kind, value) {
   assertKind(kind);
   assertNoSourceBytes(value);
   if (kind === "template") validateTemplateContract(value);
-  if (kind === "profile") validateProfileContract(value);
+  if (kind === "profile" || kind === "profileHistory") validateProfileRecord(kind, value);
+  if (kind === "templateHistory") validateTemplateHistory(value);
+}
+
+function validateTemplateHistory(history) {
+  if (!history || typeof history !== "object" || typeof history.templateID !== "string" || !Array.isArray(history.revisions)) {
+    throw new TemplateStoreError("invalid_revision_history", "Template revision history is invalid.");
+  }
+  if (history.revisions.length === 0) {
+    throw new TemplateStoreError("invalid_revision_history", "Template revision history cannot be empty.");
+  }
+  const seen = new Set();
+  for (const [index, revision] of history.revisions.entries()) {
+    validateTemplateContract(revision);
+    if (revision.payload.templateID !== history.templateID || seen.has(revision.payload.revisionID)) {
+      throw new TemplateStoreError("invalid_revision_history", "Template revision identity is duplicated or inconsistent.");
+    }
+    if (revision.payload.parentRevisionID && !seen.has(revision.payload.parentRevisionID)) {
+      throw new TemplateStoreError("invalid_revision_history", "Template revision parent must precede its child.");
+    }
+    seen.add(revision.payload.revisionID);
+  }
+}
+
+function validateProfileRecord(kind, value) {
+  if (kind === "profile") {
+    validateProfileContract(value);
+    return;
+  }
+  if (!value || typeof value !== "object" || typeof value.profileID !== "string" || !Array.isArray(value.revisions) || value.revisions.length === 0) {
+    throw new TemplateStoreError("invalid_revision_history", "Profile revision history is invalid.");
+  }
+  const seen = new Set();
+  for (const revision of value.revisions) {
+    validateProfileContract(revision);
+    if (revision.payload.profileID !== value.profileID || revision.header.profileID !== value.profileID || seen.has(revision.payload.revisionID)) {
+      throw new TemplateStoreError("invalid_revision_history", "Profile revision identity is duplicated or inconsistent.");
+    }
+    if (revision.payload.parentRevisionID && !seen.has(revision.payload.parentRevisionID)) {
+      throw new TemplateStoreError("invalid_revision_history", "Profile revision parent must precede its child.");
+    }
+    seen.add(revision.payload.revisionID);
+  }
+}
+
+function isProfileKind(kind) {
+  return kind === "profile" || kind === "profileHistory";
 }
 
 function openDatabase(dbName) {
@@ -348,7 +409,7 @@ export function createEncryptedTemplateStore({
   async function encryptRecord(kind, id, value, options = {}) {
     const key = await ensureUnlocked(options.storePassphrase);
     let payload = value;
-    if (kind === "profile") {
+    if (isProfileKind(kind)) {
       requirePassphrase(options.profilePassphrase, "profile");
       const profileSalt = crypto.getRandomValues(new Uint8Array(PROFILE_SALT_BYTES));
       const profileKey = await deriveKey(options.profilePassphrase, profileSalt, "profile");
@@ -380,7 +441,7 @@ export function createEncryptedTemplateStore({
       throw new TemplateStoreError("record_schema_unsupported", "Encrypted template store record schema is not supported.");
     }
     const payload = await decryptJSON(key, record);
-    if (record.kind !== "profile") {
+    if (!isProfileKind(record.kind)) {
       validateRecord(record.kind, payload);
       return payload;
     }
@@ -430,7 +491,7 @@ export function createEncryptedTemplateStore({
     await ensureUnlocked(options.storePassphrase);
     const db = await database();
     await requestResult(db.transaction("records", "readwrite").objectStore("records").delete(`${kind}:${id}`));
-    if (kind === "profile") unlockedProfiles.delete(id);
+    if (isProfileKind(kind)) unlockedProfiles.delete(id);
     logger.record({ event: "record_deleted", code: "delete_ok", kind, mode: "indexeddb-aes-gcm", state: "unlocked" });
   }
 
@@ -443,13 +504,96 @@ export function createEncryptedTemplateStore({
       .map(({ id, kind: recordKind, updatedAt }) => ({ id, kind: recordKind, updatedAt }));
   }
 
+  async function saveTemplateRevision(revision, options = {}) {
+    validateTemplateContract(revision);
+    const templateID = revision.payload.templateID;
+    const current = await get("templateHistory", templateID, options);
+    const history = current
+      ? appendTemplateRevision(current, revision)
+      : { templateID, revisions: [revision] };
+    validateTemplateHistory(history);
+    await put("templateHistory", templateID, history, options);
+    return structuredClone(history);
+  }
+
+  async function getTemplateHistory(templateID, options = {}) {
+    return get("templateHistory", templateID, options);
+  }
+
+  async function exportTemplateHistory(templateID, options = {}) {
+    const history = await getTemplateHistory(templateID, options);
+    if (!history) throw new TemplateStoreError("template_not_found", "The requested template was not found.");
+    return exportTemplateHistoryContract(history);
+  }
+
+  async function importTemplateHistory(envelope, { storePassphrase = passphrase, replace = false } = {}) {
+    const history = importTemplateHistoryContract(envelope);
+    const existing = await getTemplateHistory(history.templateID, { storePassphrase });
+    if (existing && !replace) {
+      throw new TemplateStoreError("template_exists", "The template already exists. Replace it explicitly to import over it.");
+    }
+    await put("templateHistory", history.templateID, history, { storePassphrase });
+    return structuredClone(history);
+  }
+
+  async function saveLearningEvent(event, options = {}) {
+    if (!event || typeof event.templateID !== "string" || typeof event.id !== "string") {
+      throw new TemplateStoreError("invalid_learning_event", "Learning event identity is invalid.");
+    }
+    const current = await get("learningEvent", event.templateID, options);
+    const events = current?.events || [];
+    if (events.some((entry) => entry.id === event.id)) {
+      throw new TemplateStoreError("duplicate_learning_event", "Learning event already exists.");
+    }
+    const journal = { templateID: event.templateID, events: [...events, structuredClone(event)] };
+    await put("learningEvent", event.templateID, journal, options);
+    return structuredClone(journal);
+  }
+
+  async function getLearningEvents(templateID, options = {}) {
+    return (await get("learningEvent", templateID, options))?.events || [];
+  }
+
+  async function deleteLearningEvents(templateID, options = {}) {
+    await remove("learningEvent", templateID, options);
+  }
+
+  async function deleteTemplate(templateID, options = {}) {
+    await remove("templateHistory", templateID, options);
+    await remove("template", templateID, options);
+  }
+
+  async function saveProfileRevision(revision, options = {}) {
+    validateProfileContract(revision);
+    const profileID = revision.payload.profileID;
+    const current = await get("profileHistory", profileID, options);
+    const history = current
+      ? appendProfileRevision(current, revision)
+      : { profileID, revisions: [revision] };
+    validateProfileRecord("profileHistory", history);
+    await put("profileHistory", profileID, history, {
+      ...options,
+      profilePassphrase: options.profilePassphrase
+    });
+    return structuredClone(history);
+  }
+
+  async function getProfileHistory(profileID, options = {}) {
+    return get("profileHistory", profileID, options);
+  }
+
+  async function deleteProfile(profileID, options = {}) {
+    await remove("profileHistory", profileID, options);
+    await remove("profile", profileID, options);
+  }
+
   async function unlock(providedPassphrase = passphrase) {
     return ensureUnlocked(providedPassphrase);
   }
 
   async function unlockProfile(profileID, profilePassphrase, options = {}) {
     requirePassphrase(profilePassphrase, "profile");
-    const record = await rawGet(`profile:${profileID}`);
+    const record = (await rawGet(`profile:${profileID}`)) || (await rawGet(`profileHistory:${profileID}`));
     if (!record) throw new TemplateStoreError("profile_not_found", "The requested local profile was not found.");
     try {
       await decryptRecord(record, { ...options, profilePassphrase });
@@ -576,7 +720,18 @@ export function createEncryptedTemplateStore({
     put,
     get,
     remove,
-    list
+    list,
+    saveTemplateRevision,
+    getTemplateHistory,
+    exportTemplateHistory,
+    importTemplateHistory,
+    saveLearningEvent,
+    getLearningEvents,
+    deleteLearningEvents,
+    deleteTemplate,
+    saveProfileRevision,
+    getProfileHistory,
+    deleteProfile
   };
   Object.defineProperty(api, "isUnlocked", { enumerable: true, get: () => Boolean(storeKey) });
   Object.defineProperty(api, "logger", { enumerable: true, value: logger });
@@ -601,7 +756,7 @@ export function createEphemeralTemplateStore({ logger = createZeroContentLogger(
       logger.record({ event: "store_locked", code: "store_locked", mode: "ephemeral", state: storeState });
     },
     async unlockProfile(profileID) {
-      if (!records.has(`profile:${profileID}`)) throw new TemplateStoreError("profile_not_found", "The requested local profile was not found.");
+      if (!records.has(`profile:${profileID}`) && !records.has(`profileHistory:${profileID}`)) throw new TemplateStoreError("profile_not_found", "The requested local profile was not found.");
       unlockedProfiles.add(profileID);
       logger.record({ event: "profile_unlocked", code: "profile_authenticated", kind: "profile", mode: "ephemeral", state: "unlocked" });
       return { profileID, unlocked: true };
@@ -634,21 +789,21 @@ export function createEphemeralTemplateStore({ logger = createZeroContentLogger(
       validateRecord(kind, value);
       if (storeState !== "unlocked") throw new TemplateStoreError("store_locked", "Unlock the local template store before accessing records.");
       records.set(`${kind}:${id}`, structuredClone(value));
-      if (kind === "profile") unlockedProfiles.add(id);
+      if (isProfileKind(kind)) unlockedProfiles.add(id);
       logger.record({ event: "record_written", code: "write_ok", kind, mode: "ephemeral", state: storeState });
       return { kind, id };
     },
     async get(kind, id) {
       assertKind(kind);
       if (storeState !== "unlocked") throw new TemplateStoreError("store_locked", "Unlock the local template store before accessing records.");
-      if (kind === "profile" && !unlockedProfiles.has(id)) throw new TemplateStoreError("profile_locked", "Unlock this profile before accessing its values.");
+      if (isProfileKind(kind) && !unlockedProfiles.has(id)) throw new TemplateStoreError("profile_locked", "Unlock this profile before accessing its values.");
       const value = records.get(`${kind}:${id}`);
       return value ? structuredClone(value) : null;
     },
     async remove(kind, id) {
       assertKind(kind);
       records.delete(`${kind}:${id}`);
-      if (kind === "profile") unlockedProfiles.delete(id);
+      if (isProfileKind(kind)) unlockedProfiles.delete(id);
       logger.record({ event: "record_deleted", code: "delete_ok", kind, mode: "ephemeral", state: storeState });
     },
     async list(kind) {
@@ -656,9 +811,381 @@ export function createEphemeralTemplateStore({ logger = createZeroContentLogger(
       return [...records.keys()]
         .filter((key) => key.startsWith(`${kind}:`))
         .map((key) => ({ kind, id: key.slice(kind.length + 1) }));
+    },
+    async saveTemplateRevision(revision) {
+      validateTemplateContract(revision);
+      const templateID = revision.payload.templateID;
+      const current = records.get(`templateHistory:${templateID}`);
+      const history = current ? appendTemplateRevision(current, revision) : { templateID, revisions: [revision] };
+      validateTemplateHistory(history);
+      records.set(`templateHistory:${templateID}`, structuredClone(history));
+      return structuredClone(history);
+    },
+    async getTemplateHistory(templateID) {
+      const history = records.get(`templateHistory:${templateID}`);
+      return history ? structuredClone(history) : null;
+    },
+    async exportTemplateHistory(templateID) {
+      const history = records.get(`templateHistory:${templateID}`);
+      if (!history) throw new TemplateStoreError("template_not_found", "The requested template was not found.");
+      return exportTemplateHistoryContract(history);
+    },
+    async importTemplateHistory(envelope, { replace = false } = {}) {
+      const history = importTemplateHistoryContract(envelope);
+      const key = `templateHistory:${history.templateID}`;
+      if (records.has(key) && !replace) throw new TemplateStoreError("template_exists", "The template already exists. Replace it explicitly to import over it.");
+      records.set(key, structuredClone(history));
+      return structuredClone(history);
+    },
+    async saveLearningEvent(event) {
+      if (!event || typeof event.templateID !== "string" || typeof event.id !== "string") throw new TemplateStoreError("invalid_learning_event", "Learning event identity is invalid.");
+      const key = `learningEvent:${event.templateID}`;
+      const current = records.get(key);
+      const events = current?.events || [];
+      if (events.some((entry) => entry.id === event.id)) throw new TemplateStoreError("duplicate_learning_event", "Learning event already exists.");
+      const journal = { templateID: event.templateID, events: [...events, structuredClone(event)] };
+      records.set(key, structuredClone(journal));
+      return structuredClone(journal);
+    },
+    async getLearningEvents(templateID) {
+      return structuredClone(records.get(`learningEvent:${templateID}`)?.events || []);
+    },
+    async deleteLearningEvents(templateID) {
+      records.delete(`learningEvent:${templateID}`);
+    },
+    async deleteTemplate(templateID) {
+      records.delete(`templateHistory:${templateID}`);
+      records.delete(`template:${templateID}`);
+    },
+    async saveProfileRevision(revision) {
+      validateProfileContract(revision);
+      const profileID = revision.payload.profileID;
+      const current = records.get(`profileHistory:${profileID}`);
+      const history = current
+        ? appendProfileRevision(current, revision)
+        : { profileID, revisions: [revision] };
+      validateProfileRecord("profileHistory", history);
+      records.set(`profileHistory:${profileID}`, structuredClone(history));
+      unlockedProfiles.add(profileID);
+      return structuredClone(history);
+    },
+    async getProfileHistory(profileID) {
+      const history = records.get(`profileHistory:${profileID}`);
+      if (!history) return null;
+      if (!unlockedProfiles.has(profileID)) throw new TemplateStoreError("profile_locked", "Unlock this profile before accessing its values.");
+      return history ? structuredClone(history) : null;
+    },
+    async deleteProfile(profileID) {
+      records.delete(`profileHistory:${profileID}`);
+      records.delete(`profile:${profileID}`);
+      unlockedProfiles.delete(profileID);
     }
   };
   Object.defineProperty(api, "isUnlocked", { enumerable: true, get: () => storeState === "unlocked" });
+  Object.defineProperty(api, "logger", { enumerable: true, value: logger });
+  return Object.freeze(api);
+}
+
+/**
+ * OPFS-backed encrypted store. OPFS is useful for larger local histories and
+ * explicit backup files, but it is still origin-private and evictable. The
+ * adapter therefore keeps the same unlock, health, deletion, and encrypted
+ * backup semantics as IndexedDB instead of presenting OPFS as a backup.
+ */
+export function createEncryptedOPFSTemplateStore({
+  fileName = "pdf-editor-template-store-v1.json",
+  passphrase = null,
+  logger = createZeroContentLogger()
+} = {}) {
+  let rootPromise;
+  let storeKey = null;
+  let storeState = "locked";
+  const unlockedProfiles = new Map();
+  const getRoot = async () => {
+    if (!globalThis.navigator?.storage?.getDirectory) {
+      throw new TemplateStoreError("opfs_unavailable", "The browser does not expose the Origin Private File System.");
+    }
+    return rootPromise ||= navigator.storage.getDirectory();
+  };
+  async function readEnvelope() {
+    try {
+      const root = await getRoot();
+      const handle = await root.getFileHandle(fileName);
+      return JSON.parse(await (await handle.getFile()).text());
+    } catch (error) {
+      if (error?.name === "NotFoundError") return null;
+      if (error instanceof TemplateStoreError) throw error;
+      throw new TemplateStoreError("opfs_read_failed", "The encrypted OPFS store could not be read.");
+    }
+  }
+  async function writeEnvelope(envelope) {
+    const root = await getRoot();
+    const handle = await root.getFileHandle(fileName, { create: true });
+    const writable = await handle.createWritable();
+    try {
+      await writable.write(JSON.stringify(envelope));
+      await writable.close();
+    } catch (error) {
+      await writable.abort?.();
+      throw new TemplateStoreError("opfs_write_failed", "The encrypted OPFS store could not be written.");
+    }
+  }
+  async function unlock(providedPassphrase = passphrase) {
+    if (storeKey) return true;
+    requirePassphrase(providedPassphrase);
+    const existing = await readEnvelope();
+    if (!existing) {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      storeKey = await deriveKey(providedPassphrase, salt);
+      const meta = await encryptJSON(storeKey, {
+        contractName: "pdf-editor.template-opfs-meta",
+        version: { major: 1, minor: 0 },
+        storeID: crypto.randomUUID(),
+        createdAt: new Date().toISOString()
+      });
+      await writeEnvelope({ mode: "opfs-aes-gcm", version: STORE_VERSION, salt: bytesToBase64(salt), meta, records: [] });
+      storeState = "unlocked";
+      logger.record({ event: "store_unlocked", code: "store_initialized", mode: "opfs-aes-gcm", state: storeState });
+      return true;
+    }
+    try {
+      const key = await deriveKey(providedPassphrase, base64ToBytes(existing.salt));
+      const meta = await decryptJSON(key, existing.meta);
+      if (meta.contractName !== "pdf-editor.template-opfs-meta" || existing.version !== STORE_VERSION) throw new Error("metadata");
+      storeKey = key;
+      storeState = "unlocked";
+      logger.record({ event: "store_unlocked", code: "store_authenticated", mode: "opfs-aes-gcm", state: storeState });
+      return true;
+    } catch {
+      storeState = "locked";
+      logger.record({ event: "store_unlock_failed", code: "unlock_failed", mode: "opfs-aes-gcm", state: storeState });
+      throw new TemplateStoreError("unlock_failed", "The encrypted OPFS store passphrase was not accepted.");
+    }
+  }
+  async function requireUnlocked(options = {}) {
+    if (!storeKey) await unlock(options.storePassphrase);
+    if (!storeKey) throw new TemplateStoreError("store_locked", "Unlock the encrypted OPFS store first.");
+  }
+  async function readRecords(options = {}) {
+    await requireUnlocked(options);
+    const envelope = await readEnvelope();
+    if (!envelope) throw new TemplateStoreError("store_evicted", "The encrypted OPFS store file is missing.");
+    const records = [];
+    const opaqueRecords = [];
+    for (const record of envelope.records || []) {
+      const value = await decryptJSON(storeKey, record);
+      if (isProfileKind(value.kind)) {
+        const profileEnvelope = value.profileEnvelope;
+        const profileKey = options.profilePassphrase
+          ? await deriveKey(options.profilePassphrase, base64ToBytes(profileEnvelope.profileSalt), "profile")
+          : unlockedProfiles.get(value.id);
+        if (!profileKey) {
+          if (options.allowLockedProfiles) {
+            opaqueRecords.push(record);
+            continue;
+          }
+          throw new TemplateStoreError("profile_locked", "Unlock this profile before accessing its values.");
+        }
+        const profile = await decryptJSON(profileKey, { iv: profileEnvelope.profileIV, ciphertext: profileEnvelope.profileCiphertext });
+        validateRecord(value.kind, profile);
+        records.push({ kind: value.kind, id: value.id, value: profile });
+        unlockedProfiles.set(value.id, profileKey);
+      } else {
+        validateRecord(value.kind, value.value);
+        records.push(value);
+      }
+    }
+    return { envelope, records, opaqueRecords };
+  }
+  async function writeRecords(records, options = {}, opaqueRecords = []) {
+    await requireUnlocked(options);
+    const existing = await readEnvelope();
+    const encryptedRecords = [];
+    for (const record of records) {
+      let value = record.value;
+      if (isProfileKind(record.kind)) {
+        requirePassphrase(options.profilePassphrase, "profile");
+        const salt = crypto.getRandomValues(new Uint8Array(PROFILE_SALT_BYTES));
+        const profileKey = await deriveKey(options.profilePassphrase, salt, "profile");
+        const profileCipher = await encryptJSON(profileKey, value);
+        value = {
+          kind: record.kind,
+          id: record.id,
+          profileEnvelope: {
+            profileSchemaVersion: 1,
+            profileSalt: bytesToBase64(salt),
+            profileIV: profileCipher.iv,
+            profileCiphertext: profileCipher.ciphertext
+          }
+        };
+        unlockedProfiles.set(record.id, profileKey);
+      } else {
+        value = { kind: record.kind, id: record.id, value };
+      }
+      encryptedRecords.push(await encryptJSON(storeKey, value));
+    }
+    await writeEnvelope({ ...existing, records: [...encryptedRecords, ...opaqueRecords], updatedAt: new Date().toISOString() });
+  }
+  async function put(kind, id, value, options = {}) {
+    validateRecord(kind, value);
+    const { records, opaqueRecords } = await readRecords({ ...options, allowLockedProfiles: true });
+    const next = records.filter((record) => !(record.kind === kind && record.id === id));
+    next.push({ kind, id, value: structuredClone(value) });
+    await writeRecords(next, options, opaqueRecords.filter((record) => record.id !== id || !isProfileKind(kind)));
+    logger.record({ event: "record_written", code: "write_ok", kind, mode: "opfs-aes-gcm", state: "unlocked" });
+    return { kind, id };
+  }
+  async function get(kind, id, options = {}) {
+    assertKind(kind);
+    const { records } = await readRecords({ ...options, allowLockedProfiles: !isProfileKind(kind) });
+    return structuredClone(records.find((record) => record.kind === kind && record.id === id)?.value || null);
+  }
+  async function remove(kind, id, options = {}) {
+    assertKind(kind);
+    const { records, opaqueRecords } = await readRecords({ ...options, allowLockedProfiles: true });
+    await writeRecords(
+      records.filter((record) => !(record.kind === kind && record.id === id)),
+      options,
+      opaqueRecords.filter((record) => record.id !== id || !isProfileKind(kind)));
+    unlockedProfiles.delete(id);
+    logger.record({ event: "record_deleted", code: "delete_ok", kind, mode: "opfs-aes-gcm", state: "unlocked" });
+  }
+  async function list(kind, options = {}) {
+    assertKind(kind);
+    const { records, opaqueRecords } = await readRecords({ ...options, allowLockedProfiles: true });
+    return [
+      ...records.filter((record) => record.kind === kind).map(({ kind: recordKind, id }) => ({ kind: recordKind, id })),
+      ...opaqueRecords.filter((record) => record.kind === kind).map(({ kind: recordKind, id }) => ({ kind: recordKind, id }))
+    ];
+  }
+  async function saveTemplateRevision(revision, options = {}) {
+    validateTemplateContract(revision);
+    const id = revision.payload.templateID;
+    const current = await get("templateHistory", id, options);
+    const history = current ? appendTemplateRevision(current, revision) : { templateID: id, revisions: [revision] };
+    validateTemplateHistory(history);
+    await put("templateHistory", id, history, options);
+    return structuredClone(history);
+  }
+  async function exportTemplateHistory(templateID, options = {}) {
+    const history = await get("templateHistory", templateID, options);
+    if (!history) throw new TemplateStoreError("template_not_found", "The requested template was not found.");
+    return exportTemplateHistoryContract(history);
+  }
+  async function importTemplateHistory(envelope, { storePassphrase = passphrase, replace = false } = {}) {
+    const history = importTemplateHistoryContract(envelope);
+    const existing = await get("templateHistory", history.templateID, { storePassphrase });
+    if (existing && !replace) throw new TemplateStoreError("template_exists", "The template already exists. Replace it explicitly to import over it.");
+    await put("templateHistory", history.templateID, history, { storePassphrase });
+    return structuredClone(history);
+  }
+  async function saveLearningEvent(event, options = {}) {
+    if (!event || typeof event.templateID !== "string" || typeof event.id !== "string") {
+      throw new TemplateStoreError("invalid_learning_event", "Learning event identity is invalid.");
+    }
+    const current = await get("learningEvent", event.templateID, options);
+    const events = current?.events || [];
+    if (events.some((entry) => entry.id === event.id)) throw new TemplateStoreError("duplicate_learning_event", "Learning event already exists.");
+    const journal = { templateID: event.templateID, events: [...events, structuredClone(event)] };
+    await put("learningEvent", event.templateID, journal, options);
+    return structuredClone(journal);
+  }
+  async function getLearningEvents(templateID, options = {}) {
+    return (await get("learningEvent", templateID, options))?.events || [];
+  }
+  async function deleteLearningEvents(templateID, options = {}) {
+    await remove("learningEvent", templateID, options);
+  }
+  async function saveProfileRevision(revision, options = {}) {
+    validateProfileContract(revision);
+    const id = revision.payload.profileID;
+    const current = await get("profileHistory", id, options);
+    const history = current ? appendProfileRevision(current, revision) : { profileID: id, revisions: [revision] };
+    validateProfileRecord("profileHistory", history);
+    await put("profileHistory", id, history, options);
+    return structuredClone(history);
+  }
+  async function deleteStore() {
+    try {
+      const root = await getRoot();
+      await root.removeEntry(fileName);
+    } catch (error) {
+      if (error?.name !== "NotFoundError") throw new TemplateStoreError("store_delete_failed", "Encrypted OPFS store deletion failed.");
+    }
+    storeKey = null;
+    storeState = "deleted";
+    unlockedProfiles.clear();
+    logger.record({ event: "store_deleted", code: "store_delete_ok", mode: "opfs-aes-gcm", state: storeState });
+  }
+  async function exportEncryptedBackup() {
+    await requireUnlocked();
+    const envelope = await readEnvelope();
+    const backup = {
+      contractName: BACKUP_CONTRACT_NAME,
+      version: { ...BACKUP_VERSION },
+      storeVersion: STORE_VERSION,
+      exportedAt: new Date().toISOString(),
+      metaRecord: { salt: envelope.salt, meta: envelope.meta },
+      records: envelope.records || []
+    };
+    if (!backup.metaRecord?.salt || !backup.metaRecord?.meta || !Array.isArray(backup.records)) {
+      throw new TemplateStoreError("backup_invalid", "Encrypted OPFS backup is invalid.");
+    }
+    logger.record({ event: "backup_exported", code: "backup_export_ok", mode: "opfs-aes-gcm", state: "unlocked", count: backup.records.length });
+    return structuredClone(backup);
+  }
+  async function restoreEncryptedBackup(backup, { storePassphrase = passphrase } = {}) {
+    if (!backup || backup.contractName !== BACKUP_CONTRACT_NAME || backup.version?.major !== BACKUP_VERSION.major
+      || !backup.metaRecord?.salt || !backup.metaRecord?.meta || !Array.isArray(backup.records)) {
+      throw new TemplateStoreError("backup_invalid", "Encrypted OPFS backup is invalid.");
+    }
+    requirePassphrase(storePassphrase);
+    await writeEnvelope({
+      mode: "opfs-aes-gcm",
+      version: STORE_VERSION,
+      salt: backup.metaRecord.salt,
+      meta: backup.metaRecord.meta,
+      records: backup.records || [],
+      updatedAt: new Date().toISOString()
+    });
+    storeKey = null;
+    await unlock(storePassphrase);
+    logger.record({ event: "backup_restored", code: "backup_restore_ok", mode: "opfs-aes-gcm", state: "unlocked", count: backup.records.length });
+    return inspectHealth();
+  }
+  const api = {
+    mode: "opfs-aes-gcm",
+    version: STORE_VERSION,
+    unlock,
+    lock() { storeKey = null; storeState = "locked"; unlockedProfiles.clear(); logger.record({ event: "store_locked", code: "store_locked", mode: "opfs-aes-gcm", state: storeState }); },
+    async unlockProfile(profileID, profilePassphrase, options = {}) {
+      const profile = await get("profile", profileID, { ...options, profilePassphrase })
+        || await get("profileHistory", profileID, { ...options, profilePassphrase });
+      if (!profile) throw new TemplateStoreError("profile_not_found", "The requested local profile was not found.");
+      return { profileID, unlocked: true };
+    },
+    lockProfile(profileID) { unlockedProfiles.delete(profileID); logger.record({ event: "profile_locked", code: "profile_locked", kind: "profile", mode: "opfs-aes-gcm", state: "locked" }); },
+    async inspectHealth() { const { records, opaqueRecords } = await readRecords({ allowLockedProfiles: true }); return { mode: "opfs-aes-gcm", state: storeState, recordCount: records.length + opaqueRecords.length, quotaBytes: null, usageBytes: null, recovery: "exportEncryptedBackup" }; },
+    exportEncryptedBackup,
+    restoreEncryptedBackup,
+    async put(kind, id, value, options) { return put(kind, id, value, options); },
+    async get(kind, id, options) { return get(kind, id, options); },
+    async remove(kind, id, options) { return remove(kind, id, options); },
+    async list(kind, options) { return list(kind, options); },
+    async saveTemplateRevision(revision, options) { return saveTemplateRevision(revision, options); },
+    async exportTemplateHistory(id, options) { return exportTemplateHistory(id, options); },
+    async importTemplateHistory(envelope, options) { return importTemplateHistory(envelope, options); },
+    async saveLearningEvent(event, options) { return saveLearningEvent(event, options); },
+    async getLearningEvents(id, options) { return getLearningEvents(id, options); },
+    async deleteLearningEvents(id, options) { return deleteLearningEvents(id, options); },
+    async getTemplateHistory(id, options) { return get("templateHistory", id, options); },
+    async deleteTemplate(id, options) { await remove("templateHistory", id, options); await remove("template", id, options); await deleteLearningEvents(id, options); },
+    async saveProfileRevision(revision, options) { return saveProfileRevision(revision, options); },
+    async getProfileHistory(id, options) { return get("profileHistory", id, options); },
+    async deleteProfile(id, options) { await remove("profileHistory", id, options); await remove("profile", id, options); },
+    deleteStore
+  };
+  Object.defineProperty(api, "isUnlocked", { enumerable: true, get: () => Boolean(storeKey) });
   Object.defineProperty(api, "logger", { enumerable: true, value: logger });
   return Object.freeze(api);
 }

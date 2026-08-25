@@ -1,0 +1,6237 @@
+{
+  "candidates" : [
+    {
+      "bounds" : {
+        "height" : 13.464000000000055,
+        "width" : 245.854,
+        "x" : 243.46,
+        "y" : 618.41
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 13.464000000000055,
+          "width" : 245.854,
+          "x" : 243.46,
+          "y" : 618.41
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 13 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"(1)(b) Name (In English in BLOCK LETTERS)\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "5DCB0CA8-B1AA-4DE6-A904-0E77F5AF3405",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.464000000000055,
+              "width" : 245.854,
+              "x" : 243.46,
+              "y" : 618.41
+            }
+          },
+          "score" : 0.9,
+          "summary" : "13 adjacent vector cells grouped into one region",
+          "text" : "(1)(b) Name (In English in BLOCK LETTERS)"
+        },
+        {
+          "id" : "4FCBA7DF-3546-48AA-A464-BADF6ABFFE2D",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 15.586666666666668,
+              "width" : 516,
+              "x" : 48,
+              "y" : 639.0533333333334
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "(1)(b) Name (In English in BLOCK LETTERS)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "4FCBA7DF-3546-48AA-A464-BADF6ABFFE2D",
+          "5DCB0CA8-B1AA-4DE6-A904-0E77F5AF3405"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 13,
+      "id" : "D919E9D7-2B6F-44D5-8994-079A0391D47D",
+      "kind" : "vectorRegion",
+      "labelText" : "(1)(b) Name (In English in BLOCK LETTERS)",
+      "memberBounds" : [
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.039999999999992,
+          "x" : 243.46,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 260.98,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.06400000000002,
+          "x" : 278.5,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 296.04,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 313.56,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 331.08,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.06400000000002,
+          "x" : 348.6,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 366.14,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 383.90000000000003,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 401.42,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.06400000000002,
+          "x" : 418.94,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 436.49,
+          "y" : 618.41
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 16.584000000000003,
+          "x" : 472.73,
+          "y" : 618.41
+        }
+      ],
+      "pageIndex" : 0,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 13.440000000000055,
+        "width" : 476.35400000000004,
+        "x" : 12.96,
+        "y" : 604.49
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 13.440000000000055,
+          "width" : 476.35400000000004,
+          "x" : 12.96,
+          "y" : 604.49
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 27 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"First Name followed by Middle Name\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "7B627FA1-F2B3-4E25-943F-79AEF0A3F348",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.440000000000055,
+              "width" : 476.35400000000004,
+              "x" : 12.96,
+              "y" : 604.49
+            }
+          },
+          "score" : 0.9,
+          "summary" : "27 adjacent vector cells grouped into one region",
+          "text" : "First Name followed by Middle Name"
+        },
+        {
+          "id" : "AAD1F4C8-CC5B-4DB1-9703-1AC204926378",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 15.586666666666668,
+              "width" : 516,
+              "x" : 48,
+              "y" : 623.4666666666667
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "First Name followed by Middle Name"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "7B627FA1-F2B3-4E25-943F-79AEF0A3F348",
+          "AAD1F4C8-CC5B-4DB1-9703-1AC204926378"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 27,
+      "id" : "E7951D97-4F6D-434C-B361-6E47D7120E09",
+      "kind" : "vectorRegion",
+      "labelText" : "First Name followed by Middle Name",
+      "memberBounds" : [
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.84,
+          "x" : 12.96,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.304000000000002,
+          "x" : 29.28,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 16.559999999999995,
+          "x" : 47.064,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 64.104,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.864000000000004,
+          "x" : 80.424,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 96.768,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 113.09,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 129.41,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.864000000000004,
+          "x" : 145.73,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 162.07,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.599999999999994,
+          "x" : 178.39000000000001,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 194.47,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.864000000000004,
+          "x" : 210.79,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 15.840000000000003,
+          "x" : 227.14000000000001,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.039999999999992,
+          "x" : 243.46,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 260.98,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.06400000000002,
+          "x" : 278.5,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 296.04,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 313.56,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 331.08,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.06400000000002,
+          "x" : 348.6,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 366.14,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 383.90000000000003,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 401.42,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.06400000000002,
+          "x" : 418.94,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 17.04000000000002,
+          "x" : 436.49,
+          "y" : 604.49
+        },
+        {
+          "height" : 13.440000000000055,
+          "width" : 16.584000000000003,
+          "x" : 472.73,
+          "y" : 604.49
+        }
+      ],
+      "pageIndex" : 0,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 13.464000000000055,
+        "width" : 210.07000000000002,
+        "x" : 243.46,
+        "y" : 520.94
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 13.464000000000055,
+          "width" : 210.07000000000002,
+          "x" : 243.46,
+          "y" : 520.94
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 12 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"PHOTOGRAPH (4.5 CM\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "CDB56905-1DC2-4406-ADD2-22140EF7E839",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.464000000000055,
+              "width" : 210.07000000000002,
+              "x" : 243.46,
+              "y" : 520.94
+            }
+          },
+          "score" : 0.9,
+          "summary" : "12 adjacent vector cells grouped into one region",
+          "text" : "PHOTOGRAPH (4.5 CM"
+        },
+        {
+          "id" : "EE4CD6A7-D669-49A7-A258-F6D285563977",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 15.586666666666668,
+              "width" : 516,
+              "x" : 48,
+              "y" : 545.5333333333333
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "PHOTOGRAPH (4.5 CM"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "CDB56905-1DC2-4406-ADD2-22140EF7E839",
+          "EE4CD6A7-D669-49A7-A258-F6D285563977"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 12,
+      "id" : "24E96DC2-2F54-4878-A345-F96FC136DD38",
+      "kind" : "vectorRegion",
+      "labelText" : "PHOTOGRAPH (4.5 CM",
+      "memberBounds" : [
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.039999999999992,
+          "x" : 243.46,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 260.98,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.06400000000002,
+          "x" : 278.5,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 296.04,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 313.56,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 331.08,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.06400000000002,
+          "x" : 348.6,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 366.14,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 383.90000000000003,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 401.42,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.06400000000002,
+          "x" : 418.94,
+          "y" : 520.94
+        },
+        {
+          "height" : 13.464000000000055,
+          "width" : 17.04000000000002,
+          "x" : 436.49,
+          "y" : 520.94
+        }
+      ],
+      "pageIndex" : 0,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 13.439999999999998,
+        "width" : 385.586,
+        "x" : 67.944,
+        "y" : 507.02000000000004
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 13.439999999999998,
+          "width" : 385.586,
+          "x" : 67.944,
+          "y" : 507.02000000000004
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 22 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"X 3.5 CM) SHOWING\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "7D18BB14-71B4-47A0-83BA-C6365863AB6F",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.439999999999998,
+              "width" : 385.586,
+              "x" : 67.944,
+              "y" : 507.02000000000004
+            }
+          },
+          "score" : 0.9,
+          "summary" : "22 adjacent vector cells grouped into one region",
+          "text" : "X 3.5 CM) SHOWING"
+        },
+        {
+          "id" : "8C397F66-0F78-4C79-A504-FEC1A2C24FC8",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 15.586666666666668,
+              "width" : 516,
+              "x" : 48,
+              "y" : 529.9466666666667
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "X 3.5 CM) SHOWING"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "7D18BB14-71B4-47A0-83BA-C6365863AB6F",
+          "8C397F66-0F78-4C79-A504-FEC1A2C24FC8"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 22,
+      "id" : "9B79E947-5F6A-455A-B290-6E80348D0E2E",
+      "kind" : "vectorRegion",
+      "labelText" : "X 3.5 CM) SHOWING",
+      "memberBounds" : [
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.040000000000006,
+          "x" : 67.944,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.063999999999993,
+          "x" : 85.464,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.040000000000006,
+          "x" : 103.01,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.039999999999992,
+          "x" : 120.53,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.039999999999992,
+          "x" : 138.05,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.063999999999993,
+          "x" : 155.57,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.039999999999992,
+          "x" : 173.11,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.039999999999992,
+          "x" : 190.63,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.304000000000002,
+          "x" : 208.15,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.039999999999992,
+          "x" : 225.94,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.039999999999992,
+          "x" : 243.46,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.04000000000002,
+          "x" : 260.98,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.06400000000002,
+          "x" : 278.5,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.04000000000002,
+          "x" : 296.04,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.04000000000002,
+          "x" : 313.56,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.04000000000002,
+          "x" : 331.08,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.06400000000002,
+          "x" : 348.6,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.04000000000002,
+          "x" : 366.14,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 16.80000000000001,
+          "x" : 383.90000000000003,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.28000000000003,
+          "x" : 401.18,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 17.06400000000002,
+          "x" : 418.94,
+          "y" : 507.02000000000004
+        },
+        {
+          "height" : 13.439999999999998,
+          "width" : 16.80000000000001,
+          "x" : 436.73,
+          "y" : 507.02000000000004
+        }
+      ],
+      "pageIndex" : 0,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 96.98400000000004,
+        "width" : 86.90399999999994,
+        "x" : 489.79,
+        "y" : 534.89
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 96.98400000000004,
+          "width" : 86.90399999999994,
+          "x" : 489.79,
+          "y" : 534.89
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (86x96pt)."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "1D062BE0-2CD5-4189-BF83-DF351D38FB61",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector rectangle at (489, 534)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "1D062BE0-2CD5-4189-BF83-DF351D38FB61"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "328F9182-BCA4-4841-9072-8A89C7BD841E",
+      "kind" : "vectorRegion",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.65,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 74.664,
+        "width" : 75.38399999999999,
+        "x" : 12.96,
+        "y" : 31.224
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 74.664,
+          "width" : 75.38399999999999,
+          "x" : 12.96,
+          "y" : 31.224
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (75x74pt).",
+        "Associated label: \"House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "FD988CD3-5667-436B-8EAB-75937C2C7BA3",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector rectangle at (12, 31)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "FD988CD3-5667-436B-8EAB-75937C2C7BA3"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "E66625D5-3C65-4255-A155-6160F925E780",
+      "kind" : "vectorRegion",
+      "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.8,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 26.903999999999996,
+        "width" : 231.94,
+        "x" : 88.824,
+        "y" : 78.984
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 26.903999999999996,
+          "width" : 231.94,
+          "x" : 88.824,
+          "y" : 78.984
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (231x26pt).",
+        "Associated label: \"House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "4F76BDB5-75FE-4E3F-9146-1A7B67A66BD5",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector rectangle at (88, 78)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "4F76BDB5-75FE-4E3F-9146-1A7B67A66BD5"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "FEECD118-EB0E-4FEE-8CAC-80A1E3AA7821",
+      "kind" : "vectorRegion",
+      "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.8,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 26.903999999999996,
+        "width" : 259.05999999999995,
+        "x" : 321.24,
+        "y" : 78.984
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 26.903999999999996,
+          "width" : 259.05999999999995,
+          "x" : 321.24,
+          "y" : 78.984
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (259x26pt)."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "2066C959-E6A7-490F-85A3-68F06B6EB41A",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector rectangle at (321, 78)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "2066C959-E6A7-490F-85A3-68F06B6EB41A"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "08A2FF88-D4E4-406E-BB3C-9AE7386B3271",
+      "kind" : "vectorRegion",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.65,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 15.600000000000023,
+        "width" : 56.424,
+        "x" : 12.96,
+        "y" : 731.98
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 15.600000000000023,
+          "width" : 56.424,
+          "x" : 12.96,
+          "y" : 731.98
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 3 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "5DF03C8F-1F95-40C6-9C01-1D62A0E280C4",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.600000000000023,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 731.98
+            }
+          },
+          "score" : 0.9,
+          "summary" : "3 adjacent vector cells grouped into one region",
+          "text" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card"
+        },
+        {
+          "id" : "0CE652EC-014A-4FA6-B485-BF4B6A6A3511",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 757.5120000000001
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "0CE652EC-014A-4FA6-B485-BF4B6A6A3511",
+          "5DF03C8F-1F95-40C6-9C01-1D62A0E280C4"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 3,
+      "id" : "8CC4AA79-B130-4064-A642-34F063ABC7E5",
+      "kind" : "vectorRegion",
+      "labelText" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card",
+      "memberBounds" : [
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.264,
+          "x" : 12.96,
+          "y" : 731.98
+        },
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.720000000000002,
+          "x" : 31.224,
+          "y" : 731.98
+        },
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.479999999999997,
+          "x" : 50.904,
+          "y" : 731.98
+        }
+      ],
+      "pageIndex" : 1,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 15.600000000000023,
+        "width" : 56.424,
+        "x" : 12.96,
+        "y" : 715.42
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 15.600000000000023,
+          "width" : 56.424,
+          "x" : 12.96,
+          "y" : 715.42
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 3 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"Indian Passport\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "704A70E2-655D-4CB4-929C-B158E57E7A32",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.600000000000023,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 715.42
+            }
+          },
+          "score" : 0.9,
+          "summary" : "3 adjacent vector cells grouped into one region",
+          "text" : "Indian Passport"
+        },
+        {
+          "id" : "B470B8D9-9813-42C3-82FF-73E8A8D4809E",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 740.6784
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "Indian Passport"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "704A70E2-655D-4CB4-929C-B158E57E7A32",
+          "B470B8D9-9813-42C3-82FF-73E8A8D4809E"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 3,
+      "id" : "21A7F673-F16D-4882-A989-EE07335A5C6D",
+      "kind" : "vectorRegion",
+      "labelText" : "Indian Passport",
+      "memberBounds" : [
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.264,
+          "x" : 12.96,
+          "y" : 715.42
+        },
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.720000000000002,
+          "x" : 31.224,
+          "y" : 715.42
+        },
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.479999999999997,
+          "x" : 50.904,
+          "y" : 715.42
+        }
+      ],
+      "pageIndex" : 1,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 15.384000000000015,
+        "width" : 56.424,
+        "x" : 12.96,
+        "y" : 699.07
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 15.384000000000015,
+          "width" : 56.424,
+          "x" : 12.96,
+          "y" : 699.07
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 3 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"Registered Sale Deed (In case of\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "85CC217F-FD23-4C66-896B-50CA77547882",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.384000000000015,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 699.07
+            }
+          },
+          "score" : 0.9,
+          "summary" : "3 adjacent vector cells grouped into one region",
+          "text" : "Registered Sale Deed (In case of"
+        },
+        {
+          "id" : "0621334F-3CAD-410B-A757-B7C5D5C1CB9D",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 723.8448000000001
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "Registered Sale Deed (In case of"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "0621334F-3CAD-410B-A757-B7C5D5C1CB9D",
+          "85CC217F-FD23-4C66-896B-50CA77547882"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 3,
+      "id" : "955E920C-697B-48D2-93B2-F1793552C5EB",
+      "kind" : "vectorRegion",
+      "labelText" : "Registered Sale Deed (In case of",
+      "memberBounds" : [
+        {
+          "height" : 15.384000000000015,
+          "width" : 18.264,
+          "x" : 12.96,
+          "y" : 699.07
+        },
+        {
+          "height" : 15.384000000000015,
+          "width" : 18.720000000000002,
+          "x" : 31.224,
+          "y" : 699.07
+        },
+        {
+          "height" : 15.384000000000015,
+          "width" : 18.479999999999997,
+          "x" : 50.904,
+          "y" : 699.07
+        }
+      ],
+      "pageIndex" : 1,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 15.600000000000023,
+        "width" : 56.424,
+        "x" : 12.96,
+        "y" : 682.51
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 15.600000000000023,
+          "width" : 56.424,
+          "x" : 12.96,
+          "y" : 682.51
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 3 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"ownhouse)\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "68375DAA-F2A7-4E28-93A5-F08FDEFCDA1E",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.600000000000023,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 682.51
+            }
+          },
+          "score" : 0.9,
+          "summary" : "3 adjacent vector cells grouped into one region",
+          "text" : "ownhouse)"
+        },
+        {
+          "id" : "B2B7F6E6-DA63-49CD-B2D4-79CF6FC06475",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 707.0112
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "ownhouse)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "68375DAA-F2A7-4E28-93A5-F08FDEFCDA1E",
+          "B2B7F6E6-DA63-49CD-B2D4-79CF6FC06475"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 3,
+      "id" : "2FC9AC6D-6933-4E6B-9C06-BC4882E49D73",
+      "kind" : "vectorRegion",
+      "labelText" : "ownhouse)",
+      "memberBounds" : [
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.264,
+          "x" : 12.96,
+          "y" : 682.51
+        },
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.720000000000002,
+          "x" : 31.224,
+          "y" : 682.51
+        },
+        {
+          "height" : 15.600000000000023,
+          "width" : 18.479999999999997,
+          "x" : 50.904,
+          "y" : 682.51
+        }
+      ],
+      "pageIndex" : 1,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 15.360000000000014,
+        "width" : 56.904,
+        "x" : 12.96,
+        "y" : 666.19
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 15.360000000000014,
+          "width" : 56.904,
+          "x" : 12.96,
+          "y" : 666.19
+        }
+      },
+      "entryMode" : "characterGrid",
+      "evidence" : [
+        "Grouped 3 adjacent boxes into one character-entry region.",
+        "Repeated cell geometry supports a single logical entry area.",
+        "Associated label: \"(ii) Any Other document for Proof of residence: -\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "F9188983-C5BA-47FC-81B3-820C86374F9F",
+          "kind" : "repeatedPattern",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.360000000000014,
+              "width" : 56.904,
+              "x" : 12.96,
+              "y" : 666.19
+            }
+          },
+          "score" : 0.9,
+          "summary" : "3 adjacent vector cells grouped into one region",
+          "text" : "(ii) Any Other document for Proof of residence: -"
+        },
+        {
+          "id" : "A5774507-A7E1-4D69-B883-CB609F2C22C2",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 690.1776000000001
+            }
+          },
+          "summary" : "Label matched by page-space proximity",
+          "text" : "(ii) Any Other document for Proof of residence: -"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "A5774507-A7E1-4D69-B883-CB609F2C22C2",
+          "F9188983-C5BA-47FC-81B3-820C86374F9F"
+        ],
+        "independentGroups" : [
+          "relationship"
+        ],
+        "reasonCodes" : [
+          "lowGeometricAgreement",
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.31,
+        "state" : "abstain",
+        "supportScore" : 0.45
+      },
+      "groupMemberCount" : 3,
+      "id" : "BFFA7264-7B2D-44BA-8DBF-2FFF61F60AF2",
+      "kind" : "vectorRegion",
+      "labelText" : "(ii) Any Other document for Proof of residence: -",
+      "memberBounds" : [
+        {
+          "height" : 15.360000000000014,
+          "width" : 18.264,
+          "x" : 12.96,
+          "y" : 666.19
+        },
+        {
+          "height" : 15.360000000000014,
+          "width" : 19.200000000000006,
+          "x" : 31.224,
+          "y" : 666.19
+        },
+        {
+          "height" : 15.360000000000014,
+          "width" : 19.440000000000005,
+          "x" : 50.424,
+          "y" : 666.19
+        }
+      ],
+      "pageIndex" : 1,
+      "score" : 0.9,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 31.91999999999996,
+        "width" : 181.50999999999993,
+        "x" : 409.82,
+        "y" : 666.19
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 31.91999999999996,
+          "width" : 181.50999999999993,
+          "x" : 409.82,
+          "y" : 666.19
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (181x31pt)."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "4B6E62AF-1BEB-420E-98A8-C2F2E2139BE9",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector rectangle at (409, 666)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "4B6E62AF-1BEB-420E-98A8-C2F2E2139BE9"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "F5CE6FE9-A569-4C4E-97E7-938EC2FBA429",
+      "kind" : "vectorRegion",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.65,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 40.343999999999994,
+        "width" : 559.87,
+        "x" : 31.464000000000002,
+        "y" : 139.01
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 40.343999999999994,
+          "width" : 559.87,
+          "x" : 31.464000000000002,
+          "y" : 139.01
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (559x40pt).",
+        "Associated label: \"guardian will be required.\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "163D9061-DA7A-43E5-9DF1-B056FE56B956",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector rectangle at (31, 139)"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "163D9061-DA7A-43E5-9DF1-B056FE56B956"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "810A3629-DE1E-48FC-87CD-21BD8D4B0D4F",
+      "kind" : "vectorRegion",
+      "labelText" : "guardian will be required.",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.8,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 18,
+        "width" : 111.16999999999999,
+        "x" : 147.65,
+        "y" : 105.41
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 18,
+          "width" : 111.16999999999999,
+          "x" : 147.65,
+          "y" : 105.41
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector underline stroke detected (111pt).",
+        "Associated label: \"^ Submission of self-attested copy ofmentioneddocumentswill ensure speedy delivery of services.\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "77B4D8BA-2CD0-476D-AC77-B7EB8E6C780E",
+          "kind" : "underline",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector line stroke at y=105"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "77B4D8BA-2CD0-476D-AC77-B7EB8E6C780E"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "9F55D8BB-A4EC-43B9-984A-F84E1344CAE5",
+      "kind" : "vectorRegion",
+      "labelText" : "^ Submission of self-attested copy ofmentioneddocumentswill ensure speedy delivery of services.",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.75,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 18,
+        "width" : 139,
+        "x" : 259.3,
+        "y" : 105.41
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 18,
+          "width" : 139,
+          "x" : 259.3,
+          "y" : 105.41
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector underline stroke detected (139pt)."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "DDA34115-D86B-400A-86E2-5DF9C59389D3",
+          "kind" : "underline",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector line stroke at y=105"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "DDA34115-D86B-400A-86E2-5DF9C59389D3"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "83DBE938-4753-4E61-893C-3D36447635D4",
+      "kind" : "vectorRegion",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.6,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 18,
+        "width" : 159.41000000000003,
+        "x" : 431.93,
+        "y" : 105.41
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 18,
+          "width" : 159.41000000000003,
+          "x" : 431.93,
+          "y" : 105.41
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector underline stroke detected (159pt)."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "9E48B3CC-FC9B-479D-AB73-B69FA74B2151",
+          "kind" : "underline",
+          "origin" : "geometryExtraction",
+          "summary" : "Vector line stroke at y=105"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 1,
+        "conflict" : false,
+        "coverageScore" : 0.25,
+        "evidenceIDs" : [
+          "9E48B3CC-FC9B-479D-AB73-B69FA74B2151"
+        ],
+        "independentGroups" : [
+          "geometry"
+        ],
+        "reasonCodes" : [
+          "lowSupport",
+          "singleEvidenceFamily"
+        ],
+        "score" : 0.2625,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "CFAADA1C-D7A8-46CC-97A9-7677DAEC75EE",
+      "kind" : "vectorRegion",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.6,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 15.586666666666668,
+        "width" : 516,
+        "x" : 48,
+        "y" : 810.5066666666668
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 15.586666666666668,
+          "width" : 516,
+          "x" : 48,
+          "y" : 810.5066666666668
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "76A07453-6004-47B6-9B0B-C21EA7149F02",
+      "kind" : "textAnchored",
+      "labelText" : "Application Form for New Voters Form-6 FORM No._______________",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 639.6768000000001
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 639.6768000000001
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "756008F9-6925-4B45-A195-93CB0CC3ECB9",
+      "kind" : "textAnchored",
+      "labelText" : "(9) Category of disability, if any(Optional) Locomotive Visual If any other (Give description)________________________________________________________",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 572.3424
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 572.3424
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "E7BBF30C-7D6A-4F17-8419-18C6F50EDC52",
+      "kind" : "textAnchored",
+      "labelText" : "as under:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.25,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 538.6752000000001
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 538.6752000000001
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "1FFFB02A-9986-4674-BCCE-0F57B793A47A",
+      "kind" : "textAnchored",
+      "labelText" : "His\/her EPIC no.:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.25,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 471.34080000000006
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 471.34080000000006
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "874C51BC-C883-4AF7-BBE4-7FA3FAB2D0B0",
+      "kind" : "textAnchored",
+      "labelText" : "District ______________________________________ State\/UT _________________________",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 454.50720000000007
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 454.50720000000007
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "A86352F4-B6FD-4716-BBB9-359DB2F4AB0F",
+      "kind" : "textAnchored",
+      "labelText" : "(ii) I am ordinarily a resident at the address mentioned at Sr. No. 8(a) in Form 6 since________________ (mention monthand",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 370.33920000000006
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 370.33920000000006
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "3C38B87B-BE20-4B09-99CA-D74A6FD0CF00",
+      "kind" : "textAnchored",
+      "labelText" : "_____________________________(Name of the document) in support of age proof (Strike off, if not applicable).",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 303.00480000000005
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 303.00480000000005
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "FA2C69E8-C1D7-46D1-AD72-773B50A36AD1",
+      "kind" : "textAnchored",
+      "labelText" : "Date:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.25,
+      "status" : "suggested",
+      "suggestedFieldType" : "date"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 286.1712
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 286.1712
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "E7925495-2E44-4CCC-B8FA-4865B6346E91",
+      "kind" : "textAnchored",
+      "labelText" : "_______________",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 269.33760000000007
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 269.33760000000007
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "BE3C7F10-F896-4E22-84FD-EBC3C0B9F421",
+      "kind" : "textAnchored",
+      "labelText" : "Place:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.25,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 16.8336,
+        "width" : 516,
+        "x" : 48,
+        "y" : 252.50400000000002
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 1,
+        "rect" : {
+          "height" : 16.8336,
+          "width" : 516,
+          "x" : 48,
+          "y" : 252.50400000000002
+        }
+      },
+      "entryMode" : "signature",
+      "evidence" : [
+        "Text contains an underline-like blank marker.",
+        "No vector geometry was inspected."
+      ],
+      "evidenceItems" : [
+
+      ],
+      "fusion" : {
+        "agreementScore" : 0,
+        "conflict" : false,
+        "coverageScore" : 0,
+        "evidenceIDs" : [
+
+        ],
+        "independentGroups" : [
+
+        ],
+        "reasonCodes" : [
+          "noEvidence"
+        ],
+        "score" : 0,
+        "state" : "abstain",
+        "supportScore" : 0
+      },
+      "groupMemberCount" : 1,
+      "id" : "0557C424-CE4A-4FB6-AA8E-3C23D2537522",
+      "kind" : "textAnchored",
+      "labelText" : "______________ Signature of Applicant\/Left Hand Thumb Impression",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 1,
+      "score" : 0.45,
+      "status" : "suggested",
+      "suggestedFieldType" : "signature"
+    }
+  ],
+  "contractName" : "pdf-editor.browser-fixture",
+  "coordinates" : {
+    "contractName" : "pdf-editor.coordinates",
+    "generatedAt" : "2026-08-24T23:29:55Z",
+    "pages" : [
+      {
+        "pageIndex" : 0,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 90,
+            "unit" : "points"
+          },
+          "pageIndex" : 0,
+          "rect" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 1,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 180,
+            "unit" : "points"
+          },
+          "pageIndex" : 1,
+          "rect" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      }
+    ],
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+    "version" : {
+      "major" : 1,
+      "minor" : 0
+    }
+  },
+  "document" : {
+    "header" : {
+      "contractName" : "pdf-editor.document",
+      "generatedAt" : "2026-08-24T23:29:55Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "accessibility" : {
+        "hasReadingOrder" : true,
+        "hasTaggedContent" : false,
+        "notes" : [
+          "Reading order is derived from provider text extraction and is not an authored-tag guarantee.",
+          "PDF\/UA conformance and authored tag-tree preservation require a validator-backed lane."
+        ]
+      },
+      "annotationTypeCounts" : {
+
+      },
+      "attachments" : [
+
+      ],
+      "candidates" : [
+        {
+          "bounds" : {
+            "height" : 13.464000000000055,
+            "width" : 245.854,
+            "x" : 243.46,
+            "y" : 618.41
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.464000000000055,
+              "width" : 245.854,
+              "x" : 243.46,
+              "y" : 618.41
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 13 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"(1)(b) Name (In English in BLOCK LETTERS)\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "5DCB0CA8-B1AA-4DE6-A904-0E77F5AF3405",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 13.464000000000055,
+                  "width" : 245.854,
+                  "x" : 243.46,
+                  "y" : 618.41
+                }
+              },
+              "score" : 0.9,
+              "summary" : "13 adjacent vector cells grouped into one region",
+              "text" : "(1)(b) Name (In English in BLOCK LETTERS)"
+            },
+            {
+              "id" : "4FCBA7DF-3546-48AA-A464-BADF6ABFFE2D",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 15.586666666666668,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 639.0533333333334
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "(1)(b) Name (In English in BLOCK LETTERS)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "4FCBA7DF-3546-48AA-A464-BADF6ABFFE2D",
+              "5DCB0CA8-B1AA-4DE6-A904-0E77F5AF3405"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 13,
+          "id" : "D919E9D7-2B6F-44D5-8994-079A0391D47D",
+          "kind" : "vectorRegion",
+          "labelText" : "(1)(b) Name (In English in BLOCK LETTERS)",
+          "memberBounds" : [
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.039999999999992,
+              "x" : 243.46,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 260.98,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.06400000000002,
+              "x" : 278.5,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 296.04,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 313.56,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 331.08,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.06400000000002,
+              "x" : 348.6,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 366.14,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 383.90000000000003,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 401.42,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.06400000000002,
+              "x" : 418.94,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 436.49,
+              "y" : 618.41
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 16.584000000000003,
+              "x" : 472.73,
+              "y" : 618.41
+            }
+          ],
+          "pageIndex" : 0,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 13.440000000000055,
+            "width" : 476.35400000000004,
+            "x" : 12.96,
+            "y" : 604.49
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.440000000000055,
+              "width" : 476.35400000000004,
+              "x" : 12.96,
+              "y" : 604.49
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 27 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"First Name followed by Middle Name\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "7B627FA1-F2B3-4E25-943F-79AEF0A3F348",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 13.440000000000055,
+                  "width" : 476.35400000000004,
+                  "x" : 12.96,
+                  "y" : 604.49
+                }
+              },
+              "score" : 0.9,
+              "summary" : "27 adjacent vector cells grouped into one region",
+              "text" : "First Name followed by Middle Name"
+            },
+            {
+              "id" : "AAD1F4C8-CC5B-4DB1-9703-1AC204926378",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 15.586666666666668,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 623.4666666666667
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "First Name followed by Middle Name"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "7B627FA1-F2B3-4E25-943F-79AEF0A3F348",
+              "AAD1F4C8-CC5B-4DB1-9703-1AC204926378"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 27,
+          "id" : "E7951D97-4F6D-434C-B361-6E47D7120E09",
+          "kind" : "vectorRegion",
+          "labelText" : "First Name followed by Middle Name",
+          "memberBounds" : [
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.84,
+              "x" : 12.96,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.304000000000002,
+              "x" : 29.28,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 16.559999999999995,
+              "x" : 47.064,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 64.104,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.864000000000004,
+              "x" : 80.424,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 96.768,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 113.09,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 129.41,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.864000000000004,
+              "x" : 145.73,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 162.07,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.599999999999994,
+              "x" : 178.39000000000001,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 194.47,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.864000000000004,
+              "x" : 210.79,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 15.840000000000003,
+              "x" : 227.14000000000001,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.039999999999992,
+              "x" : 243.46,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 260.98,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.06400000000002,
+              "x" : 278.5,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 296.04,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 313.56,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 331.08,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.06400000000002,
+              "x" : 348.6,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 366.14,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 383.90000000000003,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 401.42,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.06400000000002,
+              "x" : 418.94,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 17.04000000000002,
+              "x" : 436.49,
+              "y" : 604.49
+            },
+            {
+              "height" : 13.440000000000055,
+              "width" : 16.584000000000003,
+              "x" : 472.73,
+              "y" : 604.49
+            }
+          ],
+          "pageIndex" : 0,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 13.464000000000055,
+            "width" : 210.07000000000002,
+            "x" : 243.46,
+            "y" : 520.94
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.464000000000055,
+              "width" : 210.07000000000002,
+              "x" : 243.46,
+              "y" : 520.94
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 12 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"PHOTOGRAPH (4.5 CM\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "CDB56905-1DC2-4406-ADD2-22140EF7E839",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 13.464000000000055,
+                  "width" : 210.07000000000002,
+                  "x" : 243.46,
+                  "y" : 520.94
+                }
+              },
+              "score" : 0.9,
+              "summary" : "12 adjacent vector cells grouped into one region",
+              "text" : "PHOTOGRAPH (4.5 CM"
+            },
+            {
+              "id" : "EE4CD6A7-D669-49A7-A258-F6D285563977",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 15.586666666666668,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 545.5333333333333
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "PHOTOGRAPH (4.5 CM"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "CDB56905-1DC2-4406-ADD2-22140EF7E839",
+              "EE4CD6A7-D669-49A7-A258-F6D285563977"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 12,
+          "id" : "24E96DC2-2F54-4878-A345-F96FC136DD38",
+          "kind" : "vectorRegion",
+          "labelText" : "PHOTOGRAPH (4.5 CM",
+          "memberBounds" : [
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.039999999999992,
+              "x" : 243.46,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 260.98,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.06400000000002,
+              "x" : 278.5,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 296.04,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 313.56,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 331.08,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.06400000000002,
+              "x" : 348.6,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 366.14,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 383.90000000000003,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 401.42,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.06400000000002,
+              "x" : 418.94,
+              "y" : 520.94
+            },
+            {
+              "height" : 13.464000000000055,
+              "width" : 17.04000000000002,
+              "x" : 436.49,
+              "y" : 520.94
+            }
+          ],
+          "pageIndex" : 0,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 13.439999999999998,
+            "width" : 385.586,
+            "x" : 67.944,
+            "y" : 507.02000000000004
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 13.439999999999998,
+              "width" : 385.586,
+              "x" : 67.944,
+              "y" : 507.02000000000004
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 22 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"X 3.5 CM) SHOWING\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "7D18BB14-71B4-47A0-83BA-C6365863AB6F",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 13.439999999999998,
+                  "width" : 385.586,
+                  "x" : 67.944,
+                  "y" : 507.02000000000004
+                }
+              },
+              "score" : 0.9,
+              "summary" : "22 adjacent vector cells grouped into one region",
+              "text" : "X 3.5 CM) SHOWING"
+            },
+            {
+              "id" : "8C397F66-0F78-4C79-A504-FEC1A2C24FC8",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 15.586666666666668,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 529.9466666666667
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "X 3.5 CM) SHOWING"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "7D18BB14-71B4-47A0-83BA-C6365863AB6F",
+              "8C397F66-0F78-4C79-A504-FEC1A2C24FC8"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 22,
+          "id" : "9B79E947-5F6A-455A-B290-6E80348D0E2E",
+          "kind" : "vectorRegion",
+          "labelText" : "X 3.5 CM) SHOWING",
+          "memberBounds" : [
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.040000000000006,
+              "x" : 67.944,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.063999999999993,
+              "x" : 85.464,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.040000000000006,
+              "x" : 103.01,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.039999999999992,
+              "x" : 120.53,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.039999999999992,
+              "x" : 138.05,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.063999999999993,
+              "x" : 155.57,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.039999999999992,
+              "x" : 173.11,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.039999999999992,
+              "x" : 190.63,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.304000000000002,
+              "x" : 208.15,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.039999999999992,
+              "x" : 225.94,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.039999999999992,
+              "x" : 243.46,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.04000000000002,
+              "x" : 260.98,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.06400000000002,
+              "x" : 278.5,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.04000000000002,
+              "x" : 296.04,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.04000000000002,
+              "x" : 313.56,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.04000000000002,
+              "x" : 331.08,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.06400000000002,
+              "x" : 348.6,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.04000000000002,
+              "x" : 366.14,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 16.80000000000001,
+              "x" : 383.90000000000003,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.28000000000003,
+              "x" : 401.18,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 17.06400000000002,
+              "x" : 418.94,
+              "y" : 507.02000000000004
+            },
+            {
+              "height" : 13.439999999999998,
+              "width" : 16.80000000000001,
+              "x" : 436.73,
+              "y" : 507.02000000000004
+            }
+          ],
+          "pageIndex" : 0,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 96.98400000000004,
+            "width" : 86.90399999999994,
+            "x" : 489.79,
+            "y" : 534.89
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 96.98400000000004,
+              "width" : 86.90399999999994,
+              "x" : 489.79,
+              "y" : 534.89
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (86x96pt)."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "1D062BE0-2CD5-4189-BF83-DF351D38FB61",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector rectangle at (489, 534)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "1D062BE0-2CD5-4189-BF83-DF351D38FB61"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "328F9182-BCA4-4841-9072-8A89C7BD841E",
+          "kind" : "vectorRegion",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.65,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 74.664,
+            "width" : 75.38399999999999,
+            "x" : 12.96,
+            "y" : 31.224
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 74.664,
+              "width" : 75.38399999999999,
+              "x" : 12.96,
+              "y" : 31.224
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (75x74pt).",
+            "Associated label: \"House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "FD988CD3-5667-436B-8EAB-75937C2C7BA3",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector rectangle at (12, 31)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "FD988CD3-5667-436B-8EAB-75937C2C7BA3"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "E66625D5-3C65-4255-A155-6160F925E780",
+          "kind" : "vectorRegion",
+          "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.8,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 26.903999999999996,
+            "width" : 231.94,
+            "x" : 88.824,
+            "y" : 78.984
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 26.903999999999996,
+              "width" : 231.94,
+              "x" : 88.824,
+              "y" : 78.984
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (231x26pt).",
+            "Associated label: \"House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "4F76BDB5-75FE-4E3F-9146-1A7B67A66BD5",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector rectangle at (88, 78)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "4F76BDB5-75FE-4E3F-9146-1A7B67A66BD5"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "FEECD118-EB0E-4FEE-8CAC-80A1E3AA7821",
+          "kind" : "vectorRegion",
+          "labelText" : "House\/Building\/Apartment No. Street\/Area\/Locality\/ Mohalla\/Road",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.8,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 26.903999999999996,
+            "width" : 259.05999999999995,
+            "x" : 321.24,
+            "y" : 78.984
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 26.903999999999996,
+              "width" : 259.05999999999995,
+              "x" : 321.24,
+              "y" : 78.984
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (259x26pt)."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "2066C959-E6A7-490F-85A3-68F06B6EB41A",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector rectangle at (321, 78)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "2066C959-E6A7-490F-85A3-68F06B6EB41A"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "08A2FF88-D4E4-406E-BB3C-9AE7386B3271",
+          "kind" : "vectorRegion",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.65,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 15.600000000000023,
+            "width" : 56.424,
+            "x" : 12.96,
+            "y" : 731.98
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.600000000000023,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 731.98
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 3 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "5DF03C8F-1F95-40C6-9C01-1D62A0E280C4",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 15.600000000000023,
+                  "width" : 56.424,
+                  "x" : 12.96,
+                  "y" : 731.98
+                }
+              },
+              "score" : 0.9,
+              "summary" : "3 adjacent vector cells grouped into one region",
+              "text" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card"
+            },
+            {
+              "id" : "0CE652EC-014A-4FA6-B485-BF4B6A6A3511",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 16.8336,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 757.5120000000001
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "0CE652EC-014A-4FA6-B485-BF4B6A6A3511",
+              "5DF03C8F-1F95-40C6-9C01-1D62A0E280C4"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 3,
+          "id" : "8CC4AA79-B130-4064-A642-34F063ABC7E5",
+          "kind" : "vectorRegion",
+          "labelText" : "Registered Rent Lease Deed (In case of tenant) 7. 1. 3. 5. 6. Aadhaar Card",
+          "memberBounds" : [
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.264,
+              "x" : 12.96,
+              "y" : 731.98
+            },
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.720000000000002,
+              "x" : 31.224,
+              "y" : 731.98
+            },
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.479999999999997,
+              "x" : 50.904,
+              "y" : 731.98
+            }
+          ],
+          "pageIndex" : 1,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 15.600000000000023,
+            "width" : 56.424,
+            "x" : 12.96,
+            "y" : 715.42
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.600000000000023,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 715.42
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 3 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"Indian Passport\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "704A70E2-655D-4CB4-929C-B158E57E7A32",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 15.600000000000023,
+                  "width" : 56.424,
+                  "x" : 12.96,
+                  "y" : 715.42
+                }
+              },
+              "score" : 0.9,
+              "summary" : "3 adjacent vector cells grouped into one region",
+              "text" : "Indian Passport"
+            },
+            {
+              "id" : "B470B8D9-9813-42C3-82FF-73E8A8D4809E",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 16.8336,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 740.6784
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "Indian Passport"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "704A70E2-655D-4CB4-929C-B158E57E7A32",
+              "B470B8D9-9813-42C3-82FF-73E8A8D4809E"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 3,
+          "id" : "21A7F673-F16D-4882-A989-EE07335A5C6D",
+          "kind" : "vectorRegion",
+          "labelText" : "Indian Passport",
+          "memberBounds" : [
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.264,
+              "x" : 12.96,
+              "y" : 715.42
+            },
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.720000000000002,
+              "x" : 31.224,
+              "y" : 715.42
+            },
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.479999999999997,
+              "x" : 50.904,
+              "y" : 715.42
+            }
+          ],
+          "pageIndex" : 1,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 15.384000000000015,
+            "width" : 56.424,
+            "x" : 12.96,
+            "y" : 699.07
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.384000000000015,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 699.07
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 3 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"Registered Sale Deed (In case of\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "85CC217F-FD23-4C66-896B-50CA77547882",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 15.384000000000015,
+                  "width" : 56.424,
+                  "x" : 12.96,
+                  "y" : 699.07
+                }
+              },
+              "score" : 0.9,
+              "summary" : "3 adjacent vector cells grouped into one region",
+              "text" : "Registered Sale Deed (In case of"
+            },
+            {
+              "id" : "0621334F-3CAD-410B-A757-B7C5D5C1CB9D",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 16.8336,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 723.8448000000001
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "Registered Sale Deed (In case of"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "0621334F-3CAD-410B-A757-B7C5D5C1CB9D",
+              "85CC217F-FD23-4C66-896B-50CA77547882"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 3,
+          "id" : "955E920C-697B-48D2-93B2-F1793552C5EB",
+          "kind" : "vectorRegion",
+          "labelText" : "Registered Sale Deed (In case of",
+          "memberBounds" : [
+            {
+              "height" : 15.384000000000015,
+              "width" : 18.264,
+              "x" : 12.96,
+              "y" : 699.07
+            },
+            {
+              "height" : 15.384000000000015,
+              "width" : 18.720000000000002,
+              "x" : 31.224,
+              "y" : 699.07
+            },
+            {
+              "height" : 15.384000000000015,
+              "width" : 18.479999999999997,
+              "x" : 50.904,
+              "y" : 699.07
+            }
+          ],
+          "pageIndex" : 1,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 15.600000000000023,
+            "width" : 56.424,
+            "x" : 12.96,
+            "y" : 682.51
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.600000000000023,
+              "width" : 56.424,
+              "x" : 12.96,
+              "y" : 682.51
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 3 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"ownhouse)\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "68375DAA-F2A7-4E28-93A5-F08FDEFCDA1E",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 15.600000000000023,
+                  "width" : 56.424,
+                  "x" : 12.96,
+                  "y" : 682.51
+                }
+              },
+              "score" : 0.9,
+              "summary" : "3 adjacent vector cells grouped into one region",
+              "text" : "ownhouse)"
+            },
+            {
+              "id" : "B2B7F6E6-DA63-49CD-B2D4-79CF6FC06475",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 16.8336,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 707.0112
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "ownhouse)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "68375DAA-F2A7-4E28-93A5-F08FDEFCDA1E",
+              "B2B7F6E6-DA63-49CD-B2D4-79CF6FC06475"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 3,
+          "id" : "2FC9AC6D-6933-4E6B-9C06-BC4882E49D73",
+          "kind" : "vectorRegion",
+          "labelText" : "ownhouse)",
+          "memberBounds" : [
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.264,
+              "x" : 12.96,
+              "y" : 682.51
+            },
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.720000000000002,
+              "x" : 31.224,
+              "y" : 682.51
+            },
+            {
+              "height" : 15.600000000000023,
+              "width" : 18.479999999999997,
+              "x" : 50.904,
+              "y" : 682.51
+            }
+          ],
+          "pageIndex" : 1,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 15.360000000000014,
+            "width" : 56.904,
+            "x" : 12.96,
+            "y" : 666.19
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 15.360000000000014,
+              "width" : 56.904,
+              "x" : 12.96,
+              "y" : 666.19
+            }
+          },
+          "entryMode" : "characterGrid",
+          "evidence" : [
+            "Grouped 3 adjacent boxes into one character-entry region.",
+            "Repeated cell geometry supports a single logical entry area.",
+            "Associated label: \"(ii) Any Other document for Proof of residence: -\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "F9188983-C5BA-47FC-81B3-820C86374F9F",
+              "kind" : "repeatedPattern",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 15.360000000000014,
+                  "width" : 56.904,
+                  "x" : 12.96,
+                  "y" : 666.19
+                }
+              },
+              "score" : 0.9,
+              "summary" : "3 adjacent vector cells grouped into one region",
+              "text" : "(ii) Any Other document for Proof of residence: -"
+            },
+            {
+              "id" : "A5774507-A7E1-4D69-B883-CB609F2C22C2",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 1,
+                "rect" : {
+                  "height" : 16.8336,
+                  "width" : 516,
+                  "x" : 48,
+                  "y" : 690.1776000000001
+                }
+              },
+              "summary" : "Label matched by page-space proximity",
+              "text" : "(ii) Any Other document for Proof of residence: -"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "A5774507-A7E1-4D69-B883-CB609F2C22C2",
+              "F9188983-C5BA-47FC-81B3-820C86374F9F"
+            ],
+            "independentGroups" : [
+              "relationship"
+            ],
+            "reasonCodes" : [
+              "lowGeometricAgreement",
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.31,
+            "state" : "abstain",
+            "supportScore" : 0.45
+          },
+          "groupMemberCount" : 3,
+          "id" : "BFFA7264-7B2D-44BA-8DBF-2FFF61F60AF2",
+          "kind" : "vectorRegion",
+          "labelText" : "(ii) Any Other document for Proof of residence: -",
+          "memberBounds" : [
+            {
+              "height" : 15.360000000000014,
+              "width" : 18.264,
+              "x" : 12.96,
+              "y" : 666.19
+            },
+            {
+              "height" : 15.360000000000014,
+              "width" : 19.200000000000006,
+              "x" : 31.224,
+              "y" : 666.19
+            },
+            {
+              "height" : 15.360000000000014,
+              "width" : 19.440000000000005,
+              "x" : 50.424,
+              "y" : 666.19
+            }
+          ],
+          "pageIndex" : 1,
+          "score" : 0.9,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 31.91999999999996,
+            "width" : 181.50999999999993,
+            "x" : 409.82,
+            "y" : 666.19
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 31.91999999999996,
+              "width" : 181.50999999999993,
+              "x" : 409.82,
+              "y" : 666.19
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (181x31pt)."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "4B6E62AF-1BEB-420E-98A8-C2F2E2139BE9",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector rectangle at (409, 666)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "4B6E62AF-1BEB-420E-98A8-C2F2E2139BE9"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "F5CE6FE9-A569-4C4E-97E7-938EC2FBA429",
+          "kind" : "vectorRegion",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.65,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 40.343999999999994,
+            "width" : 559.87,
+            "x" : 31.464000000000002,
+            "y" : 139.01
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 40.343999999999994,
+              "width" : 559.87,
+              "x" : 31.464000000000002,
+              "y" : 139.01
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (559x40pt).",
+            "Associated label: \"guardian will be required.\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "163D9061-DA7A-43E5-9DF1-B056FE56B956",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector rectangle at (31, 139)"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "163D9061-DA7A-43E5-9DF1-B056FE56B956"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "810A3629-DE1E-48FC-87CD-21BD8D4B0D4F",
+          "kind" : "vectorRegion",
+          "labelText" : "guardian will be required.",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.8,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 18,
+            "width" : 111.16999999999999,
+            "x" : 147.65,
+            "y" : 105.41
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 18,
+              "width" : 111.16999999999999,
+              "x" : 147.65,
+              "y" : 105.41
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector underline stroke detected (111pt).",
+            "Associated label: \"^ Submission of self-attested copy ofmentioneddocumentswill ensure speedy delivery of services.\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "77B4D8BA-2CD0-476D-AC77-B7EB8E6C780E",
+              "kind" : "underline",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector line stroke at y=105"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "77B4D8BA-2CD0-476D-AC77-B7EB8E6C780E"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "9F55D8BB-A4EC-43B9-984A-F84E1344CAE5",
+          "kind" : "vectorRegion",
+          "labelText" : "^ Submission of self-attested copy ofmentioneddocumentswill ensure speedy delivery of services.",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.75,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 18,
+            "width" : 139,
+            "x" : 259.3,
+            "y" : 105.41
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 18,
+              "width" : 139,
+              "x" : 259.3,
+              "y" : 105.41
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector underline stroke detected (139pt)."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "DDA34115-D86B-400A-86E2-5DF9C59389D3",
+              "kind" : "underline",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector line stroke at y=105"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "DDA34115-D86B-400A-86E2-5DF9C59389D3"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "83DBE938-4753-4E61-893C-3D36447635D4",
+          "kind" : "vectorRegion",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.6,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 18,
+            "width" : 159.41000000000003,
+            "x" : 431.93,
+            "y" : 105.41
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 18,
+              "width" : 159.41000000000003,
+              "x" : 431.93,
+              "y" : 105.41
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector underline stroke detected (159pt)."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "9E48B3CC-FC9B-479D-AB73-B69FA74B2151",
+              "kind" : "underline",
+              "origin" : "geometryExtraction",
+              "summary" : "Vector line stroke at y=105"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 1,
+            "conflict" : false,
+            "coverageScore" : 0.25,
+            "evidenceIDs" : [
+              "9E48B3CC-FC9B-479D-AB73-B69FA74B2151"
+            ],
+            "independentGroups" : [
+              "geometry"
+            ],
+            "reasonCodes" : [
+              "lowSupport",
+              "singleEvidenceFamily"
+            ],
+            "score" : 0.2625,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "CFAADA1C-D7A8-46CC-97A9-7677DAEC75EE",
+          "kind" : "vectorRegion",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.6,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 15.586666666666668,
+            "width" : 516,
+            "x" : 48,
+            "y" : 810.5066666666668
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 15.586666666666668,
+              "width" : 516,
+              "x" : 48,
+              "y" : 810.5066666666668
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "76A07453-6004-47B6-9B0B-C21EA7149F02",
+          "kind" : "textAnchored",
+          "labelText" : "Application Form for New Voters Form-6 FORM No._______________",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 639.6768000000001
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 639.6768000000001
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "756008F9-6925-4B45-A195-93CB0CC3ECB9",
+          "kind" : "textAnchored",
+          "labelText" : "(9) Category of disability, if any(Optional) Locomotive Visual If any other (Give description)________________________________________________________",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 572.3424
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 572.3424
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "E7BBF30C-7D6A-4F17-8419-18C6F50EDC52",
+          "kind" : "textAnchored",
+          "labelText" : "as under:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.25,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 538.6752000000001
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 538.6752000000001
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "1FFFB02A-9986-4674-BCCE-0F57B793A47A",
+          "kind" : "textAnchored",
+          "labelText" : "His\/her EPIC no.:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.25,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 471.34080000000006
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 471.34080000000006
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "874C51BC-C883-4AF7-BBE4-7FA3FAB2D0B0",
+          "kind" : "textAnchored",
+          "labelText" : "District ______________________________________ State\/UT _________________________",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 454.50720000000007
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 454.50720000000007
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "A86352F4-B6FD-4716-BBB9-359DB2F4AB0F",
+          "kind" : "textAnchored",
+          "labelText" : "(ii) I am ordinarily a resident at the address mentioned at Sr. No. 8(a) in Form 6 since________________ (mention monthand",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 370.33920000000006
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 370.33920000000006
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "3C38B87B-BE20-4B09-99CA-D74A6FD0CF00",
+          "kind" : "textAnchored",
+          "labelText" : "_____________________________(Name of the document) in support of age proof (Strike off, if not applicable).",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 303.00480000000005
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 303.00480000000005
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "FA2C69E8-C1D7-46D1-AD72-773B50A36AD1",
+          "kind" : "textAnchored",
+          "labelText" : "Date:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.25,
+          "status" : "suggested",
+          "suggestedFieldType" : "date"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 286.1712
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 286.1712
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "E7925495-2E44-4CCC-B8FA-4865B6346E91",
+          "kind" : "textAnchored",
+          "labelText" : "_______________",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 269.33760000000007
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 269.33760000000007
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "BE3C7F10-F896-4E22-84FD-EBC3C0B9F421",
+          "kind" : "textAnchored",
+          "labelText" : "Place:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.25,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 16.8336,
+            "width" : 516,
+            "x" : 48,
+            "y" : 252.50400000000002
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 1,
+            "rect" : {
+              "height" : 16.8336,
+              "width" : 516,
+              "x" : 48,
+              "y" : 252.50400000000002
+            }
+          },
+          "entryMode" : "signature",
+          "evidence" : [
+            "Text contains an underline-like blank marker.",
+            "No vector geometry was inspected."
+          ],
+          "evidenceItems" : [
+
+          ],
+          "fusion" : {
+            "agreementScore" : 0,
+            "conflict" : false,
+            "coverageScore" : 0,
+            "evidenceIDs" : [
+
+            ],
+            "independentGroups" : [
+
+            ],
+            "reasonCodes" : [
+              "noEvidence"
+            ],
+            "score" : 0,
+            "state" : "abstain",
+            "supportScore" : 0
+          },
+          "groupMemberCount" : 1,
+          "id" : "0557C424-CE4A-4FB6-AA8E-3C23D2537522",
+          "kind" : "textAnchored",
+          "labelText" : "______________ Signature of Applicant\/Left Hand Thumb Impression",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 1,
+          "score" : 0.45,
+          "status" : "suggested",
+          "suggestedFieldType" : "signature"
+        }
+      ],
+      "fields" : [
+
+      ],
+      "links" : [
+
+      ],
+      "metadata" : {
+        "author" : "Ngawang Dorje Gindun",
+        "creationDate" : "23\/8\/2026, 9:40 PM",
+        "creator" : "Microsoft® Word 2016",
+        "keywords" : "",
+        "modificationDate" : "23\/8\/2026, 9:40 PM",
+        "producer" : "macOS Version 15.7.7 (Build 24G720) Quartz PDFContext",
+        "subject" : "",
+        "title" : ""
+      },
+      "outlines" : [
+
+      ],
+      "pages" : [
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 2321,
+          "cropBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 0,
+          "pageLabel" : "1",
+          "rotation" : 90,
+          "trimBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 3571,
+          "cropBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 1,
+          "pageLabel" : "2",
+          "rotation" : 180,
+          "trimBox" : {
+            "height" : 841.6800000000001,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      ],
+      "permissions" : {
+        "canAddAnnotations" : true,
+        "canCopy" : true,
+        "canModify" : true,
+        "canPrint" : true,
+        "isReadOnly" : false
+      },
+      "security" : {
+        "isEncrypted" : false,
+        "isLocked" : false,
+        "requiresPassword" : false
+      },
+      "source" : {
+        "byteCount" : 254106,
+        "fileName" : "rotated-form6-mixed.pdf",
+        "sha256" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177"
+      },
+      "warnings" : [
+
+      ]
+    }
+  },
+  "editSession" : {
+    "header" : {
+      "contractName" : "pdf-editor.edit-session",
+      "generatedAt" : "2026-08-24T23:29:55Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "operations" : [
+
+    ],
+    "reviews" : [
+
+    ],
+    "source" : {
+      "byteCount" : 254106,
+      "fileName" : "rotated-form6-mixed.pdf",
+      "sha256" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177"
+    }
+  },
+  "expectedFailure" : false,
+  "preflight" : {
+    "header" : {
+      "contractName" : "pdf-editor.preflight",
+      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "provider" : {
+        "capabilities" : [
+          "metadata-presence",
+          "embedded-data-counts",
+          "annotation-counts",
+          "network-boundary-counts",
+          "bounded-token-scan"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "version" : {
+        "major" : 1,
+        "minor" : 1
+      }
+    },
+    "payload" : {
+      "activeContent" : {
+        "executionAttempted" : false,
+        "possibleActionTokenCounts" : {
+          "additionalAction" : 0,
+          "javascript" : 0,
+          "launch" : 0,
+          "openAction" : 0
+        }
+      },
+      "annotations" : {
+        "byKind" : {
+
+        },
+        "coverage" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "totalCount" : 0,
+        "unknownCount" : 0
+      },
+      "attachments" : {
+        "attachmentCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "embeddedFileNameTreeCount" : 0,
+        "fileAttachmentCount" : 0,
+        "unknownCount" : 0
+      },
+      "coverage" : {
+        "annotations" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "attachments" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "metadata" : {
+          "reasonCodes" : [
+
+          ],
+          "state" : "observed"
+        },
+        "revisions" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "scripts" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        }
+      },
+      "embeddedData" : {
+        "attachmentCount" : 0,
+        "possibleTokenCounts" : {
+          "embeddedFiles" : 0,
+          "fileAttachment" : 0,
+          "richMedia" : 0,
+          "xfa" : 0
+        }
+      },
+      "findings" : [
+        {
+          "category" : "metadata",
+          "code" : "metadata.present",
+          "count" : 5,
+          "evidence" : "inspection",
+          "id" : "metadata-presence",
+          "reasonCodes" : [
+            "metadataValuesMayContainPersonalInformation"
+          ],
+          "severity" : "warning",
+          "state" : "observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded.attachments",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "embedded-attachments",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded-file-spec-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-embedded-file-spec-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "file-attachment-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-file-attachment-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "xfa-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-xfa-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "rich-media-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-rich-media-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.external-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-external",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.unsafe-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-unsafe",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-uri-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-uri-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-remote-goto-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-remote-goto-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-submit-form-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-submit-form-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-launch-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-launch-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-javascript-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-javascript-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-open-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-open-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-additional-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-additional-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "signature-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "security-signature-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "security.encryption",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "security-encryption",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "preflight",
+          "code" : "preflight.byte-scan",
+          "count" : 254106,
+          "evidence" : "boundedTokenScan",
+          "id" : "byte-scan-state",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "observed"
+        }
+      ],
+      "metadata" : {
+        "fields" : {
+          "author" : {
+            "present" : true
+          },
+          "creationDate" : {
+            "present" : true
+          },
+          "creator" : {
+            "present" : true
+          },
+          "keywords" : {
+            "present" : false
+          },
+          "modificationDate" : {
+            "present" : true
+          },
+          "producer" : {
+            "present" : true
+          },
+          "subject" : {
+            "present" : false
+          },
+          "title" : {
+            "present" : false
+          }
+        },
+        "rawValuesIncluded" : false
+      },
+      "networkBoundaries" : {
+        "externalURLCount" : 0,
+        "internalPageLinkCount" : 0,
+        "possibleActionTokenCounts" : {
+          "remoteGoTo" : 0,
+          "submitForm" : 0,
+          "uri" : 0
+        },
+        "safeExternalURLCount" : 0,
+        "unknownDestinationCount" : 0,
+        "unsafeExternalURLCount" : 0
+      },
+      "revisions" : {
+        "coverage" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "eofMarkerCount" : 1,
+        "hiddenContentState" : "unknown",
+        "incrementalUpdateCountEstimate" : 0,
+        "previousRevisionReferenceCount" : 0,
+        "startxrefCount" : 1
+      },
+      "sanitization" : {
+        "limits" : [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ],
+        "safeToClaimClean" : false,
+        "sourceUnchanged" : true,
+        "status" : "not-run",
+        "supportedModes" : [
+          "report-only",
+          "new-copy-required"
+        ]
+      },
+      "scripts" : {
+        "additionalActionCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        },
+        "executionAttempted" : false,
+        "javaScriptActionCount" : 0,
+        "launchActionCount" : 0,
+        "openActionCount" : 0,
+        "remoteGoToActionCount" : 0,
+        "submitFormActionCount" : 0,
+        "uriActionCount" : 0
+      },
+      "security" : {
+        "encrypted" : false,
+        "locked" : false,
+        "permissionsObserved" : true
+      },
+      "summary" : {
+        "activeContentCount" : 0,
+        "blockedCount" : 0,
+        "embeddedDataCount" : 0,
+        "findingCount" : 18,
+        "metadataFieldCount" : 5,
+        "networkBoundaryCount" : 0,
+        "unknownCount" : 0,
+        "unknownCoverageCount" : 1,
+        "warningCount" : 1
+      },
+      "unknownCoverage" : {
+        "categories" : {
+          "annotations" : {
+            "reasonCodes" : [
+              "pdfkitPageAnnotationEnumeration"
+            ],
+            "state" : "observed"
+          },
+          "attachments" : {
+            "reasonCodes" : [
+              "embeddedPayloadBytesNotRetained"
+            ],
+            "state" : "observed"
+          },
+          "metadata" : {
+            "reasonCodes" : [
+
+            ],
+            "state" : "observed"
+          },
+          "revisions" : {
+            "reasonCodes" : [
+              "incrementalRevisionParserNotRun"
+            ],
+            "state" : "unknown"
+          },
+          "scripts" : {
+            "reasonCodes" : [
+              "tokenScanDoesNotProveReachability"
+            ],
+            "state" : "partial"
+          }
+        },
+        "unknownCount" : 1
+      }
+    }
+  },
+  "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+  "sourcePath" : "benchmark\/results\/rotation-corpus\/rotated-form6-mixed.pdf",
+  "status" : "inspected",
+  "validation" : {
+    "checks" : [
+      {
+        "id" : "D3E734AE-3D36-45D4-94D1-AE61EBB5EE75",
+        "kind" : "sourceDigest",
+        "message" : "Source bytes still match the inspected SHA-256.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "D7DFEEF6-0DDA-47FA-9462-1055E36AB3E0",
+        "kind" : "outputReopen",
+        "message" : "Export reopened in PDFKit with 2 page(s).",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "20880A9E-0FC1-4429-82CD-C620ADB238F6",
+        "kind" : "pageGeometry",
+        "message" : "Page count, page boxes, and rotations are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "C48083B1-360F-491A-AD6C-65134604C1D4",
+        "kind" : "nativeFields",
+        "message" : "Native field identity and geometry are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "7071569F-6C57-4A65-AB20-CA5C7F6D155A",
+        "kind" : "outsideRegionText",
+        "message" : "Extracted text outside the authorized operation regions is unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "0B03A32E-56D4-4091-9B99-AC3BF3E8AAA6",
+        "kind" : "visualDiff",
+        "message" : "Raster output is unchanged outside the authorized operation regions.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "083E6604-0EA0-4E89-BB6E-9B2D92CD9D13",
+        "kind" : "appliedOperations",
+        "message" : "Requested operations were represented in the reopened export.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      }
+    ],
+    "messages" : [
+
+    ],
+    "operationIDs" : [
+
+    ],
+    "outputDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+    "outputReopenable" : true,
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "forms",
+        "overlay",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+    "sourceUnchanged" : true,
+    "status" : "validated",
+    "validatedAt" : "2026-08-24T23:29:58Z"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

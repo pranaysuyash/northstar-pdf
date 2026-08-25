@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import {
   DEFAULT_TEMPLATE_MATCH_POLICY,
   calibrateDocumentClassPolicies,
@@ -41,6 +42,23 @@ for (const fixture of REVIEWED_TEMPLATE_FIXTURES) {
 
 const calibration = calibrateDocumentClassPolicies(REVIEWED_TEMPLATE_FIXTURES);
 assert.equal(calibration.passed, true, JSON.stringify(calibration, null, 2));
+const calibrationArtifact = JSON.parse(fs.readFileSync(
+  new URL("../benchmark/results/template-matching/2026-08-24-class-calibration.json", import.meta.url),
+  "utf8"
+));
+assert.equal(calibrationArtifact.evidence.fixtureCount, REVIEWED_TEMPLATE_FIXTURES.length);
+assert.deepEqual(calibrationArtifact.evidence.counts, report.counts);
+for (const [documentClass, artifactPolicy] of Object.entries(calibrationArtifact.policyByDocumentClass)) {
+  const executablePolicy = calibration.policyByDocumentClass[documentClass];
+  assert.ok(executablePolicy, `${documentClass} must exist in executable calibration`);
+  assert.equal(artifactPolicy.familyThreshold, Number(executablePolicy.familyThreshold.toFixed(4)));
+  assert.equal(artifactPolicy.ambiguityMargin, executablePolicy.ambiguityMargin);
+  assert.equal(artifactPolicy.familyAcceptance, executablePolicy.familyAcceptance);
+  assert.equal(artifactPolicy.calibrationStatus, executablePolicy.calibrationStatus);
+  assert.equal(artifactPolicy.evidence.positiveCaseCount, executablePolicy.evidence.positiveCaseCount);
+  assert.equal(artifactPolicy.evidence.negativeCaseCount, executablePolicy.evidence.negativeCaseCount);
+  assert.equal(artifactPolicy.evidence.falsePositiveGate, executablePolicy.evidence.falsePositiveGate);
+}
 assert.deepEqual(Object.keys(calibration.policyByDocumentClass), [
   "nativeWidget",
   "publicAcroForm",

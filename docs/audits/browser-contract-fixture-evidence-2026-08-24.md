@@ -3,7 +3,7 @@
 **Date:** 2026-08-24  
 **Surface:** local web companion, isolated Chrome, Playwright  
 **Evidence tier:** Tier 3/S1 integration evidence for browser contract emission  
-**Disposition:** emitted contracts across the current ten-entry manifest corpus, including explicit encrypted, malformed, OCR, and rotation recovery states; provider and fidelity gates remain open
+**Disposition:** historical pre-expansion baseline. This report emitted contracts across the ten-entry manifest snapshot used on 2026-08-24. The current 17-entry result, including scanned, hybrid, encrypted, malformed, rotated, and large fixtures, is recorded in [`browser-corpus-fidelity-evidence-2026-08-25.md`](browser-corpus-fidelity-evidence-2026-08-25.md).
 
 ## Purpose
 

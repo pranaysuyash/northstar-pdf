@@ -1,0 +1,63 @@
+{
+  "harness": "pdf-editor-native-browser-ihatepdf-experiment-semantic-parity",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "ledgerPath": "Tests/fixtures/ihatepdf_experiment_ledger.json",
+  "sourceDocument": "docs/competitor-ihatepdf-cv-exploration-2026-08-24.md",
+  "entryCount": 6,
+  "caseCount": 6,
+  "passed": true,
+  "mutationCount": 4,
+  "mutationsKilled": 4,
+  "browser": {
+    "baseURL": "http://127.0.0.1:4174/web/index.html",
+    "consoleErrors": [],
+    "pageErrors": []
+  },
+  "cases": [
+    {
+      "id": "E-001-C-001",
+      "experimentID": "E-001",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "E-002-C-001",
+      "experimentID": "E-002",
+      "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "E-003-C-001",
+      "experimentID": "E-003",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "E-004-C-001",
+      "experimentID": "E-004",
+      "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "E-005-C-001",
+      "experimentID": "E-005",
+      "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "id": "E-006-C-001",
+      "experimentID": "E-006",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "mismatchCount": 0,
+      "mismatches": []
+    }
+  ]
+}

@@ -1,7 +1,23 @@
 # PDF Editor Capability Matrix
 
-**Status:** Canonical capability boundary
-**Rule:** A capability is not advertised as supported unless its provider, fixture, validator, and failure behavior are all identified.
+**Status:** Canonical full-capability implementation and evidence matrix
+**Rule:** A capability is not advertised as supported unless its provider,
+fixture, validator, and failure behavior are all identified. This rule governs
+claims and activation, not whether the capability is built. Every row is a
+long-term implementation target for native, browser, companion, or provider
+adapters.
+
+Provider selection is governed by the separate
+[`provider capability system`](provider-capability-system-design.md). An
+installed engine is not automatically a supported capability. The registry must
+bind the exact artifact digest to a named measurement, license state, source
+limits, and revocation state before default routing.
+
+This matrix is both a build register and an evidence register. A row marked
+conditional, restricted, unknown, or unsupported describes the current provider
+and claim state for a document class. It does not remove that row from the
+long-term implementation target. Every such row must retain a contract,
+adapter, corpus, validator, privacy/security model, and recovery path.
 
 | Capability | Native macOS | Web companion | Shared contract | Evidence gate | Product claim |
 |---|---|---|---|---|---|
@@ -24,3 +40,4 @@
 | Tagged PDF | Conditional | Conditional | accessibility facts | RG-004-RG-005, RG-052 | No PDF/UA claim |
 | Reader accessibility | Native UI | DOM landmarks/text layer | status/focus semantics | RG-006-RG-007, RG-051, RG-056-RG-059 | Surface implemented, observation pending |
 | Export validation | PDFKit reopen checks | pdf-lib reopen checks | `ValidationReport` | RG-016-RG-020 | No unrestricted fidelity claim |
+| Provider admission and revocation | Registry and native negotiator | Registry and browser negotiator | `pdf-editor.provider-capability-*` | provider registry, license, measurement, bridge, and revocation gates | Contract slice implemented; installer and live companion remain open |

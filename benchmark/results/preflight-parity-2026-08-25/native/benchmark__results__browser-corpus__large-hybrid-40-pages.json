@@ -1,0 +1,4862 @@
+{
+  "candidates" : [
+
+  ],
+  "contractName" : "pdf-editor.browser-fixture",
+  "coordinates" : {
+    "contractName" : "pdf-editor.coordinates",
+    "generatedAt" : "2026-08-24T23:30:08Z",
+    "pages" : [
+      {
+        "pageIndex" : 0,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 0,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 1,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 1,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 2,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 2,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 3,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 3,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 4,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 4,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 5,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 5,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 6,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 6,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 7,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 7,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 8,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 8,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 9,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 9,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 10,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 10,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 11,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 11,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 12,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 12,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 13,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 13,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 14,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 14,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 15,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 15,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 16,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 16,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 17,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 17,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 18,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 18,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 19,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 19,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 20,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 20,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 21,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 21,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 22,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 22,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 23,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 23,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 24,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 24,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 25,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 25,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 26,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 26,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 27,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 27,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 28,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 28,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 29,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 29,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 30,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 30,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 31,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 31,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 32,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 32,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 33,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 33,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 34,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 34,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 35,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 35,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 36,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 36,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 37,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 37,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 38,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 38,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 39,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 39,
+          "rect" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      }
+    ],
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+    "version" : {
+      "major" : 1,
+      "minor" : 0
+    }
+  },
+  "document" : {
+    "header" : {
+      "contractName" : "pdf-editor.document",
+      "generatedAt" : "2026-08-24T23:30:08Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "accessibility" : {
+        "hasReadingOrder" : true,
+        "hasTaggedContent" : false,
+        "notes" : [
+          "Reading order is derived from provider text extraction and is not an authored-tag guarantee.",
+          "PDF\/UA conformance and authored tag-tree preservation require a validator-backed lane."
+        ]
+      },
+      "annotationTypeCounts" : {
+        "widget" : 120
+      },
+      "attachments" : [
+
+      ],
+      "candidates" : [
+
+      ],
+      "fields" : [
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.name#0",
+          "kind" : "text",
+          "name" : "applicant.name",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.notes#0",
+          "kind" : "text",
+          "name" : "applicant.notes",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.subscribe#0",
+          "kind" : "button",
+          "name" : "applicant.subscribe",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant.contact#0",
+          "kind" : "button",
+          "name" : "applicant.contact",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant.contact#0#1",
+          "kind" : "button",
+          "name" : "applicant.contact",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant.country#0",
+          "kind" : "choice",
+          "name" : "applicant.country",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+1.name#2",
+          "kind" : "text",
+          "name" : "applicant+1.name",
+          "pageIndex" : 2
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+1.notes#2",
+          "kind" : "text",
+          "name" : "applicant+1.notes",
+          "pageIndex" : 2
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+1.subscribe#2",
+          "kind" : "button",
+          "name" : "applicant+1.subscribe",
+          "pageIndex" : 2
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+1.contact#2",
+          "kind" : "button",
+          "name" : "applicant+1.contact",
+          "pageIndex" : 2
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+1.contact#2#1",
+          "kind" : "button",
+          "name" : "applicant+1.contact",
+          "pageIndex" : 2
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+1.country#2",
+          "kind" : "choice",
+          "name" : "applicant+1.country",
+          "pageIndex" : 2
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+2.name#4",
+          "kind" : "text",
+          "name" : "applicant+2.name",
+          "pageIndex" : 4
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+2.notes#4",
+          "kind" : "text",
+          "name" : "applicant+2.notes",
+          "pageIndex" : 4
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+2.subscribe#4",
+          "kind" : "button",
+          "name" : "applicant+2.subscribe",
+          "pageIndex" : 4
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+2.contact#4",
+          "kind" : "button",
+          "name" : "applicant+2.contact",
+          "pageIndex" : 4
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+2.contact#4#1",
+          "kind" : "button",
+          "name" : "applicant+2.contact",
+          "pageIndex" : 4
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+2.country#4",
+          "kind" : "choice",
+          "name" : "applicant+2.country",
+          "pageIndex" : 4
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+3.name#6",
+          "kind" : "text",
+          "name" : "applicant+3.name",
+          "pageIndex" : 6
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+3.notes#6",
+          "kind" : "text",
+          "name" : "applicant+3.notes",
+          "pageIndex" : 6
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+3.subscribe#6",
+          "kind" : "button",
+          "name" : "applicant+3.subscribe",
+          "pageIndex" : 6
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+3.contact#6",
+          "kind" : "button",
+          "name" : "applicant+3.contact",
+          "pageIndex" : 6
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+3.contact#6#1",
+          "kind" : "button",
+          "name" : "applicant+3.contact",
+          "pageIndex" : 6
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+3.country#6",
+          "kind" : "choice",
+          "name" : "applicant+3.country",
+          "pageIndex" : 6
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+4.name#8",
+          "kind" : "text",
+          "name" : "applicant+4.name",
+          "pageIndex" : 8
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+4.notes#8",
+          "kind" : "text",
+          "name" : "applicant+4.notes",
+          "pageIndex" : 8
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+4.subscribe#8",
+          "kind" : "button",
+          "name" : "applicant+4.subscribe",
+          "pageIndex" : 8
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+4.contact#8",
+          "kind" : "button",
+          "name" : "applicant+4.contact",
+          "pageIndex" : 8
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+4.contact#8#1",
+          "kind" : "button",
+          "name" : "applicant+4.contact",
+          "pageIndex" : 8
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+4.country#8",
+          "kind" : "choice",
+          "name" : "applicant+4.country",
+          "pageIndex" : 8
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+5.name#10",
+          "kind" : "text",
+          "name" : "applicant+5.name",
+          "pageIndex" : 10
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+5.notes#10",
+          "kind" : "text",
+          "name" : "applicant+5.notes",
+          "pageIndex" : 10
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+5.subscribe#10",
+          "kind" : "button",
+          "name" : "applicant+5.subscribe",
+          "pageIndex" : 10
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+5.contact#10",
+          "kind" : "button",
+          "name" : "applicant+5.contact",
+          "pageIndex" : 10
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+5.contact#10#1",
+          "kind" : "button",
+          "name" : "applicant+5.contact",
+          "pageIndex" : 10
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+5.country#10",
+          "kind" : "choice",
+          "name" : "applicant+5.country",
+          "pageIndex" : 10
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+6.name#12",
+          "kind" : "text",
+          "name" : "applicant+6.name",
+          "pageIndex" : 12
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+6.notes#12",
+          "kind" : "text",
+          "name" : "applicant+6.notes",
+          "pageIndex" : 12
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+6.subscribe#12",
+          "kind" : "button",
+          "name" : "applicant+6.subscribe",
+          "pageIndex" : 12
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+6.contact#12",
+          "kind" : "button",
+          "name" : "applicant+6.contact",
+          "pageIndex" : 12
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+6.contact#12#1",
+          "kind" : "button",
+          "name" : "applicant+6.contact",
+          "pageIndex" : 12
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+6.country#12",
+          "kind" : "choice",
+          "name" : "applicant+6.country",
+          "pageIndex" : 12
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+7.name#14",
+          "kind" : "text",
+          "name" : "applicant+7.name",
+          "pageIndex" : 14
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+7.notes#14",
+          "kind" : "text",
+          "name" : "applicant+7.notes",
+          "pageIndex" : 14
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+7.subscribe#14",
+          "kind" : "button",
+          "name" : "applicant+7.subscribe",
+          "pageIndex" : 14
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+7.contact#14",
+          "kind" : "button",
+          "name" : "applicant+7.contact",
+          "pageIndex" : 14
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+7.contact#14#1",
+          "kind" : "button",
+          "name" : "applicant+7.contact",
+          "pageIndex" : 14
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+7.country#14",
+          "kind" : "choice",
+          "name" : "applicant+7.country",
+          "pageIndex" : 14
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+8.name#16",
+          "kind" : "text",
+          "name" : "applicant+8.name",
+          "pageIndex" : 16
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+8.notes#16",
+          "kind" : "text",
+          "name" : "applicant+8.notes",
+          "pageIndex" : 16
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+8.subscribe#16",
+          "kind" : "button",
+          "name" : "applicant+8.subscribe",
+          "pageIndex" : 16
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+8.contact#16",
+          "kind" : "button",
+          "name" : "applicant+8.contact",
+          "pageIndex" : 16
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+8.contact#16#1",
+          "kind" : "button",
+          "name" : "applicant+8.contact",
+          "pageIndex" : 16
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+8.country#16",
+          "kind" : "choice",
+          "name" : "applicant+8.country",
+          "pageIndex" : 16
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+9.name#18",
+          "kind" : "text",
+          "name" : "applicant+9.name",
+          "pageIndex" : 18
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+9.notes#18",
+          "kind" : "text",
+          "name" : "applicant+9.notes",
+          "pageIndex" : 18
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+9.subscribe#18",
+          "kind" : "button",
+          "name" : "applicant+9.subscribe",
+          "pageIndex" : 18
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+9.contact#18",
+          "kind" : "button",
+          "name" : "applicant+9.contact",
+          "pageIndex" : 18
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+9.contact#18#1",
+          "kind" : "button",
+          "name" : "applicant+9.contact",
+          "pageIndex" : 18
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+9.country#18",
+          "kind" : "choice",
+          "name" : "applicant+9.country",
+          "pageIndex" : 18
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+10.name#20",
+          "kind" : "text",
+          "name" : "applicant+10.name",
+          "pageIndex" : 20
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+10.notes#20",
+          "kind" : "text",
+          "name" : "applicant+10.notes",
+          "pageIndex" : 20
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+10.subscribe#20",
+          "kind" : "button",
+          "name" : "applicant+10.subscribe",
+          "pageIndex" : 20
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+10.contact#20",
+          "kind" : "button",
+          "name" : "applicant+10.contact",
+          "pageIndex" : 20
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+10.contact#20#1",
+          "kind" : "button",
+          "name" : "applicant+10.contact",
+          "pageIndex" : 20
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+10.country#20",
+          "kind" : "choice",
+          "name" : "applicant+10.country",
+          "pageIndex" : 20
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+11.name#22",
+          "kind" : "text",
+          "name" : "applicant+11.name",
+          "pageIndex" : 22
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+11.notes#22",
+          "kind" : "text",
+          "name" : "applicant+11.notes",
+          "pageIndex" : 22
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+11.subscribe#22",
+          "kind" : "button",
+          "name" : "applicant+11.subscribe",
+          "pageIndex" : 22
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+11.contact#22",
+          "kind" : "button",
+          "name" : "applicant+11.contact",
+          "pageIndex" : 22
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+11.contact#22#1",
+          "kind" : "button",
+          "name" : "applicant+11.contact",
+          "pageIndex" : 22
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+11.country#22",
+          "kind" : "choice",
+          "name" : "applicant+11.country",
+          "pageIndex" : 22
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+12.name#24",
+          "kind" : "text",
+          "name" : "applicant+12.name",
+          "pageIndex" : 24
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+12.notes#24",
+          "kind" : "text",
+          "name" : "applicant+12.notes",
+          "pageIndex" : 24
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+12.subscribe#24",
+          "kind" : "button",
+          "name" : "applicant+12.subscribe",
+          "pageIndex" : 24
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+12.contact#24",
+          "kind" : "button",
+          "name" : "applicant+12.contact",
+          "pageIndex" : 24
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+12.contact#24#1",
+          "kind" : "button",
+          "name" : "applicant+12.contact",
+          "pageIndex" : 24
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+12.country#24",
+          "kind" : "choice",
+          "name" : "applicant+12.country",
+          "pageIndex" : 24
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+13.name#26",
+          "kind" : "text",
+          "name" : "applicant+13.name",
+          "pageIndex" : 26
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+13.notes#26",
+          "kind" : "text",
+          "name" : "applicant+13.notes",
+          "pageIndex" : 26
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+13.subscribe#26",
+          "kind" : "button",
+          "name" : "applicant+13.subscribe",
+          "pageIndex" : 26
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+13.contact#26",
+          "kind" : "button",
+          "name" : "applicant+13.contact",
+          "pageIndex" : 26
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+13.contact#26#1",
+          "kind" : "button",
+          "name" : "applicant+13.contact",
+          "pageIndex" : 26
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+13.country#26",
+          "kind" : "choice",
+          "name" : "applicant+13.country",
+          "pageIndex" : 26
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+14.name#28",
+          "kind" : "text",
+          "name" : "applicant+14.name",
+          "pageIndex" : 28
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+14.notes#28",
+          "kind" : "text",
+          "name" : "applicant+14.notes",
+          "pageIndex" : 28
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+14.subscribe#28",
+          "kind" : "button",
+          "name" : "applicant+14.subscribe",
+          "pageIndex" : 28
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+14.contact#28",
+          "kind" : "button",
+          "name" : "applicant+14.contact",
+          "pageIndex" : 28
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+14.contact#28#1",
+          "kind" : "button",
+          "name" : "applicant+14.contact",
+          "pageIndex" : 28
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+14.country#28",
+          "kind" : "choice",
+          "name" : "applicant+14.country",
+          "pageIndex" : 28
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+15.name#30",
+          "kind" : "text",
+          "name" : "applicant+15.name",
+          "pageIndex" : 30
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+15.notes#30",
+          "kind" : "text",
+          "name" : "applicant+15.notes",
+          "pageIndex" : 30
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+15.subscribe#30",
+          "kind" : "button",
+          "name" : "applicant+15.subscribe",
+          "pageIndex" : 30
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+15.contact#30",
+          "kind" : "button",
+          "name" : "applicant+15.contact",
+          "pageIndex" : 30
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+15.contact#30#1",
+          "kind" : "button",
+          "name" : "applicant+15.contact",
+          "pageIndex" : 30
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+15.country#30",
+          "kind" : "choice",
+          "name" : "applicant+15.country",
+          "pageIndex" : 30
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+16.name#32",
+          "kind" : "text",
+          "name" : "applicant+16.name",
+          "pageIndex" : 32
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+16.notes#32",
+          "kind" : "text",
+          "name" : "applicant+16.notes",
+          "pageIndex" : 32
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+16.subscribe#32",
+          "kind" : "button",
+          "name" : "applicant+16.subscribe",
+          "pageIndex" : 32
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+16.contact#32",
+          "kind" : "button",
+          "name" : "applicant+16.contact",
+          "pageIndex" : 32
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+16.contact#32#1",
+          "kind" : "button",
+          "name" : "applicant+16.contact",
+          "pageIndex" : 32
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+16.country#32",
+          "kind" : "choice",
+          "name" : "applicant+16.country",
+          "pageIndex" : 32
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+17.name#34",
+          "kind" : "text",
+          "name" : "applicant+17.name",
+          "pageIndex" : 34
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+17.notes#34",
+          "kind" : "text",
+          "name" : "applicant+17.notes",
+          "pageIndex" : 34
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+17.subscribe#34",
+          "kind" : "button",
+          "name" : "applicant+17.subscribe",
+          "pageIndex" : 34
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+17.contact#34",
+          "kind" : "button",
+          "name" : "applicant+17.contact",
+          "pageIndex" : 34
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+17.contact#34#1",
+          "kind" : "button",
+          "name" : "applicant+17.contact",
+          "pageIndex" : 34
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+17.country#34",
+          "kind" : "choice",
+          "name" : "applicant+17.country",
+          "pageIndex" : 34
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+18.name#36",
+          "kind" : "text",
+          "name" : "applicant+18.name",
+          "pageIndex" : 36
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+18.notes#36",
+          "kind" : "text",
+          "name" : "applicant+18.notes",
+          "pageIndex" : 36
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+18.subscribe#36",
+          "kind" : "button",
+          "name" : "applicant+18.subscribe",
+          "pageIndex" : 36
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+18.contact#36",
+          "kind" : "button",
+          "name" : "applicant+18.contact",
+          "pageIndex" : 36
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+18.contact#36#1",
+          "kind" : "button",
+          "name" : "applicant+18.contact",
+          "pageIndex" : 36
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+18.country#36",
+          "kind" : "choice",
+          "name" : "applicant+18.country",
+          "pageIndex" : 36
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+19.name#38",
+          "kind" : "text",
+          "name" : "applicant+19.name",
+          "pageIndex" : 38
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+19.notes#38",
+          "kind" : "text",
+          "name" : "applicant+19.notes",
+          "pageIndex" : 38
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant+19.subscribe#38",
+          "kind" : "button",
+          "name" : "applicant+19.subscribe",
+          "pageIndex" : 38
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+19.contact#38",
+          "kind" : "button",
+          "name" : "applicant+19.contact",
+          "pageIndex" : 38
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant+19.contact#38#1",
+          "kind" : "button",
+          "name" : "applicant+19.contact",
+          "pageIndex" : 38
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant+19.country#38",
+          "kind" : "choice",
+          "name" : "applicant+19.country",
+          "pageIndex" : 38
+        }
+      ],
+      "links" : [
+
+      ],
+      "metadata" : {
+        "author" : "",
+        "creationDate" : "",
+        "creator" : "",
+        "keywords" : "",
+        "modificationDate" : "",
+        "producer" : "",
+        "subject" : "",
+        "title" : ""
+      },
+      "outlines" : [
+
+      ],
+      "pages" : [
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 0,
+          "pageLabel" : "1",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 1,
+          "pageLabel" : "2",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 2,
+          "pageLabel" : "3",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 3,
+          "pageLabel" : "4",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 4,
+          "pageLabel" : "5",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 5,
+          "pageLabel" : "6",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 6,
+          "pageLabel" : "7",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 7,
+          "pageLabel" : "8",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 8,
+          "pageLabel" : "9",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 9,
+          "pageLabel" : "10",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 10,
+          "pageLabel" : "11",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 11,
+          "pageLabel" : "12",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 12,
+          "pageLabel" : "13",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 13,
+          "pageLabel" : "14",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 14,
+          "pageLabel" : "15",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 15,
+          "pageLabel" : "16",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 16,
+          "pageLabel" : "17",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 17,
+          "pageLabel" : "18",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 18,
+          "pageLabel" : "19",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 19,
+          "pageLabel" : "20",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 20,
+          "pageLabel" : "21",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 21,
+          "pageLabel" : "22",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 22,
+          "pageLabel" : "23",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 23,
+          "pageLabel" : "24",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 24,
+          "pageLabel" : "25",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 25,
+          "pageLabel" : "26",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 26,
+          "pageLabel" : "27",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 27,
+          "pageLabel" : "28",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 28,
+          "pageLabel" : "29",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 29,
+          "pageLabel" : "30",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 30,
+          "pageLabel" : "31",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 31,
+          "pageLabel" : "32",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 32,
+          "pageLabel" : "33",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 33,
+          "pageLabel" : "34",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 34,
+          "pageLabel" : "35",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 35,
+          "pageLabel" : "36",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 36,
+          "pageLabel" : "37",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 37,
+          "pageLabel" : "38",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 38,
+          "pageLabel" : "39",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 0,
+          "cropBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : false,
+          "pageIndex" : 39,
+          "pageLabel" : "40",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 700,
+            "width" : 1600,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      ],
+      "permissions" : {
+        "canAddAnnotations" : true,
+        "canCopy" : true,
+        "canModify" : true,
+        "canPrint" : true,
+        "isReadOnly" : false
+      },
+      "security" : {
+        "isEncrypted" : false,
+        "isLocked" : false,
+        "requiresPassword" : false
+      },
+      "source" : {
+        "byteCount" : 183549,
+        "fileName" : "large-hybrid-40-pages.pdf",
+        "sha256" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049"
+      },
+      "warnings" : [
+
+      ]
+    }
+  },
+  "editSession" : {
+    "header" : {
+      "contractName" : "pdf-editor.edit-session",
+      "generatedAt" : "2026-08-24T23:30:08Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "operations" : [
+
+    ],
+    "reviews" : [
+
+    ],
+    "source" : {
+      "byteCount" : 183549,
+      "fileName" : "large-hybrid-40-pages.pdf",
+      "sha256" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049"
+    }
+  },
+  "expectedFailure" : false,
+  "preflight" : {
+    "header" : {
+      "contractName" : "pdf-editor.preflight",
+      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "provider" : {
+        "capabilities" : [
+          "metadata-presence",
+          "embedded-data-counts",
+          "annotation-counts",
+          "network-boundary-counts",
+          "bounded-token-scan"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+      "version" : {
+        "major" : 1,
+        "minor" : 1
+      }
+    },
+    "payload" : {
+      "activeContent" : {
+        "executionAttempted" : false,
+        "possibleActionTokenCounts" : {
+          "additionalAction" : 0,
+          "javascript" : 0,
+          "launch" : 0,
+          "openAction" : 0
+        }
+      },
+      "annotations" : {
+        "byKind" : {
+          "widget" : 120
+        },
+        "coverage" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "totalCount" : 120,
+        "unknownCount" : 0
+      },
+      "attachments" : {
+        "attachmentCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "embeddedFileNameTreeCount" : 0,
+        "fileAttachmentCount" : 0,
+        "unknownCount" : 0
+      },
+      "coverage" : {
+        "annotations" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "attachments" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "metadata" : {
+          "reasonCodes" : [
+
+          ],
+          "state" : "observed"
+        },
+        "revisions" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "scripts" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        }
+      },
+      "embeddedData" : {
+        "attachmentCount" : 0,
+        "possibleTokenCounts" : {
+          "embeddedFiles" : 0,
+          "fileAttachment" : 0,
+          "richMedia" : 0,
+          "xfa" : 0
+        }
+      },
+      "findings" : [
+        {
+          "category" : "metadata",
+          "code" : "metadata.present",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "metadata-presence",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded.attachments",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "embedded-attachments",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded-file-spec-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-embedded-file-spec-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "file-attachment-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-file-attachment-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "xfa-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-xfa-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "rich-media-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-rich-media-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.external-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-external",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.unsafe-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-unsafe",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-uri-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-uri-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-remote-goto-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-remote-goto-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-submit-form-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-submit-form-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-launch-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-launch-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-javascript-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-javascript-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-open-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-open-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-additional-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-additional-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "signature-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "security-signature-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "security.encryption",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "security-encryption",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "preflight",
+          "code" : "preflight.byte-scan",
+          "count" : 183549,
+          "evidence" : "boundedTokenScan",
+          "id" : "byte-scan-state",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "observed"
+        }
+      ],
+      "metadata" : {
+        "fields" : {
+          "author" : {
+            "present" : false
+          },
+          "creationDate" : {
+            "present" : false
+          },
+          "creator" : {
+            "present" : false
+          },
+          "keywords" : {
+            "present" : false
+          },
+          "modificationDate" : {
+            "present" : false
+          },
+          "producer" : {
+            "present" : false
+          },
+          "subject" : {
+            "present" : false
+          },
+          "title" : {
+            "present" : false
+          }
+        },
+        "rawValuesIncluded" : false
+      },
+      "networkBoundaries" : {
+        "externalURLCount" : 0,
+        "internalPageLinkCount" : 0,
+        "possibleActionTokenCounts" : {
+          "remoteGoTo" : 0,
+          "submitForm" : 0,
+          "uri" : 0
+        },
+        "safeExternalURLCount" : 0,
+        "unknownDestinationCount" : 0,
+        "unsafeExternalURLCount" : 0
+      },
+      "revisions" : {
+        "coverage" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "eofMarkerCount" : 1,
+        "hiddenContentState" : "unknown",
+        "incrementalUpdateCountEstimate" : 0,
+        "previousRevisionReferenceCount" : 0,
+        "startxrefCount" : 1
+      },
+      "sanitization" : {
+        "limits" : [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ],
+        "safeToClaimClean" : false,
+        "sourceUnchanged" : true,
+        "status" : "not-run",
+        "supportedModes" : [
+          "report-only",
+          "new-copy-required"
+        ]
+      },
+      "scripts" : {
+        "additionalActionCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        },
+        "executionAttempted" : false,
+        "javaScriptActionCount" : 0,
+        "launchActionCount" : 0,
+        "openActionCount" : 0,
+        "remoteGoToActionCount" : 0,
+        "submitFormActionCount" : 0,
+        "uriActionCount" : 0
+      },
+      "security" : {
+        "encrypted" : false,
+        "locked" : false,
+        "permissionsObserved" : true
+      },
+      "summary" : {
+        "activeContentCount" : 0,
+        "blockedCount" : 0,
+        "embeddedDataCount" : 0,
+        "findingCount" : 18,
+        "metadataFieldCount" : 0,
+        "networkBoundaryCount" : 0,
+        "unknownCount" : 0,
+        "unknownCoverageCount" : 1,
+        "warningCount" : 0
+      },
+      "unknownCoverage" : {
+        "categories" : {
+          "annotations" : {
+            "reasonCodes" : [
+              "pdfkitPageAnnotationEnumeration"
+            ],
+            "state" : "observed"
+          },
+          "attachments" : {
+            "reasonCodes" : [
+              "embeddedPayloadBytesNotRetained"
+            ],
+            "state" : "observed"
+          },
+          "metadata" : {
+            "reasonCodes" : [
+
+            ],
+            "state" : "observed"
+          },
+          "revisions" : {
+            "reasonCodes" : [
+              "incrementalRevisionParserNotRun"
+            ],
+            "state" : "unknown"
+          },
+          "scripts" : {
+            "reasonCodes" : [
+              "tokenScanDoesNotProveReachability"
+            ],
+            "state" : "partial"
+          }
+        },
+        "unknownCount" : 1
+      }
+    }
+  },
+  "sourceDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+  "sourcePath" : "benchmark\/results\/browser-corpus\/large-hybrid-40-pages.pdf",
+  "status" : "inspected",
+  "validation" : {
+    "checks" : [
+      {
+        "id" : "CDAF7848-A36D-47C7-8AFA-3765B0D3964F",
+        "kind" : "sourceDigest",
+        "message" : "Source bytes still match the inspected SHA-256.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "030DB12F-1640-4712-9360-0FBBFE886DC2",
+        "kind" : "outputReopen",
+        "message" : "Export reopened in PDFKit with 40 page(s).",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "D2074237-C82A-4F93-A3FE-039A8CFEF08D",
+        "kind" : "pageGeometry",
+        "message" : "Page count, page boxes, and rotations are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "59007C8D-CA3A-4C87-A221-2D74AEB3C7E6",
+        "kind" : "nativeFields",
+        "message" : "Native field identity and geometry are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "55A4658E-92F1-49E9-9B6A-A0B25D7F6BD3",
+        "kind" : "outsideRegionText",
+        "message" : "Extracted text outside the authorized operation regions is unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "1889A838-2E82-432C-B5C8-D2550E9CCD1C",
+        "kind" : "visualDiff",
+        "message" : "Raster output is unchanged outside the authorized operation regions.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "9724E928-8501-4250-A290-9FD75EE99126",
+        "kind" : "appliedOperations",
+        "message" : "Requested operations were represented in the reopened export.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      }
+    ],
+    "messages" : [
+
+    ],
+    "operationIDs" : [
+
+    ],
+    "outputDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+    "outputReopenable" : true,
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "forms",
+        "overlay",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+    "sourceUnchanged" : true,
+    "status" : "validated",
+    "validatedAt" : "2026-08-24T23:30:32Z"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

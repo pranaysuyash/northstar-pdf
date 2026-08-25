@@ -100,27 +100,143 @@ function clipRectToPage(rect, pageBounds) {
   return normalizeRect([x1, y1, x2, y2]);
 }
 
+function median(values) {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((left, right) => left - right);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+}
+
+import { fuseCandidateEvidence } from "./pdf-evidence-fusion.mjs";
+
+/**
+ * Group vector cell rectangles into character-grid candidate groups.
+ *
+ * First-principles rule for a character-grid entry region:
+ *   - The cells must share the page-space row band (identical top/bottom
+ *     baseline within a sub-pixel tolerance). Cells with a different
+ *     baseline are from a different row.
+ *   - The cells must share cell-size signature (width AND height within a
+ *     tight tolerance). Cells with a different cell size are from a
+ *     sibling field at the same y position — joining them silently
+ *     expands the candidate bounds past the user's intended field.
+ *   - Within a row, inter-cell gaps must remain "regular": a large gap
+ *     that diverges sharply from the within-run median is a field
+ *     boundary, even if absolute distance is small.
+ *
+ * Tolerance notes:
+ *   - The 0.5 pt top/bottom tolerance is chosen so cells drawn by the same
+ *     PDF rasterization line up but a different row drawn slightly higher
+ *     is recognized as different.
+ *   - The 0.7 pt width / height tolerance is chosen so the natural
+ *     sub-pixel rounding of vector cells does NOT split a real grid, but
+ *     a sibling field drawn with a different cell width IS split out.
+ *     This is the mechanism the user asked for: "it could have noticed
+ *     missing lines on top and bottom" — we infer "missing lines" from
+ *     cell-size signature mismatch rather than expecting the original
+ *     PDF to author an explicit horizontal stroke per row.
+ */
 function adjacentGroups(rects) {
-  const sorted = [...rects].sort((left, right) => {
-    if (Math.abs(left.y - right.y) > 3) return right.y - left.y;
-    return left.x - right.x;
-  });
-  const groups = [];
-  for (const rect of sorted) {
-    const last = groups.at(-1);
-    const previous = last?.at(-1);
-    if (!previous) {
-      groups.push([rect]);
-      continue;
-    }
-    const sameRow = Math.abs(rect.y + rect.height / 2 - (previous.y + previous.height / 2))
-      <= Math.max(3, Math.min(rect.height, previous.height) * 0.5);
-    const gap = rect.x - (previous.x + previous.width);
-    const closeEnough = gap >= -1 && gap <= Math.max(8, Math.min(rect.width, previous.width) * 1.5);
-    if (sameRow && closeEnough) last.push(rect);
-    else groups.push([rect]);
+  if (!rects.length) return [];
+  // Stage 1: bucket by shared baseline. Cells sharing top/bottom/height
+  // within tolerance form a row band. Width is NOT used as a bucket key
+  // yet so that signature outliers do not orphan themselves; Stage 2
+  // splits within a band by cell-size signature.
+  const BANDS = { top: 0.5, bottom: 0.5, height: 0.7 };
+  const bands = [];
+  for (const cell of rects) {
+    const representative = bands.find((band) => band.cells.some((other) =>
+      Math.abs(cell.y - other.y) <= BANDS.top
+      && Math.abs((cell.y + cell.height) - (other.y + other.height)) <= BANDS.bottom
+      && Math.abs(cell.height - other.height) <= BANDS.height
+    ));
+    if (representative) representative.cells.push(cell);
+    else bands.push({ cells: [cell] });
   }
-  return groups.filter((group) => group.length >= 3);
+
+  // Stage 2: per band, walk cells left-to-right and split where the
+  // cell-size signature changes OR where a gap is markedly larger than
+  // the within-band median.
+  const WIDTH_TOL = 0.7;
+  const groups = [];
+  for (const band of bands) {
+    const sorted = [...band.cells].sort((left, right) => left.x - right.x);
+    // Identify maximal width-signature runs. A width-signature run is a
+    // maximal connected span of cells where each cell's width is within
+    // WIDTH_TOL of the prior cell AND each step's gap is below an
+    // absolute "obviously not adjacent" threshold.
+    const signatureRuns = [];
+    let current = [sorted[0]];
+    let currentWidth = sorted[0].width;
+    for (let index = 1; index < sorted.length; index += 1) {
+      const prev = current.at(-1);
+      const cell = sorted[index];
+      const gap = cell.x - (prev.x + prev.width);
+      const widthDelta = Math.abs(cell.width - currentWidth);
+      const fitsWidth = widthDelta <= WIDTH_TOL;
+      const fitsHeight = Math.abs(cell.height - prev.height) <= BANDS.height;
+      // Two cells share a width-signature when their widths are close AND
+      // they sit on adjacent pitch. A wide gap is a strong break signal
+      // even when widths match (different fields).
+      const continues = fitsWidth && fitsHeight && gap <= Math.max(8, prev.width * 0.6);
+      if (continues) current.push(cell);
+      else {
+        signatureRuns.push(current);
+        current = [cell];
+        currentWidth = cell.width;
+      }
+    }
+    signatureRuns.push(current);
+
+    // Stage 3: per width-signature run, sub-divide by gap pattern. A run
+    // contains one or more field-runs separated by gaps that diverge
+    // sharply from the median gap. Width-signature kept, the candidate
+    // really is in one row — the gap test only excludes outliers.
+    for (const signatureRun of signatureRuns) {
+      const sortedRun = [...signatureRun].sort((a, b) => a.x - b.x);
+      const fieldRuns = [];
+      let run = [sortedRun[0]];
+      let runGaps = [];
+      for (let index = 1; index < sortedRun.length; index += 1) {
+        const prev = run.at(-1);
+        const cell = sortedRun[index];
+        const gap = cell.x - (prev.x + prev.width);
+        if (run.length === 1) {
+          // First pair — adopt a small absolute heuristic so the seed is
+          // not classified as an outlier by the empty median.
+          const tight = gap >= -1 && gap <= Math.max(8, prev.width * 0.5);
+          if (tight) {
+            run.push(cell);
+            runGaps.push(gap);
+          } else {
+            fieldRuns.push(run);
+            run = [cell];
+            runGaps = [];
+          }
+          continue;
+        }
+        const medianGap = median(runGaps);
+        // The threshold is the larger of (a) 4× the median within-run gap
+        // — generous enough to absorb occasional segment gaps inside a
+        // real character entry — and (b) the same absolute token as the
+        // first-pair check.
+        const threshold = Math.max(medianGap * 4, 8, prev.width * 0.5);
+        if (gap >= -1 && gap <= threshold) {
+          run.push(cell);
+          runGaps.push(gap);
+        } else {
+          fieldRuns.push(run);
+          run = [cell];
+          runGaps = [];
+        }
+      }
+      fieldRuns.push(run);
+      for (const fieldRun of fieldRuns) {
+        if (fieldRun.length >= 3) groups.push(fieldRun);
+      }
+    }
+  }
+  return groups;
 }
 
 function nearestLabel(region, lines, maxDistance) {
@@ -128,7 +244,7 @@ function nearestLabel(region, lines, maxDistance) {
   let bestDistance = maxDistance;
   for (const line of lines) {
     const text = line.text.trim();
-    if (text.length < 2) continue;
+    if (text.length < 2 || !isLikelyFieldLabel(text)) continue;
     const left = line.rect;
     const isLeft = left.x + left.width <= region.x + 15
       && Math.abs(left.y + left.height / 2 - (region.y + region.height / 2)) < Math.max(region.height, 20);
@@ -162,6 +278,24 @@ function inferFieldType(text) {
   return "text";
 }
 
+// Proximity alone is not label semantics. Generic layout text such as
+// "Section:" and "Note:" is retained as document text but is a hard negative
+// for field-candidate association.
+function isLikelyFieldLabel(text) {
+  const normalized = String(text || "")
+    .toLowerCase()
+    .replaceAll("_", " ")
+    .replaceAll(".", " ")
+    .replaceAll(":", " ");
+  return [
+    "name", "address", "email", "phone", "tel", "date", "dob", "birth",
+    "signature", "sign", "ssn", "zip", "postal", "amount", "number",
+    "account", "agree", "check", "select", "choice", "gender", "relationship",
+    "city", "state", "country", "company", "employer", "license", "policy",
+    "claim", "reference", "id"
+  ].some((token) => new RegExp(`\\b${token}\\b`).test(normalized));
+}
+
 function entryMode(fieldType, grouped = false) {
   if (fieldType === "checkbox") return "checkbox";
   if (fieldType === "radio") return "radioGroup";
@@ -175,6 +309,7 @@ function candidate({ pageIndex, pageRotation, bounds, kind, score, status = "sug
     rect: bounds,
     coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: ((pageRotation % 360) + 360) % 360 }
   };
+  const normalizedEvidenceItems = evidenceItems.map((item) => ({ ...item, id: item.id || `evidence-${crypto.randomUUID()}` }));
   return {
     id: `candidate-${crypto.randomUUID()}`,
     pageIndex,
@@ -190,7 +325,17 @@ function candidate({ pageIndex, pageRotation, bounds, kind, score, status = "sug
     labelText,
     groupMemberCount,
     memberBounds,
-    evidenceItems: evidenceItems.map((item) => ({ ...item, id: item.id || `evidence-${crypto.randomUUID()}` })),
+    evidenceItems: normalizedEvidenceItems,
+    fusion: fuseCandidateEvidence({
+      signals: normalizedEvidenceItems.map((item) => ({
+        id: item.id,
+        kind: item.kind,
+        origin: item.origin,
+        providerID: item.provider?.id || null,
+        score: item.score ?? score,
+        region: item.region?.rect || null
+      }))
+    }),
     sourceDigest
   };
 }
@@ -320,6 +465,7 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
   for (const group of adjacentGroups(squareRects)) {
     const bounds = unionRects(group);
     const label = nearestLabel(bounds, lines, 160);
+    if (!label) continue;
     const labelText = label?.text || null;
     const fieldType = inferFieldType(labelText);
     found.push(candidate({
@@ -327,7 +473,7 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       pageRotation,
       bounds,
       kind: "vectorRegion",
-      score: label ? 0.90 : 0.62,
+      score: 0.90,
       status: fieldType === "checkbox" ? "unknown" : "suggested",
       fieldType,
       mode: entryMode(fieldType, true),
@@ -336,7 +482,7 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       memberBounds: group,
       evidence: [
         `Grouped ${group.length} adjacent vector cells into one entry region.`,
-        label ? `Associated label: "${labelText}"` : "No nearby label matched; review before applying."
+        `Associated label: "${labelText}"`
       ],
       evidenceItems: [
         { kind: "repeatedPattern", origin: "geometryExtraction", summary: `${group.length} adjacent vector cells grouped into one region`, region: { pageIndex, rect: bounds, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, text: labelText, score: label ? 0.90 : 0.62 },
@@ -351,14 +497,18 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
   for (const rect of squareRects) {
     if (isClaimed(rect)) continue;
     const label = nearestLabel(rect, lines, 120);
+    // An isolated square without label or grouping evidence is ambiguous
+    // page decoration. Do not promote it to an actionable checkbox review.
+    if (!label) continue;
+    if (rect.height < 8) continue;
     const labelText = label?.text || null;
     found.push(candidate({
       pageIndex,
       pageRotation,
       bounds: rect,
       kind: "vectorRegion",
-      score: label ? 0.85 : 0.52,
-      status: label ? "suggested" : "unknown",
+      score: 0.85,
+      status: "suggested",
       fieldType: "checkbox",
       mode: "checkbox",
       labelText,
@@ -366,10 +516,10 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       memberBounds: [rect],
       evidence: [
         `Vector checkbox-shaped rectangle detected (${Math.round(rect.width)}x${Math.round(rect.height)}pt).`,
-        label ? `Associated label: "${labelText}"` : "No nearby label matched; review before applying."
+        `Associated label: "${labelText}"`
       ],
       evidenceItems: [
-        { kind: "vectorRectangle", origin: "geometryExtraction", summary: `Checkbox-shaped vector square path at (${Math.round(rect.x)}, ${Math.round(rect.y)})`, region: { pageIndex, rect, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, score: label ? 0.85 : 0.52 },
+        { kind: "vectorRectangle", origin: "geometryExtraction", summary: `Checkbox-shaped vector square path at (${Math.round(rect.x)}, ${Math.round(rect.y)})`, region: { pageIndex, rect, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, score: 0.85 },
         ...labelAssociationEvidence({ label, pageIndex, pageRotation })
       ],
       sourceDigest
@@ -380,6 +530,11 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
   for (const rect of inputRects) {
     if (isClaimed(rect)) continue;
     const label = nearestLabel(rect, lines, 160);
+    // A large rectangle without any associated label is still ambiguous
+    // document geometry (for example a table cell or decorative panel). Keep
+    // it as raw provider evidence, but do not promote it to an editable
+    // suggestion without a semantic anchor.
+    if (!label) continue;
     const labelText = label?.text || null;
     const fieldType = inferFieldType(labelText);
     found.push(candidate({
@@ -387,16 +542,16 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       pageRotation,
       bounds: rect,
       kind: "vectorRegion",
-      score: label ? 0.80 : 0.65,
+      score: 0.80,
       fieldType,
       mode: entryMode(fieldType),
       labelText,
       evidence: [
         `Vector input rectangle detected (${Math.round(rect.width)}x${Math.round(rect.height)}pt).`,
-        label ? `Associated label: "${labelText}"` : "No nearby label matched; review before applying."
+        `Associated label: "${labelText}"`
       ],
       evidenceItems: [
-        { kind: "vectorRectangle", origin: "geometryExtraction", summary: `Vector rectangle at (${Math.round(rect.x)}, ${Math.round(rect.y)})`, region: { pageIndex, rect, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, score: label ? 0.80 : 0.65 },
+        { kind: "vectorRectangle", origin: "geometryExtraction", summary: `Vector rectangle at (${Math.round(rect.x)}, ${Math.round(rect.y)})`, region: { pageIndex, rect, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, score: 0.80 },
         ...labelAssociationEvidence({ label, pageIndex, pageRotation })
       ],
       sourceDigest
@@ -408,6 +563,10 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
     if (isClaimed(line)) continue;
     const region = { x: line.x, y: line.y, width: line.width, height: 18 };
     const label = nearestLabel(region, lines, 120);
+    // A bare horizontal rule is ambiguous: it may be a page border, table
+    // rule, or decoration. Without text association it is not sufficient
+    // evidence for an editable entry region.
+    if (!label) continue;
     const labelText = label?.text || null;
     const fieldType = inferFieldType(labelText);
     found.push(candidate({
@@ -415,16 +574,16 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       pageRotation,
       bounds: region,
       kind: "vectorRegion",
-      score: label ? 0.75 : 0.60,
+      score: 0.75,
       fieldType,
       mode: entryMode(fieldType),
       labelText,
       evidence: [
         `Vector underline stroke detected (${Math.round(line.width)}pt).`,
-        label ? `Associated label: "${labelText}"` : "No nearby label matched; review before applying."
+        `Associated label: "${labelText}"`
       ],
       evidenceItems: [
-        { kind: "vectorLine", origin: "geometryExtraction", summary: `Vector horizontal line at y=${Math.round(line.y)}`, region: { pageIndex, rect: line, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, score: label ? 0.75 : 0.60 },
+        { kind: "underline", origin: "geometryExtraction", summary: `Vector horizontal line at y=${Math.round(line.y)}`, region: { pageIndex, rect: line, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, score: 0.75 },
         ...labelAssociationEvidence({ label, pageIndex, pageRotation })
       ],
       sourceDigest
@@ -434,6 +593,7 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
 
   for (const line of lines) {
     if (!/[:：]$/.test(line.text) && !/_{3,}|\.{3,}$/.test(line.text)) continue;
+    if (!isLikelyFieldLabel(line.text)) continue;
     if (claimed.some((rect) => rectIntersects(rect, line.rect, 2))) continue;
     const whitespace = clipRectToPage({
       x: line.rect.x + line.rect.width + 8,

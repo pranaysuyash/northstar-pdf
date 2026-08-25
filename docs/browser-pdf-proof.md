@@ -1,11 +1,16 @@
 # Browser PDF.js + pdf-lib proof
 
 **Date:** 2026-08-24  
-**Surface:** browser-only local web surface at [`web/index.html`](../web/index.html)  
+**Surface:** browser local web surface at [`web/index.html`](../web/index.html)
 **Runtime:** PDF.js 4.2.67 for reading/inspection and pdf-lib 1.17.1 for bounded export  
-**Status:** bounded proof implemented and exercised against the existing corpus
+**Status:** lower-layer proof implemented and exercised against the existing
+corpus; the complete browser capability program remains active above this proof
 
 ## What this proves
+
+This is an implementation and evidence slice, not a product capability limit.
+The browser, native, companion, and hosted lanes must continue to project their
+results into the shared contracts as additional capability families are built.
 
 The browser web surface now runs this local-first path without uploading document
 bytes:
@@ -134,4 +139,7 @@ at another project by a concurrent session.
   mutations, and returns unknown when operation coordinates are missing or
   inconsistent. The next hardening step is an independent-viewer and
   object-level comparison, followed by a reviewed rotated, encrypted, scanned,
-  signed, malformed, and large-document corpus.
+  signed, malformed-object, and larger-resource corpus. The current bounded
+  expansion of scanned, rotated, encrypted, malformed-truncation, hybrid, and
+  40-page fixtures is recorded in
+  [`docs/audits/browser-corpus-fidelity-evidence-2026-08-25.md`](audits/browser-corpus-fidelity-evidence-2026-08-25.md).

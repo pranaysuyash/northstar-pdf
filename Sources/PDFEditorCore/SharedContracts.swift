@@ -250,6 +250,10 @@ public struct CandidateReviewDecision: Codable, Equatable, Hashable, Identifiabl
 public enum EditPayload: Codable, Equatable, Hashable, Sendable {
   case text(String)
   case characterGrid(text: String, cells: [PDFRect])
+  /// Source-bound evidence for a semantic text-run rewrite. The replacement
+  /// value stays in EditOperation.value and is never copied to recovery-safe
+  /// session metadata.
+  case textRunReplacement(originalTextHash: String, runID: String, fontFingerprint: String?)
   case boolean(Bool)
   case choice(String)
   /// A reviewed static choice mark. This is visual evidence, not an AcroForm widget.
@@ -264,6 +268,10 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
     case kind
     case text
     case characterGrid
+    case textRunReplacement
+    case textHash
+    case runID
+    case fontFingerprint
     case boolean
     case choice
     case assetID
@@ -275,6 +283,7 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
   private enum Kind: String, Codable {
     case text
     case characterGrid
+    case textRunReplacement
     case boolean
     case choice
     case choiceMark
@@ -294,6 +303,11 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
       try container.encode(Kind.characterGrid, forKey: .kind)
       try container.encode(text, forKey: .text)
       try container.encode(cells, forKey: .cells)
+    case .textRunReplacement(let originalTextHash, let runID, let fontFingerprint):
+      try container.encode(Kind.textRunReplacement, forKey: .kind)
+      try container.encode(originalTextHash, forKey: .textHash)
+      try container.encode(runID, forKey: .runID)
+      try container.encodeIfPresent(fontFingerprint, forKey: .fontFingerprint)
     case .boolean(let value):
       try container.encode(Kind.boolean, forKey: .kind)
       try container.encode(value, forKey: .boolean)
@@ -328,6 +342,12 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
       self = .characterGrid(
         text: try container.decode(String.self, forKey: .text),
         cells: try container.decode([PDFRect].self, forKey: .cells)
+      )
+    case .textRunReplacement:
+      self = .textRunReplacement(
+        originalTextHash: try container.decode(String.self, forKey: .textHash),
+        runID: try container.decode(String.self, forKey: .runID),
+        fontFingerprint: try container.decodeIfPresent(String.self, forKey: .fontFingerprint)
       )
     case .boolean:
       self = .boolean(try container.decode(Bool.self, forKey: .boolean))

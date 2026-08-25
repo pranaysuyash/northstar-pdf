@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-      "generatedAt": "2026-08-24T16:46:34.509Z",
+      "generatedAt": "2026-08-25T04:32:11.608Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -839,9 +839,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 0,
             "rect": {
@@ -872,9 +870,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 0,
             "rect": {
@@ -971,9 +967,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 1,
             "rect": {
@@ -1004,9 +998,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 1,
             "rect": {
@@ -1103,9 +1095,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 2,
             "rect": {
@@ -1136,9 +1126,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 2,
             "rect": {
@@ -1235,9 +1223,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 3,
             "rect": {
@@ -1268,9 +1254,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 3,
             "rect": {
@@ -1367,9 +1351,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 4,
             "rect": {
@@ -1400,9 +1382,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 4,
             "rect": {
@@ -1499,9 +1479,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 5,
             "rect": {
@@ -1532,9 +1510,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 5,
             "rect": {
@@ -1631,9 +1607,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 6,
             "rect": {
@@ -1664,9 +1638,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 6,
             "rect": {
@@ -1763,9 +1735,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 7,
             "rect": {
@@ -1796,9 +1766,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 7,
             "rect": {
@@ -1895,9 +1863,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 8,
             "rect": {
@@ -1928,9 +1894,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 8,
             "rect": {
@@ -2027,9 +1991,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 9,
             "rect": {
@@ -2060,9 +2022,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 9,
             "rect": {
@@ -2159,9 +2119,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 10,
             "rect": {
@@ -2192,9 +2150,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 10,
             "rect": {
@@ -2291,9 +2247,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 11,
             "rect": {
@@ -2324,9 +2278,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 11,
             "rect": {
@@ -2423,9 +2375,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 12,
             "rect": {
@@ -2456,9 +2406,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 12,
             "rect": {
@@ -2555,9 +2503,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 13,
             "rect": {
@@ -2588,9 +2534,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 13,
             "rect": {
@@ -2687,9 +2631,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 14,
             "rect": {
@@ -2720,9 +2662,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 14,
             "rect": {
@@ -2819,9 +2759,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 15,
             "rect": {
@@ -2852,9 +2790,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 15,
             "rect": {
@@ -2951,9 +2887,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 16,
             "rect": {
@@ -2984,9 +2918,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 16,
             "rect": {
@@ -3083,9 +3015,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 17,
             "rect": {
@@ -3116,9 +3046,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 17,
             "rect": {
@@ -3215,9 +3143,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 18,
             "rect": {
@@ -3248,9 +3174,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 18,
             "rect": {
@@ -3347,9 +3271,7 @@
             "height": 20
           },
           "value": "Yes",
-          "choices": [
-            "Yes"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 19,
             "rect": {
@@ -3380,9 +3302,7 @@
             "height": 20
           },
           "value": "Email",
-          "choices": [
-            "Email"
-          ],
+          "choices": [],
           "coordinate": {
             "pageIndex": 19,
             "rect": {
@@ -3437,2669 +3357,10 @@
           "fieldFlags": 0
         }
       ],
-      "candidates": [
-        {
-          "id": "candidate-6bfb8ee6-2542-488b-b373-dc22ef5d4dea",
-          "pageIndex": 0,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 0,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 0,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-d67efa1a-0bc3-4a76-8e9c-21ca66de9098"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-b9e64e8e-4179-4297-ac39-573ef9221390",
-          "pageIndex": 0,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 0,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 0,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-003e0389-6fd4-4cf3-89dd-4251bb5712b4"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-af1deda5-eb5c-4b98-a199-e9081bd3c704",
-          "pageIndex": 1,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 1,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 1,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-db6e9caf-94bf-4019-b78c-1964c20cb1d4"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-d114a8d0-e3b5-4f18-a225-e42529b9b67d",
-          "pageIndex": 1,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 1,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 1,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-97f79163-caac-40e8-845e-0d1e5bff6ca3"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-d21bf34b-18e7-42ec-b919-8fc8d5ab944c",
-          "pageIndex": 2,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 2,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 2,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-b28bd820-f203-43c5-82a2-509ef4fec520"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-3fffb8fa-3e3f-4a86-be8e-81500b5c0ba3",
-          "pageIndex": 2,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 2,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 2,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-d1ae5b4b-aac7-4dd6-9cba-51a0c8f08aec"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-92ff6e74-d17c-4b5e-87c2-26f69759d942",
-          "pageIndex": 3,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 3,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 3,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-b9ff16be-8fd5-425e-8a25-e632c8d239b6"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-7ba063d3-0b95-43cb-8b7a-3bf2436a8cef",
-          "pageIndex": 3,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 3,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 3,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-f1cddc9c-9405-48de-92a9-2affe9b33fd3"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-84f769c7-13b6-4df3-b984-ace1eb441426",
-          "pageIndex": 4,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 4,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 4,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-2e233a58-02cf-43da-b0b7-62232eacbb01"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-4534a4e9-8ddf-4f47-b8c9-ce9d5d6574d3",
-          "pageIndex": 4,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 4,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 4,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-ab3f879b-62a4-4bdf-9a39-fa04f158e206"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-92a304ae-ce29-4140-9711-48e9eac8bbc2",
-          "pageIndex": 5,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 5,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 5,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-cc44d45c-cfab-419c-938b-3b2b6aff9227"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-90ba3610-cdbd-4139-848e-0be356a427ca",
-          "pageIndex": 5,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 5,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 5,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-acaef074-ea45-426f-94bf-afb7de67e254"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-0241e07d-358c-48d8-ae56-71bdd2ba7fb7",
-          "pageIndex": 6,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 6,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 6,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-e8603c06-1919-4f17-84a1-e6733149fe0e"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-5bee8f67-6f88-4e86-ab31-bf1a85ebb071",
-          "pageIndex": 6,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 6,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 6,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-f851cc11-e812-4b09-ac98-3b2760bb27fb"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-eb1d04d3-14f3-4643-b2c9-411eff05df34",
-          "pageIndex": 7,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 7,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 7,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-4ec522e4-5173-4c69-bd04-07e6c1a7955c"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-db370df2-222a-4bbf-84e3-33b101ae77a8",
-          "pageIndex": 7,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 7,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 7,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-99d1275a-5ab9-42c5-9979-6db8401d2aa9"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-6fadb3f3-a678-4a1f-8890-6430bce8d26f",
-          "pageIndex": 8,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 8,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 8,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-1f5e9b6c-6e3e-452d-b8dc-bc64d8d72dcf"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-c0fff669-69f7-4a8e-a645-37c8826a2aef",
-          "pageIndex": 8,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 8,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 8,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-ebad8d19-24d0-479c-a599-e9c1b697717c"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-f123e631-403e-49bb-927f-b7d28dabad58",
-          "pageIndex": 9,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 9,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 9,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-2da9644a-5946-490f-904b-ac823099962d"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-0874ffeb-d249-49e8-be54-f558f3af61c4",
-          "pageIndex": 9,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 9,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 9,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-d8b730dc-5a6f-4c30-988f-293d7c0db33a"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-a37e0832-3237-4c31-b29d-66ec845afe46",
-          "pageIndex": 10,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 10,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 10,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-86299b62-9d42-4afe-b344-4db6eef547b4"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-102b519c-6f57-4252-ba36-08c4f9dc926d",
-          "pageIndex": 10,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 10,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 10,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-0c6030d7-e37f-4ad6-b80a-169a79812570"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-f80d8d4c-a9bb-4439-8aa7-50c887c65051",
-          "pageIndex": 11,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 11,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 11,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-d1157b44-efea-472c-8d76-f000d112ef35"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-69d0fcbc-76b1-4e16-a2ee-bb4fc02478c3",
-          "pageIndex": 11,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 11,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 11,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-faed55f0-288c-4d8d-b07b-f6f52977cc1f"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-45c55062-77cc-4233-add0-3926fd1cdd5a",
-          "pageIndex": 12,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 12,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 12,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-570c3445-3158-4600-953e-ef04e77c7d56"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-b94d5b5c-6cb8-4f52-bcbf-09c3faf5065e",
-          "pageIndex": 12,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 12,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 12,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-c99fe57b-79ea-4733-bae4-1f29ee39a926"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-702cce1d-d095-417a-831b-35d0dcfe9d65",
-          "pageIndex": 13,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 13,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 13,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-255cae1b-29a8-4ca4-b380-56516da7e031"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-9db653c3-9ba7-4c48-977f-ed0eaf33f9a8",
-          "pageIndex": 13,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 13,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 13,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-ee570df0-7041-47c1-864b-b1af2190ebd2"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-539e4dcd-961e-44e1-873d-8aaa6ff70850",
-          "pageIndex": 14,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 14,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 14,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-5a43650d-bae7-4f68-b241-a9aa607b3061"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-f36fd5d9-bd8d-4723-af49-60da49891d84",
-          "pageIndex": 14,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 14,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 14,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-61ca0887-02de-41f4-970c-975f6fbeff89"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-94bca663-96bc-4c84-9723-a2b176ce59c8",
-          "pageIndex": 15,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 15,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 15,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-560b4a6d-d3d2-473e-bee9-d4f057bd28d5"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-64b277a5-a864-4a41-8f4e-09310d6a67f2",
-          "pageIndex": 15,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 15,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 15,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-02299592-f9a9-44a5-b0f0-5ba02b0d630d"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-486a9053-784d-4b35-a7c7-760ff4a73604",
-          "pageIndex": 16,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 16,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 16,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-68a34cb0-5d5a-4d96-b406-46b41efbb3d6"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-d68fd48b-0708-478d-9574-1e7ec12f8cb4",
-          "pageIndex": 16,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 16,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 16,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-c7a7e0fc-45b7-4a5a-bad6-52142e427b89"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-9febe027-11da-4280-a577-d31b586233f7",
-          "pageIndex": 17,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 17,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 17,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-ab2012eb-255b-4947-a210-a2ef7f6c5268"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-1eaaaa01-9518-42be-96a5-28ab5bbecbfa",
-          "pageIndex": 17,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 17,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 17,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-de795afc-3277-4106-b24e-5caa45d8face"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-1d780a5b-7721-41d5-a032-63184966a474",
-          "pageIndex": 18,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 18,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 18,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-046839b0-0c2d-4568-b4ba-ec3a8621cea3"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-ba954048-cbe0-4277-b6b0-6326d15195c6",
-          "pageIndex": 18,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 18,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 18,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-186d0665-5a48-4a98-aa9a-65e671aeebfe"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-d265f7b1-874b-43c7-8914-f5249af2b2de",
-          "pageIndex": 19,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 20,
-            "height": 20
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (20x20pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 19,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 19,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 20,
-                  "height": 20
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-676dd49c-07e9-46a9-b4d5-b9b57729ba2b"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        },
-        {
-          "id": "candidate-0bf6b8f8-cbae-4352-b6e6-dc8c5e9ec51e",
-          "pageIndex": 19,
-          "bounds": {
-            "x": 1,
-            "y": 23,
-            "width": 218,
-            "height": 18
-          },
-          "kind": "vectorRegion",
-          "status": "suggested",
-          "score": 0.6,
-          "evidence": [
-            "Vector underline stroke detected (218pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 19,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 18
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "text",
-          "entryMode": "singleText",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [],
-          "evidenceItems": [
-            {
-              "kind": "vectorLine",
-              "origin": "geometryExtraction",
-              "summary": "Vector horizontal line at y=23",
-              "region": {
-                "pageIndex": 19,
-                "rect": {
-                  "x": 1,
-                  "y": 23,
-                  "width": 218,
-                  "height": 1
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.6,
-              "id": "evidence-e7cb9843-6d6d-43e2-9b41-75136b15e37f"
-            }
-          ],
-          "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-        }
+      "candidates": [],
+      "warnings": [
+        "No static blank-region candidate was inferred from text extraction."
       ],
-      "warnings": [],
       "links": [],
       "outlines": [],
       "metadata": {
@@ -6120,11 +3381,14 @@
         "isReadOnly": false
       },
       "attachments": [],
+      "annotationTypeCounts": {
+        "widget": 80
+      },
       "accessibility": {
         "hasTaggedContent": false,
         "hasReadingOrder": false,
         "notes": [
-          "Tagged-content and reading-order validation are outside this browser proof."
+          "Reading order is derived from PDF.js text extraction and is not an authored-tag guarantee."
         ]
       },
       "security": {
@@ -6141,7 +3405,7 @@
       "minor": 0
     },
     "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-    "generatedAt": "2026-08-24T16:46:34.509Z",
+    "generatedAt": "2026-08-25T04:32:11.608Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -6518,2668 +3782,668 @@
       }
     ]
   },
-  "candidates": [
-    {
-      "id": "candidate-6bfb8ee6-2542-488b-b373-dc22ef5d4dea",
-      "pageIndex": 0,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
+  "candidates": [],
+  "textRuns": [],
+  "preflight": {
+    "header": {
+      "contractName": "pdf-editor.preflight",
+      "version": {
+        "major": 1,
+        "minor": 1
       },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 0,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 0,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-d67efa1a-0bc3-4a76-8e9c-21ca66de9098"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "generatedAt": "2026-08-25T04:32:11.608Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
     },
-    {
-      "id": "candidate-b9e64e8e-4179-4297-ac39-573ef9221390",
-      "pageIndex": 0,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
+    "payload": {
+      "summary": {
+        "findingCount": 18,
+        "warningCount": 0,
+        "blockedCount": 0,
+        "unknownCount": 0,
+        "metadataFieldCount": 0,
+        "embeddedDataCount": 0,
+        "networkBoundaryCount": 0,
+        "activeContentCount": 0,
+        "unknownCoverageCount": 1
       },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 0,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 0,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+      "metadata": {
+        "fields": {
+          "title": {
+            "present": false
           },
-          "score": 0.6,
-          "id": "evidence-003e0389-6fd4-4cf3-89dd-4251bb5712b4"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-af1deda5-eb5c-4b98-a199-e9081bd3c704",
-      "pageIndex": 1,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 1,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 1,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+          "author": {
+            "present": false
           },
-          "score": 0.52,
-          "id": "evidence-db6e9caf-94bf-4019-b78c-1964c20cb1d4"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-d114a8d0-e3b5-4f18-a225-e42529b9b67d",
-      "pageIndex": 1,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 1,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 1,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+          "subject": {
+            "present": false
           },
-          "score": 0.6,
-          "id": "evidence-97f79163-caac-40e8-845e-0d1e5bff6ca3"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-d21bf34b-18e7-42ec-b919-8fc8d5ab944c",
-      "pageIndex": 2,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 2,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 2,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+          "creator": {
+            "present": false
           },
-          "score": 0.52,
-          "id": "evidence-b28bd820-f203-43c5-82a2-509ef4fec520"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-3fffb8fa-3e3f-4a86-be8e-81500b5c0ba3",
-      "pageIndex": 2,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 2,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 2,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+          "producer": {
+            "present": false
           },
-          "score": 0.6,
-          "id": "evidence-d1ae5b4b-aac7-4dd6-9cba-51a0c8f08aec"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-92ff6e74-d17c-4b5e-87c2-26f69759d942",
-      "pageIndex": 3,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 3,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 3,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+          "creationDate": {
+            "present": false
           },
-          "score": 0.52,
-          "id": "evidence-b9ff16be-8fd5-425e-8a25-e632c8d239b6"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-7ba063d3-0b95-43cb-8b7a-3bf2436a8cef",
-      "pageIndex": 3,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 3,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 3,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+          "modificationDate": {
+            "present": false
           },
-          "score": 0.6,
-          "id": "evidence-f1cddc9c-9405-48de-92a9-2affe9b33fd3"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-84f769c7-13b6-4df3-b984-ace1eb441426",
-      "pageIndex": 4,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 4,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "keywords": {
+            "present": false
+          }
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
+        "rawValuesIncluded": false
+      },
+      "embeddedData": {
+        "attachmentCount": 0,
+        "possibleTokenCounts": {
+          "embeddedFiles": 0,
+          "fileAttachment": 0,
+          "xfa": 0,
+          "richMedia": 0
         }
       },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+      "attachments": {
+        "attachmentCount": 0,
+        "fileAttachmentCount": 0,
+        "embeddedFileNameTreeCount": 0,
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
         }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 4,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-2e233a58-02cf-43da-b0b7-62232eacbb01"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-4534a4e9-8ddf-4f47-b8c9-ce9d5d6574d3",
-      "pageIndex": 4,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
       },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 4,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+      "annotations": {
+        "totalCount": 80,
+        "byKind": {
+          "widget": 80
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
         }
       },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 4,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-ab3f879b-62a4-4bdf-9a39-fa04f158e206"
+      "scripts": {
+        "javaScriptActionCount": 0,
+        "openActionCount": 0,
+        "additionalActionCount": 0,
+        "launchActionCount": 0,
+        "submitFormActionCount": 0,
+        "remoteGoToActionCount": 0,
+        "uriActionCount": 0,
+        "executionAttempted": false,
+        "coverage": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
         }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-92a304ae-ce29-4140-9711-48e9eac8bbc2",
-      "pageIndex": 5,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
       },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 5,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+      "revisions": {
+        "eofMarkerCount": 1,
+        "startxrefCount": 1,
+        "previousRevisionReferenceCount": 0,
+        "incrementalUpdateCountEstimate": 0,
+        "hiddenContentState": "unknown",
+        "coverage": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "coverage": {
+        "metadata": {
+          "state": "observed",
+          "reasonCodes": []
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 5,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-cc44d45c-cfab-419c-938b-3b2b6aff9227"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-90ba3610-cdbd-4139-848e-0be356a427ca",
-      "pageIndex": 5,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 5,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+        "attachments": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 5,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-acaef074-ea45-426f-94bf-afb7de67e254"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-0241e07d-358c-48d8-ae56-71bdd2ba7fb7",
-      "pageIndex": 6,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 6,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+        "annotations": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 6,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-e8603c06-1919-4f17-84a1-e6733149fe0e"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-5bee8f67-6f88-4e86-ab31-bf1a85ebb071",
-      "pageIndex": 6,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 6,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+        "scripts": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
+        "revisions": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
         }
       },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 6,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
+      "unknownCoverage": {
+        "categories": {
+          "metadata": {
+            "state": "observed",
+            "reasonCodes": []
           },
-          "score": 0.6,
-          "id": "evidence-f851cc11-e812-4b09-ac98-3b2760bb27fb"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-eb1d04d3-14f3-4643-b2c9-411eff05df34",
-      "pageIndex": 7,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 7,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "attachments": {
+            "state": "observed",
+            "reasonCodes": [
+              "embeddedPayloadBytesNotRetained"
+            ]
+          },
+          "annotations": {
+            "state": "observed",
+            "reasonCodes": [
+              "pdfjsAnnotationEnumeration"
+            ]
+          },
+          "scripts": {
+            "state": "partial",
+            "reasonCodes": [
+              "tokenScanDoesNotProveReachability"
+            ]
+          },
+          "revisions": {
+            "state": "unknown",
+            "reasonCodes": [
+              "incrementalRevisionParserNotRun"
+            ]
+          }
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
+        "unknownCount": 1
+      },
+      "networkBoundaries": {
+        "externalURLCount": 0,
+        "safeExternalURLCount": 0,
+        "unsafeExternalURLCount": 0,
+        "internalPageLinkCount": 0,
+        "unknownDestinationCount": 0,
+        "possibleActionTokenCounts": {
+          "uri": 0,
+          "remoteGoTo": 0,
+          "submitForm": 0
         }
       },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 7,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-4ec522e4-5173-4c69-bd04-07e6c1a7955c"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-db370df2-222a-4bbf-84e3-33b101ae77a8",
-      "pageIndex": 7,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 7,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+      "activeContent": {
+        "possibleActionTokenCounts": {
+          "javascript": 0,
+          "openAction": 0,
+          "additionalAction": 0,
+          "launch": 0
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
+        "executionAttempted": false
       },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
+      "security": {
+        "encrypted": false,
+        "locked": false,
+        "permissionsObserved": true
+      },
+      "sanitization": {
+        "status": "not-run",
+        "safeToClaimClean": false,
+        "sourceUnchanged": true,
+        "supportedModes": [
+          "report-only",
+          "new-copy-required"
+        ],
+        "limits": [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ]
+      },
+      "findings": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 7,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-99d1275a-5ab9-42c5-9979-6db8401d2aa9"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-6fadb3f3-a678-4a1f-8890-6430bce8d26f",
-      "pageIndex": 8,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 8,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "metadata-presence",
+          "category": "metadata",
+          "code": "metadata.present",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 8,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-1f5e9b6c-6e3e-452d-b8dc-bc64d8d72dcf"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-c0fff669-69f7-4a8e-a645-37c8826a2aef",
-      "pageIndex": 8,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 8,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "embedded-attachments",
+          "category": "embeddedData",
+          "code": "embedded.attachments",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 8,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-ebad8d19-24d0-479c-a599-e9c1b697717c"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-f123e631-403e-49bb-927f-b7d28dabad58",
-      "pageIndex": 9,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 9,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "embeddedData-embedded-file-spec-token",
+          "category": "embeddedData",
+          "code": "embedded-file-spec-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 9,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-2da9644a-5946-490f-904b-ac823099962d"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-0874ffeb-d249-49e8-be54-f558f3af61c4",
-      "pageIndex": 9,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 9,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "embeddedData-file-attachment-token",
+          "category": "embeddedData",
+          "code": "file-attachment-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 9,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-d8b730dc-5a6f-4c30-988f-293d7c0db33a"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-a37e0832-3237-4c31-b29d-66ec845afe46",
-      "pageIndex": 10,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 10,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "embeddedData-xfa-token",
+          "category": "embeddedData",
+          "code": "xfa-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 10,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-86299b62-9d42-4afe-b344-4db6eef547b4"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-102b519c-6f57-4252-ba36-08c4f9dc926d",
-      "pageIndex": 10,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 10,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "embeddedData-rich-media-token",
+          "category": "embeddedData",
+          "code": "rich-media-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 10,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-0c6030d7-e37f-4ad6-b80a-169a79812570"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-f80d8d4c-a9bb-4439-8aa7-50c887c65051",
-      "pageIndex": 11,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 11,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "network-external",
+          "category": "networkBoundary",
+          "code": "network.external-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 11,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-d1157b44-efea-472c-8d76-f000d112ef35"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-69d0fcbc-76b1-4e16-a2ee-bb4fc02478c3",
-      "pageIndex": 11,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 11,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "network-unsafe",
+          "category": "networkBoundary",
+          "code": "network.unsafe-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 11,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-faed55f0-288c-4d8d-b07b-f6f52977cc1f"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-45c55062-77cc-4233-add0-3926fd1cdd5a",
-      "pageIndex": 12,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 12,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "networkBoundary-network-uri-action-token",
+          "category": "networkBoundary",
+          "code": "network-uri-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 12,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-570c3445-3158-4600-953e-ef04e77c7d56"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-b94d5b5c-6cb8-4f52-bcbf-09c3faf5065e",
-      "pageIndex": 12,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 12,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "networkBoundary-network-remote-goto-token",
+          "category": "networkBoundary",
+          "code": "network-remote-goto-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 12,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-c99fe57b-79ea-4733-bae4-1f29ee39a926"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-702cce1d-d095-417a-831b-35d0dcfe9d65",
-      "pageIndex": 13,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 13,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "networkBoundary-network-submit-form-token",
+          "category": "networkBoundary",
+          "code": "network-submit-form-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 13,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-255cae1b-29a8-4ca4-b380-56516da7e031"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-9db653c3-9ba7-4c48-977f-ed0eaf33f9a8",
-      "pageIndex": 13,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 13,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "activeContent-active-launch-token",
+          "category": "activeContent",
+          "code": "active-launch-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 13,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-ee570df0-7041-47c1-864b-b1af2190ebd2"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-539e4dcd-961e-44e1-873d-8aaa6ff70850",
-      "pageIndex": 14,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 14,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "activeContent-active-javascript-token",
+          "category": "activeContent",
+          "code": "active-javascript-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 14,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-5a43650d-bae7-4f68-b241-a9aa607b3061"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-f36fd5d9-bd8d-4723-af49-60da49891d84",
-      "pageIndex": 14,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 14,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "activeContent-active-open-action-token",
+          "category": "activeContent",
+          "code": "active-open-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 14,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-61ca0887-02de-41f4-970c-975f6fbeff89"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-94bca663-96bc-4c84-9723-a2b176ce59c8",
-      "pageIndex": 15,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 15,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "activeContent-active-additional-action-token",
+          "category": "activeContent",
+          "code": "active-additional-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 15,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-560b4a6d-d3d2-473e-bee9-d4f057bd28d5"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-64b277a5-a864-4a41-8f4e-09310d6a67f2",
-      "pageIndex": 15,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 15,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
+          "id": "security-signature-token",
+          "category": "security",
+          "code": "signature-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
         {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 15,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-02299592-f9a9-44a5-b0f0-5ba02b0d630d"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-486a9053-784d-4b35-a7c7-760ff4a73604",
-      "pageIndex": 16,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 16,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "security-encryption",
+          "category": "security",
+          "code": "security.encryption",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
         },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
         {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
+          "id": "byte-scan-state",
+          "category": "preflight",
+          "code": "preflight.byte-scan",
+          "severity": "info",
+          "state": "observed",
+          "count": 39839,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
         }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 16,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-68a34cb0-5d5a-4d96-b406-46b41efbb3d6"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-d68fd48b-0708-478d-9574-1e7ec12f8cb4",
-      "pageIndex": 16,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 16,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 16,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-c7a7e0fc-45b7-4a5a-bad6-52142e427b89"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-9febe027-11da-4280-a577-d31b586233f7",
-      "pageIndex": 17,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 17,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 17,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-ab2012eb-255b-4947-a210-a2ef7f6c5268"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-1eaaaa01-9518-42be-96a5-28ab5bbecbfa",
-      "pageIndex": 17,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 17,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 17,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-de795afc-3277-4106-b24e-5caa45d8face"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-1d780a5b-7721-41d5-a032-63184966a474",
-      "pageIndex": 18,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 18,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 18,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-046839b0-0c2d-4568-b4ba-ec3a8621cea3"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-ba954048-cbe0-4277-b6b0-6326d15195c6",
-      "pageIndex": 18,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 18,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 18,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-186d0665-5a48-4a98-aa9a-65e671aeebfe"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-d265f7b1-874b-43c7-8914-f5249af2b2de",
-      "pageIndex": 19,
-      "bounds": {
-        "x": 0,
-        "y": 0,
-        "width": 20,
-        "height": 20
-      },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (20x20pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 19,
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 20,
-          "height": 20
-        }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 19,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 20,
-              "height": 20
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-676dd49c-07e9-46a9-b4d5-b9b57729ba2b"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
-    },
-    {
-      "id": "candidate-0bf6b8f8-cbae-4352-b6e6-dc8c5e9ec51e",
-      "pageIndex": 19,
-      "bounds": {
-        "x": 1,
-        "y": 23,
-        "width": 218,
-        "height": 18
-      },
-      "kind": "vectorRegion",
-      "status": "suggested",
-      "score": 0.6,
-      "evidence": [
-        "Vector underline stroke detected (218pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
-      "coordinate": {
-        "pageIndex": 19,
-        "rect": {
-          "x": 1,
-          "y": 23,
-          "width": 218,
-          "height": 18
-        },
-        "coordinateSpace": {
-          "unit": "points",
-          "origin": "lowerLeft",
-          "pageBox": "crop",
-          "rotationDegrees": 0
-        }
-      },
-      "suggestedFieldType": "text",
-      "entryMode": "singleText",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [],
-      "evidenceItems": [
-        {
-          "kind": "vectorLine",
-          "origin": "geometryExtraction",
-          "summary": "Vector horizontal line at y=23",
-          "region": {
-            "pageIndex": 19,
-            "rect": {
-              "x": 1,
-              "y": 23,
-              "width": 218,
-              "height": 1
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.6,
-          "id": "evidence-e7cb9843-6d6d-43e2-9b41-75136b15e37f"
-        }
-      ],
-      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71"
+      ]
     }
-  ],
+  },
+  "sessionProvenance": {
+    "header": {
+      "contractName": "pdf-editor.session-provenance",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sessionID": "75c25ffb-8380-4391-aabf-89dc70f8488c",
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "generatedAt": "2026-08-25T04:32:11.640Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "privacy": {
+        "sourceBytesIncluded": false,
+        "documentTextIncluded": false,
+        "ocrTextIncluded": false,
+        "fieldValuesIncluded": false,
+        "filenamesIncluded": false,
+        "URLsIncluded": false
+      },
+      "processing": {
+        "locality": "local-browser",
+        "sourceInput": "local-file-picker",
+        "dataEgress": "none",
+        "networkRequestCount": 0,
+        "companionRequestCount": 0
+      },
+      "ocr": {
+        "state": "not-used",
+        "providerIDs": [],
+        "processedPageCount": 0,
+        "recognizedTextRetained": false,
+        "recognizedBoundsRetained": false
+      },
+      "sourceRetention": {
+        "state": "in-memory-session",
+        "retainedUntilSessionEnd": true,
+        "deletion": "pending",
+        "sourceCopyCount": 1
+      },
+      "export": {
+        "state": "succeeded",
+        "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+        "outputDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+        "storage": "local-download",
+        "validation": "validated",
+        "outputReopenable": true,
+        "operationCount": 0,
+        "exporterID": "pdfjs-pdflib",
+        "validationProviderID": "pdfjs-pdflib"
+      }
+    }
+  },
+  "resourcePolicy": {
+    "header": {
+      "contractName": "pdf-editor.browser-resource-policy",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "generatedAt": "2026-08-25T04:32:11.608Z",
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "environment": {
+        "cpuLogicalCores": 14,
+        "deviceMemoryGB": 32,
+        "devicePixelRatio": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "connection": {
+          "effectiveType": "4g",
+          "saveData": false
+        },
+        "memory": {
+          "state": "available",
+          "usedJSHeapSize": 12099978,
+          "jsHeapSizeLimit": 4395630592
+        },
+        "storage": {
+          "state": "unknown",
+          "quotaBytes": null,
+          "usageBytes": null
+        },
+        "browserFamily": "Not=A?Brand"
+      },
+      "document": {
+        "byteCount": 39839,
+        "pageCount": 20,
+        "maxPageAreaPoints": 484704,
+        "maxPageDimensionPoints": 792,
+        "rotatedPageCount": 0,
+        "rasterPageCount": 20,
+        "selectableTextPageCount": 0,
+        "nativeFieldCount": 80,
+        "candidateCount": 0,
+        "maxImagePixelsPerPage": 0,
+        "hasAttachments": false,
+        "isEncrypted": false,
+        "isMalformed": false
+      },
+      "request": {
+        "renderMode": "reader",
+        "ocrRequested": false,
+        "batchRequested": false,
+        "highDPIRequested": false
+      },
+      "budgets": {
+        "render": {
+          "maxDevicePixelRatio": 3,
+          "maxCanvasPixels": 4362336,
+          "maxPagePixels": 4362336,
+          "maxPageScale": 3,
+          "maxConcurrentPages": 2,
+          "chunkPages": 2,
+          "yieldEveryMs": 16,
+          "workerCount": 2,
+          "allowHighDPI": false,
+          "reasons": [
+            "rasterPixelBudget"
+          ]
+        },
+        "ocr": {
+          "state": "deferred",
+          "enabled": false,
+          "maxConcurrentJobs": 2,
+          "maxPixelsPerPage": 12000000,
+          "maxPagesPerBatch": 4,
+          "maxBatchPixels": 48000000,
+          "yieldEveryMs": 16,
+          "cancellationTimeoutMs": 15000,
+          "requiresUserConfirmation": true,
+          "reasons": [
+            "ocrNeedsExplicitOptIn"
+          ]
+        },
+        "batch": {
+          "state": "deferred",
+          "enabled": false,
+          "maxDocuments": 50,
+          "maxTotalBytes": 500000000,
+          "maxTotalPages": 500,
+          "maxConcurrentDocuments": 2,
+          "checkpointEveryDocuments": 5,
+          "checkpointEveryPages": 20,
+          "reasons": [
+            "batchNeedsExplicitOptIn"
+          ]
+        },
+        "recovery": {
+          "checkpointRequired": true,
+          "retryCount": 2,
+          "backoffMs": 500,
+          "staleDigestRequired": true,
+          "resumeSupported": true,
+          "partialOutputAllowed": false,
+          "cancellationSupported": true,
+          "reasons": [
+            "checkpointRequired",
+            "cancellationCheckpoint",
+            "recoveryResumeFromDigest"
+          ]
+        }
+      },
+      "decisions": [
+        {
+          "id": "render",
+          "capability": "render",
+          "state": "limited",
+          "reasonCode": "rasterPixelBudget",
+          "evidence": {
+            "maxDevicePixelRatio": 3,
+            "maxCanvasPixels": 4362336
+          }
+        },
+        {
+          "id": "ocr",
+          "capability": "ocr",
+          "state": "deferred",
+          "reasonCode": "ocrNeedsExplicitOptIn",
+          "evidence": {
+            "maxPagesPerBatch": 4,
+            "maxPixelsPerPage": 12000000
+          }
+        },
+        {
+          "id": "batch",
+          "capability": "batch",
+          "state": "deferred",
+          "reasonCode": "batchNeedsExplicitOptIn",
+          "evidence": {
+            "maxDocuments": 50,
+            "maxTotalPages": 500
+          }
+        },
+        {
+          "id": "recovery",
+          "capability": "recovery",
+          "state": "limited",
+          "reasonCode": "checkpointRequired",
+          "evidence": {
+            "checkpointRequired": true,
+            "resumeSupported": true
+          }
+        }
+      ],
+      "safety": {
+        "contentLogged": false,
+        "networkAccessAttempted": false,
+        "sourceBytesMutated": false,
+        "partialOutputPromoted": false,
+        "cancellationSupported": true
+      }
+    }
+  },
   "editSession": {
     "header": {
       "contractName": "pdf-editor.edit-session",
@@ -9188,7 +4452,7 @@
         "minor": 0
       },
       "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
-      "generatedAt": "2026-08-24T16:46:34.509Z",
+      "generatedAt": "2026-08-25T04:32:11.608Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -9227,7 +4491,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "5df08ff9-84e7-4189-8a62-d44b4688fb95",
+        "id": "f9083491-3021-44c3-b12c-1c1a0482abc3",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -9235,7 +4499,7 @@
         "operationIDs": []
       },
       {
-        "id": "863b6711-7d61-4c57-b4a9-c2bed61f68c0",
+        "id": "30ba13d7-2f30-4aa1-8c63-38ed1664e80d",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 20 page(s).",
@@ -9243,7 +4507,7 @@
         "operationIDs": []
       },
       {
-        "id": "4886e8d8-1421-41fa-a274-bf275d5a81a6",
+        "id": "a01b1635-3b37-4403-9017-7c1dad93da9f",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -9251,7 +4515,7 @@
         "operationIDs": []
       },
       {
-        "id": "8eaa6f8b-6ada-41c3-9e30-86820f8befd3",
+        "id": "2b39f68d-8b88-4ab2-80c2-5bbbfe579329",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -9259,7 +4523,7 @@
         "operationIDs": []
       },
       {
-        "id": "1e48e09c-1831-45d9-8dc9-2295d5e4bbcf",
+        "id": "ed4380e8-9a5b-45b0-b3d0-757e93f54865",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -9267,23 +4531,47 @@
         "operationIDs": []
       },
       {
-        "id": "fe992a1b-4124-4b58-b120-14f94c81498b",
+        "id": "a9fc9711-8908-43cc-b68d-3f5325292b57",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
         "region": null,
-        "operationIDs": []
+        "operationIDs": [],
+        "metrics": {
+          "basis": "source-digest-equality",
+          "comparedPageCount": 0,
+          "changedPageCount": 0,
+          "operationCount": 0,
+          "operationIDs": [],
+          "sourcePageCount": 20
+        }
       },
       {
-        "id": "003bbff3-d20e-452e-a943-5f436f1d6e53",
+        "id": "bc481b01-89aa-4a97-89e7-d605c32cdfd3",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
         "region": null,
-        "operationIDs": []
+        "operationIDs": [],
+        "metrics": {
+          "basis": "source-digest-equality",
+          "comparedPageCount": 0,
+          "changedPageCount": 0,
+          "comparedPixelCount": 0,
+          "changedPixelCount": 0,
+          "outsidePixelRatio": 0,
+          "maximumChannelDelta": 0,
+          "scale": null,
+          "channelTolerance": null,
+          "maxAllowedOutsidePixelRatio": null,
+          "operationCount": 0,
+          "operationIDs": [],
+          "sourcePageCount": 20,
+          "renderedPageCount": 0
+        }
       },
       {
-        "id": "9806fcd9-4159-46a5-9a65-e31d5e212d27",
+        "id": "564a9e6c-0748-41eb-b0db-028758bad169",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -9306,7 +4594,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-24T16:46:34.536Z",
+    "validatedAt": "2026-08-25T04:32:11.633Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",

@@ -22,6 +22,12 @@ xcrun swiftc \
 
 "$BIN" "$OUTPUT_DIR/artifacts" > "$RESULT"
 
+# PDFKit can leave page widgets outside the catalog AcroForm field tree.
+# Repair only reachability, preserving all existing widget objects and values.
+find "$OUTPUT_DIR/artifacts" -type f -name '*.pdf' -print0 | while IFS= read -r -d '' pdf; do
+  python3 "$ROOT/benchmark/repair_acroform_widget_reachability.py" "$pdf" >/dev/null
+done
+
 jq -e '
   (.provider == "PDFKit") and
   (.widgetCount == 6) and

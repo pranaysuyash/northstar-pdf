@@ -397,3 +397,27 @@ The negative and mutation-sensitive evidence is recorded in
 [`docs/audits/contract-negative-test-evidence-2026-08-24.md`](audits/contract-negative-test-evidence-2026-08-24.md).
 
 The remaining proof is adapter-level: native and browser providers must be run against the same fixtures and must produce reports that satisfy the same invariants.
+
+## Session privacy and export provenance contract
+
+`pdf-editor.session-provenance` is the lifecycle-level contract above document
+preflight. It binds one session to one source digest and records:
+
+- processing locality and source input class;
+- data egress state, including runtime-only network activity;
+- OCR use, provider IDs, processed page count, and OCR retention flags;
+- source retention class, session-end retention, deletion state, and bounded
+  source-copy count;
+- export state, source/output digests, storage class, validation state, reopen
+  evidence, operation count, and exporter/validator IDs.
+
+The contract serializes explicit false privacy flags for source bytes, document
+text, OCR text, field values, filenames, and URLs. These fields make the
+zero-content policy machine-checkable; they do not carry any of those values.
+Unknown states remain explicit. Successful export requires output identity,
+validation, and reopen evidence. A stale digest, privacy leak flag,
+contradictory OCR state, or incomplete successful export is rejected.
+
+Native recovery envelopes carry the contract as `privacyProvenance`, while the
+browser fixture exposes `sessionProvenance`. The full evidence is in
+[`audits/session-privacy-provenance-evidence-2026-08-25.md`](audits/session-privacy-provenance-evidence-2026-08-25.md).

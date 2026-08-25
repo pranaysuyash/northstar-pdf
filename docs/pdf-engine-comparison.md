@@ -121,9 +121,10 @@ and legal decision.
 
 ## Recommendation
 
-**Proposed product direction:** make the native macOS shell primary and keep the
-browser path as a secondary surface. Keep the provider-neutral contracts and
-constrain the first release to:
+**Implementation sequencing direction:** make the native macOS shell primary and
+keep the browser path as a secondary surface for the current validated slice.
+Keep the provider-neutral contracts and sequence the first implementation slice
+through:
 
 1. Read and render PDFs locally.
 2. Detect and fill existing native fields.
@@ -131,8 +132,9 @@ constrain the first release to:
 4. Fill reviewed static regions using reversible overlays.
 5. Add annotations and bounded text/image placement.
 6. Export a new PDF copy and preserve the original bytes unchanged.
-7. Defer arbitrary existing-text reflow, broad object editing, and automatic
-   conversion of heuristic candidates into native fields.
+7. Continue arbitrary existing-text reflow, broad object editing, and automatic
+   conversion of reviewed candidates into native fields as separate active
+   implementation lanes with their own contracts and validators.
 
 This direction is **Proposed**, not accepted as an engine decision. PDFKit should
 be benchmarked for the native shell, while PDF.js plus pdf-lib remains the

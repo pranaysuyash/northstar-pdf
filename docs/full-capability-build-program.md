@@ -5,6 +5,39 @@
 **Scope:** Native macOS app, browser app, shared contracts, local companion
 providers, corpus evidence, and release claims
 
+**Full-capability rule:** Every capability expected from a serious PDF
+reader/editor remains an implementation target. Current provider support,
+licensing, resource limits, and evidence strength determine sequencing and
+runtime admission, never permanent scope.
+
+## Build obligation versus claim readiness
+
+The capability rows in this program have two independent axes:
+
+1. **Build obligation:** whether the native, browser, companion, hosted,
+   validator, fixture, recovery, and documentation work still has to be built.
+2. **Claim readiness:** whether the current provider and evidence can safely
+   expose that capability for a specific document class or make a user-facing
+   fidelity, security, legal, or accessibility claim.
+
+Every capability listed below remains an active build obligation, including
+arbitrary semantic text editing, font/glyph-preserving text-run replacement,
+OCR-derived editable text, web and multilingual OCR, handwriting abstention,
+permanent redaction, metadata and embedded-object sanitization,
+password/encryption policy, cryptographic signatures and validation, XFA,
+PDF/UA, independent-viewer and byte-level preservation evidence, raster parity,
+page graph operations, conversion, repair, recurring templates, companion
+lifecycle, collaboration, and synchronization.
+
+“Explicitly explored,” “not yet promoted,” “deferred,” “gated,” “blocked for
+claim,” and “unsupported by the current provider” are therefore implementation
+states or claim states. They are not permanent product exclusions. A blocked
+claim requires us to continue building the missing operation, provider,
+corpus, validator, recovery path, privacy boundary, and documentation. A
+capability becomes `Built` only when its implementation exists and its current
+evidence supports that status; the program must never call an unimplemented
+runtime built merely because its design is documented.
+
 ## Purpose
 
 The product goal is a high-trust PDF reader and editor that makes difficult
@@ -16,6 +49,14 @@ only when its user behavior, shared contract, provider adapter, failure state,
 validation evidence, privacy boundary, and native/web parity status are recorded.
 A feature advertised by a competitor, exposed by a library, or visible in the
 UI is not complete by itself.
+
+The cross-project exploration is part of this implementation program, not a
+research-only appendix. D-029 requires PDF Editor to rebuild every transferable
+capability pattern found in SignKit, MetaExtract, Invoice Intelligence,
+PhotoSearch, `extracted_forms`, and the historical web detector behind its own
+contracts and evidence. Source ownership, privacy, licensing, and provenance
+boundaries remain intact, and a provider gate controls activation rather than
+removing the capability lane.
 
 ## First-principles invariants
 
@@ -39,6 +80,9 @@ UI is not complete by itself.
    permanent redaction. A metadata scan is not a sanitization proof.
 10. Native and web providers may produce different bytes. They must agree on
     user intent, evidence, coordinates, operation lineage, and validation state.
+11. Provider installation, measurement, and revocation are admission concerns,
+    not PDF document semantics. They must be versioned separately so an engine
+    can be replaced without changing the shared PDF contracts.
 
 ## Capability matrix
 
@@ -48,7 +92,8 @@ Status vocabulary:
 - **Partial:** useful behavior exists, but a required fidelity or provider gate
   remains open.
 - **Exploration:** contracts, alternatives, and corpus work are defined, but
-  the capability is not yet part of the product path.
+  the capability is not yet enabled in the product path, while its
+  implementation and evidence lane remains active.
 - **Blocked:** a provider, legal, security, licensing, or runtime constraint
   prevents a safe claim in the current lane.
 
@@ -66,7 +111,7 @@ Status vocabulary:
 | OCR text and bounds | OCR evidence, confidence, model identity | Vision adapter | Future local WASM/companion adapter | multilingual, skew, noise, handwriting abstention, calibration | Partial |
 | OCR-derived search layer | OCR artifact and provenance | Vision plus local writer lane | Future bounded writer/companion | reopen, alignment, accessibility, source image unchanged | Exploration |
 | Reviewed static text overlay | Overlay operation | PDFKit annotation | pdf-lib drawing | source digest, text impact, raster impact, reopen | Built |
-| Text-run replacement | Text target evidence and replacement operation | Provider investigation | Provider investigation | outside text/raster diff, font/glyph/RTL/ligature corpus | Exploration |
+| Text-run replacement | Text target evidence and typed replacement operation | Typed native/browser operation slice; writer gate explicit | Typed browser operation slice; writer gate explicit | outside text/raster diff, font/glyph/RTL/ligature corpus | Partial, provider-gated |
 | Images, stamps, checkmarks, dates | Typed asset/stamp operations | PDFKit annotation/drawing | pdf-lib bounded drawing | asset provenance, bounds, reopen, outside-region diff | Partial |
 | Annotations and review markup | Annotation operation | PDFKit | pdf-lib/PDF.js inspection | annotation round-trip, flatten distinction | Partial |
 | Undo, replay, and session history | Edit session, parent operation, review | AppModel | Browser session state | replay, stale digest, retry, recovery | Built |
@@ -76,7 +121,7 @@ Status vocabulary:
 | Outside-region text validation | Validation check | PDFKit character bounds | PDF.js text items | edited corpus and unknown-coordinate tests | Built |
 | Outside-region raster validation | Visual-diff validation | PDFKit raster | PDF.js canvas | fixed scale, tolerance, expected regions, metrics | Built |
 | Independent viewer parity | Independent-viewer check | qpdf/Poppler/control viewer | Companion or external control lane | PDFKit, PDF.js, qpdf, Poppler, control viewer | Exploration |
-| Privacy preflight | Security/privacy findings | PDFKit metadata/object lane | PDF.js metadata/annotation lane | EXIF, attachments, scripts, revisions, unknowns | Exploration |
+| Privacy preflight | Security/privacy findings | PDFKit metadata/object lane | PDF.js metadata/annotation lane | EXIF, attachments, scripts, revisions, unknowns | Partial |
 | Metadata sanitization | Destructive sanitation operation | Companion/provider lane | Bounded browser or companion | removal coverage, residual scan, rollback/new copy | Exploration |
 | Permanent redaction | Redaction mark/application operations | High-risk provider lane | Companion/high-fidelity lane | object, text, image, annotation, search, reopen, independent viewer | Blocked for claim |
 | Password/encryption | Security operation and policy | PDFKit/companion | pdf-lib supported subset | KDF, interoperability, metadata leakage, recovery | Exploration |
@@ -205,7 +250,17 @@ Keep PDFBox, qpdf, pikepdf, Poppler, OCRmyPDF, Tesseract-family OCR, and MuPDF
 behind separate provider experiments. Record license, distribution, runtime,
 security, performance, output fidelity, and fallback evidence before adoption.
 
-## Excluded claims and their build conditions
+### Provider admission plane
+
+The companion and built-in native/browser providers are routed through the
+separate [`provider-capability-system-design.md`](provider-capability-system-design.md)
+contract. The registry distinguishes installed, measured, enabled, partial,
+quarantined, revoked, and expired states. The default route requires an exact
+artifact digest, approved license state, capability-specific corpus evidence,
+source-limit compatibility, and no active revocation. This is now a contract
+slice with native/browser tests; no installer or live bridge is claimed.
+
+## Evidence-gated claims and their build conditions
 
 The following claims remain intentionally unmade until their gates close:
 
@@ -220,9 +275,11 @@ The following claims remain intentionally unmade until their gates close:
 - byte-for-byte unchanged text-object proof;
 - general raster parity across viewers or providers.
 
-The implementation may still contain experiments for these lanes. An experiment
-must be labeled as such, emit evidence and unknown states, and never silently
-upgrade a UI affordance into a product claim.
+These lanes must be implemented as explicit tracks. An incomplete track must
+emit evidence, unknown, blocked, or abstained states and must never silently
+upgrade a UI affordance into a product claim. “Not supported for editing
+claims” and “explicitly unsupported until proven” are current evidence states,
+not permanent product exclusions.
 
 ## Current next unit
 
@@ -232,14 +289,19 @@ The next coherent implementation unit is:
    parity report without normalizing away product-relevant differences;
 2. reduce browser geometry false positives from page borders and decorative
    lines while preserving labeled fields and checkbox shapes;
-3. add the privacy preflight contract and a read-only report for metadata,
-   attachments, annotations, scripts, and unknown coverage;
+3. expand the implemented privacy preflight contract into a source-bound
+   sanitizer operation with removed/preserved/unknown inventory for metadata,
+   attachments, annotations, scripts, hidden revisions, signatures, and
+   unknown coverage;
 4. add OCR alignment fixtures and keep browser OCR as an explicitly bounded
    capability experiment, without source-image mutation or silent field creation;
 5. define the companion capability handshake and run OCR/high-fidelity provider
    bake-offs as part of the long-term capability program;
 6. run the provider bake-off against the existing OCR and security corpus with
    license, packaging, bridge, recovery, and independent-viewer gates.
+7. keep provider admission versioned independently from the shared PDF
+   contracts; enable one capability at a time and preserve abstention when no
+   measured local provider qualifies.
 
 The accepted long-term deployment architecture is a browser-first local core
 plus an explicitly installed optional companion capability plane. OCR and
@@ -257,7 +319,15 @@ The program is complete only when every capability in the matrix is either:
 - built and supported by current evidence;
 - explicitly blocked with a named provider, legal, security, licensing, or
   runtime reason; or
-- deliberately deferred with a revisit trigger and preserved corpus plan.
+- implemented with a typed runtime state and a current enablement decision;
+  if blocked, the blocker, provider path, corpus, and recovery plan remain
+  active and visible.
+
+No capability may be converted into a permanent non-goal merely because its
+provider, licensing, runtime, or evidence gate is not closed yet. “Deferred” is
+an execution sequence state. “Blocked” is an evidence or external-constraint
+state. Both require continued implementation planning and preserved recovery
+paths.
 
 No capability is considered complete because it is listed in a menu, passes a
 single synthetic fixture, or works in one provider without a shared contract.

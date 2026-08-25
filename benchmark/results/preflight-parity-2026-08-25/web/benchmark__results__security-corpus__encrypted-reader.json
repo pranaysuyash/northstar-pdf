@@ -1,0 +1,1006 @@
+{
+  "contractName": "pdf-editor.browser-fixture",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "document": {
+    "header": {
+      "contractName": "pdf-editor.document",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "generatedAt": "2026-08-24T23:30:36.416Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "source": {
+        "fileName": "encrypted-reader.pdf",
+        "byteCount": 17733,
+        "sha256": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+      },
+      "pages": [
+        {
+          "pageIndex": 0,
+          "pageLabel": "1",
+          "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "cropBox": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "bleedBox": null,
+          "trimBox": null,
+          "artBox": null,
+          "rotation": 0,
+          "characterCount": 0,
+          "annotationCount": 4,
+          "hasSelectableText": false
+        }
+      ],
+      "fields": [
+        {
+          "id": "fullName",
+          "name": "fullName",
+          "kind": "text",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 640,
+            "width": 220,
+            "height": 24
+          },
+          "value": "Ada Lovelace",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 640,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "8R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "consent",
+          "name": "consent",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Yes",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "9R",
+          "fieldFlags": 0
+        },
+        {
+          "id": "preferredContact",
+          "name": "preferredContact",
+          "kind": "button",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 120,
+            "y": 590,
+            "width": 20,
+            "height": 20
+          },
+          "value": "Email",
+          "choices": [],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 120,
+              "y": 590,
+              "width": 20,
+              "height": 20
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "10R",
+          "fieldFlags": 32768
+        },
+        {
+          "id": "country",
+          "name": "country",
+          "kind": "choice",
+          "pageIndex": 0,
+          "bounds": {
+            "x": 72,
+            "y": 540,
+            "width": 220,
+            "height": 24
+          },
+          "value": "India",
+          "choices": [
+            "India",
+            "Ireland",
+            "United States"
+          ],
+          "coordinate": {
+            "pageIndex": 0,
+            "rect": {
+              "x": 72,
+              "y": 540,
+              "width": 220,
+              "height": 24
+            },
+            "coordinateSpace": {
+              "unit": "points",
+              "origin": "lowerLeft",
+              "pageBox": "crop",
+              "rotationDegrees": 0
+            }
+          },
+          "annotationID": "11R",
+          "fieldFlags": 0
+        }
+      ],
+      "candidates": [],
+      "warnings": [
+        "No static blank-region candidate was inferred from text extraction."
+      ],
+      "links": [],
+      "outlines": [],
+      "metadata": {
+        "title": "",
+        "author": "",
+        "subject": "",
+        "creator": "",
+        "producer": "macOS Version 15.7.7 (Build 24G720) Quartz PDFContext",
+        "creationDate": "D:20260823174025Z00'00'",
+        "modificationDate": "D:20260823174025Z00'00'",
+        "keywords": ""
+      },
+      "permissions": {
+        "canPrint": false,
+        "canCopy": false,
+        "canModify": false,
+        "canAddAnnotations": false,
+        "isReadOnly": false
+      },
+      "attachments": [],
+      "annotationTypeCounts": {
+        "widget": 4
+      },
+      "accessibility": {
+        "hasTaggedContent": false,
+        "hasReadingOrder": false,
+        "notes": [
+          "Reading order is derived from PDF.js text extraction and is not an authored-tag guarantee."
+        ]
+      },
+      "security": {
+        "isEncrypted": true,
+        "isLocked": false,
+        "requiresPassword": false
+      }
+    }
+  },
+  "coordinates": {
+    "contractName": "pdf-editor.coordinates",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+    "generatedAt": "2026-08-24T23:30:36.416Z",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "pages": [
+      {
+        "pageIndex": 0,
+        "region": {
+          "pageIndex": 0,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 612,
+            "height": 792
+          },
+          "coordinateSpace": {
+            "unit": "points",
+            "origin": "lowerLeft",
+            "pageBox": "crop",
+            "rotationDegrees": 0
+          }
+        }
+      }
+    ]
+  },
+  "candidates": [],
+  "textRuns": [],
+  "preflight": {
+    "header": {
+      "contractName": "pdf-editor.preflight",
+      "version": {
+        "major": 1,
+        "minor": 1
+      },
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "generatedAt": "2026-08-24T23:30:36.416Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "summary": {
+        "findingCount": 18,
+        "warningCount": 2,
+        "blockedCount": 0,
+        "unknownCount": 0,
+        "metadataFieldCount": 3,
+        "embeddedDataCount": 0,
+        "networkBoundaryCount": 0,
+        "activeContentCount": 0,
+        "unknownCoverageCount": 1
+      },
+      "metadata": {
+        "fields": {
+          "title": {
+            "present": false
+          },
+          "author": {
+            "present": false
+          },
+          "subject": {
+            "present": false
+          },
+          "creator": {
+            "present": false
+          },
+          "producer": {
+            "present": true
+          },
+          "creationDate": {
+            "present": true
+          },
+          "modificationDate": {
+            "present": true
+          },
+          "keywords": {
+            "present": false
+          }
+        },
+        "rawValuesIncluded": false
+      },
+      "embeddedData": {
+        "attachmentCount": 0,
+        "possibleTokenCounts": {
+          "embeddedFiles": 0,
+          "fileAttachment": 0,
+          "xfa": 0,
+          "richMedia": 0
+        }
+      },
+      "attachments": {
+        "attachmentCount": 0,
+        "fileAttachmentCount": 0,
+        "embeddedFileNameTreeCount": 0,
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
+        }
+      },
+      "annotations": {
+        "totalCount": 4,
+        "byKind": {
+          "widget": 4
+        },
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
+        }
+      },
+      "scripts": {
+        "javaScriptActionCount": 0,
+        "openActionCount": 0,
+        "additionalActionCount": 0,
+        "launchActionCount": 0,
+        "submitFormActionCount": 0,
+        "remoteGoToActionCount": 0,
+        "uriActionCount": 0,
+        "executionAttempted": false,
+        "coverage": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
+        }
+      },
+      "revisions": {
+        "eofMarkerCount": 1,
+        "startxrefCount": 1,
+        "previousRevisionReferenceCount": 0,
+        "incrementalUpdateCountEstimate": 0,
+        "hiddenContentState": "unknown",
+        "coverage": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "coverage": {
+        "metadata": {
+          "state": "observed",
+          "reasonCodes": []
+        },
+        "attachments": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
+        },
+        "annotations": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
+        },
+        "scripts": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
+        },
+        "revisions": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "unknownCoverage": {
+        "categories": {
+          "metadata": {
+            "state": "observed",
+            "reasonCodes": []
+          },
+          "attachments": {
+            "state": "observed",
+            "reasonCodes": [
+              "embeddedPayloadBytesNotRetained"
+            ]
+          },
+          "annotations": {
+            "state": "observed",
+            "reasonCodes": [
+              "pdfjsAnnotationEnumeration"
+            ]
+          },
+          "scripts": {
+            "state": "partial",
+            "reasonCodes": [
+              "tokenScanDoesNotProveReachability"
+            ]
+          },
+          "revisions": {
+            "state": "unknown",
+            "reasonCodes": [
+              "incrementalRevisionParserNotRun"
+            ]
+          }
+        },
+        "unknownCount": 1
+      },
+      "networkBoundaries": {
+        "externalURLCount": 0,
+        "safeExternalURLCount": 0,
+        "unsafeExternalURLCount": 0,
+        "internalPageLinkCount": 0,
+        "unknownDestinationCount": 0,
+        "possibleActionTokenCounts": {
+          "uri": 0,
+          "remoteGoTo": 0,
+          "submitForm": 0
+        }
+      },
+      "activeContent": {
+        "possibleActionTokenCounts": {
+          "javascript": 0,
+          "openAction": 0,
+          "additionalAction": 0,
+          "launch": 0
+        },
+        "executionAttempted": false
+      },
+      "security": {
+        "encrypted": true,
+        "locked": false,
+        "permissionsObserved": true
+      },
+      "sanitization": {
+        "status": "not-run",
+        "safeToClaimClean": false,
+        "sourceUnchanged": true,
+        "supportedModes": [
+          "report-only",
+          "new-copy-required"
+        ],
+        "limits": [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ]
+      },
+      "findings": [
+        {
+          "id": "metadata-presence",
+          "category": "metadata",
+          "code": "metadata.present",
+          "severity": "warning",
+          "state": "observed",
+          "count": 3,
+          "reasonCodes": [
+            "metadataValuesMayContainPersonalInformation"
+          ],
+          "evidence": "inspection"
+        },
+        {
+          "id": "embedded-attachments",
+          "category": "embeddedData",
+          "code": "embedded.attachments",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "embeddedData-embedded-file-spec-token",
+          "category": "embeddedData",
+          "code": "embedded-file-spec-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-file-attachment-token",
+          "category": "embeddedData",
+          "code": "file-attachment-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-xfa-token",
+          "category": "embeddedData",
+          "code": "xfa-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-rich-media-token",
+          "category": "embeddedData",
+          "code": "rich-media-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "network-external",
+          "category": "networkBoundary",
+          "code": "network.external-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "network-unsafe",
+          "category": "networkBoundary",
+          "code": "network.unsafe-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "networkBoundary-network-uri-action-token",
+          "category": "networkBoundary",
+          "code": "network-uri-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "networkBoundary-network-remote-goto-token",
+          "category": "networkBoundary",
+          "code": "network-remote-goto-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "networkBoundary-network-submit-form-token",
+          "category": "networkBoundary",
+          "code": "network-submit-form-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-launch-token",
+          "category": "activeContent",
+          "code": "active-launch-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-javascript-token",
+          "category": "activeContent",
+          "code": "active-javascript-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-open-action-token",
+          "category": "activeContent",
+          "code": "active-open-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-additional-action-token",
+          "category": "activeContent",
+          "code": "active-additional-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "security-signature-token",
+          "category": "security",
+          "code": "signature-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "security-encryption",
+          "category": "security",
+          "code": "security.encryption",
+          "severity": "warning",
+          "state": "observed",
+          "count": 1,
+          "reasonCodes": [
+            "passwordAndPermissionsBoundary"
+          ],
+          "evidence": "inspection"
+        },
+        {
+          "id": "byte-scan-state",
+          "category": "preflight",
+          "code": "preflight.byte-scan",
+          "severity": "info",
+          "state": "observed",
+          "count": 17733,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        }
+      ]
+    }
+  },
+  "resourcePolicy": {
+    "header": {
+      "contractName": "pdf-editor.browser-resource-policy",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "generatedAt": "2026-08-24T23:30:36.417Z",
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "environment": {
+        "cpuLogicalCores": 14,
+        "deviceMemoryGB": 32,
+        "devicePixelRatio": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "connection": {
+          "effectiveType": "4g",
+          "saveData": false
+        },
+        "memory": {
+          "state": "available",
+          "usedJSHeapSize": 16101162,
+          "jsHeapSizeLimit": 4395630592
+        },
+        "storage": {
+          "state": "unknown",
+          "quotaBytes": null,
+          "usageBytes": null
+        },
+        "browserFamily": "Not=A?Brand"
+      },
+      "document": {
+        "byteCount": 17733,
+        "pageCount": 1,
+        "maxPageAreaPoints": 484704,
+        "maxPageDimensionPoints": 792,
+        "rotatedPageCount": 0,
+        "rasterPageCount": 1,
+        "selectableTextPageCount": 0,
+        "nativeFieldCount": 4,
+        "candidateCount": 0,
+        "maxImagePixelsPerPage": 0,
+        "hasAttachments": false,
+        "isEncrypted": true,
+        "isMalformed": false
+      },
+      "request": {
+        "renderMode": "reader",
+        "ocrRequested": false,
+        "batchRequested": false,
+        "highDPIRequested": false
+      },
+      "budgets": {
+        "render": {
+          "maxDevicePixelRatio": 3,
+          "maxCanvasPixels": 4362336,
+          "maxPagePixels": 4362336,
+          "maxPageScale": 3,
+          "maxConcurrentPages": 2,
+          "chunkPages": 2,
+          "yieldEveryMs": 16,
+          "workerCount": 2,
+          "allowHighDPI": false,
+          "reasons": [
+            "rasterPixelBudget"
+          ]
+        },
+        "ocr": {
+          "state": "deferred",
+          "enabled": false,
+          "maxConcurrentJobs": 2,
+          "maxPixelsPerPage": 12000000,
+          "maxPagesPerBatch": 4,
+          "maxBatchPixels": 48000000,
+          "yieldEveryMs": 16,
+          "cancellationTimeoutMs": 15000,
+          "requiresUserConfirmation": true,
+          "reasons": [
+            "ocrNeedsExplicitOptIn"
+          ]
+        },
+        "batch": {
+          "state": "deferred",
+          "enabled": false,
+          "maxDocuments": 50,
+          "maxTotalBytes": 500000000,
+          "maxTotalPages": 500,
+          "maxConcurrentDocuments": 2,
+          "checkpointEveryDocuments": 5,
+          "checkpointEveryPages": 20,
+          "reasons": [
+            "batchNeedsExplicitOptIn"
+          ]
+        },
+        "recovery": {
+          "checkpointRequired": false,
+          "retryCount": 2,
+          "backoffMs": 500,
+          "staleDigestRequired": true,
+          "resumeSupported": true,
+          "partialOutputAllowed": false,
+          "cancellationSupported": true,
+          "reasons": [
+            "recoveryResumeFromDigest"
+          ]
+        }
+      },
+      "decisions": [
+        {
+          "id": "render",
+          "capability": "render",
+          "state": "limited",
+          "reasonCode": "rasterPixelBudget",
+          "evidence": {
+            "maxDevicePixelRatio": 3,
+            "maxCanvasPixels": 4362336
+          }
+        },
+        {
+          "id": "ocr",
+          "capability": "ocr",
+          "state": "deferred",
+          "reasonCode": "ocrNeedsExplicitOptIn",
+          "evidence": {
+            "maxPagesPerBatch": 4,
+            "maxPixelsPerPage": 12000000
+          }
+        },
+        {
+          "id": "batch",
+          "capability": "batch",
+          "state": "deferred",
+          "reasonCode": "batchNeedsExplicitOptIn",
+          "evidence": {
+            "maxDocuments": 50,
+            "maxTotalPages": 500
+          }
+        },
+        {
+          "id": "recovery",
+          "capability": "recovery",
+          "state": "enabled",
+          "reasonCode": "recoveryResumeFromDigest",
+          "evidence": {
+            "checkpointRequired": false,
+            "resumeSupported": true
+          }
+        }
+      ],
+      "safety": {
+        "contentLogged": false,
+        "networkAccessAttempted": false,
+        "sourceBytesMutated": false,
+        "partialOutputPromoted": false,
+        "cancellationSupported": true
+      }
+    }
+  },
+  "editSession": {
+    "header": {
+      "contractName": "pdf-editor.edit-session",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "generatedAt": "2026-08-24T23:30:36.416Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "source": {
+      "fileName": "encrypted-reader.pdf",
+      "byteCount": 17733,
+      "sha256": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf"
+    },
+    "reviews": [],
+    "operations": []
+  },
+  "validation": {
+    "status": "validated",
+    "messages": [
+      "Source bytes still match the inspected SHA-256.",
+      "Encrypted source remains open in PDF.js with 1 page(s).",
+      "No-op export preserves the already-inspected encrypted page geometry.",
+      "No native field operations were requested.",
+      "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+      "No page content changed because the protected source was copied byte-for-byte.",
+      "No raster content changed because the protected source was copied byte-for-byte.",
+      "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported."
+    ],
+    "sourceUnchanged": true,
+    "outputReopenable": true,
+    "checks": [
+      {
+        "id": "1cecbc31-8b94-4ef1-a68a-ed990f1a7f4d",
+        "kind": "sourceDigest",
+        "status": "passed",
+        "message": "Source bytes still match the inspected SHA-256.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "199611e7-0da0-4089-b527-1a1c4d6072b2",
+        "kind": "outputReopen",
+        "status": "passed",
+        "message": "Encrypted source remains open in PDF.js with 1 page(s).",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "0e512469-7823-4d98-a6bb-a3c2796abcaf",
+        "kind": "pageGeometry",
+        "status": "passed",
+        "message": "No-op export preserves the already-inspected encrypted page geometry.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "eccc3afb-f878-43bb-bd29-a027c5f6065a",
+        "kind": "nativeFields",
+        "status": "skipped",
+        "message": "No native field operations were requested.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "a7b7a1b5-9079-4347-ba4c-5c12912b2c8c",
+        "kind": "appliedOperations",
+        "status": "passed",
+        "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "dba84c3e-7e25-400b-baef-d203c2892a77",
+        "kind": "outsideRegionText",
+        "status": "passed",
+        "message": "No page content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "3b27f1e0-4933-49b7-b4ff-e19eb92ee36d",
+        "kind": "visualDiff",
+        "status": "passed",
+        "message": "No raster content changed because the protected source was copied byte-for-byte.",
+        "region": null,
+        "operationIDs": []
+      },
+      {
+        "id": "03da16e8-f0fa-4875-8289-7cdd46d58fba",
+        "kind": "providerCapability",
+        "status": "passed",
+        "message": "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported.",
+        "region": null,
+        "operationIDs": []
+      }
+    ],
+    "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+    "outputDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+    "provider": {
+      "id": "pdfjs-pdflib",
+      "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "platform": "web",
+      "capabilities": [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ]
+    },
+    "validatedAt": "2026-08-24T23:30:36.444Z",
+    "operationIDs": []
+  },
+  "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+  "expectedFailure": false,
+  "status": "inspected",
+  "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+  "error": null
+}

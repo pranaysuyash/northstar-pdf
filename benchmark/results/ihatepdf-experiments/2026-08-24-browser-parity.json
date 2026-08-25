@@ -1,0 +1,282 @@
+{
+  "harness": "pdf-editor-browser-ihatepdf-experiment-parity",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "ledgerName": "pdf-editor.ihatepdf-experiment-ledger",
+  "entryCount": 6,
+  "caseCount": 6,
+  "passed": true,
+  "cases": [
+    {
+      "id": "E-001-C-001",
+      "experimentID": "E-001",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "operationKind": "textRunReplacement",
+      "coordinate": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "executionState": "planned",
+      "sourceBound": true,
+      "reviewRequired": true,
+      "abstainIfUnsupported": true,
+      "privacyClass": "document-content",
+      "validationKinds": [
+        "independentViewer",
+        "outputReopen",
+        "outsideRegionText",
+        "sourceDigest",
+        "visualDiff"
+      ],
+      "ledgerVersion": {
+        "major": 1,
+        "minor": 0
+      },
+      "semanticParity": {
+        "operationKind": "textRunReplacement",
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        },
+        "sourceFixture": "benchmark/results/public-sample-form.pdf",
+        "reviewPolicy": {
+          "requiresSourceRunEvidence": true,
+          "requiresUserConfirmation": true,
+          "allowsSilentMutation": false,
+          "requiresAbstentionOnUnsupported": true
+        }
+      }
+    },
+    {
+      "id": "E-002-C-001",
+      "experimentID": "E-002",
+      "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "operationKind": "ocrLayerProposal",
+      "coordinate": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "executionState": "planned",
+      "sourceBound": true,
+      "reviewRequired": true,
+      "abstainIfUnsupported": true,
+      "privacyClass": "document-content",
+      "validationKinds": [
+        "accessibility",
+        "outputReopen",
+        "outsideRegionText",
+        "pageGeometry",
+        "sourceDigest",
+        "visualDiff"
+      ],
+      "ledgerVersion": {
+        "major": 1,
+        "minor": 0
+      },
+      "semanticParity": {
+        "operationKind": "ocrLayerProposal",
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        },
+        "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
+        "reviewPolicy": {
+          "requiresSourceRunEvidence": false,
+          "requiresUserConfirmation": true,
+          "allowsSilentMutation": false,
+          "requiresAbstentionOnUnsupported": true
+        }
+      }
+    },
+    {
+      "id": "E-003-C-001",
+      "experimentID": "E-003",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "operationKind": "privacyPreflight",
+      "coordinate": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "executionState": "planned",
+      "sourceBound": true,
+      "reviewRequired": true,
+      "abstainIfUnsupported": true,
+      "privacyClass": "sensitive-metadata",
+      "validationKinds": [
+        "independentViewer",
+        "outputReopen",
+        "security",
+        "sourceDigest"
+      ],
+      "ledgerVersion": {
+        "major": 1,
+        "minor": 0
+      },
+      "semanticParity": {
+        "operationKind": "privacyPreflight",
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        },
+        "sourceFixture": "benchmark/results/public-sample-form.pdf",
+        "reviewPolicy": {
+          "requiresSourceRunEvidence": false,
+          "requiresUserConfirmation": true,
+          "allowsSilentMutation": false,
+          "requiresAbstentionOnUnsupported": true
+        }
+      }
+    },
+    {
+      "id": "E-004-C-001",
+      "experimentID": "E-004",
+      "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "sourceDigest": "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
+      "operationKind": "repairRecovery",
+      "coordinate": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "executionState": "planned",
+      "sourceBound": true,
+      "reviewRequired": true,
+      "abstainIfUnsupported": true,
+      "privacyClass": "document-content",
+      "validationKinds": [
+        "independentViewer",
+        "outputReopen",
+        "pageGeometry",
+        "providerCapability",
+        "sourceDigest"
+      ],
+      "ledgerVersion": {
+        "major": 1,
+        "minor": 0
+      },
+      "semanticParity": {
+        "operationKind": "repairRecovery",
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        },
+        "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+        "reviewPolicy": {
+          "requiresSourceRunEvidence": false,
+          "requiresUserConfirmation": true,
+          "allowsSilentMutation": false,
+          "requiresAbstentionOnUnsupported": true
+        }
+      }
+    },
+    {
+      "id": "E-005-C-001",
+      "experimentID": "E-005",
+      "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "operationKind": "adaptiveResourcePolicy",
+      "coordinate": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "executionState": "planned",
+      "sourceBound": true,
+      "reviewRequired": false,
+      "abstainIfUnsupported": true,
+      "privacyClass": "operational-metadata",
+      "validationKinds": [
+        "appliedOperations",
+        "outputReopen",
+        "pageGeometry",
+        "providerCapability"
+      ],
+      "ledgerVersion": {
+        "major": 1,
+        "minor": 0
+      },
+      "semanticParity": {
+        "operationKind": "adaptiveResourcePolicy",
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        },
+        "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+        "reviewPolicy": {
+          "requiresSourceRunEvidence": false,
+          "requiresUserConfirmation": false,
+          "allowsSilentMutation": false,
+          "requiresAbstentionOnUnsupported": true
+        }
+      }
+    },
+    {
+      "id": "E-006-C-001",
+      "experimentID": "E-006",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "operationKind": "compareImpactMap",
+      "coordinate": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "executionState": "planned",
+      "sourceBound": true,
+      "reviewRequired": true,
+      "abstainIfUnsupported": true,
+      "privacyClass": "document-content",
+      "validationKinds": [
+        "independentViewer",
+        "outputReopen",
+        "outsideRegionText",
+        "sourceDigest",
+        "visualDiff"
+      ],
+      "ledgerVersion": {
+        "major": 1,
+        "minor": 0
+      },
+      "semanticParity": {
+        "operationKind": "compareImpactMap",
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        },
+        "sourceFixture": "benchmark/results/public-sample-form.pdf",
+        "reviewPolicy": {
+          "requiresSourceRunEvidence": false,
+          "requiresUserConfirmation": true,
+          "allowsSilentMutation": false,
+          "requiresAbstentionOnUnsupported": true
+        }
+      }
+    }
+  ]
+}

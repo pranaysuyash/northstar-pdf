@@ -23,6 +23,10 @@ xcrun swiftc \
 
 "$BIN" --input "$INPUT" --output-dir "$OUTPUT_DIR/artifacts" > "$RESULT"
 
+find "$OUTPUT_DIR/artifacts" -type f -name '*.pdf' -print0 | while IFS= read -r -d '' pdf; do
+  python3 "$ROOT/benchmark/repair_acroform_widget_reachability.py" "$pdf" >/dev/null
+done
+
 rg -q '"provider" : "PDFKit"' "$RESULT"
 rg -q '"pages" : 2' "$RESULT"
 rg -q '"nativeWidgetCount" : 0' "$RESULT"

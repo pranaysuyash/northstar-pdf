@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 /// Runtime state that is intentionally separate from the persisted template.
@@ -14,6 +15,73 @@ public enum PDFTemplateValueReviewState: String, Codable, CaseIterable, Hashable
     case resolvedUnreviewed
     case approved
     case rejected
+}
+
+/// The two approvals deliberately carry different identities. Mapping review
+/// answers "is this source region the right target?" Profile-value review
+/// answers "is this exact value from this profile revision authorized here?".
+/// A boolean status without these bindings would allow an old approval to be
+/// replayed after either side changed.
+public struct PDFTemplateMappingApproval: Codable, Equatable, Hashable, Sendable {
+    public let state: PDFTemplateMappingReviewState
+    public let mappingID: UUID
+    public let targetID: String?
+    public let coordinate: PDFPageRegion
+    public let reviewedAt: Date
+
+    public init(
+        state: PDFTemplateMappingReviewState,
+        mappingID: UUID,
+        targetID: String?,
+        coordinate: PDFPageRegion,
+        reviewedAt: Date = Date()
+    ) {
+        self.state = state
+        self.mappingID = mappingID
+        self.targetID = targetID
+        self.coordinate = coordinate
+        self.reviewedAt = reviewedAt
+    }
+}
+
+public struct PDFTemplateProfileValueApproval: Codable, Equatable, Hashable, Sendable {
+    public let state: PDFTemplateValueReviewState
+    public let profileID: UUID?
+    public let profileRevisionID: UUID?
+    public let semanticKey: String
+    public let valueDigest: String?
+    public let reviewedAt: Date
+
+    public init(
+        state: PDFTemplateValueReviewState,
+        profileID: UUID?,
+        profileRevisionID: UUID?,
+        semanticKey: String,
+        valueDigest: String?,
+        reviewedAt: Date = Date()
+    ) {
+        self.state = state
+        self.profileID = profileID
+        self.profileRevisionID = profileRevisionID
+        self.semanticKey = semanticKey
+        self.valueDigest = valueDigest
+        self.reviewedAt = reviewedAt
+    }
+}
+
+public enum PDFTemplateValueDigest {
+    public static func make(_ value: PDFProfileValue) -> String {
+        let canonical: String
+        switch value {
+        case let .text(text): canonical = "text:\(text)"
+        case let .choice(choice): canonical = "choice:\(choice)"
+        case let .boolean(boolean): canonical = "boolean:\(boolean ? "true" : "false")"
+        case let .assetReference(assetID): canonical = "assetReference:\(assetID)"
+        }
+        return SHA256.hash(data: Data(canonical.utf8))
+            .map { String(format: "%02x", $0) }
+            .joined()
+    }
 }
 
 public enum PDFTemplateLearningEventKind: String, Codable, CaseIterable, Hashable, Sendable {
@@ -107,6 +175,8 @@ public struct PDFTemplateCompletionEntry: Codable, Equatable, Hashable, Identifi
     public let profileRevisionID: UUID?
     public let value: PDFProfileValue?
     public let valueReview: PDFTemplateValueReviewState
+    public let mappingApproval: PDFTemplateMappingApproval?
+    public let profileValueApproval: PDFTemplateProfileValueApproval?
     /// Native field names are keyed in a template. The adapter resolves the
     /// current document's actual field name only after the user reviews it.
     public let resolvedTargetID: String?
@@ -122,6 +192,8 @@ public struct PDFTemplateCompletionEntry: Codable, Equatable, Hashable, Identifi
         profileRevisionID: UUID? = nil,
         value: PDFProfileValue? = nil,
         valueReview: PDFTemplateValueReviewState? = nil,
+        mappingApproval: PDFTemplateMappingApproval? = nil,
+        profileValueApproval: PDFTemplateProfileValueApproval? = nil,
         resolvedTargetID: String? = nil
     ) {
         self.id = id
@@ -134,15 +206,50 @@ public struct PDFTemplateCompletionEntry: Codable, Equatable, Hashable, Identifi
         self.profileRevisionID = profileRevisionID
         self.value = value
         self.valueReview = valueReview ?? (value == nil ? .unresolved : .resolvedUnreviewed)
+        self.mappingApproval = mappingApproval
+        self.profileValueApproval = profileValueApproval
         self.resolvedTargetID = resolvedTargetID
     }
 
     public var isApproved: Bool {
-        mappingReview == .approved && valueReview == .approved && value != nil
+        guard mappingReview == .approved,
+              valueReview == .approved,
+              value != nil,
+              mappingApproval?.state == .approved,
+              mappingApproval?.mappingID == mappingID,
+              mappingApproval?.coordinate == target.region,
+              mappingApproval?.targetID == resolvedTargetID,
+              profileValueApproval?.state == .approved,
+              profileValueApproval?.profileID == profileID,
+              profileValueApproval?.profileRevisionID == profileRevisionID,
+              profileValueApproval?.semanticKey == semanticKey,
+              let value,
+              profileValueApproval?.valueDigest == PDFTemplateValueDigest.make(value)
+        else { return false }
+        return true
     }
 
     public func reviewingMapping(as state: PDFTemplateMappingReviewState) -> PDFTemplateCompletionEntry {
-        replacing(mappingReview: state)
+        return PDFTemplateCompletionEntry(
+            id: id,
+            mappingID: mappingID,
+            semanticKey: semanticKey,
+            target: target,
+            candidateID: candidateID,
+            mappingReview: state,
+            profileID: profileID,
+            profileRevisionID: profileRevisionID,
+            value: value,
+            valueReview: valueReview,
+            mappingApproval: PDFTemplateMappingApproval(
+                state: state,
+                mappingID: mappingID,
+                targetID: resolvedTargetID,
+                coordinate: target.region
+            ),
+            profileValueApproval: profileValueApproval,
+            resolvedTargetID: resolvedTargetID
+        )
     }
 
     public func reviewingValue(_ value: PDFProfileValue?, as state: PDFTemplateValueReviewState) -> PDFTemplateCompletionEntry {
@@ -157,22 +264,33 @@ public struct PDFTemplateCompletionEntry: Codable, Equatable, Hashable, Identifi
             profileRevisionID: profileRevisionID,
             value: value,
             valueReview: state,
+            mappingApproval: mappingApproval,
+            profileValueApproval: PDFTemplateProfileValueApproval(
+                state: state,
+                profileID: profileID,
+                profileRevisionID: profileRevisionID,
+                semanticKey: semanticKey,
+                valueDigest: value.map(PDFTemplateValueDigest.make)
+            ),
             resolvedTargetID: resolvedTargetID
         )
     }
 
     public func resolvingTarget(_ targetID: String?) -> PDFTemplateCompletionEntry {
-        PDFTemplateCompletionEntry(
+        let targetChanged = targetID != resolvedTargetID
+        return PDFTemplateCompletionEntry(
             id: id,
             mappingID: mappingID,
             semanticKey: semanticKey,
             target: target,
             candidateID: candidateID,
-            mappingReview: mappingReview,
+            mappingReview: targetChanged ? .pending : mappingReview,
             profileID: profileID,
             profileRevisionID: profileRevisionID,
             value: value,
             valueReview: valueReview,
+            mappingApproval: targetChanged ? nil : mappingApproval,
+            profileValueApproval: profileValueApproval,
             resolvedTargetID: targetID
         )
     }
@@ -189,6 +307,8 @@ public struct PDFTemplateCompletionEntry: Codable, Equatable, Hashable, Identifi
             profileRevisionID: profileRevisionID,
             value: value,
             valueReview: valueReview,
+            mappingApproval: mappingApproval,
+            profileValueApproval: profileValueApproval,
             resolvedTargetID: resolvedTargetID
         )
     }
@@ -199,6 +319,8 @@ public enum PDFTemplateCompletionError: Error, Equatable, Sendable {
     case noMatch(PDFTemplateMatchState)
     case mappingReviewRequired(UUID)
     case valueReviewRequired(UUID)
+    case mappingApprovalRequired(UUID)
+    case profileValueApprovalRequired(UUID)
     case missingValue(UUID)
     case unresolvedNativeTarget(UUID)
     case coordinateMismatch(UUID)
@@ -292,10 +414,13 @@ public struct PDFTemplateCompletionProposal: Codable, Equatable, Hashable, Senda
         })
     }
 
-    public func reviewingValue(_ mappingID: UUID, value: PDFProfileValue?, approved: Bool = true) -> PDFTemplateCompletionProposal {
+    public func reviewingValue(_ mappingID: UUID, value: PDFProfileValue?, approved: Bool = false) -> PDFTemplateCompletionProposal {
         replacing(entries: entries.map { entry in
             guard entry.mappingID == mappingID else { return entry }
-            return entry.reviewingValue(value, as: approved && value != nil ? .approved : value == nil ? .unresolved : .rejected)
+            let state: PDFTemplateValueReviewState = approved && value != nil && entry.profileID != nil && entry.profileRevisionID != nil
+                ? .approved
+                : value == nil ? .unresolved : .resolvedUnreviewed
+            return entry.reviewingValue(value, as: state)
         })
     }
 
@@ -315,8 +440,18 @@ public struct PDFTemplateCompletionProposal: Codable, Equatable, Hashable, Senda
             guard entry.mappingReview == .approved else {
                 throw PDFTemplateCompletionError.mappingReviewRequired(entry.mappingID)
             }
+            guard entry.mappingApproval?.state == .approved,
+                  entry.mappingApproval?.mappingID == entry.mappingID,
+                  entry.mappingApproval?.coordinate == entry.target.region,
+                  entry.mappingApproval?.targetID == entry.resolvedTargetID
+            else {
+                throw PDFTemplateCompletionError.mappingApprovalRequired(entry.mappingID)
+            }
             guard entry.valueReview == .approved else {
                 throw PDFTemplateCompletionError.valueReviewRequired(entry.mappingID)
+            }
+            guard entry.isApproved else {
+                throw PDFTemplateCompletionError.profileValueApprovalRequired(entry.mappingID)
             }
             guard let value = entry.value else {
                 throw PDFTemplateCompletionError.missingValue(entry.mappingID)

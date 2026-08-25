@@ -3,6 +3,8 @@
 **Date:** 2026-08-24
 **Harness:** [`Tests/pdf_contract_parity_test.mjs`](../../Tests/pdf_contract_parity_test.mjs)
 **Native emitter:** [`Sources/PDFContractHarness/main.swift`](../../Sources/PDFContractHarness/main.swift)
+**Normalized comparator:** [`web/pdf-contract-parity.mjs`](../../web/pdf-contract-parity.mjs)
+**Mutation harness:** [`Tests/pdf_contract_parity_mutation_test.mjs`](../../Tests/pdf_contract_parity_mutation_test.mjs)
 **Corpus:** [`../fixtures/manifest.md`](../fixtures/manifest.md)
 **Evidence status:** Baseline refreshed with rotation fixtures and independent preservation evidence. Source identity and expected malformed-input behavior align; semantic mismatches remain open.
 
@@ -24,7 +26,9 @@ This harness therefore compares normalized semantic projections of:
 - validation status, reopen/source checks, and check kinds/statuses;
 - accessibility and security summaries.
 
-The comparator deliberately ignores provider IDs and versions, timestamps,
+The comparator is implemented as a reusable module rather than only as an
+orchestration helper. The corpus runner and the focused mutation suite consume
+the same module. It deliberately ignores provider IDs and versions, timestamps,
 random IDs, validation prose, output digests, and browser-only field metadata.
 It preserves the native and web serialized bundles unchanged under
 `benchmark/results/contract-parity-2026-08-24/{native,web}/` and writes the
@@ -83,7 +87,34 @@ Valid source Poppler reopen passed 9/9; native no-op outputs passed independent
 reopen/text/raster 9/9; browser no-op outputs passed 9/9, including the
 byte-preserved encrypted export. The malformed source failed as expected.
 
-## First mismatches
+The current normalized comparison is **6 classified mismatches across 17
+fixtures**. Four are the paired `candidate-semantic-set` and `candidate.count`
+projections on normal and rotated Form 6. Two are the encrypted-hybrid
+page-box precision and coordinate projections. Form fields,
+validation check kinds and statuses, accessibility booleans, security
+booleans, metadata/navigation semantics, and bounded text-count comparisons
+now agree. Candidate disagreement remains preserved as evidence and does not
+permit automatic application of either provider's suggestions.
+
+The focused mutation suite passed 8 checks. It detects changes to source digest,
+page geometry, native field kind, candidate evidence family, and validation
+state. It also proves that provider metadata and diagnostic prose are excluded
+from semantic parity. This is the comparator's own conformance evidence,
+separate from agreement on the unmutated corpus.
+
+The current Form 6 browser proof emits 83 review candidates after abstaining on
+unlabeled input rectangles, unlabeled rules, unlabeled checkbox shapes, and
+cell-sized standalone checkbox geometry. Native emits 29 candidates for the
+same normal and rotated Form 6 corpus. The count difference remains an open
+provider-detector fidelity issue; the browser suggestions remain review-gated.
+
+## Historical first-run mismatch diagnostics
+
+The detailed sections below describe the original parity investigation and are
+retained for provenance. They are not the current mismatch count. The earlier
+isolated run had 4 candidate-only mismatches on the normal and rotated Form 6
+fixtures. The current 17-fixture run has 6 classified mismatches, as recorded
+above and in the parity report.
 
 ### 1. PDF.js page boxes are rounded on three fixtures
 
@@ -186,15 +217,19 @@ only in this summary.
 The shared contract shape is present, but the semantics are not yet parity
 cleared. Neither side establishes PDF/UA conformance.
 
-## Mismatch inventory
+## Historical mismatch inventory
+
+The table below is retained as the original diagnostic inventory from the
+first parity run. It is not the current release count. The current count is
+the 4 candidate-only mismatches recorded above and in the parity report.
 
 | Mismatch class | Count | Current interpretation |
 |---|---:|---|
 | `page.geometry-or-text` | 6 | PDF.js page-box precision and rounding difference |
 | `page.provider-count` | 6 | Text extraction counting difference |
 | `native-fields` | 6 | Native/web field metadata and provider-specific field representation differences |
-| `candidate-semantic-set` | 8 | Native/browser detector evidence disagreement |
-| `candidate.count` | 8 | Same detector disagreement, summarized as count |
+| `candidate-semantic-set` | 2 | Native/browser detector evidence disagreement on normal and rotated Form 6 |
+| `candidate.count` | 2 | Same detector disagreement, summarized as count |
 | `coordinates` | 4 | Page-box precision difference after key-order normalization |
 | `validation.check-kinds` | 9 | Provider capability and no-op applicability differences |
 | `validation.check-status` | 18 | Native-field skipped/passed and provider capability differences after encrypted no-op preservation |
@@ -236,3 +271,12 @@ The report is intentionally retained as a baseline. Future changes should
 classify each mismatch as accepted provider variance, contract bug, provider
 bug, detector-quality issue, or open capability gap. They should not simply
 delete a mismatch from the comparator to make the count smaller.
+
+## Governance corpus extension, 2026-08-25
+
+The privacy/provenance governed corpus added the synthetic handwritten-like
+raster fixture to the shared manifest. The current rerun therefore covers 18
+fixtures, retains the same 6 classified mismatches and 0 unexpected mismatches,
+and reports zero mismatches for the handwritten fixture. The original tables
+above remain the dated baseline details; the current machine-readable result is
+[`benchmark/results/contract-parity-2026-08-24/parity-report.json`](../../benchmark/results/contract-parity-2026-08-24/parity-report.json).

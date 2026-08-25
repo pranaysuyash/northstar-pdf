@@ -279,13 +279,20 @@ The materializer is intentionally not a general PDF writer. It creates shared
 operation contracts; the native PDFKit adapter and browser pdf-lib adapter
 remain responsible for provider capability checks and export behavior.
 
-### Reviewed template-matching benchmark
+### Reviewed template-matching benchmark and class calibration
 
 The first matching benchmark is now executable in
 `web/template-match-benchmark.mjs`, with reviewed value-free fixtures in
 `Tests/fixtures/template_matching_reviewed_fixtures.mjs` and assertions in
 `Tests/web_template_match_benchmark_test.mjs`. It is a calibration and safety
 artifact, not permission to enable automatic family matching.
+
+The benchmark now contains 24 reviewer-labeled cases across `publicAcroForm`,
+`staticPrintedForm`, `nativeWidget`, `rotatedStaticForm`, `rotatedNativeWidget`,
+and `scannedDocument`. The full class calibration report, reviewer-label policy,
+score separation, mutation evidence, and remaining recurring-version gates are
+recorded in
+[`docs/audits/recurring-template-class-calibration-evidence-2026-08-24.md`](audits/recurring-template-class-calibration-evidence-2026-08-24.md).
 
 The fixture ledger covers the complete decision surface:
 
@@ -298,10 +305,14 @@ The fixture ledger covers the complete decision surface:
 | `stale-source-session` | `stale` and no selection | A changed source digest blocks replay before candidate ranking |
 | `near-family-negative` | `noMatch` and no selection | Similar geometry with incompatible semantics is a false-positive gate |
 | `unrelated-corpus-negative` | `noMatch` and no selection | Different page and field structure is rejected |
+| class-specific family positives | `familyMatch` and selected | Reviewed bounded drift is separated from class-specific hard negatives |
+| class-specific ambiguous cases | `ambiguous` and no selection | Equal evidence remains an abstention for every matchable class |
+| class-specific hard negatives | `noMatch` and no selection | Nearby but incompatible evidence is rejected |
+| scanned exact and known variant | `exact` or `knownVariant` | Identity behavior remains available while family inference is disabled |
 
 The benchmark applies deterministic precedence before structural scoring. Exact
 source digests and exact keyed layouts are classified first. Family candidates
-then use this benchmark policy:
+then use this global fallback policy:
 
 ```text
 geometry          0.20
@@ -312,11 +323,16 @@ family threshold  0.76
 ambiguity margin  0.05
 ```
 
-These values are deliberately labeled benchmark policy. They are not accuracy
-probabilities and are not yet product defaults. The benchmark score exposes
-components so a reviewed corpus can later determine whether the signals should
-be reweighted, split by document class, or replaced by a provider-specific
-retrieval step. A family match remains review-only even when its score is high.
+These values are deliberately labeled fallback benchmark policy. They are not
+accuracy probabilities and are not product defaults. The class calibration now
+derives separate reviewed thresholds from the same components: `0.8352` for
+`publicAcroForm`, `0.8296` for `staticPrintedForm`, `0.8624` for `nativeWidget`,
+`0.7772` for `rotatedStaticForm`, and `0.8621` for `rotatedNativeWidget`.
+`scannedDocument` has family acceptance disabled because the corpus has no family
+positive. The benchmark score exposes components so future held-out recurring
+versions can determine whether the signals should be reweighted, split further,
+or replaced by a provider-specific retrieval step. A family match remains
+review-only even when its score is high.
 
 The false-positive gate is mutation-sensitive. The test deliberately lowers the
 family threshold to `0.10` and removes the ambiguity margin, then requires the
@@ -330,16 +346,45 @@ public AcroForm and Form 6 PDFs, creates fingerprints through the PDF.js
 fixture, and proves exact, known-variant, family, ambiguous, stale, and Form 6
 false-positive behavior against live browser extraction. The browser test is
 not a claim that the two PDFs are a true real-world recurring family. The
-family and ambiguity cases are controlled perturbations of a real PDF.js
-fingerprint so the scorer and abstention rules are exercised without inventing
-document content.
+family and ambiguity cases are controlled perturbations of real PDF.js
+fingerprints so the scorer and abstention rules are exercised without inventing
+document content. The browser fixture also exposes the class calibration
+function, but a live browser run does not upgrade the value-free corpus into
+production accuracy evidence.
 
 The fixture records contain source paths and review decisions, but no raw labels,
 profile values, PDF bytes, or screenshots. This keeps matching calibration
-compatible with the template privacy boundary. A future reviewed corpus should
-add real recurring versions and hard negatives, with reviewer provenance and
-per-field decisions, before any batch acceptance or automatic profile
-resolution is considered.
+compatible with the template privacy boundary. The current reviewer label is
+explicitly single-curator evidence with independent agreement not measured. A
+future corpus must add real recurring versions, hold-out evaluation, reviewer
+agreement, and per-field decisions before any batch acceptance or automatic
+profile resolution is considered.
+
+### Reviewed correction-event benefit measurement
+
+The first correction-event measurement is recorded in
+[`docs/audits/reviewed-template-correction-benefit-evidence-2026-08-24.md`](audits/reviewed-template-correction-benefit-evidence-2026-08-24.md).
+It measures `reviewedTargetCoverage`, the number of reviewed mappings surfaced
+in a completion proposal without resolving profile values. Five structured
+source variants moved from zero surfaced targets to one after explicit
+source-bound correction promotion. All 35 promoted-revision hard-negative
+replays abstained, and rollback returned every case to its baseline state while
+retaining the child revision in history.
+
+This result is a controlled contract measurement, not a speed or accuracy claim.
+It does not enable automatic learning. The correction must be explicitly
+reviewed as same-family, pass strict validated and reopenable export checks, and
+create an immutable child revision. Raw profile values, labels, screenshots,
+and source bytes remain outside the correction record.
+
+The metric contract is now implemented in
+[`web/reviewed-completion-metrics.mjs`](../web/reviewed-completion-metrics.mjs)
+and recorded in
+[`docs/audits/reviewed-completion-metrics-evidence-2026-08-25.md`](audits/reviewed-completion-metrics-evidence-2026-08-25.md).
+It separates reviewed-correction coverage lift, ambiguous/stale/no-match
+abstention, hard-negative false-positive rate, and safe-completion readiness.
+Safe completion means a source-bound reviewed target is ready for explicit value
+review. It never means that a profile value was silently materialized.
 
 ### Implemented encrypted local record boundary
 
@@ -781,7 +826,7 @@ template system should build on that proof rather than bypass it.
 
 ### Slice T2: local matching and review acceleration
 
-**Status:** proposal matcher, completion materialization, and reviewed state/false-positive benchmark complete; local index, native review UI, adapter wiring, and real recurring-family calibration pending
+**Status:** proposal matcher, completion materialization, reviewed state/false-positive benchmark, and controlled document-class calibration complete; local index, native review UI, adapter wiring, genuine recurring-version calibration, and production promotion remain pending
 
 - local template index;
 - exact/variant/family match states;

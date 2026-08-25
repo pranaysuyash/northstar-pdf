@@ -706,7 +706,7 @@ extension UserProfile {
       if name.contains("dob") || name.contains("birth") {
         if key.contains("dateofbirth") { return profileValue.textValue }
       }
-      if name.contains("employer") || name.contains("company") && key.contains("employer") { return profileValue.textValue }
+      if (name.contains("employer") || name.contains("company")) && key.contains("employer") { return profileValue.textValue }
       if name.contains("title") && key.contains("jobtitle") { return profileValue.textValue }
     }
     return nil

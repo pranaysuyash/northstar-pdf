@@ -857,31 +857,32 @@ not instruction. Claims remain **Observed**, **Verified**, **Inferred**,
   `Tests/web_template_security_browser_test.mjs`,
   `docs/template-system-design.md`, and `docs/decisions.md` D-013.
 
-### F-050: Template family matching needs reviewed hard negatives before threshold promotion
+### F-050: Template family matching needs recurring-version evidence before threshold promotion
 
-- **Status:** Reviewed benchmark verified at Tier 2/S1 with deliberate policy
-  mutation; live PDF.js corpus smoke verified at Tier 3/S1. Production family
-  matching remains disabled.
+- **Status:** Reviewer-labeled class benchmark verified at Tier 2/S1 with
+  deliberate policy mutation; live PDF.js fingerprint smoke remains Tier 3/S1.
+  Production family matching remains disabled.
 - **Evidence:** `web/template-match-benchmark.mjs` scores geometry, native field
   sequence, keyed anchors, and region signatures after exact and known-variant
-  precedence. `Tests/web_template_match_benchmark_test.mjs` passes exact,
-  known-variant, family, ambiguous, stale, and two no-match cases. The near-
-  family negative scores `0.41` and the unrelated corpus negative scores about
-  `0.305` under the current `0.76` family threshold. A deliberate mutation that
-  lowers the threshold to `0.10` and removes the ambiguity margin fails the
-  benchmark as required. The browser companion extracts fingerprints from the
-  public sample and Form 6 PDFs through PDF.js and rejects the Form 6 false
-  positive with a score of about `0.0273`.
+  precedence. `Tests/web_template_match_benchmark_test.mjs` passes 24 cases:
+  two exact, two known variant, six family positives, six ambiguous cases, one
+  stale refusal, and seven no-match false-positive gates. Five structured classes
+  calibrate to thresholds from `0.7772` through `0.8624`. The scanned class has
+  exact and known-variant evidence but family acceptance is disabled because no
+  family-positive case exists. Lowering all class thresholds to zero and removing
+  the ambiguity margin fails on hard negatives and ambiguous selections.
 - **Implication:** A high structural score is only a review-ranking signal. The
   matcher must abstain on equal evidence, stale sources, and hard negatives;
-  values and operations remain separately review-gated. Thresholds must not be
-  promoted from controlled perturbations to batch acceptance without real
-  recurring versions, reviewer-labeled mappings, and document-class-specific
-  hard negatives.
+  values and operations remain separately review-gated. The current labels are
+  single-curator evidence with independent agreement not measured. Thresholds
+  must not be promoted from controlled perturbations to batch acceptance without
+  real recurring versions, held-out evaluation, reviewer agreement, and native/
+  browser fingerprint parity.
 - **Sources:** `web/template-match-benchmark.mjs`,
   `Tests/fixtures/template_matching_reviewed_fixtures.mjs`,
-  `Tests/web_template_match_benchmark_test.mjs`, and
-  `Tests/web_template_match_benchmark_browser_test.mjs`.
+  `Tests/web_template_match_benchmark_test.mjs`,
+  `Tests/web_template_match_benchmark_browser_test.mjs`, and
+  `docs/audits/recurring-template-class-calibration-evidence-2026-08-24.md`.
 
 ### F-051: Native and browser contract shape exists, but semantic parity is not cleared
 
@@ -923,6 +924,69 @@ not instruction. Claims remain **Observed**, **Verified**, **Inferred**,
   the native Vision path or a packaged open-source OCR adapter is the baseline.
 - Initial corpus types: government forms, scanned forms, invoices, contracts,
   tables, or mixed PDFs.
+
+### F-023: Three-lane agent review produced five confirmed fixes and tracked follow-ups
+
+- **Date:** 2026-08-25
+- **Status:** Verified by read-only parallel review (core safety, macOS shell,
+  provider lane) against the implemented sources; five fixes applied and
+  test-verified in the same session.
+- **Evidence:** Five review findings were confirmed by direct code inspection
+  and fixed:
+  1. `PDFImpactValidator.compareRasterOutsideRegions` silently passed when page
+     rendering failed (zero-dimension rasters compared equal, empty pixel loop,
+     ratio 0). Fixed: `raster(for:scale:)` returns `nil` on failure and the
+     comparator fails the page closed; two non-interpolated page-number strings
+     fixed in the same pass.
+  2. `NativeField.id` embedded PDFKit's global annotation enumeration index,
+     unstable across save/reload when non-widget annotations interleave;
+     `validate()` reconciles by id, so legitimate exports could fail
+     nondeterministically. Fixed: per-(page, name) occurrence counter with the
+     index retained only as a duplicate-name tie-breaker.
+  3. The AcroForm export guard used a raw `/AcroForm` byte scan (false
+     positives in strings; false negatives under object streams). Confirmed at
+     `PDFKitProvider.export`; structural CGPDF catalog detection is a tracked
+     follow-up.
+  4. `ProfileStore` heuristic matching had an operator-precedence bug
+     (`a || b && c`), letting an employer-named field match any semantic key.
+     Fixed with parentheses.
+  5. `applyFieldValue` enforced the signature prohibition only via a disabled
+     Button; `.onSubmit` bypassed it. Fixed with a model-level guard, and
+     `applyBulkFill` now enforces per-operation permission requirements and
+     reports skipped operations.
+- **Stale shell findings confirmed already correct in current code:**
+  `undoLastEdit` replays before mutating the operation list, and export
+  publication uses atomic `replaceItemAt` rather than delete-then-move.
+- **Remaining tracked follow-ups (P2 unless noted):**
+  - AcroForm guard: replace byte scan with structural CGPDF catalog detection.
+  - Button-field retention validation cannot detect a wrong radio/checkbox
+    selection and whitespace values can false-fail; resolve expected kid by
+    `buttonWidgetStateString` and trim consistently.
+  - Signature `.overlayImage` operation is unimplemented in the provider and the
+    sign sheet is not yet wired into the UI; hide or implement.
+  - OCR provenance is discarded: merged candidates should carry
+    `ocr_region` kind plus confidence floor, matching box, capped pixels, and
+    off-main execution.
+  - Static detector still runs on fabricated uniform line geometry; derive line
+    bounds from real glyph geometry and mark synthetic evidence.
+  - Detector certainty overstatements: unlabeled squares scored 0.85 as
+    "checkboxes" and grouped regions 0.90 from weak keyword signals; downgrade
+    to `.unknown`/lower scores.
+  - Outside-region raster exclusion ignores page rotation and pixel loops are
+    unbounded; transform rects through rotation and cap the pixel budget.
+  - P3s: session sidecar file permissions and value retention, unstable
+    `annotation.hash` link identity, resource-limit gaps (post-read size check,
+    unbounded outline recursion, triple source hashing), redo bypassing replay,
+    dead code and hardcoded `textChangedOutsideOperations = false`.
+- **Implication:** The slice now fails closed on unverifiable visual evidence
+  and no longer overstates detection certainty in the fixed paths, but
+  detector/OCR provenance and AcroForm structure handling remain the largest
+  correctness gaps before any broader fidelity claim.
+- **Sources:** `Sources/PDFEditorCore/PDFImpactValidator.swift`,
+  `Sources/PDFEditorCore/PDFKitProvider.swift`,
+  `Sources/PDFEditorCore/ProfileStore.swift`,
+  `Sources/PDFEditorApp/AppModel.swift`; review transcripts from the core-safety,
+  macOS-shell, and provider-lane subagents (2026-08-25).
 
 ## Research Completeness
 
@@ -1047,3 +1111,476 @@ block claiming a final engine, cross-platform fidelity, or licensing clearance.
   [`docs/cross-project-document-intelligence-exploration.md`](docs/cross-project-document-intelligence-exploration.md),
   [`docs/audits/native-web-contract-parity-evidence-2026-08-24.md`](docs/audits/native-web-contract-parity-evidence-2026-08-24.md),
   [`docs/audits/independent-preservation-rotated-viewer-evidence-2026-08-24.md`](docs/audits/independent-preservation-rotated-viewer-evidence-2026-08-24.md).
+
+### F-054: Reviewed template abstention and candidate evidence are semantically aligned across Swift and browser
+
+- **Status:** Verified bounded conformance at Tier 2/S1 native plus Tier 3/S1
+  isolated Chrome; live PDF-derived fingerprint parity remains open.
+- **Evidence:** `PDFTemplateParityHarness` and
+  `Tests/template_match_native_browser_parity_test.mjs` consume the same
+  canonical 24-case reviewed corpus. The native and browser lanes agree on
+  every state, selected template identity, abstention flag, false-positive gate,
+  score, candidate identity/state/reason/components, and class policy. The
+  retained report records 0 semantic mismatches and 0 evidence mismatches.
+- **Observed baseline:** Both lanes report exact 2, knownVariant 2, familyMatch
+  6, ambiguous 6, stale 1, and noMatch 7. Both select 10 cases and abstain on
+  14. The isolated browser run reports no console or page errors.
+- **Implication:** The shared matcher semantics and safety abstention behavior
+  can be tested across native and web before either provider is allowed to claim
+  production recurring completion. This is stronger than selected-ID parity
+  because it checks the evidence that justified the decision.
+- **Limits:** The corpus is value-free and single-curator. The native side is a
+  Swift benchmark adapter over shared benchmark values, not an independent
+  PDFKit extraction of the source PDFs. No PDF byte, renderer, recall, or
+  reviewer-agreement claim follows from this result.
+- **Next gate:** Independently extract fingerprints from the same real PDFs in
+  native and browser lanes, compare geometry, field sequence, anchors, and
+  regions, and retain this corpus as the decision-semantics conformance gate.
+- **Sources:** `Sources/PDFEditorCore/TemplateBenchmarkContracts.swift`,
+  `Sources/PDFTemplateParityHarness/main.swift`,
+  `Tests/template_match_native_browser_parity_test.mjs`,
+  `benchmark/results/template-matching/2026-08-24-reviewed-corpus.json`,
+  `benchmark/results/template-matching/2026-08-24-native-run.json`,
+  `benchmark/results/template-matching/2026-08-24-native-browser-semantic-parity.json`,
+  and `docs/audits/template-native-browser-semantic-parity-evidence-2026-08-24.md`.
+
+### F-055: Reviewed correction events improve bounded target coverage without weakening abstention
+
+- **Status:** Verified controlled measurement at Tier 2/S1 Node plus Tier 3/S1
+  isolated Chrome; real-user completion benefit remains unknown.
+- **Evidence:** `web/template-correction-benchmark.mjs` promotes explicit
+  same-family corrections through the existing strict learning gate, appends an
+  immutable child revision, measures reviewed-target coverage, selects the
+  unchanged parent on rollback, and replays hard negatives. The machine report
+  is `benchmark/results/template-matching/2026-08-24-correction-benefit.json`.
+- **Observed baseline:** Five structured variants begin `noMatch` with zero
+  surfaced reviewed targets. After promotion, all five become `exact` with one
+  surfaced reviewed target each, a coverage lift of 5. Rollback returns all
+  five to `noMatch` with zero surfaced targets. All 35 promoted-revision
+  hard-negative checks abstain.
+- **Privacy boundary:** Correction records contain no profile values, raw
+  labels, PDF bytes, screenshots, or passphrases. A hard-negative correction
+  mutation is rejected before child revision creation. The metric is intentionally
+  target coverage, not filled-value correctness or speed.
+- **Implication:** Reviewed correction events can be treated as a reversible,
+  source-bound proposal accelerator. They must not be treated as permission for
+  silent value resolution, broad family acceptance, or production accuracy
+  claims.
+- **Falsifier:** Held-out recurring versions fail to gain reviewed target
+  coverage, user corrections do not agree with the promoted mapping, rollback
+  cannot restore the parent behavior, or any hard-negative selection occurs.
+- **Next gate:** Build a held-out recurring-version study with independent
+  reviewer labels, per-field correctness, accepted corrections, stale-source
+  recovery, and time-on-task observation while keeping values out of diagnostics.
+- **Sources:** `web/template-correction-benchmark.mjs`,
+  `Tests/web_template_correction_benchmark_test.mjs`,
+  `Tests/web_template_correction_benchmark_browser_test.mjs`,
+  `benchmark/results/template-matching/2026-08-24-correction-benefit.json`,
+  and `docs/audits/reviewed-template-correction-benefit-evidence-2026-08-24.md`.
+
+### F-056: ihatepdf-inspired experiment definitions now have durable native/browser parity
+
+- **Status:** Verified evidence-definition and semantic-contract parity at Tier
+  2/S1 native and Node plus Tier 3/S1 isolated Chrome; six capability runs
+  remain planned.
+- **Evidence:** `Tests/fixtures/ihatepdf_experiment_ledger.json` contains six
+  versioned entries, six linked cases, current fixture references, coordinate
+  policy, review and abstention rules, validation obligations, named hard
+  negatives, falsifiers, and rollback paths. The Swift and browser projections
+  compare with 0 semantic mismatches, and the report records 4/4 ledger
+  mutations rejected.
+- **Observed cases:** E-001 text-run replacement preservation, E-002 OCR
+  layer alignment, E-003 privacy preflight and sanitization, E-004 repair and
+  recovery, E-005 device-adaptive browser limits, and E-006 compare/operation
+  impact maps.
+- **Implication:** Competitor breadth is now an admission-controlled experiment
+  program. A future provider implementation must retain the case identity,
+  source digest, coordinate projection, review boundary, validation obligations,
+  and falsifier rather than turning a feature page into an unqualified product
+  claim.
+- **Limits:** This parity result is contract evidence, not OCR accuracy,
+  arbitrary text-edit fidelity, sanitization completeness, repair recovery,
+  cross-device performance, or independent-viewer impact proof. The malformed
+  fixture was hashed but not repaired.
+- **Next gate:** Execute E-006 or E-002 against real outputs only after its
+  provider and independent-validator gate is defined. Keep the remaining cases
+  planned until their corpus oracle and recovery path are implemented.
+- **Sources:** `Tests/fixtures/ihatepdf_experiment_ledger.json`,
+  `web/ihatepdf-experiment-contract.mjs`,
+  `Sources/PDFExperimentParityHarness/main.swift`,
+  `Tests/ihatepdf_experiment_parity_test.mjs`,
+  `benchmark/results/ihatepdf-experiments/2026-08-24-semantic-parity-report.json`,
+  and `docs/audits/ihatepdf-experiment-ledger-parity-evidence-2026-08-24.md`.
+
+### F-057: Cross-project evidence and PDF corpus parity are now machine-gated
+
+- **Status:** Verified at Tier 1/S1 source inventory plus Tier 2/S1 native and
+  Tier 3/S1 isolated Chrome semantic parity; adjacent runtime reuse remains
+  unproven.
+- **Evidence:** `Tests/fixtures/cross_project_evidence_ledger.json` records six
+  versioned entries spanning SignKit, MetaExtract, Invoice Intelligence,
+  PhotoSearch, extracted_forms, and the historical signature auto-detect web
+  project. The ledger references 18 source artifacts and stores paths and
+  hashes, not PDF bytes, profile values, screenshots, or extracted content.
+  `Tests/fixtures/pdf_corpus_semantic_parity_fixture.json` records one case for
+  each of the 11 existing PDF fixtures. The combined consumer is
+  `Tests/cross_project_evidence_ledger_parity_test.mjs`.
+- **Observed baseline:** The retained report
+  `benchmark/results/cross-project-ledger/2026-08-24-ledger-parity.json`
+  passes with 6 ledger entries, 11 corpus cases, 18 source references, 4
+  parity mismatches, and 0 unexpected mismatches. The four mismatches are two
+  `candidate-semantic-set` and two `candidate.count` differences, limited to
+  the static Form 6 fixture and its mixed-rotation derivative. The malformed
+  input fails inspection in both lanes as expected.
+- **Provenance finding:** The live
+  `benchmark/results/2026-08-23-public-acroform/noop.pdf` digest is
+  `9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8`, while
+  the existing manifest declares a different digest. The harness records this
+  as source identity drift and leaves both the manifest and binary unchanged.
+- **Implication:** The project now has a durable admission boundary for
+  transferring patterns from adjacent OCR, parser, signature, and metadata
+  work. Native and browser adapters can be compared on user intent and safety
+  semantics without forcing byte identity or silently erasing detector
+  differences.
+- **Limits:** This does not prove neighboring runtime quality, license or
+  redistribution clearance, OCR accuracy, arbitrary text editing, independent
+  viewer parity, or universal PDF fidelity. The four candidate mismatches
+  remain open.
+- **Next gate:** Independently extract fingerprints from the same live PDFs in
+  both lanes, then calibrate precision, recall, correction distance, and
+  hard-negative abstention by document class before admitting OCR, parser, or
+  companion implementations.
+- **Sources:** `Tests/fixtures/cross_project_evidence_ledger.json`,
+  `Tests/fixtures/pdf_corpus_semantic_parity_fixture.json`,
+  `Tests/cross_project_evidence_ledger_parity_test.mjs`,
+  `benchmark/results/cross-project-ledger/2026-08-24-ledger-parity.json`,
+  `benchmark/results/contract-parity-2026-08-24/parity-report.json`, and
+  `docs/audits/cross-project-evidence-ledger-parity-evidence-2026-08-24.md`.
+
+### F-058: Expanded corpus separates safe failure from fidelity support
+
+- **Status:** Verified at Tier 1/S1 fixture provenance, Tier 2/S1 native and
+  independent-parser evidence, and Tier 3/S1 isolated Chrome evidence.
+- **Observed:** Six derived fixtures cover hybrid text/raster/form content,
+  degraded scans, rotation, AES-256 encryption, intentional truncation, and a
+  40-page hybrid stress input. The browser contract gate passed all 17 cases
+  with zero console or page errors. Native/browser parity passed with six
+  classified mismatches and zero unexpected mismatches. Poppler/MuPDF reopened
+  53 eligible PDFs, and qpdf output checks passed 55 generated PDFs with six
+  known recoverable Form 6 warnings and zero hard failures.
+- **Safety boundary:** The malformed fixture correctly fails inspection in
+  both lanes and produces no published output. The encrypted hybrid supports
+  password open and byte-preserving no-op export, while encrypted edits remain
+  rejected before download. Unauthorized text and raster mutations fail, while
+  authorized source-bound regions pass.
+- **Implication:** Corpus breadth now tests distinct parser, coordinate,
+  resource, encryption, and failure-state boundaries without upgrading any one
+  provider to universal PDF support. The encrypted page-box rounding mismatch
+  and Form 6 detector mismatches remain named, scoped, and visible.
+- **Limits:** No OCR accuracy claim, arbitrary text-edit claim, signed/XFA/
+  PDF-UA claim, malformed-object repair claim, or resource ceiling claim beyond
+  the measured 40-page fixture is admitted.
+- **Sources:** `benchmark/generate_browser_corpus.sh`,
+  `docs/fixtures/manifest.md`, `Tests/fixtures/pdf_corpus_semantic_parity_fixture.json`,
+  `docs/audits/browser-corpus-fidelity-evidence-2026-08-25.md`, and the retained
+  reports under `benchmark/results/contract-parity-2026-08-24/`.
+
+### F-059: Provider availability must not be mistaken for provider support
+
+- **Status:** Verified at Tier 1/S1 design and fixture inspection plus Tier
+  2/S1 native and browser contract tests. Runtime installation and companion
+  execution remain unknown.
+- **Observed:** The existing architecture accepted a browser core plus an
+  optional companion, but did not yet own the admission semantics needed to
+  distinguish installed, measured, enabled, partial, revoked, quarantined, and
+  expired capabilities. The new registry and negotiator make those states
+  explicit without changing the shared PDF payloads.
+- **Safety properties:** Enabled capabilities require an exact artifact-bound
+  measurement. Unapproved licenses, installed-but-unmeasured providers,
+  revoked/quarantined providers, and source-limit mismatches abstain. Selection
+  is deterministic and emits reason codes. The registry is value-free.
+- **Fixture evidence:** Browser PDF.js/pdf-lib reader is enabled for its passed
+  reader measurement; native Vision OCR is measured-partial; PDFBox is
+  installed-but-unmeasured; MuPDF is quarantined with license review open. This
+  is deliberate evidence classification, not provider adoption.
+- **Implication:** OCR and high-fidelity engines can be installed and measured
+  over time without creating a new PDF document model or forcing the browser
+  and native lanes onto one engine. Capability enablement becomes reversible
+  and explainable at the admission boundary.
+- **Limits:** No installer verification, authenticated bridge, sandbox,
+  cancellation, memory enforcement, live provider bake-off, revocation feed,
+  or real OCR/high-fidelity execution is claimed.
+- **Sources:** `docs/provider-capability-system-design.md`,
+  `Sources/PDFEditorCore/ProviderCapabilityContracts.swift`,
+  `web/provider-capability-contract.mjs`,
+  `Tests/fixtures/provider_capability_registry.json`,
+  `Tests/provider_capability_contract_test.mjs`, and
+  `Tests/PDFEditorCoreTests/ProviderCapabilityContractTests.swift`.
+
+### F-060: Text identity can agree while provider geometry remains unsafe for replacement
+
+- **Status:** Verified at Tier 3/S1 native and isolated Chrome runtime evidence
+  across the current 18-entry execution manifest. Replacement support remains
+  abstained.
+- **Observed:** The new `pdf-editor.text-run-ocr-alignment` projection measured
+  81 pages, with 29 pages exposing comparable text evidence and 10 pages where
+  native OCR could be compared with browser selectable text. Mean text-hash
+  agreement was 0.6593. PDFKit and PDF.js often identified the same normalized
+  text fingerprint, but their provider rectangles did not agree within two
+  points; OCR geometry did not agree within three points on the measured OCR
+  pages.
+- **Safety properties:** All 18 cases were source-bound. Two malformed inputs
+  failed safely. Seventy-one pages without usable browser OCR/reference
+  evidence produced explicit abstentions. No raw text, OCR values, replacement
+  values, pixels, passwords, or source bytes were retained. No provider was
+  allowed to silently replace text.
+- **Implication:** Provider text objects cannot be passed directly into a future
+  replacement writer. A provider-independent text-box control, class-specific
+  transform calibration, browser OCR capability, and outside-region/raster/
+  reopen/viewer proof are required before semantic replacement can be enabled.
+- **Limits:** This is not universal PDF text-editing, OCR language, handwriting,
+  font-fidelity, PDF/UA, signature, XFA, or independent-viewer parity evidence.
+  Visual overlays and native form filling remain different operation types.
+- **Sources:** `web/text-run-ocr-alignment-benchmark.mjs`,
+  `Sources/PDFTextRunOCRBenchmark/main.swift`,
+  `Tests/text_run_ocr_alignment_browser_test.mjs`,
+  `benchmark/results/text-run-ocr-alignment/browser-and-native.json`, and
+  `docs/audits/text-run-ocr-alignment-evidence-2026-08-25.md`.
+
+### F-061: Native/browser candidate agreement is measurable but not yet equivalent
+
+- **Status:** Verified at Tier 2/S1 native and Tier 3/S1 isolated Chrome
+  corpus evidence, with S3 mutation coverage for the comparator.
+- **Observed:** The fresh 18-fixture candidate report contains 206 native
+  candidates and 140 browser candidates. One-to-one page-space pairing forms
+  118 geometry pairs, with 49 fully equivalent pairs, 88 native-only
+  candidates, and 22 browser-only candidates. Native directional coverage is
+  native candidate coverage by browser pairs is 57.28%, browser candidate
+  coverage by native pairs is 84.29%, and symmetric agreement F1 is 68.21%.
+- **Mismatch clusters:** 59 coordinate-space mismatches, 18 field-type
+  mismatches, 14 entry-mode mismatches, 2 review-state mismatches, 2
+  geometry-precision mismatches, and 2 grouping mismatches. The rotated Form 6
+  derivative has zero fully equivalent pairs because rotation coordinate space
+  differs across all 59 matched regions.
+- **Safety properties:** The report is source-digest-bound and omits provider
+  IDs, labels, evidence prose, scores, timestamps, and output digests. It does
+  not treat native or browser as ground truth, and it preserves provider-only
+  candidates for review instead of discarding them.
+- **Implication:** Candidate parity now provides a concrete remediation map for
+  detector taxonomy, grouping, and rotation normalization. It is not a
+  precision/recall result because the current 18-fixture corpus has no reviewed
+  target labels for these provider candidates.
+- **Mutation evidence:** Provider-ID and prose mutations remain equivalent;
+  candidate-kind, evidence-kind, and large-coordinate mutations are detected.
+- **Limits:** Reviewed candidate adjudication, split/merge pairing, candidate-
+  bearing scanned and OCR fixtures, and broader real-world form classes remain
+  open.
+- **Sources:** `web/candidate-parity.mjs`,
+  `Tests/native_browser_candidate_parity_report_test.mjs`,
+  `Tests/candidate_parity_mutation_test.mjs`,
+  `benchmark/results/semantic-parity/2026-08-25/candidate-parity-report.json`,
+  and `docs/audits/native-browser-candidate-parity-evidence-2026-08-25.md`.
+
+### F-062: Session privacy needs execution provenance above document preflight
+
+- **Status:** Verified at Tier 2/S1 native and Tier 3/S1 isolated Chrome
+  runtime evidence across the current 18-entry corpus.
+- **Observed:** Existing preflight described source risk surfaces but could not
+  state whether OCR ran, where processing occurred, how a source was retained,
+  or which validated output was produced. The new session envelope fills that
+  lifecycle gap without duplicating document content.
+- **Safety properties:** Sixteen readable native and browser fixtures emitted
+  source-bound records. Native reports `local-device`; browser reports
+  `local-browser`; current corpus OCR is `not-used`; successful exports carry
+  output digests and reopen validation. Two malformed inputs have no session
+  record rather than a fabricated privacy claim.
+- **Mutation evidence:** Swift and browser tests reject stale digests, true
+  privacy flags, not-used OCR with usage evidence, and successful exports
+  without output digest/reopen provenance.
+- **Implication:** Future OCR, companions, remote services, persistent browser
+  storage, and eviction/recovery flows must emit actual typed locality and
+  retention states. They cannot inherit local no-OCR defaults.
+- **Limits:** Runtime provenance for real OCR, companion IPC, remote services,
+  browser eviction, source deletion confirmation, and encrypted persistence is
+  not claimed by this no-OCR corpus run.
+- **Sources:** `web/pdf-session-provenance.mjs`,
+  `Sources/PDFEditorCore/SessionPrivacyProvenanceContracts.swift`,
+  `Sources/PDFEditorCore/DocumentSessionContracts.swift`, the session
+  provenance tests, and the session provenance audit.
+
+### F-063: Browser export preservation now has an explicit independent-renderer join
+
+- **Status:** Verified at Tier 3/S1 across the current 18-fixture corpus, with
+  S3 focused mutations for provider divergence and missing PDF.js checks.
+- **Observed:** Poppler 26.08.0 independently reopened and measured all 16
+  readable browser no-op exports. Source digests matched 16/16. Poppler
+  outside-region text and raster verdicts agreed with the PDF.js
+  `outsideRegionText` and `visualDiff` checks for 16/16 readable fixtures.
+  Two malformed fixtures remained `expectedFailure` with `unknown` text and
+  raster comparison, not a fabricated pass.
+- **Safety properties:** The report preserves provider-specific evidence,
+  source/output digests, page geometry, and qpdf structural status. It reports
+  `divergence` when PDF.js and Poppler disagree, and `unknown` when either gate
+  is absent. The focused mutation test proves both behaviors.
+- **Implication:** Independent renderer evidence is now connected to the
+  browser gate without making Poppler a replacement authority or hiding
+  provider disagreement. The full parity runner regenerates the comparison
+  report beside the detailed preservation report.
+- **Limits:** This is no-op/export preservation evidence. It does not prove
+  arbitrary semantic editing, universal raster equivalence, MuPDF three-way
+  agreement, GUI-viewer parity, redaction, signatures, XFA, PDF/UA, or
+  production support.
+- **Sources:** `benchmark/browser-export-independent-viewer-validator.mjs`,
+  `benchmark/independent-preservation-validator.mjs`,
+  `Tests/browser_export_independent_viewer_validator_test.mjs`,
+  `benchmark/results/semantic-parity/2026-08-25/independent-browser-viewer-report.json`,
+  and `docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md`.
+
+### F-064: Preservation metrics must remain visible when export is withheld
+
+- **Status:** Verified at Tier 2/S1 source-contract level and Tier 3/S1
+  isolated Chrome runtime level.
+- **Observed:** The browser validation pipeline already computed page-level
+  outside-region text equality and raster pixel metrics, but the review/export
+  panel reduced them to one message per check. Reviewers could see that an
+  export failed without seeing changed-page counts, changed-pixel counts,
+  ratios, channel deltas, or the comparison basis.
+- **Implemented:** Optional value-minimized `metrics` fields now travel on the
+  existing `outsideRegionText` and `visualDiff` checks. The panel renders text
+  and raster status, compared/changed page counts, pixel counts, ratio, maximum
+  channel delta, scale/tolerance, operation count, and evidence basis.
+- **Safety properties:** Raw `sourceOutside` and `outputOutside` strings are
+  not rendered. Byte-preserving no-op exports identify source-digest equality
+  rather than claiming a raster loop ran. Failed and unknown checks remain
+  visible and styled as such.
+- **Runtime evidence:** A public-sample no-op export displayed passing metrics.
+  A static Form 6 reviewed overlay displayed failed metrics with one changed
+  page and 385 changed pixels out of 2,317,088, while the export remained
+  withheld by the existing validator.
+- **Limits:** The panel is presentation of PDF.js evidence. It is not
+  independent Poppler proof, pixel-buffer equality between renderers, PDF/UA,
+  arbitrary semantic-edit, redaction, signature, XFA, or production evidence.
+- **Sources:** `web/index.html`,
+  `Tests/web_reader_contract_test.mjs`,
+  `Tests/web_pdf_proof_playwright_test.mjs`, and
+  `docs/audits/browser-preservation-metrics-evidence-2026-08-25.md`.
+
+### F-065: Independent fidelity needs normalized measurements and operation binding
+
+- **Status:** Verified at Tier 2/S3 focused independent-renderer evidence;
+  fresh current-browser full-corpus regeneration remains unknown because the
+  existing 4173 browser surface timed out before PDF.js initialization.
+- **Observed:** The Poppler/PDF.js report already compared typed verdicts, but
+  retained bundles produced before the browser metrics surface had no
+  normalized PDF.js measurement payload. The wrapper also did not propagate
+  serialized browser edit operations into Poppler's outside-region validator.
+- **Implemented:** The report now preserves provider-specific normalized text
+  and raster metrics, labels measurement comparability explicitly, and passes
+  `editSession.operations` into the independent validator. Missing operation
+  lineage and coordinate/page mismatches produce `unknown` rather than an
+  empty authorization region.
+- **Mutation evidence:** The focused test proves baseline agreement, deliberate
+  PDF.js divergence failure, missing-gate unknown, comparable normalized
+  measurements, valid operation binding, and coordinate-mismatch abstention.
+- **Implication:** Status agreement can be used for no-op corpus evidence, but
+  edited-operation promotion requires fresh browser bundles with metrics and
+  source-bound serialized operation regions.
+- **Limits:** Poppler remains the selected independent engine for this lane.
+  MuPDF three-way comparison, GUI-viewer parity, and fresh full-corpus browser
+  regeneration remain open.
+- **Sources:** `benchmark/browser-export-independent-viewer-validator.mjs`,
+  `Tests/browser_export_independent_viewer_validator_test.mjs`, and
+  `docs/audits/independent-browser-viewer-comparison-evidence-2026-08-25.md`.
+
+### F-066: Encrypted local persistence now preserves template history and profile isolation
+
+- **Status:** Verified at native focused runtime and browser isolated-Chrome
+  runtime; long-term recovery and deletion surfaces remain active.
+- **Observed:** Native `EncryptedPDFTemplateStore` persists the existing
+  `PDFTemplateRevisionSet` with AES-GCM and a Keychain-backed template key.
+  `EncryptedPDFProfileVault` uses a separate directory and Keychain account.
+  Browser IndexedDB persists encrypted template-history and profile-history
+  records, with a distinct profile-derived key, explicit unlock, backup
+  recovery, deletion, and zero-content diagnostics.
+- **Safety evidence:** Native ciphertext does not contain template or profile
+  values. Missing revision parents are rejected. Corrupt primary data recovers
+  only from an authenticated backup and reports `recoveredFromBackup`. Wrong
+  profile keys fail. Browser tests pass wrong-passphrase rejection, IndexedDB
+  eviction recovery, profile/template deletion, source-byte exclusion, and
+  zero-content log filtering.
+- **Product integration:** The live web page no longer writes profile values to
+  plaintext IndexedDB. Template persistence is an explicit encrypted revision
+  action, and profile persistence requires explicit vault unlock. The native
+  `AppModel` now uses the revision-preserving profile vault through its existing
+  `UserProfile` projection.
+- **Implication:** Recurring-layout learning can persist reviewed mappings and
+  profile references without making a template a copy of the source PDF or a
+  hidden sensitive-value database.
+- **Limits:** Secure erasure from OS/browser backups, Keychain-loss recovery,
+  passphrase recovery, quota exhaustion, multi-tab conflict handling,
+  cross-platform encrypted-backup parity, and native SwiftUI persistence
+  controls remain unverified.
+- **Sources:** `Sources/PDFEditorCore/EncryptedTemplatePersistence.swift`,
+  `web/pdf-template-store.mjs`, `web/index.html`, focused native/browser tests,
+  and the encrypted persistence audit.
+
+### F-067: Template completion requires two independently bound approvals
+
+- **Status:** Verified at native Tier 2/S2, browser contract Tier 2/S2, and
+  isolated Chrome Tier 4/S1 evidence.
+- **Observed:** Completion entries now carry separate mapping and profile-value
+  approval records. Mapping approval binds the mapping, resolved provider
+  target, and page-space coordinate. Profile-value approval binds the profile,
+  profile revision, semantic key, and SHA-256 of the exact typed value.
+- **Safety evidence:** Value approval without mapping approval is rejected.
+  Mapping approval without value approval is rejected. Changing an approved
+  value fails the old digest binding. Changing native target resolution resets
+  mapping approval. No template edit operation is created before both records
+  pass the source and coordinate gates.
+- **Product integration:** Native SwiftUI exposes separate mapping and exact
+  profile-value controls through `AppModel`. The browser review panel exposes
+  separate `Approve mapping` and `Approve exact profile value` controls and
+  leaves Apply disabled for unreviewed entries.
+- **Implication:** A recurring template can accelerate reviewed completion
+  without turning a layout match into permission to use a stale or unintended
+  profile value.
+- **Limits:** Automated macOS UI interaction evidence, profile revision change
+  during an open proposal, and collaborative multi-reviewer authorization
+  remain open. The browser no-profile path is explicitly session-only.
+- **Sources:** `Sources/PDFEditorCore/TemplateRuntimeContracts.swift`,
+  `Sources/PDFEditorApp/AppModel.swift`, `Sources/PDFEditorApp/ContentView.swift`,
+  `web/pdf-template-contract.mjs`, `web/index.html`, focused tests, and
+  `docs/audits/template-review-workflow-evidence-2026-08-25.md`.
+
+### F-068: Structural fingerprint parity isolates provider divergence
+
+- **Status:** Verified at Tier 2/S1 over the retained native and browser
+  bundles for all 18 current corpus entries, with focused S3 mutations for
+  source binding, rotation, permissions, candidate population, coordinate
+  space, and tolerated text representation drift.
+- **Observed:** A dedicated value-minimized fingerprint projection agrees on
+  the two expected malformed failure states. Sixteen readable fixtures retain
+  provider divergence. Permission observability differs on 16 fixtures, text
+  character counts differ within tolerance on 8, encrypted-hybrid page-box
+  precision differs on 1, and the two static Form 6 fixtures differ across
+  candidate count, field-type distribution, grouping, evidence composition,
+  label-association population, geometry, and coordinate-space metadata.
+- **Safety properties:** The fixture retains source SHA-256 only for binding and
+  excludes raw labels, evidence prose, provider IDs, timestamps, output
+  digests, and PDF bytes. Malformed inputs remain explicit equal failure states,
+  not fabricated successful parity.
+- **Implication:** Native/browser parity must be repaired by feature family.
+  Permission fallback, text segmentation, candidate grouping/classification,
+  rotation normalization, and encrypted page-box precision are separate
+  engineering problems and must not be collapsed into one aggregate score.
+- **Limits:** The result consumes existing emitted bundles. It is not a fresh
+  native/browser regeneration, independent-viewer proof, reviewed candidate
+  precision/recall result, or arbitrary PDF editing guarantee. The browser
+  permission values remain conservative fallback observations until the adapter
+  can distinguish observed source permissions from unknown coverage.
+- **Sources:** `web/pdf-fingerprint-parity.mjs`,
+  `benchmark/generate_fingerprint_parity.mjs`,
+  `Tests/fixtures/pdf_fingerprint_parity_fixture.json`,
+  `benchmark/results/semantic-parity/2026-08-25/fingerprint-parity-report.json`,
+  `Tests/native_browser_fingerprint_parity_test.mjs`, and
+  `docs/audits/native-browser-fingerprint-parity-evidence-2026-08-25.md`.

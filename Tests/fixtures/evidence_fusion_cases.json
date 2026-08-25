@@ -1,0 +1,43 @@
+{
+  "schema": "pdf-editor.evidence-fusion-cases",
+  "schemaVersion": "1.0.0",
+  "privacy": "metadata-only",
+  "cases": [
+    {
+      "id": "aligned-multisignal",
+      "signals": [
+        {"id": "native-1", "kind": "nativeField", "origin": "provider", "providerID": "pdfkit", "score": 1, "region": {"x": 100, "y": 200, "width": 120, "height": 20}},
+        {"id": "vector-1", "kind": "vectorRectangle", "origin": "geometryExtraction", "providerID": "pdfkit", "score": 0.9, "region": {"x": 101, "y": 201, "width": 119, "height": 19}},
+        {"id": "label-1", "kind": "textLabel", "origin": "textExtraction", "providerID": "pdfkit", "score": 0.8, "region": {"x": 100, "y": 200, "width": 120, "height": 20}}
+      ],
+      "expected": {"state": "supported", "reasonCodes": ["independentEvidenceAgreement"]}
+    },
+    {
+      "id": "ocr-review-only",
+      "signals": [
+        {"id": "ocr-1", "kind": "ocrText", "origin": "ocr", "providerID": "vision", "score": 0.7, "region": {"x": 100, "y": 200, "width": 120, "height": 20}}
+      ],
+      "expected": {"state": "review", "reasonCodes": ["singleEvidenceFamily"]}
+    },
+    {
+      "id": "low-confidence-abstention",
+      "signals": [
+        {"id": "whitespace-1", "kind": "whitespace", "origin": "geometryExtraction", "providerID": "pdfjs", "score": 0.2, "region": {"x": 100, "y": 200, "width": 120, "height": 20}}
+      ],
+      "expected": {"state": "abstain", "reasonCodes": ["lowSupport", "singleEvidenceFamily"]}
+    },
+    {
+      "id": "conflicting-high-confidence",
+      "signals": [
+        {"id": "vector-a", "kind": "vectorRectangle", "origin": "geometryExtraction", "providerID": "pdfjs", "score": 0.95, "region": {"x": 100, "y": 200, "width": 120, "height": 20}},
+        {"id": "ocr-b", "kind": "ocrText", "origin": "ocr", "providerID": "vision", "score": 0.95, "region": {"x": 500, "y": 600, "width": 120, "height": 20}}
+      ],
+      "expected": {"state": "abstain", "reasonCodes": ["conflictingHighConfidenceEvidence", "lowGeometricAgreement"]}
+    },
+    {
+      "id": "empty-evidence",
+      "signals": [],
+      "expected": {"state": "abstain", "reasonCodes": ["noEvidence"]}
+    }
+  ]
+}

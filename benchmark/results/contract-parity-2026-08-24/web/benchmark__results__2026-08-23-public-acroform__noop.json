@@ -11,8 +11,8 @@
         "major": 1,
         "minor": 0
       },
-      "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-      "generatedAt": "2026-08-24T16:46:33.296Z",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "generatedAt": "2026-08-25T04:32:10.602Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -30,8 +30,8 @@
     "payload": {
       "source": {
         "fileName": "noop.pdf",
-        "byteCount": 27307,
-        "sha256": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+        "byteCount": 27354,
+        "sha256": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8"
       },
       "pages": [
         {
@@ -102,7 +102,7 @@
               "rotationDegrees": 0
             }
           },
-          "annotationID": "10R",
+          "annotationID": "16R",
           "fieldFlags": 0
         },
         {
@@ -133,7 +133,7 @@
               "rotationDegrees": 0
             }
           },
-          "annotationID": "11R",
+          "annotationID": "21R",
           "fieldFlags": 4096
         },
         {
@@ -147,7 +147,7 @@
             "width": 19,
             "height": 19
           },
-          "value": "Off",
+          "value": "",
           "choices": [],
           "coordinate": {
             "pageIndex": 0,
@@ -164,7 +164,7 @@
               "rotationDegrees": 0
             }
           },
-          "annotationID": "12R",
+          "annotationID": "26R",
           "fieldFlags": 0
         },
         {
@@ -178,10 +178,8 @@
             "width": 19,
             "height": 19
           },
-          "value": "Off",
-          "choices": [
-            "0"
-          ],
+          "value": "",
+          "choices": [],
           "coordinate": {
             "pageIndex": 0,
             "rect": {
@@ -197,7 +195,7 @@
               "rotationDegrees": 0
             }
           },
-          "annotationID": "13R",
+          "annotationID": "39R",
           "fieldFlags": 32768
         },
         {
@@ -211,10 +209,8 @@
             "width": 19,
             "height": 19
           },
-          "value": "Off",
-          "choices": [
-            "1"
-          ],
+          "value": "",
+          "choices": [],
           "coordinate": {
             "pageIndex": 0,
             "rect": {
@@ -230,7 +226,7 @@
               "rotationDegrees": 0
             }
           },
-          "annotationID": "14R",
+          "annotationID": "52R",
           "fieldFlags": 32768
         },
         {
@@ -267,83 +263,14 @@
               "rotationDegrees": 0
             }
           },
-          "annotationID": "15R",
+          "annotationID": "65R",
           "fieldFlags": 131072
         }
       ],
-      "candidates": [
-        {
-          "id": "candidate-2cc92528-5387-43a3-a738-068fee57189d",
-          "pageIndex": 0,
-          "bounds": {
-            "x": 0,
-            "y": 0,
-            "width": 19,
-            "height": 19
-          },
-          "kind": "vectorRegion",
-          "status": "unknown",
-          "score": 0.52,
-          "evidence": [
-            "Vector checkbox-shaped rectangle detected (19x19pt).",
-            "No nearby label matched; review before applying."
-          ],
-          "nativeFieldID": null,
-          "coordinate": {
-            "pageIndex": 0,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 19,
-              "height": 19
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "suggestedFieldType": "checkbox",
-          "entryMode": "checkbox",
-          "labelText": null,
-          "groupMemberCount": 1,
-          "memberBounds": [
-            {
-              "x": 0,
-              "y": 0,
-              "width": 19,
-              "height": 19
-            }
-          ],
-          "evidenceItems": [
-            {
-              "kind": "vectorRectangle",
-              "origin": "geometryExtraction",
-              "summary": "Checkbox-shaped vector square path at (0, 0)",
-              "region": {
-                "pageIndex": 0,
-                "rect": {
-                  "x": 0,
-                  "y": 0,
-                  "width": 19,
-                  "height": 19
-                },
-                "coordinateSpace": {
-                  "unit": "points",
-                  "origin": "lowerLeft",
-                  "pageBox": "crop",
-                  "rotationDegrees": 0
-                }
-              },
-              "score": 0.52,
-              "id": "evidence-834e695b-5bcc-4f8a-8e54-839b1b3b68f8"
-            }
-          ],
-          "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
-        }
+      "candidates": [],
+      "warnings": [
+        "No static blank-region candidate was inferred from text extraction."
       ],
-      "warnings": [],
       "links": [],
       "outlines": [],
       "metadata": {
@@ -354,7 +281,7 @@
         "producer": "macOS Version 15.7.7 (Build 24G720) Quartz PDFContext",
         "creationDate": "D:20260823173705Z00'00'",
         "modificationDate": "D:20260823173705Z00'00'",
-        "keywords": "sample test pdf cc0 pdftoolskit.org"
+        "keywords": ""
       },
       "permissions": {
         "canPrint": false,
@@ -364,11 +291,14 @@
         "isReadOnly": false
       },
       "attachments": [],
+      "annotationTypeCounts": {
+        "widget": 6
+      },
       "accessibility": {
         "hasTaggedContent": false,
-        "hasReadingOrder": false,
+        "hasReadingOrder": true,
         "notes": [
-          "Tagged-content and reading-order validation are outside this browser proof."
+          "Reading order is derived from PDF.js text extraction and is not an authored-tag guarantee."
         ]
       },
       "security": {
@@ -384,8 +314,8 @@
       "major": 1,
       "minor": 0
     },
-    "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-    "generatedAt": "2026-08-24T16:46:33.296Z",
+    "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+    "generatedAt": "2026-08-25T04:32:10.602Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -420,31 +350,33 @@
       }
     ]
   },
-  "candidates": [
+  "candidates": [],
+  "textRuns": [
     {
-      "id": "candidate-2cc92528-5387-43a3-a738-068fee57189d",
+      "runID": "0:0:e8f17feece6ddb1d",
       "pageIndex": 0,
+      "sequence": 0,
+      "textHash": "e8f17feece6ddb1d0cef41f9a183dfa284214e5b187affb3d8897ec066119481",
+      "characterCount": 26,
       "bounds": {
+        "x": 56,
+        "y": 761.89,
+        "width": 215.168,
+        "height": 16
+      },
+      "pageBounds": {
         "x": 0,
         "y": 0,
-        "width": 19,
-        "height": 19
+        "width": 595.28,
+        "height": 841.89
       },
-      "kind": "vectorRegion",
-      "status": "unknown",
-      "score": 0.52,
-      "evidence": [
-        "Vector checkbox-shaped rectangle detected (19x19pt).",
-        "No nearby label matched; review before applying."
-      ],
-      "nativeFieldID": null,
       "coordinate": {
         "pageIndex": 0,
         "rect": {
-          "x": 0,
-          "y": 0,
-          "width": 19,
-          "height": 19
+          "x": 56,
+          "y": 761.89,
+          "width": 215.168,
+          "height": 16
         },
         "coordinateSpace": {
           "unit": "points",
@@ -453,45 +385,983 @@
           "rotationDegrees": 0
         }
       },
-      "suggestedFieldType": "checkbox",
-      "entryMode": "checkbox",
-      "labelText": null,
-      "groupMemberCount": 1,
-      "memberBounds": [
-        {
-          "x": 0,
-          "y": 0,
-          "width": 19,
-          "height": 19
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": false
+    },
+    {
+      "runID": "0:2:d745055adccbf4d7",
+      "pageIndex": 0,
+      "sequence": 2,
+      "textHash": "d745055adccbf4d7d9a01ffc31013fd0efab2f5fd1fdcb0306589d3925980d1e",
+      "characterCount": 66,
+      "bounds": {
+        "x": 56,
+        "y": 747.89,
+        "width": 290.1100000000001,
+        "height": 10
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 56,
+          "y": 747.89,
+          "width": 290.1100000000001,
+          "height": 10
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
         }
-      ],
-      "evidenceItems": [
-        {
-          "kind": "vectorRectangle",
-          "origin": "geometryExtraction",
-          "summary": "Checkbox-shaped vector square path at (0, 0)",
-          "region": {
-            "pageIndex": 0,
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "width": 19,
-              "height": 19
-            },
-            "coordinateSpace": {
-              "unit": "points",
-              "origin": "lowerLeft",
-              "pageBox": "crop",
-              "rotationDegrees": 0
-            }
-          },
-          "score": 0.52,
-          "id": "evidence-834e695b-5bcc-4f8a-8e54-839b1b3b68f8"
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": true
+    },
+    {
+      "runID": "0:3:f13a64ba2fea87ef",
+      "pageIndex": 0,
+      "sequence": 3,
+      "textHash": "f13a64ba2fea87ef6360c1f2e9bcd3286cc1551a90cb62a8d9345ebf97fbc29f",
+      "characterCount": 9,
+      "bounds": {
+        "x": 56,
+        "y": 705.89,
+        "width": 43.900000000000006,
+        "height": 10
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 56,
+          "y": 705.89,
+          "width": 43.900000000000006,
+          "height": 10
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
         }
-      ],
-      "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": true
+    },
+    {
+      "runID": "0:4:b9f5e766d84e28ed",
+      "pageIndex": 0,
+      "sequence": 4,
+      "textHash": "b9f5e766d84e28edecf80243762d4214efc22b1baa0f4dab885a066eccfeb69d",
+      "characterCount": 17,
+      "bounds": {
+        "x": 56,
+        "y": 661.89,
+        "width": 72.23000000000002,
+        "height": 10
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 56,
+          "y": 661.89,
+          "width": 72.23000000000002,
+          "height": 10
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": true
+    },
+    {
+      "runID": "0:5:cc0e38da9c41790b",
+      "pageIndex": 0,
+      "sequence": 5,
+      "textHash": "cc0e38da9c41790bffef1b88af32d39ac285edce93da766810edc237cb2f1625",
+      "characterCount": 9,
+      "bounds": {
+        "x": 56,
+        "y": 565.89,
+        "width": 44.459999999999994,
+        "height": 10
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 56,
+          "y": 565.89,
+          "width": 44.459999999999994,
+          "height": 10
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": true
+    },
+    {
+      "runID": "0:6:fc12c57a09cbd8d7",
+      "pageIndex": 0,
+      "sequence": 6,
+      "textHash": "fc12c57a09cbd8d77741defcb765587daabcbbe077b794405260ab9b98e9a6d5",
+      "characterCount": 11,
+      "bounds": {
+        "x": 56,
+        "y": 521.89,
+        "width": 50.02000000000001,
+        "height": 10
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 56,
+          "y": 521.89,
+          "width": 50.02000000000001,
+          "height": 10
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": false
+    },
+    {
+      "runID": "0:8:82244417f956ac7c",
+      "pageIndex": 0,
+      "sequence": 8,
+      "textHash": "82244417f956ac7c599f191593f7e441a4fafa20a4158fd52e154f1dc4c8ed92",
+      "characterCount": 5,
+      "bounds": {
+        "x": 208,
+        "y": 519.89,
+        "width": 21.501,
+        "height": 9
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 208,
+          "y": 519.89,
+          "width": 21.501,
+          "height": 9
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": false
+    },
+    {
+      "runID": "0:10:45569da57f4b7bf4",
+      "pageIndex": 0,
+      "sequence": 10,
+      "textHash": "45569da57f4b7bf472d7a864ef4781451cae6383fee9fb0ae40c59aa1ce475b7",
+      "characterCount": 5,
+      "bounds": {
+        "x": 278,
+        "y": 519.89,
+        "width": 25.020000000000003,
+        "height": 9
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 278,
+          "y": 519.89,
+          "width": 25.020000000000003,
+          "height": 9
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": true
+    },
+    {
+      "runID": "0:11:701d021d08c54579",
+      "pageIndex": 0,
+      "sequence": 11,
+      "textHash": "701d021d08c54579f23343581e45b65ffb1150b2c99f94352fdac4b7036dbbd5",
+      "characterCount": 7,
+      "bounds": {
+        "x": 56,
+        "y": 477.89,
+        "width": 35.010000000000005,
+        "height": 10
+      },
+      "pageBounds": {
+        "x": 0,
+        "y": 0,
+        "width": 595.28,
+        "height": 841.89
+      },
+      "coordinate": {
+        "pageIndex": 0,
+        "rect": {
+          "x": 56,
+          "y": 477.89,
+          "width": 35.010000000000005,
+          "height": 10
+        },
+        "coordinateSpace": {
+          "unit": "points",
+          "origin": "lowerLeft",
+          "pageBox": "crop",
+          "rotationDegrees": 0
+        }
+      },
+      "geometryStatus": "insidePage",
+      "origin": "pdfjs.textContent",
+      "providerID": "pdfjs",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "hasEOL": false
     }
   ],
+  "preflight": {
+    "header": {
+      "contractName": "pdf-editor.preflight",
+      "version": {
+        "major": 1,
+        "minor": 1
+      },
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "generatedAt": "2026-08-25T04:32:10.602Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "summary": {
+        "findingCount": 18,
+        "warningCount": 1,
+        "blockedCount": 0,
+        "unknownCount": 0,
+        "metadataFieldCount": 7,
+        "embeddedDataCount": 0,
+        "networkBoundaryCount": 0,
+        "activeContentCount": 0,
+        "unknownCoverageCount": 1
+      },
+      "metadata": {
+        "fields": {
+          "title": {
+            "present": true
+          },
+          "author": {
+            "present": true
+          },
+          "subject": {
+            "present": true
+          },
+          "creator": {
+            "present": true
+          },
+          "producer": {
+            "present": true
+          },
+          "creationDate": {
+            "present": true
+          },
+          "modificationDate": {
+            "present": true
+          },
+          "keywords": {
+            "present": false
+          }
+        },
+        "rawValuesIncluded": false
+      },
+      "embeddedData": {
+        "attachmentCount": 0,
+        "possibleTokenCounts": {
+          "embeddedFiles": 0,
+          "fileAttachment": 0,
+          "xfa": 0,
+          "richMedia": 0
+        }
+      },
+      "attachments": {
+        "attachmentCount": 0,
+        "fileAttachmentCount": 0,
+        "embeddedFileNameTreeCount": 0,
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
+        }
+      },
+      "annotations": {
+        "totalCount": 6,
+        "byKind": {
+          "widget": 6
+        },
+        "unknownCount": 0,
+        "coverage": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
+        }
+      },
+      "scripts": {
+        "javaScriptActionCount": 0,
+        "openActionCount": 0,
+        "additionalActionCount": 0,
+        "launchActionCount": 0,
+        "submitFormActionCount": 0,
+        "remoteGoToActionCount": 0,
+        "uriActionCount": 0,
+        "executionAttempted": false,
+        "coverage": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
+        }
+      },
+      "revisions": {
+        "eofMarkerCount": 1,
+        "startxrefCount": 1,
+        "previousRevisionReferenceCount": 0,
+        "incrementalUpdateCountEstimate": 0,
+        "hiddenContentState": "unknown",
+        "coverage": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "coverage": {
+        "metadata": {
+          "state": "observed",
+          "reasonCodes": []
+        },
+        "attachments": {
+          "state": "observed",
+          "reasonCodes": [
+            "embeddedPayloadBytesNotRetained"
+          ]
+        },
+        "annotations": {
+          "state": "observed",
+          "reasonCodes": [
+            "pdfjsAnnotationEnumeration"
+          ]
+        },
+        "scripts": {
+          "state": "partial",
+          "reasonCodes": [
+            "tokenScanDoesNotProveReachability"
+          ]
+        },
+        "revisions": {
+          "state": "unknown",
+          "reasonCodes": [
+            "incrementalRevisionParserNotRun"
+          ]
+        }
+      },
+      "unknownCoverage": {
+        "categories": {
+          "metadata": {
+            "state": "observed",
+            "reasonCodes": []
+          },
+          "attachments": {
+            "state": "observed",
+            "reasonCodes": [
+              "embeddedPayloadBytesNotRetained"
+            ]
+          },
+          "annotations": {
+            "state": "observed",
+            "reasonCodes": [
+              "pdfjsAnnotationEnumeration"
+            ]
+          },
+          "scripts": {
+            "state": "partial",
+            "reasonCodes": [
+              "tokenScanDoesNotProveReachability"
+            ]
+          },
+          "revisions": {
+            "state": "unknown",
+            "reasonCodes": [
+              "incrementalRevisionParserNotRun"
+            ]
+          }
+        },
+        "unknownCount": 1
+      },
+      "networkBoundaries": {
+        "externalURLCount": 0,
+        "safeExternalURLCount": 0,
+        "unsafeExternalURLCount": 0,
+        "internalPageLinkCount": 0,
+        "unknownDestinationCount": 0,
+        "possibleActionTokenCounts": {
+          "uri": 0,
+          "remoteGoTo": 0,
+          "submitForm": 0
+        }
+      },
+      "activeContent": {
+        "possibleActionTokenCounts": {
+          "javascript": 0,
+          "openAction": 0,
+          "additionalAction": 0,
+          "launch": 0
+        },
+        "executionAttempted": false
+      },
+      "security": {
+        "encrypted": false,
+        "locked": false,
+        "permissionsObserved": true
+      },
+      "sanitization": {
+        "status": "not-run",
+        "safeToClaimClean": false,
+        "sourceUnchanged": true,
+        "supportedModes": [
+          "report-only",
+          "new-copy-required"
+        ],
+        "limits": [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ]
+      },
+      "findings": [
+        {
+          "id": "metadata-presence",
+          "category": "metadata",
+          "code": "metadata.present",
+          "severity": "warning",
+          "state": "observed",
+          "count": 7,
+          "reasonCodes": [
+            "metadataValuesMayContainPersonalInformation"
+          ],
+          "evidence": "inspection"
+        },
+        {
+          "id": "embedded-attachments",
+          "category": "embeddedData",
+          "code": "embedded.attachments",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "embeddedData-embedded-file-spec-token",
+          "category": "embeddedData",
+          "code": "embedded-file-spec-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-file-attachment-token",
+          "category": "embeddedData",
+          "code": "file-attachment-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-xfa-token",
+          "category": "embeddedData",
+          "code": "xfa-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "embeddedData-rich-media-token",
+          "category": "embeddedData",
+          "code": "rich-media-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "network-external",
+          "category": "networkBoundary",
+          "code": "network.external-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "network-unsafe",
+          "category": "networkBoundary",
+          "code": "network.unsafe-links",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "networkBoundary-network-uri-action-token",
+          "category": "networkBoundary",
+          "code": "network-uri-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "networkBoundary-network-remote-goto-token",
+          "category": "networkBoundary",
+          "code": "network-remote-goto-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "networkBoundary-network-submit-form-token",
+          "category": "networkBoundary",
+          "code": "network-submit-form-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-launch-token",
+          "category": "activeContent",
+          "code": "active-launch-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-javascript-token",
+          "category": "activeContent",
+          "code": "active-javascript-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-open-action-token",
+          "category": "activeContent",
+          "code": "active-open-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "activeContent-active-additional-action-token",
+          "category": "activeContent",
+          "code": "active-additional-action-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "security-signature-token",
+          "category": "security",
+          "code": "signature-token",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        },
+        {
+          "id": "security-encryption",
+          "category": "security",
+          "code": "security.encryption",
+          "severity": "info",
+          "state": "not-observed",
+          "count": 0,
+          "reasonCodes": [],
+          "evidence": "inspection"
+        },
+        {
+          "id": "byte-scan-state",
+          "category": "preflight",
+          "code": "preflight.byte-scan",
+          "severity": "info",
+          "state": "observed",
+          "count": 27354,
+          "reasonCodes": [],
+          "evidence": "boundedTokenScan"
+        }
+      ]
+    }
+  },
+  "sessionProvenance": {
+    "header": {
+      "contractName": "pdf-editor.session-provenance",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "sessionID": "49ba8698-7497-48dd-ba9b-e1a42382ed59",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "generatedAt": "2026-08-25T04:32:10.631Z",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "privacy": {
+        "sourceBytesIncluded": false,
+        "documentTextIncluded": false,
+        "ocrTextIncluded": false,
+        "fieldValuesIncluded": false,
+        "filenamesIncluded": false,
+        "URLsIncluded": false
+      },
+      "processing": {
+        "locality": "local-browser",
+        "sourceInput": "local-file-picker",
+        "dataEgress": "none",
+        "networkRequestCount": 0,
+        "companionRequestCount": 0
+      },
+      "ocr": {
+        "state": "not-used",
+        "providerIDs": [],
+        "processedPageCount": 0,
+        "recognizedTextRetained": false,
+        "recognizedBoundsRetained": false
+      },
+      "sourceRetention": {
+        "state": "in-memory-session",
+        "retainedUntilSessionEnd": true,
+        "deletion": "pending",
+        "sourceCopyCount": 1
+      },
+      "export": {
+        "state": "succeeded",
+        "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+        "outputDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+        "storage": "local-download",
+        "validation": "validated",
+        "outputReopenable": true,
+        "operationCount": 0,
+        "exporterID": "pdfjs-pdflib",
+        "validationProviderID": "pdfjs-pdflib"
+      }
+    }
+  },
+  "resourcePolicy": {
+    "header": {
+      "contractName": "pdf-editor.browser-resource-policy",
+      "version": {
+        "major": 1,
+        "minor": 0
+      },
+      "generatedAt": "2026-08-25T04:32:10.603Z",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "provider": {
+        "id": "pdfjs-pdflib",
+        "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
+        "platform": "web",
+        "capabilities": [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ]
+      }
+    },
+    "payload": {
+      "environment": {
+        "cpuLogicalCores": 14,
+        "deviceMemoryGB": 32,
+        "devicePixelRatio": 1,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "connection": {
+          "effectiveType": "4g",
+          "saveData": false
+        },
+        "memory": {
+          "state": "available",
+          "usedJSHeapSize": 9279567,
+          "jsHeapSizeLimit": 4395630592
+        },
+        "storage": {
+          "state": "unknown",
+          "quotaBytes": null,
+          "usageBytes": null
+        },
+        "browserFamily": "Not=A?Brand"
+      },
+      "document": {
+        "byteCount": 27354,
+        "pageCount": 1,
+        "maxPageAreaPoints": 501160.2792,
+        "maxPageDimensionPoints": 841.89,
+        "rotatedPageCount": 0,
+        "rasterPageCount": 0,
+        "selectableTextPageCount": 1,
+        "nativeFieldCount": 6,
+        "candidateCount": 0,
+        "maxImagePixelsPerPage": 0,
+        "hasAttachments": false,
+        "isEncrypted": false,
+        "isMalformed": false
+      },
+      "request": {
+        "renderMode": "reader",
+        "ocrRequested": false,
+        "batchRequested": false,
+        "highDPIRequested": false
+      },
+      "budgets": {
+        "render": {
+          "maxDevicePixelRatio": 3,
+          "maxCanvasPixels": 4510442,
+          "maxPagePixels": 4510442,
+          "maxPageScale": 3,
+          "maxConcurrentPages": 4,
+          "chunkPages": 4,
+          "yieldEveryMs": 16,
+          "workerCount": 2,
+          "allowHighDPI": true,
+          "reasons": []
+        },
+        "ocr": {
+          "state": "deferred",
+          "enabled": false,
+          "maxConcurrentJobs": 2,
+          "maxPixelsPerPage": 12000000,
+          "maxPagesPerBatch": 8,
+          "maxBatchPixels": 96000000,
+          "yieldEveryMs": 16,
+          "cancellationTimeoutMs": 15000,
+          "requiresUserConfirmation": true,
+          "reasons": [
+            "ocrNeedsExplicitOptIn"
+          ]
+        },
+        "batch": {
+          "state": "deferred",
+          "enabled": false,
+          "maxDocuments": 50,
+          "maxTotalBytes": 500000000,
+          "maxTotalPages": 500,
+          "maxConcurrentDocuments": 2,
+          "checkpointEveryDocuments": 5,
+          "checkpointEveryPages": 20,
+          "reasons": [
+            "batchNeedsExplicitOptIn"
+          ]
+        },
+        "recovery": {
+          "checkpointRequired": false,
+          "retryCount": 2,
+          "backoffMs": 500,
+          "staleDigestRequired": true,
+          "resumeSupported": true,
+          "partialOutputAllowed": false,
+          "cancellationSupported": true,
+          "reasons": [
+            "recoveryResumeFromDigest"
+          ]
+        }
+      },
+      "decisions": [
+        {
+          "id": "render",
+          "capability": "render",
+          "state": "enabled",
+          "reasonCode": "boundedRenderBudget",
+          "evidence": {
+            "maxDevicePixelRatio": 3,
+            "maxCanvasPixels": 4510442
+          }
+        },
+        {
+          "id": "ocr",
+          "capability": "ocr",
+          "state": "deferred",
+          "reasonCode": "ocrNeedsExplicitOptIn",
+          "evidence": {
+            "maxPagesPerBatch": 8,
+            "maxPixelsPerPage": 12000000
+          }
+        },
+        {
+          "id": "batch",
+          "capability": "batch",
+          "state": "deferred",
+          "reasonCode": "batchNeedsExplicitOptIn",
+          "evidence": {
+            "maxDocuments": 50,
+            "maxTotalPages": 500
+          }
+        },
+        {
+          "id": "recovery",
+          "capability": "recovery",
+          "state": "enabled",
+          "reasonCode": "recoveryResumeFromDigest",
+          "evidence": {
+            "checkpointRequired": false,
+            "resumeSupported": true
+          }
+        }
+      ],
+      "safety": {
+        "contentLogged": false,
+        "networkAccessAttempted": false,
+        "sourceBytesMutated": false,
+        "partialOutputPromoted": false,
+        "cancellationSupported": true
+      }
+    }
+  },
   "editSession": {
     "header": {
       "contractName": "pdf-editor.edit-session",
@@ -499,8 +1369,8 @@
         "major": 1,
         "minor": 0
       },
-      "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-      "generatedAt": "2026-08-24T16:46:33.296Z",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "generatedAt": "2026-08-25T04:32:10.602Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -517,8 +1387,8 @@
     },
     "source": {
       "fileName": "noop.pdf",
-      "byteCount": 27307,
-      "sha256": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c"
+      "byteCount": 27354,
+      "sha256": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8"
     },
     "reviews": [],
     "operations": []
@@ -539,7 +1409,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "efd9a636-5c87-498b-bdb9-d275e4e7361d",
+        "id": "0a005f20-a2b4-4a93-b28d-f1e9d435d460",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -547,7 +1417,7 @@
         "operationIDs": []
       },
       {
-        "id": "bf0ff7d9-79aa-4ac6-bbf7-cd52345f1041",
+        "id": "abae1955-db83-482f-b617-188448372254",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -555,7 +1425,7 @@
         "operationIDs": []
       },
       {
-        "id": "013d89cb-211d-4b21-bbb1-da6464056370",
+        "id": "c88f311f-3f7a-41bf-9d95-6e4141a66b1d",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -563,7 +1433,7 @@
         "operationIDs": []
       },
       {
-        "id": "9d1bf9ee-2b71-4e7a-96d8-223278e0cc8e",
+        "id": "089f70c6-96a8-4628-a976-fa4560d29fd3",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -571,7 +1441,7 @@
         "operationIDs": []
       },
       {
-        "id": "7c74db46-b0a6-4d20-8334-490a07174e1f",
+        "id": "ecf19713-b470-4523-b778-98742c03c722",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -579,23 +1449,47 @@
         "operationIDs": []
       },
       {
-        "id": "38df3c8f-f4f9-4b69-8e40-0d50711663b1",
+        "id": "1a5b17ad-51a8-4e1c-8747-277c9a2b9d44",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
         "region": null,
-        "operationIDs": []
+        "operationIDs": [],
+        "metrics": {
+          "basis": "source-digest-equality",
+          "comparedPageCount": 0,
+          "changedPageCount": 0,
+          "operationCount": 0,
+          "operationIDs": [],
+          "sourcePageCount": 1
+        }
       },
       {
-        "id": "a45cefd3-4092-4fe4-9478-bd924f4f5052",
+        "id": "4d6279f3-327a-417d-b174-e7df8ca2e3c5",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
         "region": null,
-        "operationIDs": []
+        "operationIDs": [],
+        "metrics": {
+          "basis": "source-digest-equality",
+          "comparedPageCount": 0,
+          "changedPageCount": 0,
+          "comparedPixelCount": 0,
+          "changedPixelCount": 0,
+          "outsidePixelRatio": 0,
+          "maximumChannelDelta": 0,
+          "scale": null,
+          "channelTolerance": null,
+          "maxAllowedOutsidePixelRatio": null,
+          "operationCount": 0,
+          "operationIDs": [],
+          "sourcePageCount": 1,
+          "renderedPageCount": 0
+        }
       },
       {
-        "id": "06183429-c503-451d-9239-54f4ed433e91",
+        "id": "aced0841-bd4e-4fd4-94b6-be82ac45dae3",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -603,8 +1497,8 @@
         "operationIDs": []
       }
     ],
-    "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
-    "outputDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+    "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+    "outputDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -618,12 +1512,12 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-24T16:46:33.315Z",
+    "validatedAt": "2026-08-25T04:32:10.623Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
   "expectedFailure": false,
   "status": "inspected",
-  "sourceDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+  "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
   "error": null
 }

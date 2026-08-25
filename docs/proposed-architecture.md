@@ -159,8 +159,10 @@ Static geometry is interpreted group-first. Repeated small cells are claimed by
 one logical candidate before isolated checkbox or input classification runs.
 Character grids are directly editable as one logical operation whose value is
 materialized one glyph per cell in the live preview and exported artifact.
-Checkbox and radio patterns remain review-only until a real choice interaction
-and export/reopen proof exist. Native double-click and web double-click both
+Checkbox and radio patterns now have bounded choice interaction plus
+export/reopen proof. Static checkbox/radio candidates remain review-first until
+the user confirms the detected choice, while authored native controls can be
+edited directly. Native double-click and web double-click both
 enter the same page-space manual placement path, so detection improvements do
 not change the coordinate or undo contract. The full exploration record is in
 [`docs/audits/grouped-regions-and-direct-editing-exploration-2026-08-24.md`](audits/grouped-regions-and-direct-editing-exploration-2026-08-24.md).

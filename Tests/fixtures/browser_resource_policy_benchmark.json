@@ -1,0 +1,33 @@
+{
+  "contract": "pdf-editor.browser-resource-policy-benchmark",
+  "version": { "major": 1, "minor": 0 },
+  "privacy": {
+    "contentLogged": false,
+    "networkAccessAttempted": false,
+    "sourceValuesIncluded": false
+  },
+  "deviceProfiles": [
+    { "id": "low-memory-mobile", "cpuLogicalCores": 2, "deviceMemoryGB": 2, "devicePixelRatio": 3, "viewport": { "width": 390, "height": 844 }, "connection": { "effectiveType": "4g", "saveData": false } },
+    { "id": "save-data-mobile", "cpuLogicalCores": 4, "deviceMemoryGB": 4, "devicePixelRatio": 2, "viewport": { "width": 412, "height": 915 }, "connection": { "effectiveType": "3g", "saveData": true } },
+    { "id": "mid-laptop", "cpuLogicalCores": 4, "deviceMemoryGB": 8, "devicePixelRatio": 2, "viewport": { "width": 1440, "height": 900 }, "connection": { "effectiveType": "4g", "saveData": false } },
+    { "id": "high-desktop", "cpuLogicalCores": 12, "deviceMemoryGB": 32, "devicePixelRatio": 2, "viewport": { "width": 2560, "height": 1440 }, "connection": { "effectiveType": "4g", "saveData": false } },
+    { "id": "unknown-signals", "cpuLogicalCores": null, "deviceMemoryGB": null, "devicePixelRatio": 2, "viewport": { "width": 1280, "height": 800 }, "connection": { "effectiveType": "unknown", "saveData": null } }
+  ],
+  "documentClasses": [
+    { "id": "tiny-text-form", "byteCount": 10768, "pageCount": 1, "maxPageAreaPoints": 484704, "maxPageDimensionPoints": 792, "selectableTextPageCount": 1, "rasterPageCount": 0, "nativeFieldCount": 6, "candidateCount": 3 },
+    { "id": "rotated-hybrid", "byteCount": 240000, "pageCount": 4, "maxPageAreaPoints": 484704, "maxPageDimensionPoints": 792, "selectableTextPageCount": 2, "rasterPageCount": 2, "rotatedPageCount": 4, "nativeFieldCount": 2, "candidateCount": 8 },
+    { "id": "scanned-noisy", "byteCount": 4000000, "pageCount": 8, "maxPageAreaPoints": 1000000, "maxPageDimensionPoints": 1200, "selectableTextPageCount": 0, "rasterPageCount": 8, "maxImagePixelsPerPage": 12000000, "candidateCount": 0 },
+    { "id": "large-hybrid-40-pages", "byteCount": 183549, "pageCount": 40, "maxPageAreaPoints": 484704, "maxPageDimensionPoints": 792, "selectableTextPageCount": 40, "rasterPageCount": 0, "nativeFieldCount": 0, "candidateCount": 30 },
+    { "id": "large-rotated-scan", "byteCount": 60000000, "pageCount": 120, "maxPageAreaPoints": 3000000, "maxPageDimensionPoints": 1800, "selectableTextPageCount": 12, "rasterPageCount": 108, "rotatedPageCount": 120, "maxImagePixelsPerPage": 24000000, "candidateCount": 10 },
+    { "id": "malformed", "byteCount": 900000, "pageCount": 3, "maxPageAreaPoints": 484704, "maxPageDimensionPoints": 792, "selectableTextPageCount": 0, "rasterPageCount": 3, "isMalformed": true }
+  ],
+  "gates": [
+    "no policy may emit an unbounded concurrency or byte/page budget",
+    "OCR is deferred unless explicitly requested",
+    "high-DPI is clamped to the device/document pixel budget",
+    "long-running work requires source-digest-bound checkpoint recovery",
+    "cancelled work never promotes partial output",
+    "unknown device signals produce conservative unknown or limited states",
+    "benchmark output contains no document content"
+  ]
+}

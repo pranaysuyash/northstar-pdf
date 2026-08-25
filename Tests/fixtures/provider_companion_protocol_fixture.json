@@ -1,0 +1,56 @@
+{
+  "hello": {
+    "type": "pdf-editor.companion.hello",
+    "version": { "major": 1, "minor": 0 },
+    "sessionID": "session-001",
+    "clientNonce": "client-nonce-001",
+    "origin": "https://pdf-editor.local",
+    "requestedCapabilities": ["ocr.textBounds", "edit.existingText"],
+    "localOnly": true
+  },
+  "helloResponse": {
+    "type": "pdf-editor.companion.hello-response",
+    "version": { "major": 1, "minor": 0 },
+    "sessionID": "session-001",
+    "serverNonce": "server-nonce-001",
+    "accepted": true,
+    "companionID": "companion-local-001",
+    "providerIDs": ["native-vision", "companion-pdfbox"]
+  },
+  "request": {
+    "type": "pdf-editor.companion.capability-request",
+    "version": { "major": 1, "minor": 0 },
+    "sessionID": "session-001",
+    "requestID": "request-001",
+    "clientNonce": "client-nonce-001",
+    "serverNonce": "server-nonce-001",
+    "capability": "ocr.textBounds",
+    "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "sourceByteCount": 1024,
+    "sourcePageCount": 2,
+    "maxOutputBytes": 1048576,
+    "timeoutMs": 30000,
+    "inputMode": "source-bytes",
+    "sourceBytesBase64": "cGRmLWJ5dGVz",
+    "operationIDs": ["operation-001"],
+    "localOnly": true
+  },
+  "response": {
+    "type": "pdf-editor.companion.capability-response",
+    "version": { "major": 1, "minor": 0 },
+    "sessionID": "session-001",
+    "requestID": "request-001",
+    "state": "completed",
+    "providerID": "native-vision",
+    "outputDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "reasonCodes": ["measurement:partial", "local-only"]
+  },
+  "cancel": {
+    "type": "pdf-editor.companion.cancel",
+    "version": { "major": 1, "minor": 0 },
+    "sessionID": "session-001",
+    "requestID": "request-001",
+    "clientNonce": "client-nonce-001",
+    "serverNonce": "server-nonce-001"
+  }
+}

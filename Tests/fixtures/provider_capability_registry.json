@@ -1,0 +1,78 @@
+{
+  "contract": "pdf-editor.provider-capability-registry",
+  "version": { "major": 1, "minor": 0 },
+  "registryID": "local-default-registry",
+  "providers": [
+    {
+      "contract": "pdf-editor.provider-capability",
+      "version": { "major": 1, "minor": 0 },
+      "providerID": "browser-pdfjs-pdflib",
+      "engineFamily": "pdfjs-pdflib",
+      "providerVersion": "pdfjs-4.2.67+pdf-lib-1.17.1",
+      "runtimeKind": "browser-bundled",
+      "artifactDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "installState": "enabled",
+      "license": { "name": "Apache-2.0 plus MIT", "status": "approved" },
+      "capabilities": [
+        { "capabilityID": "reader.render", "state": "enabled", "limits": { "maxBytes": 100000000, "maxPages": 500, "supportsEncrypted": true, "supportsScanned": true }, "measurementIDs": ["measurement-browser-reader-001"] },
+        { "capabilityID": "edit.existingText", "state": "unavailable", "limits": { "maxBytes": 0, "maxPages": 0, "supportsEncrypted": false, "supportsScanned": false }, "measurementIDs": [] }
+      ],
+      "measurements": [
+        { "measurementID": "measurement-browser-reader-001", "capabilityID": "reader.render", "artifactDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "corpusDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", "reportDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "status": "passed", "evidenceTier": "T3", "sensitivity": "S1", "gates": ["browser-contract", "independent-viewer"] }
+      ],
+      "revocations": []
+    },
+    {
+      "contract": "pdf-editor.provider-capability",
+      "version": { "major": 1, "minor": 0 },
+      "providerID": "native-vision",
+      "engineFamily": "apple-vision",
+      "providerVersion": "macOS-15",
+      "runtimeKind": "native-system",
+      "artifactDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "installState": "enabled",
+      "license": { "name": "Apple platform framework", "status": "approved" },
+      "capabilities": [
+        { "capabilityID": "ocr.textBounds", "state": "measuredPartial", "limits": { "maxBytes": 50000000, "maxPages": 100, "supportsEncrypted": false, "supportsScanned": true }, "measurementIDs": ["measurement-vision-ocr-001"] }
+      ],
+      "measurements": [
+        { "measurementID": "measurement-vision-ocr-001", "capabilityID": "ocr.textBounds", "artifactDigest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "corpusDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "reportDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "status": "partial", "evidenceTier": "T2", "sensitivity": "S1", "gates": ["raster-ocr", "coordinate-transform"] }
+      ],
+      "revocations": []
+    },
+    {
+      "contract": "pdf-editor.provider-capability",
+      "version": { "major": 1, "minor": 0 },
+      "providerID": "companion-pdfbox",
+      "engineFamily": "apache-pdfbox",
+      "providerVersion": "3.0.x",
+      "runtimeKind": "installed-companion",
+      "artifactDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "installState": "installed",
+      "license": { "name": "Apache-2.0", "status": "reviewRequired" },
+      "capabilities": [
+        { "capabilityID": "edit.existingText", "state": "installedUnmeasured", "limits": { "maxBytes": 500000000, "maxPages": 2000, "supportsEncrypted": false, "supportsScanned": false }, "measurementIDs": [] }
+      ],
+      "measurements": [],
+      "revocations": []
+    },
+    {
+      "contract": "pdf-editor.provider-capability",
+      "version": { "major": 1, "minor": 0 },
+      "providerID": "companion-mupdf",
+      "engineFamily": "mupdf",
+      "providerVersion": "1.28.x",
+      "runtimeKind": "installed-companion",
+      "artifactDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "installState": "quarantined",
+      "license": { "name": "AGPL-3.0 or commercial", "status": "reviewRequired" },
+      "capabilities": [
+        { "capabilityID": "edit.existingText", "state": "quarantined", "limits": { "maxBytes": 1000000000, "maxPages": 5000, "supportsEncrypted": true, "supportsScanned": true }, "measurementIDs": [] }
+      ],
+      "measurements": [],
+      "revocations": [
+        { "revocationID": "revocation-mupdf-license-review", "reasonCode": "licenseReviewRequired", "effectiveAt": "2026-08-25T00:00:00Z" }
+      ]
+    }
+  ]
+}

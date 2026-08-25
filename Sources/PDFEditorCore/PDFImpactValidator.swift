@@ -120,17 +120,23 @@ public enum PDFImpactValidator {
                   let outputPage = output.page(at: pageIndex) else {
                 return PDFImpactResult(
                     status: .failed,
-                    message: "Raster comparison could not reopen page (pageIndex + 1)."
+                    message: "Raster comparison could not reopen page \(pageIndex + 1)."
                 )
             }
-            let sourceRaster = raster(for: sourcePage, scale: scale)
-            let outputRaster = raster(for: outputPage, scale: scale)
+            guard let sourceRaster = raster(for: sourcePage, scale: scale),
+                  let outputRaster = raster(for: outputPage, scale: scale) else {
+                return PDFImpactResult(
+                    status: .failed,
+                    message:
+                        "Raster comparison could not render page \(pageIndex + 1); failing closed rather than passing without evidence."
+                )
+            }
             guard sourceRaster.width == outputRaster.width,
                   sourceRaster.height == outputRaster.height,
                   sourceRaster.samplesPerPixel == outputRaster.samplesPerPixel else {
                 return PDFImpactResult(
                     status: .failed,
-                    message: "Rendered page dimensions changed on page (pageIndex + 1)."
+                    message: "Rendered page dimensions changed on page \(pageIndex + 1)."
                 )
             }
 
@@ -208,7 +214,7 @@ public enum PDFImpactValidator {
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private static func raster(for page: PDFPage, scale: CGFloat) -> Raster {
+    private static func raster(for page: PDFPage, scale: CGFloat) -> Raster? {
         let bounds = page.bounds(for: .cropBox)
         let width = max(1, Int(ceil(bounds.width * scale)))
         let height = max(1, Int(ceil(bounds.height * scale)))
@@ -225,7 +231,7 @@ public enum PDFImpactValidator {
             bytesPerRow: 0,
             bitsPerPixel: 0
         ), let context = NSGraphicsContext(bitmapImageRep: bitmap) else {
-            return Raster(width: 0, height: 0, bytesPerRow: 0, samplesPerPixel: 0, bytes: [])
+            return nil
         }
 
         NSGraphicsContext.saveGraphicsState()

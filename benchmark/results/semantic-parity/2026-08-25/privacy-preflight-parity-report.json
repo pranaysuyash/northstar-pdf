@@ -1,0 +1,221 @@
+{
+  "harness": "pdf-editor-native-web-privacy-preflight-parity",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "contract": {
+    "name": "pdf-editor.preflight",
+    "version": {
+      "major": 1,
+      "minor": 1
+    }
+  },
+  "corpusManifest": "docs/fixtures/manifest.md",
+  "normalization": {
+    "excludes": [
+      "header.provider",
+      "header.generatedAt",
+      "provider-specific finding IDs",
+      "output file digests"
+    ],
+    "retains": [
+      "sourceDigest",
+      "metadata presence",
+      "embedded-data counts",
+      "annotation taxonomy",
+      "script/action counts",
+      "revision evidence",
+      "coverage states",
+      "unknown reasons",
+      "sanitization and execution invariants"
+    ]
+  },
+  "fixtureCount": 18,
+  "mismatchCount": 3,
+  "mismatchCounts": {
+    "preflight.payload.findings[9].count": 1,
+    "preflight.payload.metadata.fields.keywords.present": 1,
+    "preflight.payload.summary.metadataFieldCount": 1
+  },
+  "fixtures": [
+    {
+      "sourcePath": "benchmark/results/public-sample-form.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 3,
+      "mismatches": [
+        {
+          "path": "preflight.payload.findings[9].count",
+          "native": 7,
+          "web": 8
+        },
+        {
+          "path": "preflight.payload.metadata.fields.keywords.present",
+          "native": false,
+          "web": true
+        },
+        {
+          "path": "preflight.payload.summary.metadataFieldCount",
+          "native": 7,
+          "web": 8
+        }
+      ]
+    },
+    {
+      "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "81e59007c14307ad7a40a99f051363b99c9a5d78c880f67507082f12ff72cef0",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "expectedFailure": true,
+      "sourceDigest": "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
+      "nativeStatus": "unavailable",
+      "browserStatus": "unavailable",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+      "expectedFailure": true,
+      "sourceDigest": "98f9a51e4cbdef0e146f52f2658b1f2d4d3a1d5b057f85791aae7cf2d8b99bfe",
+      "nativeStatus": "unavailable",
+      "browserStatus": "unavailable",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    },
+    {
+      "sourcePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+      "expectedFailure": false,
+      "sourceDigest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+      "nativeStatus": "observed",
+      "browserStatus": "observed",
+      "mismatchCount": 0,
+      "mismatches": []
+    }
+  ]
+}

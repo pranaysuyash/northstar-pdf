@@ -57,6 +57,9 @@ at `NO-GO`, even when all artifacts reopen successfully.
 
 - qpdf version: `12.4.0`
 - Independent viewers: Poppler `26.08.0` and MuPDF `1.28.2`
-- Current hard-failure examples: public and synthetic external AcroForm widget
-  reachability after PDFKit serialization
+- Current hard-failure examples: malformed output, unknown-password encrypted
+  output, and public or synthetic external AcroForm widget reachability after
+  PDFKit serialization
+- Encrypted contract-parity exports are checked with the fixture password based
+  on the source fixture name, not on the generated output's final filename
 - Current warning-only examples: Form 6 cross-reference offset diagnostics

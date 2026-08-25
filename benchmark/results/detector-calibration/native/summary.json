@@ -1,0 +1,29 @@
+{
+  "fixtureCount" : 1,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+      "sourcePath" : "benchmark\/results\/detector-calibration\/detector-calibration.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 15.7.7 (Build 24G720)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

@@ -8,6 +8,11 @@ privacy-first workflow patterns
 **Canonical owner:** `/Users/pranay/Projects/pdf_editor`  
 **Evidence level:** Tier 1 static inspection unless a row says otherwise
 
+The SignKit row has a dedicated current crosswalk covering its product
+inventory, explored roadmap, native and web surfaces, metadata-only workspace,
+ownership boundary, and transfer into the PDF Editor's five modes:
+[`docs/audits/signkit-capability-crosswalk-2026-08-24.md`](audits/signkit-capability-crosswalk-2026-08-24.md).
+
 ## Why this document exists
 
 The PDF editor should not be designed from PDF libraries alone. Several local
@@ -45,23 +50,60 @@ doctrines:
 
 - Start from live local truth. Neighboring projects were inspected at their
   current paths; previous summaries were treated as leads, not proof.
-- Exploration widens the frontier. It does not authorize copying every idea or
-  making every adjacent capability a PDF-editor commitment.
+- Exploration widens the frontier and, for this project, is an implementation
+  mandate: every transferable capability becomes a PDF-editor build lane. It
+  does not authorize copying neighboring code, importing another project's
+  data, or making an unverified provider claim.
 - Evidence status is preserved. Static file inspection is not runtime proof;
   historical benchmark claims are not re-run claims in this project.
 - One canonical owner per pipeline and contract. The PDF editor owns its
   document, coordinate, candidate, operation, template, and validation
   contracts. SignKit, MetaExtract, Invoice Intelligence, and PhotoSearch keep
   ownership of their own source pipelines.
-- Semantic salvage is allowed. Reusable concepts, fixtures, metrics, and
-  failure taxonomies may inform this project after provenance, license, privacy,
-  and compatibility review.
+- Semantic salvage is required. Reusable concepts, contract projections,
+  fixtures, metrics, failure taxonomies, and workflow patterns must be rebuilt
+  here after provenance, license, privacy, security, and compatibility review.
 - The neighboring projects were read only. No adjacent source, dependency,
   fixture, database, generated file, or Git state was changed.
 
-The PDF editor request authorizes documentation and planning in this project.
-It does not authorize external service calls, data movement, Git mutation, or
-cross-project code changes.
+The PDF editor request authorizes documentation, implementation, benchmarking,
+and filesystem verification in this project. It does not authorize external
+service calls, data movement, Git mutation, or cross-project code changes. The
+neighboring projects remain read-only evidence sources and distinct owners;
+their transferable behavior is reimplemented behind PDF Editor contracts.
+
+## Full transferable-capability implementation mandate
+
+The owner direction is that the exploration is a moat-building input to the
+complete PDF Editor platform, not a list of optional inspirations. Every row in
+the source inventory must therefore produce a PDF Editor-owned implementation
+lane, even when its provider is currently unavailable or its evidence is not yet
+strong enough for activation.
+
+| Explored project | PDF Editor build lanes | Ownership preserved |
+| --- | --- | --- |
+| SignKit | Native-first PDF inspection, AcroForm/widget evidence, CV and OCR evidence fusion, shared coordinate transforms, ranked candidates, human review, hard-negative mining, reviewed corrections, signature placement adapters, benchmark and recovery reporting | SignKit keeps signature extraction, cleanup, signature assets, vault behavior, and signature-specific claims. PDF Editor owns its adapter, operation contract, and validation. |
+| MetaExtract | Extractor/provider registry, normalized field facts, module provenance, conflict reporting, shadow mode, sensitive-field classification, bounded observability, and parser admission | MetaExtract keeps its broad metadata catalog and extractor tree. PDF Editor owns the PDF evidence projection and runtime routing. |
+| Invoice Intelligence | Digital-versus-scanned routing, OCR/parser/vision fallback, versioned semantic schemas, aliases, reviewed labels, synthetic degradation, completeness/math validation, latency/cost/failure metrics | Invoice-specific schemas, prompts, and workflows remain in Invoice Intelligence. PDF Editor builds generic document-field and validation equivalents. |
+| PhotoSearch | Region-level OCR with bounds, confidence, language/model identity, caching, local model opt-in, and graceful missing-engine behavior | PhotoSearch keeps media metadata and catalog ownership. PDF Editor owns PDF page-space OCR evidence and privacy policy. |
+| extracted_forms | Artifact/source separation, legal and privacy boundaries, packaged-resource provenance, editable-form distinctions, and dependency quarantine | Bundled artifacts remain historical or packaged evidence until independently verified; they are not canonical source or trusted training data. |
+| Historical web detector | Early browser interaction, coordinate, and review hypotheses | Historical material remains a low-confidence lead until PDF Editor source, corpus, and parity tests promote it. |
+
+The resulting implementation lanes include reader and forms, static geometry and
+label association, OCR and layout intelligence, parser and metadata routing,
+signatures and signature validation, templates and profile separation, review and
+hard-negative learning, batch and large-document execution, privacy and
+sanitization, redaction, accessibility, collaboration, hosted/companion
+providers, and independent validation. Native, browser, companion, and hosted
+surfaces may execute different adapters, but they must project into the same
+versioned PDF Editor contracts.
+
+“Deferred,” “Gated,” “Unmeasured,” “Quarantined,” “Blocked,” and “Abstained” are
+current execution or evidence states. They do not remove a capability from the
+implementation program. A lane is complete only when it has an implementation,
+contract projection, governed corpus, provider/license record, privacy and
+security boundary, failure and recovery behavior, benchmark, independent
+validation where applicable, and user-visible state semantics.
 
 ## Local source inventory
 
@@ -315,8 +357,11 @@ owns normalized meaning, review state, operation lineage, and the safety oracle.
 Create a machine-readable ledger for each candidate capability with project path,
 source file, owner, truth status, license/provenance status, inputs/outputs,
 coordinate space, privacy class, runtime evidence, and import decision. This
-document is the human-readable synthesis; the ledger should be the next small
-implementation artifact.
+document is the human-readable synthesis. This is now implemented in
+[`Tests/fixtures/cross_project_evidence_ledger.json`](../Tests/fixtures/cross_project_evidence_ledger.json)
+with six versioned entries and 18 source references. The ledger remains
+reference-only: no neighboring runtime, source bytes, profile values, or
+unreviewed dependency was imported.
 
 ### P0: Native/web contract parity corpus
 
@@ -324,6 +369,18 @@ Run the same normalized inspection and edit-session serialization against the
 existing PDF corpus in the Swift and browser lanes. Compare semantic records,
 not PDF bytes. Include source digest, page boxes, widget facts, candidates,
 operations, and validation states.
+
+This was first implemented by
+[`Tests/fixtures/pdf_corpus_semantic_parity_fixture.json`](../Tests/fixtures/pdf_corpus_semantic_parity_fixture.json)
+and [`Tests/cross_project_evidence_ledger_parity_test.mjs`](../Tests/cross_project_evidence_ledger_parity_test.mjs).
+The 2026-08-24 report records the original 11-case baseline, 4 explicitly
+classified candidate mismatches, and 0 unexpected mismatches. The current
+expanded 17-case result is recorded in
+[`docs/audits/browser-corpus-fidelity-evidence-2026-08-25.md`](audits/browser-corpus-fidelity-evidence-2026-08-25.md)
+and adds hybrid, noisy-scan, rotated-hybrid, encrypted-hybrid, malformed, and
+40-page stress fixtures. One existing public AcroForm artifact has a live
+SHA-256 different from the manifest; the harness records that provenance drift
+without rewriting either side.
 
 ### P1: Multi-provider evidence fusion
 
@@ -381,13 +438,16 @@ support obligations.
 
 ## Immediate plan change
 
-The next implementation unit remains contract and corpus work, but its input set
-now explicitly includes local adjacent evidence:
+The contract and corpus unit is implemented and now serves as the admission
+gate for future capability work. Its input set explicitly includes local
+adjacent evidence:
 
-1. build the cross-project evidence ledger;
-2. identify reusable fixture categories and failure labels;
-3. compare native and web serialized contracts on the existing corpus;
-4. only then add OCR, parser, companion, or template runtime dependencies.
+1. preserve and review the six ledger entries and their source hashes;
+2. reduce the four Form 6 candidate mismatches through independent fingerprint
+   extraction and class-specific false-positive gates;
+3. identify reusable fixture categories and failure labels for OCR, parser, and
+   companion admission;
+4. only then add OCR, parser, companion, or new provider runtime dependencies.
 
 No adjacent repository should be edited or added as a dependency during this
 exploration phase. The first safe transfer is a contract fixture or documented

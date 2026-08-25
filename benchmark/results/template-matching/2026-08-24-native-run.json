@@ -1,0 +1,878 @@
+{
+  "adapter" : "native-swift-pdf-editor-core",
+  "cases" : [
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-public-sample",
+      "actualState" : "exact",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Reviewed source digest matched.",
+          "score" : 1,
+          "state" : "exact",
+          "templateID" : "template-public-sample"
+        }
+      ],
+      "documentClass" : "publicAcroForm",
+      "expectedSelectedTemplateID" : "template-public-sample",
+      "expectedState" : "exact",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "exact-public-sample",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8352
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-public-sample",
+      "actualState" : "knownVariant",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Reviewed keyed layout matched a different source digest.",
+          "score" : 0.9,
+          "state" : "knownVariant",
+          "templateID" : "template-public-sample"
+        }
+      ],
+      "documentClass" : "publicAcroForm",
+      "expectedSelectedTemplateID" : "template-public-sample",
+      "expectedState" : "knownVariant",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "known-variant-public-sample",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8352
+      },
+      "score" : 0.9
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-public-sample",
+      "actualState" : "familyMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 0.9970861064891847,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 0.99895
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 0.9991022212978369,
+          "state" : "familyMatch",
+          "templateID" : "template-public-sample"
+        }
+      ],
+      "documentClass" : "staticPrintedForm",
+      "expectedSelectedTemplateID" : "template-public-sample",
+      "expectedState" : "familyMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "family-form6-drift",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8296
+      },
+      "score" : 0.9991022212978369
+    },
+    {
+      "abstained" : true,
+      "actualState" : "ambiguous",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-family-a"
+        },
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-family-b"
+        }
+      ],
+      "documentClass" : "staticPrintedForm",
+      "expectedState" : "ambiguous",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "ambiguous-family-choice",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8296
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : true,
+      "actualState" : "stale",
+      "candidates" : [
+
+      ],
+      "documentClass" : "publicAcroForm",
+      "expectedState" : "stale",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "stale-source-session",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8352
+      },
+      "score" : 0
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0,
+            "geometry" : 1,
+            "nativeFields" : 0,
+            "pageCount" : 1,
+            "regions" : 0.7000000000000001
+          },
+          "reason" : "No reviewed exact, variant, or family threshold was met.",
+          "score" : 0.41000000000000003,
+          "state" : "noMatch",
+          "templateID" : "template-public-sample"
+        }
+      ],
+      "documentClass" : "staticPrintedForm",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "near-family-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8296
+      },
+      "score" : 0.41000000000000003
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0,
+            "geometry" : 0.7740429505135387,
+            "nativeFields" : 0,
+            "pageCount" : 1,
+            "regions" : 0.5
+          },
+          "reason" : "Family matching is disabled for this document class until reviewed calibration exists.",
+          "score" : 0.3048085901027078,
+          "state" : "noMatch",
+          "templateID" : "template-public-sample"
+        }
+      ],
+      "documentClass" : "scannedDocument",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "unrelated-corpus-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "insufficientEvidence",
+        "familyAcceptance" : "disabled",
+        "familyThreshold" : 1.01
+      },
+      "score" : 0.3048085901027078
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-scanned",
+      "actualState" : "exact",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Reviewed source digest matched.",
+          "score" : 1,
+          "state" : "exact",
+          "templateID" : "template-class-scanned"
+        }
+      ],
+      "documentClass" : "scannedDocument",
+      "expectedSelectedTemplateID" : "template-class-scanned",
+      "expectedState" : "exact",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "scanned-exact-source",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "insufficientEvidence",
+        "familyAcceptance" : "disabled",
+        "familyThreshold" : 1.01
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-scanned",
+      "actualState" : "knownVariant",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Reviewed keyed layout matched a different source digest.",
+          "score" : 0.9,
+          "state" : "knownVariant",
+          "templateID" : "template-class-scanned"
+        }
+      ],
+      "documentClass" : "scannedDocument",
+      "expectedSelectedTemplateID" : "template-class-scanned",
+      "expectedState" : "knownVariant",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "scanned-known-variant",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "insufficientEvidence",
+        "familyAcceptance" : "disabled",
+        "familyThreshold" : 1.01
+      },
+      "score" : 0.9
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-public-acroform",
+      "actualState" : "familyMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 0.9970861064891847,
+            "nativeFields" : 0.85,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 0.9619172212978369,
+          "state" : "familyMatch",
+          "templateID" : "template-class-public-acroform"
+        }
+      ],
+      "documentClass" : "publicAcroForm",
+      "expectedSelectedTemplateID" : "template-class-public-acroform",
+      "expectedState" : "familyMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "public-acro-form-family-positive",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8352
+      },
+      "score" : 0.9619172212978369
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0.3333333333333333,
+            "geometry" : 1,
+            "nativeFields" : 0.5,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "No reviewed exact, variant, or family threshold was met.",
+          "score" : 0.7083333333333333,
+          "state" : "noMatch",
+          "templateID" : "template-class-public-acroform"
+        }
+      ],
+      "documentClass" : "publicAcroForm",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "public-acro-form-hard-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8352
+      },
+      "score" : 0.7083333333333333
+    },
+    {
+      "abstained" : true,
+      "actualState" : "ambiguous",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-public-acroform-ambiguous-1"
+        },
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-public-acroform-ambiguous-2"
+        }
+      ],
+      "documentClass" : "publicAcroForm",
+      "expectedState" : "ambiguous",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "public-acro-form-ambiguous",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8352
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-static-printed",
+      "actualState" : "familyMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 0.9970861064891847,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 0.9994172212978369,
+          "state" : "familyMatch",
+          "templateID" : "template-class-static-printed"
+        }
+      ],
+      "documentClass" : "staticPrintedForm",
+      "expectedSelectedTemplateID" : "template-class-static-printed",
+      "expectedState" : "familyMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "static-printed-form-family-positive",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8296
+      },
+      "score" : 0.9994172212978369
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 0.7000000000000001
+          },
+          "reason" : "No reviewed exact, variant, or family threshold was met.",
+          "score" : 0.66,
+          "state" : "noMatch",
+          "templateID" : "template-class-static-printed"
+        }
+      ],
+      "documentClass" : "staticPrintedForm",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "static-printed-form-hard-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8296
+      },
+      "score" : 0.66
+    },
+    {
+      "abstained" : true,
+      "actualState" : "ambiguous",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-static-printed-ambiguous-1"
+        },
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-static-printed-ambiguous-2"
+        }
+      ],
+      "documentClass" : "staticPrintedForm",
+      "expectedState" : "ambiguous",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "static-printed-form-ambiguous",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8296
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-native-widget",
+      "actualState" : "familyMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 0.9987515605493134,
+            "nativeFields" : 0.8999999999999999,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 0.9747503121098626,
+          "state" : "familyMatch",
+          "templateID" : "template-class-native-widget"
+        }
+      ],
+      "documentClass" : "nativeWidget",
+      "expectedSelectedTemplateID" : "template-class-native-widget",
+      "expectedState" : "familyMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "native-widget-family-positive",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8624
+      },
+      "score" : 0.9747503121098626
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0.3333333333333333,
+            "geometry" : 1,
+            "nativeFields" : 0.6666666666666666,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "No reviewed exact, variant, or family threshold was met.",
+          "score" : 0.75,
+          "state" : "noMatch",
+          "templateID" : "template-class-native-widget"
+        }
+      ],
+      "documentClass" : "nativeWidget",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "native-widget-hard-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8624
+      },
+      "score" : 0.75
+    },
+    {
+      "abstained" : true,
+      "actualState" : "ambiguous",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-native-widget-ambiguous-1"
+        },
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-native-widget-ambiguous-2"
+        }
+      ],
+      "documentClass" : "nativeWidget",
+      "expectedState" : "ambiguous",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "native-widget-ambiguous",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8624
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-rotated-static",
+      "actualState" : "familyMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 0.9970861064891847,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 0.9994172212978369,
+          "state" : "familyMatch",
+          "templateID" : "template-class-rotated-static"
+        }
+      ],
+      "documentClass" : "rotatedStaticForm",
+      "expectedSelectedTemplateID" : "template-class-rotated-static",
+      "expectedState" : "familyMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "rotated-static-form-family-positive",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.7772
+      },
+      "score" : 0.9994172212978369
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0,
+            "geometry" : 0.7740429505135387,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 0.5
+          },
+          "reason" : "No reviewed exact, variant, or family threshold was met.",
+          "score" : 0.5548085901027078,
+          "state" : "noMatch",
+          "templateID" : "template-class-rotated-static"
+        }
+      ],
+      "documentClass" : "rotatedStaticForm",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "rotated-static-form-hard-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.7772
+      },
+      "score" : 0.5548085901027078
+    },
+    {
+      "abstained" : true,
+      "actualState" : "ambiguous",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-rotated-static-ambiguous-1"
+        },
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-rotated-static-ambiguous-2"
+        }
+      ],
+      "documentClass" : "rotatedStaticForm",
+      "expectedState" : "ambiguous",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "rotated-static-form-ambiguous",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.7772
+      },
+      "score" : 1
+    },
+    {
+      "abstained" : false,
+      "actualSelectedTemplateID" : "template-class-rotated-widget",
+      "actualState" : "familyMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 0.9958395677472984,
+            "nativeFields" : 0.8999999999999999,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 0.9741679135494596,
+          "state" : "familyMatch",
+          "templateID" : "template-class-rotated-widget"
+        }
+      ],
+      "documentClass" : "rotatedNativeWidget",
+      "expectedSelectedTemplateID" : "template-class-rotated-widget",
+      "expectedState" : "familyMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : true,
+      "id" : "rotated-native-widget-family-positive",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8621
+      },
+      "score" : 0.9741679135494596
+    },
+    {
+      "abstained" : true,
+      "actualState" : "noMatch",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 0.3333333333333333,
+            "geometry" : 1,
+            "nativeFields" : 0.6666666666666666,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "No reviewed exact, variant, or family threshold was met.",
+          "score" : 0.75,
+          "state" : "noMatch",
+          "templateID" : "template-class-rotated-widget"
+        }
+      ],
+      "documentClass" : "rotatedNativeWidget",
+      "expectedState" : "noMatch",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "rotated-native-widget-hard-negative",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8621
+      },
+      "score" : 0.75
+    },
+    {
+      "abstained" : true,
+      "actualState" : "ambiguous",
+      "candidates" : [
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-rotated-widget-ambiguous-1"
+        },
+        {
+          "components" : {
+            "anchors" : 1,
+            "geometry" : 1,
+            "nativeFields" : 1,
+            "pageCount" : 1,
+            "regions" : 1
+          },
+          "reason" : "Structural family evidence exceeded the reviewed threshold.",
+          "score" : 1,
+          "state" : "familyMatch",
+          "templateID" : "template-class-rotated-widget-ambiguous-2"
+        }
+      ],
+      "documentClass" : "rotatedNativeWidget",
+      "expectedState" : "ambiguous",
+      "falsePositiveGatePassed" : true,
+      "falsePositiveGateSelected" : false,
+      "id" : "rotated-native-widget-ambiguous",
+      "passed" : true,
+      "policy" : {
+        "ambiguityMargin" : 0.05,
+        "calibrationStatus" : "calibrated",
+        "familyAcceptance" : "review",
+        "familyThreshold" : 0.8621
+      },
+      "score" : 1
+    }
+  ],
+  "corpusVersion" : {
+    "major" : 1,
+    "minor" : 0
+  },
+  "counts" : {
+    "ambiguous" : 6,
+    "exact" : 2,
+    "familyMatch" : 6,
+    "knownVariant" : 2,
+    "noMatch" : 7,
+    "stale" : 1
+  },
+  "fixtureCount" : 24,
+  "harness" : "pdf-editor-template-matching-benchmark",
+  "passed" : true,
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

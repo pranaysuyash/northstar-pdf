@@ -1,0 +1,14 @@
+{
+  "harness": "pdf-editor-moat-asset-registry",
+  "registryId": "pdf-editor-compounding-assets-2026-08-25",
+  "assetCount": 16,
+  "statusCounts": {
+    "implemented": 10,
+    "partial": 6,
+    "open": 0,
+    "blocked": 0,
+    "quarantined": 0
+  },
+  "contentLogging": "none",
+  "passed": true
+}

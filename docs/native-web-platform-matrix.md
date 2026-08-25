@@ -111,19 +111,21 @@ Do not make the web app depend on Swift behavior. If parity is important, encode
 
 1. Freeze the shared contract and coordinate system.
 2. Finish the native macOS reader/completion/export proof already in progress.
-3. Add a web reader with PDF.js and a browser-only overlay/form-fill experiment using pdf-lib.
+3. Add a web reader with PDF.js and a browser overlay/form-fill experiment using pdf-lib.
 4. Run the same corpus and preservation gates against native and web exports.
-5. Add OCR as a worker/companion capability with explicit provenance.
-6. If a measured browser failure triggers the companion gate, evaluate whether
-   high-fidelity editing justifies MuPDF licensing or a PDFBox/local-companion
-   boundary.
-7. Only then consider collaboration, server storage, and arbitrary object editing.
+5. Add OCR as browser, native, worker, and companion capabilities with explicit
+   provenance and comparable corpus measurements.
+6. Evaluate high-fidelity editing through every viable provider path, including
+   MuPDF licensing and PDFBox/local-companion boundaries, while preserving
+   provider revocation and fallback.
+7. Build collaboration, server storage, and arbitrary object editing as later
+   dependency-ordered lanes, never as permanent exclusions from the program.
 
 ## Open decisions
 
 | Decision | Why it matters | Falsifier |
 |---|---|---|
-| Is browser-only export sufficient for the browser core? | Resolved in D-009: browser core plus companion capability plane; determines which operations are owned by which provider | A required long-term capability cannot be represented or safely validated across the browser and companion planes |
+| Which execution lane should own each capability? | Browser core plus companion capability plane; the answer determines provider placement and routing, not whether the capability is built | A required long-term capability cannot be represented or safely validated across the browser, native, companion, or hosted planes |
 | Is macOS-only native the first supported desktop? | Determines provider and packaging scope | User requires Windows/Linux/iOS before macOS proof is complete |
 | Is a permissive license mandatory? | Removes MuPDF/Poppler paths unless separately licensed | Legal review approves AGPL/commercial distribution path |
 | Is “normal editing” bounded object editing or arbitrary reflow? | Changes product architecture and validation cost | User explicitly requires paragraph reflow/layout reconstruction |

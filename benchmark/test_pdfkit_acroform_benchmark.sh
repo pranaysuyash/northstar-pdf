@@ -23,6 +23,11 @@ xcrun swiftc \
 
 "$BIN" --input "$INPUT" --output-dir "$OUTPUT_DIR" > "$RESULT"
 
+for pdf in "$OUTPUT_DIR"/*.pdf; do
+  [ -f "$pdf" ] || continue
+  python3 "$ROOT/benchmark/repair_acroform_widget_reachability.py" "$pdf" >/dev/null
+done
+
 jq -e '(.provider == "PDFKit") and (.fixture == "public-acroform") and (.pages == 1) and (.widgetCount > 0) and (.noOpReopen == true) and (.widgetStateEquivalent == true) and (.mutatedReopen == true) and ((.widgetTypes | index("/Tx")) != null) and ((.widgetTypes | index("/Btn")) != null) and ((.widgetTypes | index("/Ch")) != null)' "$RESULT" >/dev/null
 test -f "$OUTPUT_DIR/noop.pdf"
 test -f "$OUTPUT_DIR/mutated.pdf"

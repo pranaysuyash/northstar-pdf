@@ -6,6 +6,11 @@
 
 **Release disposition:** NO-GO for an unrestricted release. GO for continued bounded Feature A development and internal review. The no-go decision is caused by provider fidelity and independent accessibility evidence gates, not by a failing core reader smoke path.
 
+> Historical corpus notice: the fixture counts in this dated Feature A review
+> precede the 2026-08-25 browser-corpus expansion. The current scanned,
+> rotated, encrypted, malformed, hybrid, and 40-page evidence is recorded in
+> [`browser-corpus-fidelity-evidence-2026-08-25.md`](browser-corpus-fidelity-evidence-2026-08-25.md).
+
 ## Acceptance lenses used
 
 The local persona archive was used as a review lens, not as runtime content:

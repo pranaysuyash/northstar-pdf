@@ -2,19 +2,23 @@
 
 **Owner:** `/Users/pranay/Projects/pdf_editor`
 **Date:** 2026-08-24
-**Status:** Consolidated documentation pass initiated for the user request.
+**Status:** Canonical full-capability inventory; implementation sequencing and evidence gates are active, not permanent scope exclusions.
 **Source set:** `docs/pdf-feature-frontier.md`, `docs/native-web-platform-matrix.md`, `docs/proposed-architecture.md`, `docs/implementation-status.md`, `docs/market-strategy.md`, `docs/decisions.md`, `docs/open-source-landscape.md`, `docs/pdf-engine-comparison.md`, `docs/platform-options.md`, `task_plan.md`.
 
 ## Scope and status grammar
 
-This register is separate from implementation evidence. It is a feature-exploration and expansion ledger used for planning and discussion before final scope lock.
+This register is separate from implementation evidence. It is a feature-exploration
+and expansion ledger used to keep the complete capability program visible while
+implementation and enablement are sequenced.
 
 - **Implemented**: present in the current native prototype / documented execution lane.
 - **Partially implemented**: available in a narrow context, with caveats.
 - **Planned**: accepted for the long-term capability program; implementation is
   not complete.
 - **Gated**: requires explicit provider, corpus, safety, or legal/security evidence.
-- **Deferred**: intentionally out of scope for now.
+- **Deferred**: sequenced later in the current execution order, with an active
+  implementation lane and preserved evidence plan. This status must not be
+  interpreted as permanently out of scope.
 - **Not in active slice**: deliberately sequenced after the current safety and
   provider gates; not rejected from the long-term product.
 
@@ -193,11 +197,24 @@ Recommended persona slices for this feature/expansion planning round:
 
 This project’s persona repository rules require project-specific and generic roles to stay separated where applicable and named-only roles not to be treated as fully expanded personas.
 
+## Full-capability correction
+
+Every row in this inventory is a product capability to explore and build. A
+`Deferred`, `Gated`, or `Not in active slice` value records current execution
+state, not a product non-goal. The implementation must eventually provide a
+native path, web path, companion/provider path, or an explicit adapter that
+returns a typed blocked or unsupported state for the relevant source class.
+The only permanent exclusions are unsafe silent behavior and unsupported
+claims without evidence. The underlying capability remains on the roadmap.
+
 ## Required follow-up for complete closure
 
 - Keep this register aligned with `docs/implementation-status.md` after each phase.
 - Add a companion matrix for every feature indicating *measured result* once corpus gates are executed.
-- Keep the user-facing docs explicit about non-goals: arbitrary full-text reflow, silent heuristic field conversion, and legal-signature guarantees.
+- Keep the user-facing docs explicit about claim boundaries: arbitrary
+  full-text reflow, silent heuristic field conversion, and legal-signature
+  guarantees require their own implementation and evidence lanes. They are not
+  permanent product non-goals.
 
 ## Governed expansion matrix by lane and pass criteria
 
@@ -249,7 +266,10 @@ This matrix sets explicit governance for expansion decisions across native, web-
 
 ### Pass/fail governance thresholds
 
-- **Readiness threshold:** any feature with a `Deferred` or `Gated` status in the feature inventory can only move to `Planned` after all pass criteria above are passed in the designated lane.
+- **Readiness threshold:** any feature with a `Deferred` or `Gated` status in
+  the feature inventory remains an active implementation item. It can move to
+  `Planned`, `Implemented`, or `Enabled` only after the pass criteria above are
+  satisfied in the designated lane.
 - **Release threshold:** any feature moving to `Implemented` or user-facing `Go` state must pass two independent providers where practical and one independent-viewer check.
 - **Evidence threshold:** at least one machine-generated artifact, one operator-visible report, and one residual-risk note must be attached per feature.
 - **Governance threshold:** if a provider path changes (for example from PDFKit to PDFBox), pass criteria remain active and must be rerun before feature claim changes.

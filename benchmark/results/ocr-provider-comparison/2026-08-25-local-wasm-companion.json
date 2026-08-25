@@ -1,0 +1,748 @@
+{
+  "contract": "pdf-editor.ocr-provider-comparison",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "corpusManifest": "pdf-corpus-governance-2026-08-25",
+  "corpusDigest": "de862e182b2b6f9f3e68387cfb20dbeb51fd4bdc6158f0ef53c735d5817971b4",
+  "fixtureDescriptorDigest": "f520cce6d310f36ebdae16551a4b574d97b13c844f332a1e4f8a0dc9c1ec5daa",
+  "accuracyUnit": "ground-truth-line-anchor-recall",
+  "latencyUnit": "milliseconds-per-provider-request",
+  "generatedAt": "2026-08-25",
+  "providers": [
+    {
+      "providerId": "browser-wasm-tesseract",
+      "engineFamily": "tesseract.js",
+      "runtimeKind": "browser-local-wasm-worker",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "Apache-2.0-package-and-core-MIT-language-data",
+      "defaultState": "measuredPartial",
+      "installedVersion": "tesseract.js-5.1.1",
+      "artifactDigest": "232a7fb32ee0bd57470bc57ad348be394859c52eeb5abbec35180402317a6f05",
+      "measurementStatus": "measured-below",
+      "licenseGate": "package-apache-core-apache-language-data-license-recorded"
+    },
+    {
+      "providerId": "native-vision",
+      "engineFamily": "apple-vision",
+      "runtimeKind": "native-system",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "platform-framework-approved-local-use",
+      "defaultState": "measuredPartial",
+      "installedVersion": "macOS Vision runtime",
+      "artifactDigest": null,
+      "measurementStatus": "measured-below",
+      "licenseGate": "passed-for-local-system-use"
+    },
+    {
+      "providerId": "local-tesseract",
+      "engineFamily": "tesseract-5",
+      "runtimeKind": "installed-local-process",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "Apache-2.0-engine-traineddata-package-review-required",
+      "defaultState": "installedUnmeasured",
+      "installedVersion": "tesseract 5.5.0",
+      "artifactDigest": "b0f2903f4095f770fe490e1880a1728e72376c9a10c52be5a1fc13c06371d8b8",
+      "measurementStatus": "measured-below",
+      "licenseGate": "review-required"
+    },
+    {
+      "providerId": "companion-ocrmypdf",
+      "engineFamily": "ocrmypdf",
+      "runtimeKind": "installed-companion",
+      "capability": "ocr.searchableLayer",
+      "licenseStatus": "MPL-2.0-core-dependency-review-required",
+      "defaultState": "unavailable-uninstalled",
+      "installedVersion": null,
+      "artifactDigest": null,
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required"
+    },
+    {
+      "providerId": "companion-pdfbox",
+      "engineFamily": "apache-pdfbox",
+      "runtimeKind": "installed-companion",
+      "capability": "pdf.text-extraction-and-edit",
+      "licenseStatus": "Apache-2.0-exact-package-review-required",
+      "defaultState": "installedUnmeasured",
+      "installedVersion": null,
+      "artifactDigest": null,
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required"
+    },
+    {
+      "providerId": "companion-mupdf",
+      "engineFamily": "mupdf",
+      "runtimeKind": "installed-companion",
+      "capability": "pdf.high-fidelity-edit",
+      "licenseStatus": "AGPL-3.0-or-commercial-review-required",
+      "defaultState": "quarantined",
+      "installedVersion": null,
+      "artifactDigest": null,
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required"
+    }
+  ],
+  "measurements": {
+    "local-tesseract": {
+      "summary": {
+        "providerId": "local-tesseract",
+        "fixtureCount": 6,
+        "measuredFixtureCount": 6,
+        "accuracyGatePassed": false,
+        "meanAnchorRecall": 0.7777777777777777,
+        "minimumAnchorRecall": 0,
+        "latencyGate": {
+          "maxMillisecondsPerRequest": 15000,
+          "passed": true,
+          "medianMilliseconds": 189.13658299999997,
+          "p95Milliseconds": 401.32016699999997
+        },
+        "handwrittenClaimBlocked": true,
+        "fieldCreationAllowed": false,
+        "status": "failed"
+      },
+      "cases": [
+        {
+          "fixtureId": "printed-scan",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 8,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 91.27754200000004,
+          "confidenceMean": 0.9497972487499999,
+          "confidenceMinimum": 0.8925173200000001,
+          "confidenceMaximum": 0.9684771000000001,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 8,
+          "boundsUnion": {
+            "x": 0.341875,
+            "y": 0.3628571428571429,
+            "width": 0.3150000000000001,
+            "height": 0.26428571428571435
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "scanned-noisy",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 40,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 0,
+          "anchorRecall": 0,
+          "latencyMilliseconds": 401.32016699999997,
+          "confidenceMean": 0.15000646899999998,
+          "confidenceMinimum": 0,
+          "confidenceMaximum": 0.38844589,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 40,
+          "boundsUnion": {
+            "x": 0,
+            "y": 0.2857142857142857,
+            "width": 1,
+            "height": 0.7142857142857143
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "handwritten-simulated-entries",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 32,
+          "requiredAnchorCount": 6,
+          "matchedAnchorCount": 4,
+          "anchorRecall": 0.6666666666666666,
+          "latencyMilliseconds": 217.23720900000012,
+          "confidenceMean": 0.8747135581250001,
+          "confidenceMinimum": 0.23658484999999999,
+          "confidenceMaximum": 0.96730484,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 32,
+          "boundsUnion": {
+            "x": 0.06777777777777778,
+            "y": 0.06363636363636363,
+            "width": 0.8166666666666667,
+            "height": 0.859090909090909
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "rotated-hybrid-90-raster-page",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 24,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 230.40249999999992,
+          "confidenceMean": 0.39611987125000003,
+          "confidenceMinimum": 0,
+          "confidenceMaximum": 0.88874901,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 24,
+          "boundsUnion": {
+            "x": 0.36428571428571427,
+            "y": 0.343125,
+            "width": 0.26285714285714296,
+            "height": 0.3153125
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "encrypted-hybrid-raster-page",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 8,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 189.13658299999997,
+          "confidenceMean": 0.9543482300000001,
+          "confidenceMinimum": 0.9206671900000001,
+          "confidenceMaximum": 0.9658889,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 8,
+          "boundsUnion": {
+            "x": 0.3415625,
+            "y": 0.36357142857142855,
+            "width": 0.31562500000000004,
+            "height": 0.26357142857142857
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "large-hybrid-raster-page-40",
+          "providerId": "local-tesseract",
+          "status": "measured",
+          "observationCount": 8,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 182.50250000000005,
+          "confidenceMean": 0.9543482300000001,
+          "confidenceMinimum": 0.9206671900000001,
+          "confidenceMaximum": 0.9658889,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 8,
+          "boundsUnion": {
+            "x": 0.3415625,
+            "y": 0.36357142857142855,
+            "width": 0.31562500000000004,
+            "height": 0.26357142857142857
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        }
+      ]
+    },
+    "native-vision": {
+      "summary": {
+        "providerId": "native-vision",
+        "fixtureCount": 6,
+        "measuredFixtureCount": 6,
+        "accuracyGatePassed": true,
+        "meanAnchorRecall": 0.9444444444444443,
+        "minimumAnchorRecall": 0.6666666666666666,
+        "latencyGate": {
+          "maxMillisecondsPerRequest": 15000,
+          "passed": true,
+          "medianMilliseconds": 97.48087499610847,
+          "p95Milliseconds": 425.0744583332562
+        },
+        "handwrittenClaimBlocked": true,
+        "fieldCreationAllowed": false,
+        "status": "measured-partial"
+      },
+      "cases": [
+        {
+          "anchorRecall": 1,
+          "boundsUnion": {
+            "height": 0.2759800659511954,
+            "width": 0.3183139480578246,
+            "x": 0.34156976909546716,
+            "y": 0.3585714284865147
+          },
+          "boundsValidCount": 3,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "coordinateSpace": "normalizedLowerLeft",
+          "fixtureId": "printed-scan",
+          "latencyMilliseconds": 425.0744583332562,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 0.6666666666666666,
+          "boundsUnion": {
+            "height": 0.2628571419546134,
+            "width": 0.31540697186483063,
+            "x": 0.34302325978140097,
+            "y": 0.35857142968804756
+          },
+          "boundsValidCount": 3,
+          "confidenceMaximum": 1,
+          "confidenceMean": 0.8333333333333334,
+          "confidenceMinimum": 0.5,
+          "coordinateSpace": "normalizedLowerLeft",
+          "fixtureId": "scanned-noisy",
+          "latencyMilliseconds": 96.49620833079098,
+          "matchedAnchorCount": 2,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "boundsUnion": {
+            "height": 0.8613112694833425,
+            "width": 0.4854651156251263,
+            "x": 0.06686047352670269,
+            "y": 0.06267922901780487
+          },
+          "boundsValidCount": 12,
+          "confidenceMaximum": 1,
+          "confidenceMean": 0.9166666666666666,
+          "confidenceMinimum": 0.5,
+          "coordinateSpace": "normalizedLowerLeft",
+          "fixtureId": "handwritten-simulated-entries",
+          "latencyMilliseconds": 175.0681249977788,
+          "matchedAnchorCount": 6,
+          "observationCount": 12,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 6,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "boundsUnion": {
+            "height": 0.31976743698120136,
+            "width": 0.26910304747208147,
+            "x": 0.35880396457493624,
+            "y": 0.3401162831082365
+          },
+          "boundsValidCount": 3,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "coordinateSpace": "normalizedLowerLeft",
+          "fixtureId": "rotated-hybrid-90-raster-page",
+          "latencyMilliseconds": 112.15020833333256,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "boundsUnion": {
+            "height": 0.27930232399661703,
+            "width": 0.31831394770829535,
+            "x": 0.3415697694449964,
+            "y": 0.358571429117744
+          },
+          "boundsValidCount": 3,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "coordinateSpace": "normalizedLowerLeft",
+          "fixtureId": "encrypted-hybrid-raster-page",
+          "latencyMilliseconds": 97.33183333446505,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        },
+        {
+          "anchorRecall": 1,
+          "boundsUnion": {
+            "height": 0.27930232399661703,
+            "width": 0.31831394770829535,
+            "x": 0.3415697694449964,
+            "y": 0.358571429117744
+          },
+          "boundsValidCount": 3,
+          "confidenceMaximum": 1,
+          "confidenceMean": 1,
+          "confidenceMinimum": 1,
+          "coordinateSpace": "normalizedLowerLeft",
+          "fixtureId": "large-hybrid-raster-page-40",
+          "latencyMilliseconds": 97.48087499610847,
+          "matchedAnchorCount": 3,
+          "observationCount": 3,
+          "providerId": "native-vision",
+          "requiredAnchorCount": 3,
+          "status": "measured"
+        }
+      ]
+    },
+    "browser-wasm-tesseract": {
+      "summary": {
+        "providerId": "browser-wasm-tesseract",
+        "fixtureCount": 6,
+        "measuredFixtureCount": 6,
+        "accuracyGatePassed": false,
+        "meanAnchorRecall": 0.7777777777777777,
+        "minimumAnchorRecall": 0,
+        "latencyGate": {
+          "maxMillisecondsPerRequest": 15000,
+          "passed": true,
+          "medianMilliseconds": 257.79999999701977,
+          "p95Milliseconds": 11945.89999999851
+        },
+        "handwrittenClaimBlocked": true,
+        "fieldCreationAllowed": false,
+        "status": "failed"
+      },
+      "cases": [
+        {
+          "fixtureId": "printed-scan",
+          "providerId": "browser-wasm-tesseract",
+          "status": "measured",
+          "observationCount": 8,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 107.10000000149012,
+          "confidenceMean": 0.9498967742919922,
+          "confidenceMinimum": 0.8935321807861328,
+          "confidenceMaximum": 0.9643038177490234,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 8,
+          "boundsUnion": {
+            "x": 0.341875,
+            "y": 0.3628571428571429,
+            "width": 0.3150000000000001,
+            "height": 0.26428571428571435
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "scanned-noisy",
+          "providerId": "browser-wasm-tesseract",
+          "status": "measured",
+          "observationCount": 687,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 0,
+          "anchorRecall": 0,
+          "latencyMilliseconds": 11945.89999999851,
+          "confidenceMean": 0.14867560429691037,
+          "confidenceMinimum": 0,
+          "confidenceMaximum": 0.9693917083740234,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 687,
+          "boundsUnion": {
+            "x": 0,
+            "y": 0,
+            "width": 1,
+            "height": 1
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "handwritten-simulated-entries",
+          "providerId": "browser-wasm-tesseract",
+          "status": "measured",
+          "observationCount": 32,
+          "requiredAnchorCount": 6,
+          "matchedAnchorCount": 6,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 394.8999999985099,
+          "confidenceMean": 0.8896620261669158,
+          "confidenceMinimum": 0.3861210632324219,
+          "confidenceMaximum": 0.9689794158935547,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 32,
+          "boundsUnion": {
+            "x": 0.06777777777777778,
+            "y": 0.06363636363636363,
+            "width": 0.8166666666666667,
+            "height": 0.859090909090909
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "rotated-hybrid-90-raster-page",
+          "providerId": "browser-wasm-tesseract",
+          "status": "measured",
+          "observationCount": 27,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 2,
+          "anchorRecall": 0.6666666666666666,
+          "latencyMilliseconds": 337.79999999701977,
+          "confidenceMean": 0.4449251796581127,
+          "confidenceMinimum": 0,
+          "confidenceMaximum": 0.7876065063476563,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 27,
+          "boundsUnion": {
+            "x": 0.36428571428571427,
+            "y": 0.34,
+            "width": 0.2671428571428572,
+            "height": 0.3184375
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "encrypted-hybrid-raster-page",
+          "providerId": "browser-wasm-tesseract",
+          "status": "measured",
+          "observationCount": 8,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 252.80000000447035,
+          "confidenceMean": 0.9474644947052002,
+          "confidenceMinimum": 0.8863182067871094,
+          "confidenceMaximum": 0.9668787384033203,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 8,
+          "boundsUnion": {
+            "x": 0.3415625,
+            "y": 0.36357142857142855,
+            "width": 0.31562500000000004,
+            "height": 0.26357142857142857
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        },
+        {
+          "fixtureId": "large-hybrid-raster-page-40",
+          "providerId": "browser-wasm-tesseract",
+          "status": "measured",
+          "observationCount": 8,
+          "requiredAnchorCount": 3,
+          "matchedAnchorCount": 3,
+          "anchorRecall": 1,
+          "latencyMilliseconds": 257.79999999701977,
+          "confidenceMean": 0.9474644947052002,
+          "confidenceMinimum": 0.8863182067871094,
+          "confidenceMaximum": 0.9668787384033203,
+          "coordinateSpace": "normalizedLowerLeft",
+          "boundsValidCount": 8,
+          "boundsUnion": {
+            "x": 0.3415625,
+            "y": 0.36357142857142855,
+            "width": 0.31562500000000004,
+            "height": 0.26357142857142857
+          },
+          "alignmentStatus": "measured-in-image-bounds",
+          "errorCode": null
+        }
+      ]
+    },
+    "preparationFailures": []
+  },
+  "companionCandidates": [
+    {
+      "providerId": "companion-ocrmypdf",
+      "capability": "ocr.searchableLayer",
+      "runtimeKind": "installed-companion",
+      "availability": "unavailable",
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required",
+      "recoveryStatus": "not-measured",
+      "errorCode": "executable-unavailable"
+    },
+    {
+      "providerId": "companion-pdfbox",
+      "capability": "pdf.text-extraction-and-edit",
+      "runtimeKind": "installed-companion",
+      "availability": "unavailable",
+      "measurementStatus": "not-measured",
+      "licenseGate": "review-required",
+      "recoveryStatus": "not-measured",
+      "errorCode": "pdfbox-jar-unavailable"
+    },
+    {
+      "providerId": "companion-mupdf",
+      "capability": "pdf.high-fidelity-edit",
+      "runtimeKind": "installed-companion",
+      "availability": "installed",
+      "measurementStatus": "capability-control-only",
+      "licenseGate": "review-required",
+      "recoveryStatus": "not-measured",
+      "renderControl": "passed",
+      "errorCode": "not-an-ocr-provider"
+    }
+  ],
+  "alignment": {
+    "localTesseractVsVision": [
+      {
+        "fixtureId": "printed-scan",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 8,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9476563103780783,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "scanned-noisy",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 40,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.11606976524772797,
+        "status": "divergent"
+      },
+      {
+        "fixtureId": "handwritten-simulated-entries",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 32,
+        "referenceBoundsValidCount": 12,
+        "boundsUnionIoU": 0.591750028847692,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "rotated-hybrid-90-raster-page",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 24,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9631814701650985,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "encrypted-hybrid-raster-page",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 8,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9356644859013411,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "large-hybrid-raster-page-40",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 8,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9356644859013411,
+        "status": "aligned"
+      }
+    ],
+    "browserWasmVsVision": [
+      {
+        "fixtureId": "printed-scan",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 8,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9476563103780783,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "scanned-noisy",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 687,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.08290697517694856,
+        "status": "divergent"
+      },
+      {
+        "fixtureId": "handwritten-simulated-entries",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 32,
+        "referenceBoundsValidCount": 12,
+        "boundsUnionIoU": 0.591750028847692,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "rotated-hybrid-90-raster-page",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 27,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9623153821522934,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "encrypted-hybrid-raster-page",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 8,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9356644859013411,
+        "status": "aligned"
+      },
+      {
+        "fixtureId": "large-hybrid-raster-page-40",
+        "referenceProviderId": "native-vision",
+        "coordinateSpace": "normalizedLowerLeft",
+        "providerBoundsValidCount": 8,
+        "referenceBoundsValidCount": 3,
+        "boundsUnionIoU": 0.9356644859013411,
+        "status": "aligned"
+      }
+    ]
+  },
+  "recovery": {
+    "malformed": {
+      "qpdfRejected": true,
+      "rasterizerRejected": true,
+      "noPartialOutputPublished": true,
+      "passed": true
+    },
+    "encrypted": {
+      "rejectsWithoutPassword": true,
+      "opensAfterExplicitUnlock": true,
+      "passwordNotLogged": true,
+      "passed": true
+    },
+    "large": {
+      "declaredPageCount": 40,
+      "pageBudgetObserved": true,
+      "representativeRasterPageRendered": true,
+      "partialOutputPublished": false,
+      "cancellationRecovery": "not-measured",
+      "passed": true
+    },
+    "companionCrashTimeoutRecovery": "not-measured-no-companion-installed",
+    "passed": true
+  },
+  "privacy": {
+    "sourceBytesLogged": false,
+    "pageTextLogged": false,
+    "ocrTextLogged": false,
+    "groundTruthLogged": false,
+    "passwordsLogged": false,
+    "profileValuesLogged": false,
+    "reportContainsContent": false,
+    "browserWasmAssetsServedLocally": true,
+    "browserExternalNetworkRequests": [],
+    "browserNetworkBoundaryPassed": true
+  },
+  "gates": {
+    "accuracy": false,
+    "latency": true,
+    "privacy": true,
+    "licensing": false,
+    "recovery": true,
+    "companionRuntime": "partial-unmeasured",
+    "promotionReady": false
+  },
+  "passed": false
+}

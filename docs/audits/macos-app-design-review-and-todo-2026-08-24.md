@@ -617,3 +617,88 @@ This pass is primarily `T1 / S0`, informed by existing `T2` and selected `T3` ar
 ### Closure rule
 
 This review should be considered closed only when the P1 tasks have either passed their acceptance criteria or have a documented, user-approved decision to defer them. A task marked “implemented,” a queued agent, a passing core test, or a web proof artifact alone is not closure for the corresponding native claim.
+
+## 12. Implementation wave status
+
+This section records the implementation work completed after the original review and the remaining work identified by the final static integration review. It supersedes the earlier TODO status for the items listed here, but it does not convert static evidence into runtime proof.
+
+### Statically closed or materially implemented
+
+- [x] `T-MAC-001` Canonical session boundaries are represented through source identity, operation-ledger identity, projection revision, view state, metadata recovery, and value-bearing payload recovery.
+- [x] `T-MAC-002` AppModel ownership moved to the per-window scene boundary and commands resolve the focused scene model.
+- [x] `T-MAC-003` The product now communicates an export-only lifecycle: source PDFs are not overwritten, `Export Copy` produces separate output, and close choices explicitly keep or discard recovery.
+- [x] `T-MAC-004` Permission checks are enforced in AppModel action methods and are mirrored across the native controls and command enablement for the main extraction, OCR, form, annotation, overlay, mark, synthesis, and export paths.
+- [x] `T-MAC-005` Two-plane recovery is active in the AppModel path: metadata envelope, generation-specific value-bearing payload, and pair manifest.
+- [x] `T-MAC-006` Standard Mac commands route through typed AppModel APIs for document, edit, search, navigation, zoom, scale, reader mode, Settings, and window actions.
+- [x] `T-MAC-007` Reader rotation is view-only; the live document remains in source coordinates and the PDFKit presentation copy applies rotation.
+- [x] `T-MAC-009` Candidate, field, and search highlights are presentation-only overlays with viewport invalidation hooks and native accessibility descriptions.
+- [x] `T-MAC-010` Search identity carries page-local range data; the viewer supports exact, approximate, unavailable, and no-selection projection states.
+- [x] `T-MAC-011` Recovery payload and metadata identities use deterministic source, operation, candidate-status, view-state, generation, and pair-manifest bindings.
+- [x] `T-MAC-012` Template and recovery-related failure states are surfaced through explicit status and diagnostics paths where the current UI has a corresponding surface.
+- [x] `T-MAC-013` Native controls now expose keyboard, accessibility, permission, selection, and recovery-state semantics in the inspected source.
+- [x] `T-MAC-014` Native command and window routing code now has explicit seams for later UI evidence; runtime native tests remain pending.
+- [x] `T-MAC-019` External and export-related safety copy is more explicit about local source preservation and export-only behavior.
+
+### P0 items
+
+- [x] `P0-R1` Recovery replay is staged and committed only after isolated replay succeeds. Failure leaves the active operation ledger, inspection, view state, history, and live document unchanged.
+- [x] `P0-R2` Recovery writes use generation-specific payload and pair files, with the metadata envelope as the reader-visible commit pointer. This is statically closed as a generation-bound commit protocol, not as an OS-level atomic transaction.
+
+### Remaining implementation TODOs
+
+- [ ] `P1-L1` Align every Open entry point, including toolbar and welcome flows, with the non-destructive `Continue to Open` lifecycle language. No path should say “Discard” when it preserves the current document.
+- [ ] `P1-L2` Couple close-and-discard recovery deletion to window-close success, or expose a model-owned transactional `discardRecoveryAndClose` operation so a failed close cannot lose the document first.
+- [ ] `P1-R3` Define the accepted payload integrity threat model. The pair manifest prevents accidental generation mixing, but it is not cryptographic authenticity. Decide whether authenticated encryption, Keychain-backed protection, or an explicit local-trust boundary is required.
+- [ ] `P1-R4` Add retention policy for sensitive value-bearing payload generations. Keep only the active generation and a bounded number of known-good predecessors, then report orphan cleanup failures.
+- [ ] `P2-R1` Document or implement migration for payload schema version 2. Distinguish unsupported historical recovery from corruption and define the behavior for legacy `.pdfedit` records.
+- [ ] `P2-R2` Add an explicit `recoveryStatus` state for discovered valid recovery, rather than reporting `.none` while `recoveryRecords` is non-empty.
+- [ ] `P2-R3` Deprecate or narrow the compatibility `list()` API so app-facing code cannot discard corruption diagnostics by default. `listRecoveries()` should be the required discovery path.
+- [ ] `P2-R4` Keep candidate status, view state, metadata, payload, and pair generation under one authoritative recovery-generation contract without duplicated conflict-prone state.
+- [ ] `P2-R5` Keep the recovery discovery panel synchronized with the authoritative recovery status enum and include clear actions for replayable, metadata-only, corrupted, and save-failed states.
+- [ ] `P2-R6` Add a model-owned debounced `scheduleViewStateAutosave()` hook for selected page, reader mode, scale, zoom, rotation, and selection state without marking content dirty.
+
+### Runtime and release evidence TODOs
+
+- [ ] `T-MAC-020` Build the project against the supported macOS deployment target and resolve any SDK/API availability issues for focused scene values, command APIs, PDFKit copy behavior, and synthesized contract conformances.
+- [ ] `T-MAC-021` Exercise two independent document windows, focused command routing, importer sheets, password sheets, close targeting, and New/Open/Close lifecycle transitions.
+- [ ] `T-MAC-022` Exercise recovery interruption scenarios: payload write failure, pair write failure, metadata commit failure, process termination during replacement, orphan cleanup, source mismatch, and replay failure rollback.
+- [ ] `T-MAC-023` Exercise PDFKit presentation behavior with rotated pages, native widgets, overlays, repeated search terms, ligatures, multi-page modes, scrolling, zoom, resizing, and document replacement.
+- [ ] `T-MAC-024` Exercise native VoiceOver, full keyboard access, reduced motion, focus restoration, manual placement, candidate review, search projection states, and permission explanations.
+- [ ] `T-MAC-025` Measure large-document open, projection rebuild, undo/redo, recovery autosave, recovery replay, overlay redraw, and export validation performance.
+- [ ] `T-MAC-026` Decide and document whether the value-bearing payload plane requires encryption or Keychain-backed protection. Filesystem mode `0700`/`0600` is local access control, not encryption.
+
+### Final implementation posture
+
+The native app is substantially implemented through the P0 foundation and the primary P1 interaction and recovery seams. It is not yet release-complete because the remaining work is now concentrated in lifecycle edge semantics, sensitive payload retention and threat-model policy, recovery-state authority cleanup, view-state autosave, and T2-T4 build/runtime/accessibility evidence.
+
+The current evidence ceiling remains `T1` static implementation review. The correct next move is an explicitly authorized validation pass, not a stronger completion claim based on agent reports or source inspection alone.
+
+## 13. Final static cleanup pass
+
+The following cleanup items were completed after the previous status update:
+
+- [x] Added `currentViewStateDigest()` so coalesced view-state autosave uses the same privacy-safe digest as the metadata envelope, payload, and pair manifest.
+- [x] Added authoritative `RecoveryStatus.available` handling throughout the recovery panel. Valid discovered recovery is no longer represented as `.none`.
+- [x] Added readable recovery status titles, explanations, accessibility values, and status-specific visual treatment for available, restored, metadata-only, corrupted, and save-failed recovery.
+- [x] Aligned toolbar, welcome, and menu Open language around non-destructive `Continue to Open` behavior.
+- [x] Added bounded payload and pair-generation retention, preserving the active generation and one known-good predecessor after successful commit.
+- [x] Added explicit payload schema quarantine for unsupported historical and future schemas instead of guessed migration or unsafe replay.
+- [x] Deprecated the lossy recovery `list()` compatibility projection in favor of `listRecoveries()` with corruption diagnostics.
+- [x] Added model-owned coalesced view-state autosave for navigation, search, reader mode, scale, zoom, rotation, and selection transitions.
+
+### Remaining source-level decisions
+
+- [ ] Add a model-owned transactional close/discard operation so recovery deletion cannot happen before the target window close is admitted.
+- [ ] Decide whether the sensitive value-bearing payload plane requires authenticated encryption or an explicit local-trust threat model. `0700`/`0600` filesystem permissions are not encryption.
+- [ ] Decide whether the generation commit-pointer protocol is sufficient for the product's durability claim or whether a stronger OS-level package/transaction boundary is required.
+
+### Remaining evidence gates
+
+- [ ] Build the package against the supported macOS deployment target.
+- [ ] Run native two-window, importer, password-sheet, Cmd-F, close-keep, close-discard, permission, recovery-panel, and search-projection workflows.
+- [ ] Exercise crash interruption between payload, pair manifest, and metadata envelope writes.
+- [ ] Exercise PDFKit copy, rotated-page projection, overlays, repeated search ranges, scrolling, zoom, display modes, and document replacement.
+- [ ] Exercise VoiceOver, full keyboard access, reduced motion, focus restoration, and manual placement.
+- [ ] Measure recovery autosave, presentation-copy rebuild, undo/redo, and export performance on large PDFs.
+
+The implementation is now materially complete at the source-architecture level for the primary review findings. It remains `NOT RELEASE VERIFIED` until the evidence gates above are executed and the payload threat-model decision is recorded.

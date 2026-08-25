@@ -1,0 +1,17 @@
+{
+  "benchmark": "reviewed-template-correction-benefit-browser",
+  "baseURL": "http://127.0.0.1:4174/web/index.html",
+  "passed": true,
+  "fixtureCount": 5,
+  "reviewedTargetCoverageLift": 5,
+  "selectedHardNegatives": 0,
+  "rollback": true,
+  "privacy": true,
+  "abstentionRate": 1,
+  "hardNegativeFalsePositiveRate": 0,
+  "safeCompletionReadyRate": 1,
+  "silentAutofillCount": 0,
+  "metricsPassed": true,
+  "consoleErrors": 0,
+  "pageErrors": 0
+}

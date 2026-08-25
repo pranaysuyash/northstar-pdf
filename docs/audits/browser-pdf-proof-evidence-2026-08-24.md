@@ -5,6 +5,11 @@
 **Evidence tier:** Tier 2/S1 internal corpus evidence  
 **Disposition:** bounded proof passes; production fidelity gates remain open
 
+> Historical baseline notice: this report predates the expanded browser corpus.
+> Its remaining-coverage statement is superseded by
+> [`browser-corpus-fidelity-evidence-2026-08-25.md`](browser-corpus-fidelity-evidence-2026-08-25.md),
+> while the older command results remain retained for provenance.
+
 ## Commands executed
 
 ```sh
@@ -96,8 +101,10 @@ agreement with another PDF engine.
 - No independent-viewer raster comparison for browser exports yet. The current
   raster diff is an independent validator module, but it intentionally uses the
   same PDF.js rendering stack as the browser reader.
-- Checkbox, radio, choice, rotated, encrypted, scanned/OCR, signed, XFA,
-  malformed, and large-document browser corpus coverage remains to be added.
+- Signed, XFA, broader malformed-object, and larger-resource browser corpus
+  coverage remains open. Scanned, rotated, encrypted, malformed-truncation,
+  large-hybrid, and hybrid coverage is now recorded in the expanded corpus
+  audit linked above.
 - The shared Browser Daemon was not used as release evidence because concurrent
   sessions pointed it at an unrelated FieldCanvas page. The isolated Chrome
   run is the authoritative browser result for this proof.

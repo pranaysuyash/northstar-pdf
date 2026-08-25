@@ -1,6 +1,6 @@
 # Long-Term Web Deployment Architecture: Browser Core and Local Companion
 
-**Status:** Accepted product decision; companion implementation remains gated  
+**Status:** Accepted long-term architecture; companion activation and release claims remain evidence-gated
 **Date:** 2026-08-24  
 **Project:** `/Users/pranay/Projects/pdf_editor`  
 **Decision owner:** Pranay  
@@ -36,23 +36,49 @@ handling, and other capabilities when their provider, security, privacy,
 licensing, and validation gates close. The browser core remains useful without
 the companion, and the companion must never be a hidden runtime dependency.
 
-This is the accepted long-term product architecture. It does not approve
-packaging or shipping a companion immediately. Companion implementation and
-provider adoption remain conditional on their admission gates.
+This is the accepted long-term product architecture. The companion, OCR, and
+high-fidelity lanes are implementation targets across the native and web
+surfaces. Packaging, activation, and product claims remain conditional on
+their admission gates. A gate controls whether behavior may be enabled or
+claimed for a document class, not whether the corresponding implementation,
+adapter, benchmark, or recovery path should be built.
 
 The decision is capability-specific:
 
 | Capability | Browser core | Explicit local companion | Long-term placement |
 |---|---|---|---|
-| OCR text and bounds | Optional bounded browser experiment where supported; never silent field truth | Yes, as a local worker with model/language provenance and bounds | PDF-to-image rendering, WASM/model assets, memory, multilingual calibration, and scanned-layout validation are separate runtime and evidence problems |
-| Searchable OCR layer | No | Yes, only through a companion writer path that passes reopen and source-image preservation gates | Recognition output is not a safe PDF mutation by itself |
-| High-fidelity existing-object editing | Not owned by the browser core without a provider that passes the gates | Candidate provider lane, then supported companion capability if cleared | pdf-lib does not provide arbitrary existing-text editing and current parity/preservation evidence is not a fidelity clearance |
-| Arbitrary paragraph reflow | Long-term exploration, not silently implied by bounded overlays | Long-term provider and semantic-editing lane | Requires a distinct semantic-editing model and stronger preservation oracle |
+| OCR text and bounds | Active browser implementation lane where supported; never silent field truth | Yes, as a local worker with model/language provenance and bounds | PDF-to-image rendering, WASM/model assets, memory, multilingual calibration, and scanned-layout validation are separate runtime and evidence problems |
+| Searchable OCR layer | Active browser and companion writer lanes, each requiring reopen and source-image preservation gates | Yes, where the installed provider passes those gates | Recognition output is not a safe PDF mutation by itself |
+| High-fidelity existing-object editing | Active browser/provider lane, not yet enabled for unsupported source classes | Candidate provider lane, then supported companion capability if cleared | pdf-lib does not provide arbitrary existing-text editing and current parity/preservation evidence is not a fidelity clearance |
+| Arbitrary paragraph reflow | Active semantic-editing lane, not silently implied by bounded overlays | Active provider and semantic-editing lane | Requires a distinct semantic-editing model and stronger preservation oracle |
 | Bounded overlays, supported fields, and reviewed candidates | Yes where corpus and validation gates pass | Companion may offer an alternative provider | The browser proof and shared contracts already support this bounded intent |
 
 The native macOS app continues to use local PDFKit and Vision lanes behind the
 shared contracts. Native and web provider choices may differ while the long-term
 product semantics remain shared.
+
+## Full-capability implementation amendment, 2026-08-25
+
+Historical browser-only rollout wording is superseded as a scope
+interpretation. The project mandate is to build the complete long-term native
+and web platform, including browser OCR, native OCR, installed local OCR
+providers, high-fidelity editing providers, independent validators, batch and
+large-document lanes, security operations, accessibility, templates, and
+recovery. The browser core remains independently usable and the companion
+remains explicitly installed, but neither fact removes a capability from the
+implementation program.
+
+The capability registry therefore answers two separate questions:
+
+1. Has the lane and its provider adapter been implemented, measured, and made
+   recoverable?
+2. Has the resulting capability passed the evidence, privacy, licensing,
+   security, and fidelity gates for a particular document class?
+
+An answer of “not yet” or “abstained” to the second question remains a typed
+runtime state and a visible release claim boundary. It is not a reason to stop
+building the first question. This amendment is the canonical interpretation
+for future plans and handoffs.
 
 ### Browser core capability promise
 
@@ -134,7 +160,7 @@ Both deployment shapes must preserve these invariants:
 
 ## Options explored
 
-### Option A: Browser-only first release
+### Option A: Browser deployment lane
 
 ```text
 browser UI
@@ -170,11 +196,12 @@ browser UI
 - Large files and complex PDFs may exceed practical browser memory or expose
   provider-specific export failures.
 
-**What it is allowed to claim:** bounded reader, supported native-field filling,
-reviewed overlays, annotations, page operations, and validated new-copy export.
+**Current evidence state:** bounded reader, supported native-field filling,
+reviewed overlays, annotations, page operations, and validated new-copy export
+are the measured browser slice. This is not the complete product boundary.
 
-**What it is not allowed to claim:** general PDF editing, universal OCR, or
-desktop-grade fidelity.
+**Claims still require evidence:** general PDF editing, universal OCR, and
+desktop-grade fidelity require their own implementation lanes and validators.
 
 ### Option B: Browser shell plus optional local companion
 
@@ -254,10 +281,10 @@ local companion.
 | Static blank-box detection | Product-owned reviewed candidates | OCR/layout evidence may improve suggestions | Vector detector, Vision adapter | Always review before operation |
 | Text/image/checkmark overlays | pdf-lib bounded path | Provider-specific alternative | PDFKit adapter | First editing lane |
 | Page operations | pdf-lib where corpus passes | PDFBox/MuPDF control lane | Native provider | Shared capability, provider-gated |
-| OCR text and bounds | Bounded experiment where supported | Tesseract/OCRmyPDF/native Vision lane | Vision evidence path | Shared evidence capability, never silent field creation |
-| Searchable OCR layer | Deferred | OCRmyPDF or dedicated writer | Separate native worker | Requires OCR and output validation gates |
+| OCR text and bounds | Active implementation lane, evidence-gated | Tesseract/OCRmyPDF/native Vision lane | Vision evidence path | Shared evidence capability, never silent field creation |
+| Searchable OCR layer | Active implementation lane, evidence-gated | OCRmyPDF or dedicated writer | Separate native worker | Requires OCR and output validation gates |
 | Existing-object semantic editing | Not owned without a cleared provider | Candidate provider experiment | Unknown beyond bounded adapter | Long-term capability, provider-gated |
-| Arbitrary paragraph reflow | Long-term exploration | Long-term provider and semantic-editing lane | No | Separate architecture decision |
+| Arbitrary paragraph reflow | Active semantic-editing lane | Active provider and semantic-editing lane | No | Separate architecture and preservation program |
 | Permanent redaction | No | Isolated provider/security lane | Separate lane | Later and security-gated |
 | Cryptographic signatures | No claim | Dedicated signing/validation lane | Dedicated lane | Later and independently verified |
 | Large/batch processing | Best-effort browser limits | Strong companion use case | Background native work | Companion differentiator |
@@ -306,8 +333,9 @@ states that PDF input is not supported directly. A browser flow must render PDF
 pages to images, then recognize those images, and must package or fetch worker,
 WASM, and language assets. The project also documents that handwritten text is
 not supported by the standard Tesseract.js model. This makes browser OCR
-possible as an experiment, but not a supported browser-core promise for
-scanned, multilingual, or handwriting-heavy forms without a corpus benchmark.
+possible as an implementation lane, but it is not enabled for scanned,
+multilingual, or handwriting-heavy forms until its corpus benchmark closes.
+Those OCR classes remain active browser and companion build targets.
 
 Sources: [Tesseract.js project scope and FAQ](https://github.com/naptha/tesseract.js/blob/master/docs/faq.md),
 [Tesseract.js local installation](https://github.com/naptha/tesseract.js/blob/master/docs/local-installation.md),
@@ -441,12 +469,12 @@ Define, but do not yet require, a companion capability contract containing:
 
 ### C1: Companion experiment
 
-Start only after the accepted decision's admission trigger is met: a declared
-workflow or corpus class cannot be served by the browser promise, and users or
-the product owner accept installation friction. Compare PDFBox and one
-high-fidelity candidate against the same corpus. Keep OCR as a separate worker
-lane. Measure capability delta rather than accepting a broad feature list as
-proof.
+Build the companion experiment as an active implementation lane. Compare
+PDFBox and one high-fidelity candidate against the same corpus, keep OCR as a
+separate worker lane, and measure capability delta rather than accepting a
+broad feature list as proof. The companion may be unavailable or abstained at
+runtime while its adapter, installer, recovery path, and benchmark continue to
+be built.
 
 ### Migration rule
 
@@ -458,9 +486,9 @@ browser-supported operation subset and preserves the unsupported reason.
 
 ## Validation gates for the decision
 
-### Browser-only release gate
+### Browser core capability gate
 
-The browser-only recommendation is viable only when all of these are true for
+The browser core may enable a capability only when all of these are true for
 the declared supported corpus:
 
 - reader and contract emission work for each fixture;

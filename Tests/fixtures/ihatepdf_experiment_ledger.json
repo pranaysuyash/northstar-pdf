@@ -1,0 +1,263 @@
+{
+  "ledgerName": "pdf-editor.ihatepdf-experiment-ledger",
+  "ledgerVersion": { "major": 1, "minor": 0 },
+  "generatedOn": "2026-08-24",
+  "truthStatus": "proposed-experiment",
+  "sourceDocument": "docs/competitor-ihatepdf-cv-exploration-2026-08-24.md",
+  "entries": [
+    {
+      "id": "E-001",
+      "version": { "major": 1, "minor": 0 },
+      "title": "Text-run replacement preservation",
+      "inspiredCapability": "In-place text editing with font matching",
+      "sourceRefs": ["https://www.ihatepdf.cv/edit-pdf-text"],
+      "provenanceStatus": "observed-public-claim-not-runtime-proof",
+      "licenseStatus": "not-adopted-unverified",
+      "runtimeEvidence": { "tier": 1, "status": "not-run" },
+      "truthStatus": "proposed-experiment",
+      "owner": "pdf_editor",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "corpusClass": "digital-text",
+      "operationKind": "textRunReplacement",
+      "privacyClass": "document-content",
+      "coordinatePolicy": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "reviewPolicy": {
+        "requiresSourceRunEvidence": true,
+        "requiresUserConfirmation": true,
+        "allowsSilentMutation": false,
+        "requiresAbstentionOnUnsupported": true
+      },
+      "validationKinds": ["sourceDigest", "outputReopen", "outsideRegionText", "visualDiff", "independentViewer"],
+      "hardNegatives": ["embedded-font", "ligature", "right-to-left", "clipping", "overlap"],
+      "falsifier": "Text outside the selected run changes, or font and bounds evidence cannot predict the rendered impact.",
+      "rollback": "Disable textRunReplacement while retaining the source PDF and append-only operation record.",
+      "parityCases": ["E-001-C-001"]
+    },
+    {
+      "id": "E-002",
+      "version": { "major": 1, "minor": 0 },
+      "title": "OCR layer alignment",
+      "inspiredCapability": "Local OCR with searchable invisible text and confidence review",
+      "sourceRefs": ["https://www.ihatepdf.cv/ocr-pdf"],
+      "provenanceStatus": "observed-public-claim-not-runtime-proof",
+      "licenseStatus": "not-adopted-unverified",
+      "runtimeEvidence": { "tier": 1, "status": "not-run" },
+      "truthStatus": "proposed-experiment",
+      "owner": "pdf_editor",
+      "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "corpusClass": "raster-ocr",
+      "operationKind": "ocrLayerProposal",
+      "privacyClass": "document-content",
+      "coordinatePolicy": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "reviewPolicy": {
+        "requiresSourceRunEvidence": false,
+        "requiresUserConfirmation": true,
+        "allowsSilentMutation": false,
+        "requiresAbstentionOnUnsupported": true
+      },
+      "validationKinds": ["sourceDigest", "outputReopen", "pageGeometry", "outsideRegionText", "visualDiff", "accessibility"],
+      "hardNegatives": ["handwriting", "stamp", "signature", "skew", "mixed-language"],
+      "falsifier": "OCR bounds or confidence are not calibrated enough to separate searchable text evidence from field truth.",
+      "rollback": "Remove the derived OCR layer or discard the proposal; never rewrite the source image.",
+      "parityCases": ["E-002-C-001"]
+    },
+    {
+      "id": "E-003",
+      "version": { "major": 1, "minor": 0 },
+      "title": "Privacy preflight and sanitization",
+      "inspiredCapability": "Metadata and hidden-data report followed by strip-and-download",
+      "sourceRefs": ["https://www.ihatepdf.cv/privacy-scanner"],
+      "provenanceStatus": "observed-public-claim-not-runtime-proof",
+      "licenseStatus": "not-adopted-unverified",
+      "runtimeEvidence": { "tier": 1, "status": "not-run" },
+      "truthStatus": "proposed-experiment",
+      "owner": "pdf_editor",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "corpusClass": "metadata-security",
+      "operationKind": "privacyPreflight",
+      "privacyClass": "sensitive-metadata",
+      "coordinatePolicy": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "reviewPolicy": {
+        "requiresSourceRunEvidence": false,
+        "requiresUserConfirmation": true,
+        "allowsSilentMutation": false,
+        "requiresAbstentionOnUnsupported": true
+      },
+      "validationKinds": ["sourceDigest", "outputReopen", "security", "independentViewer"],
+      "hardNegatives": ["javascript", "attachment", "signature", "incremental-revision", "embedded-image-metadata"],
+      "falsifier": "The scanner cannot distinguish detected, removed, retained, and unverified sensitive content.",
+      "rollback": "Keep the source immutable and discard the sanitized derived copy; do not mutate the active session in place.",
+      "parityCases": ["E-003-C-001"]
+    },
+    {
+      "id": "E-004",
+      "version": { "major": 1, "minor": 0 },
+      "title": "Repair and recovery",
+      "inspiredCapability": "Multi-strategy local repair with partial-recovery warning",
+      "sourceRefs": ["https://www.ihatepdf.cv/repair-pdf"],
+      "provenanceStatus": "observed-public-claim-not-runtime-proof",
+      "licenseStatus": "not-adopted-unverified",
+      "runtimeEvidence": { "tier": 1, "status": "not-run" },
+      "truthStatus": "proposed-experiment",
+      "owner": "pdf_editor",
+      "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "corpusClass": "malformed-recovery",
+      "operationKind": "repairRecovery",
+      "privacyClass": "document-content",
+      "coordinatePolicy": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "reviewPolicy": {
+        "requiresSourceRunEvidence": false,
+        "requiresUserConfirmation": true,
+        "allowsSilentMutation": false,
+        "requiresAbstentionOnUnsupported": true
+      },
+      "validationKinds": ["sourceDigest", "outputReopen", "pageGeometry", "providerCapability", "independentViewer"],
+      "hardNegatives": ["missing-xref", "missing-trailer", "truncated-stream", "bad-page-tree", "encrypted-input"],
+      "falsifier": "Recovery cannot enumerate recovered and unrecovered content, or independent reopening disagrees about the result.",
+      "rollback": "Treat repaired output as a new derived copy and keep the malformed source plus recovery report unchanged.",
+      "parityCases": ["E-004-C-001"]
+    },
+    {
+      "id": "E-005",
+      "version": { "major": 1, "minor": 0 },
+      "title": "Device-adaptive browser limits",
+      "inspiredCapability": "Memory-aware file, DPI, batching, and worker limits",
+      "sourceRefs": ["https://www.ihatepdf.cv/technical-blog"],
+      "provenanceStatus": "observed-public-claim-not-runtime-proof",
+      "licenseStatus": "not-adopted-unverified",
+      "runtimeEvidence": { "tier": 1, "status": "not-run" },
+      "truthStatus": "proposed-experiment",
+      "owner": "pdf_editor",
+      "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "corpusClass": "resource-limit",
+      "operationKind": "adaptiveResourcePolicy",
+      "privacyClass": "operational-metadata",
+      "coordinatePolicy": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "reviewPolicy": {
+        "requiresSourceRunEvidence": false,
+        "requiresUserConfirmation": false,
+        "allowsSilentMutation": false,
+        "requiresAbstentionOnUnsupported": true
+      },
+      "validationKinds": ["outputReopen", "pageGeometry", "appliedOperations", "providerCapability"],
+      "hardNegatives": ["low-memory-mobile", "high-dpi", "large-page", "cancellation", "worker-timeout"],
+      "falsifier": "A resource policy freezes, silently downgrades output, or loses recoverability without a visible capability state.",
+      "rollback": "Fall back to bounded batching or an explicit unsupported result without changing the source or operation ledger.",
+      "parityCases": ["E-005-C-001"]
+    },
+    {
+      "id": "E-006",
+      "version": { "major": 1, "minor": 0 },
+      "title": "Compare and operation impact map",
+      "inspiredCapability": "Side-by-side comparison and visual change inspection",
+      "sourceRefs": ["https://www.ihatepdf.cv/compare-pdfs"],
+      "provenanceStatus": "observed-public-claim-not-runtime-proof",
+      "licenseStatus": "not-adopted-unverified",
+      "runtimeEvidence": { "tier": 1, "status": "not-run" },
+      "truthStatus": "proposed-experiment",
+      "owner": "pdf_editor",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "corpusClass": "edited-output-impact",
+      "operationKind": "compareImpactMap",
+      "privacyClass": "document-content",
+      "coordinatePolicy": {
+        "unit": "points",
+        "origin": "lowerLeft",
+        "pageBox": "crop",
+        "rotationDegrees": 0
+      },
+      "reviewPolicy": {
+        "requiresSourceRunEvidence": false,
+        "requiresUserConfirmation": true,
+        "allowsSilentMutation": false,
+        "requiresAbstentionOnUnsupported": true
+      },
+      "validationKinds": ["sourceDigest", "outputReopen", "outsideRegionText", "visualDiff", "independentViewer"],
+      "hardNegatives": ["rotated-page", "font-substitution", "metadata-only-change", "page-reorder", "unexpected-object-change"],
+      "falsifier": "The impact map misses an unintentional outside-region change or presents an unknown comparison as clean.",
+      "rollback": "Discard the comparison projection and retain both immutable source and derived output artifacts.",
+      "parityCases": ["E-006-C-001"]
+    }
+  ],
+  "parityCases": [
+    {
+      "id": "E-001-C-001",
+      "experimentID": "E-001",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "scenario": "Replace one reviewed digital text run while preserving unrelated page content.",
+      "operationKind": "textRunReplacement",
+      "coordinate": { "unit": "points", "origin": "lowerLeft", "pageBox": "crop", "rotationDegrees": 0 },
+      "expected": { "executionState": "planned", "sourceBound": true, "reviewRequired": true, "abstainIfUnsupported": true, "privacyClass": "document-content", "validationKinds": ["sourceDigest", "outputReopen", "outsideRegionText", "visualDiff", "independentViewer"] }
+    },
+    {
+      "id": "E-002-C-001",
+      "experimentID": "E-002",
+      "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "scenario": "Propose an OCR text layer with word bounds and confidence without creating fields.",
+      "operationKind": "ocrLayerProposal",
+      "coordinate": { "unit": "points", "origin": "lowerLeft", "pageBox": "crop", "rotationDegrees": 0 },
+      "expected": { "executionState": "planned", "sourceBound": true, "reviewRequired": true, "abstainIfUnsupported": true, "privacyClass": "document-content", "validationKinds": ["sourceDigest", "outputReopen", "pageGeometry", "outsideRegionText", "visualDiff", "accessibility"] }
+    },
+    {
+      "id": "E-003-C-001",
+      "experimentID": "E-003",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "scenario": "Report metadata and hidden-content findings before producing a sanitized copy.",
+      "operationKind": "privacyPreflight",
+      "coordinate": { "unit": "points", "origin": "lowerLeft", "pageBox": "crop", "rotationDegrees": 0 },
+      "expected": { "executionState": "planned", "sourceBound": true, "reviewRequired": true, "abstainIfUnsupported": true, "privacyClass": "sensitive-metadata", "validationKinds": ["sourceDigest", "outputReopen", "security", "independentViewer"] }
+    },
+    {
+      "id": "E-004-C-001",
+      "experimentID": "E-004",
+      "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "scenario": "Attempt bounded recovery and enumerate recovered versus unrecovered content.",
+      "operationKind": "repairRecovery",
+      "coordinate": { "unit": "points", "origin": "lowerLeft", "pageBox": "crop", "rotationDegrees": 0 },
+      "expected": { "executionState": "planned", "sourceBound": true, "reviewRequired": true, "abstainIfUnsupported": true, "privacyClass": "document-content", "validationKinds": ["sourceDigest", "outputReopen", "pageGeometry", "providerCapability", "independentViewer"] }
+    },
+    {
+      "id": "E-005-C-001",
+      "experimentID": "E-005",
+      "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "scenario": "Select a visible resource policy for a repeated-page workload and preserve cancellation.",
+      "operationKind": "adaptiveResourcePolicy",
+      "coordinate": { "unit": "points", "origin": "lowerLeft", "pageBox": "crop", "rotationDegrees": 0 },
+      "expected": { "executionState": "planned", "sourceBound": true, "reviewRequired": false, "abstainIfUnsupported": true, "privacyClass": "operational-metadata", "validationKinds": ["outputReopen", "pageGeometry", "appliedOperations", "providerCapability"] }
+    },
+    {
+      "id": "E-006-C-001",
+      "experimentID": "E-006",
+      "sourceFixture": "benchmark/results/public-sample-form.pdf",
+      "scenario": "Map intentional operations against outside-region text, raster, geometry, and viewer outcomes.",
+      "operationKind": "compareImpactMap",
+      "coordinate": { "unit": "points", "origin": "lowerLeft", "pageBox": "crop", "rotationDegrees": 0 },
+      "expected": { "executionState": "planned", "sourceBound": true, "reviewRequired": true, "abstainIfUnsupported": true, "privacyClass": "document-content", "validationKinds": ["sourceDigest", "outputReopen", "outsideRegionText", "visualDiff", "independentViewer"] }
+    }
+  ]
+}

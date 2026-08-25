@@ -1,0 +1,291 @@
+{
+  "harness": "pdf-editor-cross-project-evidence-ledger-parity",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "ledgerPath": "Tests/fixtures/cross_project_evidence_ledger.json",
+  "parityFixturePath": "Tests/fixtures/pdf_corpus_semantic_parity_fixture.json",
+  "corpusManifest": "docs/fixtures/manifest.md",
+  "nativeBrowserParityReport": "benchmark/results/contract-parity-2026-08-24/parity-report.json",
+  "ledgerEntryCount": 6,
+  "corpusFixtureCount": 18,
+  "sourceEvidenceCount": 18,
+  "sourceEvidence": [
+    {
+      "entryID": "CP-001",
+      "projectID": "signkit",
+      "sourcePath": "/Users/pranay/Projects/Data_Science/computer_vision/proj6/signature-extractor-app/docs/AUTO_DETECTION_ML.md",
+      "kind": "file",
+      "sha256": "491985b49f25be784e0e2c7a1e4f4dae30252443776dc90b253bded48102a535"
+    },
+    {
+      "entryID": "CP-001",
+      "projectID": "signkit",
+      "sourcePath": "/Users/pranay/Projects/Data_Science/computer_vision/proj6/signature-extractor-app/docs/analysis/2026-08-04_signkit_roadmap_intelligence.md",
+      "kind": "file",
+      "sha256": "da8adadf657b2ba1ed1fbb19ca02b9f8a6a8df0621afbf290c4947d5fbe6424b"
+    },
+    {
+      "entryID": "CP-001",
+      "projectID": "signkit",
+      "sourcePath": "/Users/pranay/Projects/Data_Science/computer_vision/proj6/signature-extractor-app/docs/SIGNKIT_PRODUCT_ML_DISCUSSION_2026-08-13.md",
+      "kind": "file",
+      "sha256": "b95b2e8cbe9551dbe90b88874d385a76188efe7d700552d45f0ddc774c06560a"
+    },
+    {
+      "entryID": "CP-001",
+      "projectID": "signkit",
+      "sourcePath": "/Users/pranay/Projects/Data_Science/computer_vision/proj6/signature-extractor-app/docs/SIGNKIT_S_TIER_PRODUCT_EXPANSION_MAP.md",
+      "kind": "file",
+      "sha256": "2d896586d5b4d1356b94b0806e572d8a70be8af120eab502645c78c805b74afd"
+    },
+    {
+      "entryID": "CP-001",
+      "projectID": "signkit",
+      "sourcePath": "/Users/pranay/Projects/Data_Science/computer_vision/proj6/signature-extractor-app/desktop_app/processing/extractor.py",
+      "kind": "file",
+      "sha256": "3ecfb250cc5f2461b50fb72f011070daa6e4d368d5458dd2019ba965124a9b00"
+    },
+    {
+      "entryID": "CP-002",
+      "projectID": "metaextract",
+      "sourcePath": "/Users/pranay/Projects/metaextract/docs/EXTRACTOR_REGISTRY.md",
+      "kind": "file",
+      "sha256": "8d45f97731db8d191ea5207a9c6b168e46908c7c62cd49a8a867cdd03d723cb9"
+    },
+    {
+      "entryID": "CP-002",
+      "projectID": "metaextract",
+      "sourcePath": "/Users/pranay/Projects/metaextract/docs/EXTRACTION_OBSERVABILITY.md",
+      "kind": "file",
+      "sha256": "3dc2093c4bc3baec661630d7aa8ac497f093f63da3548e8ac5cc767e7c7f95a2"
+    },
+    {
+      "entryID": "CP-002",
+      "projectID": "metaextract",
+      "sourcePath": "/Users/pranay/Projects/metaextract/docs/UNIFIED_FIELD_REGISTRY_DESIGN.md",
+      "kind": "file",
+      "sha256": "04256bad6cfa6bb0ee8a2e5abb26cf49e49a4df80f4a0570fe78234eb44f2897"
+    },
+    {
+      "entryID": "CP-002",
+      "projectID": "metaextract",
+      "sourcePath": "/Users/pranay/Projects/metaextract/docs/extraction_pipeline_recommendations.md",
+      "kind": "file",
+      "sha256": "dd9913c49ce05ea890a45fd7a3c366aed70f0f0f028b7842c5bf4802b912d4b6"
+    },
+    {
+      "entryID": "CP-002",
+      "projectID": "metaextract",
+      "sourcePath": "/Users/pranay/Projects/metaextract/docs/FIELD_INVENTORY_SYSTEM.md",
+      "kind": "file",
+      "sha256": "e57378cec67d5249bc414ce7157ca35071f3ebab300fe3221f272841b6fce3cc"
+    },
+    {
+      "entryID": "CP-003",
+      "projectID": "invoice-intelligence",
+      "sourcePath": "/Users/pranay/Projects/invoice-intelligence/docs/IMPLEMENTATION_WRITEUP.md",
+      "kind": "file",
+      "sha256": "72830c2fd5fa3ced55423130f49e1f201c166045cae6db7f66f8cd80eda65b9b"
+    },
+    {
+      "entryID": "CP-003",
+      "projectID": "invoice-intelligence",
+      "sourcePath": "/Users/pranay/Projects/invoice-intelligence/docs/RICH_INVOICE_SCHEMA.md",
+      "kind": "file",
+      "sha256": "cec9b75200d01161d0436414505eb94f20eb0567a6f5da0adf9ed5c4388dda4d"
+    },
+    {
+      "entryID": "CP-003",
+      "projectID": "invoice-intelligence",
+      "sourcePath": "/Users/pranay/Projects/invoice-intelligence/docs/FIELD_ALIAS_MAP.md",
+      "kind": "file",
+      "sha256": "e2eda72150c91cdab42db40e08f776a07a0657b03eaf40612e6103913df7c847"
+    },
+    {
+      "entryID": "CP-003",
+      "projectID": "invoice-intelligence",
+      "sourcePath": "/Users/pranay/Projects/invoice-intelligence/experiments/MODEL_BENCHMARKING.md",
+      "kind": "file",
+      "sha256": "7e8c50a4ff2e98b7c0a2b7b02623e07c7711797f14857121cc1310c82e61b6cb"
+    },
+    {
+      "entryID": "CP-004",
+      "projectID": "photosearch",
+      "sourcePath": "/Users/pranay/Projects/Photosearch_experiment/src/enhanced_ocr_search.py",
+      "kind": "file",
+      "sha256": "29a25595e051e76da6dbc00c5bde54d92c429bdf0caf394df87133b2dc055a21"
+    },
+    {
+      "entryID": "CP-004",
+      "projectID": "photosearch",
+      "sourcePath": "/Users/pranay/Projects/Photosearch_experiment/METADATA_GAPS_ANALYSIS.md",
+      "kind": "file",
+      "sha256": "5a9f1b571dde2f29315d04cacc538c63884721e944ce169849507e6ba20ec9fc"
+    },
+    {
+      "entryID": "CP-005",
+      "projectID": "extracted-forms",
+      "sourcePath": "/Users/pranay/Projects/extracted_forms/OPERATING_DOCTRINE.md",
+      "kind": "file",
+      "sha256": "93dc8e76f2c264898cd5adaa3ccd3bbd045275b653696460bc32ed5064479823"
+    },
+    {
+      "entryID": "CP-006",
+      "projectID": "signature-auto-detect-v1",
+      "sourcePath": "/Users/pranay/Projects/Web_dev/signature_auto_detect_v1",
+      "kind": "directory",
+      "sha256": null
+    }
+  ],
+  "parity": {
+    "fixtureCount": 18,
+    "mismatchCount": 6,
+    "mismatchCounts": {
+      "candidate-semantic-set": 2,
+      "candidate.count": 2,
+      "page.geometry-or-text": 1,
+      "coordinates": 1
+    },
+    "unexpectedMismatchCount": 0,
+    "classification": [
+      {
+        "sourceFixture": "benchmark/results/public-sample-form.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+        "mismatchCount": 2,
+        "mismatchKinds": [
+          "candidate-semantic-set",
+          "candidate.count"
+        ],
+        "allowedOpenMismatchKinds": [
+          "candidate-semantic-set",
+          "candidate.count"
+        ]
+      },
+      {
+        "sourceFixture": "benchmark/results/security-corpus/encrypted-reader.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/ocr-corpus/printed-scan.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "mismatchCount": 2,
+        "mismatchKinds": [
+          "candidate-semantic-set",
+          "candidate.count"
+        ],
+        "allowedOpenMismatchKinds": [
+          "candidate-semantic-set",
+          "candidate.count"
+        ]
+      },
+      {
+        "sourceFixture": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+        "mismatchCount": 2,
+        "mismatchKinds": [
+          "coordinates",
+          "page.geometry-or-text"
+        ],
+        "allowedOpenMismatchKinds": [
+          "page.geometry-or-text",
+          "coordinates"
+        ]
+      },
+      {
+        "sourceFixture": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      },
+      {
+        "sourceFixture": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+        "mismatchCount": 0,
+        "mismatchKinds": [],
+        "allowedOpenMismatchKinds": []
+      }
+    ]
+  },
+  "sourceIdentityDrift": [
+    {
+      "sourceFixture": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+      "declaredManifestDigest": "08b7ab663298627d1d4c152e1b53a51ad9a3ff688eca14f9791d993e42c2a00c",
+      "observedLiveDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "disposition": "preserved-for-review; manifest-and-generated-artifact-were-not-rewritten"
+    }
+  ],
+  "passed": true,
+  "claimBoundary": "Ledger provenance and native/browser semantic parity pass; neighboring runtime reuse and universal PDF fidelity remain unproven."
+}

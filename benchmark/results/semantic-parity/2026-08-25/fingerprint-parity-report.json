@@ -1,0 +1,579 @@
+{
+  "harness": "pdf-editor-native-web-structural-fingerprint-parity",
+  "contract": {
+    "name": "pdf-editor.native-web-structural-fingerprint-parity",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "coordinateTolerancePoints": 0.01,
+    "textCharacterRelativeTolerance": 0.05,
+    "textCharacterMinimumTolerance": 16,
+    "ignoredRepresentationFields": [
+      "document.header.provider.id",
+      "document.header.provider.version",
+      "document.header.provider.platform",
+      "document.header.generatedAt",
+      "document.header.sourceDigest",
+      "document.payload.source.sha256",
+      "document.payload.fields[].id",
+      "document.payload.candidates[].id",
+      "document.payload.candidates[].evidenceItems[].id",
+      "editSession.operations[].id",
+      "validation.outputDigest",
+      "rawLabels",
+      "PDFBytes"
+    ],
+    "sourceIdentityFields": [
+      "sourcePath",
+      "sourceDigest",
+      "sourceByteCount"
+    ]
+  },
+  "corpusRoot": "benchmark/results/semantic-parity/2026-08-25",
+  "aggregate": {
+    "fixtureCount": 18,
+    "equalCount": 2,
+    "representationDifferenceOnlyCount": 0,
+    "semanticDivergenceCount": 8,
+    "mixedDivergenceCount": 8,
+    "divergentFeatureCounts": {
+      "permissions": 16,
+      "pages.characterCounts": 8,
+      "candidates.coordinateSpaceCounts": 2,
+      "candidates.count": 2,
+      "candidates.entryModeCounts": 2,
+      "candidates.evidenceKindCounts": 2,
+      "candidates.evidenceOriginCounts": 2,
+      "candidates.geometryByPage": 2,
+      "candidates.groupMemberCountHistogram": 2,
+      "candidates.kindCounts": 2,
+      "candidates.labelAssociation": 2,
+      "candidates.suggestedFieldTypeCounts": 2,
+      "pages.boxes": 1
+    }
+  },
+  "featureDivergenceClusters": [
+    {
+      "featureID": "permissions",
+      "status": "semantic-divergence",
+      "fixtureCount": 16,
+      "fixtures": [
+        "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+        "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+        "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+        "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+        "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+        "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+        "benchmark/results/browser-corpus/scanned-noisy.pdf",
+        "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+        "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+        "benchmark/results/ocr-corpus/printed-scan.pdf",
+        "benchmark/results/public-sample-form.pdf",
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+        "benchmark/results/security-corpus/encrypted-reader.pdf",
+        "benchmark/results/security-corpus/repeated-20-pages.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "encrypted-hybrid-form": 1,
+        "handwriting-like-raster": 1,
+        "large-hybrid-resource-stress": 1,
+        "native-acroform": 2,
+        "navigation-metadata": 1,
+        "other": 2,
+        "printed-scan": 1,
+        "repeated-widget-form": 1,
+        "rotated-hybrid-form": 1,
+        "scanned-raster": 1,
+        "static-form6-candidates": 2,
+        "widget-form": 2
+      }
+    },
+    {
+      "featureID": "pages.characterCounts",
+      "status": "representation-difference",
+      "fixtureCount": 8,
+      "fixtures": [
+        "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+        "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+        "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+        "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+        "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+        "benchmark/results/public-sample-form.pdf",
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "encrypted-hybrid-form": 1,
+        "large-hybrid-resource-stress": 1,
+        "native-acroform": 2,
+        "other": 1,
+        "rotated-hybrid-form": 1,
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.coordinateSpaceCounts",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.count",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.entryModeCounts",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.evidenceKindCounts",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.evidenceOriginCounts",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.geometryByPage",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.groupMemberCountHistogram",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.kindCounts",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.labelAssociation",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "candidates.suggestedFieldTypeCounts",
+      "status": "semantic-divergence",
+      "fixtureCount": 2,
+      "fixtures": [
+        "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+        "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf"
+      ],
+      "populations": {
+        "static-form6-candidates": 2
+      }
+    },
+    {
+      "featureID": "pages.boxes",
+      "status": "semantic-divergence",
+      "fixtureCount": 1,
+      "fixtures": [
+        "benchmark/results/browser-corpus/encrypted-hybrid.pdf"
+      ],
+      "populations": {
+        "encrypted-hybrid-form": 1
+      }
+    }
+  ],
+  "cases": [
+    {
+      "id": "FINGERPRINT-001",
+      "sourcePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "population": "widget-form",
+      "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-002",
+      "sourcePath": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+      "population": "native-acroform",
+      "sourceDigest": "9ed5ff75fec3a5f51847160e81d5413d1797a84005a02a757787f477b1f934f8",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-003",
+      "sourcePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+      "population": "encrypted-hybrid-form",
+      "sourceDigest": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.boxes",
+        "pages.characterCounts",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "pages.boxes",
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-004",
+      "sourcePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+      "population": "other",
+      "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-005",
+      "sourcePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+      "population": "large-hybrid-resource-stress",
+      "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-006",
+      "sourcePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+      "population": "malformed-input",
+      "sourceDigest": null,
+      "expectedFailure": true,
+      "status": "equal",
+      "divergentFeatureIDs": [],
+      "semanticDivergenceFeatureIDs": [],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-007",
+      "sourcePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+      "population": "rotated-hybrid-form",
+      "sourceDigest": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-008",
+      "sourcePath": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+      "population": "scanned-raster",
+      "sourceDigest": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-009",
+      "sourcePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+      "population": "handwriting-like-raster",
+      "sourceDigest": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-010",
+      "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+      "population": "navigation-metadata",
+      "sourceDigest": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-011",
+      "sourcePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "population": "printed-scan",
+      "sourceDigest": "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-012",
+      "sourcePath": "benchmark/results/public-sample-form.pdf",
+      "population": "native-acroform",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-013",
+      "sourcePath": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "population": "static-form6-candidates",
+      "sourceDigest": "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "candidates.count",
+        "candidates.kindCounts",
+        "candidates.suggestedFieldTypeCounts",
+        "candidates.entryModeCounts",
+        "candidates.groupMemberCountHistogram",
+        "candidates.evidenceKindCounts",
+        "candidates.evidenceOriginCounts",
+        "candidates.coordinateSpaceCounts",
+        "candidates.labelAssociation",
+        "candidates.geometryByPage",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "candidates.count",
+        "candidates.kindCounts",
+        "candidates.suggestedFieldTypeCounts",
+        "candidates.entryModeCounts",
+        "candidates.groupMemberCountHistogram",
+        "candidates.evidenceKindCounts",
+        "candidates.evidenceOriginCounts",
+        "candidates.coordinateSpaceCounts",
+        "candidates.labelAssociation",
+        "candidates.geometryByPage",
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    },
+    {
+      "id": "FINGERPRINT-014",
+      "sourcePath": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "population": "widget-form",
+      "sourceDigest": "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-015",
+      "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+      "population": "other",
+      "sourceDigest": "b1a6177b0736ebb8c8bff00df19137cc1d4887eb32fac836f90a02e36c3eacbf",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-016",
+      "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "population": "repeated-widget-form",
+      "sourceDigest": "64f06a8d57e0807864c021b83e975981500c6099b748a134cbb442a8caaa1f71",
+      "expectedFailure": false,
+      "status": "semantic-divergence",
+      "divergentFeatureIDs": [
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-017",
+      "sourcePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "population": "malformed-input",
+      "sourceDigest": null,
+      "expectedFailure": true,
+      "status": "equal",
+      "divergentFeatureIDs": [],
+      "semanticDivergenceFeatureIDs": [],
+      "representationDifferenceFeatureIDs": []
+    },
+    {
+      "id": "FINGERPRINT-018",
+      "sourcePath": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "population": "static-form6-candidates",
+      "sourceDigest": "81e59007c14307ad7a40a99f051363b99c9a5d78c880f67507082f12ff72cef0",
+      "expectedFailure": false,
+      "status": "mixed-divergence",
+      "divergentFeatureIDs": [
+        "pages.characterCounts",
+        "candidates.count",
+        "candidates.kindCounts",
+        "candidates.suggestedFieldTypeCounts",
+        "candidates.entryModeCounts",
+        "candidates.groupMemberCountHistogram",
+        "candidates.evidenceKindCounts",
+        "candidates.evidenceOriginCounts",
+        "candidates.coordinateSpaceCounts",
+        "candidates.labelAssociation",
+        "candidates.geometryByPage",
+        "permissions"
+      ],
+      "semanticDivergenceFeatureIDs": [
+        "candidates.count",
+        "candidates.kindCounts",
+        "candidates.suggestedFieldTypeCounts",
+        "candidates.entryModeCounts",
+        "candidates.groupMemberCountHistogram",
+        "candidates.evidenceKindCounts",
+        "candidates.evidenceOriginCounts",
+        "candidates.coordinateSpaceCounts",
+        "candidates.labelAssociation",
+        "candidates.geometryByPage",
+        "permissions"
+      ],
+      "representationDifferenceFeatureIDs": [
+        "pages.characterCounts"
+      ]
+    }
+  ]
+}

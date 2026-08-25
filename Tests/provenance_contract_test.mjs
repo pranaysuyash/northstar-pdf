@@ -21,6 +21,7 @@ const assets = [
   , ["benchmark/results/ocr-corpus/printed-scan.pdf", "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364"]
   , ["benchmark/results/rotation-corpus/rotated-widget-90.pdf", "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2"]
   , ["benchmark/results/rotation-corpus/rotated-form6-mixed.pdf", "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177"]
+  , ["benchmark/results/governed-corpus/handwritten-simulated-entries.pdf", "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897"]
 ];
 
 for (const [relativePath, expectedDigest] of assets) {

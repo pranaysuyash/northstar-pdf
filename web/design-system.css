@@ -1,0 +1,485 @@
+/*
+ * Northstar PDF visual system, adapted from Web-Prototype.zip.
+ *
+ * This first pass deliberately styles the existing semantic DOM instead of
+ * replacing the PDF.js/pdf-lib runtime. The selectors preserve the current
+ * IDs and event wiring so the design work can land independently of the
+ * later React migration.
+ */
+:root {
+  --pdf-ink: oklch(0.22 0.03 255);
+  --pdf-ink-soft: oklch(0.42 0.035 255);
+  --pdf-ink-faint: oklch(0.58 0.025 255);
+  --pdf-paper: oklch(0.985 0.009 90);
+  --pdf-canvas: oklch(0.93 0.018 255);
+  --pdf-shell: oklch(0.18 0.035 255);
+  --pdf-shell-raised: oklch(0.23 0.038 255);
+  --pdf-shell-line: oklch(0.33 0.035 255);
+  --pdf-surface: oklch(0.99 0.006 255);
+  --pdf-surface-soft: oklch(0.965 0.012 255);
+  --pdf-border: oklch(0.86 0.02 255);
+  --pdf-accent: oklch(0.57 0.19 258);
+  --pdf-accent-deep: oklch(0.43 0.16 258);
+  --pdf-accent-wash: oklch(0.92 0.055 258);
+  --pdf-amber: oklch(0.73 0.14 80);
+  --pdf-amber-wash: oklch(0.95 0.05 90);
+  --pdf-green: oklch(0.57 0.13 155);
+  --pdf-display: Iowan Old Style, Baskerville, Palatino Linotype, Georgia, serif;
+  --pdf-body: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --pdf-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --pdf-shadow: 0 18px 45px oklch(0.17 0.04 255 / 0.14);
+}
+
+html,
+body {
+  background: var(--pdf-canvas);
+  color: var(--pdf-ink);
+  font-family: var(--pdf-body);
+}
+
+#app {
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* Command frame: the existing toolbar remains one responsive command area. */
+.toolbar {
+  gap: 8px 12px;
+  align-items: center;
+  padding: 9px 14px;
+  color: oklch(0.88 0.02 255);
+  background: var(--pdf-shell);
+  border-bottom-color: var(--pdf-shell-line);
+  box-shadow: none;
+}
+
+.toolbar-title {
+  min-width: 174px;
+  margin-right: 4px;
+}
+
+.toolbar-title strong {
+  color: oklch(0.97 0.01 255);
+  font: 600 16px/1.05 var(--pdf-display);
+  letter-spacing: -0.015em;
+}
+
+.toolbar-title span,
+.toolbar label,
+.toolbar .small,
+.toolbar .status {
+  color: oklch(0.68 0.025 255);
+}
+
+.toolbar label {
+  font: 10px var(--pdf-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.toolbar button,
+.toolbar select,
+.toolbar input {
+  color: oklch(0.9 0.015 255);
+  background: var(--pdf-shell-raised);
+  border-color: var(--pdf-shell-line);
+  border-radius: 5px;
+}
+
+.toolbar input[type="file"] {
+  max-width: 168px;
+  padding: 5px 6px;
+  font-size: 11px;
+}
+
+.toolbar input[type="text"],
+.toolbar input[type="number"] {
+  min-height: 30px;
+  padding: 0 8px;
+}
+
+.toolbar button {
+  min-height: 34px;
+  padding: 6px 9px;
+  font-size: 11px;
+}
+
+.toolbar button:hover:not(:disabled) {
+  color: oklch(0.98 0.01 255);
+  background: oklch(0.3 0.045 255);
+}
+
+.toolbar button.primary,
+.toolbar button[data-primary="true"] {
+  color: oklch(0.98 0.01 255);
+  background: var(--pdf-accent-deep);
+  border-color: var(--pdf-accent);
+}
+
+.toolbar button:focus-visible,
+.toolbar select:focus-visible,
+.toolbar input:focus-visible {
+  outline-color: var(--pdf-accent);
+}
+
+/* Three-region workspace: shell, document stage, evidence inspector. */
+.workspace {
+  grid-template-columns: 232px minmax(0, 1fr) 310px;
+  gap: 0;
+  padding: 0;
+  background: var(--pdf-canvas);
+}
+
+.panel {
+  border-radius: 0;
+  border-color: var(--pdf-border);
+  box-shadow: none;
+}
+
+.workspace > aside:first-child {
+  color: oklch(0.82 0.02 255);
+  background: var(--pdf-shell);
+  border: 0;
+  border-right: 1px solid var(--pdf-shell-line);
+}
+
+.workspace > aside:first-child .list-title {
+  margin: 0 0 14px;
+  padding: 0 10px;
+  color: oklch(0.6 0.025 255);
+  font: 700 10px var(--pdf-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.workspace > aside:first-child .thumb {
+  width: 100%;
+  height: auto;
+  min-height: 160px;
+  margin: 6px 0;
+  padding: 6px;
+  background: oklch(0.23 0.038 255);
+  border-color: var(--pdf-shell-line);
+}
+
+.workspace > aside:first-child .thumb.selected {
+  outline: 2px solid var(--pdf-accent);
+  background: oklch(0.3 0.06 258);
+}
+
+#viewerMain {
+  min-width: 0;
+  padding: 0;
+  background: var(--pdf-canvas);
+  border: 0;
+}
+
+#viewerCanvasWrap {
+  min-height: 100%;
+  padding: 28px;
+  background: var(--pdf-canvas);
+  border: 0;
+  border-radius: 0;
+}
+
+#viewerStack {
+  gap: 28px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.page-shell {
+  box-shadow: var(--pdf-shadow);
+}
+
+#viewerCanvas {
+  border-color: oklch(0.84 0.025 255);
+}
+
+/* Evidence inspector: cards are containers, not the visual center of gravity. */
+.workspace > aside:last-child {
+  padding: 0;
+  background: var(--pdf-surface);
+  border: 0;
+  border-left: 1px solid var(--pdf-border);
+}
+
+.workspace > aside:last-child > .list-title {
+  margin: 0;
+  padding: 21px 20px 15px;
+  color: var(--pdf-ink);
+  border-bottom: 1px solid var(--pdf-border);
+  font: 18px/1.05 var(--pdf-display);
+  letter-spacing: -0.025em;
+}
+
+.workspace > aside:last-child > .list-title::before {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--pdf-ink-faint);
+  content: "INSPECTOR";
+  font: 700 10px var(--pdf-mono);
+  letter-spacing: 0.1em;
+}
+
+.workspace > aside:last-child > .list-title + * {
+  margin-top: 0;
+}
+
+.workspace > aside:last-child > .small,
+.workspace > aside:last-child > .completion-card {
+  margin-right: 0;
+  margin-left: 0;
+  border-radius: 0;
+}
+
+.workspace > aside:last-child .item,
+.workspace > aside:last-child .completion-item {
+  padding: 10px 20px;
+  border-color: var(--pdf-border);
+}
+
+.completion-card {
+  margin: 0;
+  padding: 17px 20px;
+  background: var(--pdf-surface);
+  border: 0;
+  border-top: 1px solid var(--pdf-border);
+  border-radius: 0;
+}
+
+.completion-card .list-title {
+  color: var(--pdf-ink-faint);
+  font: 700 10px var(--pdf-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.review-card {
+  background: var(--pdf-surface-soft);
+  border-color: var(--pdf-border);
+  border-radius: 5px;
+}
+
+.review-card:first-of-type {
+  background: var(--pdf-amber-wash);
+  border-color: oklch(0.82 0.11 82);
+}
+
+.review-actions button {
+  min-height: 34px;
+  border-radius: 5px;
+}
+
+.review-actions button.primary {
+  background: var(--pdf-accent-deep);
+  border-color: var(--pdf-accent-deep);
+}
+
+.success {
+  color: oklch(0.38 0.09 155);
+}
+
+.danger {
+  color: oklch(0.5 0.13 25);
+}
+
+/* The mode rail is the first visible bridge from the prototype's five-mode
+   product model into the existing PDF.js surface. It is intentionally a
+   navigation/state layer, not a claim that every provider is connected. */
+.product-mode-rail {
+  margin: -17px -20px 18px;
+  padding: 18px 14px 14px;
+  background: var(--pdf-shell);
+  color: var(--pdf-shell-text);
+  border-bottom: 1px solid var(--pdf-shell-line);
+}
+
+.product-mode-kicker {
+  padding: 0 7px 10px;
+  color: var(--pdf-shell-muted);
+  font: 600 9px var(--pdf-mono);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.product-mode-nav {
+  display: grid;
+  gap: 3px;
+}
+
+.product-mode-button {
+  display: grid;
+  grid-template-columns: 23px minmax(0, 1fr) auto;
+  gap: 7px;
+  align-items: center;
+  width: 100%;
+  padding: 9px 7px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--pdf-shell-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.product-mode-button:hover,
+.product-mode-button:focus-visible {
+  background: var(--pdf-shell-raised);
+}
+
+.product-mode-button.is-active {
+  background: var(--pdf-shell-raised);
+  border-color: color-mix(in oklch, var(--pdf-accent) 50%, transparent);
+  box-shadow: inset 3px 0 var(--pdf-accent);
+}
+
+.product-mode-index {
+  color: var(--pdf-shell-muted);
+  font: 600 9px var(--pdf-mono);
+}
+
+.product-mode-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.product-mode-copy strong {
+  overflow: hidden;
+  color: var(--pdf-shell-text);
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-mode-copy small {
+  overflow: hidden;
+  color: var(--pdf-shell-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-mode-state {
+  color: var(--pdf-shell-muted);
+  font: 600 8px var(--pdf-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.product-mode-button.is-active .product-mode-state {
+  color: var(--pdf-accent-soft);
+}
+
+.product-mode-status {
+  margin: 12px 7px 0;
+  color: var(--pdf-shell-muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+@media (max-width: 760px) {
+  .product-mode-rail {
+    margin: -17px -20px 18px;
+  }
+
+  .product-mode-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .product-mode-button {
+    display: block;
+    min-height: 62px;
+    padding: 8px 5px;
+  }
+
+  .product-mode-index,
+  .product-mode-state {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .product-mode-copy small {
+    display: none;
+  }
+}
+
+/* Preserve a usable reading surface at the prototype's tablet and mobile widths. */
+@media (max-width: 1100px) {
+  .workspace {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+
+  .workspace > aside:last-child {
+    grid-column: 1 / -1;
+    max-height: 380px;
+    border-top: 1px solid var(--pdf-border);
+    border-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  #app {
+    height: auto;
+  }
+
+  .toolbar {
+    align-items: stretch;
+    max-height: none;
+  }
+
+  .toolbar-title {
+    flex: 1 1 100%;
+  }
+
+  .toolbar .control-row {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+
+  .workspace {
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  #viewerMain {
+    order: 1;
+    min-height: 540px;
+  }
+
+  .workspace > aside:first-child {
+    order: 2;
+    max-height: 230px;
+    border-top: 1px solid var(--pdf-shell-line);
+    border-right: 0;
+  }
+
+  .workspace > aside:last-child {
+    order: 3;
+    max-height: none;
+  }
+
+  #viewerCanvasWrap {
+    min-height: 540px;
+    padding: 14px;
+  }
+
+  #viewerStack {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

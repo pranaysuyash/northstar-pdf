@@ -403,18 +403,18 @@ Each of these should be a typed operation or capability provider with a source
 digest, provider version, evidence, resource estimate, output validation, and
 explicit failure state.
 
-### Defer or reject for the first differentiated product
+### Sequence and govern, never permanently omit
 
-- generic GST/POS business tools;
-- a real-time whiteboard as a product direction;
-- an invisible document fingerprint without a clear user-authority and privacy
-  model;
-- unreviewed AI modification of PDF content;
-- silent OCR overwrite of source imagery;
-- broad legal claims about signature validity or GDPR compliance;
-- “no network” language that ignores telemetry, external assets, AI, or P2P
-  signaling;
-- arbitrary paragraph reflow before a preservation oracle exists.
+- Generic GST/POS business tools and a real-time whiteboard are separate product
+  surfaces to build only after their contracts and ownership boundaries are
+  defined, not permanent omissions from the broader platform program.
+- Invisible document fingerprints, unreviewed AI modification, silent OCR
+  overwrite, and broad legal claims require explicit authority, privacy, review,
+  and validation contracts before implementation can be enabled.
+- “No network” language must remain capability-specific and account for
+  telemetry, external assets, AI, and P2P signaling.
+- Arbitrary paragraph reflow must be built behind a preservation oracle rather
+  than presented as safe before that oracle exists.
 
 ## Competitive interpretation
 
@@ -455,8 +455,10 @@ the same validated contracts.
 
 ## Proposed corpus experiments inspired by the site
 
-The following experiments should be added to the PDF editor corpus, but are not
-implemented by this document:
+The following six experiments are now represented in the versioned evidence
+ledger and semantic parity harness. This section remains the experiment design
+and oracle definition; it does not claim that the six capability implementations
+have executed successfully.
 
 ### E-001: Text-run replacement preservation
 
@@ -530,21 +532,17 @@ This becomes the product-level proof behind “without touching other text.”
 
 ## Exact next step
 
-Add the site-inspired cases to the existing cross-project evidence ledger and
-semantic parity plan, in this order:
-
-1. text-run replacement preservation;
-2. OCR layer alignment;
-3. privacy preflight and sanitization;
-4. repair and recovery;
-5. device-adaptive browser limits;
-6. semantic/visual compare impact maps.
-
-The next implementation should still be the cross-project evidence ledger plus
-native/web parity fixture. This competitor exploration expands the test corpus
-and product opportunity map; it does not authorize adding Ghostscript,
-Tesseract.js, Gemini, P2P signaling, a service worker, or a converter suite to
-the product yet.
+The six cases are now implemented as E-001 through E-006 in
+[`Tests/fixtures/ihatepdf_experiment_ledger.json`](../Tests/fixtures/ihatepdf_experiment_ledger.json),
+with one semantic parity case per entry and native/browser projections recorded
+in [`docs/audits/ihatepdf-experiment-ledger-parity-evidence-2026-08-24.md`](audits/ihatepdf-experiment-ledger-parity-evidence-2026-08-24.md).
+The next implementation is capability execution against those cases, beginning
+with named providers and independent validators. This exploration expands the
+test corpus and product opportunity map and authorizes building Ghostscript,
+Tesseract.js or another browser OCR lane, Gemini or another explicitly governed
+AI lane, P2P signaling, a service worker, and a converter suite through their
+own capability, privacy, licensing, recovery, and parity contracts. Adoption is
+sequenced by evidence, not removed from the long-term build program.
 
 ## Verification limits
 
@@ -564,4 +562,3 @@ The next live verification, if this competitor is important enough to justify
 it, is a controlled browser test with a non-sensitive fixture and DevTools
 network capture, followed by output reopen and independent-viewer checks. That
 would be external competitor observation, not a PDF-editor production gate.
-

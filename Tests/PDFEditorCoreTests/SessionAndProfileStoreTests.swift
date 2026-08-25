@@ -583,4 +583,132 @@ struct SessionAndProfileStoreTests {
       (stored?.count ?? 0) <= 1024,
       "RT-003 FAIL: vCard FN: value was stored at \(stored?.count ?? 0) chars; expected ≤ 1024.")
   }
+
+  // MARK: - Bulk Fill Tests
+
+  @Test func bulkFillMatchesNativeFieldsByName() {
+    var profile = UserProfile(displayName: "Test")
+    profile.setValue("Ada Lovelace", for: "person.fullName")
+    profile.setValue("ada@example.com", for: "person.email")
+    profile.setValue("555-0100", for: "person.phone")
+
+    let fields = [
+      NativeField(
+        id: "applicant.name", name: "applicant.name", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 500, width: 200, height: 20),
+        value: nil, choices: []),
+      NativeField(
+        id: "applicant.email", name: "applicant.email", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 460, width: 200, height: 20),
+        value: nil, choices: []),
+      NativeField(
+        id: "applicant.dob", name: "applicant.dob", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 420, width: 200, height: 20),
+        value: nil, choices: []),
+    ]
+
+    let result = profile.bulkFill(
+      fields: fields, candidates: [], sourceDigest: "test-digest")
+
+    #expect(result.totalMatches == 2)
+    #expect(result.unmatchedFields == ["applicant.dob"])
+    #expect(result.matchedOperations.count == 2)
+    #expect(result.matchedOperations.contains { $0.value == "Ada Lovelace" })
+    #expect(result.matchedOperations.contains { $0.value == "ada@example.com" })
+  }
+
+  @Test func bulkFillMatchesStaticCandidatesByLabel() {
+    var profile = UserProfile(displayName: "Test")
+    profile.setValue("Jane Smith", for: "person.fullName")
+    profile.setValue("123 Main St", for: "person.address.street")
+
+    let candidates = [
+      RegionCandidate(
+        pageIndex: 0,
+        bounds: PDFRect(x: 100, y: 500, width: 200, height: 20),
+        kind: .textAnchored, score: 0.8, evidence: ["label"],
+        entryMode: .singleText, labelText: "Full Name:"),
+      RegionCandidate(
+        pageIndex: 0,
+        bounds: PDFRect(x: 100, y: 460, width: 200, height: 20),
+        kind: .vectorRegion, score: 0.7, evidence: ["label"],
+        entryMode: .singleText, labelText: "Street Address:"),
+      RegionCandidate(
+        pageIndex: 0,
+        bounds: PDFRect(x: 100, y: 420, width: 200, height: 20),
+        kind: .textAnchored, score: 0.6, evidence: ["label"],
+        entryMode: .checkbox, labelText: "Check if yes"),
+    ]
+
+    let result = profile.bulkFill(
+      fields: [], candidates: candidates, sourceDigest: "test-digest")
+
+    #expect(result.totalMatches == 2)
+    #expect(result.matchedOperations.count == 2)
+    #expect(result.matchedOperations.contains { $0.value == "Jane Smith" })
+    #expect(result.matchedOperations.contains { $0.value == "123 Main St" })
+  }
+
+  @Test func bulkFillSkipsNonEditableCandidates() {
+    var profile = UserProfile(displayName: "Test")
+    profile.setValue("Yes", for: "person.firstName")
+
+    let candidates = [
+      RegionCandidate(
+        pageIndex: 0,
+        bounds: PDFRect(x: 100, y: 500, width: 200, height: 20),
+        kind: .vectorRegion, score: 0.8, evidence: ["label"],
+        entryMode: .checkbox, labelText: "First Name:"),
+    ]
+
+    let result = profile.bulkFill(
+      fields: [], candidates: candidates, sourceDigest: "test-digest")
+
+    #expect(result.totalMatches == 0)
+  }
+
+  @Test func bulkFillReturnsEmptyForEmptyProfile() {
+    let profile = UserProfile(displayName: "Empty")
+    let fields = [
+      NativeField(
+        id: "field-1", name: "name", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 500, width: 200, height: 20),
+        value: nil, choices: []),
+    ]
+
+    let result = profile.bulkFill(
+      fields: fields, candidates: [], sourceDigest: "test-digest")
+
+    #expect(result.totalMatches == 0)
+    #expect(result.unmatchedFields == ["name"])
+  }
+
+  @Test func bulkFillHeuristicMatchesPhoneAndSSN() {
+    var profile = UserProfile(displayName: "Test")
+    profile.setValue("555-0100", for: "person.phone")
+    profile.setValue("123-45-6789", for: "person.ssn")
+
+    let fields = [
+      NativeField(
+        id: "phone", name: "applicant.phone", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 500, width: 200, height: 20),
+        value: nil, choices: []),
+      NativeField(
+        id: "ssn", name: "applicant.ssn", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 460, width: 200, height: 20),
+        value: nil, choices: []),
+      NativeField(
+        id: "other", name: "random.field", kind: .text,
+        pageIndex: 0, bounds: PDFRect(x: 100, y: 420, width: 200, height: 20),
+        value: nil, choices: []),
+    ]
+
+    let result = profile.bulkFill(
+      fields: fields, candidates: [], sourceDigest: "test-digest")
+
+    #expect(result.totalMatches == 2)
+    #expect(result.matchedOperations.contains { $0.value == "555-0100" })
+    #expect(result.matchedOperations.contains { $0.value == "123-45-6789" })
+    #expect(result.unmatchedFields == ["random.field"])
+  }
 }

@@ -1,0 +1,493 @@
+{
+  "benchmark": "reviewed-template-correction-benefit",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "fixtureCount": 5,
+  "metricDefinition": {
+    "primary": "reviewedTargetCoverage",
+    "description": "Count of reviewed template mappings surfaced in a completion proposal without resolving profile values.",
+    "baseline": "Active parent revision before a reviewed correction event.",
+    "promoted": "Immutable child revision after strict validation and explicit correction review.",
+    "notMeasured": [
+      "keystroke time",
+      "user acceptance rate",
+      "profile-value completion",
+      "real-world recall"
+    ]
+  },
+  "improvement": {
+    "baselineReviewedTargetCount": 0,
+    "promotedReviewedTargetCount": 5,
+    "reviewedTargetCoverageLift": 5,
+    "improvedCaseCount": 5,
+    "improvementRate": 1,
+    "allPromotionsImproved": true
+  },
+  "rollback": {
+    "passed": true,
+    "baselineTargetCountAfterRollback": 0,
+    "historyPreserved": true,
+    "childRevisionsRemainAuditable": true
+  },
+  "hardNegativeAbstention": {
+    "fixtureCount": 7,
+    "passed": true,
+    "selectedCountAfterPromotion": 0,
+    "abstainedCountAfterPromotion": 35
+  },
+  "privacy": {
+    "passed": true,
+    "valueFreeCorrectionRecords": true,
+    "profileValueCount": 0,
+    "sourceBytesStored": false,
+    "rawLabelsStored": false
+  },
+  "cases": [
+    {
+      "id": "public-acro-form-family-positive",
+      "documentClass": "publicAcroForm",
+      "baseline": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0
+      },
+      "promoted": {
+        "state": "exact",
+        "selectedTemplateID": "template-class-public-acroform",
+        "reviewedTargetCount": 1,
+        "approvedMappingCount": 1,
+        "revisionID": "revision-correction-public-acro-form-family-positive",
+        "eventStatus": "applied"
+      },
+      "rollback": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0,
+        "activeRevisionID": "template-class-public-acroform-revision-1",
+        "parentRevisionID": "template-class-public-acroform-revision-1",
+        "historyUnchanged": true
+      },
+      "hardNegativeResults": [
+        {
+          "id": "near-family-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "unrelated-corpus-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "public-acro-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "static-printed-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-static-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        }
+      ],
+      "correctionRecordValueFree": true,
+      "safeCompletion": {
+        "sourceDigestBound": true,
+        "sourceUnchanged": true,
+        "outputReopenable": true,
+        "validationStatus": "validated",
+        "reviewedTargetReadyForExplicitValueReview": true,
+        "mappingReviewRequired": true,
+        "valueReviewRequired": true,
+        "materializationAllowedWithoutReview": false,
+        "materializationGuardCode": "mappingReviewRequired",
+        "silentAutofillDetected": false
+      }
+    },
+    {
+      "id": "static-printed-form-family-positive",
+      "documentClass": "staticPrintedForm",
+      "baseline": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0
+      },
+      "promoted": {
+        "state": "exact",
+        "selectedTemplateID": "template-class-static-printed",
+        "reviewedTargetCount": 1,
+        "approvedMappingCount": 1,
+        "revisionID": "revision-correction-static-printed-form-family-positive",
+        "eventStatus": "applied"
+      },
+      "rollback": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0,
+        "activeRevisionID": "template-class-static-printed-revision-1",
+        "parentRevisionID": "template-class-static-printed-revision-1",
+        "historyUnchanged": true
+      },
+      "hardNegativeResults": [
+        {
+          "id": "near-family-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "unrelated-corpus-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "public-acro-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "static-printed-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-static-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        }
+      ],
+      "correctionRecordValueFree": true,
+      "safeCompletion": {
+        "sourceDigestBound": true,
+        "sourceUnchanged": true,
+        "outputReopenable": true,
+        "validationStatus": "validated",
+        "reviewedTargetReadyForExplicitValueReview": true,
+        "mappingReviewRequired": true,
+        "valueReviewRequired": true,
+        "materializationAllowedWithoutReview": false,
+        "materializationGuardCode": "mappingReviewRequired",
+        "silentAutofillDetected": false
+      }
+    },
+    {
+      "id": "native-widget-family-positive",
+      "documentClass": "nativeWidget",
+      "baseline": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0
+      },
+      "promoted": {
+        "state": "exact",
+        "selectedTemplateID": "template-class-native-widget",
+        "reviewedTargetCount": 1,
+        "approvedMappingCount": 1,
+        "revisionID": "revision-correction-native-widget-family-positive",
+        "eventStatus": "applied"
+      },
+      "rollback": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0,
+        "activeRevisionID": "template-class-native-widget-revision-1",
+        "parentRevisionID": "template-class-native-widget-revision-1",
+        "historyUnchanged": true
+      },
+      "hardNegativeResults": [
+        {
+          "id": "near-family-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "unrelated-corpus-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "public-acro-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "static-printed-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-static-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        }
+      ],
+      "correctionRecordValueFree": true,
+      "safeCompletion": {
+        "sourceDigestBound": true,
+        "sourceUnchanged": true,
+        "outputReopenable": true,
+        "validationStatus": "validated",
+        "reviewedTargetReadyForExplicitValueReview": true,
+        "mappingReviewRequired": true,
+        "valueReviewRequired": true,
+        "materializationAllowedWithoutReview": false,
+        "materializationGuardCode": "mappingReviewRequired",
+        "silentAutofillDetected": false
+      }
+    },
+    {
+      "id": "rotated-static-form-family-positive",
+      "documentClass": "rotatedStaticForm",
+      "baseline": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0
+      },
+      "promoted": {
+        "state": "exact",
+        "selectedTemplateID": "template-class-rotated-static",
+        "reviewedTargetCount": 1,
+        "approvedMappingCount": 1,
+        "revisionID": "revision-correction-rotated-static-form-family-positive",
+        "eventStatus": "applied"
+      },
+      "rollback": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0,
+        "activeRevisionID": "template-class-rotated-static-revision-1",
+        "parentRevisionID": "template-class-rotated-static-revision-1",
+        "historyUnchanged": true
+      },
+      "hardNegativeResults": [
+        {
+          "id": "near-family-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "unrelated-corpus-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "public-acro-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "static-printed-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-static-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        }
+      ],
+      "correctionRecordValueFree": true,
+      "safeCompletion": {
+        "sourceDigestBound": true,
+        "sourceUnchanged": true,
+        "outputReopenable": true,
+        "validationStatus": "validated",
+        "reviewedTargetReadyForExplicitValueReview": true,
+        "mappingReviewRequired": true,
+        "valueReviewRequired": true,
+        "materializationAllowedWithoutReview": false,
+        "materializationGuardCode": "mappingReviewRequired",
+        "silentAutofillDetected": false
+      }
+    },
+    {
+      "id": "rotated-native-widget-family-positive",
+      "documentClass": "rotatedNativeWidget",
+      "baseline": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0
+      },
+      "promoted": {
+        "state": "exact",
+        "selectedTemplateID": "template-class-rotated-widget",
+        "reviewedTargetCount": 1,
+        "approvedMappingCount": 1,
+        "revisionID": "revision-correction-rotated-native-widget-family-positive",
+        "eventStatus": "applied"
+      },
+      "rollback": {
+        "state": "noMatch",
+        "selectedTemplateID": null,
+        "reviewedTargetCount": 0,
+        "approvedMappingCount": 0,
+        "activeRevisionID": "template-class-rotated-widget-revision-1",
+        "parentRevisionID": "template-class-rotated-widget-revision-1",
+        "historyUnchanged": true
+      },
+      "hardNegativeResults": [
+        {
+          "id": "near-family-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "unrelated-corpus-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "public-acro-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "static-printed-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-static-form-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        },
+        {
+          "id": "rotated-native-widget-hard-negative",
+          "state": "noMatch",
+          "selectedTemplateID": null
+        }
+      ],
+      "correctionRecordValueFree": true,
+      "safeCompletion": {
+        "sourceDigestBound": true,
+        "sourceUnchanged": true,
+        "outputReopenable": true,
+        "validationStatus": "validated",
+        "reviewedTargetReadyForExplicitValueReview": true,
+        "mappingReviewRequired": true,
+        "valueReviewRequired": true,
+        "materializationAllowedWithoutReview": false,
+        "materializationGuardCode": "mappingReviewRequired",
+        "silentAutofillDetected": false
+      }
+    }
+  ],
+  "metrics": {
+    "schema": "pdf-editor.reviewed-completion-metrics",
+    "version": {
+      "major": 1,
+      "minor": 0
+    },
+    "privacy": {
+      "valueFree": true,
+      "sourceBytesStored": false,
+      "rawLabelsStored": false,
+      "profileValuesStored": false,
+      "contentLogged": false
+    },
+    "reviewedCorrection": {
+      "eligibleCaseCount": 5,
+      "promotedCorrectionCount": 5,
+      "baselineReviewedTargetCount": 0,
+      "promotedReviewedTargetCount": 5,
+      "reviewedTargetCoverageLift": 5,
+      "improvedCaseCount": 5,
+      "improvementRate": 1,
+      "rollbackRestoredCount": 5,
+      "rollbackRestorationRate": 1
+    },
+    "abstention": {
+      "eligibleCaseCount": 14,
+      "abstainedCount": 14,
+      "abstentionRate": 1,
+      "failureCount": 0,
+      "expectedStateCounts": {
+        "ambiguous": 6,
+        "stale": 1,
+        "noMatch": 7
+      }
+    },
+    "hardNegative": {
+      "fixtureCount": 7,
+      "selectedCount": 0,
+      "abstainedCount": 7,
+      "abstentionRate": 1,
+      "falsePositiveRate": 0,
+      "promotionReplayCount": 35,
+      "promotionReplaySelectedCount": 0,
+      "promotionReplayAbstentionRate": 1
+    },
+    "safeCompletion": {
+      "eligibleCaseCount": 5,
+      "sourceBoundValidatedCount": 5,
+      "sourceBoundValidatedRate": 1,
+      "explicitReviewGuardedCount": 5,
+      "explicitReviewGuardedRate": 1,
+      "materializationAllowedWithoutReviewCount": 0,
+      "silentAutofillCount": 0,
+      "safeCompletionReadyCount": 5,
+      "safeCompletionReadyRate": 1
+    },
+    "passed": true
+  },
+  "passed": true
+}

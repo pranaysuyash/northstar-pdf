@@ -100,17 +100,43 @@ public struct SessionRecoveryListResult: Sendable {
 }
 
 /// Provider-neutral persistence for document-session recovery envelopes.
+///
+/// App-facing recovery discovery should always use `listRecoveries()`. It
+/// returns both valid envelopes and structured corruption diagnostics, so a
+/// partially damaged recovery directory cannot be mistaken for a clean one.
 public protocol SessionRecoveryStoring: Sendable {
   func save(_ envelope: DocumentSessionRecoveryEnvelope) throws
   func load(sessionID: UUID) throws -> DocumentSessionRecoveryEnvelope?
+
+  /// Legacy compatibility projection that intentionally discards corruption
+  /// diagnostics. New callers must use `listRecoveries()` instead.
+  ///
+  /// This requirement remains in the protocol so existing alternate store
+  /// implementations and callers remain source-compatible while migrating to
+  /// the diagnostic-preserving contract.
+  @available(
+    *,
+    deprecated,
+    message: "Use listRecoveries() to preserve recovery corruption diagnostics."
+  )
   func list() throws -> [DocumentSessionRecoveryEnvelope]
+
+  /// Discovers recovery envelopes without hiding malformed or unreadable
+  /// records.
+  ///
+  /// This is the preferred app-facing discovery contract. Callers must inspect
+  /// both `envelopes` and `corruptions`, including when `envelopes` is non-empty.
   func listRecoveries() throws -> SessionRecoveryListResult
   func delete(sessionID: UUID) throws
 }
 
 public extension SessionRecoveryStoring {
-  /// Compatibility default for existing alternate store implementations.
-  /// Concrete stores should provide diagnostics when they can inspect files.
+  /// Compatibility adapter for existing alternate store implementations.
+  ///
+  /// Implementations that can inspect their backing store should override this
+  /// method and return structured diagnostics. The default preserves source
+  /// compatibility for legacy stores but cannot recover corruption information
+  /// that their `list()` implementation does not expose.
   func listRecoveries() throws -> SessionRecoveryListResult {
     SessionRecoveryListResult(envelopes: try list(), corruptions: [])
   }
@@ -201,6 +227,13 @@ public final class SessionRecoveryStore: SessionRecoveryStoring, @unchecked Send
     }
   }
 
+  /// Legacy compatibility projection. Prefer `listRecoveries()` so callers do
+  /// not discard corruption diagnostics.
+  @available(
+    *,
+    deprecated,
+    message: "Use listRecoveries() to preserve recovery corruption diagnostics."
+  )
   public func list() throws -> [DocumentSessionRecoveryEnvelope] {
     try listRecoveries().envelopes
   }

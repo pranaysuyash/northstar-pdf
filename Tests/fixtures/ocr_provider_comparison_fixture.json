@@ -1,0 +1,126 @@
+{
+  "contract": "pdf-editor.ocr-provider-comparison",
+  "version": { "major": 1, "minor": 0 },
+  "corpusManifest": "Tests/fixtures/pdf_corpus_governance_manifest.json",
+  "privacyPolicy": "value-free-report-no-content-logging",
+  "accuracyUnit": "ground-truth-line-anchor-recall",
+  "latencyUnit": "milliseconds-per-provider-request",
+  "fixtures": [
+    {
+      "fixtureId": "printed-scan",
+      "documentClasses": ["scanned"],
+      "input": { "kind": "image", "relativePath": "benchmark/results/ocr-corpus/printed-scan.png" },
+      "groundTruthPath": "benchmark/results/ocr-corpus/ground-truth.txt",
+      "accuracyGate": { "minimumAnchorRecall": 1.0 },
+      "policy": "candidate-evidence-only"
+    },
+    {
+      "fixtureId": "scanned-noisy",
+      "documentClasses": ["scanned", "malformed-layout-negative"],
+      "input": { "kind": "image", "relativePath": "benchmark/results/browser-corpus/scanned-noisy.png" },
+      "groundTruthPath": "benchmark/results/ocr-corpus/ground-truth.txt",
+      "accuracyGate": { "minimumAnchorRecall": 0.66 },
+      "policy": "abstain-below-confidence-and-no-field-creation"
+    },
+    {
+      "fixtureId": "handwritten-simulated-entries",
+      "documentClasses": ["handwritten", "scanned", "static-form", "mixed-content"],
+      "input": { "kind": "image", "relativePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.png" },
+      "groundTruthPath": "benchmark/results/governed-corpus/handwritten-simulated-ground-truth.txt",
+      "accuracyGate": { "minimumAnchorRecall": 0.0 },
+      "policy": "evidence-only-no-genuine-handwriting-or-signature-claim"
+    },
+    {
+      "fixtureId": "rotated-hybrid-90-raster-page",
+      "documentClasses": ["rotated", "mixed-content", "scanned", "native-form"],
+      "input": { "kind": "pdfPage", "relativePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf", "page": 2 },
+      "groundTruthPath": "benchmark/results/ocr-corpus/ground-truth.txt",
+      "accuracyGate": { "minimumAnchorRecall": 0.66 },
+      "policy": "coordinate-transform-and-candidate-evidence-only"
+    },
+    {
+      "fixtureId": "encrypted-hybrid-raster-page",
+      "documentClasses": ["encrypted", "mixed-content", "scanned", "native-form"],
+      "input": { "kind": "pdfPage", "relativePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf", "page": 2, "passwordEnv": "PDF_EDITOR_FIXTURE_PASSWORD" },
+      "groundTruthPath": "benchmark/results/ocr-corpus/ground-truth.txt",
+      "accuracyGate": { "minimumAnchorRecall": 0.66 },
+      "policy": "explicit-unlock-local-only-no-password-logging"
+    },
+    {
+      "fixtureId": "large-hybrid-raster-page-40",
+      "documentClasses": ["large", "mixed-content", "scanned", "native-form"],
+      "input": { "kind": "pdfPage", "relativePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf", "page": 40 },
+      "groundTruthPath": "benchmark/results/ocr-corpus/ground-truth.txt",
+      "accuracyGate": { "minimumAnchorRecall": 0.66 },
+      "policy": "resource-budget-and-cancellation-evidence"
+    }
+  ],
+  "recoveryFixtures": [
+    {
+      "fixtureId": "malformed-hybrid-truncated",
+      "relativePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+      "expected": "safe-failure-no-output"
+    },
+    {
+      "fixtureId": "encrypted-hybrid",
+      "relativePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+      "passwordEnv": "PDF_EDITOR_FIXTURE_PASSWORD",
+      "expected": "reject-without-password-and-open-after-explicit-unlock"
+    },
+    {
+      "fixtureId": "large-hybrid-40-pages",
+      "relativePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+      "expected": "page-budget-observed-and-no-partial-output"
+    }
+  ],
+  "providers": [
+    {
+      "providerId": "browser-wasm-tesseract",
+      "engineFamily": "tesseract.js",
+      "runtimeKind": "browser-local-wasm-worker",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "Apache-2.0-package-and-core-MIT-language-data",
+      "defaultState": "measuredPartial"
+    },
+    {
+      "providerId": "native-vision",
+      "engineFamily": "apple-vision",
+      "runtimeKind": "native-system",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "platform-framework-approved-local-use",
+      "defaultState": "measuredPartial"
+    },
+    {
+      "providerId": "local-tesseract",
+      "engineFamily": "tesseract-5",
+      "runtimeKind": "installed-local-process",
+      "capability": "ocr.textBounds",
+      "licenseStatus": "Apache-2.0-engine-traineddata-package-review-required",
+      "defaultState": "installedUnmeasured"
+    },
+    {
+      "providerId": "companion-ocrmypdf",
+      "engineFamily": "ocrmypdf",
+      "runtimeKind": "installed-companion",
+      "capability": "ocr.searchableLayer",
+      "licenseStatus": "MPL-2.0-core-dependency-review-required",
+      "defaultState": "unavailable-uninstalled"
+    },
+    {
+      "providerId": "companion-pdfbox",
+      "engineFamily": "apache-pdfbox",
+      "runtimeKind": "installed-companion",
+      "capability": "pdf.text-extraction-and-edit",
+      "licenseStatus": "Apache-2.0-exact-package-review-required",
+      "defaultState": "installedUnmeasured"
+    },
+    {
+      "providerId": "companion-mupdf",
+      "engineFamily": "mupdf",
+      "runtimeKind": "installed-companion",
+      "capability": "pdf.high-fidelity-edit",
+      "licenseStatus": "AGPL-3.0-or-commercial-review-required",
+      "defaultState": "quarantined"
+    }
+  ]
+}

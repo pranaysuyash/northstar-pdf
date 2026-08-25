@@ -22,13 +22,15 @@ failures=0
 warnings=0
 for file in "${files[@]}"; do
   case "$file" in
-    "$ROOT/benchmark/results/security-corpus/"*|"$ROOT/benchmark/results/ocr-corpus/"*)
+    "$ROOT/benchmark/results/security-corpus/"*|"$ROOT/benchmark/results/ocr-corpus/"*|*"/malformed-"*.pdf)
       continue
       ;;
   esac
   printf '\n--- qpdf output check: %s ---\n' "${file#$ROOT/}"
   qpdf_args=(--check)
-  if [[ "$file" == *"encrypted-reader.pdf" ]]; then
+  # Contract-parity exports prefix the source path, so the encrypted fixture
+  # name is not necessarily the final filename component.
+  if [[ "$file" == *"encrypted-reader"* || "$file" == *"encrypted-"* ]]; then
     qpdf_args+=(--password=reader-password)
   fi
   output=""

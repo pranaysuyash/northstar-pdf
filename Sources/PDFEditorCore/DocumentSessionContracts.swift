@@ -86,6 +86,7 @@ public enum DocumentSessionOperationPayloadKind: String, Codable, CaseIterable, 
   case none
   case text
   case characterGrid
+  case textRunReplacement
   case boolean
   case choice
   case choiceMark
@@ -185,6 +186,8 @@ public struct DocumentSessionOperationMetadata: Codable, Equatable, Hashable, Id
       return .text
     case .some(.characterGrid(_, _)):
       return .characterGrid
+    case .some(.textRunReplacement(_, _, _)):
+      return .textRunReplacement
     case .some(.boolean(_)):
       return .boolean
     case .some(.choice(_)):
@@ -288,6 +291,10 @@ public struct DocumentSession: Codable, Equatable, Hashable, Sendable, Identifia
   public let sessionID: UUID
   public let sourceArtifact: DocumentSessionSourceArtifact
   public let inspectionReference: DocumentSessionInspectionReference?
+  /// Value-minimized processing and export provenance for this session.
+  /// Optional keeps older recovery envelopes readable; new adapters should
+  /// populate it whenever a PDF session is created or autosaved.
+  public let privacyProvenance: PDFSessionPrivacyProvenance?
   public let operationLedger: [DocumentSessionOperationMetadata]
   public let viewState: DocumentSessionViewState
   public let recovery: DocumentSessionRecoveryMetadata
@@ -296,6 +303,7 @@ public struct DocumentSession: Codable, Equatable, Hashable, Sendable, Identifia
     sessionID: UUID = UUID(),
     sourceArtifact: DocumentSessionSourceArtifact,
     inspectionReference: DocumentSessionInspectionReference? = nil,
+    privacyProvenance: PDFSessionPrivacyProvenance? = nil,
     operationLedger: [DocumentSessionOperationMetadata] = [],
     viewState: DocumentSessionViewState = DocumentSessionViewState(),
     recovery: DocumentSessionRecoveryMetadata = DocumentSessionRecoveryMetadata()
@@ -303,6 +311,7 @@ public struct DocumentSession: Codable, Equatable, Hashable, Sendable, Identifia
     self.sessionID = sessionID
     self.sourceArtifact = sourceArtifact
     self.inspectionReference = inspectionReference
+    self.privacyProvenance = privacyProvenance
     self.operationLedger = operationLedger
     self.viewState = viewState
     self.recovery = recovery

@@ -1,0 +1,4308 @@
+{
+  "corpusVersion": {
+    "major": 1,
+    "minor": 0
+  },
+  "policyByDocumentClass": {
+    "nativeWidget": {
+      "familyThreshold": 0.8624,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9747503121098626,
+        "maximumNegativeScore": 0.75,
+        "falsePositiveGate": true
+      }
+    },
+    "publicAcroForm": {
+      "familyThreshold": 0.8352,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9619172212978369,
+        "maximumNegativeScore": 0.7083333333333333,
+        "falsePositiveGate": true
+      }
+    },
+    "rotatedNativeWidget": {
+      "familyThreshold": 0.8621,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9741679135494596,
+        "maximumNegativeScore": 0.75,
+        "falsePositiveGate": true
+      }
+    },
+    "rotatedStaticForm": {
+      "familyThreshold": 0.7772,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 1,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 1,
+        "minimumPositiveScore": 0.9994172212978369,
+        "maximumNegativeScore": 0.5548085901027078,
+        "falsePositiveGate": true
+      }
+    },
+    "scannedDocument": {
+      "familyThreshold": 1.01,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "disabled",
+      "calibrationStatus": "insufficientEvidence",
+      "evidence": {
+        "positiveCaseCount": 0,
+        "negativeCaseCount": 1,
+        "ambiguousCaseCount": 0,
+        "minimumPositiveScore": null,
+        "maximumNegativeScore": 0.3048085901027078,
+        "falsePositiveGate": false
+      }
+    },
+    "staticPrintedForm": {
+      "familyThreshold": 0.8296,
+      "ambiguityMargin": 0.05,
+      "familyAcceptance": "review",
+      "calibrationStatus": "calibrated",
+      "evidence": {
+        "positiveCaseCount": 2,
+        "negativeCaseCount": 2,
+        "ambiguousCaseCount": 2,
+        "minimumPositiveScore": 0.9991022212978369,
+        "maximumNegativeScore": 0.66,
+        "falsePositiveGate": true
+      }
+    }
+  },
+  "fixtures": [
+    {
+      "id": "exact-public-sample",
+      "label": "Exact source digest match",
+      "documentClass": "publicAcroForm",
+      "source": "benchmark/results/public-sample-form.pdf",
+      "review": "curator accepted the source digest and mapping set",
+      "reviewLabel": {
+        "decision": "exact",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "exact source digest and reviewed mapping identity",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-base",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-public-sample",
+              "revisionID": "template-public-sample-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-public-sample",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-base",
+                "exactSourceDigests": [
+                  "sha256:corpus-public-sample"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-base",
+          "exactSourceDigests": [
+            "sha256:corpus-public-sample"
+          ],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-name",
+                "hmac:field-date"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-applicant",
+                "hmac:anchor-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-public-sample"
+      },
+      "expected": {
+        "state": "exact",
+        "selectedTemplateID": "template-public-sample"
+      }
+    },
+    {
+      "id": "known-variant-public-sample",
+      "label": "Known layout with a different source digest",
+      "documentClass": "publicAcroForm",
+      "source": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+      "review": "same keyed layout reviewed as a source variant; values still require review",
+      "reviewLabel": {
+        "decision": "known-variant",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "same keyed layout with a distinct source digest",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-base",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-public-sample",
+              "revisionID": "template-public-sample-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-public-sample",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-base",
+                "exactSourceDigests": [
+                  "sha256:corpus-public-sample"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-base",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-name",
+                "hmac:field-date"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-applicant",
+                "hmac:anchor-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-public-sample-noop"
+      },
+      "expected": {
+        "state": "knownVariant",
+        "selectedTemplateID": "template-public-sample"
+      }
+    },
+    {
+      "id": "family-form6-drift",
+      "label": "Structural family with bounded geometry drift",
+      "documentClass": "staticPrintedForm",
+      "source": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "review": "same reviewed field and region structure with small page and box drift",
+      "reviewLabel": {
+        "decision": "family-positive",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "bounded geometry drift and matching keyed structure",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-base",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-public-sample",
+              "revisionID": "template-public-sample-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-public-sample",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-base",
+                "exactSourceDigests": [
+                  "sha256:corpus-public-sample"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-family-drift",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 601,
+              "heightPoints": 799,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-name",
+                "hmac:field-date"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-applicant",
+                "hmac:anchor-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.152,
+                    "y": 0.698,
+                    "width": 0.399,
+                    "height": 0.031
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.701,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-form6-family"
+      },
+      "expected": {
+        "state": "familyMatch",
+        "selectedTemplateID": "template-public-sample"
+      }
+    },
+    {
+      "id": "ambiguous-family-choice",
+      "label": "Two equally scored family candidates",
+      "documentClass": "staticPrintedForm",
+      "source": "benchmark/results/public-sample-form.pdf",
+      "review": "curator withheld template selection because both families had equal evidence",
+      "reviewLabel": {
+        "decision": "ambiguous",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "equal structural evidence between reviewed candidates",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-ambiguous-a",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-family-a",
+              "revisionID": "template-family-a-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-family-a",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-ambiguous-a",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          },
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-ambiguous-b",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-family-b",
+              "revisionID": "template-family-b-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-family-b",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-ambiguous-b",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-ambiguous-input",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-name",
+                "hmac:field-date"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-applicant",
+                "hmac:anchor-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-ambiguous"
+      },
+      "expected": {
+        "state": "ambiguous",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "stale-source-session",
+      "label": "Stale source digest refuses replay",
+      "documentClass": "publicAcroForm",
+      "source": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+      "review": "the session was reviewed against the public source, then input bytes changed",
+      "reviewLabel": {
+        "decision": "stale",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "session digest differs from current source digest",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-base",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-public-sample",
+              "revisionID": "template-public-sample-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-public-sample",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-base",
+                "exactSourceDigests": [
+                  "sha256:corpus-public-sample"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-base",
+          "exactSourceDigests": [
+            "sha256:corpus-public-sample"
+          ],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-name",
+                "hmac:field-date"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-applicant",
+                "hmac:anchor-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-public-sample-noop",
+        "expectedSourceDigest": "sha256:corpus-public-sample"
+      },
+      "expected": {
+        "state": "stale",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "near-family-negative",
+      "label": "Near-family false positive is rejected",
+      "documentClass": "staticPrintedForm",
+      "source": "benchmark/results/2026-08-23-pdfkit-widgets/native-widgets.pdf",
+      "review": "same page geometry but incompatible field, anchor, and region semantics",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "same geometry with incompatible semantic evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-base",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-public-sample",
+              "revisionID": "template-public-sample-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-public-sample",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-base",
+                "exactSourceDigests": [
+                  "sha256:corpus-public-sample"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-near-negative",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "signature"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-signature"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-signature"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "signatureLine",
+                  "suggestedFieldType": "signature",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-signature",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-other",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-widgets-negative"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "unrelated-corpus-negative",
+      "label": "Unrelated corpus shape is rejected",
+      "documentClass": "scannedDocument",
+      "source": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "review": "page count, geometry, field sequence, and regions are incompatible",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "incompatible page count, geometry, and region evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:layout-base",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-public-sample",
+              "revisionID": "template-public-sample-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-public-sample",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:layout-base",
+                "exactSourceDigests": [
+                  "sha256:corpus-public-sample"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:field-name",
+                      "hmac:field-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:anchor-applicant",
+                      "hmac:anchor-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:layout-unrelated",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 612,
+              "heightPoints": 1008,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "signature"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:field-signature"
+              ],
+              "anchorTokens": [
+                "hmac:anchor-unrelated"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "signatureLine",
+                  "suggestedFieldType": "signature",
+                  "normalizedRect": {
+                    "x": 0.1,
+                    "y": 0.2,
+                    "width": 0.7,
+                    "height": 0.05
+                  },
+                  "anchorToken": "hmac:anchor-unrelated",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-repeated-pages"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "scanned-exact-source",
+      "label": "Scanned document exact digest match",
+      "documentClass": "scannedDocument",
+      "source": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "review": "curator accepted exact source identity while keeping family matching disabled",
+      "reviewLabel": {
+        "decision": "exact",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "exact source digest with no family inference",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-scanned-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-scanned",
+              "revisionID": "template-class-scanned-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-scanned",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-scanned-template",
+                "exactSourceDigests": [
+                  "sha256:corpus-printed-scan"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [],
+                    "regionSignatures": []
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-scanned-template",
+          "exactSourceDigests": [
+            "sha256:corpus-printed-scan"
+          ],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [],
+              "regionSignatures": []
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-printed-scan"
+      },
+      "expected": {
+        "state": "exact",
+        "selectedTemplateID": "template-class-scanned"
+      }
+    },
+    {
+      "id": "scanned-known-variant",
+      "label": "Scanned document known layout variant",
+      "documentClass": "scannedDocument",
+      "source": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "review": "curator accepted a known layout variant without enabling family inference",
+      "reviewLabel": {
+        "decision": "known-variant",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "same keyed layout and distinct source digest",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-scanned-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-scanned",
+              "revisionID": "template-class-scanned-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-scanned",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-scanned-template",
+                "exactSourceDigests": [
+                  "sha256:corpus-printed-scan"
+                ],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [],
+                    "regionSignatures": []
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-scanned-template",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [],
+              "regionSignatures": []
+            }
+          ]
+        },
+        "sourceDigest": "sha256:corpus-printed-scan-variant"
+      },
+      "expected": {
+        "state": "knownVariant",
+        "selectedTemplateID": "template-class-scanned"
+      }
+    },
+    {
+      "id": "public-acro-form-family-positive",
+      "label": "publicAcroForm reviewed family positive",
+      "documentClass": "publicAcroForm",
+      "source": "benchmark/results/public-sample-form.pdf",
+      "review": "curator accepted bounded structural drift as the same document family",
+      "reviewLabel": {
+        "decision": "family-positive",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "value-free geometry and keyed structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-public-acroform-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-public-acroform",
+              "revisionID": "template-class-public-acroform-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-public-acroform",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-public-acroform-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-public-acroform-family",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 601,
+              "heightPoints": 799,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:public-name",
+                "hmac:public-date-v2"
+              ],
+              "anchorTokens": [
+                "hmac:public-name",
+                "hmac:public-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:public-acro-form-family-source"
+      },
+      "expected": {
+        "state": "familyMatch",
+        "selectedTemplateID": "template-class-public-acroform"
+      }
+    },
+    {
+      "id": "public-acro-form-hard-negative",
+      "label": "publicAcroForm reviewed hard negative",
+      "documentClass": "publicAcroForm",
+      "source": "benchmark/results/public-sample-form.pdf",
+      "review": "curator rejected the visually or geometrically nearby candidate as a different family",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "incompatible field, anchor, region, or page evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-public-acroform-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-public-acroform",
+              "revisionID": "template-class-public-acroform-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-public-acroform",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-public-acroform-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-public-acroform-negative",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "signature",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:signature",
+                "hmac:public-date"
+              ],
+              "anchorTokens": [
+                "hmac:signature",
+                "hmac:public-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:public-acro-form-negative-source"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "public-acro-form-ambiguous",
+      "label": "publicAcroForm reviewed ambiguous candidates",
+      "documentClass": "publicAcroForm",
+      "source": "benchmark/results/public-sample-form.pdf",
+      "review": "curator withheld selection because the top family candidates had equivalent evidence",
+      "reviewLabel": {
+        "decision": "ambiguous",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "equivalent value-free structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-public-acroform-ambiguous-a",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-public-acroform-ambiguous-1",
+              "revisionID": "template-class-public-acroform-ambiguous-1-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-public-acroform-ambiguous-1",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-public-acroform-ambiguous-a",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          },
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-public-acroform-ambiguous-b",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-public-acroform-ambiguous-2",
+              "revisionID": "template-class-public-acroform-ambiguous-2-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-public-acroform-ambiguous-2",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-public-acroform-ambiguous-b",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "choice"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "anchorTokens": [
+                      "hmac:public-name",
+                      "hmac:public-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-public-acroform-ambiguous-input",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "choice"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:public-name",
+                "hmac:public-date"
+              ],
+              "anchorTokens": [
+                "hmac:public-name",
+                "hmac:public-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:public-acro-form-ambiguous-source"
+      },
+      "expected": {
+        "state": "ambiguous",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "static-printed-form-family-positive",
+      "label": "staticPrintedForm reviewed family positive",
+      "documentClass": "staticPrintedForm",
+      "source": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "review": "curator accepted bounded structural drift as the same document family",
+      "reviewLabel": {
+        "decision": "family-positive",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "value-free geometry and keyed structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-static-printed-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-static-printed",
+              "revisionID": "template-class-static-printed-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-static-printed",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-static-printed-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:printed-name",
+                      "hmac:printed-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-static-printed-family",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 601,
+              "heightPoints": 799,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [
+                "hmac:printed-name",
+                "hmac:printed-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:static-printed-form-family-source"
+      },
+      "expected": {
+        "state": "familyMatch",
+        "selectedTemplateID": "template-class-static-printed"
+      }
+    },
+    {
+      "id": "static-printed-form-hard-negative",
+      "label": "staticPrintedForm reviewed hard negative",
+      "documentClass": "staticPrintedForm",
+      "source": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "review": "curator rejected the visually or geometrically nearby candidate as a different family",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "incompatible field, anchor, region, or page evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-static-printed-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-static-printed",
+              "revisionID": "template-class-static-printed-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-static-printed",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-static-printed-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:printed-name",
+                      "hmac:printed-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-static-printed-negative",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [
+                "hmac:printed-signature",
+                "hmac:printed-other"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "signatureLine",
+                  "suggestedFieldType": "signature",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-signature",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-other",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:static-printed-form-negative-source"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "static-printed-form-ambiguous",
+      "label": "staticPrintedForm reviewed ambiguous candidates",
+      "documentClass": "staticPrintedForm",
+      "source": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "review": "curator withheld selection because the top family candidates had equivalent evidence",
+      "reviewLabel": {
+        "decision": "ambiguous",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "equivalent value-free structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-static-printed-ambiguous-a",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-static-printed-ambiguous-1",
+              "revisionID": "template-class-static-printed-ambiguous-1-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-static-printed-ambiguous-1",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-static-printed-ambiguous-a",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:printed-name",
+                      "hmac:printed-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          },
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-static-printed-ambiguous-b",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-static-printed-ambiguous-2",
+              "revisionID": "template-class-static-printed-ambiguous-2-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-static-printed-ambiguous-2",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-static-printed-ambiguous-b",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:printed-name",
+                      "hmac:printed-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-static-printed-ambiguous-input",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [
+                "hmac:printed-name",
+                "hmac:printed-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:static-printed-form-ambiguous-source"
+      },
+      "expected": {
+        "state": "ambiguous",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "native-widget-family-positive",
+      "label": "nativeWidget reviewed family positive",
+      "documentClass": "nativeWidget",
+      "source": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "review": "curator accepted bounded structural drift as the same document family",
+      "reviewLabel": {
+        "decision": "family-positive",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "value-free geometry and keyed structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-native-widget-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-native-widget",
+              "revisionID": "template-class-native-widget-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-native-widget",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-native-widget-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-check",
+                      "hmac:widget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-native-widget-family",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 801,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "checkbox",
+                "radio"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:widget-name-v2",
+                "hmac:widget-check",
+                "hmac:widget-choice"
+              ],
+              "anchorTokens": [
+                "hmac:widget-name",
+                "hmac:widget-choice"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:native-widget-family-source"
+      },
+      "expected": {
+        "state": "familyMatch",
+        "selectedTemplateID": "template-class-native-widget"
+      }
+    },
+    {
+      "id": "native-widget-hard-negative",
+      "label": "nativeWidget reviewed hard negative",
+      "documentClass": "nativeWidget",
+      "source": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "review": "curator rejected the visually or geometrically nearby candidate as a different family",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "incompatible field, anchor, region, or page evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-native-widget-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-native-widget",
+              "revisionID": "template-class-native-widget-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-native-widget",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-native-widget-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-check",
+                      "hmac:widget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-native-widget-negative",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "signature",
+                "radio"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:widget-name",
+                "hmac:widget-signature",
+                "hmac:widget-choice"
+              ],
+              "anchorTokens": [
+                "hmac:widget-signature",
+                "hmac:widget-choice"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:native-widget-negative-source"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "native-widget-ambiguous",
+      "label": "nativeWidget reviewed ambiguous candidates",
+      "documentClass": "nativeWidget",
+      "source": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "review": "curator withheld selection because the top family candidates had equivalent evidence",
+      "reviewLabel": {
+        "decision": "ambiguous",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "equivalent value-free structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-native-widget-ambiguous-a",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-native-widget-ambiguous-1",
+              "revisionID": "template-class-native-widget-ambiguous-1-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-native-widget-ambiguous-1",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-native-widget-ambiguous-a",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-check",
+                      "hmac:widget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          },
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-native-widget-ambiguous-b",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-native-widget-ambiguous-2",
+              "revisionID": "template-class-native-widget-ambiguous-2-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-native-widget-ambiguous-2",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-native-widget-ambiguous-b",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 0,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-check",
+                      "hmac:widget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:widget-name",
+                      "hmac:widget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-native-widget-ambiguous-input",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 0,
+              "nativeFieldKinds": [
+                "text",
+                "checkbox",
+                "radio"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:widget-name",
+                "hmac:widget-check",
+                "hmac:widget-choice"
+              ],
+              "anchorTokens": [
+                "hmac:widget-name",
+                "hmac:widget-choice"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:native-widget-ambiguous-source"
+      },
+      "expected": {
+        "state": "ambiguous",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "rotated-static-form-family-positive",
+      "label": "rotatedStaticForm reviewed family positive",
+      "documentClass": "rotatedStaticForm",
+      "source": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "review": "curator accepted bounded structural drift as the same document family",
+      "reviewLabel": {
+        "decision": "family-positive",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "value-free geometry and keyed structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-static-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-static",
+              "revisionID": "template-class-rotated-static-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-static",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-static-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:rotated-name",
+                      "hmac:rotated-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-rotated-static-family",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 601,
+              "heightPoints": 799,
+              "rotationDegrees": 90,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [
+                "hmac:rotated-name",
+                "hmac:rotated-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:rotated-static-form-family-source"
+      },
+      "expected": {
+        "state": "familyMatch",
+        "selectedTemplateID": "template-class-rotated-static"
+      }
+    },
+    {
+      "id": "rotated-static-form-hard-negative",
+      "label": "rotatedStaticForm reviewed hard negative",
+      "documentClass": "rotatedStaticForm",
+      "source": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "review": "curator rejected the visually or geometrically nearby candidate as a different family",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "incompatible field, anchor, region, or page evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-static-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-static",
+              "revisionID": "template-class-rotated-static-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-static",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-static-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:rotated-name",
+                      "hmac:rotated-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-rotated-static-negative",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 612,
+              "heightPoints": 1008,
+              "rotationDegrees": 90,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [
+                "hmac:rotated-signature"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "signatureLine",
+                  "suggestedFieldType": "signature",
+                  "normalizedRect": {
+                    "x": 0.1,
+                    "y": 0.2,
+                    "width": 0.7,
+                    "height": 0.05
+                  },
+                  "anchorToken": "hmac:anchor-unrelated",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:rotated-static-form-negative-source"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "rotated-static-form-ambiguous",
+      "label": "rotatedStaticForm reviewed ambiguous candidates",
+      "documentClass": "rotatedStaticForm",
+      "source": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "review": "curator withheld selection because the top family candidates had equivalent evidence",
+      "reviewLabel": {
+        "decision": "ambiguous",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "equivalent value-free structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-static-ambiguous-a",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-static-ambiguous-1",
+              "revisionID": "template-class-rotated-static-ambiguous-1-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-static-ambiguous-1",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-static-ambiguous-a",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:rotated-name",
+                      "hmac:rotated-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          },
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-static-ambiguous-b",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-static-ambiguous-2",
+              "revisionID": "template-class-rotated-static-ambiguous-2-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-static-ambiguous-2",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-static-ambiguous-b",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [],
+                    "nativeFieldNameTokens": [],
+                    "anchorTokens": [
+                      "hmac:rotated-name",
+                      "hmac:rotated-date"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-rotated-static-ambiguous-input",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 90,
+              "nativeFieldKinds": [],
+              "nativeFieldNameTokens": [],
+              "anchorTokens": [
+                "hmac:rotated-name",
+                "hmac:rotated-date"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:rotated-static-form-ambiguous-source"
+      },
+      "expected": {
+        "state": "ambiguous",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "rotated-native-widget-family-positive",
+      "label": "rotatedNativeWidget reviewed family positive",
+      "documentClass": "rotatedNativeWidget",
+      "source": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "review": "curator accepted bounded structural drift as the same document family",
+      "reviewLabel": {
+        "decision": "family-positive",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "value-free geometry and keyed structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-widget-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-widget",
+              "revisionID": "template-class-rotated-widget-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-widget",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-widget-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-check",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-rotated-widget-family",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 599,
+              "heightPoints": 802,
+              "rotationDegrees": 90,
+              "nativeFieldKinds": [
+                "text",
+                "checkbox",
+                "radio"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:rotwidget-name",
+                "hmac:rotwidget-check-v2",
+                "hmac:rotwidget-choice"
+              ],
+              "anchorTokens": [
+                "hmac:rotwidget-name",
+                "hmac:rotwidget-choice"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:rotated-native-widget-family-source"
+      },
+      "expected": {
+        "state": "familyMatch",
+        "selectedTemplateID": "template-class-rotated-widget"
+      }
+    },
+    {
+      "id": "rotated-native-widget-hard-negative",
+      "label": "rotatedNativeWidget reviewed hard negative",
+      "documentClass": "rotatedNativeWidget",
+      "source": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "review": "curator rejected the visually or geometrically nearby candidate as a different family",
+      "reviewLabel": {
+        "decision": "hard-negative",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "incompatible field, anchor, region, or page evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-widget-template",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-widget",
+              "revisionID": "template-class-rotated-widget-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-widget",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-widget-template",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-check",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-rotated-widget-negative",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 90,
+              "nativeFieldKinds": [
+                "text",
+                "signature",
+                "radio"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:rotwidget-name",
+                "hmac:rotwidget-signature",
+                "hmac:rotwidget-choice"
+              ],
+              "anchorTokens": [
+                "hmac:rotwidget-signature",
+                "hmac:rotwidget-choice"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:rotated-native-widget-negative-source"
+      },
+      "expected": {
+        "state": "noMatch",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    },
+    {
+      "id": "rotated-native-widget-ambiguous",
+      "label": "rotatedNativeWidget reviewed ambiguous candidates",
+      "documentClass": "rotatedNativeWidget",
+      "source": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "review": "curator withheld selection because the top family candidates had equivalent evidence",
+      "reviewLabel": {
+        "decision": "ambiguous",
+        "reviewer": "corpus-curator",
+        "reviewedAt": "2026-08-24",
+        "evidence": "equivalent value-free structural evidence",
+        "independentAgreement": "not-measured"
+      },
+      "input": {
+        "templates": [
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-widget-ambiguous-a",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-widget-ambiguous-1",
+              "revisionID": "template-class-rotated-widget-ambiguous-1-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-widget-ambiguous-1",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-widget-ambiguous-a",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-check",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          },
+          {
+            "header": {
+              "contractName": "pdf-editor.template",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "templateDigest": "hmac:class-rotated-widget-ambiguous-b",
+              "generatedAt": "2026-08-24T00:00:00.000Z",
+              "provider": {
+                "id": "reviewed-template-benchmark",
+                "version": "1",
+                "platform": "shared",
+                "capabilities": []
+              }
+            },
+            "payload": {
+              "templateID": "template-class-rotated-widget-ambiguous-2",
+              "revisionID": "template-class-rotated-widget-ambiguous-2-revision-1",
+              "parentRevisionID": null,
+              "displayName": "Reviewed fixture template-class-rotated-widget-ambiguous-2",
+              "lifecycle": "active",
+              "privacyMode": "localMinimized",
+              "fingerprint": {
+                "algorithm": "layout-v1+hmac-sha256",
+                "keyScope": "review-benchmark-workspace",
+                "featureVersion": "layout-features-1",
+                "layoutFingerprint": "hmac:class-rotated-widget-ambiguous-b",
+                "exactSourceDigests": [],
+                "pageSignatures": [
+                  {
+                    "pageIndex": 0,
+                    "widthPoints": 600,
+                    "heightPoints": 800,
+                    "rotationDegrees": 90,
+                    "nativeFieldKinds": [
+                      "text",
+                      "checkbox",
+                      "radio"
+                    ],
+                    "nativeFieldNameTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-check",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "anchorTokens": [
+                      "hmac:rotwidget-name",
+                      "hmac:rotwidget-choice"
+                    ],
+                    "regionSignatures": [
+                      {
+                        "kind": "textAnchored",
+                        "suggestedFieldType": "text",
+                        "normalizedRect": {
+                          "x": 0.15,
+                          "y": 0.7,
+                          "width": 0.4,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-applicant",
+                        "groupMemberCount": 1
+                      },
+                      {
+                        "kind": "checkboxShape",
+                        "suggestedFieldType": "checkbox",
+                        "normalizedRect": {
+                          "x": 0.7,
+                          "y": 0.7,
+                          "width": 0.03,
+                          "height": 0.03
+                        },
+                        "anchorToken": "hmac:anchor-date",
+                        "groupMemberCount": 1
+                      }
+                    ]
+                  }
+                ]
+              },
+              "mappings": [],
+              "reviewPolicy": {
+                "defaultMappingPolicy": "alwaysReviewMappingAndValue",
+                "requireValueReview": true,
+                "allowBatchMappingApproval": false
+              }
+            }
+          }
+        ],
+        "fingerprint": {
+          "algorithm": "layout-v1+hmac-sha256",
+          "keyScope": "review-benchmark-workspace",
+          "featureVersion": "layout-features-1",
+          "layoutFingerprint": "hmac:class-rotated-widget-ambiguous-input",
+          "exactSourceDigests": [],
+          "pageSignatures": [
+            {
+              "pageIndex": 0,
+              "widthPoints": 600,
+              "heightPoints": 800,
+              "rotationDegrees": 90,
+              "nativeFieldKinds": [
+                "text",
+                "checkbox",
+                "radio"
+              ],
+              "nativeFieldNameTokens": [
+                "hmac:rotwidget-name",
+                "hmac:rotwidget-check",
+                "hmac:rotwidget-choice"
+              ],
+              "anchorTokens": [
+                "hmac:rotwidget-name",
+                "hmac:rotwidget-choice"
+              ],
+              "regionSignatures": [
+                {
+                  "kind": "textAnchored",
+                  "suggestedFieldType": "text",
+                  "normalizedRect": {
+                    "x": 0.15,
+                    "y": 0.7,
+                    "width": 0.4,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-applicant",
+                  "groupMemberCount": 1
+                },
+                {
+                  "kind": "checkboxShape",
+                  "suggestedFieldType": "checkbox",
+                  "normalizedRect": {
+                    "x": 0.7,
+                    "y": 0.7,
+                    "width": 0.03,
+                    "height": 0.03
+                  },
+                  "anchorToken": "hmac:anchor-date",
+                  "groupMemberCount": 1
+                }
+              ]
+            }
+          ]
+        },
+        "sourceDigest": "sha256:rotated-native-widget-ambiguous-source"
+      },
+      "expected": {
+        "state": "ambiguous",
+        "mustNotSelect": true,
+        "forbiddenStates": [
+          "exact",
+          "knownVariant",
+          "familyMatch"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,2651 @@
+{
+  "candidates" : [
+    {
+      "bounds" : {
+        "height" : 16,
+        "width" : 16,
+        "x" : 72,
+        "y" : 600
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 16,
+          "width" : 16,
+          "x" : 72,
+          "y" : 600
+        }
+      },
+      "entryMode" : "checkbox",
+      "evidence" : [
+        "Vector checkbox geometry detected (16x16pt).",
+        "Associated label: \"Agree to terms:\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "35F941A5-7505-40B8-8466-13B9679ABE53",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 16,
+              "width" : 16,
+              "x" : 72,
+              "y" : 600
+            }
+          },
+          "score" : 0.85,
+          "summary" : "Vector square path at (72, 600)"
+        },
+        {
+          "id" : "60F55BFA-2AB5-432B-93E4-A68FACC3DE08",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 82.03200000000001,
+              "x" : 72,
+              "y" : 627.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Semantically plausible field label",
+          "text" : "Agree to terms:"
+        },
+        {
+          "id" : "6425F32C-BD29-4E69-A515-814E88CD3C76",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 82.03200000000001,
+              "x" : 72,
+              "y" : 627.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label matched by page-space proximity",
+          "text" : "Agree to terms:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "35F941A5-7505-40B8-8466-13B9679ABE53",
+          "60F55BFA-2AB5-432B-93E4-A68FACC3DE08",
+          "6425F32C-BD29-4E69-A515-814E88CD3C76"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.67839,
+        "state" : "review",
+        "supportScore" : 0.771316
+      },
+      "groupMemberCount" : 1,
+      "id" : "1DD0B828-01B5-43B2-A4C0-6AEB31D3D740",
+      "kind" : "vectorRegion",
+      "labelText" : "Agree to terms:",
+      "memberBounds" : [
+        {
+          "height" : 16,
+          "width" : 16,
+          "x" : 72,
+          "y" : 600
+        }
+      ],
+      "pageIndex" : 0,
+      "score" : 0.85,
+      "status" : "suggested",
+      "suggestedFieldType" : "checkbox"
+    },
+    {
+      "bounds" : {
+        "height" : 32,
+        "width" : 300,
+        "x" : 180,
+        "y" : 700
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 32,
+          "width" : 300,
+          "x" : 180,
+          "y" : 700
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector bounding box (300x32pt).",
+        "Associated label: \"Applicant Name:\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "2AE287D8-33E7-4ECD-BB02-A1542DC140AE",
+          "kind" : "vectorRectangle",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 32,
+              "width" : 300,
+              "x" : 180,
+              "y" : 700
+            }
+          },
+          "score" : 0.8,
+          "summary" : "Vector rectangle at (180, 700)"
+        },
+        {
+          "id" : "ECCD2311-8F2F-4795-99AE-FFA483D3E767",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 88.03200000000001,
+              "x" : 72,
+              "y" : 717.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Semantically plausible field label",
+          "text" : "Applicant Name:"
+        },
+        {
+          "id" : "C9F173E5-4E51-45B7-A3B2-71996E66F916",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 88.03200000000001,
+              "x" : 72,
+              "y" : 717.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label matched by page-space proximity",
+          "text" : "Applicant Name:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "2AE287D8-33E7-4ECD-BB02-A1542DC140AE",
+          "C9F173E5-4E51-45B7-A3B2-71996E66F916",
+          "ECCD2311-8F2F-4795-99AE-FFA483D3E767"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.667535,
+        "state" : "review",
+        "supportScore" : 0.751579
+      },
+      "groupMemberCount" : 1,
+      "id" : "58E5DB60-6D17-4916-A259-78D62A44C2FF",
+      "kind" : "vectorRegion",
+      "labelText" : "Applicant Name:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.8,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 18,
+        "width" : 140,
+        "x" : 180,
+        "y" : 520
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 18,
+          "width" : 140,
+          "x" : 180,
+          "y" : 520
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Vector underline stroke detected (140pt).",
+        "Associated label: \"Date:\""
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "9F225865-CF10-44C9-BE4B-9DC40BA44130",
+          "kind" : "underline",
+          "origin" : "geometryExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 18,
+              "width" : 140,
+              "x" : 180,
+              "y" : 520
+            }
+          },
+          "score" : 0.75,
+          "summary" : "Vector line stroke at y=520"
+        },
+        {
+          "id" : "CB1288FF-D4C4-43D2-839A-6259336F30CA",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 28.680000000000007,
+              "x" : 72,
+              "y" : 537.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Semantically plausible field label",
+          "text" : "Date:"
+        },
+        {
+          "id" : "C33F7BC7-2927-4602-B727-C0E4FCC2AF63",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 28.680000000000007,
+              "x" : 72,
+              "y" : 537.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label matched by page-space proximity",
+          "text" : "Date:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "9F225865-CF10-44C9-BE4B-9DC40BA44130",
+          "C33F7BC7-2927-4602-B727-C0E4FCC2AF63",
+          "CB1288FF-D4C4-43D2-839A-6259336F30CA"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.656125,
+        "state" : "review",
+        "supportScore" : 0.730833
+      },
+      "groupMemberCount" : 1,
+      "id" : "CE0F97EB-A53E-4D4B-BD55-020A2593213F",
+      "kind" : "vectorRegion",
+      "labelText" : "Date:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.75,
+      "status" : "suggested",
+      "suggestedFieldType" : "date"
+    },
+    {
+      "bounds" : {
+        "height" : 17,
+        "width" : 220,
+        "x" : 168.032,
+        "y" : 717.240234375
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 17,
+          "width" : 220,
+          "x" : 168.032,
+          "y" : 717.240234375
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "64EC325E-C5C4-4F02-B284-21CA6ADCF6A9",
+          "kind" : "whitespace",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 168.032,
+              "y" : 717.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace adjacent to a semantically plausible label",
+          "text" : "Applicant Name:"
+        },
+        {
+          "id" : "46EB5FA1-D10B-487D-ACF9-85F738778AAE",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 88.03200000000001,
+              "x" : 72,
+              "y" : 717.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label text anchors the whitespace candidate",
+          "text" : "Applicant Name:"
+        },
+        {
+          "id" : "726AB241-C498-48B1-AB01-BE4CC32692C8",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 88.03200000000001,
+              "x" : 72,
+              "y" : 717.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace is positioned after the label text",
+          "text" : "Applicant Name:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "46EB5FA1-D10B-487D-ACF9-85F738778AAE",
+          "64EC325E-C5C4-4F02-B284-21CA6ADCF6A9",
+          "726AB241-C498-48B1-AB01-BE4CC32692C8"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.605457,
+        "state" : "review",
+        "supportScore" : 0.63871
+      },
+      "groupMemberCount" : 1,
+      "id" : "E29DCCFD-D066-436B-B290-436431DBDA8E",
+      "kind" : "textAnchored",
+      "labelText" : "Applicant Name:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.58,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 17,
+        "width" : 220,
+        "x" : 162.032,
+        "y" : 627.240234375
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 17,
+          "width" : 220,
+          "x" : 162.032,
+          "y" : 627.240234375
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "FF777BB4-1F6A-4208-BF73-7995DFE09A0E",
+          "kind" : "whitespace",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 162.032,
+              "y" : 627.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace adjacent to a semantically plausible label",
+          "text" : "Agree to terms:"
+        },
+        {
+          "id" : "9B7F0BF7-B018-4117-AB1E-FD0CF9F868A8",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 82.03200000000001,
+              "x" : 72,
+              "y" : 627.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label text anchors the whitespace candidate",
+          "text" : "Agree to terms:"
+        },
+        {
+          "id" : "E1350F2F-D007-47F1-9AD6-E0A2798400B3",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 82.03200000000001,
+              "x" : 72,
+              "y" : 627.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace is positioned after the label text",
+          "text" : "Agree to terms:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "9B7F0BF7-B018-4117-AB1E-FD0CF9F868A8",
+          "E1350F2F-D007-47F1-9AD6-E0A2798400B3",
+          "FF777BB4-1F6A-4208-BF73-7995DFE09A0E"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.605457,
+        "state" : "review",
+        "supportScore" : 0.63871
+      },
+      "groupMemberCount" : 1,
+      "id" : "4452C73A-DE5B-4304-8A5C-A207FAB765A8",
+      "kind" : "textAnchored",
+      "labelText" : "Agree to terms:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.58,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    },
+    {
+      "bounds" : {
+        "height" : 17,
+        "width" : 220,
+        "x" : 108.68,
+        "y" : 537.240234375
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 17,
+          "width" : 220,
+          "x" : 108.68,
+          "y" : 537.240234375
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "272C7EF3-DCEC-4583-926A-DAEAF01489B0",
+          "kind" : "whitespace",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 108.68,
+              "y" : 537.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace adjacent to a semantically plausible label",
+          "text" : "Date:"
+        },
+        {
+          "id" : "FD69A5F5-6B1D-4E76-A619-643D7A1F289B",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 28.680000000000007,
+              "x" : 72,
+              "y" : 537.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label text anchors the whitespace candidate",
+          "text" : "Date:"
+        },
+        {
+          "id" : "3B6B2321-A423-4443-AB90-DF9FC1881E43",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 28.680000000000007,
+              "x" : 72,
+              "y" : 537.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace is positioned after the label text",
+          "text" : "Date:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "272C7EF3-DCEC-4583-926A-DAEAF01489B0",
+          "3B6B2321-A423-4443-AB90-DF9FC1881E43",
+          "FD69A5F5-6B1D-4E76-A619-643D7A1F289B"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.605457,
+        "state" : "review",
+        "supportScore" : 0.63871
+      },
+      "groupMemberCount" : 1,
+      "id" : "A5A74C13-61AE-491B-911E-D0A855629252",
+      "kind" : "textAnchored",
+      "labelText" : "Date:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.58,
+      "status" : "suggested",
+      "suggestedFieldType" : "date"
+    },
+    {
+      "bounds" : {
+        "height" : 17,
+        "width" : 220,
+        "x" : 127.352,
+        "y" : 447.240234375
+      },
+      "coordinate" : {
+        "coordinateSpace" : {
+          "origin" : "lowerLeft",
+          "pageBox" : "crop",
+          "rotationDegrees" : 0,
+          "unit" : "points"
+        },
+        "pageIndex" : 0,
+        "rect" : {
+          "height" : 17,
+          "width" : 220,
+          "x" : 127.352,
+          "y" : 447.240234375
+        }
+      },
+      "entryMode" : "singleText",
+      "evidence" : [
+        "Text ends with a label delimiter.",
+        "No vector-field proof is available."
+      ],
+      "evidenceItems" : [
+        {
+          "id" : "251772AE-8897-4860-9172-71FD934FEEB0",
+          "kind" : "whitespace",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 127.352,
+              "y" : 447.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace adjacent to a semantically plausible label",
+          "text" : "Address:"
+        },
+        {
+          "id" : "B72A23B5-78F5-437E-95E7-47F3375BA799",
+          "kind" : "textLabel",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 47.352000000000004,
+              "x" : 72,
+              "y" : 447.240234375
+            }
+          },
+          "score" : 0.72,
+          "summary" : "Label text anchors the whitespace candidate",
+          "text" : "Address:"
+        },
+        {
+          "id" : "30752FD5-DF31-4063-9AF7-D9CF70B9C8A3",
+          "kind" : "spatialRelationship",
+          "origin" : "textExtraction",
+          "region" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 12,
+              "width" : 47.352000000000004,
+              "x" : 72,
+              "y" : 447.240234375
+            }
+          },
+          "score" : 0.58,
+          "summary" : "Whitespace is positioned after the label text",
+          "text" : "Address:"
+        }
+      ],
+      "fusion" : {
+        "agreementScore" : 0.333333,
+        "conflict" : false,
+        "coverageScore" : 0.75,
+        "evidenceIDs" : [
+          "251772AE-8897-4860-9172-71FD934FEEB0",
+          "30752FD5-DF31-4063-9AF7-D9CF70B9C8A3",
+          "B72A23B5-78F5-437E-95E7-47F3375BA799"
+        ],
+        "independentGroups" : [
+          "geometry",
+          "language",
+          "relationship"
+        ],
+        "reasonCodes" : [
+
+        ],
+        "score" : 0.605457,
+        "state" : "review",
+        "supportScore" : 0.63871
+      },
+      "groupMemberCount" : 1,
+      "id" : "B285E21A-FE7A-45FA-A9B5-F1C9175A7F91",
+      "kind" : "textAnchored",
+      "labelText" : "Address:",
+      "memberBounds" : [
+
+      ],
+      "pageIndex" : 0,
+      "score" : 0.58,
+      "status" : "suggested",
+      "suggestedFieldType" : "text"
+    }
+  ],
+  "contractName" : "pdf-editor.browser-fixture",
+  "coordinates" : {
+    "contractName" : "pdf-editor.coordinates",
+    "generatedAt" : "2026-08-25T00:40:36Z",
+    "pages" : [
+      {
+        "pageIndex" : 0,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 0,
+          "rect" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 1,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 1,
+          "rect" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      }
+    ],
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+    "version" : {
+      "major" : 1,
+      "minor" : 0
+    }
+  },
+  "document" : {
+    "header" : {
+      "contractName" : "pdf-editor.document",
+      "generatedAt" : "2026-08-25T00:40:36Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "accessibility" : {
+        "hasReadingOrder" : true,
+        "hasTaggedContent" : false,
+        "notes" : [
+          "Reading order is derived from provider text extraction and is not an authored-tag guarantee.",
+          "PDF\/UA conformance and authored tag-tree preservation require a validator-backed lane."
+        ]
+      },
+      "annotationTypeCounts" : {
+
+      },
+      "attachments" : [
+
+      ],
+      "candidates" : [
+        {
+          "bounds" : {
+            "height" : 16,
+            "width" : 16,
+            "x" : 72,
+            "y" : 600
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 16,
+              "width" : 16,
+              "x" : 72,
+              "y" : 600
+            }
+          },
+          "entryMode" : "checkbox",
+          "evidence" : [
+            "Vector checkbox geometry detected (16x16pt).",
+            "Associated label: \"Agree to terms:\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "35F941A5-7505-40B8-8466-13B9679ABE53",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 16,
+                  "width" : 16,
+                  "x" : 72,
+                  "y" : 600
+                }
+              },
+              "score" : 0.85,
+              "summary" : "Vector square path at (72, 600)"
+            },
+            {
+              "id" : "60F55BFA-2AB5-432B-93E4-A68FACC3DE08",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 82.03200000000001,
+                  "x" : 72,
+                  "y" : 627.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Semantically plausible field label",
+              "text" : "Agree to terms:"
+            },
+            {
+              "id" : "6425F32C-BD29-4E69-A515-814E88CD3C76",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 82.03200000000001,
+                  "x" : 72,
+                  "y" : 627.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label matched by page-space proximity",
+              "text" : "Agree to terms:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "35F941A5-7505-40B8-8466-13B9679ABE53",
+              "60F55BFA-2AB5-432B-93E4-A68FACC3DE08",
+              "6425F32C-BD29-4E69-A515-814E88CD3C76"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.67839,
+            "state" : "review",
+            "supportScore" : 0.771316
+          },
+          "groupMemberCount" : 1,
+          "id" : "1DD0B828-01B5-43B2-A4C0-6AEB31D3D740",
+          "kind" : "vectorRegion",
+          "labelText" : "Agree to terms:",
+          "memberBounds" : [
+            {
+              "height" : 16,
+              "width" : 16,
+              "x" : 72,
+              "y" : 600
+            }
+          ],
+          "pageIndex" : 0,
+          "score" : 0.85,
+          "status" : "suggested",
+          "suggestedFieldType" : "checkbox"
+        },
+        {
+          "bounds" : {
+            "height" : 32,
+            "width" : 300,
+            "x" : 180,
+            "y" : 700
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 32,
+              "width" : 300,
+              "x" : 180,
+              "y" : 700
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector bounding box (300x32pt).",
+            "Associated label: \"Applicant Name:\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "2AE287D8-33E7-4ECD-BB02-A1542DC140AE",
+              "kind" : "vectorRectangle",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 32,
+                  "width" : 300,
+                  "x" : 180,
+                  "y" : 700
+                }
+              },
+              "score" : 0.8,
+              "summary" : "Vector rectangle at (180, 700)"
+            },
+            {
+              "id" : "ECCD2311-8F2F-4795-99AE-FFA483D3E767",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 88.03200000000001,
+                  "x" : 72,
+                  "y" : 717.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Semantically plausible field label",
+              "text" : "Applicant Name:"
+            },
+            {
+              "id" : "C9F173E5-4E51-45B7-A3B2-71996E66F916",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 88.03200000000001,
+                  "x" : 72,
+                  "y" : 717.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label matched by page-space proximity",
+              "text" : "Applicant Name:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "2AE287D8-33E7-4ECD-BB02-A1542DC140AE",
+              "C9F173E5-4E51-45B7-A3B2-71996E66F916",
+              "ECCD2311-8F2F-4795-99AE-FFA483D3E767"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.667535,
+            "state" : "review",
+            "supportScore" : 0.751579
+          },
+          "groupMemberCount" : 1,
+          "id" : "58E5DB60-6D17-4916-A259-78D62A44C2FF",
+          "kind" : "vectorRegion",
+          "labelText" : "Applicant Name:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.8,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 18,
+            "width" : 140,
+            "x" : 180,
+            "y" : 520
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 18,
+              "width" : 140,
+              "x" : 180,
+              "y" : 520
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Vector underline stroke detected (140pt).",
+            "Associated label: \"Date:\""
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "9F225865-CF10-44C9-BE4B-9DC40BA44130",
+              "kind" : "underline",
+              "origin" : "geometryExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 18,
+                  "width" : 140,
+                  "x" : 180,
+                  "y" : 520
+                }
+              },
+              "score" : 0.75,
+              "summary" : "Vector line stroke at y=520"
+            },
+            {
+              "id" : "CB1288FF-D4C4-43D2-839A-6259336F30CA",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 28.680000000000007,
+                  "x" : 72,
+                  "y" : 537.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Semantically plausible field label",
+              "text" : "Date:"
+            },
+            {
+              "id" : "C33F7BC7-2927-4602-B727-C0E4FCC2AF63",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 28.680000000000007,
+                  "x" : 72,
+                  "y" : 537.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label matched by page-space proximity",
+              "text" : "Date:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "9F225865-CF10-44C9-BE4B-9DC40BA44130",
+              "C33F7BC7-2927-4602-B727-C0E4FCC2AF63",
+              "CB1288FF-D4C4-43D2-839A-6259336F30CA"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.656125,
+            "state" : "review",
+            "supportScore" : 0.730833
+          },
+          "groupMemberCount" : 1,
+          "id" : "CE0F97EB-A53E-4D4B-BD55-020A2593213F",
+          "kind" : "vectorRegion",
+          "labelText" : "Date:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.75,
+          "status" : "suggested",
+          "suggestedFieldType" : "date"
+        },
+        {
+          "bounds" : {
+            "height" : 17,
+            "width" : 220,
+            "x" : 168.032,
+            "y" : 717.240234375
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 168.032,
+              "y" : 717.240234375
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "64EC325E-C5C4-4F02-B284-21CA6ADCF6A9",
+              "kind" : "whitespace",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 17,
+                  "width" : 220,
+                  "x" : 168.032,
+                  "y" : 717.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace adjacent to a semantically plausible label",
+              "text" : "Applicant Name:"
+            },
+            {
+              "id" : "46EB5FA1-D10B-487D-ACF9-85F738778AAE",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 88.03200000000001,
+                  "x" : 72,
+                  "y" : 717.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label text anchors the whitespace candidate",
+              "text" : "Applicant Name:"
+            },
+            {
+              "id" : "726AB241-C498-48B1-AB01-BE4CC32692C8",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 88.03200000000001,
+                  "x" : 72,
+                  "y" : 717.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace is positioned after the label text",
+              "text" : "Applicant Name:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "46EB5FA1-D10B-487D-ACF9-85F738778AAE",
+              "64EC325E-C5C4-4F02-B284-21CA6ADCF6A9",
+              "726AB241-C498-48B1-AB01-BE4CC32692C8"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.605457,
+            "state" : "review",
+            "supportScore" : 0.63871
+          },
+          "groupMemberCount" : 1,
+          "id" : "E29DCCFD-D066-436B-B290-436431DBDA8E",
+          "kind" : "textAnchored",
+          "labelText" : "Applicant Name:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.58,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 17,
+            "width" : 220,
+            "x" : 162.032,
+            "y" : 627.240234375
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 162.032,
+              "y" : 627.240234375
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "FF777BB4-1F6A-4208-BF73-7995DFE09A0E",
+              "kind" : "whitespace",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 17,
+                  "width" : 220,
+                  "x" : 162.032,
+                  "y" : 627.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace adjacent to a semantically plausible label",
+              "text" : "Agree to terms:"
+            },
+            {
+              "id" : "9B7F0BF7-B018-4117-AB1E-FD0CF9F868A8",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 82.03200000000001,
+                  "x" : 72,
+                  "y" : 627.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label text anchors the whitespace candidate",
+              "text" : "Agree to terms:"
+            },
+            {
+              "id" : "E1350F2F-D007-47F1-9AD6-E0A2798400B3",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 82.03200000000001,
+                  "x" : 72,
+                  "y" : 627.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace is positioned after the label text",
+              "text" : "Agree to terms:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "9B7F0BF7-B018-4117-AB1E-FD0CF9F868A8",
+              "E1350F2F-D007-47F1-9AD6-E0A2798400B3",
+              "FF777BB4-1F6A-4208-BF73-7995DFE09A0E"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.605457,
+            "state" : "review",
+            "supportScore" : 0.63871
+          },
+          "groupMemberCount" : 1,
+          "id" : "4452C73A-DE5B-4304-8A5C-A207FAB765A8",
+          "kind" : "textAnchored",
+          "labelText" : "Agree to terms:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.58,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        },
+        {
+          "bounds" : {
+            "height" : 17,
+            "width" : 220,
+            "x" : 108.68,
+            "y" : 537.240234375
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 108.68,
+              "y" : 537.240234375
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "272C7EF3-DCEC-4583-926A-DAEAF01489B0",
+              "kind" : "whitespace",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 17,
+                  "width" : 220,
+                  "x" : 108.68,
+                  "y" : 537.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace adjacent to a semantically plausible label",
+              "text" : "Date:"
+            },
+            {
+              "id" : "FD69A5F5-6B1D-4E76-A619-643D7A1F289B",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 28.680000000000007,
+                  "x" : 72,
+                  "y" : 537.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label text anchors the whitespace candidate",
+              "text" : "Date:"
+            },
+            {
+              "id" : "3B6B2321-A423-4443-AB90-DF9FC1881E43",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 28.680000000000007,
+                  "x" : 72,
+                  "y" : 537.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace is positioned after the label text",
+              "text" : "Date:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "272C7EF3-DCEC-4583-926A-DAEAF01489B0",
+              "3B6B2321-A423-4443-AB90-DF9FC1881E43",
+              "FD69A5F5-6B1D-4E76-A619-643D7A1F289B"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.605457,
+            "state" : "review",
+            "supportScore" : 0.63871
+          },
+          "groupMemberCount" : 1,
+          "id" : "A5A74C13-61AE-491B-911E-D0A855629252",
+          "kind" : "textAnchored",
+          "labelText" : "Date:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.58,
+          "status" : "suggested",
+          "suggestedFieldType" : "date"
+        },
+        {
+          "bounds" : {
+            "height" : 17,
+            "width" : 220,
+            "x" : 127.352,
+            "y" : 447.240234375
+          },
+          "coordinate" : {
+            "coordinateSpace" : {
+              "origin" : "lowerLeft",
+              "pageBox" : "crop",
+              "rotationDegrees" : 0,
+              "unit" : "points"
+            },
+            "pageIndex" : 0,
+            "rect" : {
+              "height" : 17,
+              "width" : 220,
+              "x" : 127.352,
+              "y" : 447.240234375
+            }
+          },
+          "entryMode" : "singleText",
+          "evidence" : [
+            "Text ends with a label delimiter.",
+            "No vector-field proof is available."
+          ],
+          "evidenceItems" : [
+            {
+              "id" : "251772AE-8897-4860-9172-71FD934FEEB0",
+              "kind" : "whitespace",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 17,
+                  "width" : 220,
+                  "x" : 127.352,
+                  "y" : 447.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace adjacent to a semantically plausible label",
+              "text" : "Address:"
+            },
+            {
+              "id" : "B72A23B5-78F5-437E-95E7-47F3375BA799",
+              "kind" : "textLabel",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 47.352000000000004,
+                  "x" : 72,
+                  "y" : 447.240234375
+                }
+              },
+              "score" : 0.72,
+              "summary" : "Label text anchors the whitespace candidate",
+              "text" : "Address:"
+            },
+            {
+              "id" : "30752FD5-DF31-4063-9AF7-D9CF70B9C8A3",
+              "kind" : "spatialRelationship",
+              "origin" : "textExtraction",
+              "region" : {
+                "coordinateSpace" : {
+                  "origin" : "lowerLeft",
+                  "pageBox" : "crop",
+                  "rotationDegrees" : 0,
+                  "unit" : "points"
+                },
+                "pageIndex" : 0,
+                "rect" : {
+                  "height" : 12,
+                  "width" : 47.352000000000004,
+                  "x" : 72,
+                  "y" : 447.240234375
+                }
+              },
+              "score" : 0.58,
+              "summary" : "Whitespace is positioned after the label text",
+              "text" : "Address:"
+            }
+          ],
+          "fusion" : {
+            "agreementScore" : 0.333333,
+            "conflict" : false,
+            "coverageScore" : 0.75,
+            "evidenceIDs" : [
+              "251772AE-8897-4860-9172-71FD934FEEB0",
+              "30752FD5-DF31-4063-9AF7-D9CF70B9C8A3",
+              "B72A23B5-78F5-437E-95E7-47F3375BA799"
+            ],
+            "independentGroups" : [
+              "geometry",
+              "language",
+              "relationship"
+            ],
+            "reasonCodes" : [
+
+            ],
+            "score" : 0.605457,
+            "state" : "review",
+            "supportScore" : 0.63871
+          },
+          "groupMemberCount" : 1,
+          "id" : "B285E21A-FE7A-45FA-A9B5-F1C9175A7F91",
+          "kind" : "textAnchored",
+          "labelText" : "Address:",
+          "memberBounds" : [
+
+          ],
+          "pageIndex" : 0,
+          "score" : 0.58,
+          "status" : "suggested",
+          "suggestedFieldType" : "text"
+        }
+      ],
+      "fields" : [
+
+      ],
+      "links" : [
+
+      ],
+      "metadata" : {
+        "author" : "",
+        "creationDate" : "",
+        "creator" : "",
+        "keywords" : "",
+        "modificationDate" : "",
+        "producer" : "",
+        "subject" : "",
+        "title" : ""
+      },
+      "outlines" : [
+
+      ],
+      "pages" : [
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 46,
+          "cropBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 0,
+          "pageLabel" : "1",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 23,
+          "cropBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 1,
+          "pageLabel" : "2",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      ],
+      "permissions" : {
+        "canAddAnnotations" : true,
+        "canCopy" : true,
+        "canModify" : true,
+        "canPrint" : true,
+        "isReadOnly" : false
+      },
+      "security" : {
+        "isEncrypted" : false,
+        "isLocked" : false,
+        "requiresPassword" : false
+      },
+      "source" : {
+        "byteCount" : 1235,
+        "fileName" : "detector-calibration.pdf",
+        "sha256" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f"
+      },
+      "warnings" : [
+
+      ]
+    }
+  },
+  "editSession" : {
+    "header" : {
+      "contractName" : "pdf-editor.edit-session",
+      "generatedAt" : "2026-08-25T00:40:36Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "operations" : [
+
+    ],
+    "reviews" : [
+
+    ],
+    "source" : {
+      "byteCount" : 1235,
+      "fileName" : "detector-calibration.pdf",
+      "sha256" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f"
+    }
+  },
+  "expectedFailure" : false,
+  "preflight" : {
+    "header" : {
+      "contractName" : "pdf-editor.preflight",
+      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "provider" : {
+        "capabilities" : [
+          "metadata-presence",
+          "embedded-data-counts",
+          "annotation-counts",
+          "network-boundary-counts",
+          "bounded-token-scan"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.7 (Build 24G720)"
+      },
+      "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+      "version" : {
+        "major" : 1,
+        "minor" : 1
+      }
+    },
+    "payload" : {
+      "activeContent" : {
+        "executionAttempted" : false,
+        "possibleActionTokenCounts" : {
+          "additionalAction" : 0,
+          "javascript" : 0,
+          "launch" : 0,
+          "openAction" : 0
+        }
+      },
+      "annotations" : {
+        "byKind" : {
+
+        },
+        "coverage" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "totalCount" : 0,
+        "unknownCount" : 0
+      },
+      "attachments" : {
+        "attachmentCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "embeddedFileNameTreeCount" : 0,
+        "fileAttachmentCount" : 0,
+        "unknownCount" : 0
+      },
+      "coverage" : {
+        "annotations" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "attachments" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "metadata" : {
+          "reasonCodes" : [
+
+          ],
+          "state" : "observed"
+        },
+        "revisions" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "scripts" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        }
+      },
+      "embeddedData" : {
+        "attachmentCount" : 0,
+        "possibleTokenCounts" : {
+          "embeddedFiles" : 0,
+          "fileAttachment" : 0,
+          "richMedia" : 0,
+          "xfa" : 0
+        }
+      },
+      "findings" : [
+        {
+          "category" : "metadata",
+          "code" : "metadata.present",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "metadata-presence",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded.attachments",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "embedded-attachments",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded-file-spec-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-embedded-file-spec-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "file-attachment-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-file-attachment-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "xfa-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-xfa-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "rich-media-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-rich-media-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.external-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-external",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.unsafe-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-unsafe",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-uri-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-uri-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-remote-goto-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-remote-goto-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-submit-form-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-submit-form-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-launch-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-launch-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-javascript-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-javascript-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-open-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-open-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-additional-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-additional-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "signature-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "security-signature-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "security.encryption",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "security-encryption",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "preflight",
+          "code" : "preflight.byte-scan",
+          "count" : 1235,
+          "evidence" : "boundedTokenScan",
+          "id" : "byte-scan-state",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "observed"
+        }
+      ],
+      "metadata" : {
+        "fields" : {
+          "author" : {
+            "present" : false
+          },
+          "creationDate" : {
+            "present" : false
+          },
+          "creator" : {
+            "present" : false
+          },
+          "keywords" : {
+            "present" : false
+          },
+          "modificationDate" : {
+            "present" : false
+          },
+          "producer" : {
+            "present" : false
+          },
+          "subject" : {
+            "present" : false
+          },
+          "title" : {
+            "present" : false
+          }
+        },
+        "rawValuesIncluded" : false
+      },
+      "networkBoundaries" : {
+        "externalURLCount" : 0,
+        "internalPageLinkCount" : 0,
+        "possibleActionTokenCounts" : {
+          "remoteGoTo" : 0,
+          "submitForm" : 0,
+          "uri" : 0
+        },
+        "safeExternalURLCount" : 0,
+        "unknownDestinationCount" : 0,
+        "unsafeExternalURLCount" : 0
+      },
+      "revisions" : {
+        "coverage" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "eofMarkerCount" : 1,
+        "hiddenContentState" : "unknown",
+        "incrementalUpdateCountEstimate" : 0,
+        "previousRevisionReferenceCount" : 0,
+        "startxrefCount" : 1
+      },
+      "sanitization" : {
+        "limits" : [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ],
+        "safeToClaimClean" : false,
+        "sourceUnchanged" : true,
+        "status" : "not-run",
+        "supportedModes" : [
+          "report-only",
+          "new-copy-required"
+        ]
+      },
+      "scripts" : {
+        "additionalActionCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        },
+        "executionAttempted" : false,
+        "javaScriptActionCount" : 0,
+        "launchActionCount" : 0,
+        "openActionCount" : 0,
+        "remoteGoToActionCount" : 0,
+        "submitFormActionCount" : 0,
+        "uriActionCount" : 0
+      },
+      "security" : {
+        "encrypted" : false,
+        "locked" : false,
+        "permissionsObserved" : true
+      },
+      "summary" : {
+        "activeContentCount" : 0,
+        "blockedCount" : 0,
+        "embeddedDataCount" : 0,
+        "findingCount" : 18,
+        "metadataFieldCount" : 0,
+        "networkBoundaryCount" : 0,
+        "unknownCount" : 0,
+        "unknownCoverageCount" : 1,
+        "warningCount" : 0
+      },
+      "unknownCoverage" : {
+        "categories" : {
+          "annotations" : {
+            "reasonCodes" : [
+              "pdfkitPageAnnotationEnumeration"
+            ],
+            "state" : "observed"
+          },
+          "attachments" : {
+            "reasonCodes" : [
+              "embeddedPayloadBytesNotRetained"
+            ],
+            "state" : "observed"
+          },
+          "metadata" : {
+            "reasonCodes" : [
+
+            ],
+            "state" : "observed"
+          },
+          "revisions" : {
+            "reasonCodes" : [
+              "incrementalRevisionParserNotRun"
+            ],
+            "state" : "unknown"
+          },
+          "scripts" : {
+            "reasonCodes" : [
+              "tokenScanDoesNotProveReachability"
+            ],
+            "state" : "partial"
+          }
+        },
+        "unknownCount" : 1
+      }
+    }
+  },
+  "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+  "sourcePath" : "benchmark\/results\/detector-calibration\/detector-calibration.pdf",
+  "status" : "inspected",
+  "validation" : {
+    "checks" : [
+      {
+        "id" : "0585E982-3F1E-410B-B2D4-F6A3D2E3D13B",
+        "kind" : "sourceDigest",
+        "message" : "Source bytes still match the inspected SHA-256.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "6CC050E8-CC67-4070-821F-D7BE66E7E3F3",
+        "kind" : "outputReopen",
+        "message" : "Export reopened in PDFKit with 2 page(s).",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "33FE84A2-7370-44A2-9E32-08A0B5C1B067",
+        "kind" : "pageGeometry",
+        "message" : "Page count, page boxes, and rotations are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "163636DE-3C79-4AFE-B617-C17D11A4D333",
+        "kind" : "nativeFields",
+        "message" : "Native field identity and geometry are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "4C0AA7D5-4099-439A-BECA-F36966EF685A",
+        "kind" : "outsideRegionText",
+        "message" : "Extracted text outside the authorized operation regions is unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "A2F0FD29-B066-41B4-A391-AC2B3903911B",
+        "kind" : "visualDiff",
+        "message" : "Raster output is unchanged outside the authorized operation regions.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "B06FB16E-3CFF-4052-87FC-D598493F5BBC",
+        "kind" : "appliedOperations",
+        "message" : "Requested operations were represented in the reopened export.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      }
+    ],
+    "messages" : [
+
+    ],
+    "operationIDs" : [
+
+    ],
+    "outputDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+    "outputReopenable" : true,
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "forms",
+        "overlay",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.7 (Build 24G720)"
+    },
+    "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
+    "sourceUnchanged" : true,
+    "status" : "validated",
+    "validatedAt" : "2026-08-25T00:40:37Z"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

@@ -522,7 +522,7 @@ struct PDFEditorCoreTests {
     #expect(proposal.entries[0].valueReview == .resolvedUnreviewed)
     proposal = proposal.reviewingMapping(mappingID, approved: true)
     #expect(!proposal.isReadyToMaterialize)
-    proposal = proposal.reviewingValue(mappingID, value: .text("Ada Lovelace"))
+    proposal = proposal.reviewingValue(mappingID, value: .text("Ada Lovelace"), approved: true)
     #expect(proposal.isReadyToMaterialize)
 
     let operations = try proposal.materializeOperations(currentSourceDigest: sourceDigest)
@@ -580,13 +580,14 @@ struct PDFEditorCoreTests {
       PDFTemplateCompletionProposal.make(match: match, template: template, profile: profile)
     )
     .reviewingMapping(mapping.id, approved: true)
-    .reviewingValue(mapping.id, value: .text("ada@example.test"))
+    .reviewingValue(mapping.id, value: .text("ada@example.test"), approved: true)
 
     #expect(!proposal.isReadyToMaterialize)
     #expect(throws: PDFTemplateCompletionError.unresolvedNativeTarget(mapping.id)) {
       try proposal.materializeOperations(currentSourceDigest: sourceDigest)
     }
     proposal = proposal.resolvingNativeTarget(mapping.id, targetID: "actual-field-name")
+      .reviewingMapping(mapping.id, approved: true)
     #expect(proposal.isReadyToMaterialize)
     #expect(
       try proposal.materializeOperations(currentSourceDigest: sourceDigest)[0].targetID
@@ -641,6 +642,68 @@ struct PDFEditorCoreTests {
       !PDFTemplateRevisionGate.canPromote(
         template: template, sourceDigest: sourceDigest, validation: validated,
         events: [event.applying()]))
+  }
+
+  @Test func completionApprovalStagesRejectValueOrMappingBypassAndInvalidateChangedInputs() throws {
+    let sourceDigest = String(repeating: "c", count: 64)
+    let mappingID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+    let profileID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
+    let profileRevisionID = UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
+    let region = PDFPageRegion(pageIndex: 0, rect: PDFRect(x: 10, y: 20, width: 80, height: 16))
+    let entry = PDFTemplateCompletionEntry(
+      mappingID: mappingID,
+      semanticKey: "person.fullName",
+      target: PDFTemplateMappingTarget(kind: .staticRegion, pageIndex: 0, region: region),
+      profileID: profileID,
+      profileRevisionID: profileRevisionID,
+      value: .text("Ada Lovelace"))
+    let templateID = UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
+    var proposal = PDFTemplateCompletionProposal(
+      sessionID: UUID(uuidString: "55555555-5555-5555-5555-555555555555")!,
+      templateID: templateID,
+      revisionID: UUID(uuidString: "66666666-6666-6666-6666-666666666666")!,
+      sourceDigest: sourceDigest,
+      matchState: .exact,
+      entries: [entry])
+
+    proposal = proposal.reviewingValue(mappingID, value: .text("Ada Lovelace"), approved: true)
+    #expect(throws: PDFTemplateCompletionError.mappingReviewRequired(mappingID)) {
+      try proposal.materializeOperations(currentSourceDigest: sourceDigest)
+    }
+
+    proposal = proposal.reviewingMapping(mappingID, approved: true)
+    #expect(proposal.isReadyToMaterialize)
+    let changedValue = PDFTemplateCompletionEntry(
+      id: proposal.entries[0].id,
+      mappingID: mappingID,
+      semanticKey: proposal.entries[0].semanticKey,
+      target: proposal.entries[0].target,
+      mappingReview: .approved,
+      profileID: profileID,
+      profileRevisionID: profileRevisionID,
+      value: .text("Grace Hopper"),
+      valueReview: .approved,
+      mappingApproval: proposal.entries[0].mappingApproval,
+      profileValueApproval: proposal.entries[0].profileValueApproval,
+      resolvedTargetID: nil)
+    let staleValueProposal = PDFTemplateCompletionProposal(
+      id: proposal.id,
+      sessionID: proposal.sessionID,
+      templateID: proposal.templateID,
+      revisionID: proposal.revisionID,
+      sourceDigest: proposal.sourceDigest,
+      matchState: proposal.matchState,
+      entries: [changedValue],
+      createdAt: proposal.createdAt)
+    #expect(throws: PDFTemplateCompletionError.profileValueApprovalRequired(mappingID)) {
+      try staleValueProposal.materializeOperations(currentSourceDigest: sourceDigest)
+    }
+
+    let movedTarget = proposal.resolvingNativeTarget(mappingID, targetID: "provider-target")
+    #expect(movedTarget.entries[0].mappingReview == .pending)
+    #expect(throws: PDFTemplateCompletionError.mappingReviewRequired(mappingID)) {
+      try movedTarget.materializeOperations(currentSourceDigest: sourceDigest)
+    }
   }
 
   @Test func encryptedTemplateStoreCodecProtectsProfileValuesAndBindsRecordIdentity() throws {

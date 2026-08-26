@@ -27,6 +27,15 @@ dependencies. PDFKit behavior varies across macOS versions; we test on 15.0+.
 Apple Silicon is primary because of Apple Vision framework availability and
 performance budget compliance.
 
+**Known PDFKit limitations:**
+- Radio button serialization corruption (Apple FB22167174)
+- Radio-choice metadata loss on no-op save (F-016)
+- Tile rendering crashes on lower-RAM iPads (iPadOS 26.x)
+- Form field handling issues (Apple Developer Forums)
+
+These limitations are mitigated by using PDFIncrementalFormWriter for all
+writes, which bypasses PDFKit's broken form handling.
+
 ### Web companion (browser)
 
 | Tier | Browser | Minimum version | Status |

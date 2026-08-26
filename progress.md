@@ -3085,3 +3085,28 @@ Live-truth snapshot: `swift test` 274/274 pass; native perf runner reports all b
 - D-055 single status authority maintains coherence
 
 Live-truth snapshot: `swift test` 275/275 pass; all 159 docs fresh.
+
+## 2026-08-26 PDF Library Evaluation
+
+### Critical finding
+Apple's PDFKit has **known bugs**:
+- FB22167174: Radio button serialization corruption
+- Thread 837282: Tile rendering crash on lower-RAM iPads (iPadOS 26.x)
+- F-016: Radio-choice metadata loss on no-op save
+
+### Libraries evaluated
+1. **MuPDF** — AGPL, fastest, full AcroForm support, but copyleft license
+2. **PDFium** — BSD, fast, good form support, permissive license
+3. **Poppler** — GPL, good text extraction, used for validation
+4. **pdf-lib** — MIT, JavaScript, used in web companion
+5. **pypdf** — BSD, Python, used for validation/testing
+6. **PSPDFKit** — Commercial, professional SDK
+
+### Recommendation
+- Keep PDFKit for rendering (with known bugs documented)
+- Use PDFIncrementalFormWriter for all writes (already bypasses PDFKit)
+- Add MuPDF as CLI validator (not linked, avoids AGPL)
+- Evaluate PDFium for future rendering replacement (BSD license)
+- Document all PDFKit limitations in support policy
+
+Live-truth snapshot: `swift test` 279/279 pass; evaluation documented.

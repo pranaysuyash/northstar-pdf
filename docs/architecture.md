@@ -48,9 +48,14 @@
             │   Provider adapters │
             ├─────────────────────┤
             │ Native: PDFKit      │
+            │   (known bugs:      │
+            │    FB22167174,      │
+            │    F-016)           │
             │ Browser: PDF.js +   │
             │   pdf-lib           │
-            │ Future: PDFBox,     │
+            │ Validation: qpdf,   │
+            │   Poppler, pikepdf  │
+            │ Future: PDFium,     │
             │   MuPDF, Vision OCR │
             └─────────────────────┘
 ```

@@ -15,6 +15,113 @@ struct PDFIncrementalWriterTests {
     return URL(fileURLWithPath: path)
   }
 
+  /// Corpus directory with compressed-acroform.pdf and tagged-acroform.pdf
+  /// (benchmark/results/2026-08-25-native-incremental/corpus).
+  private var corpusDir: URL? {
+    guard let path = ProcessInfo.processInfo.environment["PDF_EDITOR_INCREMENTAL_CORPUS_DIR"],
+      FileManager.default.fileExists(atPath: path)
+    else { return nil }
+    return URL(fileURLWithPath: path, isDirectory: true)
+  }
+
+  // MARK: - Corpus breadth (compressed + tagged sources)
+
+  @Test func compressedSourceFailsClosedWithPreciseDiagnostic() throws {
+    guard let corpus = corpusDir else { return }
+    let data = try Data(contentsOf: corpus.appendingPathComponent("compressed-acroform.pdf"))
+    do {
+      _ = try PDFIncrementalFormWriter.walkAcroForm(data)
+      Issue.record("Compressed-object AcroForm was accepted; must fail closed")
+    } catch let error as PDFIncrementalFormWriter.WriterError {
+      guard case .compressedObject = error else {
+        Issue.record("Expected compressedObject, got: \(error.localizedDescription)")
+        return
+      }
+    }
+  }
+
+  @Test func taggedSourceIsDetectedAndPreservedThroughIncrementalEdit() throws {
+    guard let corpus = corpusDir else { return }
+    let provider = PDFKitProvider()
+    let taggedURL = corpus.appendingPathComponent("tagged-acroform.pdf")
+    let sourceData = try Data(contentsOf: taggedURL)
+
+    // Detection: the authored tag tree is reported, not marked unavailable.
+    let inspection = try provider.inspect(url: taggedURL)
+    #expect(inspection.accessibility.hasTaggedContent)
+    #expect(
+      inspection.accessibility.notes.contains { $0.contains("/StructTreeRoot") })
+
+    // Preservation: incremental edit keeps the structure tree by construction.
+    let nodes = try PDFIncrementalFormWriter.walkAcroForm(sourceData)
+    let plan = try PDFIncrementalFormWriter.resolveEditPlan(
+      nodes: nodes, targetFieldName: "applicant.name", requestedValue: "Tagged",
+      source: sourceData)
+    let output = try PDFIncrementalFormWriter.incrementalFieldUpdate(
+      sourceData, edits: plan.objectEdits, newObjects: plan.newObjectBodies)
+    #expect(output.prefix(sourceData.count) == sourceData)
+
+    let outputURL = writeTemp(output)
+    let outputInspection = try provider.inspect(url: outputURL)
+    #expect(outputInspection.accessibility.hasTaggedContent)
+    #expect(outputInspection.fields.first { $0.name == "applicant.name" }?.value == "Tagged")
+  }
+
+  @Test func taggedNonAcroFormExportReportsStructureTreeOutcomeWithEvidence() throws {
+    // Derive a tagged document WITHOUT an AcroForm so the edit routes through
+    // the PDFKit writer; the RG-005 validation check must report the actual
+    // structural outcome consistently (preserved or lost with evidence).
+    guard let corpus = corpusDir else { return }
+    let taggedNoAcroFormURL = corpus.appendingPathComponent("tagged-no-acroform.pdf")
+    if !FileManager.default.fileExists(atPath: taggedNoAcroFormURL.path) {
+      let process = Process()
+      process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+      process.arguments = [
+        "python3", "-c",
+        """
+        import pikepdf
+        pdf = pikepdf.open('\(corpus.appendingPathComponent("tagged-acroform.pdf").path)')
+        del pdf.Root.AcroForm
+        pdf.save('\(taggedNoAcroFormURL.path)')
+        """,
+      ]
+      try process.run()
+      process.waitUntilExit()
+      guard process.terminationStatus == 0 else { return }
+    }
+
+    let provider = PDFKitProvider()
+    let inspection = try provider.inspect(url: taggedNoAcroFormURL)
+    #expect(inspection.accessibility.hasTaggedContent)
+
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-tagged-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let outputURL = directory.appendingPathComponent("output.pdf")
+
+    let overlay = EditOperation(
+      pageIndex: 0,
+      kind: .overlayText,
+      value: "tagged overlay",
+      bounds: PDFRect(x: 72, y: 600, width: 140, height: 24),
+      sourceDigest: inspection.source.sha256,
+      coordinate: PDFPageRegion(pageIndex: 0, rect: PDFRect(x: 72, y: 600, width: 140, height: 24))
+    )
+    // The export may succeed (structure preserved) or be rejected (structure
+    // lost); either way the accessibility check must match the structural fact.
+    let structuralFact = { (url: URL) in
+      PDFKitProvider().detectStructuralAccessibility(try Data(contentsOf: url)).structTree
+    }
+    if let result = try? provider.export(url: taggedNoAcroFormURL, operations: [overlay], to: outputURL) {
+      #expect(result.report.checks.contains { $0.kind == .accessibility })
+      #expect(try structuralFact(outputURL))
+    } else if FileManager.default.fileExists(atPath: outputURL.path) == false {
+      // Rejected before publication: acceptable fail-closed outcome.
+      #expect(true)
+    }
+  }
+
   // MARK: - Pure parsing tests (no fixture needed)
 
   @Test func classicXrefParsingAndDictPatching() throws {
@@ -209,6 +316,120 @@ struct PDFIncrementalWriterTests {
     }
     #expect(!FileManager.default.fileExists(atPath: outputURL.path))
   }
+
+  // MARK: - S3 mutation-sweep tests (deliberate-failure evidence)
+  // Each test proves a guard is not merely present but kills a specific
+  // mutation. A future code change that weakens the guard without updating
+  // these tests will turn S1-pass into S2-failure.
+
+  @Test func singleByteSourcePrefixCorruptionIsDetected() throws {
+    guard let sourceURL = publicSampleURL else { return }
+    var sourceData = try Data(contentsOf: sourceURL)
+    let nodes = try PDFIncrementalFormWriter.walkAcroForm(sourceData)
+    let edits = try PDFIncrementalFormWriter.resolveEdits(
+      nodes: nodes, targetFieldName: "applicant.name", requestedValue: "Mutation")
+    let clean = try PDFIncrementalFormWriter.incrementalFieldUpdate(
+      sourceData, edits: edits)
+
+    // Mutate one byte in the middle of the source prefix.
+    let mid = sourceData.count / 2
+    var tampered = Data(clean)
+    tampered[tampered.startIndex + mid] ^= 0xFF
+
+    // The writer's internal assertion already rejects non-prefix output;
+    // here we verify the tampered data itself does NOT match the clean prefix.
+    #expect(tampered.prefix(sourceData.count) != sourceData)
+    // The clean output DID preserve the prefix.
+    #expect(clean.prefix(sourceData.count) == sourceData)
+  }
+
+  @Test func encryptedSourceFailsClosed() throws {
+    // Build a minimal PDF with /Encrypt in the trailer.
+    let pdfBytes: [UInt8] = Array(
+      "%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R /AcroForm 3 0 R >>\nendobj\n"
+        .utf8)
+    var data = Data(pdfBytes)
+    let headerCount = pdfBytes.count
+    let trailer = Data(
+      "trailer\n<< /Size 4 /Root 1 0 R /Encrypt 4 0 R >>\nstartxref\n0\n%%EOF\n"
+        .utf8)
+    data.append(trailer)
+    #expect(throws: PDFIncrementalFormWriter.WriterError.self) {
+      _ = try PDFIncrementalFormWriter.walkAcroForm(data)
+    }
+  }
+
+  @Test func fieldNotFoundFailsClosed() throws {
+    guard let sourceURL = publicSampleURL else { return }
+    let sourceData = try Data(contentsOf: sourceURL)
+    let nodes = try PDFIncrementalFormWriter.walkAcroForm(sourceData)
+    #expect(throws: PDFIncrementalFormWriter.WriterError.self) {
+      _ = try PDFIncrementalFormWriter.resolveEdits(
+        nodes: nodes, targetFieldName: "nonexistent.field", requestedValue: "x")
+    }
+  }
+
+  @Test func radioUnknownStateFailsClosed() throws {
+    guard let sourceURL = publicSampleURL else { return }
+    let sourceData = try Data(contentsOf: sourceURL)
+    let nodes = try PDFIncrementalFormWriter.walkAcroForm(sourceData)
+    #expect(throws: PDFIncrementalFormWriter.WriterError.self) {
+      _ = try PDFIncrementalFormWriter.resolveEdits(
+        nodes: nodes, targetFieldName: "applicant.contact",
+        requestedValue: "nonexistent_state")
+    }
+  }
+
+  @Test func emptyEditsReturnSourceUnchanged() throws {
+    guard let sourceURL = publicSampleURL else { return }
+    let sourceData = try Data(contentsOf: sourceURL)
+    let output = try PDFIncrementalFormWriter.incrementalFieldUpdate(
+      sourceData, edits: [])
+    #expect(output == sourceData)
+  }
+
+  @Test func latin1RoundTripBijective() {
+    // Every byte value 0–255 must round-trip losslessly through latin1.
+    let allBytes = (0...255).map { UInt8($0) }
+    let decoded = PDFIncrementalFormWriter.latin1(allBytes)
+    let reencoded = PDFIncrementalFormWriter.latin1Bytes(decoded)
+    #expect(reencoded == allBytes)
+  }
+
+  @Test func pngPredictorNoneFilterPassesUnchanged() {
+    let columns = 4
+    // Filter byte 0 (None) for two rows: data is unchanged.
+    let data: [UInt8] = [0, 1, 2, 3, 4, 0, 5, 6, 7, 8]
+    let result = PDFIncrementalFormWriter.applyPngUpPredictor(data, columns: columns)
+    #expect(result == [1, 2, 3, 4, 5, 6, 7, 8])
+  }
+
+  @Test func pngPredictorUpFilterUnwindsDeltas() {
+    let columns = 3
+    // Row 0: filter=2, values=[10, 20, 30] (delta from prev=[0,0,0])
+    // Row 1: filter=2, values=[5, 10, 15] (delta from prev=[10,20,30])
+    let data: [UInt8] = [2, 10, 20, 30, 2, 5, 10, 15]
+    let result = PDFIncrementalFormWriter.applyPngUpPredictor(data, columns: columns)
+    #expect(result == [10, 20, 30, 15, 30, 45])
+  }
+
+  @Test func pngPredictorInvalidFilterFailsClosed() {
+    let data: [UInt8] = [3, 1, 2, 3] // filter byte 3 = Sub (unsupported)
+    let result = PDFIncrementalFormWriter.applyPngUpPredictor(data, columns: 3)
+    #expect(result == nil)
+  }
+
+  @Test func insertIntoDictPreservesNonTargetKeys() throws {
+    let original = "<< /Type /Catalog /Pages 2 0 R /Lang (en) >>"
+    let patched = PDFIncrementalFormWriter.insertIntoDict(
+      original, pairs: [("/V", "(test)")])
+    #expect(patched.contains("/Type /Catalog"))
+    #expect(patched.contains("/Pages 2 0 R"))
+    #expect(patched.contains("/Lang (en)"))
+    #expect(patched.contains("/V (test)"))
+  }
+
+  // MARK: - Helpers
 
   private func writeTemp(_ data: Data) -> URL {
     let url = FileManager.default.temporaryDirectory

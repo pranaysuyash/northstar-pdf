@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import http from "node:http";
+import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -6,7 +8,43 @@ import { chromium } from "playwright";
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
 const fixture = path.join(projectRoot, "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+
+// Self-booting static server so the test has no external choreography.
+// Set PDF_EDITOR_BASE_URL to target an already-running server instead.
+const mimeTypes = {
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json",
+  ".pdf": "application/pdf",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".wasm": "application/wasm",
+};
+
+let server;
+let baseURL = process.env.PDF_EDITOR_BASE_URL;
+if (!baseURL) {
+  server = http.createServer(async (req, res) => {
+    try {
+      const urlPath = decodeURIComponent(new URL(req.url, "http://127.0.0.1").pathname);
+      const filePath = path.join(projectRoot, path.normalize(urlPath));
+      if (!filePath.startsWith(projectRoot)) throw new Error("path traversal rejected");
+      const data = await fs.readFile(filePath);
+      res.writeHead(200, { "content-type": mimeTypes[path.extname(filePath).toLowerCase()] ?? "application/octet-stream" });
+      res.end(data);
+    } catch {
+      res.writeHead(404, { "content-type": "text/plain" });
+      res.end("not found");
+    }
+  });
+  await new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolve);
+  });
+  baseURL = `http://127.0.0.1:${server.address().port}/web/index.html`;
+}
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -62,4 +100,5 @@ try {
   console.log("web editor workflow: highlight, apply, edit, undo, dismiss/restore, and manual placement passed");
 } finally {
   await browser.close();
+  server?.close();
 }

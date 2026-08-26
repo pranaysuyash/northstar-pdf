@@ -2829,3 +2829,33 @@ Added to `docs/release-gates.md`:
 - `node Tests/run-tool-dependent-tests.mjs`: 2 passed, 0 failed, 13 skipped (pass)
 - `swift test`: 244/244 pass
 - All other tests unchanged
+
+## 2026-08-26 (afternoon) — Continuation audit & plan execution (PER-0428 + PER-91013)
+
+- Resumed the morning's doctrine-alignment program under PER-0428 (continuity;
+  vendored in docs/personas/) with PER-91013 No-Go Adversarial Reviewer as challenge
+  lens for every closure decision made this session.
+- Live truth: swift build transiently broken by parallel lane mid-edit, then green;
+  swift test **230/230 across 33 suites** (+4 vs 226 baseline); signature-guard test
+  confirmed repaired.
+- Contract suite: run 1 = 72/79 → run 2/3 = **77/81** after root-cause fix:
+  browser tests defaulted to standalone ports 4174/4184 while the aggregate runner
+  served only 4173 and exported no base URL; ambient stale servers on 4173/4174 were
+  producing both false reds and false greens. Runner now exports PDF_EDITOR_BASE_URL.
+- All remaining reds classified with owner in docs/flaky-register.md:
+  semantic-parity bundle fixture drift (validation:null vs pdfjs-gate expectations),
+  cross-project parity allowlist drift (D-015 adjudication needed), toolbar visual
+  regression (byte-equality oracle + bundled-chromium launch; my chrome-channel fix
+  verified green x2 then overwritten by parallel lane — §10 collision documented,
+  not raced), new network-egression test from parallel lane (chromium download is an
+  L2 decision).
+- Found and fixed duplicate decision ID D-055 (two unrelated decisions); React-surface
+  decision renumbered D-056 with both references updated.
+- Published continuation audit with full chat/process trail, live-truth evidence
+  ledger, 8 new implicit findings, first-principles/long-term/doctrine verdicts:
+  docs/audits/repository-continuation-audit-per-0428-per-91013-2026-08-26.md
+- Queued P6.7 (regenerate semantic-parity bundles) and P6.8 (pixelmatch upgrade);
+  appended completion-ledger rows to docs/roadmaps/implementation-plan-2026-08-26.md.
+- Owner gates still open: git checkpoint (~106 dirty paths), frontend cutover
+  criterion, dead-code disposition, Playwright-browser download policy.
+- No Git commits, external services, or downloads performed by this session.

@@ -227,7 +227,8 @@ public struct ContentView: View {
       open: requestOpenDocument,
       createBlank: { size in model.newDocument(pageSize: size) },
       createFromImages: { model.presentNewFromImagesPanel() },
-      createFromClipboard: { model.newDocumentFromClipboard() }
+      createFromClipboard: { model.newDocumentFromClipboard() },
+      createFromMarkdown: { model.newDocumentFromMarkdown() }
     )
   }
 
@@ -546,6 +547,7 @@ private struct WelcomeView: View {
   let createBlank: (CGSize) -> Void
   let createFromImages: () -> Void
   let createFromClipboard: () -> Void
+  let createFromMarkdown: () -> Void
   @State private var pageSize = AppModel.ScratchPageSize.letter
 
   var body: some View {
@@ -586,6 +588,7 @@ private struct WelcomeView: View {
         Menu {
           Button("From Images…") { createFromImages() }
           Button("From Clipboard") { createFromClipboard() }
+          Button("From Markdown…") { createFromMarkdown() }
         } label: {
           Label("New From…", systemImage: "plus.square.on.square")
         }

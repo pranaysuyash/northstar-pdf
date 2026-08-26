@@ -24,6 +24,15 @@ export interface HistoryOperation {
   readonly confirmedAt: string;
   readonly undoneBy?: number;
   readonly undoes?: number;
+  /**
+   * Provider-shaped authorization rectangle for coordinate-bearing operations
+   * (overlay text placement). Additive; consumers without coordinates ignore it.
+   */
+  readonly coordinate?: {
+    pageIndex: number;
+    rect: { x: number; y: number; width: number; height: number };
+    coordinateSpace?: { unit?: string; origin?: string; pageBox?: string };
+  };
 }
 
 export declare function createOperationHistory(): OperationHistory;

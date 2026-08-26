@@ -52,3 +52,43 @@ node_modules/
 
 # Downloaded PDF validation tool payloads
 tools/verapdf-cli-*/
+
+# IDE/agent skill artifacts (react-doctor and similar)
+web/app/.adal/
+web/app/.agents/
+web/app/.aider-desk/
+web/app/.augment/
+web/app/.bob/
+web/app/.claude/
+web/app/.codeartsdoer/
+web/app/.codebuddy/
+web/app/.codemaker/
+web/app/.codestudio/
+web/app/.continue/
+web/app/.cortex/
+web/app/.crush/
+web/app/.cursor/
+web/app/.factory/
+web/app/.forge/
+web/app/.github/
+web/app/.goose/
+web/app/.iflow/
+web/app/.junie/
+web/app/.kilocode/
+web/app/.kiro/
+web/app/.kode/
+web/app/.mcpjam/
+web/app/.mux/
+web/app/.neovate/
+web/app/.openhands/
+web/app/.pochi/
+web/app/.qoder/
+web/app/.qwen/
+web/app/.roo/
+web/app/.rovodev/
+web/app/.tabnine/
+web/app/.trae/
+web/app/.vibe/
+web/app/.windsurf/
+web/app/.zencoder/
+web/app/skills/

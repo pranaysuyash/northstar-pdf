@@ -113,3 +113,28 @@ appended with a discovery date.
   (RT-004 extraction, CDN fix, Package wiring). Always re-check live truth.
 - Never race a live editor on a contested file; document precisely instead
   (error text + location) so the owning session can repair in one step.
+
+---
+
+## Appended 2026-08-26 (PER-0428 doctrine-alignment audit)
+
+Discovered by `docs/audits/repository-audit-per-0428-doctrine-alignment-2026-08-26.md`;
+full plan in `docs/roadmaps/implementation-plan-2026-08-26.md`.
+
+| # | Task | Type | Status |
+|---|---|---|---|
+| A-1 | Repair `Tests/pdf-signature-guard_test.mjs` malformed import collision | implicit | **Closed 2026-08-26** — fixed, S2 verified (`node Tests/pdf-signature-guard_test.mjs` passes all RG-014 assertions) |
+| A-2 | `tools/verify-all.sh` whole-system gate + launchd template + flake register | implicit | **Closed 2026-08-26** — `tools/verify-all.sh`, `tools/com.owner.pdfeditor.verify.plist`, `docs/flaky-register.md` |
+| A-3 | Supersession banners on stale audits; status-authority decision; audit index | implicit | **Closed 2026-08-26** — banners on 2026-08-25 comprehensive + full-persona audits; D-055 in decisions.md; `docs/audits/INDEX.md` |
+| A-4 | Owner Git-checkpoint authorization (commit working tree in described batches) | owner gate | Open — awaiting owner decision |
+| A-5 | Regenerate semantic-parity bundles (fixes `browser_export_independent_viewer_validator_test`); blocked on removing machine-local Playwright path in the regen tool | implicit | Open |
+| A-6 | Reconcile contract-parity ledger after native lane goes quiet (fixes `cross_project_evidence_ledger_parity_test`) | implicit | Open |
+| A-7 | De-flake browser suite (condition-based waits); target two consecutive 79/79 runs | implicit | Open |
+| A-8 | Portability: remove machine-local paths (`tools/regenerate_browser_contract_bundles.mjs:16`, document `Tests/pdf-python.mjs` fallback); stamp pdf-lib version | implicit | Open |
+| A-9 | AppModel decomposition + module-rename evaluation (behavior-preserving, gated on green build) | implicit | Open |
+| A-10 | Termination probe relocation out of production binary; dead-code disposition for XFAFormProcessor/PDFBatchProcessor (**note:** parallel lane appears to be wiring XFAFormProcessor into PDFKitProvider — re-verify before acting) | implicit | Open |
+
+Live-truth snapshot at append time: `swift build` red on in-flight
+PDFIncrementalFormWriter/PDFKitProvider edits (parallel lane active, hands off);
+contract suite 73/79 with remaining failures classified in
+`docs/flaky-register.md`.

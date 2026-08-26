@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Local verification timer for the pdf_editor repository.
+  Air-gap compatible: runs entirely locally, no external services.
+
+  Install (owner action — writes to ~/Library/LaunchAgents):
+    cp tools/com.owner.pdfeditor.verify.plist ~/Library/LaunchAgents/
+    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.owner.pdfeditor.verify.plist
+    launchctl kickstart gui/$(id -u)/com.owner.pdfeditor.verify   # first run now
+
+  Remove:
+    launchctl bootout gui/$(id -u)/com.owner.pdfeditor.verify
+    rm ~/Library/LaunchAgents/com.owner.pdfeditor.verify.plist
+
+  Logs: tmp/verify-all-launchd.log (rotated by the script wrapper below)
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.owner.pdfeditor.verify</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>cd /Users/pranay/Projects/pdf_editor &amp;&amp; tools/verify-all.sh --quick &gt;&gt; tmp/verify-all-launchd.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>9</integer>
+    <key>Minute</key><integer>0</integer>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>/Users/pranay/Projects/pdf_editor/tmp/verify-all-launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/pranay/Projects/pdf_editor/tmp/verify-all-launchd.log</string>
+</dict>
+</plist>

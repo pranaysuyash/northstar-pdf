@@ -329,11 +329,11 @@ struct AppCommands: Commands {
 
             Divider()
 
-            Button("Append PDF Pages...") {
-                router.perform(.appendPDFPages)
-            }
-            .disabled(!router.isEnabled(.appendPDFPages))
-            .help("Append the pages of another PDF after the current last page.")
+Button("Append PDF Pages...") {
+    router.perform(.appendPDFPages)
+}
+.disabled(!router.isEnabled(.appendPDFPages))
+.help("Append the pages of another PDF after the current last page. Requires an open PDF document (not a scratch document).")
 
             Button("Open...") {
                 router.perform(.openDocument)

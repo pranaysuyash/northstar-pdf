@@ -93,6 +93,74 @@ export const OVERLAY_PROPOSAL = Object.freeze({
   minimumSizePt: 36
 });
 
+const ENCRYPTED_WRITE_MESSAGE =
+  "Encrypted PDF editing is not supported by the browser writer. "
+  + "The protected source remains read-only; unchanged export is byte-preserving.";
+
+/**
+ * Export authorization gate. Encrypted sources refuse any mutation; only a
+ * zero-operation byte-preserving copy may proceed. Salvaged from the legacy
+ * entry's materializeOperations guard.
+ */
+export function assertWritable({ encrypted, operationCount }) {
+  if (!encrypted) return;
+  if (operationCount > 0) {
+    throw new Error(ENCRYPTED_WRITE_MESSAGE);
+  }
+}
+
+function normalizeRectTuple(rect) {
+  const [x1, y1, x2, y2] = rect;
+  return { x: Math.min(x1, x2), y: Math.min(y1, y2), width: Math.abs(x2 - x1), height: Math.abs(y2 - y1) };
+}
+
+/**
+ * Reads page facts from an untouched pdf-lib source document so they can be
+ * replayed onto the output before edits: pdf-lib can normalize non-default
+ * page boxes while loading/saving, which would silently change the meaning of
+ * crop-relative operation bounds. `rotationOf(pageIndex)` supplies rotation
+ * truth from the inspected reader document (pdf.js).
+ */
+export function planPageFactReplay(sourceDocument, rotationOf = () => 0) {
+  const box = (value) =>
+    value && Number.isFinite(value.x)
+      ? normalizeRectTuple([value.x, value.y, value.x + value.width, value.y + value.height])
+      : null;
+  return sourceDocument.getPages().map((page, index) => ({
+    boxes: {
+      media: box(page.getMediaBox()),
+      crop: box(page.getCropBox()),
+      bleed: box(page.getBleedBox()),
+      trim: box(page.getTrimBox()),
+      art: box(page.getArtBox())
+    },
+    rotate: ((Number(rotationOf(index)) % 360) + 360) % 360
+  }));
+}
+
+/**
+ * Replays inspected page facts onto the output document. Must run before any
+ * edit is applied.
+ */
+export function applyPageFacts(outputDocument, facts, degrees) {
+  outputDocument.getPages().forEach((page, index) => {
+    const fact = facts[index];
+    if (!fact) return;
+    const replay = (method, rect) => {
+      if (!rect) return;
+      page[method](rect.x, rect.y, rect.width, rect.height);
+    };
+    replay("setMediaBox", fact.boxes.media);
+    replay("setCropBox", fact.boxes.crop);
+    replay("setBleedBox", fact.boxes.bleed);
+    replay("setTrimBox", fact.boxes.trim);
+    replay("setArtBox", fact.boxes.art);
+    if (typeof page.setRotation === "function") {
+      page.setRotation(degrees(fact.rotate || 0));
+    }
+  });
+}
+
 /**
  * Proposes an authorized rectangle around a PDF-space point, clamped into the
  * page crop box so a placement near an edge can never authorize an

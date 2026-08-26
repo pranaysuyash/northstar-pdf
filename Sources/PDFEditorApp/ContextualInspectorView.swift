@@ -26,6 +26,8 @@ public struct ContextualInspectorView: View {
   @State private var fieldDraft = ""
   @State private var overlayDraft = ""
   @State private var choiceCellIndex = 0
+  @State private var isRenamingCandidate = false
+  @State private var renameDraft = ""
   @State private var templateDisplayName = "Reviewed local layout"
 
   public init(
@@ -179,8 +181,29 @@ public struct ContextualInspectorView: View {
   private func selectedCandidateCard(_ candidate: RegionCandidate) -> some View {
     VStack(alignment: .leading, spacing: 10) {
       HStack {
-        Label(candidate.effectiveDisplayName, systemImage: "scope")
-          .font(.subheadline.weight(.semibold))
+        if isRenamingCandidate {
+          TextField("Suggestion name", text: $renameDraft)
+            .font(.subheadline.weight(.semibold))
+            .textFieldStyle(.roundedBorder)
+            .onSubmit { commitRename(candidate) }
+        } else {
+          Label(candidate.effectiveDisplayName, systemImage: "scope")
+            .font(.subheadline.weight(.semibold))
+        }
+        Button {
+          if isRenamingCandidate {
+            commitRename(candidate)
+          } else {
+            renameDraft = candidate.effectiveDisplayName
+            isRenamingCandidate = true
+          }
+        } label: {
+          Image(systemName: isRenamingCandidate ? "checkmark.circle" : "pencil")
+            .font(.caption)
+        }
+        .buttonStyle(.plain)
+        .help(isRenamingCandidate ? "Save name" : "Rename this suggestion")
+        .accessibilityLabel(isRenamingCandidate ? "Save suggestion name" : "Rename suggestion")
         Spacer()
         Text(confidenceLabel(candidate.score))
           .font(.caption2.monospacedDigit())
@@ -444,7 +467,7 @@ public struct ContextualInspectorView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
       } else {
-        ForEach(model.activeCandidates.prefix(6)) { candidate in
+        ForEach(model.rankedActiveCandidates.prefix(6)) { candidate in
           Button {
             model.selectedCandidateID = candidate.id
             model.selectedFieldID = nil
@@ -669,6 +692,11 @@ public struct ContextualInspectorView: View {
     case .signature: return "Signature"
     case .unknown: return "Entry region"
     }
+  }
+
+  private func commitRename(_ candidate: RegionCandidate) {
+    model.renameCandidate(candidate.id, to: renameDraft)
+    isRenamingCandidate = false
   }
 
   /// Per-cell choice names extracted from adjacent document text, falling

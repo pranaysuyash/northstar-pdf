@@ -35,6 +35,10 @@ public final class AppModel {
   private let recoveryPairStore: RecoveryPairStore
   private let profileStore: EncryptedPDFProfileVault
   private let templateStore: EncryptedPDFTemplateStore
+  /// Stage 0 learning loop: local, value-free review decisions per source.
+  private let candidateReviewEventStore: CandidateReviewLearningEventStore
+  /// Stage 1: priors aggregated from those events, used for ranking only.
+  public private(set) var candidatePriors = CandidatePriors(sampleCount: 0)
 
   public var inspection: DocumentInspection? {
     didSet { refreshCandidateCaches() }
@@ -169,6 +173,8 @@ public final class AppModel {
   /// body-evaluation path whenever the diff sheet was open.
   @ObservationIgnored private var cachedSourceDocument: PDFDocument?
   private var ocrProcessedPageIndices: Set<Int> = []
+  /// Auto-scan dedup for in-flight OCR passes (fill/sign mode).
+  @ObservationIgnored private var autoOCRPendingPages: Set<Int> = []
 
   public var searchQuery = ""
   public var searchMatches: [SearchMatch] = []
@@ -351,6 +357,7 @@ public final class AppModel {
     recoveryPairStore: RecoveryPairStore = RecoveryPairStore(),
     profileStore: EncryptedPDFProfileVault = EncryptedPDFProfileVault(directory: EncryptedPDFProfileVault.defaultDirectory),
     templateStore: EncryptedPDFTemplateStore = EncryptedPDFTemplateStore(directory: EncryptedPDFTemplateStore.defaultDirectory),
+    candidateReviewEventStore: CandidateReviewLearningEventStore = CandidateReviewLearningEventStore(directory: CandidateReviewLearningEventStore.defaultDirectory),
     initializeLocalVaultState: Bool = true,
     loadsKeychainSignatures: Bool = true
   ) {
@@ -360,6 +367,7 @@ public final class AppModel {
     self.recoveryPairStore = recoveryPairStore
     self.profileStore = profileStore
     self.templateStore = templateStore
+    self.candidateReviewEventStore = candidateReviewEventStore
     if initializeLocalVaultState {
       refreshProfiles()
       refreshTemplateIDs()
@@ -1099,6 +1107,11 @@ public final class AppModel {
       sourceURL = url
       isScratchDocument = false
       cachedSourceData = data
+      // Stage 1 learning loop: load value-free priors so remaining
+      // suggestions rank by what the user historically accepted here.
+      candidatePriors = CandidatePriors(
+        events: candidateReviewEventStore.events(
+          sourceDigest: nextInspection.source.sha256))
       // Preflight build/validate is CPU-bound; keep the open path responsive by
       // computing it off the main thread and publishing the report when ready.
       // The session digest guards against publishing a stale report after the
@@ -1758,6 +1771,49 @@ public func resetDocument() {
     statusMessage = "Dismissed the suggested area. The source PDF was not changed."
   }
 
+  /// Renames a suggestion and records the correction as a `.retyped`
+  /// learning event so future matching prefers the user's terminology.
+  public func renameCandidate(_ candidateID: UUID, to rawName: String) {
+    guard let current = inspection else { return }
+    let trimmed = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty, trimmed.count <= 80 else {
+      statusMessage = "Use a non-empty name of at most 80 characters."
+      return
+    }
+    let previous = current.candidates.first { $0.id == candidateID }
+    let candidates = current.candidates.map { candidate -> RegionCandidate in
+      guard candidate.id == candidateID else { return candidate }
+      var updated = candidate
+      updated.displayName = trimmed
+      return updated
+    }
+    inspection = DocumentInspection(
+      source: current.source,
+      pages: current.pages,
+      fields: current.fields,
+      candidates: candidates,
+      warnings: current.warnings,
+      links: current.links,
+      outlines: current.outlines,
+      metadata: current.metadata,
+      permissions: current.permissions,
+      attachments: current.attachments,
+      accessibility: current.accessibility,
+      security: current.security
+    )
+    if let previous,
+      let event = CandidateReviewLearningEventFactory.make(
+        candidateID: previous.id,
+        decision: .retyped,
+        pageIndex: previous.pageIndex,
+        candidate: previous,
+        sourceDigest: current.source.sha256)
+    {
+      try? candidateReviewEventStore.append(event: event)
+    }
+    statusMessage = "Renamed the suggestion to \(trimmed). Matching now prefers your wording."
+  }
+
   public func restoreCandidate(_ candidateID: UUID) {
     updateCandidate(candidateID, status: .suggested)
     statusMessage = "Restored the suggested area for review."
@@ -1804,6 +1860,7 @@ public func resetDocument() {
 
   private func updateCandidate(_ candidateID: UUID, status: CandidateStatus) {
     guard let current = inspection else { return }
+    let previous = current.candidates.first { $0.id == candidateID }
     let candidates = current.candidates.map { candidate in
       guard candidate.id == candidateID else { return candidate }
       var updated = candidate
@@ -1824,11 +1881,56 @@ public func resetDocument() {
       accessibility: current.accessibility,
       security: current.security
     )
+    recordCandidateLearningEvent(
+      previous: previous, status: status, sourceDigest: current.source.sha256)
   }
 
   public var activeCandidates: [RegionCandidate] { _activeCandidates }
 
+  /// Stage 0 learning loop: terminal review decisions become value-free
+  /// structural events. Failures never block the user's edit flow.
+  private func recordCandidateLearningEvent(
+    previous: RegionCandidate?, status: CandidateStatus, sourceDigest: String
+  ) {
+    guard let previous else { return }
+    let decision: CandidateReviewDecisionKind?
+    switch status {
+    case .confirmed: decision = .confirmed
+    case .rejected: decision = .rejected
+    case .suggested, .unknown: decision = nil
+    }
+    guard let decision,
+      let event = CandidateReviewLearningEventFactory.make(
+        candidateID: previous.id,
+        decision: decision,
+        pageIndex: previous.pageIndex,
+        candidate: previous,
+        sourceDigest: sourceDigest)
+    else { return }
+    do {
+      try candidateReviewEventStore.append(event: event)
+    } catch {
+      // Learning is best-effort by contract; a full disk must not break a fill.
+    }
+    // Re-aggregate so the remaining suggestions re-rank immediately.
+    candidatePriors = CandidatePriors(
+      events: candidateReviewEventStore.events(sourceDigest: sourceDigest))
+  }
+
   public var dismissedCandidates: [RegionCandidate] { _dismissedCandidates }
+
+  /// Active suggestions ordered by prior-adjusted score (Stage 1 learning
+  /// loop). Contract scores are untouched; this only orders review attention.
+  public var rankedActiveCandidates: [RegionCandidate] {
+    guard candidatePriors.hasSignal else { return _activeCandidates }
+    return _activeCandidates.sorted { lhs, rhs in
+      let lhsScore = candidatePriors.adjustedScore(for: lhs)
+      let rhsScore = candidatePriors.adjustedScore(for: rhs)
+      if lhsScore != rhsScore { return lhsScore > rhsScore }
+      if lhs.pageIndex != rhs.pageIndex { return lhs.pageIndex < rhs.pageIndex }
+      return lhs.bounds.y > rhs.bounds.y
+    }
+  }
 
   private func refreshCandidateCaches() {
     let candidates = inspection?.candidates ?? []
@@ -2097,6 +2199,7 @@ public func resetDocument() {
     case .fill:
       let label = fillProgressLabel ?? "No fillable fields detected."
       statusMessage = "Fill mode — \(label)"
+      autoOCRIfNeededForFillMode(pageIndex: selectedPageIndex)
     case .sign:
       let count = activeCandidates.filter { $0.entryMode == .signature }.count
       statusMessage = count > 0
@@ -2778,7 +2881,7 @@ public func resetDocument() {
   }
 
   public func selectNextCandidate() {
-    let candidates = activeCandidates
+    let candidates = rankedActiveCandidates
     guard !candidates.isEmpty else { return }
     let currentID = selectedCandidateID
     let currentIndex = candidates.firstIndex { $0.id == currentID } ?? -1
@@ -2792,7 +2895,7 @@ public func resetDocument() {
   }
 
   public func selectPreviousCandidate() {
-    let candidates = activeCandidates
+    let candidates = rankedActiveCandidates
     guard !candidates.isEmpty else { return }
     let currentID = selectedCandidateID
     let currentIndex = candidates.firstIndex { $0.id == currentID } ?? 0
@@ -2807,6 +2910,13 @@ public func resetDocument() {
 
   public func runOCROnSelectedPage() {
     guard requirePermission(.copy, action: "Run OCR") else { return }
+    runOCR(pageIndex: selectedPageIndex, announceResult: true)
+  }
+
+  /// Runs Vision OCR on one page and merges detected blanks into the
+  /// candidate set. Safe to call repeatedly: each page is processed once.
+  private func runOCR(pageIndex: Int, announceResult: Bool) {
+    let selectedPageIndex = pageIndex
     guard let page = liveDocument?.page(at: selectedPageIndex),
       let pageSnapshot = inspection?.pages[safe: selectedPageIndex]
     else {
@@ -2860,6 +2970,95 @@ public func resetDocument() {
       }
     } catch {
       alertMessage = "OCR recognition error: \(error.localizedDescription)"
+    }
+  }
+
+  /// Fill mode convenience: scanned or text-poor pages get one automatic
+  /// local OCR pass so suggestions appear without a manual step. Results
+  /// merge through the same reviewed-candidate path (never auto-applied).
+  private func autoOCRIfNeededForFillMode(pageIndex: Int) {
+    guard editorMode == .fill || editorMode == .sign else { return }
+    guard !ocrProcessedPageIndices.contains(pageIndex),
+      autoOCRPendingPages.contains(pageIndex) == false
+    else { return }
+    guard let snapshot = inspection?.pages[safe: pageIndex],
+      snapshot.hasSelectableText == false || snapshot.characterCount == 0
+    else { return }
+    guard let page = liveDocument?.page(at: pageIndex) else { return }
+
+    autoOCRPendingPages.insert(pageIndex)
+    statusMessage = "Scanning page \(pageIndex + 1) for fillable areas…"
+    Task { @MainActor [weak self] in
+      let observations = await Self.runRecognition(
+        page: page, pageIndex: pageIndex)
+      guard let self else { return }
+      self.autoOCRPendingPages.remove(pageIndex)
+      if let observations {
+        self.mergeOCRObservations(observations, pageIndex: pageIndex)
+      }
+      // Silent by design on failure: auto-scan is opportunistic; manual OCR
+      // still reports errors loudly.
+    }
+  }
+
+  /// Runs off the main actor; PDFKit rasterization and Vision recognition
+  /// are both CPU-bound.
+  private nonisolated static func runRecognition(
+    page: PDFPage, pageIndex: Int
+  ) async -> [OCRObservation]? {
+    // PDFPage is not declared Sendable, but it is immutable for the span of
+    // this handoff: the main actor never mutates the live document while the
+    // recognition pass reads it. The box scopes that invariant explicitly.
+    final class OCRPageBox: @unchecked Sendable {
+      let page: PDFPage
+      init(page: PDFPage) { self.page = page }
+    }
+    let boxed = OCRPageBox(page: page)
+    return await Task.detached(priority: .userInitiated) {
+      try? VisionOCRProvider().recognize(page: boxed.page, pageIndex: pageIndex)
+    }.value
+  }
+
+  /// Merge path shared by manual and automatic OCR.
+  private func mergeOCRObservations(_ observations: [OCRObservation], pageIndex: Int) {
+    guard let pageSnapshot = inspection?.pages[safe: pageIndex] else { return }
+    let ocrCandidates = StaticRegionDetector.detectOCR(
+      observations: observations,
+      pageIndex: pageIndex,
+      pageBounds: pageSnapshot.bounds
+    )
+    guard let current = inspection else { return }
+    var existingCandidates = current.candidates
+    var added = 0
+    for c in ocrCandidates {
+      if !existingCandidates.contains(where: {
+        $0.pageIndex == c.pageIndex && abs($0.bounds.x - c.bounds.x) < 10
+          && abs($0.bounds.y - c.bounds.y) < 10
+      }) {
+        existingCandidates.append(c)
+        added += 1
+      }
+    }
+    inspection = DocumentInspection(
+      source: current.source,
+      pages: current.pages,
+      fields: current.fields,
+      candidates: existingCandidates,
+      warnings: current.warnings,
+      links: current.links,
+      outlines: current.outlines,
+      metadata: current.metadata,
+      permissions: current.permissions,
+      attachments: current.attachments,
+      accessibility: current.accessibility,
+      security: current.security
+    )
+    ocrProcessedPageIndices.insert(pageIndex)
+    if added > 0 {
+      statusMessage =
+        "Auto-detected \(added) fillable area\(added == 1 ? "" : "s") on page \(pageIndex + 1). Review before applying."
+    } else if !ocrCandidates.isEmpty {
+      statusMessage = "Scanned page \(pageIndex + 1); no new fillable areas found."
     }
   }
 
@@ -3017,6 +3216,8 @@ public func resetDocument() {
     if !preservingSearchMatch {
       selectedSearchMatchIndex = nil
     }
+    // Fill/sign mode opportunistically scans text-poor pages on arrival.
+    autoOCRIfNeededForFillMode(pageIndex: clamped)
     scheduleViewStateAutosave()
   }
 

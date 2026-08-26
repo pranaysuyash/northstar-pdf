@@ -1,5 +1,16 @@
 # Full Persona Audit — 2026-08-26
 
+> **SUPERSEDED IN PART — 2026-08-26 (PER-0428 doctrine-alignment audit).**
+> This document predates same-day gate updates and contains stale status
+> claims. Specifically: the "FAIL Gates" table records RG-001 as `FAIL`, but
+> `docs/release-gates.md` shows RG-001 as `PARTIAL` with delivered evidence
+> (incremental writer, appearance streams, compressed-object corpus support).
+> **The release-gate registry is the sole authority for gate status** (see the
+> status-authority decision record in `docs/decisions.md`). Its remaining task
+> priorities were folded into
+> `docs/roadmaps/implementation-plan-2026-08-26.md`. Retained as historical
+> evidence; do not cite its status tables.
+
 **Scope:** Native macOS app + web companion, all source files, design docs, release gates
 **Personas applied:** Researcher, Security Auditor, Reviewer, Design Doc Reviewer, Test Writer, Implementer
 

@@ -655,7 +655,9 @@ extension UserProfile {
 
     // Match static candidates (text-entry regions only)
     for candidate in candidates where candidate.isDirectlyEditable {
-      let label = candidate.labelText ?? ""
+      // A user-set displayName is authoritative; the canonicalized
+      // derivation of labelText is the fallback.
+      let label = candidate.displayName ?? candidate.labelText ?? ""
       if let match = bestMatch(forLabel: label) {
         usedKeys.insert(match.key)
         operations.append(

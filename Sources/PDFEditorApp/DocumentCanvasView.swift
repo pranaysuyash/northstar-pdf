@@ -114,11 +114,6 @@ public struct DocumentCanvasView: View {
       isManualPlacementMode: model.isManualPlacementMode,
       fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
       activeInlineEditor: model.activeInlineEditor,
-      initialAnchor: model.stagedInitialAnchor,
-      initialAnchorToken: model.pendingInitialAnchorToken,
-      onViewportAnchorChange: { anchor in
-        model.reportViewportAnchor(anchor)
-      },
       applyPresentationOperation: { operation, document in
         model.applyOperationForPresentation(operation, to: document)
       },
@@ -213,6 +208,26 @@ public struct DocumentCanvasView: View {
       .buttonStyle(.plain)
       .accessibilityLabel("Rotate right 90 degrees")
       .help("Rotate Right 90°")
+
+      // D-057 (F34): pinned-layout indicator. Visible only when this
+      // document carries an explicit saved layout; clicking clears it so
+      // restore behavior returns to the configured default policy.
+      if model.hasPinnedLayout {
+        Divider()
+          .frame(height: 12)
+          .accessibilityHidden(true)
+
+        Button {
+          model.clearPinnedLayout()
+        } label: {
+          Image(systemName: "pin.fill")
+            .font(.caption)
+            .foregroundStyle(.orange)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Saved layout is active for this document. Click to clear.")
+        .help("Saved layout active — click to clear and follow the default setting again")
+      }
     }
     .padding(.horizontal, 10)
     .padding(.vertical, 6)

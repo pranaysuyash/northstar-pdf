@@ -1057,9 +1057,37 @@ private struct SignatureSavedTab: View {
 }
 
 public struct SettingsView: View {
+  @AppStorage("layoutRestorePolicy") private var layoutRestorePolicyRaw: String =
+    UserDefaults.standard.string(forKey: "layoutRestorePolicy") ?? AppModel.LayoutRestorePolicy.fixedDefault.rawValue
+
   public init() {}
+
+  /// The stored raw value can pre-date a renamed case; normalize on read.
+  private var resolvedPolicy: AppModel.LayoutRestorePolicy {
+    AppModel.LayoutRestorePolicy(rawValue: layoutRestorePolicyRaw) ?? .fixedDefault
+  }
+
   public var body: some View {
     Form {
+      Section {
+        Picker("Open documents with", selection: Binding(
+          get: { resolvedPolicy },
+          set: { layoutRestorePolicyRaw = $0.rawValue }
+        )) {
+          Text("Fixed default (fit width)").tag(AppModel.LayoutRestorePolicy.fixedDefault)
+          Text("Layout last used on any document").tag(AppModel.LayoutRestorePolicy.lastUsedGlobally)
+          Text("Each document's own last layout").tag(AppModel.LayoutRestorePolicy.perDocument)
+        }
+        .pickerStyle(.radioGroup)
+        Text(
+          "This controls zoom and orientation for documents without a saved layout. Where you were reading is always remembered per document. File ▸ Save This Layout pins zoom and orientation for one specific document, overriding this setting."
+        )
+        .font(.callout)
+        .foregroundStyle(.secondary)
+      } header: {
+        Text("Opening Documents")
+      }
+
       Section {
         LabeledContent("Processing", value: "On this Mac")
         LabeledContent("Source files", value: "Never overwritten")
@@ -1073,6 +1101,6 @@ public struct SettingsView: View {
     }
     .formStyle(.grouped)
     .scenePadding()
-    .frame(width: 420)
+    .frame(width: 460)
   }
 }

@@ -138,3 +138,17 @@ Live-truth snapshot at append time: `swift build` red on in-flight
 PDFIncrementalFormWriter/PDFKitProvider edits (parallel lane active, hands off);
 contract suite 73/79 with remaining failures classified in
 `docs/flaky-register.md`.
+
+### 2026-08-26 evening — P3.2 resolved: React canonical (D-058)
+
+| # | Task | Status |
+|---|---|---|
+| A-11 | **P7.G1**: route `PdfController.exportCopy` through `pdf-contract-mutation-gate.mjs` + preflight (currently bypasses the canonical gate) | Open — highest priority gate |
+| A-12 | **P7.G2a–c**: port vault/session/recovery UI, template domain UI, profiles/completion to React (zero React implementation today; React autofill/OCR are demo stubs) | Open |
+| A-13 | **P7.G2d–G5**: reader completeness features; interaction parity dispositions (port or owner-signed revocation for rubber-band scroll, drag-pan, copy-page-text) | Open |
+| A-14 | **P7.G3**: retarget ~35 legacy-coupled browser tests to React bundle; accessibility gate on React markup | Open |
+| A-15 | **P7.G4**: `deploy-web.mjs` prebuilt-dist mode (Vite hashed assets break current closure walker); repoint RT-004 test + run-web-e2e | Open |
+| A-16 | **P7.G6**: actual sunset deletion of app.js + legacy DOM — only after G1–G5 evidence green | Blocked on A-11..A-15 |
+
+Full parity table and risk ranking in the D-058 exploration record
+(`docs/decisions.md`); gates in `docs/roadmaps/implementation-plan-2026-08-26.md` Phase P7.

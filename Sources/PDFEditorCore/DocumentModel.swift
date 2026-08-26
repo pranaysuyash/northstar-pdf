@@ -547,6 +547,51 @@ public struct FillHighlight: Equatable, Hashable, Sendable {
   }
 }
 
+/// Merge overlapping `FillHighlight`s that share a page, state, and non-empty
+/// label into a single union-rect highlight.
+///
+/// This is a display-only consolidation: it never touches the underlying
+/// fillable candidates, whose geometry drives filling. On dense forms the
+/// region detector emits many overlapping boxes that all inherit the same
+/// nearest-text-line label, which paints a wall of duplicated, overlapping
+/// outlines. Merging by (page, state, label, intersection) collapses those
+/// duplicates into one outline without changing what the user can fill.
+///
+/// Anonymous highlights (empty label) are left untouched so genuinely distinct
+/// unnamed fields are never silently fused.
+public func mergeOverlappingFillHighlights(_ input: [FillHighlight]) -> [FillHighlight] {
+  var output: [FillHighlight] = []
+
+  for hl in input {
+    guard let label = hl.label, !label.isEmpty else {
+      output.append(hl)
+      continue
+    }
+
+    if let idx = output.firstIndex(where: { candidate in
+      candidate.pageIndex == hl.pageIndex
+      && candidate.state == hl.state
+      && candidate.label == label
+      && candidate.bounds.intersects(hl.bounds)
+    }) {
+      let merged = output[idx]
+      let unionRect = merged.bounds.cgRect.union(hl.bounds.cgRect)
+      output[idx] = FillHighlight(
+        id: merged.id,
+        pageIndex: merged.pageIndex,
+        bounds: PDFRect(unionRect),
+        state: merged.state,
+        label: merged.label
+      )
+    } else {
+      output.append(hl)
+    }
+  }
+
+  return output
+}
+
+
 /// How a saved signature was originally produced. Acts as provenance so the
 /// library can show where each stamp came from (drawn, typed, imported photo,
 /// or CV-extracted). Mirrors SignKit's source-tagged library concept.
@@ -857,6 +902,35 @@ public struct ValidationReport: Codable, Equatable, Hashable, Sendable {
   }
 }
 
+/// Provenance tracking: records which module produced each extraction result.
+/// Adopted from metaextract pattern for truth taxonomy (OPERATING_DOCTRINE §2).
+public struct ExtractionProvenance: Codable, Equatable, Sendable {
+  /// Which module extracted text ("PDFKit", "fitz", "Poppler", "pdf_oxide")
+  public let textExtractor: String
+  /// Which module inspected fields ("CGPDF", "PDFKit", "MuPDF")
+  public let fieldInspector: String
+  /// Which OCR engine was used ("Vision", "Tesseract", nil if not OCR)
+  public let ocrEngine: String?
+  /// Confidence in extraction (0.0-1.0)
+  public let confidence: Double
+  /// Timestamp of extraction
+  public let extractedAt: Date
+
+  public init(
+    textExtractor: String,
+    fieldInspector: String,
+    ocrEngine: String? = nil,
+    confidence: Double = 1.0,
+    extractedAt: Date = Date()
+  ) {
+    self.textExtractor = textExtractor
+    self.fieldInspector = fieldInspector
+    self.ocrEngine = ocrEngine
+    self.confidence = confidence
+    self.extractedAt = extractedAt
+  }
+}
+
 public struct DocumentInspection: Codable, Equatable, Sendable {
   public let source: DocumentSource
   public let pages: [PageSnapshot]
@@ -873,6 +947,9 @@ public struct DocumentInspection: Codable, Equatable, Sendable {
   /// Provider-neutral annotation taxonomy used by the read-only privacy preflight.
   /// Keys are normalized categories such as widget, link, markup, and unknown.
   public let annotationTypeCounts: [String: Int]
+  /// Provenance: which module produced each extraction result.
+  /// Adopted from metaextract pattern for truth taxonomy (OPERATING_DOCTRINE §2).
+  public let provenance: ExtractionProvenance
 
   public init(
     source: DocumentSource,
@@ -887,7 +964,8 @@ public struct DocumentInspection: Codable, Equatable, Sendable {
     attachments: [String] = [],
     accessibility: PDFAccessibilitySummary = .unknown,
     security: PDFSecuritySummary = .unknown,
-    annotationTypeCounts: [String: Int] = [:]
+    annotationTypeCounts: [String: Int] = [:],
+    provenance: ExtractionProvenance? = nil
   ) {
     self.source = source
     self.pages = pages
@@ -902,6 +980,7 @@ public struct DocumentInspection: Codable, Equatable, Sendable {
     self.accessibility = accessibility
     self.security = security
     self.annotationTypeCounts = annotationTypeCounts
+    self.provenance = provenance ?? ExtractionProvenance(textExtractor: "PDFKit", fieldInspector: "CGPDF", extractedAt: Date(timeIntervalSince1970: 0))
   }
 }
 

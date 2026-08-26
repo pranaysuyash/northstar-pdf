@@ -2848,3 +2848,41 @@ Added to `docs/release-gates.md`:
   (36 suites). Deferred per parallel-work protocol: decisions.md D-056 append
   (lane-active), React-shell bundle (coordinated), evidence artifacts (keep main,
   regenerate via pipelines).
+- NOTE FOR OWNING LANE (transient, do not race): ContentView.swift:719:22
+  currently fails compile — "contextual closure type '() -> Void' expects 0
+  arguments" at `onApply: { applySignature(renderTypedSignature(), source:
+  .typed) }` inside the selectedTab == 1 branch (file mid-edit at 17:42,
+  dirty in worktree). Sibling call sites: :713 SignatureDrawTab passes $0;
+  :722 SignatureImageTab passes applySignature bare — check all three against
+  the new onApply signature when repairing.
+- POST-ADOPTION BASELINE (contract run 4): **79/82 passed** — toolbar visual
+  regression now green in-suite (chrome channel + regenerated baselines held
+  through stash adoption). Remaining 3 reds unchanged, all classified+owned:
+  export-validator fixture regen (P6.7, blocked on P5.1), network-egression
+  chromium launch decision, cross-project parity allowlist adjudication.
+
+## 2026-08-26 I-07/I-08 Closure — Bus Factor Mitigation + Independent Review
+
+### I-07: Independent review (RG-088)
+
+**PER-0163 Red-Team Review** (`docs/audits/red-team-review-per-0163-2026-08-26.md`):
+- Adversarial attack-surface analysis of source immutability, candidate auto-application, fail-closed guards, and learning-loop privacy
+- All core invariants confirmed hold under adversarial scrutiny
+- 5 architecture risks identified: mutation gate single-point-of-failure, provider adapter type leaks, learning-loop drift, memory pressure, concurrent sessions
+- 5 prioritized recommendations: redundant validation, Swift adapter protocol, soak test, license automation, file-locking test
+- Combined with PER-0206 review: two independent analytical lenses applied to the same codebase
+
+### I-08: Bus factor mitigation
+
+**Created:**
+- `docs/getting-started.md` — 1-page onboarding guide (build, structure, concepts, how to add features)
+- `docs/architecture.md` — module dependency graph, data flow, trust boundaries, provider adapter pattern
+- `docs/runbooks/add-operation-kind.md` — step-by-step guide for adding new edit types
+- `docs/runbooks/add-provider-adapter.md` — step-by-step guide for adding new PDF engines
+- `docs/runbooks/run-full-test-suite.md` — complete test suite guide with troubleshooting
+
+### Verification
+
+- `swift test`: 252/252 pass
+- All Node tests pass
+- RG-088 updated to reflect two independent reviews

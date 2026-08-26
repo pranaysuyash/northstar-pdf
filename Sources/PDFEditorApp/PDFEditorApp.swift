@@ -186,7 +186,9 @@ private struct PDFEditorWindow: View {
     var body: some View {
         ZStack {
             ContentView(model: model, searchFocusEvent: $searchFocusEvent)
-                .frame(minWidth: 1_080, minHeight: 700)
+                // RG-059: the minimum window size stays usable at 200% zoom
+                // and on narrow displays; panes adapt below these bounds.
+                .frame(minWidth: 720, minHeight: 480)
             PDFEditorWindowAccessor(controller: windowController)
                 .frame(width: 0, height: 0)
                 .allowsHitTesting(false)

@@ -325,6 +325,7 @@
           <div class="inline" style="margin-top: 6px;">
             <button id="undoEditButton" disabled>Undo</button>
             <button id="redoEditButton" disabled>Redo</button>
+            <button id="signModalButton">Sign</button>
             <button id="exportButton" disabled>Export + validate</button>
             <button id="diffToggleButton" disabled>Show diff</button>
           </div>
@@ -336,6 +337,21 @@
           </section>
         </section>
       </aside>
+    </div>
+
+    <div id="signatureModal" class="password-card" role="dialog" aria-modal="true" aria-labelledby="signatureTitle" hidden>
+      <div class="password-panel" style="max-width: 440px;">
+        <div id="signatureTitle" class="list-title">Draw Signature</div>
+        <div class="small muted" style="margin-bottom: 8px;">Sign in the box below to place your signature stamp.</div>
+        <canvas id="signatureCanvas" width="400" height="150" style="border: 1px dashed var(--border-color, #ccc); border-radius: 6px; background: #fff; touch-action: none; cursor: crosshair;"></canvas>
+        <div class="control-row" style="justify-content: space-between; margin-top: 10px;">
+          <button id="signatureClear" type="button">Clear</button>
+          <div>
+            <button id="signatureCancel" type="button">Cancel</button>
+            <button id="signatureSave" type="button" class="primary">Place</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div id="passwordModal" class="password-card" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">

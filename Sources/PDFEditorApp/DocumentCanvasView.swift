@@ -44,15 +44,22 @@ public struct DocumentCanvasView: View {
   @Binding var searchProjectionState: SearchProjectionState
   // RG-058: honor Reduce Motion for canvas-level transitions.
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  // RG-059: raised-contrast chrome under the Increased Contrast setting.
+  @Environment(\.colorSchemeContrast) private var colorSchemeContrast
+  /// RG-057: incremented by the ⌘F command; consuming it focuses the field.
+  @Binding var searchFocusEvent: Int
+  @FocusState private var isSearchFieldFocused: Bool
 
   public init(
     model: AppModel,
     inspection: DocumentInspection,
-    searchProjectionState: Binding<SearchProjectionState>
+    searchProjectionState: Binding<SearchProjectionState>,
+    searchFocusEvent: Binding<Int> = .constant(0)
   ) {
     self.model = model
     self.inspection = inspection
     self._searchProjectionState = searchProjectionState
+    self._searchFocusEvent = searchFocusEvent
   }
 
   @State private var isSearchExpanded = false
@@ -80,6 +87,14 @@ public struct DocumentCanvasView: View {
       }
     }
     .frame(minWidth: 480)
+    // RG-057: the ⌘F command increments searchFocusEvent; consuming it here
+    // expands the search HUD and moves keyboard focus into the field so focus
+    // lands predictably after the Find action.
+    .onChange(of: searchFocusEvent) { _, newValue in
+      guard newValue > 0 else { return }
+      isSearchExpanded = true
+      isSearchFieldFocused = true
+    }
   }
 
   private var pdfCanvas: some View {
@@ -201,7 +216,11 @@ public struct DocumentCanvasView: View {
     .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
     .overlay(
       Capsule()
-        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        .stroke(
+          colorSchemeContrast == .increased
+            ? Color.primary.opacity(0.6) : Color.white.opacity(0.2),
+          lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
+        )
     )
   }
 
@@ -215,6 +234,7 @@ public struct DocumentCanvasView: View {
         TextField("Find in document…", text: $model.searchQuery)
           .textFieldStyle(.plain)
           .frame(minWidth: 160, maxWidth: 220)
+          .focused($isSearchFieldFocused)
           .onSubmit { model.runSearch() }
           .onChange(of: model.searchQuery) { _, newValue in
             if !newValue.isEmpty {
@@ -313,7 +333,11 @@ public struct DocumentCanvasView: View {
     .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
     .overlay(
       Capsule()
-        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+        .stroke(
+          colorSchemeContrast == .increased
+            ? Color.primary.opacity(0.6) : Color.white.opacity(0.2),
+          lineWidth: colorSchemeContrast == .increased ? 1.5 : 1
+        )
     )
   }
 }

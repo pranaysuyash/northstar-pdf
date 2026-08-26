@@ -2863,6 +2863,53 @@ public func resetDocument() {
     }
   }
 
+  /// Synthesizes an invisible selectable text layer on top of scanned/raster PDF pages
+  /// using recognized OCR bounding boxes so the exported PDF is searchable in external viewers.
+  public func synthesizeSearchableOCRLayer(for pageIndex: Int? = nil) {
+    guard let doc = liveDocument else { return }
+    guard requirePermission(.addAnnotations, action: "Synthesize searchable OCR layer") else { return }
+
+    let targetPages = pageIndex.map { [$0] } ?? Array(0..<doc.pageCount)
+    var synthesizedCount = 0
+    let ocrProvider = VisionOCRProvider()
+
+    for idx in targetPages {
+      guard let page = doc.page(at: idx),
+            let pageSnapshot = inspection?.pages.first(where: { $0.pageIndex == idx }) else { continue }
+
+      do {
+        let observations = try ocrProvider.recognize(page: page, pageIndex: idx)
+        for obs in observations where obs.confidence >= 0.3 {
+          let lineEvidence = obs.toPageSpace(pageBounds: pageSnapshot.bounds, pageIndex: idx)
+          let bounds = lineEvidence.bounds.cgRect
+          let annotation = PDFAnnotation(bounds: bounds, forType: .freeText, withProperties: nil)
+          annotation.contents = obs.text
+          annotation.font = NSFont.systemFont(ofSize: max(6, bounds.height * 0.75))
+          annotation.fontColor = NSColor.clear // Invisible text layer
+          annotation.color = NSColor.clear
+          page.addAnnotation(annotation)
+          synthesizedCount += 1
+        }
+      } catch {
+        continue
+      }
+    }
+
+    if synthesizedCount > 0 {
+      let op = EditOperation(
+        pageIndex: pageIndex ?? 0,
+        kind: .annotation,
+        value: "ocr-searchable-layer:\(synthesizedCount)",
+        sessionID: currentSessionID,
+        sourceDigest: inspection?.source.sha256
+      )
+      recordAppliedOperation(op)
+      statusMessage = "Synthesized searchable text layer (\(synthesizedCount) text spans)."
+    } else {
+      statusMessage = "No text spans generated for searchable layer."
+    }
+  }
+
   public func export() {
     guard ensureExportPermission() else { return }
     if isScratchDocument {

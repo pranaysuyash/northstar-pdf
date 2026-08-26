@@ -1612,4 +1612,41 @@ struct PDFEditorCoreTests {
     let author = reopened.documentAttributes?[PDFDocumentAttribute.authorAttribute] as? String
     #expect(author == nil || author?.isEmpty == true)
   }
+
+  @Test func pdfUATaggingEngineGeneratesDocumentAndFormFieldStructure() {
+    let engine = PDFUATaggingEngine()
+    let page = PageSnapshot(
+      pageIndex: 0,
+      pageLabel: "1",
+      bounds: PDFRect(x: 0, y: 0, width: 612, height: 792),
+      cropBox: nil,
+      bleedBox: nil,
+      trimBox: nil,
+      artBox: nil,
+      rotation: 0,
+      characterCount: 50,
+      annotationCount: 1,
+      hasSelectableText: true
+    )
+    let field = NativeField(
+      id: "name-field",
+      name: "Full Name",
+      kind: .text,
+      pageIndex: 0,
+      bounds: PDFRect(x: 100, y: 500, width: 200, height: 20),
+      value: "Jane Doe",
+      choices: []
+    )
+    let (elements, report) = engine.generateAccessibilityTags(
+      pages: [page],
+      candidates: [],
+      fields: [field],
+      signatures: []
+    )
+
+    #expect(report.structureRootCreated)
+    #expect(report.totalTaggedElements >= 2)
+    #expect(elements.contains { $0.type == .document })
+    #expect(elements.contains { $0.type == .formField && $0.actualText == "Full Name" })
+  }
 }

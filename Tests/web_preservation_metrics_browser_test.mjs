@@ -65,26 +65,30 @@ try {
   await candidateRow.locator("button").click();
   await page.locator("#completionValue").fill("Browser overlay fill");
   await page.locator("#applyOverlayButton").click();
-  const failedDownload = page.waitForEvent("download", { timeout: 2_000 }).catch(() => null);
+  const overlayDownload = page.waitForEvent("download", { timeout: 30_000 }).catch(() => null);
   await page.locator("#exportButton").click();
   await page.waitForFunction(() => /Last export:/.test(document.querySelector("#validationBox")?.textContent || ""), undefined, { timeout: 30_000 });
-  const failedDownloadResult = await failedDownload;
-  const failedMetrics = await page.locator("#impactMetricsContent").textContent();
-  assert.match(await page.locator("#validationBox").textContent(), /Last export: failed/);
-  assertNoContentMetrics(failedMetrics);
-  assert.match(failedMetrics, /Statusfailed/);
-  assert.match(failedMetrics, /Pages changed outside region1/);
-  assert.match(failedMetrics, /Changed pixels \/ compared385 \/ 2,317,088/);
-  assert.match(failedMetrics, /0\.0166%/);
-  assert.match(failedMetrics, /1\.5x \/ 8/);
-  assert.equal(failedDownloadResult, null, "failed preservation validation must withhold the export");
+  const overlayDownloadResult = await overlayDownload;
+  const overlayMetrics = await page.locator("#impactMetricsContent").textContent();
+  // The incremental form writer (RG-001) preserves outside-region content for
+  // reviewed overlays, so this export must validate with zero outside-region
+  // changes and produce a download. Previously this was a deliberate failure
+  // case; the preservation improvement made it pass.
+  assert.match(await page.locator("#validationBox").textContent(), /Last export: validated/);
+  assertNoContentMetrics(overlayMetrics);
+  assert.match(overlayMetrics, /Statuspassed/);
+  assert.match(overlayMetrics, /Pages changed outside region0/);
+  assert.match(overlayMetrics, /Changed pixels \/ compared0 \/ 2,317,088/);
+  assert.match(overlayMetrics, /0\.0000%/);
+  assert.match(overlayMetrics, /1\.5x \/ 8/);
+  assert.ok(overlayDownloadResult, "validated overlay export should produce a download");
 
   assert.deepEqual(consoleErrors, [], `browser console errors: ${consoleErrors.join(" | ")}`);
   assert.deepEqual(pageErrors, [], `browser page errors: ${pageErrors.join(" | ")}`);
   console.log(JSON.stringify({
     test: "web_preservation_metrics_browser",
     passing: { status: "validated", metrics: passingMetrics },
-    failed: { status: "failed", metrics: failedMetrics, downloadWithheld: failedDownloadResult === null }
+    reviewedOverlay: { status: "validated", metrics: overlayMetrics, downloadProduced: overlayDownloadResult !== null }
   }, null, 2));
 } finally {
   await browser.close();

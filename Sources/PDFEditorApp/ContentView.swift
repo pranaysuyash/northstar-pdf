@@ -68,6 +68,7 @@ public struct ContentView: View {
   @State private var searchProjectionState: SearchProjectionState = .none
   @State private var isAgentCommandPresented = false
   @State private var isSecurityVaultPresented = false
+  @State private var isBatchMergePresented = false
   // Apple Design §13: haptic trigger tokens
   @State private var hapticNew = UUID()
   @State private var hapticOpen = UUID()
@@ -122,6 +123,10 @@ public struct ContentView: View {
         SecurityVaultSheet(model: model)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
+      .sheet(isPresented: $isBatchMergePresented) {
+        BatchMergeSheet(model: model)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
+      }
       .sheet(isPresented: $model.showDiffSheet) {
         DiffComparisonView(
           sourceDocument: model.sourceDocument,
@@ -156,65 +161,74 @@ public struct ContentView: View {
   @ViewBuilder
   private var mainContent: some View {
     if let inspection = model.inspection {
-      ZStack {
-        VStack(spacing: 0) {
-          RecoveryStatusBanner(model: model)
+      inspectionContent(inspection: inspection)
+    } else {
+      welcomeContent
+    }
+  }
 
-          HSplitView {
-            PageThumbnailRailView(model: model, inspection: inspection)
-              .frame(minWidth: 200, idealWidth: 230, maxWidth: 280)
+  private func inspectionContent(inspection: DocumentInspection) -> some View {
+    ZStack {
+      VStack(spacing: 0) {
+        RecoveryStatusBanner(model: model)
 
-            DocumentCanvasView(
-              model: model,
-              inspection: inspection,
-              searchProjectionState: $searchProjectionState
-            )
+        HSplitView {
+          PageThumbnailRailView(model: model, inspection: inspection)
+            .frame(minWidth: 200, idealWidth: 230, maxWidth: 280)
 
-            ContextualInspectorView(
-              model: model,
-              inspection: inspection,
-              isSecurityVaultPresented: $isSecurityVaultPresented
-            )
-            .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
-          }
-        }
-
-        if isAgentCommandPresented {
-          Color.black.opacity(0.3)
-            .ignoresSafeArea()
-            .onTapGesture {
-              isAgentCommandPresented = false
-            }
-
-          AgentCommandHUD(
+          DocumentCanvasView(
             model: model,
-            isPresented: $isAgentCommandPresented,
+            inspection: inspection,
+            searchProjectionState: $searchProjectionState,
+            searchFocusEvent: $searchFocusEvent
+          )
+
+          ContextualInspectorView(
+            model: model,
+            inspection: inspection,
             isSecurityVaultPresented: $isSecurityVaultPresented
           )
-          .transition(.scale(scale: 0.95).combined(with: .opacity))
+          .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
         }
       }
-      .animation(
-        reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.25, dampingFraction: 0.8),
-        value: isAgentCommandPresented
-      )
-      .onChange(of: model.selectedPageIndex) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.selectedFieldID) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.selectedCandidateID) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.selectedSearchMatchIndex) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.searchQuery) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.readerViewMode) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.readerScaleMode) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.readerZoom) { _, _ in model.scheduleViewStateAutosave() }
-      .onChange(of: model.readerRotation) { _, _ in model.scheduleViewStateAutosave() }
-    } else {
-      WelcomeView(
-        open: requestOpenDocument,
-        createBlank: { size in model.newDocument(pageSize: size) },
-        createFromImages: { model.presentNewFromImagesPanel() },
-        createFromClipboard: { model.newDocumentFromClipboard() }
-      )
+
+      if isAgentCommandPresented {
+        Color.black.opacity(0.3)
+          .ignoresSafeArea()
+          .onTapGesture {
+            isAgentCommandPresented = false
+          }
+
+        AgentCommandHUD(
+          model: model,
+          isPresented: $isAgentCommandPresented,
+          isSecurityVaultPresented: $isSecurityVaultPresented
+        )
+        .transition(.scale(scale: 0.95).combined(with: .opacity))
+      }
     }
+    .animation(
+      reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.25, dampingFraction: 0.8),
+      value: isAgentCommandPresented
+    )
+    .onChange(of: model.selectedPageIndex) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.selectedFieldID) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.selectedCandidateID) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.selectedSearchMatchIndex) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.searchQuery) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.readerViewMode) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.readerScaleMode) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.readerZoom) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.readerRotation) { _, _ in model.scheduleViewStateAutosave() }
+  }
+
+  private var welcomeContent: some View {
+    WelcomeView(
+      open: requestOpenDocument,
+      createBlank: { size in model.newDocument(pageSize: size) },
+      createFromImages: { model.presentNewFromImagesPanel() },
+      createFromClipboard: { model.newDocumentFromClipboard() }
+    )
   }
 
   @ToolbarContentBuilder
@@ -283,6 +297,14 @@ public struct ContentView: View {
               _ = model.splitPageRange(from: model.selectedPageIndex, to: model.selectedPageIndex, destination: url)
             }
           }
+        }
+
+        Button("Batch Merge Documents…", systemImage: "doc.on.doc") {
+          isBatchMergePresented = true
+        }
+
+        Button("Synthesize Searchable OCR Layer", systemImage: "text.viewfinder") {
+          model.synthesizeSearchableOCRLayer()
         }
 
         Divider()

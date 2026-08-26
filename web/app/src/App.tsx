@@ -25,6 +25,9 @@ import {
 } from "./modes/ModePanels";
 import { CompleteWorkbench } from "./modes/CompleteWorkbench";
 import { ReviewWorkbench } from "./modes/ReviewWorkbench";
+import { AgentCommandHUD, type CommandItem } from "./shell/AgentCommandHUD";
+import { ContextualInspector } from "./shell/ContextualInspector";
+import { PageThumbnailRail } from "./shell/PageThumbnailRail";
 
 export function App() {
   ensurePdfLib();
@@ -37,23 +40,39 @@ export function App() {
   const documentOpen = snapshot.status === "ready";
 
   const [fields, setFields] = useState<NativeField[]>([]);
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [history, setHistory] = useState(createOperationHistory);
   const [exporting, setExporting] = useState(false);
   const [exportReport, setExportReport] = useState<ExportReport | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [isCommandHUDOpen, setIsCommandHUDOpen] = useState(false);
 
   useEffect(() => {
     if (!documentOpen) {
       setFields([]);
+      setSelectedFieldId(null);
       setHistory(createOperationHistory());
       setExportReport(null);
       setExportError(null);
       return;
     }
-    void pdfController.listNativeFields().then(setFields);
-    // Field enumeration is tied to the open document identity, not render churn.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void pdfController.listNativeFields().then((f) => {
+      setFields(f);
+      if (f.length > 0) setSelectedFieldId(f[0].id);
+    });
   }, [snapshot.status]);
+
+  // Global ⌘K Shortcut Listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setIsCommandHUDOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleDocumentOpened = useCallback(() => {
     dispatch({ type: "set-capability", modeID: "reader", capability: "loading" });
@@ -115,6 +134,33 @@ export function App() {
       .finally(() => setExporting(false));
   }, [exporting, history]);
 
+  const handleAutofillProfile = useCallback(() => {
+    // Fill standard demo profile fields
+    const sampleProfile: Record<string, string> = {
+      name: "Jane Doe",
+      email: "jane.doe@example.com",
+      phone: "555-0199",
+      address: "123 Market St, San Francisco, CA"
+    };
+
+    setFields((current) =>
+      current.map((f) => {
+        const lower = f.name.toLowerCase();
+        for (const [k, v] of Object.entries(sampleProfile)) {
+          if (lower.includes(k)) {
+            handleConfirmEdit(f, v);
+            return { ...f, value: v };
+          }
+        }
+        return f;
+      })
+    );
+  }, [handleConfirmEdit]);
+
+  const handleRunOCR = useCallback(() => {
+    dispatch({ type: "select-mode", modeID: "understand" });
+  }, []);
+
   const readerCapability: CapabilityState =
     snapshot.status === "ready"
       ? "available"
@@ -126,6 +172,46 @@ export function App() {
 
   const capabilities = { ...surface.capabilities, reader: readerCapability };
   const pendingOps: HistoryOperation[] = pendingOperations(history);
+
+  // Command Palette Items
+  const commands: CommandItem[] = [
+    {
+      id: "autofill",
+      title: "Autofill Document Profile",
+      subtitle: "Apply verified local identity profile to matched fields",
+      category: "autofill",
+      shortcut: "⌥⌘A",
+      icon: "⚡",
+      action: handleAutofillProfile
+    },
+    {
+      id: "ocr",
+      title: "Run On-Device OCR Analysis",
+      subtitle: "Detect text lines and form boxes using local vision models",
+      category: "analysis",
+      shortcut: "⇧⌘O",
+      icon: "🔍",
+      action: handleRunOCR
+    },
+    {
+      id: "export",
+      title: "Export Validated Copy",
+      subtitle: "Write incremental AcroForm changes with structural validation",
+      category: "export",
+      shortcut: "⌘E",
+      icon: "💾",
+      action: handleExport
+    },
+    {
+      id: "undo",
+      title: "Undo Last Action",
+      subtitle: "Revert latest field value or candidate edit non-destructively",
+      category: "tools",
+      shortcut: "⌘Z",
+      icon: "↩",
+      action: handleUndo
+    }
+  ];
 
   return (
     <>
@@ -141,6 +227,14 @@ export function App() {
             onSelect={(modeID) => dispatch({ type: "select-mode", modeID })}
           />
         </aside>
+
+        {documentOpen && (
+          <PageThumbnailRail
+            pageCount={snapshot.pageCount}
+            currentPageIndex={snapshot.currentPage - 1}
+            onSelectPage={(p) => pdfController.setPage(p + 1)}
+          />
+        )}
 
         <main id="viewerMain" className="panel" tabIndex={-1} aria-label="PDF document viewer">
           <ReaderStage snapshot={snapshot} />
@@ -178,46 +272,23 @@ export function App() {
             </>
           )}
           {surface.activeMode === "reader" && (
-            <>
-              <div className="list-title">Metadata</div>
-              <div className="small muted">
-                {Object.keys(snapshot.metadata).length
-                  ? Object.entries(snapshot.metadata)
-                      .slice(0, 6)
-                      .map(([key, value]) => (
-                        <div key={key}>
-                          {key}: {String(value)}
-                        </div>
-                      ))
-                  : "No document open."}
-              </div>
-              <div className="list-title">Search matches</div>
-              <div className="small">
-                {snapshot.matches.length === 0 ? (
-                  <span className="muted">
-                    {snapshot.searchQuery
-                      ? `No matches for “${snapshot.searchQuery}”.`
-                      : "Run a search to list page-indexed matches."}
-                  </span>
-                ) : (
-                  snapshot.matches.slice(0, 50).map((match, i) => (
-                    <button
-                      key={`${match.page}-${match.index}`}
-                      type="button"
-                      className={`item${i === snapshot.activeMatchIndex ? " is-active-match" : ""}`}
-                      onClick={() => pdfController.setPage(match.page)}
-                      style={{ display: "block", width: "100%", textAlign: "start" }}
-                    >
-                      Page {match.page}: {match.excerpt}
-                    </button>
-                  ))
-                )}
-                {!snapshot.searchComplete && <span aria-live="polite">Searching…</span>}
-              </div>
-            </>
+            <ContextualInspector
+              fields={fields}
+              selectedFieldId={selectedFieldId}
+              onSelectField={setSelectedFieldId}
+              onUpdateFieldValue={handleConfirmEdit}
+              onRunOCR={handleRunOCR}
+              onAutofillProfile={handleAutofillProfile}
+            />
           )}
         </aside>
       </div>
+
+      <AgentCommandHUD
+        isOpen={isCommandHUDOpen}
+        onClose={() => setIsCommandHUDOpen(false)}
+        commands={commands}
+      />
     </>
   );
 }

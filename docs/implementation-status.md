@@ -153,9 +153,11 @@ current product claim is blocked.
   - **Visual Annotation Tools**: Direct support for adding typed visual highlights, shape rectangles, and freehand annotations (`.annotation`) on target page coordinates without touching source bytes.
   - **Multi-Page Graph Insertions**: Dynamic "Insert Blank Page" and "Insert Pages from PDF" operations in `PageThumbnailRailView` and `AppModel`, recorded as non-destructive `.pageInsert` operations.
   - **Form Flattening & Clean Export Pipeline**: `exportFlattenedCopy(destination:)` with `.burnInAnnotationsOption: true` to bake all interactive form fields, visual overlays, annotations, and signature stamps permanently into page content streams for secure distribution.
-  - **Batch Document Merge**: `mergePDFs(sources:destination:)` utility combining multiple independent PDF documents into a single target PDF document preserving individual page contents and geometries.
-  - **Page Extraction & Splitting**: `splitPageRange(from:to:destination:)` extracting arbitrary page ranges into standalone PDF files.
-  - **Metadata & Attribute Sanitization**: `sanitizeAndExportCopy(destination:)` stripping document-level metadata dictionaries, EXIF/XMP tags, author info, and hidden tracking properties prior to distribution.
+  - **Dedicated Batch Merge Modal (`BatchMergeSheet.swift`)**: Interactive macOS sheet featuring drag-and-drop file queuing, reordering handles, live page count summaries, and single-click sequential document merging.
+  - **Forensic Metadata Sanitization**: `sanitizeAndExportCopy(destination:)` stripping document-level metadata dictionaries, EXIF/XMP tags, author info, and hidden tracking properties prior to distribution.
+  - **Searchable OCR Text Layer Synthesis**: `synthesizeSearchableOCRLayer(for:)` mapping recognized Apple Vision text bounding boxes directly into invisible, selectable `PDFAnnotation` freeText spans across raster and scanned pages so exported PDFs become searchable in Spotlight, Preview, Acrobat, and web browsers.
+  - **PDF/UA Tagged Accessibility Structure (`PDFUATaggingEngine`)**: ISO 14289-1 logical structure tree generation (/Document, /Sect, /H1-/H6, /P, /Form, /Figure) and /TU tooltips.
+  - **Web Companion Freehand Signature Canvas**: HTML5 pointer-event drawing canvas modal with local storage persistence and stamp placement in `web/index.html` & `web/app.js`.
   independent-viewer reopening. Provider admission, execution evidence, and
   revocation remain separately measured gates.
 

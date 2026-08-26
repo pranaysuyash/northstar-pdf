@@ -2456,3 +2456,17 @@
   - `swift test` passed all **193 tests across 25 suites** with 0 failures.
   - Node web contracts and capability lane tests passed.
 - Durable audit report published at [`docs/audits/chaos-engineering-and-fault-injection-audit-per-pl2-0035.md`](docs/audits/chaos-engineering-and-fault-injection-audit-per-pl2-0035.md).
+
+### 2026-08-26 Boundary Systems Architecture Audit (PER-0933)
+
+- Adopted **Persona `PER-0933 — BOUNDARY SYSTEMS ARCHITECT`** (supported by `Product Architecture Specialist` and `Agent Protocol Architect`).
+- Mapped all 5 critical trust boundaries: Untrusted File Ingestion, Value-Free Observability, Cryptographic Disk Persistence, Pasteboard Normalization, and Temporary Staging to Atomic Export Publication.
+- **Untrusted Input Boundary:** Verified that non-PDF binary payloads are rejected before parsing.
+- **Cryptographic Storage Boundary:** Verified that in-memory identity PII crossing the disk boundary is authenticated and encrypted via AES-256-GCM.
+- **Staging to Publication Boundary:** Verified that exports stage in OS-isolated temporary locations and publish atomically without touching the source file.
+- **Privacy Provenance Boundary:** Verified that preflight and telemetry payloads crossing observability boundaries contain zero user PII.
+- **Regression Test Suite:** Added `Tests/PDFEditorCoreTests/BoundarySystemsArchitectTests.swift` (4 tests).
+- **Verification:**
+  - `swift test` passed all **202 tests across 27 suites** with 0 failures.
+  - Node web contracts and capability lane tests passed.
+- Durable audit report published at [`docs/audits/boundary-systems-architecture-audit-per-0933.md`](docs/audits/boundary-systems-architecture-audit-per-0933.md).

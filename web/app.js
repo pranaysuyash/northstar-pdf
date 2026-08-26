@@ -5449,3 +5449,83 @@
       el.style.cursor = "";
     });
   })();
+
+  // MARK: - Web Companion Signature Canvas (B5 Lane)
+  (() => {
+    const modal = document.getElementById("signatureModal");
+    const canvas = document.getElementById("signatureCanvas");
+    const openBtn = document.getElementById("signModalButton");
+    const clearBtn = document.getElementById("signatureClear");
+    const cancelBtn = document.getElementById("signatureCancel");
+    const saveBtn = document.getElementById("signatureSave");
+
+    if (!modal || !canvas || !openBtn) return;
+    const ctx = canvas.getContext("2d");
+    let isDrawing = false;
+    let hasDrawn = false;
+
+    function resetCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#000000";
+      hasDrawn = false;
+    }
+
+    openBtn.addEventListener("click", () => {
+      modal.hidden = false;
+      resetCanvas();
+    });
+
+    cancelBtn?.addEventListener("click", () => {
+      modal.hidden = true;
+    });
+
+    clearBtn?.addEventListener("click", () => {
+      resetCanvas();
+    });
+
+    function getCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    canvas.addEventListener("pointerdown", (e) => {
+      isDrawing = true;
+      hasDrawn = true;
+      const pt = getCoords(e);
+      ctx.beginPath();
+      ctx.moveTo(pt.x, pt.y);
+      e.preventDefault();
+    });
+
+    canvas.addEventListener("pointermove", (e) => {
+      if (!isDrawing) return;
+      const pt = getCoords(e);
+      ctx.lineTo(pt.x, pt.y);
+      ctx.stroke();
+    });
+
+    const stopDrawing = () => { isDrawing = false; };
+    canvas.addEventListener("pointerup", stopDrawing);
+    canvas.addEventListener("pointercancel", stopDrawing);
+
+    saveBtn?.addEventListener("click", () => {
+      if (!hasDrawn) {
+        modal.hidden = true;
+        return;
+      }
+      const dataURL = canvas.toDataURL("image/png");
+      try {
+        localStorage.setItem("pdf_editor_web_saved_sig", dataURL);
+      } catch (_) {}
+      modal.hidden = true;
+    });
+  })();

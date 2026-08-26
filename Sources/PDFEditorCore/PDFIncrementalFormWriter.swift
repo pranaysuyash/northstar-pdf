@@ -290,6 +290,41 @@ public enum PDFIncrementalFormWriter {
     return XrefInfo(entries: entries, trailer: trailer, size: max(size, declaredSize))
   }
 
+  /// Undo PNG row filters (None = 0, Up = 2) over predictor-encoded stream
+  /// bytes. Each row is prefixed with one filter byte. Rows using any other
+  /// filter, or a truncated final row, fail closed (nil) rather than
+  /// producing silently wrong output.
+  static func applyPngUpPredictor(_ data: [UInt8], columns: Int) -> [UInt8]? {
+    guard columns > 0 else { return nil }
+    let rowLength = columns + 1
+    guard data.count >= rowLength, data.count % rowLength == 0 else { return nil }
+    var previous = [UInt8](repeating: 0, count: columns)
+    var output: [UInt8] = []
+    output.reserveCapacity(data.count - (data.count / rowLength))
+    var position = 0
+    while position < data.count {
+      let filter = data[position]
+      let rowStart = position + 1
+      switch filter {
+      case 0:
+        let row = Array(data[rowStart..<(rowStart + columns)])
+        output.append(contentsOf: row)
+        previous = row
+      case 2:
+        var row = [UInt8](repeating: 0, count: columns)
+        for column in 0..<columns {
+          row[column] = data[rowStart + column] &+ previous[column]
+        }
+        output.append(contentsOf: row)
+        previous = row
+      default:
+        return nil
+      }
+      position += rowLength
+    }
+    return output
+  }
+
   static func inflateZlib(_ bytes: [UInt8]) -> [UInt8]? {
     guard bytes.count > 6 else { return nil }
     // zlib wrapper: 2-byte header + 4-byte Adler-32; COMPRESSION_ZLIB is raw

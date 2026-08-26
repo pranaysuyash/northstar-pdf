@@ -50,6 +50,7 @@ pages to visually verify the tokens:
 
 - http://127.0.0.1:4173/web/typography-specimen.html — type scale, weights, font stacks
 - http://127.0.0.1:4173/web/typography-regression.html — responsive viewport widths
+- http://127.0.0.1:4173/web/color-palette-specimen.html — all oklch tokens, WCAG contrast pairs
 
 See [`docs/design-system-specimen.md`](../design-system-specimen.md) for details.
 

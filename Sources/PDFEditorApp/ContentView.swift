@@ -5,15 +5,13 @@ import PDFKit
 import SwiftUI
 import UniformTypeIdentifiers
 
-// MARK: - Apple Design §13: haptic feedback helper
-// NSHapticFeedbackPerformer is an ObjC protocol; dispatch via selector.
-@MainActor
-private func hapticFeedback(_ pattern: NSHapticFeedbackManager.FeedbackPattern = .generic) {
-  let sel = NSSelectorFromString("performFeedback:performanceTime:")
-  let performer: AnyObject = NSHapticFeedbackManager.defaultPerformer as AnyObject
-  if performer.responds(to: sel) {
-    performer.perform(sel, with: pattern.rawValue as NSNumber, with: 0 as NSNumber)
-  }
+// MARK: - Apple Design §13: haptic feedback trigger values
+// Used with .sensoryFeedback modifier on buttons.
+private enum HapticTrigger {
+  static let open = UUID()
+  static let undo = UUID()
+  static let redo = UUID()
+  static let export = UUID()
 }
 
 extension NSImage {
@@ -70,6 +68,12 @@ public struct ContentView: View {
   @State private var searchProjectionState: SearchProjectionState = .none
   @State private var isAgentCommandPresented = false
   @State private var isSecurityVaultPresented = false
+  // Apple Design §13: haptic trigger tokens
+  @State private var hapticNew = UUID()
+  @State private var hapticOpen = UUID()
+  @State private var hapticUndo = UUID()
+  @State private var hapticRedo = UUID()
+  @State private var hapticExport = UUID()
 
   public init(model: AppModel, searchFocusEvent: Binding<Int> = .constant(0)) {
     self.model = model
@@ -142,7 +146,7 @@ public struct ContentView: View {
           model.commitRedactions()
         }
       } message: {
-        let count = model.operations.filter { $0.kind == .redactMark }.count
+        let count = model.redactionMarkCount
         Text(
           "This will permanently remove content under \(count) marked region\(count == 1 ? "" : "s") in a separate new PDF copy. The original file is never overwritten.\n\nThis action cannot be undone."
         )
@@ -204,39 +208,85 @@ public struct ContentView: View {
       .onChange(of: model.readerZoom) { _, _ in model.scheduleViewStateAutosave() }
       .onChange(of: model.readerRotation) { _, _ in model.scheduleViewStateAutosave() }
     } else {
-      WelcomeView(open: requestOpenDocument)
+      WelcomeView(
+        open: requestOpenDocument,
+        createBlank: { size in model.newDocument(pageSize: size) },
+        createFromImages: { model.presentNewFromImagesPanel() },
+        createFromClipboard: { model.newDocumentFromClipboard() }
+      )
     }
   }
 
   @ToolbarContentBuilder
   private var appToolbar: some ToolbarContent {
     ToolbarItemGroup {
+
+      Button("New", systemImage: "doc.badge.plus") {
+        hapticNew = UUID()
+        requestNewDocument()
+      }
+      .accessibilityLabel("New blank PDF")
+      .sensoryFeedback(.impact, trigger: hapticNew)
+      .help("Create a new blank PDF document in this window.")
+
       Button("Open", systemImage: "folder") {
-        hapticFeedback(.generic)
+        hapticOpen = UUID()
         requestOpenDocument()
       }
       .accessibilityLabel("Open PDF")
+      .sensoryFeedback(.impact, trigger: hapticOpen)
       .help("Open another PDF. The current document remains open until the new PDF is admitted.")
 
+
       Button("Undo", systemImage: "arrow.uturn.backward") {
-        hapticFeedback(.levelChange)
+        hapticUndo = UUID()
         model.undoLastEdit()
       }
       .accessibilityLabel("Undo last edit")
+      .sensoryFeedback(.decrease, trigger: hapticUndo)
       .disabled(!model.canUndo)
 
+
       Button("Redo", systemImage: "arrow.uturn.forward") {
-        hapticFeedback(.levelChange)
+        hapticRedo = UUID()
         model.redoLastEdit()
       }
       .accessibilityLabel("Redo last edit")
+      .sensoryFeedback(.increase, trigger: hapticRedo)
       .disabled(!model.canRedo)
 
       Menu {
+
         Button("Export Copy…", systemImage: "square.and.arrow.down") {
-          hapticFeedback(.generic)
+          hapticExport = UUID()
           model.export()
         }
+        .sensoryFeedback(.success, trigger: hapticExport)
+
+        Button("Export Sanitized Copy (No Metadata)…", systemImage: "lock.shield") {
+          let panel = NSSavePanel()
+          panel.allowedContentTypes = [.pdf]
+          panel.nameFieldStringValue = "Sanitized-\(model.inspection?.source.fileName ?? "document.pdf")"
+          panel.begin { response in
+            if response == .OK, let url = panel.url {
+              _ = model.sanitizeAndExportCopy(destination: url)
+            }
+          }
+        }
+
+        Button("Extract / Split Pages…", systemImage: "arrow.triangle.pull") {
+          let panel = NSSavePanel()
+          panel.allowedContentTypes = [.pdf]
+          panel.nameFieldStringValue = "Extracted-Page\(model.selectedPageIndex + 1).pdf"
+          panel.begin { response in
+            if response == .OK, let url = panel.url {
+              _ = model.splitPageRange(from: model.selectedPageIndex, to: model.selectedPageIndex, destination: url)
+            }
+          }
+        }
+
+        Divider()
+
         Button("Export Flattened Copy…", systemImage: "printer.dotmatrix") {
           let panel = NSSavePanel()
           panel.allowedContentTypes = [.pdf]
@@ -294,6 +344,8 @@ public struct ContentView: View {
       .buttonStyle(.plain)
       .keyboardShortcut("k", modifiers: .command)
       .disabled(model.inspection == nil)
+      .accessibilityLabel("Agent Command Palette")
+      .accessibilityHint("⌘K. Semantic actions, bulk fill, OCR, and diff tools.")
       .help("Open Agent Command Palette (⌘K) for semantic actions, bulk fill, OCR, and diff tools.")
     }
 
@@ -359,6 +411,8 @@ public struct ContentView: View {
             .clipShape(Capsule())
           }
           .buttonStyle(.plain)
+          .accessibilityLabel(model.fillProgressLabel ?? "Start filling")
+          .accessibilityHint("Switches to fill mode to populate form fields")
         }
 
         if model.editorMode == .fill, let label = model.fillProgressLabel {
@@ -384,14 +438,10 @@ public struct ContentView: View {
   }
 
   private func openImportedPDF(_ url: URL) {
-    guard let candidate = PDFDocument(url: url) else {
-      model.alertMessage = "The selected PDF could not be opened. The current document remains open."
-      return
-    }
-    guard candidate.isLocked || candidate.pageCount > 0 else {
-      model.alertMessage = "The selected PDF contains no readable pages. The current document remains open."
-      return
-    }
+    // No probe parse: a throwaway `PDFDocument(url:)` used to parse the whole
+    // file just to validate readability before `model.open` parsed it again.
+    // `open` keeps the current document on failure and reports the provider's
+    // own locked/empty/unreadable diagnostics.
     model.open(url: url)
   }
 
@@ -411,6 +461,23 @@ public struct ContentView: View {
     alert.addButton(withTitle: "Cancel")
     guard alert.runModal() == .alertFirstButtonReturn else { return }
     model.isImporterPresented = true
+  }
+
+  private func requestNewDocument() {
+    let decision = model.lifecycleDecision(for: .newDocument)
+    guard decision.disposition == .confirmBeforeDiscardingChanges else {
+      model.newDocument()
+      return
+    }
+
+    let alert = NSAlert()
+    alert.alertStyle = .warning
+    alert.messageText = "This document has unexported changes."
+    alert.informativeText = "New Document replaces this window's document with a blank PDF. Export Copy... creates a separate edited PDF and never overwrites the source. A recoverable session is kept for the current document."
+    alert.addButton(withTitle: "Create New Document")
+    alert.addButton(withTitle: "Cancel")
+    guard alert.runModal() == .alertFirstButtonReturn else { return }
+    model.newDocument()
   }
 }
 
@@ -454,6 +521,10 @@ private struct RecoveryStatusBanner: View {
 // MARK: - Welcome View
 private struct WelcomeView: View {
   let open: () -> Void
+  let createBlank: (CGSize) -> Void
+  let createFromImages: () -> Void
+  let createFromClipboard: () -> Void
+  @State private var pageSize = AppModel.ScratchPageSize.letter
 
   var body: some View {
     VStack(spacing: 20) {
@@ -469,17 +540,44 @@ private struct WelcomeView: View {
       VStack(spacing: 6) {
         Text("Northstar Document Workbench")
           .font(.title2.weight(.semibold))
-        Text("Local-first PDF reader, verified completion, and agentic intelligence without disturbing source bytes.")
+        Text("Local-first PDF reader and editor: open a PDF, create one from scratch, or assemble pages from images.")
           .font(.subheadline)
           .foregroundStyle(.secondary)
           .multilineTextAlignment(.center)
           .frame(maxWidth: 480)
       }
 
-      Button("Open a PDF…", action: open)
-        .keyboardShortcut(.defaultAction)
+      HStack(spacing: 12) {
+        Button("Open a PDF…", action: open)
+          .keyboardShortcut(.defaultAction)
+          .buttonStyle(.bordered)
+          .controlSize(.large)
+
+        Button {
+          createBlank(pageSize.size)
+        } label: {
+          Label("Create Blank PDF", systemImage: "doc.badge.plus")
+        }
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
+
+        Menu {
+          Button("From Images…") { createFromImages() }
+          Button("From Clipboard") { createFromClipboard() }
+        } label: {
+          Label("New From…", systemImage: "plus.square.on.square")
+        }
+        .controlSize(.large)
+      }
+
+      Picker("Page size", selection: $pageSize) {
+        ForEach(AppModel.ScratchPageSize.all) { size in
+          Text(size.id).tag(size)
+        }
+      }
+      .pickerStyle(.segmented)
+      .frame(width: 280)
+      .help("Page size used when creating a blank PDF.")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .padding(40)

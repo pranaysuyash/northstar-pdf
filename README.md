@@ -111,6 +111,8 @@ Current durable research artifacts:
 - [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](docs/audits/local-persistence-product-surface-evidence-2026-08-25.md): native and browser
   backup UI, lost-passphrase guidance, quota education, Keychain/profile
   unlock, ciphertext-only worker validation, and portable cross-device recovery.
+- [`docs/audits/full-fidelity-open-items-evidence-2026-08-25.md`](docs/audits/full-fidelity-open-items-evidence-2026-08-25.md): rotated and non-zero crop-box replay, browser AcroForm semantic matrix, encrypted companion export, signature integrity, redaction completeness, PDF/UA baseline, and GUI/independent-viewer evidence with remaining long-term gates.
+- [`benchmark/mupdf-independent-validator.mjs`](benchmark/mupdf-independent-validator.mjs) and [`Tests/mupdf_independent_validator_test.mjs`](Tests/mupdf_independent_validator_test.mjs): MuPDF text/raster/reopen control evidence for browser no-op exports, with edited-operation mapping explicitly unmeasured until its crop/rotation authorization lane is wired.
 - [`docs/audits/template-review-workflow-evidence-2026-08-25.md`](docs/audits/template-review-workflow-evidence-2026-08-25.md),
   [`Sources/PDFEditorCore/TemplateRuntimeContracts.swift`](Sources/PDFEditorCore/TemplateRuntimeContracts.swift),
   and [`web/pdf-template-contract.mjs`](web/pdf-template-contract.mjs): native

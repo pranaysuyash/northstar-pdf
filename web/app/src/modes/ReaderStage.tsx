@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { pdfController } from "../pdf/PdfController";
-import type { PdfSnapshot } from "../pdf/PdfController";
+import type { MatchRect, PdfSnapshot } from "../pdf/PdfController";
 import { CapabilityNotice } from "./ModePanels";
 
 export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [password, setPassword] = useState("");
+  const [matchRects, setMatchRects] = useState<MatchRect[]>([]);
   const passwordOpen = snapshot.status === "password";
 
   useEffect(() => {
@@ -24,6 +25,19 @@ export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
     snapshot.fitMode,
     snapshot.rotation
   ]);
+
+  useEffect(() => {
+    if (snapshot.status !== "ready" || !snapshot.renderedAt) return;
+    let cancelled = false;
+    void pdfController.getMatchRects(snapshot.currentPage).then((rects) => {
+      if (!cancelled) setMatchRects(rects);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [snapshot.status, snapshot.renderedAt, snapshot.currentPage, snapshot.matches, snapshot.searchQuery]);
+
+  const firstMatchOnPage = snapshot.matches.findIndex((match) => match.page === snapshot.currentPage);
 
   return (
     <>
@@ -45,7 +59,25 @@ export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
 
       <div className="pdf-stage" id="viewerCanvasWrap">
         {snapshot.status === "ready" ? (
-          <canvas ref={canvasRef} aria-label="PDF page rendering" />
+          <div className="pdf-page-wrap">
+            <canvas ref={canvasRef} aria-label="PDF page rendering" />
+            <div className="match-highlight-layer" aria-hidden="true">
+              {matchRects.map((rect, i) => (
+                <span
+                  key={i}
+                  className={`match-highlight${
+                    firstMatchOnPage + i === snapshot.activeMatchIndex ? " is-active" : ""
+                  }`}
+                  style={{
+                    left: rect.left,
+                    top: rect.top,
+                    width: rect.width,
+                    height: rect.height
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         ) : (
           <p className="pdf-stage-empty small muted">
             {snapshot.status === "failed"

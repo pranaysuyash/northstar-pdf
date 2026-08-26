@@ -4,6 +4,7 @@ import Testing
 
 import PDFEditorRecovery
 
+@Suite(.serialized)
 struct RecoveryCrashInterruptionTests {
   private enum ScenarioMode: String {
     case firstSave = "first-save"

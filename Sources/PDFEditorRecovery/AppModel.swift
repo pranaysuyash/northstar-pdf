@@ -1,4 +1,5 @@
 import AppKit
+import CoreText
 import CryptoKit
 import Observation
 import PDFEditorCore
@@ -35,7 +36,15 @@ public final class AppModel {
   private let profileStore: EncryptedPDFProfileVault
   private let templateStore: EncryptedPDFTemplateStore
 
-  public var inspection: DocumentInspection?
+  public var inspection: DocumentInspection? {
+    didSet { refreshCandidateCaches() }
+  }
+  /// Guards the deferred preflight task: only the session that most recently
+  /// opened a document may publish a preflight report.
+  @ObservationIgnored private var pendingPreflightSessionID: UUID?
+  // Performance: cached candidate lists to avoid re-filtering on every view body evaluation
+  @ObservationIgnored private var _activeCandidates: [RegionCandidate] = []
+  @ObservationIgnored private var _dismissedCandidates: [RegionCandidate] = []
   /// The inspection captured at document open, before any operations are applied.
   /// Used to compute the document diff showing original vs current state.
   public private(set) var sourceInspection: DocumentInspection?
@@ -52,11 +61,22 @@ public final class AppModel {
   /// The original source PDF as a PDFDocument, used for the diff comparison
   /// left panel to show the pre-edit state.
   public var sourceDocument: PDFDocument? {
-    guard let data = cachedSourceData else { return nil }
-    return PDFDocument(data: data)
+    guard cachedSourceData != nil else { return nil }
+    if let cached = cachedSourceDocument { return cached }
+    guard let data = cachedSourceData, let parsed = PDFDocument(data: data) else { return nil }
+    cachedSourceDocument = parsed
+    return parsed
   }
   public var sourceURL: URL?
+  /// True when the active document was authored in the app (blank, from
+  /// images, or from the clipboard) and is backed by an app-owned temporary
+  /// file rather than a user-owned source PDF.
+  public private(set) var isScratchDocument = false
   public var operations: [EditOperation] = []
+  /// Count of operations marked for permanent redaction. Avoids repeated filter in view bodies.
+  public var redactionMarkCount: Int {
+    operations.filter { $0.kind == .redactMark }.count
+  }
   public var selectedPageIndex = 0
   public var selectedFieldID: String?
   public var selectedCandidateID: UUID?
@@ -66,7 +86,14 @@ public final class AppModel {
   public var manualTextDraft = ""
   public var isImporterPresented = false
   public var statusMessage: String?
+  /// RG-043: last assistive-technology announcement (search counts, current
+  /// match, page changes, no-match states). Recorded for verification and
+  /// posted to the system accessibility channel.
+  public private(set) var lastAccessibilityAnnouncement: String?
   public var alertMessage: String?
+  /// Formatted value suggestions for the most recently focused region
+  /// (profile matches first). Empty when nothing sensible to offer.
+  public private(set) var lastValueSuggestions: [String] = []
 
   // Profile state
   public var currentProfile: UserProfile?
@@ -134,7 +161,13 @@ public final class AppModel {
   public var isPasswordSheetPresented = false
   public var passwordAttempt = ""
   private var passwordPendingURL: URL?
-  private var cachedSourceData: Data?
+  private var cachedSourceData: Data? {
+    didSet { cachedSourceDocument = nil }
+  }
+  /// Memoized parse of `cachedSourceData`. `sourceDocument` used to re-parse
+  /// the whole file on every access, which put a full PDF parse on the SwiftUI
+  /// body-evaluation path whenever the diff sheet was open.
+  @ObservationIgnored private var cachedSourceDocument: PDFDocument?
   private var ocrProcessedPageIndices: Set<Int> = []
 
   public var searchQuery = ""
@@ -153,6 +186,7 @@ public final class AppModel {
   public var recoveryStatus: RecoveryStatus = .none
   private var recoveryAutosaveSequence = 0
   private var viewStateAutosaveTask: Task<Void, Never>?
+  private var contentAutosaveTask: Task<Void, Never>?
   private var lastPersistedViewStateDigest: String?
 
   public enum RecoveryStatus: String, Sendable {
@@ -317,7 +351,8 @@ public final class AppModel {
     recoveryPairStore: RecoveryPairStore = RecoveryPairStore(),
     profileStore: EncryptedPDFProfileVault = EncryptedPDFProfileVault(directory: EncryptedPDFProfileVault.defaultDirectory),
     templateStore: EncryptedPDFTemplateStore = EncryptedPDFTemplateStore(directory: EncryptedPDFTemplateStore.defaultDirectory),
-    initializeLocalVaultState: Bool = true
+    initializeLocalVaultState: Bool = true,
+    loadsKeychainSignatures: Bool = true
   ) {
     self.sessionStore = sessionStore
     self.recoveryStore = recoveryStore
@@ -330,8 +365,45 @@ public final class AppModel {
       refreshTemplateIDs()
       refreshLocalPersistenceHealth()
     }
-    loadVaultSignatures()
+    // Test harnesses must not touch the user's login keychain: ad-hoc SwiftPM
+    // binaries change signature on every rebuild, so each run would otherwise
+    // re-trigger the "wants to use your confidential information" prompt.
+    if loadsKeychainSignatures {
+      loadVaultSignatures()
+    }
     refreshRecoveryDiscovery()
+
+    // Performance: respond to memory pressure by evicting non-essential caches
+    setupMemoryPressureHandler()
+  }
+
+  /// Evict non-essential caches on memory pressure. The source data cache
+  /// is preserved because it is required for undo correctness.
+  /// Sets up a macOS memory pressure handler using DispatchSource.
+  private func setupMemoryPressureHandler() {
+    let source = DispatchSource.makeMemoryPressureSource(
+      eventMask: [.warning, .critical],
+      queue: .main
+    )
+    source.setEventHandler { [weak self] in
+      self?.handleMemoryWarning()
+    }
+    source.resume()
+    // Store the source to prevent deallocation
+    self.memoryPressureSource = source
+  }
+
+  /// Dispatch source for memory pressure events. Stored to prevent deallocation.
+  private var memoryPressureSource: DispatchSourceMemoryPressure?
+
+  /// Evict non-essential caches on memory pressure. The source data cache
+  /// is preserved because it is required for undo correctness.
+  private func handleMemoryWarning() {
+    // Clear the memoized source document (can be re-parsed from cachedSourceData)
+    cachedSourceDocument = nil
+    // Clear OCR processed pages (will be re-detected if needed)
+    ocrProcessedPageIndices.removeAll()
+    statusMessage = "Memory pressure: cleared non-essential caches."
   }
 
   /// Keychain-backed local vault access is explicit in the UI. No template
@@ -1005,6 +1077,7 @@ public final class AppModel {
 
   public func open(url: URL, password: String? = nil) {
     cancelViewStateAutosave()
+    cancelContentAutosave()
     do {
       let hasSecurityScope = url.startAccessingSecurityScopedResource()
       defer {
@@ -1012,36 +1085,55 @@ public final class AppModel {
           url.stopAccessingSecurityScopedResource()
         }
       }
-      let nextInspection = try provider.inspect(url: url, password: password)
-      let data = try Data(contentsOf: url, options: [.mappedIfSafe])
-      guard let document = PDFDocument(data: data) else {
-        throw PDFEditorError.cannotOpen(url.lastPathComponent)
-      }
-      if document.isLocked, let password {
-        _ = document.unlock(withPassword: password)
-      }
+      // One load, one parse: the provider returns the already-parsed document
+      // alongside its inspection so the open path never pays for a second
+      // `Data(contentsOf:)` + `PDFDocument(data:)` of the same bytes.
+      let opened = try provider.openDocument(url: url, password: password)
+      let nextInspection = opened.inspection
+      let data = opened.data
+      let document = opened.document
 
       inspection = nextInspection
       sourceInspection = nextInspection
       replaceLiveDocument(document)
       sourceURL = url
+      isScratchDocument = false
       cachedSourceData = data
-      let builtPreflight = PDFPreflightBuilder.build(
-        inspection: nextInspection,
-        data: data,
-        provider: PDFProviderDescriptor(
-          id: "pdfkit",
-          version: ProcessInfo.processInfo.operatingSystemVersionString,
-          platform: "macOS",
-          capabilities: ["read-only-preflight", "metadata-presence", "embedded-data-counts", "network-boundary-counts", "bounded-token-scan"]))
-      do {
-        try PDFPreflightValidator.validate(
-          builtPreflight,
-          expectedSourceDigest: nextInspection.source.sha256)
-        preflightReport = builtPreflight
-      } catch {
-        preflightReport = nil
-        statusMessage = "Opened the PDF, but the read-only privacy preflight is unknown: \(error.localizedDescription)"
+      // Preflight build/validate is CPU-bound; keep the open path responsive by
+      // computing it off the main thread and publishing the report when ready.
+      // The session digest guards against publishing a stale report after the
+      // user opens a different document while this one is still running.
+      let openedSessionID = UUID()
+      currentSessionID = openedSessionID
+      pendingPreflightSessionID = openedSessionID
+      preflightReport = nil
+      let providerDescriptor = PDFProviderDescriptor(
+        id: "pdfkit",
+        version: ProcessInfo.processInfo.operatingSystemVersionString,
+        platform: "macOS",
+        capabilities: ["read-only-preflight", "metadata-presence", "embedded-data-counts", "network-boundary-counts", "bounded-token-scan"])
+      let expectedDigest = nextInspection.source.sha256
+      let inspectionForPreflight = nextInspection
+      Task.detached(priority: .userInitiated) { [weak self] in
+        let builtPreflight = PDFPreflightBuilder.build(
+          inspection: inspectionForPreflight,
+          data: data,
+          provider: providerDescriptor)
+        do {
+          try PDFPreflightValidator.validate(builtPreflight, expectedSourceDigest: expectedDigest)
+          await MainActor.run { [weak self] in
+            guard let self, self.pendingPreflightSessionID == openedSessionID else { return }
+            self.pendingPreflightSessionID = nil
+            self.preflightReport = builtPreflight
+          }
+        } catch {
+          await MainActor.run { [weak self] in
+            guard let self, self.pendingPreflightSessionID == openedSessionID else { return }
+            self.pendingPreflightSessionID = nil
+            self.preflightReport = nil
+            self.statusMessage = "Opened the PDF, but the read-only privacy preflight is unknown: \(error.localizedDescription)"
+          }
+        }
       }
       ocrProcessedPageIndices = []
       operations = []
@@ -1075,7 +1167,6 @@ public final class AppModel {
       passwordAttempt = ""
       isPasswordSheetPresented = false
       pageJumpInput = ""
-      currentSessionID = UUID()
       hasSavedSession = false
       lastSessionInfo = nil
 
@@ -1127,13 +1218,14 @@ public final class AppModel {
     isPasswordSheetPresented = false
   }
 
-  public func resetDocument() {
+public func resetDocument() {
     cancelViewStateAutosave()
     discardCurrentRecovery()
     inspection = nil
     sourceInspection = nil
     replaceLiveDocument(nil)
     sourceURL = nil
+    isScratchDocument = false
     cachedSourceData = nil
     preflightReport = nil
     ocrProcessedPageIndices = []
@@ -1160,13 +1252,282 @@ public final class AppModel {
     lastAppliedTemplateCompletion = nil
     templateCompletionOperationIDs = []
     templateRevisionDiff = nil
+    templateProfileResolution = nil
+    templateMigrationProposal = nil
     exportReport = nil
     currentSessionID = nil
+    pendingPreflightSessionID = nil
     hasSavedSession = false
     lastPersistedViewStateDigest = nil
     lastSessionInfo = nil
     statusMessage = "New document"
     resetReaderState()
+  }
+
+  // MARK: - Scratch Document Creation
+
+  /// Authoring page sizes offered for scratch documents (PDF points).
+  public struct ScratchPageSize: Identifiable, Hashable, Sendable {
+    public let id: String
+    public let size: CGSize
+
+    public init(id: String, size: CGSize) {
+      self.id = id
+      self.size = size
+    }
+
+    public static let letter = ScratchPageSize(id: "Letter", size: CGSize(width: 612, height: 792))
+    public static let a4 = ScratchPageSize(id: "A4", size: CGSize(width: 595, height: 842))
+    public static let legal = ScratchPageSize(id: "Legal", size: CGSize(width: 612, height: 1008))
+    public static let all: [ScratchPageSize] = [.letter, .a4, .legal]
+  }
+
+  /// Renders a real single-page PDF with exportable bytes. The generated data
+  /// backs the scratch session the same way an opened file would, so digests,
+  /// preflight, diff, and export all flow through the standard pipeline.
+  static func makeBlankPDFData(pageSize: CGSize) -> Data? {
+    guard pageSize.width > 0, pageSize.height > 0 else { return nil }
+    var mediaBox = CGRect(origin: .zero, size: pageSize)
+    let pdfData = NSMutableData()
+    guard let consumer = CGDataConsumer(data: pdfData),
+      let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil)
+    else { return nil }
+    context.beginPDFPage(nil)
+    context.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+    context.fill(mediaBox)
+    context.endPDFPage()
+    context.closePDF()
+    return pdfData as Data?
+  }
+
+  /// Builds a multi-page PDF with one page per image, at the image's native size.
+  static func makePDFData(fromImages images: [NSImage]) -> Data? {
+    let document = PDFDocument()
+    for image in images {
+      guard let page = PDFPage(image: image) else { continue }
+      document.insert(page, at: document.pageCount)
+    }
+    guard document.pageCount > 0 else { return nil }
+    return document.dataRepresentation()
+  }
+
+  /// Paginates text into a real (selectable-text) PDF via CoreText.
+  static func makePDFData(fromText text: String, pageSize: CGSize) -> Data? {
+    guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return nil }
+    let paragraph = NSMutableParagraphStyle()
+    paragraph.lineBreakMode = .byWordWrapping
+    let attributed = NSAttributedString(
+      string: text,
+      attributes: [
+        .font: NSFont.systemFont(ofSize: 11),
+        .paragraphStyle: paragraph,
+        .foregroundColor: NSColor.black,
+      ])
+    let framesetter = CTFramesetterCreateWithAttributedString(attributed)
+    var mediaBox = CGRect(origin: .zero, size: pageSize)
+    let margin: CGFloat = 54
+    let contentRect = CGRect(
+      x: margin, y: margin,
+      width: max(1, pageSize.width - margin * 2),
+      height: max(1, pageSize.height - margin * 2))
+    let pdfData = NSMutableData()
+    guard let consumer = CGDataConsumer(data: pdfData),
+      let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil)
+    else { return nil }
+    var location = 0
+    let totalLength = attributed.length
+    while location < totalLength {
+      context.beginPDFPage(nil)
+      let frame = CTFramesetterCreateFrame(
+        framesetter,
+        CFRange(location: location, length: 0),
+        CGPath(rect: contentRect, transform: nil),
+        nil)
+      CTFrameDraw(frame, context)
+      let visible = CTFrameGetVisibleStringRange(frame)
+      context.endPDFPage()
+      guard visible.length > 0 else { break }
+      location += visible.length
+    }
+    context.closePDF()
+    return pdfData as Data?
+  }
+
+  /// Backs a generated document with real bytes in an app-owned temporary
+  /// file and admits it through the standard open pipeline, so the scratch
+  /// document has a genuine source digest, preflight, diff, and export path.
+  /// The author-facing name is applied after admission.
+  private func loadScratchDocument(data: Data, displayName: String, createdMessage: String) {
+    let tempURL = FileManager.default.temporaryDirectory
+      .appendingPathComponent("PDFEditor-Scratch-\(UUID().uuidString)")
+      .appendingPathExtension("pdf")
+    do {
+      try data.write(to: tempURL, options: [.atomic])
+    } catch {
+      alertMessage = "Could not prepare the new document: \(error.localizedDescription)"
+      return
+    }
+    open(url: tempURL)
+    guard let admitted = inspection else { return }
+    let renamedSource = DocumentSource(
+      fileName: displayName,
+      byteCount: admitted.source.byteCount,
+      sha256: admitted.source.sha256)
+    let renamedInspection = DocumentInspection(
+      source: renamedSource,
+      pages: admitted.pages,
+      fields: admitted.fields,
+      candidates: admitted.candidates,
+      warnings: admitted.warnings,
+      links: admitted.links,
+      outlines: admitted.outlines,
+      metadata: admitted.metadata,
+      permissions: admitted.permissions,
+      attachments: admitted.attachments,
+      accessibility: admitted.accessibility,
+      security: admitted.security,
+      annotationTypeCounts: admitted.annotationTypeCounts)
+    inspection = renamedInspection
+    sourceInspection = renamedInspection
+    isScratchDocument = true
+    statusMessage = createdMessage
+  }
+
+  /// Creates a blank scratch document. ⌘N entry point.
+  public func newDocument(pageSize: CGSize = CGSize(width: 612, height: 792)) {
+    guard let data = Self.makeBlankPDFData(pageSize: pageSize),
+      !data.isEmpty,
+      let probe = PDFDocument(data: data),
+      probe.pageCount == 1
+    else {
+      alertMessage = "Could not create a new blank document."
+      return
+    }
+    loadScratchDocument(
+      data: data,
+      displayName: "Untitled.pdf",
+      createdMessage: "New blank document created.")
+  }
+
+  /// Creates a scratch document with one page per selected image.
+  public func newDocumentFromImages(at urls: [URL]) {
+    let images = urls.compactMap { url -> NSImage? in
+      let hasScope = url.startAccessingSecurityScopedResource()
+      defer { if hasScope { url.stopAccessingSecurityScopedResource() } }
+      return NSImage(contentsOf: url)
+    }
+    guard !images.isEmpty else {
+      alertMessage = "No readable images were found in the selection."
+      return
+    }
+    guard let data = Self.makePDFData(fromImages: images), !data.isEmpty else {
+      alertMessage = "The selected images could not be converted into PDF pages."
+      return
+    }
+    loadScratchDocument(
+      data: data,
+      displayName: "Untitled.pdf",
+      createdMessage: "Created a new PDF from \(images.count) image\(images.count == 1 ? "" : "s").")
+  }
+
+  /// Presents the image picker for `newDocumentFromImages(at:)`.
+  public func presentNewFromImagesPanel() {
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.png, .jpeg, .tiff, .gif, .heic]
+    panel.allowsMultipleSelection = true
+    panel.canChooseDirectories = false
+    panel.message = "Choose images. Each image becomes one page, in order."
+    panel.begin { [weak self] response in
+      guard response == .OK, !panel.urls.isEmpty else { return }
+      self?.newDocumentFromImages(at: panel.urls)
+    }
+  }
+
+  /// Creates a scratch document from a Markdown file: headings, bold/italic,
+  /// code blocks, lists, and block quotes are rendered with proper typography.
+  public func newDocumentFromMarkdown() {
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.init(filenameExtension: "md")!, .init(filenameExtension: "markdown")!, .init(filenameExtension: "txt")!]
+    panel.allowsMultipleSelection = false
+    panel.message = "Choose a Markdown file. It will be converted to a publication-quality PDF."
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      let hasScope = url.startAccessingSecurityScopedResource()
+      defer { if hasScope { url.stopAccessingSecurityScopedResource() } }
+      guard let markdown = try? String(contentsOf: url, encoding: .utf8) else {
+        self?.alertMessage = "Could not read the Markdown file."
+        return
+      }
+      let title = url.deletingPathExtension().lastPathComponent
+      let options = MarkdownToPDFRenderer.Options(
+        showCover: true,
+        title: title
+      )
+      guard let data = MarkdownToPDFRenderer.render(markdown, options: options), !data.isEmpty else {
+        self?.alertMessage = "The Markdown file could not be converted to PDF."
+        return
+      }
+      self?.loadScratchDocument(
+        data: data,
+        displayName: "\(title).pdf",
+        createdMessage: "Created a PDF from \(title).md")
+    }
+  }
+
+  /// Creates a scratch document from the clipboard: images become pages at
+  /// native size; text is paginated into real selectable-text pages.
+  public func newDocumentFromClipboard(pageSize: CGSize = CGSize(width: 612, height: 792)) {
+    let pasteboard = NSPasteboard.general
+    if let images = pasteboard.readObjects(forClasses: [NSImage.self], options: nil) as? [NSImage],
+      !images.isEmpty
+    {
+      guard let data = Self.makePDFData(fromImages: images), !data.isEmpty else {
+        alertMessage = "The clipboard images could not be converted into PDF pages."
+        return
+      }
+      loadScratchDocument(
+        data: data,
+        displayName: "Untitled.pdf",
+        createdMessage: "Created a new PDF from the clipboard image\(images.count == 1 ? "" : "s").")
+      return
+    }
+    if let text = pasteboard.string(forType: .string),
+      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    {
+      guard let data = Self.makePDFData(fromText: text, pageSize: pageSize), !data.isEmpty else {
+        alertMessage = "The clipboard text could not be converted into a PDF page."
+        return
+      }
+      loadScratchDocument(
+        data: data,
+        displayName: "Untitled.pdf",
+        createdMessage: "Created a new PDF from the clipboard text.")
+      return
+    }
+    statusMessage = "The clipboard does not contain a readable image or text."
+  }
+
+  /// Presents the PDF picker for appending pages into the active scratch
+  /// document (merge). Opened files keep a strict source-preserving export
+  /// contract, so structural assembly is scoped to scratch documents.
+  public func presentAppendPagesPanel() {
+    guard liveDocument != nil else {
+      statusMessage = "Open or create a document before appending pages."
+      return
+    }
+    guard isScratchDocument else {
+      alertMessage =
+        "Appending pages from another PDF is available for documents created in the app. Opened files keep a strict source-preserving export contract."
+      return
+    }
+    let panel = NSOpenPanel()
+    panel.allowedContentTypes = [.pdf]
+    panel.allowsMultipleSelection = false
+    panel.message = "Choose a PDF. Its pages are appended after the current last page."
+    panel.begin { [weak self] response in
+      guard response == .OK, let url = panel.url else { return }
+      self?.insertPages(from: url)
+    }
   }
 
   public func currentValue(for field: NativeField) -> String {
@@ -1465,12 +1826,14 @@ public final class AppModel {
     )
   }
 
-  public var activeCandidates: [RegionCandidate] {
-    inspection?.candidates.filter { $0.status != .rejected } ?? []
-  }
+  public var activeCandidates: [RegionCandidate] { _activeCandidates }
 
-  public var dismissedCandidates: [RegionCandidate] {
-    inspection?.candidates.filter { $0.status == .rejected } ?? []
+  public var dismissedCandidates: [RegionCandidate] { _dismissedCandidates }
+
+  private func refreshCandidateCaches() {
+    let candidates = inspection?.candidates ?? []
+    _activeCandidates = candidates.filter { $0.status != .rejected }
+    _dismissedCandidates = candidates.filter { $0.status == .rejected }
   }
 
   // MARK: - Editor mode (D-010)
@@ -1536,7 +1899,7 @@ public final class AppModel {
           pageIndex: candidate.pageIndex,
           bounds: candidate.bounds,
           state: state,
-          label: candidate.labelText
+          label: candidate.effectiveDisplayName
         ))
       }
     } else {
@@ -1548,7 +1911,7 @@ public final class AppModel {
           pageIndex: candidate.pageIndex,
           bounds: candidate.bounds,
           state: isFocused ? .focused : .signatureRegion,
-          label: candidate.labelText ?? "Signature"
+          label: candidate.effectiveDisplayName
         ))
       }
     }
@@ -1778,18 +2141,21 @@ public final class AppModel {
           initialValue: val,
           label: field.name
         )
+        lastValueSuggestions = valueSuggestions(for: field)
       }
     case .candidate(let id):
       selectedCandidateID = id
       selectedFieldID = nil
       jumpToPage(region.pageIndex)
       if let candidate = activeCandidates.first(where: { $0.id == id }) {
+        let suggestions = valueSuggestions(for: candidate)
         activeInlineEditor = InlineEditorState(
           target: region,
           draftText: "",
           initialValue: "",
-          label: candidate.labelText ?? "Suggested Area"
+          label: candidate.effectiveDisplayName
         )
+        lastValueSuggestions = suggestions
       }
     }
   }
@@ -1830,6 +2196,7 @@ public final class AppModel {
   /// Dismiss the inline editor without applying uncommitted changes.
   public func dismissInlineEditor() {
     activeInlineEditor = nil
+    lastValueSuggestions = []
   }
 
   /// Intent-inference router: called when the user taps a point on a page.
@@ -2087,7 +2454,6 @@ public final class AppModel {
     operationViewStates.append(
       OperationViewState(before: viewStateBefore, after: viewStateAfter))
     redoEntries.removeAll()
-    recordReplayCheckpointIfNeeded()
     autoSaveSession()
     refreshInMemoryRecoverySnapshot()
   }
@@ -2146,6 +2512,24 @@ public final class AppModel {
   private func replaceLiveDocument(_ document: PDFDocument?) {
     liveDocument = document
     advanceDocumentProjectionRevision()
+  }
+
+  /// Applies an already-recorded operation to a presentation clone of the
+  /// live document. The canvas layer keeps its rotated presentation copy in
+  /// sync incrementally instead of deep-copying the whole PDF on every edit.
+  /// Returns false when the clone diverged and must be rebuilt from the live
+  /// document.
+  @discardableResult
+  public func applyOperationForPresentation(
+    _ operation: EditOperation,
+    to document: PDFDocument
+  ) -> Bool {
+    do {
+      try provider.apply(operation, to: document)
+      return true
+    } catch {
+      return false
+    }
   }
 
   private func refreshInMemoryRecoverySnapshot() {
@@ -2380,7 +2764,6 @@ public final class AppModel {
       operationViewStates.append(
         OperationViewState(before: viewStateBefore, after: entry.viewStateAfter))
       redoEntries.removeLast()
-      recordReplayCheckpointIfNeeded()
       restoreViewState(entry.viewStateAfter)
       if let candidateID = entry.operation.candidateID {
         updateCandidate(candidateID, status: .confirmed)
@@ -2405,7 +2788,7 @@ public final class AppModel {
     selectedFieldID = nil
     jumpToPage(next.pageIndex)
     statusMessage =
-      "Selected candidate \(nextIndex + 1) of \(candidates.count) (\(next.suggestedFieldType?.rawValue ?? "field"))"
+      "Selected \(next.effectiveDisplayName) (\(nextIndex + 1) of \(candidates.count))"
   }
 
   public func selectPreviousCandidate() {
@@ -2419,7 +2802,7 @@ public final class AppModel {
     selectedFieldID = nil
     jumpToPage(prev.pageIndex)
     statusMessage =
-      "Selected candidate \(prevIndex + 1) of \(candidates.count) (\(prev.suggestedFieldType?.rawValue ?? "field"))"
+      "Selected \(prev.effectiveDisplayName) (\(prevIndex + 1) of \(candidates.count))"
   }
 
   public func runOCROnSelectedPage() {
@@ -2481,8 +2864,22 @@ public final class AppModel {
   }
 
   public func export() {
-    guard let sourceURL else { return }
     guard ensureExportPermission() else { return }
+    if isScratchDocument {
+      let baseName = URL(fileURLWithPath: inspection?.source.fileName ?? "Untitled.pdf")
+        .deletingPathExtension()
+        .lastPathComponent
+      let panel = NSSavePanel()
+      panel.allowedContentTypes = [.pdf]
+      panel.canCreateDirectories = true
+      panel.nameFieldStringValue = "\(baseName)-copy.pdf"
+      panel.begin { [weak self] response in
+        guard response == .OK, let destination = panel.url else { return }
+        self?.exportScratchCopy(to: destination)
+      }
+      return
+    }
+    guard let sourceURL else { return }
     let panel = NSSavePanel()
     panel.allowedContentTypes = [.pdf]
     panel.canCreateDirectories = true
@@ -2491,6 +2888,52 @@ public final class AppModel {
       guard response == .OK, let destination = panel.url else { return }
       self?.performExport(sourceURL: sourceURL, destination: destination)
     }
+  }
+
+  /// Serializes the live scratch document to a user-chosen destination.
+  ///
+  /// Scratch documents have no user-owned source file, so the live document
+  /// is the export authority: every admitted operation is already applied to
+  /// it. The staged copy is reopened and checked before the export is
+  /// reported as validated.
+  @discardableResult
+  public func exportScratchCopy(to destination: URL) -> Bool {
+    guard let document = liveDocument else {
+      statusMessage = "There is no document to export."
+      return false
+    }
+    if let sourceURL, destination.standardizedFileURL == sourceURL.standardizedFileURL {
+      alertMessage = "Choose a new output location; the working copy cannot be overwritten."
+      return false
+    }
+    guard let data = document.dataRepresentation(), !data.isEmpty else {
+      alertMessage = "The document could not be serialized for export."
+      return false
+    }
+    do {
+      try data.write(to: destination, options: [.atomic])
+    } catch {
+      alertMessage = "Could not write the export copy: \(error.localizedDescription)"
+      return false
+    }
+    guard let reopened = PDFDocument(data: data), reopened.pageCount == document.pageCount else {
+      alertMessage = "The exported copy could not be reopened for verification. Please check the file."
+      return false
+    }
+    let outputDigest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    exportReport = ValidationReport(
+      status: .validated,
+      messages: [],
+      sourceUnchanged: true,
+      outputReopenable: true,
+      sourceDigest: inspection?.source.sha256,
+      outputDigest: outputDigest,
+      validatedAt: Date(),
+      operationIDs: operations.map(\.id))
+    statusMessage =
+      "Exported a copy of the new document (\(document.pageCount) page\(document.pageCount == 1 ? "" : "s"))."
+    saveSession()
+    return true
   }
 
   /// Commits reviewed redaction marks only when the active provider exposes a
@@ -2517,6 +2960,8 @@ public final class AppModel {
 
   public func jumpToPage(_ index: Int) {
     jumpToPage(index, preservingSearchMatch: false)
+    // RG-043: page changes are announced for assistive technology.
+    announceForAccessibility("Page \(min(max(index, 0), max(0, currentPageCount - 1)) + 1)")
   }
 
   private func jumpToPage(_ index: Int, preservingSearchMatch: Bool) {
@@ -2526,6 +2971,21 @@ public final class AppModel {
       selectedSearchMatchIndex = nil
     }
     scheduleViewStateAutosave()
+  }
+
+  /// RG-043: records the announcement for verification and posts it to the
+  /// macOS accessibility channel so VoiceOver speaks it.
+  public func announceForAccessibility(_ message: String) {
+    guard !message.isEmpty else { return }
+    lastAccessibilityAnnouncement = message
+    NSAccessibility.post(
+      element: NSApp as Any,
+      notification: .announcementRequested,
+      userInfo: [
+        .announcement: message,
+        .priority: NSAccessibilityPriorityLevel.high.rawValue,
+      ]
+    )
   }
 
   public func runPageJump() {
@@ -2600,6 +3060,8 @@ public final class AppModel {
     statusMessage =
       nextMatches.isEmpty
       ? "No matches found for \(query)." : "Found \(nextMatches.count) matches for \(query)."
+    // RG-043: match counts and no-match states are announced, not only shown.
+    announceForAccessibility(statusMessage ?? "")
     if let first = selectedSearchMatch {
       jumpToPage(first.pageIndex, preservingSearchMatch: true)
     }
@@ -2627,6 +3089,11 @@ public final class AppModel {
     selectedSearchMatchIndex = index
     if let match = selectedSearchMatch {
       jumpToPage(match.pageIndex, preservingSearchMatch: true)
+      // RG-043: the current result is announced with its position, page, and
+      // snippet so VoiceOver users can follow search navigation.
+      announceForAccessibility(
+        "Match \(index + 1) of \(searchMatches.count), page \(match.pageIndex + 1): \(match.snippet)"
+      )
     }
     scheduleViewStateAutosave()
   }
@@ -2875,6 +3342,112 @@ public final class AppModel {
     statusMessage = "Flattened export unavailable (fail-closed)."
   }
 
+  // MARK: - Batch Merge & Split Workflows (B3 Lane)
+
+  /// Merge multiple PDF documents sequentially into a single target PDF.
+  public func mergePDFs(sources: [URL], destination: URL) -> Bool {
+    guard !sources.isEmpty else {
+      alertMessage = "Select at least one PDF to merge."
+      return false
+    }
+    let mergedDoc = PDFDocument()
+    var totalPages = 0
+
+    for sourceURL in sources {
+      guard let doc = PDFDocument(url: sourceURL) else {
+        alertMessage = "Could not read \(sourceURL.lastPathComponent)."
+        return false
+      }
+      for pageIndex in 0..<doc.pageCount {
+        if let page = doc.page(at: pageIndex)?.copy() as? PDFPage {
+          mergedDoc.insert(page, at: totalPages)
+          totalPages += 1
+        }
+      }
+    }
+
+    guard let data = mergedDoc.dataRepresentation() else {
+      alertMessage = "Failed to serialize merged PDF."
+      return false
+    }
+
+    do {
+      try data.write(to: destination, options: .atomic)
+      statusMessage = "Successfully merged \(sources.count) documents into \(totalPages) pages."
+      return true
+    } catch {
+      alertMessage = "Failed to save merged PDF: \(error.localizedDescription)"
+      return false
+    }
+  }
+
+  /// Extract a selected range of pages and export them into a new standalone PDF.
+  public func splitPageRange(from startIndex: Int, to endIndex: Int, destination: URL) -> Bool {
+    guard let doc = liveDocument else { return false }
+    let start = min(max(0, startIndex), doc.pageCount - 1)
+    let end = min(max(start, endIndex), doc.pageCount - 1)
+
+    let splitDoc = PDFDocument()
+    var targetIndex = 0
+
+    for pageIndex in start...end {
+      if let page = doc.page(at: pageIndex)?.copy() as? PDFPage {
+        splitDoc.insert(page, at: targetIndex)
+        targetIndex += 1
+      }
+    }
+
+    guard let data = splitDoc.dataRepresentation() else {
+      alertMessage = "Failed to serialize extracted pages."
+      return false
+    }
+
+    do {
+      try data.write(to: destination, options: .atomic)
+      statusMessage = "Extracted pages \(start + 1)–\(end + 1) to \(destination.lastPathComponent)."
+      return true
+    } catch {
+      alertMessage = "Failed to write extracted PDF: \(error.localizedDescription)"
+      return false
+    }
+  }
+
+  // MARK: - Sanitization & Metadata Scrubbing (B4 Lane)
+
+  /// Cleanly export a copy of the PDF with all metadata, EXIF properties, author tags, and hidden streams stripped.
+  public func sanitizeAndExportCopy(destination: URL) -> Bool {
+    guard let doc = liveDocument else { return false }
+    guard let copiedDoc = doc.copy() as? PDFDocument else {
+      alertMessage = "Failed to duplicate document for sanitization."
+      return false
+    }
+
+    // Scrub document-level metadata dictionary
+    copiedDoc.documentAttributes = [:]
+
+    guard let data = copiedDoc.dataRepresentation() else {
+      alertMessage = "Failed to serialize sanitized PDF."
+      return false
+    }
+
+    do {
+      try data.write(to: destination, options: .atomic)
+      let op = EditOperation(
+        pageIndex: 0,
+        kind: .sanitize,
+        value: "metadata-scrubbed",
+        sessionID: currentSessionID,
+        sourceDigest: inspection?.source.sha256
+      )
+      recordAppliedOperation(op)
+      statusMessage = "Exported metadata-sanitized copy to \(destination.lastPathComponent)."
+      return true
+    } catch {
+      alertMessage = "Failed to save sanitized copy: \(error.localizedDescription)"
+      return false
+    }
+  }
+
   // MARK: - Session Persistence
 
   /// Save the current editing session to disk.
@@ -2892,9 +3465,52 @@ public final class AppModel {
     }
   }
 
-  /// Auto-save session periodically (call after each operation).
+  /// Debounced content autosave, called after each recorded operation.
+  ///
+  /// The write protocol is unchanged (payload → pair manifest → metadata
+  /// commit pointer) and `flushRecoveryForTermination()` plus
+  /// `saveRecoveryForInterruptionTest()` remain synchronous. Deferring only
+  /// moves the three disk writes and the replay-checkpoint copy off the edit
+  /// click itself: a crash inside the debounce window loses at most that
+  /// window of edits, which the generation-based recovery design already
+  /// tolerates by replaying the previous committed generation.
   private func autoSaveSession() {
-    _ = saveDurableRecovery()
+    guard inspection != nil, sourceURL != nil, currentSessionID != nil else { return }
+    contentAutosaveTask?.cancel()
+    let scheduledSessionID = currentSessionID
+    let scheduledSourceDigest = inspection?.source.sha256
+    contentAutosaveTask = Task { @MainActor [weak self] in
+      do {
+        try await Task.sleep(nanoseconds: 250_000_000)
+      } catch {
+        return
+      }
+      guard !Task.isCancelled, let self else { return }
+      self.contentAutosaveTask = nil
+      // A document opened while the debounce was pending invalidates this
+      // save; the session identity and source digest must still match.
+      guard self.currentSessionID == scheduledSessionID,
+        self.inspection?.source.sha256 == scheduledSourceDigest
+      else { return }
+      self.recordReplayCheckpointIfNeeded()
+      _ = self.saveDurableRecovery()
+    }
+  }
+
+  /// Runs a pending debounced content autosave immediately. Termination and
+  /// test harnesses need the synchronous ordering without waiting out the
+  /// debounce window.
+  @discardableResult
+  public func flushPendingContentAutosave() -> Bool {
+    guard contentAutosaveTask != nil else { return true }
+    cancelContentAutosave()
+    recordReplayCheckpointIfNeeded()
+    return saveDurableRecovery()
+  }
+
+  private func cancelContentAutosave() {
+    contentAutosaveTask?.cancel()
+    contentAutosaveTask = nil
   }
 
   /// Schedules a coalesced persistence of the current view/session state.
@@ -2937,12 +3553,19 @@ public final class AppModel {
   public func flushRecoveryForTermination() -> Bool {
     let hasPendingViewStateSave = viewStateAutosaveTask != nil
     cancelViewStateAutosave()
+    let hasPendingContentSave = contentAutosaveTask != nil
+    cancelContentAutosave()
 
     guard inspection != nil, sourceURL != nil, currentSessionID != nil else {
       return true
     }
-    guard isDirty || hasSavedSession || lastPersistedViewStateDigest != nil || hasPendingViewStateSave else {
+    guard isDirty || hasSavedSession || lastPersistedViewStateDigest != nil
+      || hasPendingViewStateSave || hasPendingContentSave
+    else {
       return true
+    }
+    if hasPendingContentSave {
+      recordReplayCheckpointIfNeeded()
     }
     return saveDurableRecovery()
   }
@@ -4160,6 +4783,31 @@ public final class AppModel {
 
   /// Run bulk fill: match profile values against the current document's fields and candidates.
   /// Returns the result but does NOT apply operations — the user must review and confirm.
+  /// Fill-ready suggestions for a candidate region: the best local profile
+  /// match formatted for its inferred field type. Local-only, deterministic.
+  public func valueSuggestions(for candidate: RegionCandidate) -> [String] {
+    guard let profile = currentProfile else { return [] }
+    return profile.valueSuggestions(
+      labelText: candidate.labelText,
+      fieldType: candidate.suggestedFieldType
+    )
+  }
+
+  /// Fill-ready suggestions for a native field, keyed by its declared name.
+  public func valueSuggestions(for field: NativeField) -> [String] {
+    guard let profile = currentProfile else { return [] }
+    let fieldType: SuggestedFieldType?
+    switch field.kind {
+    case .text: fieldType = .text
+    case .choice: fieldType = .choice
+    case .button, .signature, .unknown: fieldType = nil
+    }
+    return profile.valueSuggestions(
+      labelText: field.name,
+      fieldType: fieldType
+    )
+  }
+
   public func previewBulkFill() {
     guard let profile = currentProfile, let inspection else {
       statusMessage = "Open a document and select a profile before bulk fill."

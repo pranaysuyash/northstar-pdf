@@ -120,7 +120,7 @@ private struct KeychainPersistenceKeyProvider {
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
             kSecValueData as String: data,
-            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
         ]
         let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
         guard addStatus == errSecSuccess || addStatus == errSecDuplicateItem else {
@@ -474,6 +474,9 @@ private final class EncryptedRevisionFileStore<Value: Codable & Sendable>: @unch
             }
             let temporary = directory.appendingPathComponent(".\(id).\(UUID().uuidString).tmp")
             try data.write(to: temporary, options: .atomic)
+            try fileManager.setAttributes(
+                [.posixPermissions: NSNumber(value: Int16(0o600))],
+                ofItemAtPath: temporary.path)
             if fileManager.fileExists(atPath: primary.path) {
                 _ = try fileManager.replaceItemAt(primary, withItemAt: temporary)
             } else {

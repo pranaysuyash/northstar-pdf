@@ -1,0 +1,23 @@
+{
+  "provider" : "PDFBox",
+  "pdfboxVersion" : "3.0.8",
+  "inputSHA256" : "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+  "pages" : 1,
+  "fieldCount" : 0,
+  "fieldTypes" : [],
+  "radioExportValues" : {},
+  "fieldInventory" : [],
+  "noOpReopen" : false,
+  "widgetStateEquivalent" : false,
+  "mutatedReopen" : false,
+  "mutateSkipped" : false,
+  "encryptedUnsupported" : false,
+  "rasterAE" : 0,
+  "rasterMeanDelta" : 0.000000,
+  "rasterPage1" : {"widthA" : 792, "heightA" : 612, "widthB" : 792, "heightB" : 612},
+  "originalUnchanged" : true,
+  "finalInputSHA256" : "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+  "jarSHA512" : "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+  "mutatedFieldName" : "",
+  "perFieldDiffs" : []
+}

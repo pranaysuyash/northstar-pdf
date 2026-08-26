@@ -21,6 +21,11 @@ extension FocusedValues {
 @MainActor
 private enum PDFEditorCommand: Hashable {
     case newDocument
+    case newWindow
+    case newFromImages
+    case newFromClipboard
+    case newFromMarkdown
+    case appendPDFPages
     case openDocument
     case closeWindow
     case exportCopy
@@ -52,8 +57,12 @@ private struct PDFEditorCommandRouter {
 
     func isEnabled(_ command: PDFEditorCommand) -> Bool {
         switch command {
-        case .newDocument:
+        case .newDocument, .newWindow:
             return true
+        case .newFromImages, .newFromClipboard, .newFromMarkdown:
+            return model != nil
+        case .appendPDFPages:
+            return model?.liveDocument != nil
         case .openDocument:
             return model != nil
         case .closeWindow:
@@ -91,6 +100,17 @@ private struct PDFEditorCommandRouter {
     func perform(_ command: PDFEditorCommand) {
         switch command {
         case .newDocument:
+            guard let model else {
+                openWindow(id: "pdf-editor")
+                return
+            }
+            // The confirmation must run BEFORE any state reset: creating the
+            // document clears operations, which would silently clear the
+            // dirty flag and discard unexported work.
+            withReplaceConfirmation(model: model, actionName: "New Document") {
+                model.newDocument()
+            }
+        case .newWindow:
             if let model {
                 withNewWindowConfirmation(model: model) {
                     openWindow(id: "pdf-editor")
@@ -98,6 +118,23 @@ private struct PDFEditorCommandRouter {
             } else {
                 openWindow(id: "pdf-editor")
             }
+        case .newFromImages:
+            guard let model else { return }
+            withReplaceConfirmation(model: model, actionName: "New from Images") {
+                model.presentNewFromImagesPanel()
+            }
+        case .newFromClipboard:
+            guard let model else { return }
+            withReplaceConfirmation(model: model, actionName: "New from Clipboard") {
+                model.newDocumentFromClipboard()
+            }
+        case .newFromMarkdown:
+            guard let model else { return }
+            withReplaceConfirmation(model: model, actionName: "New from Markdown") {
+                model.newDocumentFromMarkdown()
+            }
+        case .appendPDFPages:
+            model?.presentAppendPagesPanel()
         case .openDocument:
             guard let model else { return }
             withOpenConfirmation(model: model) {
@@ -152,6 +189,30 @@ private struct PDFEditorCommandRouter {
         case .compareDiff:
             model?.showDiffSheet = true
         }
+    }
+
+    /// Guards flows that replace this window's document (New Document,
+    /// New from Images, New from Clipboard). Runs the confirmation before
+    /// any model mutation so the dirty state is still accurate.
+    private func withReplaceConfirmation(
+        model: AppModel,
+        actionName: String,
+        proceed: @escaping @MainActor () -> Void
+    ) {
+        guard model.isDirty else {
+            proceed()
+            return
+        }
+
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = "This document has unexported changes."
+        alert.informativeText = "\(actionName) replaces this window's document. Export Copy... creates a separate edited PDF and never overwrites the source. A recoverable session is kept for the current document."
+        alert.addButton(withTitle: actionName)
+        alert.addButton(withTitle: "Cancel")
+
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        proceed()
     }
 
     private func withNewWindowConfirmation(model: AppModel, proceed: () -> Void) {
@@ -241,6 +302,38 @@ struct AppCommands: Commands {
                 router.perform(.newDocument)
             }
             .keyboardShortcut("n", modifiers: .command)
+            .help("Create a new blank PDF in this window.")
+
+            Button("New Window") {
+                router.perform(.newWindow)
+            }
+            .keyboardShortcut("n", modifiers: [.command, .option])
+
+            Button("New from Images...") {
+                router.perform(.newFromImages)
+            }
+            .disabled(!router.isEnabled(.newFromImages))
+            .help("Create a new PDF with one page per selected image.")
+
+            Button("New from Clipboard") {
+                router.perform(.newFromClipboard)
+            }
+            .disabled(!router.isEnabled(.newFromClipboard))
+            .help("Create a new PDF from a clipboard image or text.")
+
+            Button("New from Markdown...") {
+                router.perform(.newFromMarkdown)
+            }
+            .disabled(!router.isEnabled(.newFromMarkdown))
+            .help("Convert a Markdown file to a publication-quality PDF.")
+
+            Divider()
+
+            Button("Append PDF Pages...") {
+                router.perform(.appendPDFPages)
+            }
+            .disabled(!router.isEnabled(.appendPDFPages))
+            .help("Append the pages of another PDF after the current last page.")
 
             Button("Open...") {
                 router.perform(.openDocument)

@@ -54,6 +54,14 @@ enabled or claimed for a source class.
 
 **Status:** active, with provider-specific evidence still being closed
 
+The current continuation is executing the full-fidelity lanes rather than
+retiring them as scope boundaries. The latest evidence pass covers rotated
+crop-relative replay, browser AcroForm semantics, encrypted companion export,
+signature integrity, and text-redaction completeness. The next implementation
+units are MuPDF three-way comparison, real signed-CMS corpus generation,
+permanent image/vector redaction, tagged PDF/UA authoring, general text-run
+replacement, and production-scale arbitrary-PDF recovery.
+
 - Reconcile handoff claims against the actual native and browser source before
   adding duplicate surfaces.
 - Keep retrieval advisory and preserve mapping approval, profile-value approval,

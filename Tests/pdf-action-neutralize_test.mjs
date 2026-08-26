@@ -6,6 +6,7 @@ import assert from "node:assert";
 import fs from "node:fs";
 import { spawnSync, execFileSync } from "node:child_process";
 import { neutralizeActions } from "../web/pdf-action-neutralize.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const srcBuf = fs.readFileSync(SRC);
@@ -13,7 +14,7 @@ fs.mkdirSync("/Users/pranay/Projects/pdf_editor/tmp", { recursive: true });
 
 // Build a malicious-ish fixture locally (auto-executing JS + Launch annotation).
 const dirty = execFileSync(
-  "python3",
+  pdfPython,
   [
     "-c",
     [
@@ -55,7 +56,7 @@ console.log("PASS qpdf --check: neutralized file is structurally valid");
 
 const res = JSON.parse(
   execFileSync(
-    "python3",
+    pdfPython,
     [
       "-c",
       "import pikepdf,sys,json; p=pikepdf.open(sys.argv[1]); root=p.Root; anns=[]\nfor pg in p.pages:\n  if '/Annots' in pg:\n    for a in pg.Annots:\n      if hasattr(a,'keys'): anns.append({'subtype':str(a.get('/Subtype')),'hasA':'/A' in a,'hasS':'/S' in a})\nprint(json.dumps({'openAction':'/OpenAction' in root,'aa':'/AA' in root,'pages':len(p.pages),'ann':anns}))",

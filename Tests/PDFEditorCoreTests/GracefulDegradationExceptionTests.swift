@@ -7,6 +7,7 @@ struct GracefulDegradationExceptionTests {
 
   private let provider = PDFProviderDescriptor(id: "degradation-test", version: "1", platform: "test")
   private let templateID = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
+  private let digestA = String(repeating: "a", count: 64)
 
   private func mapping(
     id: UUID = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!,
@@ -27,7 +28,7 @@ struct GracefulDegradationExceptionTests {
   private func template(revisionID: UUID, mappings: [PDFTemplateMapping]) -> PDFTemplateContract {
     let fingerprint = PDFTemplateFingerprint(
       layoutFingerprint: "layout-degradation",
-      exactSourceDigests: [String(repeating: "a", count: 64)],
+      exactSourceDigests: [digestA],
       pageSignatures: [PDFTemplatePageSignature(pageIndex: 0, widthPoints: 612, heightPoints: 792, rotationDegrees: 0, nativeFieldKinds: [.text], nativeFieldNameTokens: [], anchorTokens: [], regionSignatures: [])])
     return PDFTemplateContract(
       header: PDFTemplateHeader(templateDigest: "template-degradation", provider: provider),
@@ -57,16 +58,16 @@ struct GracefulDegradationExceptionTests {
     let capabilityID = "text.runReplacement"
     let manifest = ProviderCapabilityManifest(
       providerID: "com.pdfeditor.experimental",
-      engineFamily: "pdfkit",
+      engineFamily: "experimental-engine",
       providerVersion: "1.0.0",
-      runtimeKind: "native",
-      artifactDigest: String(repeating: "b", count: 64),
+      runtimeKind: "native-binary",
+      artifactDigest: digestA,
       installState: .enabled,
       license: ProviderLicenseRecord(name: "MIT", status: .approved),
       capabilities: [
         ProviderCapabilityRecord(
           capabilityID: capabilityID,
-          state: .revoked,  // Revoked capability
+          state: .revoked, // Revoked capability
           limits: ProviderCapabilityLimits(
             maxBytes: 10_000_000,
             maxPages: 100,
@@ -80,16 +81,16 @@ struct GracefulDegradationExceptionTests {
       revocations: [
         ProviderRevocationRecord(
           revocationID: "REV-001",
-          reasonCode: "security-audit-failed",
+          reasonCode: "security_audit_failure",
           effectiveAt: Date()
         )
       ]
     )
 
-    let registry = ProviderCapabilityRegistry(registryID: "degradation-registry", providers: [manifest])
+    let registry = ProviderCapabilityRegistry(registryID: "test-registry", providers: [manifest])
     let request = ProviderCapabilityRequest(
       capability: capabilityID,
-      operationKinds: ["nativeFieldValue"],
+      operationKinds: ["text-edit"],
       source: ProviderSourceFacts(byteCount: 5000, pageCount: 1, isEncrypted: false, isScanned: false),
       policy: ProviderCapabilityPolicy(
         localOnly: true,
@@ -102,9 +103,7 @@ struct GracefulDegradationExceptionTests {
     let decision = try ProviderCapabilityNegotiator.negotiate(registry: registry, request: request)
     #expect(decision.decision == .abstained)
     #expect(decision.providerID == nil)
-    #expect(
-      decision.reasonCodes.contains { $0.contains("providerRevoked") || $0.contains("capabilityState:revoked") }
-    )
+    #expect(decision.reasonCodes.contains { $0.contains("providerRevoked") || $0.contains("capabilityState:revoked") })
   }
 
   // MARK: - 2. Template Resolution Ambiguity & Tie Abstention (PER-0925 / PER-0929)
@@ -142,7 +141,7 @@ struct GracefulDegradationExceptionTests {
       trimBox: nil,
       artBox: nil,
       rotation: 0,
-      characterCount: 100,
+      characterCount: 10,
       annotationCount: 0,
       hasSelectableText: true
     )
@@ -155,7 +154,7 @@ struct GracefulDegradationExceptionTests {
       trimBox: nil,
       artBox: nil,
       rotation: 0,
-      characterCount: 100,
+      characterCount: 10,
       annotationCount: 0,
       hasSelectableText: true
     )
@@ -187,7 +186,7 @@ struct GracefulDegradationExceptionTests {
     )
 
     let diff = DocumentDiffBuilder.build(source: sourceInspection, output: outputInspection, operations: [])
-    #expect(diff.summary.overallStatus == .incomplete)
+    #expect(diff.summary.overallStatus == DiffOverallStatus.incomplete)
     #expect(diff.pages.isEmpty)
   }
 

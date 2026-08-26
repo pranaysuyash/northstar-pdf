@@ -224,7 +224,70 @@ public struct AgentCommandHUD: View {
       }
     )
 
-    // 7. Safe Export
+    // 7. Text & Document Creation
+    items.append(
+      AgentCommandItem(
+        id: "copy-page-text",
+        title: "Copy Current Page Text",
+        subtitle: "Extract selectable text from page \(model.selectedPageIndex + 1) to clipboard",
+        icon: "doc.on.doc",
+        category: "Authoring",
+        isAvailable: model.inspection?.permissions.canCopy ?? false
+      ) {
+        model.copyCurrentPageText()
+      }
+    )
+
+    items.append(
+      AgentCommandItem(
+        id: "new-from-clipboard",
+        title: "New PDF from Clipboard",
+        subtitle: "Create a new document from system clipboard text or image",
+        icon: "doc.on.clipboard",
+        category: "Authoring"
+      ) {
+        model.newDocumentFromClipboard()
+      }
+    )
+
+    items.append(
+      AgentCommandItem(
+        id: "new-from-markdown",
+        title: "New PDF from Markdown",
+        subtitle: "Render markdown content into a formatted PDF document",
+        icon: "text.document",
+        category: "Authoring"
+      ) {
+        model.newDocumentFromMarkdown()
+      }
+    )
+
+    items.append(
+      AgentCommandItem(
+        id: "new-from-images",
+        title: "New PDF from Images…",
+        subtitle: "Combine raster images into a multi-page PDF",
+        icon: "photo.on.rectangle.angled",
+        category: "Authoring"
+      ) {
+        model.presentNewFromImagesPanel()
+      }
+    )
+
+    items.append(
+      AgentCommandItem(
+        id: "append-pages",
+        title: "Append PDF Pages…",
+        subtitle: "Insert pages from another PDF into the current document",
+        icon: "doc.badge.plus",
+        category: "Authoring",
+        isAvailable: model.liveDocument != nil
+      ) {
+        model.presentAppendPagesPanel()
+      }
+    )
+
+    // 8. Safe Export
     items.append(
       AgentCommandItem(
         id: "export-copy",
@@ -277,6 +340,7 @@ public struct AgentCommandHUD: View {
               .foregroundStyle(.secondary)
           }
           .buttonStyle(.plain)
+          .accessibilityLabel("Clear search")
         }
 
         Text("ESC")
@@ -311,44 +375,12 @@ public struct AgentCommandHUD: View {
                 Button {
                   executeCommand(item)
                 } label: {
-                  HStack(spacing: 12) {
-                    Image(systemName: item.icon)
-                      .font(.title3.weight(.medium))
-                      .frame(width: 24, height: 24)
-                      .foregroundStyle(item.isAvailable ? Color.accentColor : Color.secondary)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                      HStack {
-                        Text(item.title)
-                          .font(.callout.weight(.medium))
-                          .foregroundStyle(item.isAvailable ? Color.primary : Color.secondary)
-
-                        Spacer()
-
-                        Text(item.category)
-                          .font(.caption2)
-                          .foregroundStyle(.secondary)
-                          .padding(.horizontal, 6)
-                          .padding(.vertical, 2)
-                          .background(Color.secondary.opacity(0.1))
-                          .clipShape(Capsule())
-                      }
-
-                      Text(item.subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                    }
-                  }
-                  .padding(.horizontal, 12)
-                  .padding(.vertical, 8)
-                  .background(
-                    selectedIndex == index ? Color.accentColor.opacity(0.12) : Color.clear
-                  )
-                  .clipShape(RoundedRectangle(cornerRadius: 6))
+                  AgentCommandRowView(item: item, isSelected: selectedIndex == index)
                 }
                 .buttonStyle(.plain)
                 .disabled(!item.isAvailable)
+                .accessibilityLabel(item.title)
+                .accessibilityHint(item.isAvailable ? item.subtitle : "Unavailable")
                 .id(item.id)
               }
             }
@@ -383,6 +415,7 @@ public struct AgentCommandHUD: View {
     .background(.ultraThinMaterial)
     .clipShape(RoundedRectangle(cornerRadius: 12))
     .shadow(color: Color.black.opacity(0.25), radius: 24, x: 0, y: 12)
+    .sensoryFeedback(.impact, trigger: hapticCommand)
     .overlay(
       RoundedRectangle(cornerRadius: 12)
         .stroke(Color.white.opacity(0.2), lineWidth: 1)
@@ -419,14 +452,52 @@ public struct AgentCommandHUD: View {
     executeCommand(filteredCommands[selectedIndex])
   }
 
+  private struct AgentCommandRowView: View {
+    let item: AgentCommandItem
+    let isSelected: Bool
+
+    var body: some View {
+      HStack(spacing: 12) {
+        Image(systemName: item.icon)
+          .font(.title3.weight(.medium))
+          .frame(width: 24, height: 24)
+          .foregroundStyle(item.isAvailable ? Color.accentColor : Color.secondary)
+
+        VStack(alignment: .leading, spacing: 2) {
+          HStack {
+            Text(item.title)
+              .font(.callout.weight(.medium))
+              .foregroundStyle(item.isAvailable ? Color.primary : Color.secondary)
+
+            Spacer()
+
+            Text(item.category)
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+              .padding(.horizontal, 6)
+              .padding(.vertical, 2)
+              .background(Color.secondary.opacity(0.1))
+              .clipShape(Capsule())
+          }
+
+          Text(item.subtitle)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        }
+      }
+      .padding(.horizontal, 12)
+      .padding(.vertical, 8)
+      .background(isSelected ? Color.accentColor.opacity(0.12) : Color.clear)
+      .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+  }
+
+  @State private var hapticCommand = UUID()
+
   private func executeCommand(_ item: AgentCommandItem) {
     guard item.isAvailable else { return }
-    /* Apple Design §13: haptic feedback on command execution */
-    let sel = NSSelectorFromString("performFeedback:performanceTime:")
-    let performer: AnyObject = NSHapticFeedbackManager.defaultPerformer as AnyObject
-    if performer.responds(to: sel) {
-      performer.perform(sel, with: NSHapticFeedbackManager.FeedbackPattern.generic.rawValue as NSNumber, with: 0 as NSNumber)
-    }
+    hapticCommand = UUID()
     isPresented = false
     item.action()
   }

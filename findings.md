@@ -912,6 +912,90 @@ not instruction. Claims remain **Observed**, **Verified**, **Inferred**,
   `docs/audits/native-web-contract-parity-evidence-2026-08-24.md`, and
   `benchmark/results/contract-parity-2026-08-24/parity-report.json`.
 
+### F-070: PDFBox corpus expansion shows pixel-perfect no-op parity; detector certainty recalibrated under a 0.80 ceiling
+
+- **Date:** 2026-08-25
+- **Status:** Runtime-verified (Tier 2/S1) for the corpus lane; signed/XFA and
+  password-protected corpus remain open.
+- **PDFBox corpus evidence:** the generalized lane
+  (`benchmark/pdfbox-lane/run-corpus.sh`) ran five fixtures with per-fixture
+  JSON under `benchmark/results/2026-08-25-pdfbox-corpus/`. Raster parity at
+  72 dpi: public AcroForm sample AE 0 / mean delta 0.000000; both rotation
+  fixtures AE 0 (PDFRenderer auto-honors `/Rotate 90`, rendering 792×612 and
+  841×612). The encrypted fixture fails cleanly as
+  `encryptedUnsupported`/`InvalidPasswordException` with exit 0 and unchanged
+  input digest — an explicit documented failure state, not a crash. The
+  field-less native-widget fixture is a valid negative control. Both rotation
+  fixtures contain zero AcroForm dictionaries (byte scan + `qpdf --json` +
+  probe concur): they derive from the field-less `fixture.pdf`, so field gates
+  apply only where fields exist.
+- **Detector calibration:** vector-region detection scores were flat
+  (0.85/0.90/0.80) regardless of evidence quality. New `detectionScore`
+  weights parsed geometry at 0.55 with bounded increments for repeated cells
+  (+0.08), proximity label (+0.10), and semantic type match (+0.07), capped at
+  0.80 and returning 0 without geometry. No heuristic candidate can present
+  itself as near-certain; the Form 6 corpus now scores 0.55–0.80 by evidence
+  instead of a uniform 0.9.
+- **Implication:** PDFBox no-op output is visually indistinguishable from the
+  source on the available corpus at 72 dpi, strengthening the D-007 split
+  (PDFKit default for AcroForm-free documents; PDFBox companion lane for
+  AcroForm documents). The calibration removes the certainty overstatement
+  flagged in F-023.
+- **Limits:** 72 dpi raster parity is not universal fidelity; signed, XFA,
+  password-protected (with-password policy), and large documents remain
+  untested through the lane; PDFBox `getOnValues()`/`PDChoice.getValue()`
+  asymmetries are worked around, not fixed upstream.
+- **Sources:** `benchmark/pdfbox-lane/RadioProbe.java`,
+  `benchmark/pdfbox-lane/run-corpus.sh`,
+  `benchmark/results/2026-08-25-pdfbox-corpus/`,
+  `Sources/PDFEditorCore/StaticRegionDetector.swift`,
+  `Tests/PDFEditorCoreTests/ReviewFixVerificationTests.swift`,
+  `docs/pdfbox-packaging-review.md`.
+
+### F-071: Native incremental form writer resolves RG-001 for bounded field edits
+
+- **Date:** 2026-08-25
+- **Status:** Runtime-verified (Tier 2/S1) on the public AcroForm sample;
+  appearance regeneration and broader corpus remain open.
+- **Evidence:** `Sources/PDFEditorCore/PDFIncrementalFormWriter.swift` ports the
+  verified web-lane semantics to native Swift: classic xref tables and
+  FlateDecode xref streams are parsed, field objects are located through a raw
+  AcroForm tree walk (UTF-16BE hex `/T` names decoded — the sample encodes all
+  six field names as hex strings), and bounded `/V`+`/AS` edits are appended
+  as a genuine incremental update with a `/Prev`-chained xref. The source is
+  asserted as a byte-exact prefix inside the writer and again in the export
+  path. Routing: AcroForm documents accept only native field-value edits;
+  everything else stays fail-closed; compressed-object and encrypted sources
+  are refused with precise errors. Durable artifact:
+  `benchmark/results/2026-08-25-native-incremental/` — qpdf `--check` exit 0,
+  byte-exact 10,768-byte prefix verified with `cmp`, pikepdf reopen shows
+  `/V 'Incremental'` on the correct container field node (11) with radio
+  choice metadata (`/AP /N`, `/AS`) untouched; PDFKit inspection reads the
+  new value through inheritance. Seven tests in
+  `PDFIncrementalWriterTests.swift` cover parsing, dict patching, radio
+  semantics (parent/kid state selection, clearing, unknown-state fail-closed),
+  string escaping, prefix preservation, routing, and the guard.
+- **New knowledge:** the sample's field tree uses container nodes
+  (10→11→12…) where widget kids inherit `/FT`; appearance states must be
+  extracted from any node carrying `/AP`, not just `/FT=Btn` holders. Field
+  `/T` values are UTF-16BE hex-encoded. Radio edits write `/V` on the
+  terminal field node plus `/AS` on each widget kid — matching the web lane's
+  objNum 24/25/30 evidence exactly.
+- **Limits:** edited text widgets still show stale appearance streams until a
+  viewer regenerates them from `/V` (value-level oracle passes; edited-region
+  raster parity is unproven); xref-stream sources beyond FlateDecode are
+  refused; object-stream-compressed field documents fail closed pending a
+  normalization lane.
+- **Implication:** RG-001 moves FAIL → PARTIAL. The native lane can now edit
+  external AcroForm documents without the PDFKit writer's known radio-choice
+  destruction, using the same source-preserving mechanism that passed RG-002
+  on the web lane.
+- **Sources:** `Sources/PDFEditorCore/PDFIncrementalFormWriter.swift`,
+  `Sources/PDFEditorCore/PDFKitProvider.swift`,
+  `Tests/PDFEditorCoreTests/PDFIncrementalWriterTests.swift`,
+  `benchmark/results/2026-08-25-native-incremental/`,
+  `web/pdf-incremental-form-writer.mjs`.
+
 ## Open Questions
 
 - Exact native macOS engine/provider and the boundary to the browser companion.

@@ -424,10 +424,16 @@
 
   renderProductModeState();
 
-  // --- Web Session Persistence (IndexedDB) ---
+  // --- Web Session Persistence (IndexedDB + encrypted vault) ---
+  // Privacy contract (audit A-7, 2026-08-25): filled field values — potentially
+  // sensitive form data — persist only inside the passphrase-encrypted local
+  // vault. The plaintext sessions store keeps value-free metadata (progress,
+  // decisions, page context) so quick restore still works without the vault.
+  // Legacy plaintext records are restored once, then upgraded on next save.
   const SESSION_DB_NAME = "pdf-editor-sessions";
   const SESSION_STORE_NAME = "sessions";
-  const SESSION_DB_VERSION = 1;
+  const SESSION_DB_VERSION = 2;
+  const SESSION_RECORD_PREFIX = "session-";
 
   function openSessionDB() {
     return new Promise((resolve, reject) => {
@@ -443,19 +449,33 @@
     });
   }
 
+  function summarizeOperationsForSession() {
+    // Value-free ledger summary: what existed, never what was typed.
+    return operations.map((op) => ({
+      kind: op.kind,
+      pageIndex: op.pageIndex,
+      candidateID: op.candidateID ?? null,
+      targetID: op.targetID ?? null
+    }));
+  }
+
+  async function currentUnlockedBrowserStore() {
+    try {
+      return await ensureEncryptedBrowserStore({ promptForPassphrase: false });
+    } catch {
+      return null;
+    }
+  }
+
   async function saveWebSession() {
     if (!sourceDigest || !documentContract) return;
     try {
-      const db = await openSessionDB();
-      const tx = db.transaction(SESSION_STORE_NAME, "readwrite");
-      const store = tx.objectStore(SESSION_STORE_NAME);
-      const record = {
+      const baseRecord = {
         sourceDigest,
         sourceName,
         savedAt: new Date().toISOString(),
         pageCount: scaleState.pageCount,
         operationCount: operations.length,
-        operations: JSON.parse(JSON.stringify(operations)),
         candidateStatuses: {},
         selectedPageIndex: currentPage - 1,
         completionProgress: {
@@ -467,14 +487,56 @@
       };
       for (const c of candidates) {
         if (c.status !== "suggested") {
-          record.candidateStatuses[c.id] = c.status;
+          baseRecord.candidateStatuses[c.id] = c.status;
         }
       }
-      store.put(record);
-      db.close();
+
+      const store = await currentUnlockedBrowserStore();
+      if (store) {
+        await store.put("session", SESSION_RECORD_PREFIX + sourceDigest, {
+          ...baseRecord,
+          schema: 2,
+          valuesEncrypted: true,
+          operations: JSON.parse(JSON.stringify(operations)),
+          redoStack: JSON.parse(JSON.stringify(redoStack))
+        });
+        await putPlaintextSession({
+          ...baseRecord,
+          schema: 2,
+          valuesEncrypted: true,
+          operationSummaries: summarizeOperationsForSession()
+        });
+      } else {
+        await putPlaintextSession({
+          ...baseRecord,
+          schema: 2,
+          valuesPersisted: false,
+          operationSummaries: summarizeOperationsForSession()
+        });
+      }
     } catch (err) {
       // Session save failure is non-fatal
       console.warn("Session save failed:", err);
+    }
+  }
+
+  async function putPlaintextSession(record) {
+    const db = await openSessionDB();
+    try {
+      const tx = db.transaction(SESSION_STORE_NAME, "readwrite");
+      tx.objectStore(SESSION_STORE_NAME).put(record);
+    } finally {
+      db.close();
+    }
+  }
+
+  async function loadEncryptedSession(digest) {
+    const store = await currentUnlockedBrowserStore();
+    if (!store) return null;
+    try {
+      return await store.get("session", SESSION_RECORD_PREFIX + digest);
+    } catch {
+      return null;
     }
   }
 
@@ -522,29 +584,62 @@
     } catch {
       // Non-fatal
     }
+    const vaultStore = await currentUnlockedBrowserStore();
+    if (vaultStore) {
+      try {
+        await vaultStore.remove("session", SESSION_RECORD_PREFIX + digest);
+      } catch {
+        // Vault cleanup is best-effort; the record stays encrypted at rest.
+      }
+    }
   }
 
   async function restoreWebSession(record) {
     if (!record) return false;
-    // Restore candidate statuses
+    // Restore candidate statuses (always value-free).
     for (const c of candidates) {
       if (record.candidateStatuses && record.candidateStatuses[c.id]) {
         c.status = record.candidateStatuses[c.id];
       }
     }
-    // Restore operations
-    operations.length = 0;
-    redoStack.length = 0;
-    for (const op of (record.operations || [])) {
-      operations.push(op);
-    }
-    // Restore page selection
+    // Restore page selection.
     if (typeof record.selectedPageIndex === "number") {
       currentPage = Math.max(1, Math.min(record.selectedPageIndex + 1, scaleState.pageCount));
     }
+
+    // Edit values come from the encrypted vault, from a legacy plaintext
+    // record (migrated below), or not at all — never silently half-restored.
+    const encryptedRecord = await loadEncryptedSession(record.sourceDigest);
+    const isLegacyPlaintext = !encryptedRecord
+      && Array.isArray(record.operations)
+      && record.operations.length > 0
+      && record.schema === undefined;
+    const fullRecord = encryptedRecord || (isLegacyPlaintext ? record : null);
+
+    operations.length = 0;
+    redoStack.length = 0;
+    let valueNote = "";
+    if (fullRecord) {
+      for (const op of (fullRecord.operations || [])) {
+        operations.push(op);
+      }
+      for (const snapshot of (fullRecord.redoStack || [])) {
+        redoStack.push(snapshot);
+      }
+      if (isLegacyPlaintext) {
+        // One-time migration: re-save under the value-free/encrypted contract
+        // so plaintext values do not outlive this restore.
+        await saveWebSession();
+        valueNote = " — session store upgraded: edit values now persist only in the encrypted vault";
+      }
+    } else if (record.operationCount > 0) {
+      valueNote = ` — ${record.operationCount} edit${record.operationCount === 1 ? "" : "s"} recorded without values (vault was locked at save time); re-enter values before export`;
+    }
+
     renderCompletionPanel();
     renderVisiblePages();
-    setStatus(`Restored session from ${new Date(record.savedAt).toLocaleDateString()} — ${record.operationCount} edits, ${record.completionProgress?.confirmedCount || 0}/${record.completionProgress?.totalCandidates || 0} fields filled`);
+    const redoCount = redoStack.length;
+    setStatus(`Restored session from ${new Date(record.savedAt).toLocaleDateString()} — ${record.operationCount} edits${redoCount ? `, ${redoCount} redo available` : ""}, ${record.completionProgress?.confirmedCount || 0}/${record.completionProgress?.totalCandidates || 0} fields filled${valueNote}`);
     return true;
   }
 
@@ -1057,10 +1152,11 @@
             ((name.includes("employer") || name.includes("company")) && key.includes("employer")) ||
             (name.includes("title") && key.includes("jobtitle"))) {
           usedKeys.add(pv.semanticKey);
+          const bulkValue = resolveButtonExportValue(field, pv.textValue);
           pushOperation(makeOperation({
             pageIndex: field.pageIndex,
             kind: "nativeFieldValue",
-            value: pv.textValue,
+            value: bulkValue,
             targetID: field.name,
             bounds: field.bounds,
             sourceDigest,
@@ -2774,6 +2870,7 @@
     }
     renderImpactMetrics(lastValidation);
     renderTemplateReview();
+    modeStage.refreshPanels();
   }
 
   function makeOperation({ pageIndex, targetID = null, kind, value, bounds = null, candidateID = null, previousValue = null, payload = null, coordinate = null }) {
@@ -2808,11 +2905,13 @@
       return;
     }
     const buttonOptions = selectedField.kind === "button" ? nativeButtonOptions(selectedField) : [];
+    // Normalize widget state index to export value for button fields
+    const normalizedValue = resolveButtonExportValue(selectedField, value);
     const operation = makeOperation({
       pageIndex: selectedField.pageIndex,
       targetID: selectedField.name,
       kind: "nativeFieldValue",
-      value,
+      value: normalizedValue,
       bounds: selectedField.bounds,
       previousValue: selectedField.value || null,
       payload: selectedField.kind !== "button"
@@ -3680,6 +3779,7 @@
       renderDiffOverlays(pageNum, viewport, shell);
     }
     updateThumbSelection();
+    modeStage.updateReaderContext();
   }
 
   async function runPageLinks() {
@@ -3901,6 +4001,13 @@
   function renderSearchResults() {
     ui.searchBox.innerHTML = "";
     ui.searchCount.textContent = `${searchResults.length} result(s)`;
+    if (!searchResults.length && ui.searchInput.value.trim()) {
+      const empty = document.createElement("div");
+      empty.className = "small muted";
+      empty.setAttribute("role", "status");
+      empty.textContent = "No matches found. Try a different search term.";
+      ui.searchBox.appendChild(empty);
+    }
     searchResults.forEach((result, index) => {
       const row = document.createElement("div");
       row.className = "item";
@@ -4106,7 +4213,6 @@
       page[method](value.x, value.y, value.width, value.height);
     };
     for (const [pageIndex, fact] of pageFacts.entries()) {
-      console.warn("pdf-editor-replay-page-facts", pageIndex, JSON.stringify(fact.boxes), fact.rotate);
       const outputPage = outputDocument.getPage(pageIndex);
       replayBox(outputPage, "setMediaBox", fact.boxes?.media);
       replayBox(outputPage, "setCropBox", fact.boxes?.crop);
@@ -4117,6 +4223,17 @@
         outputPage.setRotation(pdfLib.degrees(fact.rotate || 0));
       }
     }
+    const pageFactForOperation = (operation) => pageFacts[operation.pageIndex] || null;
+    const pageRectForOperation = (operation, rect) => {
+      const fact = pageFactForOperation(operation);
+      const crop = fact?.boxes?.crop;
+      const pageBox = operation.coordinate?.coordinateSpace?.pageBox;
+      if (!crop || pageBox !== "crop") return { ...rect };
+      return { ...rect, x: rect.x + crop.x, y: rect.y + crop.y };
+    };
+    const cellsForOperation = (operation) => (Array.isArray(operation.payload?.cells)
+      ? operation.payload.cells.map((cell) => pageRectForOperation(operation, cell))
+      : []);
     const formOperations = operations.filter((operation) => ["nativeFieldValue", "synthesizeNativeField"].includes(operation.kind));
     const overlayOperations = operations.filter((operation) => operation.kind === "overlayText");
     let form = null;
@@ -4127,7 +4244,7 @@
       for (const operation of formOperations) {
         if (operation.kind === "synthesizeNativeField") {
           const field = form.createTextField(operation.targetID);
-          const bounds = operation.bounds;
+          const bounds = pageRectForOperation(operation, operation.bounds);
           if (!bounds) { throw new Error(`Synthesized field ${operation.targetID} has no bounds.`); }
           field.addToPage(outputDocument.getPage(operation.pageIndex), {
             x: bounds.x,
@@ -4176,10 +4293,11 @@
         if (operation.payload?.kind === "characterGrid" || isExplicitMultiline(operation)) {
           continue;
         }
+        const bounds = pageRectForOperation(operation, operation.bounds);
         const text = String(operation.value || "");
-        const availableWidth = operation.bounds.width - (boundedTextPadding * 2);
-        const availableHeight = operation.bounds.height - (boundedTextPadding * 2);
-        const preferredSize = Math.max(8, Math.min(14, operation.bounds.height * 0.72));
+        const availableWidth = bounds.width - (boundedTextPadding * 2);
+        const availableHeight = bounds.height - (boundedTextPadding * 2);
+        const preferredSize = Math.max(8, Math.min(14, bounds.height * 0.72));
         const preferredWidth = font.widthOfTextAtSize(text, preferredSize);
         const preferredHeight = measureTextHeight(preferredSize);
         const widthSize = preferredWidth > 0 ? (preferredSize * availableWidth) / preferredWidth : preferredSize;
@@ -4188,7 +4306,7 @@
         if (!Number.isFinite(size) || size < boundedTextMinimumSize) {
           throw new Error(
             `Bounded single-line text operation ${operation.id} cannot fit inside its declared region `
-            + `(${operation.bounds.width.toFixed(2)} x ${operation.bounds.height.toFixed(2)}pt) `
+            + `(${bounds.width.toFixed(2)} x ${bounds.height.toFixed(2)}pt) `
             + `at the supported minimum font size of ${boundedTextMinimumSize}pt. `
             + "Choose a larger region or explicitly request multiline text."
           );
@@ -4202,8 +4320,8 @@
           );
         }
         singleLineLayouts.set(operation.id, {
-          x: operation.bounds.x + boundedTextPadding,
-          y: operation.bounds.y + boundedTextPadding + Math.max(0, (availableHeight - measuredHeight) / 2),
+          x: bounds.x + boundedTextPadding,
+          y: bounds.y + boundedTextPadding + Math.max(0, (availableHeight - measuredHeight) / 2),
           size
         });
       }
@@ -4211,12 +4329,13 @@
       for (const operation of overlayOperations) {
         if (!operation.bounds) { throw new Error(`Overlay ${operation.id} has no coordinate bounds.`); }
         const page = outputDocument.getPage(operation.pageIndex);
+        const bounds = pageRectForOperation(operation, operation.bounds);
         if (operation.payload?.kind === "characterGrid" && Array.isArray(operation.payload.cells)) {
           const characters = [...operation.value];
           if (characters.length > operation.payload.cells.length) {
             throw new Error(`Overlay ${operation.id} has more characters than detected cells.`);
           }
-          operation.payload.cells.slice(0, characters.length).forEach((cell, index) => {
+          cellsForOperation(operation).slice(0, characters.length).forEach((cell, index) => {
             page.drawText(characters[index], {
               x: cell.x + Math.max(1, cell.width * 0.18),
               y: cell.y + Math.max(1, cell.height * 0.12),
@@ -4231,13 +4350,13 @@
         }
         if (isExplicitMultiline(operation)) {
           page.drawText(operation.value, {
-            x: operation.bounds.x + 2,
-            y: operation.bounds.y + 2,
-            size: Math.max(8, Math.min(14, operation.bounds.height * 0.72)),
+            x: bounds.x + 2,
+            y: bounds.y + 2,
+            size: Math.max(8, Math.min(14, bounds.height * 0.72)),
             font,
             color: pdfLib.rgb(0.06, 0.18, 0.35),
-            maxWidth: Math.max(8, operation.bounds.width - 4),
-            lineHeight: Math.max(9, operation.bounds.height)
+            maxWidth: Math.max(8, bounds.width - 4),
+            lineHeight: Math.max(9, bounds.height)
           });
           continue;
         }
@@ -5004,14 +5123,25 @@
   }
 
   document.addEventListener("keydown", (event) => {
+    // Escape works without modifier — close help panel or blur input
+    if (event.key === "Escape") {
+      if (shortcutsHelpPanel && shortcutsHelpPanel.hidden === false) {
+        shortcutsHelpPanel.hidden = true;
+        shortcutsHelpButton?.setAttribute("aria-expanded", "false");
+      }
+      const tag = event.target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || event.target?.isContentEditable) {
+        event.target.blur();
+      }
+      return;
+    }
+
     const mod = event.metaKey || event.ctrlKey;
     if (!mod) { return; }
 
     // Skip shortcuts when typing in an input/textarea/select
     const tag = event.target?.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || event.target?.isContentEditable) {
-      // Allow Escape to blur even inside inputs
-      if (event.key === "Escape") { event.target.blur(); event.preventDefault(); }
       return;
     }
 
@@ -5059,12 +5189,263 @@
       return;
     }
 
-    // Escape → Close help panel / blur
-    if (event.key === "Escape") {
-      if (shortcutsHelpPanel && shortcutsHelpPanel.hidden === false) {
-        shortcutsHelpPanel.hidden = true;
-        shortcutsHelpButton?.setAttribute("aria-expanded", "false");
-      }
-      return;
-    }
   });
+
+  // ── Apple Design §9: Rubber-band overscroll with velocity-aware momentum ──
+  // Wraps the PDF viewer scroll container with momentum projection and
+  // rubber-band resistance at boundaries, matching Apple's fluid interface spec.
+  (function initRubberBandScroll() {
+    const el = document.getElementById("viewerCanvasWrap");
+    if (!el) return;
+
+    // Skip on reduced-motion
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    let tracking = false;
+    let armed = false;
+    let startY = 0;
+    let startScroll = 0;
+    const history = []; // { y, t } for velocity calculation
+    let animFrame = null;
+
+    // Rubber-band function: progressive resistance past boundary
+    function rubberband(overshoot, dimension, constant) {
+      if (constant === undefined) constant = 0.55;
+      return (overshoot * dimension * constant) / (dimension + constant * Math.abs(overshoot));
+    }
+
+    // Project where the finger is going (Apple's exponential deceleration)
+    function project(velocity, decelerationRate) {
+      if (decelerationRate === undefined) decelerationRate = 0.998;
+      return (velocity / 1000) * decelerationRate / (1 - decelerationRate);
+    }
+
+    // Get current scroll bounds
+    function bounds() {
+      return {
+        top: 0,
+        bottom: el.scrollHeight - el.clientHeight,
+      };
+    }
+
+    // Smooth animation via requestAnimationFrame
+    function animateTo(target, velocity) {
+      if (animFrame) cancelAnimationFrame(animFrame);
+
+      const b = bounds();
+      const clampedTarget = Math.max(b.top, Math.min(b.bottom, target));
+      let current = el.scrollTop;
+      let v = velocity || 0;
+      const damping = 0.92; // friction per frame
+      const threshold = 0.5;
+
+      function step() {
+        const diff = clampedTarget - current;
+
+        // If close enough, snap and stop
+        if (Math.abs(diff) < threshold && Math.abs(v) < threshold) {
+          el.scrollTop = clampedTarget;
+          return;
+        }
+
+        // Spring-like approach: move toward target with velocity
+        v += diff * 0.08; // spring force
+        v *= damping;     // friction
+        current += v;
+        el.scrollTop = current;
+        animFrame = requestAnimationFrame(step);
+      }
+
+      animFrame = requestAnimationFrame(step);
+    }
+
+    el.addEventListener("pointerdown", (e) => {
+      // Only respond to vertical single-finger drag on the scroll container
+      if (e.button !== 0) return;
+
+      const b = bounds();
+      const atTop = el.scrollTop <= b.top;
+      const atBottom = el.scrollTop >= b.bottom;
+
+      // Only track when at a boundary (rubber-band territory)
+      if (!atTop && !atBottom) return;
+
+      // Arm the gesture instead of capturing immediately: a pointerdown at a
+      // scroll boundary may still be a tap on an interactive child (pending
+      // overlay preview, candidate, text layer). setPointerCapture on
+      // pointerdown redirects the resulting click to this container and
+      // silently breaks every child control. Capture only once a real drag
+      // actually starts.
+      armed = true;
+      startY = e.clientY;
+      startScroll = el.scrollTop;
+      history.length = 0;
+      history.push({ y: e.clientY, t: performance.now() });
+
+      if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+
+      el.style.scrollBehavior = "auto";
+    });
+
+    el.addEventListener("pointermove", (e) => {
+      if (!tracking && !armed) return;
+
+      const dy = e.clientY - startY;
+      // Tap-vs-drag disambiguation: a small movement is still a tap on a
+      // child control; only a real drag takes the pointer.
+      if (armed) {
+        if (Math.abs(dy) < 6) return;
+        armed = false;
+        tracking = true;
+        el.setPointerCapture(e.pointerId);
+      }
+
+      const b = bounds();
+      const atTop = startScroll <= b.top;
+      const atBottom = startScroll >= b.bottom;
+
+      // Record velocity history (last 5 events)
+      history.push({ y: e.clientY, t: performance.now() });
+      if (history.length > 5) history.shift();
+
+      // Rubber-band when pulling past boundary
+      if (atTop && dy > 0) {
+        const rubberY = rubberband(dy, el.clientHeight);
+        el.scrollTop = b.top - rubberY;
+        e.preventDefault();
+      } else if (atBottom && dy < 0) {
+        const rubberY = rubberband(-dy, el.clientHeight);
+        el.scrollTop = b.bottom + rubberY;
+        e.preventDefault();
+      } else {
+        // Normal scroll — let the browser handle it
+        el.scrollTop = startScroll - dy;
+      }
+    });
+
+    el.addEventListener("pointerup", (e) => {
+      // A tap that never crossed the drag threshold releases cleanly so the
+      // browser dispatches the click to the actual child target.
+      armed = false;
+      if (!tracking) return;
+      tracking = false;
+
+      // Calculate release velocity from history
+      let velocity = 0;
+      if (history.length >= 2) {
+        const last = history[history.length - 1];
+        const prev = history[history.length - 2];
+        const dt = last.t - prev.t;
+        if (dt > 0 && dt < 100) {
+          velocity = (last.y - prev.y) / dt * -1000; // px/s, inverted (down = positive scroll)
+        }
+      }
+
+      const b = bounds();
+      const currentPos = el.scrollTop;
+
+      // If we're in rubber-band territory (past boundary), snap back with velocity
+      if (currentPos < b.top) {
+        const projectedExtra = project(velocity);
+        const target = Math.max(b.top - projectedExtra * 0.1, b.top);
+        animateTo(target, velocity * 0.5);
+        return;
+      }
+      if (currentPos > b.bottom) {
+        const projectedExtra = project(velocity);
+        const target = Math.min(b.bottom - projectedExtra * 0.1, b.bottom);
+        animateTo(target, velocity * 0.5);
+        return;
+      }
+
+      // If inside bounds but has momentum, project to nearest snap point
+      if (Math.abs(velocity) > 200) {
+        const projected = currentPos + project(velocity);
+        animateTo(projected, velocity);
+      }
+
+      el.style.scrollBehavior = "";
+    });
+
+    el.addEventListener("pointercancel", () => {
+      armed = false;
+      tracking = false;
+      const b = bounds();
+      // Snap back if in rubber-band territory
+      if (el.scrollTop < b.top || el.scrollTop > b.bottom) {
+        animateTo(Math.max(b.top, Math.min(b.bottom, el.scrollTop)), 0);
+      }
+      el.style.scrollBehavior = "";
+    });
+  })();
+
+  // ── Direct manipulation: scroll-wheel zoom + drag-to-pan ────────────
+  // Ctrl+scroll or pinch-to-zoom on the viewer; drag to pan when zoomed in.
+  (function initDirectManipulation() {
+    const el = document.getElementById("viewerCanvasWrap");
+    if (!el) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Scroll-wheel zoom (Ctrl/Cmd + wheel)
+    el.addEventListener("wheel", (e) => {
+      const mod = e.ctrlKey || e.metaKey;
+      if (!mod) return; // normal scroll — let rubber-band handle it
+      e.preventDefault();
+
+      const zoomSlider = document.getElementById("zoomSlider");
+      const zoomValue = document.getElementById("zoomValue");
+      if (!zoomSlider) return;
+
+      const currentZoom = parseFloat(zoomSlider.value) || 100;
+      // deltaY negative = scroll up = zoom in; positive = zoom out
+      const delta = -e.deltaY * 0.5;
+      const newZoom = Math.max(25, Math.min(300, currentZoom + delta));
+
+      zoomSlider.value = newZoom;
+      if (zoomValue) zoomValue.textContent = `${Math.round(newZoom)}%`;
+
+      // Dispatch input event to trigger the zoom handler
+      zoomSlider.dispatchEvent(new Event("input", { bubbles: true }));
+    }, { passive: false });
+
+    // Drag-to-pan when zoomed in
+    let dragTracking = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let dragStartScrollLeft = 0;
+    let dragStartScrollTop = 0;
+
+    el.addEventListener("pointerdown", (e) => {
+      // Only drag with middle button or when zoomed in (scrollbar visible)
+      if (e.button !== 1) return; // middle-click drag
+      if (el.scrollWidth <= el.clientWidth && el.scrollHeight <= el.clientHeight) return;
+
+      dragTracking = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragStartScrollLeft = el.scrollLeft;
+      dragStartScrollTop = el.scrollTop;
+      el.setPointerCapture(e.pointerId);
+      el.style.cursor = "grabbing";
+      e.preventDefault();
+    });
+
+    el.addEventListener("pointermove", (e) => {
+      if (!dragTracking) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      el.scrollLeft = dragStartScrollLeft - dx;
+      el.scrollTop = dragStartScrollTop - dy;
+    });
+
+    el.addEventListener("pointerup", () => {
+      if (!dragTracking) return;
+      dragTracking = false;
+      el.style.cursor = "";
+    });
+
+    el.addEventListener("pointercancel", () => {
+      dragTracking = false;
+      el.style.cursor = "";
+    });
+  })();

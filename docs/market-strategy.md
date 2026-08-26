@@ -186,6 +186,17 @@ separate. Do not make a cloud parser a hidden dependency for ordinary filling.
 
 ## Proposed Pricing Experiments
 
+> **Superseded (2026-08-25):** The subscription hypotheses below ($79/yr,
+> $9.99/mo, $149/seat/yr) are superseded by
+> [D-052](decisions.md#d-052-adopt-one-time-with-renewals-pricing-and-re-anchored-ai-packaging):
+> one-time Pro at $79 with 12 months of updates + optional $39/yr renewal,
+> on-device AI included in the update window, and cloud escalation as a
+> $4.99/mo Agent+ credit add-on. Verified 2026 competitor data (incumbents
+> vacating one-time pricing; PDF-editor AI add-ons at $1.99–$4.17/mo) changed
+> the recommendation. See
+> [`pdf-pricing-marketing-exploration-2026-08-25.md`](pdf-pricing-marketing-exploration-2026-08-25.md).
+> Retained below for historical traceability.
+
 These are hypotheses to test, not approved prices:
 
 - **Free:** reading, annotations, existing native-field filling, and limited

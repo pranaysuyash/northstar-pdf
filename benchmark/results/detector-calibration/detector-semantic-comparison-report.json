@@ -205,7 +205,7 @@
           "candidateIdentity": {
             "pageIndex": 0,
             "bounds": {
-              "height": 18,
+              "height": 16.200000000000003,
               "width": 140,
               "x": 180,
               "y": 520
@@ -750,7 +750,7 @@
               "x": 180,
               "y": 520,
               "width": 140,
-              "height": 18
+              "height": 16.200000000000003
             },
             "kind": "vectorRegion",
             "suggestedFieldType": "date",

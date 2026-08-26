@@ -8,10 +8,12 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import {
+import { pdfPython } from "./pdf-python.mjs";
   detectSignatures,
   planSignatureImpact,
   assertSignaturesEditable,
-  SignatureEditBlockError
+  SignatureEditBlockError,
+  validateSignatureIntegrity
 } from "../web/pdf-signature-guard.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
@@ -19,7 +21,7 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sig-"));
 const signedPath = path.join(tmpDir, "signed.pdf");
 
 execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     [
       "import pikepdf, sys",
@@ -50,6 +52,8 @@ execFileSync(
 const clean = detectSignatures(fs.readFileSync(SRC));
 assert.equal(clean.detected, false, `public fixture unexpectedly flagged: ${JSON.stringify(clean)}`);
 assert.ok(typeof clean.detected === "boolean");
+const cleanValidation = validateSignatureIntegrity(fs.readFileSync(SRC));
+assert.equal(cleanValidation.status, "unsigned");
 console.log("PASS unsigned public fixture: not flagged");
 
 // Synthetic signed structures must be caught three ways.
@@ -59,6 +63,10 @@ assert.equal(dirty.sigFlags, 1);
 assert.ok(dirty.sigFieldCount >= 1, `sig fields: ${dirty.sigFieldCount}`);
 assert.ok(dirty.signatureDictionaries >= 1, `sig dicts: ${dirty.signatureDictionaries}`);
 assert.equal(dirty.detected, true);
+const dirtyValidation = validateSignatureIntegrity(fs.readFileSync(signedPath));
+assert.equal(dirtyValidation.structuralStatus, "valid");
+assert.equal(dirtyValidation.cryptographicStatus, "failed");
+assert.equal(dirtyValidation.trustStatus, "notEvaluated");
 console.log(`PASS synthetic signed fixture: flags=1, sigFields=${dirty.sigFieldCount}, sigDicts=${dirty.signatureDictionaries}`);
 
 // Guard: edits blocked until explicitly acknowledged.
@@ -81,4 +89,4 @@ assert.throws(() => planSignatureImpact({ sigFieldCount: 0 }), TypeError);
 console.log("PASS falsifier: detection facts without boolean 'detected' are rejected");
 
 fs.rmSync(tmpDir, { recursive: true, force: true });
-console.log("\nRG-014 detection + invalidation gates PASS (validity verification remains open)");
+console.log("\nRG-014 detection, invalidation, and signature-integrity gates PASS (trusted real signed corpus remains open)");

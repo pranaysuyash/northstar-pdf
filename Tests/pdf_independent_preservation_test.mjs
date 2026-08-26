@@ -3,11 +3,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 import { compareIndependentPreservation, independentViewerReopen } from "../benchmark/independent-preservation-validator.mjs";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const baseURL = process.env.PDF_PROOF_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
 const sourceRelativePath = "benchmark/results/public-sample-form.pdf";
 const sourcePath = path.join(projectRoot, sourceRelativePath);
 const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "pdf-editor-independent-test-"));

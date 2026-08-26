@@ -3,17 +3,18 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 import { compareIndependentPreservation } from "../benchmark/independent-preservation-validator.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const root = path.resolve(new URL("..", import.meta.url).pathname);
-const baseURL = process.env.PDF_PROOF_BASE_URL || "http://127.0.0.1:4184/web/index.html";
+const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4184/web/index.html";
 const sourcePath = path.join(root, "benchmark/results/rotation-corpus/rotated-widget-90.pdf");
 const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "pdf-editor-rotated-crop-replay-"));
 const cropSourcePath = path.join(tempDirectory, "rotated-crop-offset.pdf");
 const outputPath = path.join(tempDirectory, "rotated-crop-overlay.pdf");
 
-execFileSync("python3", ["-c", [
+execFileSync(pdfPython, ["-c", [
   "import pikepdf, sys",
   "p = pikepdf.open(sys.argv[1])",
   "pg = p.pages[0]",
@@ -84,7 +85,6 @@ try {
     outputPath,
     operations: exportedSnapshot.editSession.operations
   });
-  console.log("independent-debug", JSON.stringify({ text: independent.text, raster: independent.raster, reopen: independent.outputReopen }, null, 2));
   assert.equal(independent.text.status, "passed");
   assert.equal(independent.raster.status, "passed");
   assert.equal(independent.outputReopen.status, "passed");

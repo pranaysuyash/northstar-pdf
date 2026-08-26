@@ -39,9 +39,19 @@ public enum StaticRegionDetector {
         let looksLikeLabel = normalized.hasSuffix(":")
         guard hasBlankMarker || looksLikeLabel else { return nil }
         let line = observation.toPageSpace(pageBounds: pageBounds, pageIndex: pageIndex)
+        // An OCR line that merges label and blank markers highlights only the
+        // blank run, mirroring the text-anchored refinement.
+        let bounds: PDFRect
+        if hasBlankMarker,
+          let blankBounds = blankRunBounds(in: normalized, lineBounds: line.bounds)
+        {
+          bounds = blankBounds
+        } else {
+          bounds = line.bounds
+        }
         return RegionCandidate(
           pageIndex: pageIndex,
-          bounds: line.bounds,
+          bounds: bounds,
           kind: .ocrRegion,
           score: min(0.6, observation.confidence * 0.6),
           evidence: [
@@ -81,7 +91,12 @@ public enum StaticRegionDetector {
         checkboxes: geom.potentialCheckboxes,
         inputBoxes: geom.potentialInputBoxes
       )
-      for group in adjacentCellGroups(smallBoxes) {
+      for originalGroup in adjacentCellGroups(smallBoxes) {
+        // A stray wide rectangle sharing the row signature would balloon the
+        // union bounds past the user's intended field; split it off first.
+        let (keptGroup, removedOutliers) = splittingOutliers(from: originalGroup)
+        guard keptGroup.count >= 3 else { continue }
+        let group = keptGroup
         let region = union(of: group)
         // Repeated geometry is not field intent by itself. Require a
         // semantically plausible label before promoting a grid to a review
@@ -96,6 +111,10 @@ public enum StaticRegionDetector {
           "Grouped \(group.count) adjacent boxes into one \(mode.displayName.lowercased()) region.",
           "Repeated cell geometry supports a single logical entry area.",
         ]
+        if removedOutliers > 0 {
+          evidenceStrings.append(
+            "Split \(removedOutliers) width-signature outlier(s) from the group.")
+        }
         if let labelText, !labelText.isEmpty {
           evidenceStrings.append("Associated label: \"\(labelText)\"")
         } else {
@@ -116,6 +135,10 @@ public enum StaticRegionDetector {
             labelText: labelText,
             groupMemberCount: group.count,
             memberBounds: group.sorted { $0.x < $1.x },
+            memberLabels:
+              mode == .checkbox || mode == .radioGroup
+              ? optionLabels(for: group, in: pageLines)
+              : [],
             evidenceItems: [
               CandidateEvidence(
                 kind: .repeatedPattern,
@@ -153,21 +176,25 @@ public enum StaticRegionDetector {
             // A. Isolated checkbox geometry. Small cells are handled above;
             // only larger, ungrouped rectangles can reach this path.
       for box in geom.potentialCheckboxes {
-        let nearbyLabel = findNearestLabel(
-          for: box, in: fieldLabelLines, maxDistance: 120.0)
+        guard let nearbyLabel = findNearestLabel(
+          for: box, in: fieldLabelLines, maxDistance: 120.0) else {
+          continue
+        }
         // Character-entry grids and decorative squares are common PDF
         // geometry. Without label evidence, treating every tiny square
         // as a checkbox creates an unusable review queue.
-        guard !claimedVectorBoxes.contains(box), box.height >= 8, nearbyLabel != nil else {
+        guard !claimedVectorBoxes.contains(box), box.height >= 8 else {
           continue
         }
+        // A square drawn over dense static text is page decoration (a photo
+        // box or section border), not a fillable cell.
+        let checkboxInteriorCoverage = interiorTextCoverage(
+          of: box, in: pageLines, excluding: nearbyLabel)
+        guard checkboxInteriorCoverage <= 0.40 else { continue }
         var evidenceStrings = [
-          "Vector checkbox geometry detected (\(Int(box.width))x\(Int(box.height))pt)."
+          "Vector checkbox geometry detected (\(Int(box.width))x\(Int(box.height))pt).",
+          "Associated label: \"\(nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines))\"",
         ]
-        if let label = nearbyLabel {
-          evidenceStrings.append(
-            "Associated label: \"\(label.text.trimmingCharacters(in: .whitespacesAndNewlines))\"")
-        }
 
         candidates.append(
           RegionCandidate(
@@ -180,9 +207,10 @@ public enum StaticRegionDetector {
             coordinate: PDFPageRegion(pageIndex: geom.pageIndex, rect: box),
             suggestedFieldType: .checkbox,
             entryMode: .checkbox,
-            labelText: nearbyLabel?.text.trimmingCharacters(in: .whitespacesAndNewlines),
+            labelText: nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines),
             groupMemberCount: 1,
             memberBounds: [box],
+            memberLabels: optionLabels(for: [box], in: pageLines),
             evidenceItems: [
               CandidateEvidence(
                 kind: .vectorRectangle,
@@ -195,16 +223,16 @@ public enum StaticRegionDetector {
                 kind: .textLabel,
                 origin: .textExtraction,
                 summary: "Semantically plausible field label",
-                region: nearbyLabel.map { PDFPageRegion(pageIndex: geom.pageIndex, rect: $0.bounds) },
-                text: nearbyLabel?.text,
+                region: PDFPageRegion(pageIndex: geom.pageIndex, rect: nearbyLabel.bounds),
+                text: nearbyLabel.text,
                 score: 0.72
               ),
               CandidateEvidence(
                 kind: .spatialRelationship,
                 origin: .textExtraction,
                 summary: "Label matched by page-space proximity",
-                region: nearbyLabel.map { PDFPageRegion(pageIndex: geom.pageIndex, rect: $0.bounds) },
-                text: nearbyLabel?.text,
+                region: PDFPageRegion(pageIndex: geom.pageIndex, rect: nearbyLabel.bounds),
+                text: nearbyLabel.text,
                 score: 0.72
               ),
             ]
@@ -215,21 +243,26 @@ public enum StaticRegionDetector {
 
             // B. Larger input boxes (table cells, form blanks)
       for box in geom.potentialInputBoxes {
-        let nearbyLabel = findNearestLabel(
-          for: box, in: fieldLabelLines, maxDistance: 160.0)
-        // Defer unlabeled character cells to grouped-layout detection;
-        // a single cell is not a useful text-entry suggestion.
-        guard !claimedVectorBoxes.contains(box), box.height >= 8, nearbyLabel != nil else {
+        guard let nearbyLabel = findNearestLabel(
+          for: box, in: fieldLabelLines, maxDistance: 160.0) else {
           continue
         }
-        let inferredType = inferFieldType(from: nearbyLabel?.text ?? "")
+        // Defer unlabeled character cells to grouped-layout detection;
+        // a single cell is not a useful text-entry suggestion.
+        guard !claimedVectorBoxes.contains(box), box.height >= 8 else {
+          continue
+        }
+        // Rectangles whose interior is mostly static text are decorative
+        // panels or borders; a fillable entry area is empty inside.
+        let coverage = interiorTextCoverage(
+          of: box, in: pageLines, excluding: nearbyLabel)
+        guard coverage <= 0.40 else { continue }
+        let inferredType = inferFieldType(from: nearbyLabel.text)
         var evidenceStrings = ["Vector bounding box (\(Int(box.width))x\(Int(box.height))pt)."]
 
         let score = 0.80
-        if let label = nearbyLabel {
-          evidenceStrings.append(
-            "Associated label: \"\(label.text.trimmingCharacters(in: .whitespacesAndNewlines))\"")
-        }
+        evidenceStrings.append(
+            "Associated label: \"\(nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines))\"")
 
         candidates.append(
           RegionCandidate(
@@ -242,7 +275,7 @@ public enum StaticRegionDetector {
             coordinate: PDFPageRegion(pageIndex: geom.pageIndex, rect: box),
             suggestedFieldType: inferredType,
             entryMode: entryMode(for: inferredType, isGrouped: false),
-            labelText: nearbyLabel?.text.trimmingCharacters(in: .whitespacesAndNewlines),
+            labelText: nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines),
             evidenceItems: [
               CandidateEvidence(
                 kind: .vectorRectangle,
@@ -255,16 +288,16 @@ public enum StaticRegionDetector {
                 kind: .textLabel,
                 origin: .textExtraction,
                 summary: "Semantically plausible field label",
-                region: nearbyLabel.map { PDFPageRegion(pageIndex: geom.pageIndex, rect: $0.bounds) },
-                text: nearbyLabel?.text,
+                region: PDFPageRegion(pageIndex: geom.pageIndex, rect: nearbyLabel.bounds),
+                text: nearbyLabel.text,
                 score: 0.72
               ),
               CandidateEvidence(
                 kind: .spatialRelationship,
                 origin: .textExtraction,
                 summary: "Label matched by page-space proximity",
-                region: nearbyLabel.map { PDFPageRegion(pageIndex: geom.pageIndex, rect: $0.bounds) },
-                text: nearbyLabel?.text,
+                region: PDFPageRegion(pageIndex: geom.pageIndex, rect: nearbyLabel.bounds),
+                text: nearbyLabel.text,
                 score: 0.72
               ),
             ]
@@ -275,16 +308,24 @@ public enum StaticRegionDetector {
 
             // C. Underlines from vector stream
       for line in geom.potentialUnderlines {
-        let boxAbove = PDFRect(x: line.x, y: line.y, width: line.width, height: 18.0)
-        let nearbyLabel = findNearestLabel(
-          for: boxAbove, in: fieldLabelLines, maxDistance: 120.0)
-        guard nearbyLabel != nil else { continue }
-        let inferredType = inferFieldType(from: nearbyLabel?.text ?? "")
-        var evidenceStrings = ["Vector underline stroke detected (\(Int(line.width))pt)."]
-        if let label = nearbyLabel {
-          evidenceStrings.append(
-            "Associated label: \"\(label.text.trimmingCharacters(in: .whitespacesAndNewlines))\"")
-        }
+        // Provisional band used only to locate the associated label; the
+        // final band height derives from the label's own line metrics so the
+        // suggestion matches the real writing area instead of a fixed 18 pt.
+        let searchBox = PDFRect(x: line.x, y: line.y, width: line.width, height: 18.0)
+        guard let nearbyLabel = findNearestLabel(
+          for: searchBox, in: fieldLabelLines, maxDistance: 120.0)
+        else { continue }
+        let bandHeight = min(26.0, max(10.0, nearbyLabel.bounds.height * 1.35))
+        let boxAbove = PDFRect(
+          x: line.x, y: line.y, width: line.width, height: bandHeight)
+        let inferredType = inferFieldType(from: nearbyLabel.text)
+        var evidenceStrings = [
+          "Vector underline stroke detected (\(Int(line.width))pt).",
+          String(
+            format: "Entry band height derived from label line metrics (%.1fpt).",
+            bandHeight),
+          "Associated label: \"\(nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines))\"",
+        ]
 
         candidates.append(
           RegionCandidate(
@@ -297,7 +338,7 @@ public enum StaticRegionDetector {
             coordinate: PDFPageRegion(pageIndex: geom.pageIndex, rect: boxAbove),
             suggestedFieldType: inferredType,
             entryMode: entryMode(for: inferredType, isGrouped: false),
-            labelText: nearbyLabel?.text.trimmingCharacters(in: .whitespacesAndNewlines),
+            labelText: nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines),
             evidenceItems: [
               CandidateEvidence(
                 kind: .underline,
@@ -310,16 +351,16 @@ public enum StaticRegionDetector {
                 kind: .textLabel,
                 origin: .textExtraction,
                 summary: "Semantically plausible field label",
-                region: nearbyLabel.map { PDFPageRegion(pageIndex: geom.pageIndex, rect: $0.bounds) },
-                text: nearbyLabel?.text,
+                region: PDFPageRegion(pageIndex: geom.pageIndex, rect: nearbyLabel.bounds),
+                text: nearbyLabel.text,
                 score: 0.72
               ),
               CandidateEvidence(
                 kind: .spatialRelationship,
                 origin: .textExtraction,
                 summary: "Label matched by page-space proximity",
-                region: nearbyLabel.map { PDFPageRegion(pageIndex: geom.pageIndex, rect: $0.bounds) },
-                text: nearbyLabel?.text,
+                region: PDFPageRegion(pageIndex: geom.pageIndex, rect: nearbyLabel.bounds),
+                text: nearbyLabel.text,
                 score: 0.72
               ),
             ]
@@ -355,25 +396,47 @@ public enum StaticRegionDetector {
         : ["Text ends with a label delimiter.", "No vector-field proof is available."]
 
       let inferredType = inferFieldType(from: normalized)
-      let whitespaceRect: PDFRect
+      let pageLines = pageLinesByIndex[line.pageIndex] ?? []
+      let pageRight: CGFloat
       if let pageGeometry = vectorGeometries.first(where: { $0.pageIndex == line.pageIndex }) {
-        let pageRight = pageGeometry.mediaBox.maxX
-        let x = line.bounds.x + line.bounds.width + 8
-        whitespaceRect = PDFRect(
-          x: x,
-          y: line.bounds.y,
-          width: max(72, min(220, pageRight - x - 20)),
-          height: max(14, line.bounds.height + 5)
-        )
+        pageRight = pageGeometry.mediaBox.maxX
       } else {
-        whitespaceRect = PDFRect(
-          x: line.bounds.x + line.bounds.width + 8,
+        pageRight = line.bounds.x + line.bounds.width + 228
+      }
+
+      // A line with an underscore blank run highlights only the blank run,
+      // never the static label words sitting next to it.
+      var candidateBounds = line.bounds
+      var boundsEvidence: [String] = []
+      if containsUnderline,
+        let blankBounds = blankRunBounds(in: normalized, lineBounds: line.bounds)
+      {
+        candidateBounds = blankBounds
+        boundsEvidence = ["Blank-run isolated from label text within the line."]
+      } else if looksLikeLabel {
+        // Colon-label entries synthesize whitespace after the label. Clip the
+        // synthesized width to the nearest same-row text run so the box can
+        // no longer overflow into a neighboring column.
+        let proposedX = line.bounds.x + line.bounds.width + 8
+        let proposedWidth = max(0, min(220, pageRight - proposedX - 20))
+        let clippedWidth = clippedWhitespaceWidth(
+          for: PDFRect(
+            x: proposedX, y: line.bounds.y, width: proposedWidth, height: line.bounds.height),
+          pageLines: pageLines,
+          labelLine: line)
+        let usableWidth = min(proposedWidth, clippedWidth)
+        guard usableWidth >= 48 else { continue }
+        candidateBounds = PDFRect(
+          x: proposedX,
           y: line.bounds.y,
-          width: 220,
+          width: usableWidth,
           height: max(14, line.bounds.height + 5)
         )
+        boundsEvidence =
+          clippedWidth < proposedWidth
+          ? ["Entry width clipped to the nearest same-row content."]
+          : []
       }
-      let candidateBounds = containsUnderline ? line.bounds : whitespaceRect
 
       candidates.append(
         RegionCandidate(
@@ -382,7 +445,7 @@ public enum StaticRegionDetector {
           kind: kind,
           status: .suggested,
           score: score,
-          evidence: evidence,
+          evidence: evidence + boundsEvidence,
           coordinate: PDFPageRegion(pageIndex: line.pageIndex, rect: candidateBounds),
           suggestedFieldType: inferredType,
           entryMode: entryMode(for: inferredType, isGrouped: false),
@@ -392,7 +455,7 @@ public enum StaticRegionDetector {
               kind: .whitespace,
               origin: .textExtraction,
               summary: "Whitespace adjacent to a semantically plausible label",
-              region: PDFPageRegion(pageIndex: line.pageIndex, rect: whitespaceRect),
+              region: PDFPageRegion(pageIndex: line.pageIndex, rect: candidateBounds),
               text: normalized,
               score: score
             ),
@@ -658,6 +721,18 @@ public enum StaticRegionDetector {
     return groups
   }
 
+  /// Splits a group of boxes into kept boxes and removed outliers based on
+  /// width deviation. Boxes that are significantly wider than the median
+  /// are removed as potential decorative elements.
+  private static func splittingOutliers(from group: [PDFRect]) -> (kept: [PDFRect], removed: Int) {
+    guard group.count >= 3 else { return (group, 0) }
+    let widths = group.map { $0.width }.sorted()
+    let median = widths[widths.count / 2]
+    let threshold = median * 1.5
+    let kept = group.filter { $0.width <= threshold }
+    return (kept, group.count - kept.count)
+  }
+
   private static func stableUnique(_ boxes: [PDFRect]) -> [PDFRect] {
     let reserveHint = min(boxes.count, 256)
     var unique: [PDFRect] = []
@@ -679,6 +754,118 @@ public enum StaticRegionDetector {
       partial.union(box.cgRect)
     }
     return PDFRect(rect)
+  }
+
+  // MARK: - Geometry refinement (bounds fidelity)
+
+  /// Isolates the fillable portion of a text line that contains an
+  /// underscore blank run ("Full Name: ______").
+  ///
+  /// Glyph-level projection is unavailable in this pure core layer, so the
+  /// blank-run x-extent is interpolated proportionally from character
+  /// offsets. Underscores have near-uniform advance widths, which keeps the
+  /// estimate close to the true run while never covering the static label
+  /// words — the defect this replaces was highlighting the entire line.
+  public static func blankRunBounds(in text: String, lineBounds: PDFRect) -> PDFRect? {
+    guard let range = text.range(of: "_{3,}", options: .regularExpression) else {
+      return nil
+    }
+    let total = max(1, text.count)
+    let startOffset = text.distance(from: text.startIndex, to: range.lowerBound)
+    let runLength = text.distance(from: range.lowerBound, to: range.upperBound)
+    let charWidth = lineBounds.width / CGFloat(total)
+    let x = lineBounds.x + CGFloat(startOffset) * charWidth
+    let width = max(12.0, CGFloat(runLength) * charWidth)
+    return PDFRect(x: x, y: lineBounds.y, width: width, height: lineBounds.height)
+  }
+
+  /// Clips a synthesized whitespace-entry width to the nearest text run on
+  /// the same visual row so the suggestion cannot overflow into a neighboring
+  /// column or content block.
+  static func clippedWhitespaceWidth(
+    for rect: PDFRect,
+    pageLines: [TextLineEvidence],
+    labelLine: TextLineEvidence
+  ) -> CGFloat {
+    let top = rect.y + rect.height
+    var limit: CGFloat = rect.width
+    for line in pageLines {
+      if line.bounds == labelLine.bounds && line.text == labelLine.text { continue }
+      let lineTop = line.bounds.y + line.bounds.height
+      // Only runs whose vertical span overlaps the entry band constrain it.
+      guard line.bounds.y < top - 1, lineTop > rect.y + 1 else { continue }
+      // Only runs starting to the right of the label matter.
+      guard line.bounds.x >= labelLine.bounds.x + labelLine.bounds.width else { continue }
+      let available = line.bounds.x - 8.0 - rect.x
+      if available >= 0 && available < limit {
+        limit = available
+      }
+    }
+    return max(0, limit)
+  }
+
+  /// Fraction of a box's interior covered by static text runs other than its
+  /// associated label. Decorative rectangles (photo boxes, section borders)
+  /// sit over dense text; genuine entry areas are empty.
+  static func interiorTextCoverage(
+    of box: PDFRect,
+    in lines: [TextLineEvidence],
+    excluding excluded: TextLineEvidence?
+  ) -> CGFloat {
+    guard box.width > 0, box.height > 0 else { return 0 }
+    let boxRect = box.cgRect
+    var covered: CGFloat = 0
+    for line in lines {
+      if let excluded, line == excluded { continue }
+      let intersection = line.bounds.cgRect.intersection(boxRect)
+      if !intersection.isNull {
+        covered += intersection.width * intersection.height
+      }
+    }
+    return covered / (box.width * box.height)
+  }
+
+  /// Extracts one option name per choice-cell from the static text adjacent
+  /// to each cell ("☐ Yes ☐ No" → ["Yes", "No"]). Right-side neighbors win
+  /// because standard forms place option text after the cell; left side is a
+  /// fallback for trailing-label layouts.
+  public static func optionLabels(
+    for members: [PDFRect],
+    in lines: [TextLineEvidence]
+  ) -> [String] {
+    members.sorted { $0.x < $1.x }.map { member in
+      let memberRect = member.cgRect
+      var best: TextLineEvidence?
+      var bestDistance: CGFloat = 120.0
+      for line in lines {
+        let lineRect = line.bounds.cgRect
+        let baselineOverlap =
+          abs(lineRect.midY - memberRect.midY) <= max(memberRect.height * 0.75, 8.0)
+        guard baselineOverlap else { continue }
+        let gapRight = lineRect.minX - memberRect.maxX
+        let gapLeft = memberRect.minX - lineRect.maxX
+        if gapRight >= -1 && gapRight < bestDistance {
+          bestDistance = gapRight
+          best = line
+        } else if gapRight < -1 && gapLeft >= -1 && gapLeft < bestDistance {
+          bestDistance = gapLeft
+          best = line
+        }
+      }
+      return best.map { $0.text.trimmingCharacters(in: .whitespacesAndNewlines) } ?? ""
+    }
+  }
+
+  /// Splits outlier-width members out of a grouped cell run so one stray wide
+  /// rectangle cannot balloon the union bounds over neighboring content.
+  static func medianValue(_ values: [CGFloat]) -> CGFloat? {
+    guard !values.isEmpty else { return nil }
+    let sortedValues = values.sorted()
+    let middle = sortedValues.count / 2
+    if sortedValues.count.isMultiple(of: 2) {
+      return (sortedValues[middle - 1] + sortedValues[middle]) / 2
+    }
+    return sortedValues[middle]
   }
 }
 

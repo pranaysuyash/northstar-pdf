@@ -236,7 +236,8 @@ public enum RecoveryInterruptionTestSupport {
       recoveryPairStore: RecoveryPairStore(directory: pairDirectory),
       profileStore: EncryptedPDFProfileVault(directory: profileDirectory),
       templateStore: EncryptedPDFTemplateStore(directory: templateDirectory),
-      initializeLocalVaultState: false
+      initializeLocalVaultState: false,
+      loadsKeychainSignatures: false
     )
   }
 

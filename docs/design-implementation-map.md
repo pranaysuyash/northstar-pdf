@@ -92,6 +92,21 @@ provider and validation evidence.
   five-mode workflow reaches feature parity in the React surface. The current
   CSS pass stays a compatibility bridge: `web/app/src/app.css` adds only
   token-consuming rules on top of `web/design-system.css`.
+- Slices landed in the React surface (verified by
+  `benchmark/react-surface-smoke.mjs` against a real Chromium):
+  Reader search with page-indexed matches and canvas-aligned highlight
+  rectangles; Complete mode enumerates native AcroForm widgets through the
+  controller adapter and confirms field edits into a reversible operation
+  history; Review mode replays confirmed operations onto a new copy via
+  pdf-lib and runs an independent PDF.js reopen-validation lane before any
+  download is offered. The history itself is a new framework-neutral contract
+  (`web/operation-history.mjs`, typed via `.d.mts`, covered by
+  `Tests/operation_history_test.mjs`) so undo lineage stays headlessly
+  testable and shared with future surfaces.
+- Still explicit partials in this surface: geometry-detected candidate
+  regions, field synthesis, overlay text placement, page organization, and
+  template persistence remain unconnected and render their true capability
+  states rather than simulated success.
 
 ## Explicit non-goals of this record
 

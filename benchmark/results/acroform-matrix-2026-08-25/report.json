@@ -1,0 +1,114 @@
+{
+  "contract": "pdf-editor.acroform-semantic-matrix",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "source": "benchmark/results/public-sample-form.pdf",
+  "provider": "pdfjs-pdflib",
+  "status": "measured",
+  "results": [
+    {
+      "kind": "text",
+      "fieldName": "applicant.name",
+      "hierarchical": true,
+      "radioOrChoice": false,
+      "operationKind": "nativeFieldValue",
+      "exportStatus": "validated",
+      "downloaded": true,
+      "validationKinds": [
+        "sourceDigest:passed",
+        "outputReopen:passed",
+        "pageGeometry:passed",
+        "nativeFields:passed",
+        "appliedOperations:passed",
+        "outsideRegionText:passed",
+        "visualDiff:passed",
+        "providerCapability:passed"
+      ],
+      "failureCodes": []
+    },
+    {
+      "kind": "text",
+      "fieldName": "applicant.notes",
+      "hierarchical": true,
+      "radioOrChoice": false,
+      "operationKind": "nativeFieldValue",
+      "exportStatus": "validated",
+      "downloaded": true,
+      "validationKinds": [
+        "sourceDigest:passed",
+        "outputReopen:passed",
+        "pageGeometry:passed",
+        "nativeFields:passed",
+        "appliedOperations:passed",
+        "outsideRegionText:passed",
+        "visualDiff:passed",
+        "providerCapability:passed"
+      ],
+      "failureCodes": []
+    },
+    {
+      "kind": "button",
+      "fieldName": "applicant.subscribe",
+      "hierarchical": true,
+      "radioOrChoice": false,
+      "operationKind": "nativeFieldValue",
+      "exportStatus": "validated",
+      "downloaded": true,
+      "validationKinds": [
+        "sourceDigest:passed",
+        "outputReopen:passed",
+        "pageGeometry:passed",
+        "nativeFields:passed",
+        "appliedOperations:passed",
+        "outsideRegionText:passed",
+        "visualDiff:passed",
+        "providerCapability:passed"
+      ],
+      "failureCodes": []
+    },
+    {
+      "kind": "button",
+      "fieldName": "applicant.contact",
+      "hierarchical": true,
+      "radioOrChoice": true,
+      "operationKind": "nativeFieldValue",
+      "exportStatus": "validated",
+      "downloaded": true,
+      "validationKinds": [
+        "sourceDigest:passed",
+        "outputReopen:passed",
+        "pageGeometry:passed",
+        "nativeFields:passed",
+        "appliedOperations:passed",
+        "outsideRegionText:passed",
+        "visualDiff:passed",
+        "providerCapability:passed"
+      ],
+      "failureCodes": []
+    },
+    {
+      "kind": "choice",
+      "fieldName": "applicant.country",
+      "hierarchical": true,
+      "radioOrChoice": true,
+      "operationKind": "nativeFieldValue",
+      "exportStatus": "validated",
+      "downloaded": true,
+      "validationKinds": [
+        "sourceDigest:passed",
+        "outputReopen:passed",
+        "pageGeometry:passed",
+        "nativeFields:passed",
+        "appliedOperations:passed",
+        "outsideRegionText:passed",
+        "visualDiff:passed",
+        "providerCapability:passed"
+      ],
+      "failureCodes": []
+    }
+  ],
+  "rawValuesInReport": false,
+  "interpretation": "Operation creation parity is proven separately from provider export round-trip. A failed or unsupported class remains an explicit provider result."
+}

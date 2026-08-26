@@ -7,7 +7,7 @@
   "provider": "Preview",
   "platform": "macOS",
   "sourcePath": "benchmark/results/public-sample-form.pdf",
-  "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+  "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
   "status": "passed",
   "observedWindowNames": [
     "public-sample-form.pdf"

@@ -9,6 +9,7 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { scanAttachments, assertAttachmentsSafe } from "../web/pdf-attachment-scanner.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "att-"));
@@ -17,7 +18,7 @@ const corpusPath = path.join(tmpDir, "attachment-corpus.pdf");
 const LONG_NAME = `x`.repeat(300) + ".txt";
 
 execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     [
       "import pikepdf, sys",

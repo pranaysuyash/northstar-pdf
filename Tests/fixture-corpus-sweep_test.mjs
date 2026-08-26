@@ -11,12 +11,13 @@ import { execFileSync, spawnSync } from "node:child_process";
 import { inspectPdfWithPikepdf } from "../web/pdf-object-inspect.mjs";
 import { detectSignatures } from "../web/pdf-signature-guard.mjs";
 import { detectXfa } from "../web/pdf-xfa-guard.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const ROOT = "/Users/pranay/Projects/pdf_editor";
 const OUT = path.join(ROOT, "benchmark/results/corpus-sweep-2026-08-25");
 const BASE = path.join(ROOT, "benchmark/results/public-sample-form.pdf");
 
-execFileSync("python3", [
+execFileSync(pdfPython, [
   path.join(ROOT, "Tests/fixtures/generate_corpus_sweep.py"), OUT, BASE
 ], { stdio: ["ignore", "pipe", "pipe"] });
 

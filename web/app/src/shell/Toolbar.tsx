@@ -1,6 +1,12 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { pdfController, type FitMode } from "../pdf/PdfController";
 import type { PdfSnapshot } from "../pdf/PdfController";
+import {
+  SCRATCH_PAGE_SIZES,
+  createBlankPdfBytes,
+  createPdfFromImageFiles,
+  resolvePageSize
+} from "../pdf/createDocument";
 
 interface ToolbarProps {
   snapshot: PdfSnapshot;
@@ -11,11 +17,45 @@ export function Toolbar({ snapshot, onDocumentOpened }: ToolbarProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const pageInput = useRef<HTMLInputElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
+  const pageSizeSelect = useRef<HTMLSelectElement>(null);
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
     await pdfController.open(await file.arrayBuffer());
     onDocumentOpened();
+  };
+
+  const handleCreateBlank = async () => {
+    if (creating) return;
+    setCreating(true);
+    setCreateError(null);
+    try {
+      const pageSize = resolvePageSize(pageSizeSelect.current?.value);
+      const bytes = await createBlankPdfBytes(pageSize);
+      await pdfController.open(bytes.buffer as ArrayBuffer);
+      onDocumentOpened();
+    } catch (error: unknown) {
+      setCreateError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleCreateFromImages = async (files: File[]) => {
+    if (creating || files.length === 0) return;
+    setCreating(true);
+    setCreateError(null);
+    try {
+      const bytes = await createPdfFromImageFiles(files);
+      await pdfController.open(bytes.buffer as ArrayBuffer);
+      onDocumentOpened();
+    } catch (error: unknown) {
+      setCreateError(error instanceof Error ? error.message : String(error));
+    } finally {
+      setCreating(false);
+    }
   };
 
   return (
@@ -34,6 +74,36 @@ export function Toolbar({ snapshot, onDocumentOpened }: ToolbarProps) {
           accept=".pdf,application/pdf"
           onChange={(event) => {
             void handleFile(event.target.files?.[0]);
+            event.target.value = "";
+          }}
+        />
+      </div>
+
+      <div className="control-row">
+        <label htmlFor="newPageSize">New</label>
+        <select id="newPageSize" ref={pageSizeSelect} defaultValue="Letter">
+          {SCRATCH_PAGE_SIZES.map((size) => (
+            <option key={size.id} value={size.id}>
+              {size.id}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => void handleCreateBlank()}
+          disabled={creating}
+          aria-label="Create a new blank PDF in the selected page size"
+        >
+          Blank PDF
+        </button>
+        <input
+          id="newImagesInput"
+          type="file"
+          accept="image/png,image/jpeg"
+          multiple
+          aria-label="Create a new PDF with one page per selected image"
+          onChange={(event) => {
+            void handleCreateFromImages(Array.from(event.target.files ?? []));
             event.target.value = "";
           }}
         />
@@ -134,10 +204,13 @@ export function Toolbar({ snapshot, onDocumentOpened }: ToolbarProps) {
       </div>
 
       <span id="status" className="status" role="status" aria-live="polite" aria-atomic="true">
-        {snapshot.error ??
+        {createError ??
+          snapshot.error ??
           (snapshot.status === "loading"
             ? "Reading source… nothing leaves this device."
-            : "")}
+            : creating
+              ? "Creating document…"
+              : "")}
       </span>
     </div>
   );

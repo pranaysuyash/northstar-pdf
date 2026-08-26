@@ -1,6 +1,6 @@
 # Session Context
 
-- Generated: 2026-08-25T13:51:26Z
+- Generated: 2026-08-26T04:39:39Z
 - Project: `pdf_editor`
 - Provider: `local`
 - Model: `BAAI/bge-m3`
@@ -13,7 +13,7 @@
 - Operating doctrine: `OPERATING_DOCTRINE.md` v8.0 (sha256 `93dc8e76f2c26489…`) — always applies
 - Project: `pdf_editor`
 - Routing mechanism: agent-start doctrine-family router v1.0 (deterministic intent-signal model)
-- Generated at: 2026-08-25T13:51:26Z
+- Generated at: 2026-08-26T04:39:39Z
 - Generator: agent-start lib/doctrine_family.py
 
 Doctrine routing for this run (task intent not supplied; deferred):
@@ -40,30 +40,7 @@ No specialist doctrine was selected for this run. The Operating Doctrine routing
 
 ## Project-Focused Retrieval
 
-### Architecture Decisions
-- Collection: `projects_proj_pdf_editor`
-- Query: `architecture decisions for pdf_editor`
-_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
-
-### Project Management Workflow
-- Collection: `projects_proj_pdf_editor`
-- Query: `project management workflow for pdf_editor`
-_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
-
-### Known Issues and Worklogs
-- Collection: `projects_proj_pdf_editor`
-- Query: `known issues and worklog for pdf_editor`
-_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
-
-### Prompts and Guidelines
-- Collection: `projects_proj_pdf_editor`
-- Query: `prompts and guidelines for pdf_editor`
-_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
-
-### System Learning Graph
-- Collection: `projects_proj_pdf_editor`
-- Query: `knowledge graph memory learning feedback loops autoresearch semantic taste graph for pdf_editor`
-_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
+> NOTE: Project collection is temporarily locked by another index/search process; using shared workspace context for this run.
 
 ## Shared Cross-Project Retrieval
 

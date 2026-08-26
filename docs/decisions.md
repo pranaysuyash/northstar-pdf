@@ -130,6 +130,44 @@ runtime evidence belongs in [`pdfkit-benchmark.md`](pdfkit-benchmark.md).
 - **Owner:** Project owner; the lane maintains machine evidence under
   `benchmark/results/2026-08-25-pdfbox-public-acroform/`.
 
+## D-007: Split-Provider Architecture — Native PDFKit Default, PDFBox Form-Aware Companion Lane
+
+- **Date:** 2026-08-25
+- **Status:** Accepted working decision; final distribution packaging remains
+  a separate gate
+- **Context:** Accumulated runtime evidence: PDFKit passes the Form 6 lane but
+  drops radio-choice metadata on external AcroForm saves (F-016); PDFBox 3.0.8
+  passes all four oracle gates on the identical fixture with zero per-field
+  diffs and raster AE 0 versus source on the public sample and both rotation
+  fixtures (F-069, `benchmark/results/2026-08-25-pdfbox-corpus/`); the
+  encrypted fixture fails cleanly as `encryptedUnsupported`. Packaging review:
+  [`pdfbox-packaging-review.md`](pdfbox-packaging-review.md).
+- **Selected path:** PDFKit remains the in-process default provider for
+  documents without a catalog AcroForm (enforced by the structural guard).
+  Documents with an AcroForm route to a PDFBox companion lane running as a
+  separate opt-in helper process (Option C in the packaging review), never by
+  silently degrading field semantics. The companion lane ships its own license
+  notices and update cadence.
+- **Options considered:** PDFKit-only (rejected: known radio-choice loss);
+  PDFBox-only in-process with a bundled JVM (rejected: 40–80 MB and a JVM
+  upgrade surface for users whose documents need none); commercial SDKs
+  (rejected as non-open-source default per D-003); server-side PDFBox
+  (rejected: local-first boundary).
+- **Trade-offs:** Two providers mean two fidelity surfaces and an IPC contract
+  to harden. The split preserves a fully native, small base app while making
+  the form-aware lane available where the evidence demands it.
+- **Validation:** Companion lane must pass the full corpus (signed, XFA,
+  malformed, large, encrypted-with-password policy) with the same four-gate
+  oracle plus raster parity before any user-facing enablement; IPC hardening
+  (timeouts, payload caps, version handshake) is a release gate.
+- **Rollback/migration:** The provider-neutral contracts keep both adapters
+  replaceable; disabling the companion lane returns the app to the guarded
+  PDFKit-only behavior with no data loss.
+- **Revisit trigger:** PDFBox corpus failure on signed/XFA documents, an
+  unacceptable packaging/notarization outcome, or an approved commercial
+  license changing the default-provider calculus.
+- **Owner:** Project owner; implementation agent maintains lane evidence.
+
 ## Decision History
 
 No earlier decision records are superseded. The initial architecture and comparison
@@ -2380,3 +2418,205 @@ Implementation and evidence:
 - [`benchmark/results/detector-calibration/detector_calibration_labels.json`](../benchmark/results/detector-calibration/detector_calibration_labels.json)
 - [`benchmark/results/detector-calibration/detector-semantic-comparison-report.json`](../benchmark/results/detector-calibration/detector-semantic-comparison-report.json)
 - [`docs/audits/detector-semantic-comparison-evidence-2026-08-25.md`](audits/detector-semantic-comparison-evidence-2026-08-25.md)
+
+## D-051: Treat full-fidelity PDF capabilities as typed evidence lanes
+
+- **Date:** 2026-08-25
+- **Status:** Accepted long-term implementation decision; controlled lanes
+  measured; arbitrary-PDF production promotion remains open
+- **Context:** The full capability mandate includes rotated and cropped
+  operations, arbitrary text editing, object preservation, complete AcroForm
+  semantics, encryption, signatures, redaction, PDF/UA, and independent
+  viewers. A single browser writer or a single green fixture cannot prove all
+  of those properties.
+- **Decision:** Build every capability behind a shared operation and validation
+  contract, then admit providers by measured source class. Keep browser-only
+  encrypted mutation refused. Permit an explicitly typed qpdf companion lane
+  to decrypt, run a reviewed browser operation, re-encrypt, and independently
+  validate. Keep signature structure, CMS integrity, certificate trust, and
+  legal effect separate. Treat whiteout as non-redaction and require
+  independent target-text removal before a text-redaction result can pass.
+  Preserve crop-relative coordinates as the shared truth and translate them in
+  every writer and validator.
+- **Invariants:** Source bytes remain immutable. Every edit binds to a source
+  digest. Unknown, unsupported, stale, invalid, or provider-divergent results
+  remain visible. Reports contain no document values or raw content. A passing
+  controlled fixture never upgrades an arbitrary-PDF claim.
+- **Validation:** Rotated/crop-offset browser and Poppler replay passes;
+  browser AcroForm text/multiline/checkbox/radio/choice matrix passes;
+  encrypted companion export and wrong-password gates pass; signature
+  integrity states pass against unsigned and synthetic signed fixtures;
+  whiteout redaction is rejected and controlled text removal passes; object
+  preservation mutation gates pass; veraPDF and Preview evidence remain
+  explicit baselines.
+- **Falsifiers:** A crop-relative edit is shifted; a validator loses the crop
+  origin; unauthorized object bytes change without a report; a whiteout is
+  accepted as redaction; wrong passwords unlock a companion; a structurally
+  present signature is called cryptographically valid; or an untagged output
+  is called PDF/UA compliant.
+- **Rollback:** Disable only the affected provider capability or source class,
+  retain the shared contract and evidence artifacts, and route the operation to
+  read-only or reviewed-overlay behavior. No source PDF mutation or Git
+  mutation is required.
+- **Owner:** Native and browser adapters, companion providers, validators,
+  corpus governance, security/privacy review, and release evidence.
+
+Implementation and evidence:
+
+- [`Tests/rotated_operation_replay_test.mjs`](../Tests/rotated_operation_replay_test.mjs)
+- [`benchmark/pdf-object-preservation-validator.mjs`](../benchmark/pdf-object-preservation-validator.mjs)
+- [`Tests/browser_acroform_semantic_matrix_test.mjs`](../Tests/browser_acroform_semantic_matrix_test.mjs)
+- [`Tests/encrypted_companion_export_test.mjs`](../Tests/encrypted_companion_export_test.mjs)
+- [`web/pdf-signature-guard.mjs`](../web/pdf-signature-guard.mjs)
+- [`benchmark/redaction-completeness-validator.mjs`](../benchmark/redaction-completeness-validator.mjs)
+- [`docs/audits/full-fidelity-open-items-evidence-2026-08-25.md`](audits/full-fidelity-open-items-evidence-2026-08-25.md)
+
+## D-052: Adopt one-time-with-renewals pricing and re-anchored AI packaging
+
+- **Date:** 2026-08-25
+- **Status:** Accepted commercial direction; launch price points remain
+  evidence-gated (willingness-to-pay survey, funnel data, 30-day price
+  re-verification) and commerce mechanics are unselected
+- **Context:** Verified 2026 competitor pricing shows incumbents vacating
+  one-time licensing (Nitro made the PDFpen successor Mac-subscription-only at
+  $139.99/yr; Foxit is phasing out perpetual licenses; Acrobat Pro is
+  $239.88/yr after documented increases) while PDF Expert added a $139.99
+  lifetime tier. PDFpen's own history shows a flat one-time-with-forever-updates
+  promise is unsustainable. PDF-editor AI add-ons cluster at $1.99-$4.17/mo,
+  free AI quotas are table stakes, and verified token pricing shows default
+  nano/Flash-Lite-class cloud routing costs roughly $0.01-$0.03 per agent run.
+  `docs/market-strategy.md` previously proposed testing $79/yr subscription
+  and $9.99/mo hypotheses.
+- **Decision:** Northstar PDF native macOS pricing adopts a free/own/add-on
+  structure:
+  1. **Free forever:** reading, annotation, native AcroForm fill, limited
+     export; genuinely better than Preview.
+  2. **Pro $79 one-time:** perpetual license plus 12 months of updates — not
+     updates-forever. Optional renewal $39/yr extends the update window
+     (JetBrains-fallback model; renewals fund app and local-model freshness).
+     Launch early-adopter window $59. License covers 2-3 personal Macs;
+     education 40% off.
+  3. **On-device AI is included in the Pro update window,** hardware-tiered
+     with honest abstention on 8 GB machines; local agent runs under a stated
+     fair-use cap (~300/month) that exists to stop scripted abuse.
+  4. **Agent+ $4.99/month or $39/year, 500 cloud credits/month:**
+     cloud-escalation credits only (default-cheap routing, per-run step
+     budgets, escalation on explicit action). Verified economics: worst-case
+     P95 user costs $5-$15/month at default-cheap routing against $4.99
+     revenue; average subscribers cost $1-$3. 300 credits is the strictly
+     non-negative conservative fallback. No flat unlimited cloud tier. The
+     $29 one-time BYOK SKU is deferred to Agent+ launch review, not part of
+     the launch pricing page.
+  5. **Agentic product line:** review-first agents whose output is a validated
+     document mutation with provenance — never silent chat output. First lane
+     is agentic form completion on the existing template/profile stack. A
+     hosted multi-doc Workspace tier ($12.99-$14.99/month) is built and priced
+     only after demand evidence (users exhausting local limits, requesting
+     multi-device or team review).
+  6. **Launch SKU set is exactly Free / Pro / Agent+,** with Agent+ appearing
+     only when the cloud lane ships (two-column pricing page until then).
+     SKU admission rule: a SKU earns a pricing-page slot only when it has a
+     shipped feature gate, maps to a distinct buyer, and explains in one
+     line. Tier naming avoids "AI" — "Agent+" names the paid capability
+     (agentic runs + cloud horsepower). The local fair-use cap number is
+     decided at agent launch, not before.
+- **Invariants:** Pricing pages list only shipped, capability-matrix-verified
+  features (D-051 claim policy extends to pricing). Metering telemetry stays
+  value-free (counts and durations, never content). Local compute is never
+  metered as a billable resource. Existing buyers are grandfathered by
+  construction under the update-window model.
+- **Validation:** `docs/pdf-pricing-marketing-exploration-2026-08-25.md`
+  (verified competitor table, AI add-on anchors, live token pricing, App
+  Review Guidelines resolution for model downloads). Pre-launch validation
+  still required: Van Westendorp survey on the free/Pro/Agent+ structure,
+  value-free attempted-Pro-action funnel events in the free reader, and
+  competitor price re-verification within 30 days of launch.
+- **Falsifiers:** Observed buyers are one-and-done with no renewal appetite
+  (switch to paid major versions); Agent+ attach data shows demand for hosted
+  agentic work (spin up the Workspace tier); $79 conversion is weak against
+  PDF Expert lifetime positioning (test $89/$99); 8 GB installs dominate and
+  local models abstain too often (re-balance routing and quota).
+- **Rollback:** Pricing is reversible without customer impact until first
+  sale. After first sale, tier changes must preserve existing entitlements;
+  price changes apply to new customers only. A future move to subscription
+  would require fresh evidence that recurring paperwork use defeats the
+  occasional-use pattern.
+- **Owner:** Product owner, with evidence in
+  [`docs/pdf-pricing-marketing-exploration-2026-08-25.md`](pdf-pricing-marketing-exploration-2026-08-25.md).
+
+Supersedes the pricing hypotheses in
+[`docs/market-strategy.md`](market-strategy.md) §Proposed Pricing Experiments.
+
+## D-053: Encrypt session edit values; keep a value-free plaintext session slot
+
+- **Date:** 2026-08-25
+- **Context:** The web app persists per-source sessions to IndexedDB. Audit
+  finding A-7 (2026-08-25) observed that the session record stored the full
+  operation ledger — including user-entered field values, potentially
+  `person.ssn`-class data — in plaintext, while templates and profiles already
+  used passphrase-derived AES-GCM vaults with separate unlock boundaries.
+- **Decision:** Session edit values persist only inside the encrypted local
+  vault, recorded under a new `session` record kind in
+  `web/pdf-template-store.mjs` (`put/get/remove("session", …)`), written when
+  the vault is unlocked. The plaintext `pdf-editor-sessions` store keeps a
+  schema-2, value-free record — progress, review decisions, page context, and
+  value-free `operationSummaries` (`kind`, `pageIndex`, `candidateID`,
+  `targetID`) — so quick restore still works without the vault. Restore never
+  half-restores: values come from the vault, from a one-time legacy-plaintext
+  migration that immediately re-saves under the new contract, or not at all,
+  with an explicit status message. Deletion removes both slots.
+- **Alternatives rejected:** a parallel encrypted session store (duplicate
+  system beside the canonical vault); a device-bound WebCrypto key in the same
+  IndexedDB (obfuscation that does not bind to a user secret); encrypting
+  nothing and documenting the exposure (inconsistent with D-013 and the
+  zero-content logging posture).
+- **Tradeoffs:** Vault-locked sessions lose value restore until unlock; the
+  plaintext slot leaks structure (operation kinds and page placement) but no
+  entered text.
+- **Validation:** Tier 3 browser probe (2026-08-25): applying an overlay with a
+  deliberately secret-looking value produced a plaintext record with
+  `valuesPersisted: false`, no `operations` array, and no occurrence of the
+  value; `web_template_store_test.mjs` still passes with the extended record
+  kind.
+- **Rollback:** Revert `saveWebSession`/`restoreWebSession` in `web/app.js`;
+  schema-2 records remain readable as value-free metadata.
+- **Owner:** Web lane. Related: audit A-7 in the 2026-08-25 design/privacy
+  audit; D-013 separate store/profile unlock.
+
+## D-054: The five-mode stage, analysis reveal, and single stylesheet are the canonical web surface
+
+- **Date:** 2026-08-25
+- **Context:** The `Web-Prototype.zip` design contract ("calm evidence
+  workspace") had landed only as token-level restyling. The 2026-08-25 audit
+  (A-3/A-5/A-8) mapped the missing product surfaces and the double stylesheet
+  source.
+- **Decision:** `web/mode-stage.mjs` owns the five-mode tab chrome (WAI-ARIA
+  tabs with Arrow/Home/End traversal), per-mode evidence panels rendered from
+  live application state via a `getState` snapshot (no second source of
+  truth), and the local analysis reveal: a four-stage console bound to the
+  real inspection passes (digest → structure → fields → signals) with cancel
+  to reader-only, partial-state honesty, a persistent status pill, and a
+  retryable re-analyze. `design-system.css` is the single stylesheet source:
+  the legacy inline `<style>` blocks were retired into it and tokenized.
+  CDN PDF.js fallbacks that CSP made unreachable were removed; the pin is
+  asserted through `PDFJS_PINNED_VERSION`. A module-parse boot-smoke gate was
+  added to `Tests/web_reader_contract_test.mjs` after the audit caught the
+  51-check static suite passing while a duplicate-import SyntaxError made the
+  app unbootable.
+- **Validation:** Tier 3/4 (2026-08-25): live keyboard tablist traversal with
+  panel switching; guardrail renders three decisions from the real source
+  digest; analysis pill reports "70 editable signals found — 0 native, 70
+  suggested" from the loaded Form 6 fixture; accessibility gate and contract
+  suites pass; zero horizontal overflow across the nine-viewport matrix
+  (360–1920) after mobile min-width fixes.
+- **Known regression, not introduced here:** `web_editor_workflow_test.mjs`
+  fails at overlay re-selection in the current uncommitted tree; a 2×2
+  isolation experiment (HEAD/current × app.js/stylesheet, 2026-08-25) proved
+  the regression enters with the in-flight uncommitted app-lane edits, not
+  with this decision's changes (HEAD including the design work passes; the
+  experiment copy with only the session functions reverted still failed).
+- **Rollback:** Mode stage is presentation-only and additive; disabling it
+  restores the prior inspector-only surface.
+- **Owner:** Web lane, coordinated with the in-flight React migration under
+  `web/app/` which should consume the same mode/analysis contracts.
+

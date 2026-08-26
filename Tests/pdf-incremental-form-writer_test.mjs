@@ -1,11 +1,9 @@
-// pdf-incremental-form-writer_test.mjs
-// Tier 3 / S3: a deliberate mutation (full rewrite) must FAIL the prefix
-// invariant, proving why incremental update is required for RG-002.
 import assert from "node:assert";
 import fs from "node:fs";
 import crypto from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { incrementalFieldUpdate } from "../web/pdf-incremental-form-writer.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 function spawnSyncSafe(cmd, args) {
   const r = spawnSync(cmd, args, { encoding: "utf8" });
@@ -63,14 +61,14 @@ for f in acro.get('/Fields'):
     walk(f)
 print(json.dumps(res))
 `;
-const readback = JSON.parse(execFileSync("python3", ["-c", py, incPath], { encoding: "utf8" }).trim());
+const readback = JSON.parse(execFileSync(pdfPython, ["-c", py, incPath], { encoding: "utf8" }).trim());
 assert.equal(readback.V, "/1", `radio parent /V not preserved (got ${readback.V})`);
 assert.deepEqual(readback.kids.sort(), ["/1", "/Off"].sort(), `kid /AS not preserved: ${readback.kids}`);
 console.log("PASS independent re-read: contact=/1, kid AS=[/1,/Off]");
 
 // 4. Falsifier: a full rewrite (pdf-lib/PDFKit-style) MUST break the prefix
 //    invariant. If it did NOT, our RG-017 claim would be falsified.
-execFileSync("python3", ["-c", "import pikepdf,sys; pikepdf.open(sys.argv[1]).save(sys.argv[2])", SRC, rewPath]);
+execFileSync(pdfPython, ["-c", "import pikepdf,sys; pikepdf.open(sys.argv[1]).save(sys.argv[2])", SRC, rewPath]);
 const rewBuf = fs.readFileSync(rewPath);
 const samePrefix = rewBuf.length >= srcBuf.length && rewBuf.subarray(0, srcBuf.length).equals(srcBuf);
 assert.ok(!samePrefix, "FALSIFIER FAILED: full rewrite kept original prefix (would falsify RG-017)");

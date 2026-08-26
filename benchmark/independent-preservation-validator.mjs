@@ -98,7 +98,7 @@ function parsePdfInfo(text, pageCount = 0) {
   if (!pages.length && pageCount === 1) {
     const size = text.match(/^Page size:\s+([\d.]+)\s+x\s+([\d.]+)/m);
     const rotation = text.match(/^Page rot:\s+(-?\d+)/m);
-    const crop = text.match(/^Page CropBox:\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)/m);
+    const crop = text.match(/^(?:Page\s+)?CropBox:\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)/m);
     if (size) {
       current = {
         pageIndex: 0,

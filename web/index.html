@@ -17,7 +17,7 @@
     connect-src 'none' enforces the air-gap (no network fetch from the app).
   -->
   <meta http-equiv="Content-Security-Policy" content="
-    script-src 'self';
+    script-src 'self' 'sha256-/1evokJz/r9u7edRsfEEnwzMIiCH2ypxLLekHiyTUKQ=';
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data:;
     worker-src 'self' blob:;
@@ -28,7 +28,24 @@
   ">
   <link rel="icon" href="data:,">
   <title>PDF Editor</title>
-  <script src="./vendor/pdf-lib/pdf-lib.min.js"></script>
+  <!-- Performance: pdf-lib deferred (was parser-blocking) -->
+  <script defer src="./vendor/pdf-lib/pdf-lib.min.js"></script>
+  <!-- Speculative prerender for likely next interactions -->
+  <script type="speculationrules">{
+    "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }]
+  }</script>
+  <!-- Critical CSS inlined for fastest FCP -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--pdf-canvas, #f0ede8); color: var(--pdf-ink, #1a1a2e); }
+    .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; z-index: 9999; }
+    .skip-link:focus { position: fixed; top: 8px; left: 8px; width: auto; height: auto; padding: 8px 16px; background: #fff; border: 2px solid #0066cc; border-radius: 4px; font-size: 14px; z-index: 10000; }
+    #app { display: flex; height: 100vh; overflow: hidden; }
+    .toolbar { display: flex; flex-direction: column; gap: 8px; padding: 12px; background: var(--pdf-shell, #1e1e2e); color: var(--pdf-shell-text, #e0e0e0); }
+    .viewer-stack { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  </style>
+  <!-- Design system must load synchronously: the rel=preload/onload swap
+       never fires reliably and leaves the UI unstyled. -->
   <link rel="stylesheet" href="./design-system.css">
 </head>
 <body>
@@ -77,7 +94,7 @@
         <button id="searchButton" aria-label="Find occurrences in document">Find</button>
         <button id="searchPrev" aria-label="Previous search occurrence">Prev</button>
         <button id="searchNext" aria-label="Next search occurrence">Next</button>
-        <span id="searchCount" class="small" aria-label="search result count">0</span>
+        <span id="searchCount" class="small" aria-label="search result count" role="status" aria-live="polite" aria-atomic="true">0</span>
       </div>
       <div class="control-row">
         <button id="copyPageText" aria-label="Copy extracted text of current page to clipboard">Copy current page text</button>
@@ -213,7 +230,7 @@
           </div>
         </div>
       </main>
-      <aside class="panel" aria-label="Reading and navigation tools">
+      <aside class="panel panel-sidebar" aria-label="Reading and navigation tools">
         <div class="list-title">Reading & navigation</div>
         <div id="outlineBox" class="small"></div>
         <div class="list-title" style="margin-top: 14px;">Links</div>

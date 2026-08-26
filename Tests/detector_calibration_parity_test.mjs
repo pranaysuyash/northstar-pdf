@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 import { buildCalibrationReport, rectIoU } from "../web/detector-calibration.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -14,7 +14,7 @@ const fixturePath = path.join(root, labels.fixture);
 const nativeDirectory = path.join(root, "benchmark/results/detector-calibration/native");
 const nativeBundlePath = path.join(nativeDirectory, "benchmark__results__detector-calibration__detector-calibration.json");
 const reportPath = path.join(root, "benchmark/results/detector-calibration/detector-calibration-report.json");
-const baseURL = process.env.PDF_CALIBRATION_BASE_URL || "http://127.0.0.1:4174/web/index.html";
+const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4174/web/index.html";
 const sourceDigest = crypto.createHash("sha256").update(fs.readFileSync(fixturePath)).digest("hex");
 
 function findPositiveCandidate(caseLabel, candidates) {

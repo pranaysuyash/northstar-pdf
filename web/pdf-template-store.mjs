@@ -25,7 +25,10 @@ const RECORD_KINDS = new Set([
   "profileHistory",
   "learningEvent",
   "revisionPromotion",
-  "audit"
+  "audit",
+  // Session snapshots hold the user's edit values (potentially sensitive form
+  // data), so they belong in the encrypted vault — never in plaintext storage.
+  "session"
 ]);
 const PRIVACY_EVENT_FIELDS = new Set(["event", "code", "kind", "mode", "state", "count"]);
 const ALLOWED_PRIVACY_EVENTS = new Set([

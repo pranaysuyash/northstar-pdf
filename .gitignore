@@ -32,12 +32,15 @@ mcp-shell.log
 test-results/
 playwright-report/
 .playwright-artifacts/
+.playwright-mcp/
+Tests/toolbar-regression-output/
 coverage/
 .nyc_output/
 *.tsbuildinfo
 
 # Local generated fixtures and scratch outputs
 tmp/
+dist/
 
 # Agent-generated reports and task outputs
 outputs/
@@ -45,6 +48,7 @@ outputs/
 # Local web app dependencies and build output
 web/app/node_modules/
 web/app/dist/
+node_modules/
 
 # Downloaded PDF validation tool payloads
 tools/verapdf-cli-*/

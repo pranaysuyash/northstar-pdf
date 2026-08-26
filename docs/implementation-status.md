@@ -150,6 +150,12 @@ current product claim is blocked.
   - Full-featured `SignatureSheet` with multi-modal input (Draw canvas, Type with typography styles, Image file upload, and Saved signatures store).
   - Explicit two-phase redaction workflow with hard confirmation gate (L3) alerting the user of permanent data destruction before committing `.applyRedaction`.
   - Intent inference engine routing page clicks to inline editors, sign sheets, or direct placements based on active mode and tapped element semantics.
+  - **Visual Annotation Tools**: Direct support for adding typed visual highlights, shape rectangles, and freehand annotations (`.annotation`) on target page coordinates without touching source bytes.
+  - **Multi-Page Graph Insertions**: Dynamic "Insert Blank Page" and "Insert Pages from PDF" operations in `PageThumbnailRailView` and `AppModel`, recorded as non-destructive `.pageInsert` operations.
+  - **Form Flattening & Clean Export Pipeline**: `exportFlattenedCopy(destination:)` with `.burnInAnnotationsOption: true` to bake all interactive form fields, visual overlays, annotations, and signature stamps permanently into page content streams for secure distribution.
+  - **Batch Document Merge**: `mergePDFs(sources:destination:)` utility combining multiple independent PDF documents into a single target PDF document preserving individual page contents and geometries.
+  - **Page Extraction & Splitting**: `splitPageRange(from:to:destination:)` extracting arbitrary page ranges into standalone PDF files.
+  - **Metadata & Attribute Sanitization**: `sanitizeAndExportCopy(destination:)` stripping document-level metadata dictionaries, EXIF/XMP tags, author info, and hidden tracking properties prior to distribution.
   independent-viewer reopening. Provider admission, execution evidence, and
   revocation remain separately measured gates.
 

@@ -634,18 +634,18 @@ extension UserProfile {
 
     // Match native fields
     for field in fields {
-      if let value = matchForField(field) {
-        usedKeys.insert(matchingKey(for: field) ?? "")
+      if let match = bestMatch(forLabel: field.name) {
+        usedKeys.insert(match.key)
         operations.append(
           EditOperation(
             pageIndex: field.pageIndex,
             targetID: field.name,
             kind: .nativeFieldValue,
-            value: value,
+            value: match.value,
             bounds: field.bounds,
             sourceDigest: sourceDigest,
             coordinate: PDFPageRegion(pageIndex: field.pageIndex, rect: field.bounds),
-            payload: .text(value)
+            payload: .text(match.value)
           )
         )
       } else {
@@ -655,20 +655,21 @@ extension UserProfile {
 
     // Match static candidates (text-entry regions only)
     for candidate in candidates where candidate.isDirectlyEditable {
-      if let value = matchForCandidate(candidate) {
-        usedKeys.insert(matchingKey(for: candidate) ?? "")
+      let label = candidate.labelText ?? ""
+      if let match = bestMatch(forLabel: label) {
+        usedKeys.insert(match.key)
         operations.append(
           EditOperation(
             pageIndex: candidate.pageIndex,
             kind: .overlayText,
-            value: value,
+            value: match.value,
             bounds: candidate.bounds,
             candidateID: candidate.id,
             sourceDigest: sourceDigest,
             coordinate: PDFPageRegion(pageIndex: candidate.pageIndex, rect: candidate.bounds),
             payload: candidate.entryMode == .characterGrid
-              ? .characterGrid(text: value, cells: candidate.memberBounds)
-              : .text(value)
+              ? .characterGrid(text: match.value, cells: candidate.memberBounds)
+              : .text(match.value)
           )
         )
       }
@@ -682,80 +683,165 @@ extension UserProfile {
     )
   }
 
-  /// Find a profile value that matches a native field by name/label heuristics.
-  private func matchForField(_ field: NativeField) -> String? {
-    let name = field.name.lowercased()
-    let label = field.name
+  // MARK: - Scored label matching
 
-    // Direct semantic key match
-    if let value = value(for: label), !value.isEmpty { return value }
+  /// Alias table mapping each standard semantic key to the label phrases it
+  /// accepts on documents. Matching stays deterministic and local; the table
+  /// replaces the previous first-hit substring rules which mis-assigned
+  /// "First Name" fields to the full-name value.
+  static let labelAliases: [String: [String]] = [
+    StandardSemanticKey.fullName.rawValue: [
+      "name", "full name", "full legal name", "legal name", "applicant name",
+      "your name", "print name", "employee name", "student name",
+    ],
+    StandardSemanticKey.firstName.rawValue: [
+      "first name", "given name", "forename", "first",
+    ],
+    StandardSemanticKey.lastName.rawValue: [
+      "last name", "surname", "family name", "last",
+    ],
+    StandardSemanticKey.email.rawValue: [
+      "email", "e mail", "email address", "electronic mail",
+    ],
+    StandardSemanticKey.phone.rawValue: [
+      "phone", "telephone", "tel", "mobile", "cell", "cellular",
+      "contact number", "daytime phone", "home phone", "work phone",
+    ],
+    StandardSemanticKey.dateOfBirth.rawValue: [
+      "dob", "date of birth", "birth date", "birthday", "born on",
+    ],
+    StandardSemanticKey.addressStreet.rawValue: [
+      "address", "street", "street address", "mailing address",
+      "home address", "residence", "addr",
+    ],
+    StandardSemanticKey.addressCity.rawValue: ["city", "town", "municipality"],
+    StandardSemanticKey.addressState.rawValue: ["state", "province", "region"],
+    StandardSemanticKey.addressZip.rawValue: [
+      "zip", "zip code", "zipcode", "postal code", "postcode",
+    ],
+    StandardSemanticKey.addressCountry.rawValue: ["country", "nation"],
+    StandardSemanticKey.ssn.rawValue: [
+      "ssn", "social security number", "social security no", "tax id",
+      "taxpayer id",
+    ],
+    StandardSemanticKey.employer.rawValue: [
+      "employer", "company", "organization", "organisation", "firm",
+      "business name",
+    ],
+    StandardSemanticKey.jobTitle.rawValue: [
+      "title", "job title", "position", "occupation", "role",
+    ],
+  ]
 
-    // Heuristic matching by field name patterns
-    for profileValue in values where !profileValue.textValue.isEmpty {
-      let key = profileValue.semanticKey.lowercased()
-      if name.contains("name") && key.contains("fullname") { return profileValue.textValue }
-      if name.contains("first") && key.contains("firstname") { return profileValue.textValue }
-      if name.contains("last") && key.contains("lastname") { return profileValue.textValue }
-      if name.contains("email") && key.contains("email") { return profileValue.textValue }
-      if name.contains("phone") && key.contains("phone") { return profileValue.textValue }
-      if name.contains("address") && key.contains("address.street") { return profileValue.textValue }
-      if name.contains("city") && key.contains("address.city") { return profileValue.textValue }
-      if name.contains("state") && key.contains("address.state") { return profileValue.textValue }
-      if (name.contains("zip") || name.contains("postal")) && key.contains("address.zip") { return profileValue.textValue }
-      if name.contains("ssn") && key.contains("ssn") { return profileValue.textValue }
-      if name.contains("dob") || name.contains("birth") {
-        if key.contains("dateofbirth") { return profileValue.textValue }
+  /// Normalizes a label or alias phrase into comparable tokens.
+  private static func normalizedTokens(_ text: String) -> Set<String> {
+    let cleaned = text.lowercased()
+      .map { $0.isLetter || $0.isNumber ? $0 : " " }
+      .reduce(into: "") { $0.append($1) }
+    return Set(cleaned.split(separator: " ").map(String.init))
+  }
+
+  /// Scores how well a raw document label names a semantic key.
+  ///
+  /// 1.0 = exact alias-phrase equality; otherwise graded token overlap.
+  /// Short labels (<2 meaningful tokens) never match multi-token aliases
+  /// partially, so "Name" cannot pull the first-name value.
+  static func matchScore(label rawLabel: String, semanticKey: String) -> Double {
+    guard let aliases = labelAliases[semanticKey] else { return 0 }
+    let labelTokens = normalizedTokens(rawLabel)
+    guard !labelTokens.isEmpty else { return 0 }
+
+    var best = 0.0
+    for alias in aliases {
+      let aliasTokens = normalizedTokens(alias)
+      guard !aliasTokens.isEmpty else { continue }
+
+      if labelTokens == aliasTokens { return 1.0 }
+
+      // Containment: every alias token present in the label, penalized by
+      // how much unrelated text surrounds it.
+      if aliasTokens.isSubset(of: labelTokens) {
+        let precision = Double(aliasTokens.count) / Double(labelTokens.count)
+        best = max(best, 0.6 + 0.35 * precision)
+        continue
       }
-      if (name.contains("employer") || name.contains("company")) && key.contains("employer") { return profileValue.textValue }
-      if name.contains("title") && key.contains("jobtitle") { return profileValue.textValue }
-    }
-    return nil
-  }
 
-  /// Find a profile value that matches a static candidate by label.
-  private func matchForCandidate(_ candidate: RegionCandidate) -> String? {
-    guard let labelText = candidate.labelText?.lowercased() else { return nil }
-
-    for profileValue in values where !profileValue.textValue.isEmpty {
-      let key = profileValue.semanticKey.lowercased()
-      if labelText.contains("name") && key.contains("fullname") { return profileValue.textValue }
-      if labelText.contains("first") && key.contains("firstname") { return profileValue.textValue }
-      if labelText.contains("last") && key.contains("lastname") { return profileValue.textValue }
-      if labelText.contains("email") && key.contains("email") { return profileValue.textValue }
-      if labelText.contains("phone") && key.contains("phone") { return profileValue.textValue }
-      if labelText.contains("address") && key.contains("address.street") { return profileValue.textValue }
-      if labelText.contains("city") && key.contains("address.city") { return profileValue.textValue }
-      if labelText.contains("state") && key.contains("address.state") { return profileValue.textValue }
-      if (labelText.contains("zip") || labelText.contains("postal")) && key.contains("address.zip") { return profileValue.textValue }
-      if labelText.contains("ssn") && key.contains("ssn") { return profileValue.textValue }
-      if labelText.contains("date") || labelText.contains("birth") {
-        if key.contains("dateofbirth") { return profileValue.textValue }
+      // Partial overlap requires at least half the alias tokens and at
+      // least two tokens' worth of signal.
+      let shared = labelTokens.intersection(aliasTokens)
+      if aliasTokens.count >= 2 && shared.count >= 1 {
+        let recall = Double(shared.count) / Double(aliasTokens.count)
+        if recall >= 0.5 {
+          best = max(best, 0.3 + 0.25 * recall)
+        }
       }
-      if labelText.contains("employer") && key.contains("employer") { return profileValue.textValue }
-      if labelText.contains("title") && key.contains("jobtitle") { return profileValue.textValue }
     }
-    return nil
+    return min(best, 0.99)
   }
 
-  private func matchingKey(for field: NativeField) -> String? {
-    let name = field.name.lowercased()
-    for profileValue in values {
-      let key = profileValue.semanticKey.lowercased()
-      if name.contains("name") && key.contains("fullname") { return profileValue.semanticKey }
-      if name.contains("email") && key.contains("email") { return profileValue.semanticKey }
-      if name.contains("phone") && key.contains("phone") { return profileValue.semanticKey }
+  /// Best profile entry for a raw document label, or nil below threshold.
+  public func bestMatch(forLabel rawLabel: String) -> (key: String, value: String, score: Double)? {
+    var best: (key: String, value: String, score: Double)?
+    for profileValue in values where !profileValue.textValue.isEmpty {
+      let score = Self.matchScore(label: rawLabel, semanticKey: profileValue.semanticKey)
+      if score >= 0.6, score > (best?.score ?? 0) {
+        best = (profileValue.semanticKey, profileValue.textValue, score)
+      }
     }
-    return nil
+    return best
   }
 
-  private func matchingKey(for candidate: RegionCandidate) -> String? {
-    guard let labelText = candidate.labelText?.lowercased() else { return nil }
-    for profileValue in values {
-      let key = profileValue.semanticKey.lowercased()
-      if labelText.contains("name") && key.contains("fullname") { return profileValue.semanticKey }
-      if labelText.contains("email") && key.contains("email") { return profileValue.semanticKey }
-      if labelText.contains("phone") && key.contains("phone") { return profileValue.semanticKey }
+  // MARK: - Value suggestions
+
+  /// Formats a raw stored value for placement into a field of the given
+  /// inferred type. Deliberately narrow: only unambiguous normalizations.
+  public static func formattedValue(
+    _ raw: String, for fieldType: SuggestedFieldType?
+  ) -> String {
+    switch fieldType {
+    case .date:
+      let isoFormatters = [
+        "yyyy-MM-dd", "yyyyMMdd", "MM/dd/yyyy", "M/d/yyyy",
+      ].map { format -> DateFormatter in
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = format
+        return formatter
+      }
+      for formatter in isoFormatters {
+        if let date = formatter.date(from: raw) {
+          let output = DateFormatter()
+          output.locale = Locale(identifier: "en_US_POSIX")
+          output.dateFormat = "MM/dd/yyyy"
+          return output.string(from: date)
+        }
+      }
+      return raw
+    case .number:
+      let digits = raw.filter(\.isNumber)
+      if digits.count == 10 {
+        return "(\(digits.prefix(3))) \(digits.dropFirst(3).prefix(3))-\(digits.suffix(4))"
+      }
+      if digits.count == 7 {
+        return "\(digits.prefix(3))-\(digits.suffix(4))"
+      }
+      return raw
+    default:
+      return raw
     }
-    return nil
+  }
+
+  /// Up to `limit` fill-ready suggestions for a labeled region: profile
+  /// matches formatted for the inferred field type.
+  public func valueSuggestions(
+    labelText: String?, fieldType: SuggestedFieldType?, limit: Int = 3
+  ) -> [String] {
+    guard let labelText, !labelText.isEmpty else { return [] }
+    var results: [String] = []
+    if let match = bestMatch(forLabel: labelText) {
+      results.append(Self.formattedValue(match.value, for: fieldType))
+    }
+    return Array(results.prefix(limit))
   }
 }
+

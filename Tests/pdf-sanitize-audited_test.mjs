@@ -9,6 +9,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { sanitizePdfAudited, SanitizeAuditError } from "../web/pdf-sanitize-audited.mjs";
 import { incrementalFieldUpdate, readSourceXref } from "../web/pdf-incremental-form-writer.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const srcBuf = fs.readFileSync(SRC);
@@ -23,7 +24,7 @@ console.log("PASS clean source sanitizes with default refuse policy");
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sa-"));
 const dirtyPath = path.join(tmpDir, "dirty.pdf");
 execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     "import pikepdf,sys\np=pikepdf.open(sys.argv[1])\np.Root['/OpenAction']=pikepdf.Dictionary(JS=pikepdf.String('app.alert(1)'))\np.save(sys.argv[2])",
     SRC, dirtyPath],

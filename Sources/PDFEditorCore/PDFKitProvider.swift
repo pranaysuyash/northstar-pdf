@@ -40,6 +40,41 @@ public struct PDFKitProvider: PDFProvider {
     }
   }
 
+  /// Result of the open path: the file is loaded and parsed exactly once and
+  /// both the parsed document and its inspection are returned. `inspect`
+  /// remains for callers that only need metadata; the document-open path must
+  /// not pay for a second full parse of the same bytes.
+  public struct OpenedDocument {
+    public let data: Data
+    public let document: PDFDocument
+    public let inspection: DocumentInspection
+  }
+
+  /// Open-path counterpart to `inspect`. Loads the file once, parses it once,
+  /// unlocks it when a password is supplied, and inspects the parsed instance.
+  public func openDocument(url: URL, password: String?) throws -> OpenedDocument {
+    try PerformanceTelemetry.shared.measureOpenLoad {
+    let data = try loadData(from: url)
+    guard let document = PDFDocument(data: data) else {
+      throw PDFEditorError.cannotOpen(url.lastPathComponent)
+    }
+    guard document.pageCount > 0 else {
+      throw PDFEditorError.cannotOpen(url.lastPathComponent)
+    }
+    if document.isLocked {
+      guard let password, !password.isEmpty else {
+        throw PDFEditorError.passwordRequired(url.lastPathComponent)
+      }
+      guard document.unlock(withPassword: password) else {
+        throw PDFEditorError.passwordIncorrect(url.lastPathComponent)
+      }
+    }
+    let inspection = try inspection(
+      for: document, source: makeSource(url: url, data: data), data: data)
+    return OpenedDocument(data: data, document: document, inspection: inspection)
+    }
+  }
+
   /// Produces a value-minimized privacy preflight without mutating the source.
   /// The report is observational only. It must not be used as proof that a
   /// later sanitizer removed or neutralized every PDF risk surface.
@@ -92,8 +127,17 @@ public struct PDFKitProvider: PDFProvider {
     // in content/annotation strings, and it sees through cross-reference and
     // object streams where the catalog dictionary is compressed.
     if !operations.isEmpty && hasDocumentLevelAcroForm(sourceData) {
+      // RG-001: bounded native field-value edits route through the incremental
+      // form writer, which preserves the source bytes as a byte-exact prefix
+      // and never touches widget choice metadata. Anything else stays
+      // fail-closed: the PDFKit writer must not rewrite AcroForm documents.
+      if operations.allSatisfy({ $0.kind == .nativeFieldValue }) {
+        return try exportAcroFormViaIncrementalWriter(
+          url: url, sourceData: sourceData, source: source,
+          operations: operations, to: outputURL)
+      }
       throw PDFEditorError.exportFailed(
-        "This PDF contains an existing document-level AcroForm. The PDFKit writer cannot safely preserve its widget tree during edits; the source remains read-only until a form-aware provider is available."
+        "This PDF contains an existing document-level AcroForm. Only native field-value edits are supported on it (via the source-preserving incremental writer); overlays, synthesis, and page operations remain rejected until the form-aware provider lane covers them."
       )
     }
 
@@ -162,6 +206,94 @@ public struct PDFKitProvider: PDFProvider {
     }
 
     return ExportResult(outputURL: outputURL, report: report)
+    }
+  }
+
+  /// RG-001 source-preserving path: bounded native field-value edits on
+  /// AcroForm documents go through the incremental form writer instead of the
+  /// PDFKit writer. The source bytes remain a byte-exact prefix by
+  /// construction and the same validation contract runs before publication.
+  private func exportAcroFormViaIncrementalWriter(
+    url: URL,
+    sourceData: Data,
+    source: DocumentInspection,
+    operations: [EditOperation],
+    to outputURL: URL
+  ) throws -> ExportResult {
+    let nodes: [PDFIncrementalFormWriter.FormObjectNode]
+    do {
+      nodes = try PDFIncrementalFormWriter.walkAcroForm(sourceData)
+    } catch let error as PDFIncrementalFormWriter.WriterError {
+      throw PDFEditorError.exportFailed(error.localizedDescription)
+    } catch {
+      throw PDFEditorError.exportFailed(
+        "The AcroForm tree could not be read for the incremental writer: \(error.localizedDescription)")
+    }
+
+    var objectEdits: [PDFIncrementalFormWriter.ObjectEdit] = []
+    do {
+      for operation in operations {
+        try validateSourceBinding(operation, source: source.source)
+        guard let targetID = operation.targetID, !targetID.isEmpty else {
+          throw PDFEditorError.invalidOperation(
+            "A native field edit on an AcroForm document requires a field name.")
+        }
+        objectEdits.append(
+          contentsOf: try PDFIncrementalFormWriter.resolveEdits(
+            nodes: nodes,
+            targetFieldName: targetID,
+            requestedValue: operation.value
+          ))
+      }
+      let updated = try PDFIncrementalFormWriter.incrementalFieldUpdate(
+        sourceData, edits: objectEdits)
+      // Defense in depth: the prefix invariant is asserted inside the writer
+      // and verified again here before anything touches disk.
+      guard updated.prefix(sourceData.count) == sourceData else {
+        throw PDFEditorError.exportFailed(
+          "RG-017 violated: the incremental output diverged from the source prefix."
+        )
+      }
+      let fileManager = FileManager.default
+      let temporaryURL = fileManager.temporaryDirectory
+        .appendingPathComponent(".pdf-editor-incremental-\(UUID().uuidString).pdf")
+      try updated.write(to: temporaryURL, options: .atomic)
+      defer { try? fileManager.removeItem(at: temporaryURL) }
+
+      let report = try validate(
+        source: source,
+        sourceURL: url,
+        outputURL: temporaryURL,
+        operations: operations
+      )
+      guard report.status != .failed else {
+        let detail =
+          report.messages.isEmpty
+          ? "The incremental export failed validation without a diagnostic."
+          : report.messages.joined(separator: " ")
+        throw PDFEditorError.exportFailed(
+          "The incremental export was rejected before publication: \(detail)")
+      }
+      do {
+        if fileManager.fileExists(atPath: outputURL.path) {
+          _ = try fileManager.replaceItemAt(
+            outputURL, withItemAt: temporaryURL, backupItemName: nil,
+            options: .usingNewMetadataOnly)
+        } else {
+          try fileManager.copyItem(at: temporaryURL, to: outputURL)
+        }
+      } catch {
+        throw PDFEditorError.exportFailed(
+          "The validated incremental export could not be moved into place: \(error.localizedDescription)")
+      }
+      return ExportResult(outputURL: outputURL, report: report)
+    } catch let error as PDFIncrementalFormWriter.WriterError {
+      throw PDFEditorError.exportFailed(error.localizedDescription)
+    } catch let error as PDFEditorError {
+      throw error
+    } catch {
+      throw PDFEditorError.exportFailed(
+        "The incremental form writer failed: \(error.localizedDescription)")
     }
   }
 
@@ -363,17 +495,53 @@ public struct PDFKitProvider: PDFProvider {
         throw PDFEditorError.invalidPage(pageIndex)
       }
       let bounds = page.bounds(for: .cropBox)
-      for annotation in page.annotations {
+      // Single pass over the page annotations and a single text extraction:
+      // `page.annotations` returns a fresh array and `page.string` forces a
+      // full text layout each call, so per-page open cost must be linear in
+      // annotations, not a fixed multiple of it.
+      let annotations = page.annotations
+      let pageText = page.string
+
+      // Identity must not embed PDFKit's global annotation enumeration index:
+      // it is not stable across save/reload when non-widget annotations are
+      // interleaved. Use a per-(page, name) occurrence counter instead, keeping
+      // the index only as a tie-breaker for repeated names.
+      var widgetOccurrenceCounts: [String: Int] = [:]
+      for (annotationIndex, annotation) in annotations.enumerated() {
         let rawType = annotation.type ?? "unknown"
-        let normalizedType: String
         switch rawType {
-        case "Widget": normalizedType = "widget"
-        case "Link": normalizedType = "link"
-        case "FileAttachment": normalizedType = "fileAttachment"
-        case "Text", "FreeText", "Highlight", "Underline", "StrikeOut", "Squiggly", "Ink", "Square", "Circle", "Line", "Polygon", "PolyLine", "Caret", "Stamp", "Popup": normalizedType = "markup"
-        default: normalizedType = "unknown"
+        case "Widget":
+          annotationTypeCounts["widget", default: 0] += 1
+          let name = annotation.fieldName ?? "unnamed-\(pageIndex)-\(annotationIndex)"
+          let occurrence = widgetOccurrenceCounts[name, default: 0]
+          widgetOccurrenceCounts[name] = occurrence + 1
+          let stableID =
+            occurrence == 0 ? "\(name)#\(pageIndex)" : "\(name)#\(pageIndex)#\(occurrence)"
+          fields.append(
+            NativeField(
+              id: stableID,
+              name: name,
+              kind: nativeFieldKind(annotation.widgetFieldType),
+              pageIndex: pageIndex,
+              bounds: PDFRect(annotation.bounds),
+              value: nativeValue(for: annotation),
+              choices: annotation.choices ?? []
+            ))
+        case "Link":
+          annotationTypeCounts["link", default: 0] += 1
+          links.append(makeLink(from: annotation, pageIndex: pageIndex, page: page, source: source))
+        case "FileAttachment":
+          annotationTypeCounts["fileAttachment", default: 0] += 1
+          if let contents = annotation.contents?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !contents.isEmpty
+          {
+            attachments.append(contents)
+          }
+        case "Text", "FreeText", "Highlight", "Underline", "StrikeOut", "Squiggly", "Ink", "Square", "Circle", "Line", "Polygon", "PolyLine", "Caret", "Stamp", "Popup":
+          annotationTypeCounts["markup", default: 0] += 1
+        default:
+          annotationTypeCounts["unknown", default: 0] += 1
         }
-        annotationTypeCounts[normalizedType, default: 0] += 1
       }
       pages.append(
         PageSnapshot(
@@ -386,45 +554,10 @@ public struct PDFKitProvider: PDFProvider {
           artBox: PDFRect(page.bounds(for: .artBox)),
           rotation: page.rotation,
           characterCount: page.numberOfCharacters,
-          annotationCount: page.annotations.count,
-          hasSelectableText: !(page.string ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+          annotationCount: annotations.count,
+          hasSelectableText: !(pageText ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
             .isEmpty
         ))
-
-      // Identity must not embed PDFKit's global annotation enumeration index:
-      // it is not stable across save/reload when non-widget annotations are
-      // interleaved. Use a per-(page, name) occurrence counter instead, keeping
-      // the index only as a tie-breaker for repeated names.
-      var widgetOccurrenceCounts: [String: Int] = [:]
-      for (annotationIndex, annotation) in page.annotations.enumerated()
-      where annotation.type == "Widget" {
-        let name = annotation.fieldName ?? "unnamed-\(pageIndex)-\(annotationIndex)"
-        let occurrence = widgetOccurrenceCounts[name, default: 0]
-        widgetOccurrenceCounts[name] = occurrence + 1
-        let stableID = occurrence == 0 ? "\(name)#\(pageIndex)" : "\(name)#\(pageIndex)#\(occurrence)"
-        fields.append(
-          NativeField(
-            id: stableID,
-            name: name,
-            kind: nativeFieldKind(annotation.widgetFieldType),
-            pageIndex: pageIndex,
-            bounds: PDFRect(annotation.bounds),
-            value: nativeValue(for: annotation),
-            choices: annotation.choices ?? []
-          ))
-      }
-
-      for annotation in page.annotations where annotation.type == "Link" {
-        links.append(makeLink(from: annotation, pageIndex: pageIndex, page: page, source: source))
-      }
-
-      for annotation in page.annotations where annotation.type == "FileAttachment" {
-        if let contents = annotation.contents?.trimmingCharacters(in: .whitespacesAndNewlines),
-          !contents.isEmpty
-        {
-          attachments.append(contents)
-        }
-      }
 
       // Use PDFKit's selection geometry rather than assigning evenly spaced
       // bands to page.string lines. The latter loses the authored x/y layout
@@ -463,7 +596,7 @@ public struct PDFKitProvider: PDFProvider {
     let outlineRoot = collectOutlines(from: document.outlineRoot, level: 0, includeRoot: false)
     let metadata = inspectMetadata(document)
     let permissions = inspectPermissions(document)
-    let accessibility = inspectAccessibility(document)
+    let accessibility = inspectAccessibility(document, sourceData: data)
     let security = PDFSecuritySummary(
       isEncrypted: document.isEncrypted,
       isLocked: document.isLocked,
@@ -515,6 +648,26 @@ public struct PDFKitProvider: PDFProvider {
     else { return false }
     var acroForm: CGPDFDictionaryRef?
     return CGPDFDictionaryGetDictionary(catalog, "AcroForm", &acroForm)
+  }
+
+  /// RG-005/RG-052: structural detection of the authored tag tree through the
+  /// CGPDF catalog. PDFKit's document attributes rarely expose tagging, so
+  /// this reads the catalog keys directly: /StructTreeRoot (the structure
+  /// hierarchy), /MarkInfo with /Marked true (tagged-PDF conformance flag).
+  func detectStructuralAccessibility(_ data: Data) -> (structTree: Bool, markInfo: Bool) {
+    guard let provider = CGDataProvider(data: data as CFData),
+      let document = CGPDFDocument(provider),
+      let catalog = document.catalog
+    else { return (false, false) }
+    var structTree: CGPDFDictionaryRef?
+    var markInfo: CGPDFDictionaryRef?
+    let hasStructTree = CGPDFDictionaryGetDictionary(catalog, "StructTreeRoot", &structTree)
+    let hasMarkInfoDict = CGPDFDictionaryGetDictionary(catalog, "MarkInfo", &markInfo)
+    var marked = false
+    if hasMarkInfoDict, let markInfo {
+      _ = CGPDFDictionaryGetBoolean(markInfo, "Marked", &marked)
+    }
+    return (hasStructTree, hasMarkInfoDict && marked)
   }
 
   /// Button retention contract.
@@ -874,6 +1027,35 @@ public struct PDFKitProvider: PDFProvider {
         operationIDs: operations.map(\.id)
       ))
 
+    // RG-005/RG-052: authored tag-tree preservation. A tagged source must keep
+    // its /StructTreeRoot through export, or the export fails with evidence.
+    if source.accessibility.hasTaggedContent {
+      let sourceStructural = detectStructuralAccessibility(sourceData)
+      let outputStructural = detectStructuralAccessibility(outputData)
+      if sourceStructural.structTree, !outputStructural.structTree {
+        messages.append(
+          "The authored structure tree (/StructTreeRoot) was lost during export."
+        )
+        checks.append(
+          ValidationCheck(
+            kind: .accessibility,
+            status: .failed,
+            message:
+              "Tag-tree preservation failed: the output catalog no longer contains /StructTreeRoot.",
+            operationIDs: operations.map(\.id)
+          ))
+      } else {
+        checks.append(
+          ValidationCheck(
+            kind: .accessibility,
+            status: .passed,
+            message:
+              "The authored structure tree is preserved in the exported catalog (byte-preserving lane).",
+            operationIDs: operations.map(\.id)
+          ))
+      }
+    }
+
     let status: ValidationStatus
     if !sourceUnchanged || !messages.isEmpty {
       status = .failed
@@ -1159,15 +1341,35 @@ public struct PDFKitProvider: PDFProvider {
     )
   }
 
-  private func inspectAccessibility(_ document: PDFDocument) -> PDFAccessibilitySummary {
+  private func inspectAccessibility(_ document: PDFDocument, sourceData: Data? = nil) -> PDFAccessibilitySummary {
     let attributes = document.documentAttributes ?? [:]
-    let hasTagged = (attributes["Tagged"] as? Bool) == true
     let hasExtractedReadingOrder =
       document.pageCount > 0
       && (0..<document.pageCount).contains { index in
         guard let text = document.page(at: index)?.string else { return false }
         return !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
       }
+
+    // RG-005/RG-052: prefer structural catalog detection over provider
+    // attributes; report the authored tag tree as preserved-by-evidence only
+    // when the source is byte-preserved (incremental lane), otherwise mark it
+    // explicitly unavailable rather than claiming fidelity.
+    var hasTagged = (attributes["Tagged"] as? Bool) == true
+    var structuralNote: String?
+    if let sourceData {
+      let structural = detectStructuralAccessibility(sourceData)
+      hasTagged = hasTagged || structural.structTree
+      if structural.structTree {
+        structuralNote =
+          "An authored /StructTreeRoot is present. Tag-tree preservation is guaranteed only on the byte-preserving incremental lane; other writers must be treated as unverified."
+      } else {
+        structuralNote =
+          "No /StructTreeRoot in the catalog: this document has no authored tag tree (screen-reader structure is unavailable at the source)."
+      }
+    } else {
+      structuralNote = "Structural tag-tree detection was not run against source bytes in this lane."
+    }
+
     return PDFAccessibilitySummary(
       hasTaggedContent: hasTagged,
       hasReadingOrder: hasExtractedReadingOrder,
@@ -1175,8 +1377,10 @@ public struct PDFKitProvider: PDFProvider {
         hasExtractedReadingOrder
           ? "Reading order is derived from provider text extraction and is not an authored-tag guarantee."
           : "No usable extracted text was found; OCR or a tagged-content provider is required.",
-        "PDF/UA conformance and authored tag-tree preservation require a validator-backed lane.",
+        structuralNote ?? "",
+        "PDF/UA conformance requires the validator-backed lane (veraPDF).",
       ]
+      .filter { !$0.isEmpty }
     )
   }
 

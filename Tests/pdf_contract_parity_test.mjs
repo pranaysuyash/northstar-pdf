@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 import { compareIndependentPreservation, independentViewerReopen } from "../benchmark/independent-preservation-validator.mjs";
 import { buildBrowserExportIndependentViewerReport } from "../benchmark/browser-export-independent-viewer-validator.mjs";
 import { comparePreflightReports } from "../web/pdf-preflight.mjs";
@@ -17,7 +17,7 @@ import {
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
-const baseURL = process.env.PDF_PROOF_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
 const manifestPath = path.join(projectRoot, "docs/fixtures/manifest.md");
 const parityFixturePath = path.join(projectRoot, "Tests/fixtures/pdf_corpus_semantic_parity_fixture.json");
 const parityFixtureDescriptor = JSON.parse(fs.readFileSync(parityFixturePath, "utf8"));

@@ -7,6 +7,8 @@ public struct SecurityVaultSheet: View {
   @Bindable var model: AppModel
   @Environment(\.dismiss) private var dismiss
   @State private var selectedTab = 0
+  // Performance: cache sorted audit events to avoid re-sorting on every body evaluation
+  @State private var cachedSortedEvents: [PDFLocalStoreAuditEvent] = []
 
   public init(model: AppModel) {
     self.model = model
@@ -21,6 +23,7 @@ public struct SecurityVaultSheet: View {
             Image(systemName: "lock.shield.fill")
               .font(.title2)
               .foregroundStyle(.tint)
+              .accessibilityHidden(true)
             Text("Security & Privacy Vault")
               .font(.title2.weight(.semibold))
           }
@@ -83,7 +86,8 @@ public struct SecurityVaultSheet: View {
       }
       .padding(.horizontal, 24)
       .padding(.vertical, 10)
-      .background(Color.secondary.opacity(0.04))
+      /* Warm-tinted header */
+      .background(Color.orange.opacity(0.04))
     }
     .frame(width: 640)
   }
@@ -144,7 +148,8 @@ public struct SecurityVaultSheet: View {
         }
       }
       .padding(12)
-      .background(Color.secondary.opacity(0.06))
+      /* Warm-tinted section */
+      .background(Color.orange.opacity(0.05))
       .clipShape(RoundedRectangle(cornerRadius: 8))
 
       Button("Refresh Store Health & Diagnostics") {
@@ -172,7 +177,8 @@ public struct SecurityVaultSheet: View {
     }
     .padding(10)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(Color.secondary.opacity(0.06))
+    /* Warm-tinted section */
+    .background(Color.orange.opacity(0.05))
     .clipShape(RoundedRectangle(cornerRadius: 8))
   }
 
@@ -306,14 +312,13 @@ public struct SecurityVaultSheet: View {
         .font(.caption)
         .foregroundStyle(.secondary)
 
-      let events = (model.templateAuditEvents + model.profileAuditEvents).sorted(by: { $0.createdAt > $1.createdAt })
-      if events.isEmpty {
+      if cachedSortedEvents.isEmpty {
         Text("No audit events recorded in this session yet.")
           .font(.callout)
           .foregroundStyle(.secondary)
           .padding(.vertical, 20)
       } else {
-        List(events, id: \.id) { event in
+        List(cachedSortedEvents, id: \.id) { event in
           HStack {
             VStack(alignment: .leading, spacing: 2) {
               Text(event.action.rawValue.capitalized)
@@ -333,5 +338,13 @@ public struct SecurityVaultSheet: View {
         .frame(height: 220)
       }
     }
+    .onAppear { refreshCachedEvents() }
+    .onChange(of: model.templateAuditEvents) { _, _ in refreshCachedEvents() }
+    .onChange(of: model.profileAuditEvents) { _, _ in refreshCachedEvents() }
+  }
+
+  private func refreshCachedEvents() {
+    cachedSortedEvents = (model.templateAuditEvents + model.profileAuditEvents)
+      .sorted(by: { $0.createdAt > $1.createdAt })
   }
 }

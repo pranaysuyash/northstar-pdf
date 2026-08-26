@@ -5,6 +5,7 @@ import assert from "node:assert";
 import fs from "node:fs";
 import { execFileSync, spawnSync } from "node:child_process";
 import { sanitizePdf } from "../web/pdf-sanitize.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const srcBuf = fs.readFileSync(SRC);
@@ -27,7 +28,7 @@ console.log("PASS qpdf --check: sanitized file is structurally valid");
 
 const res = JSON.parse(
   execFileSync(
-    "python3",
+    pdfPython,
     [
       "-c",
       "import pikepdf,sys,json; p=pikepdf.open(sys.argv[1]); info=p.trailer.get('/Info'); print(json.dumps({'hasInfo':'/Info' in p.trailer,'infoKeys':list(info.keys()) if info is not None else [],'hasMetadata':'/Metadata' in p.Root,'pages':len(p.pages)}))",

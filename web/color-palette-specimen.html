@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northstar Color Palette Specimen</title>
+<style>
+  :root {
+    --type-3xs: 0.5625rem;
+    --type-2xs: 0.625rem;
+    --type-xs: 0.6875rem;
+    --type-sm: 0.75rem;
+    --type-body: 0.8125rem;
+    --type-heading: 1.0625rem;
+    --type-display: 1.1875rem;
+    --pdf-ink: oklch(0.22 0.025 260);
+    --pdf-ink-soft: oklch(0.42 0.03 260);
+    --pdf-ink-faint: oklch(0.56 0.025 260);
+    --pdf-paper: oklch(0.985 0.008 80);
+    --pdf-canvas: oklch(0.94 0.012 75);
+    --pdf-shell: oklch(0.17 0.015 50);
+    --pdf-shell-raised: oklch(0.22 0.018 50);
+    --pdf-shell-line: oklch(0.30 0.015 50);
+    --pdf-shell-text: oklch(0.88 0.012 70);
+    --pdf-shell-muted: oklch(0.65 0.018 60);
+    --pdf-accent-soft: oklch(0.78 0.1 258);
+    --pdf-surface: oklch(0.99 0.005 80);
+    --pdf-surface-soft: oklch(0.97 0.008 80);
+    --pdf-border: oklch(0.88 0.012 75);
+    --pdf-accent: oklch(0.57 0.19 258);
+    --pdf-accent-deep: oklch(0.43 0.16 258);
+    --pdf-accent-wash: oklch(0.94 0.04 258);
+    --pdf-amber: oklch(0.73 0.14 80);
+    --pdf-amber-wash: oklch(0.96 0.04 85);
+    --pdf-amber-line: oklch(0.82 0.11 82);
+    --pdf-green: oklch(0.55 0.14 150);
+    --pdf-green-ink: oklch(0.36 0.10 150);
+    --pdf-green-wash: oklch(0.95 0.04 150);
+    --pdf-red: oklch(0.55 0.17 25);
+    --pdf-red-ink: oklch(0.48 0.14 25);
+    --pdf-red-wash: oklch(0.95 0.04 25);
+    --pdf-info: oklch(0.50 0.12 270);
+    --pdf-info-wash: oklch(0.94 0.035 270);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--pdf-canvas);
+    color: var(--pdf-ink);
+    padding: 32px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1 {
+    font: 600 var(--type-display)/1.1 Iowan Old Style, Baskerville, Palatino Linotype, Georgia, serif;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    color: var(--pdf-ink-soft);
+    font-size: var(--type-body);
+    margin-bottom: 32px;
+  }
+
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font: 700 var(--type-2xs)/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--pdf-ink-faint);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--pdf-border);
+  }
+
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .swatch {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--pdf-border);
+    background: var(--pdf-surface);
+  }
+
+  .swatch-color {
+    height: 72px;
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 10px;
+    position: relative;
+  }
+
+  .swatch-color .contrast-badge {
+    font: 600 var(--type-3xs)/1 ui-monospace, SFMono-Regular, monospace;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: oklch(0 0 0 / 0.5);
+    color: oklch(1 0 0);
+    backdrop-filter: blur(4px);
+  }
+
+  .swatch-info {
+    padding: 10px;
+  }
+
+  .swatch-name {
+    font: 600 var(--type-xs)/1.3 ui-sans-serif, sans-serif;
+    margin-bottom: 4px;
+    word-break: break-all;
+  }
+
+  .swatch-value {
+    font: 400 var(--type-3xs)/1.3 ui-monospace, SFMono-Regular, monospace;
+    color: var(--pdf-ink-soft);
+    word-break: break-all;
+  }
+
+  .swatch-usage {
+    font: 400 var(--type-3xs)/1.3 ui-sans-serif, sans-serif;
+    color: var(--pdf-ink-faint);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .contrast-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .contrast-cell {
+    padding: 8px 10px;
+    border-radius: 6px;
+    font: 600 var(--type-3xs)/1.3 ui-monospace, monospace;
+    text-align: center;
+  }
+
+  .contrast-cell .ratio {
+    font-size: var(--type-sm);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .contrast-cell .label {
+    font-size: var(--type-3xs);
+    font-weight: 400;
+    opacity: 0.8;
+  }
+
+  .pass { outline: 2px solid oklch(0.55 0.14 150); outline-offset: 1px; }
+  .fail { outline: 2px solid oklch(0.55 0.17 25); outline-offset: 1px; opacity: 0.7; }
+
+  .pair-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .pair-card {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--pdf-border);
+  }
+
+  .pair-preview {
+    padding: 16px;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .pair-preview .text-sample {
+    font: 600 var(--type-heading)/1.2 ui-sans-serif, sans-serif;
+  }
+
+  .pair-meta {
+    padding: 8px 12px;
+    background: var(--pdf-surface);
+    font: 400 var(--type-3xs)/1.4 ui-monospace, monospace;
+    color: var(--pdf-ink-soft);
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
+</head>
+<body>
+
+<h1>Northstar Color Palette</h1>
+<p class="subtitle">All oklch tokens with WCAG contrast ratios against key backgrounds. Warm-tinted palette — no pure grays.</p>
+
+<div class="section" id="inkSection">
+  <div class="section-title">Ink (Text Hierarchy)</div>
+  <div class="swatch-grid" id="inkSwatches"></div>
+</div>
+
+<div class="section" id="surfaceSection">
+  <div class="section-title">Surfaces & Canvas</div>
+  <div class="swatch-grid" id="surfaceSwatches"></div>
+</div>
+
+<div class="section" id="shellSection">
+  <div class="section-title">Shell (Dark Sidebar)</div>
+  <div class="swatch-grid" id="shellSwatches"></div>
+</div>
+
+<div class="section" id="accentSection">
+  <div class="section-title">Accent (Cobalt Blue)</div>
+  <div class="swatch-grid" id="accentSwatches"></div>
+</div>
+
+<div class="section" id="semanticSection">
+  <div class="section-title">Semantic States</div>
+  <div class="swatch-grid" id="semanticSwatches"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Key Contrast Pairs</div>
+  <div class="pair-grid" id="pairGrid"></div>
+</div>
+
+<script>
+// ── Token definitions ──────────────────────────────────────────────
+const tokens = [
+  // Ink
+  { name: "--pdf-ink", value: "oklch(0.22 0.025 260)", section: "ink", usage: "Primary text" },
+  { name: "--pdf-ink-soft", value: "oklch(0.42 0.03 260)", section: "ink", usage: "Secondary text" },
+  { name: "--pdf-ink-faint", value: "oklch(0.56 0.025 260)", section: "ink", usage: "Tertiary / captions" },
+  // Surfaces
+  { name: "--pdf-paper", value: "oklch(0.985 0.008 80)", section: "surface", usage: "PDF page background" },
+  { name: "--pdf-canvas", value: "oklch(0.94 0.012 75)", section: "surface", usage: "Workspace background" },
+  { name: "--pdf-surface", value: "oklch(0.99 0.005 80)", section: "surface", usage: "Card / panel surface" },
+  { name: "--pdf-surface-soft", value: "oklch(0.97 0.008 80)", section: "surface", usage: "Subtle surface tint" },
+  { name: "--pdf-border", value: "oklch(0.88 0.012 75)", section: "surface", usage: "Light borders" },
+  // Shell
+  { name: "--pdf-shell", value: "oklch(0.17 0.015 50)", section: "shell", usage: "Dark sidebar bg" },
+  { name: "--pdf-shell-raised", value: "oklch(0.22 0.018 50)", section: "shell", usage: "Raised elements in shell" },
+  { name: "--pdf-shell-line", value: "oklch(0.30 0.015 50)", section: "shell", usage: "Shell borders" },
+  { name: "--pdf-shell-text", value: "oklch(0.88 0.012 70)", section: "shell", usage: "Text on dark bg" },
+  { name: "--pdf-shell-muted", value: "oklch(0.65 0.018 60)", section: "shell", usage: "Muted text on dark" },
+  // Accent
+  { name: "--pdf-accent", value: "oklch(0.57 0.19 258)", section: "accent", usage: "Primary action / selection" },
+  { name: "--pdf-accent-deep", value: "oklch(0.43 0.16 258)", section: "accent", usage: "Dark accent / buttons" },
+  { name: "--pdf-accent-soft", value: "oklch(0.78 0.1 258)", section: "accent", usage: "Soft accent / hover" },
+  { name: "--pdf-accent-wash", value: "oklch(0.94 0.04 258)", section: "accent", usage: "Light accent bg" },
+  // Semantic
+  { name: "--pdf-green", value: "oklch(0.55 0.14 150)", section: "semantic", usage: "Success" },
+  { name: "--pdf-green-ink", value: "oklch(0.36 0.10 150)", section: "semantic", usage: "Success text" },
+  { name: "--pdf-green-wash", value: "oklch(0.95 0.04 150)", section: "semantic", usage: "Success bg" },
+  { name: "--pdf-amber", value: "oklch(0.73 0.14 80)", section: "semantic", usage: "Warning" },
+  { name: "--pdf-amber-wash", value: "oklch(0.96 0.04 85)", section: "semantic", usage: "Warning bg" },
+  { name: "--pdf-amber-line", value: "oklch(0.82 0.11 82)", section: "semantic", usage: "Warning border" },
+  { name: "--pdf-red", value: "oklch(0.55 0.17 25)", section: "semantic", usage: "Error / danger" },
+  { name: "--pdf-red-ink", value: "oklch(0.48 0.14 25)", section: "semantic", usage: "Error text" },
+  { name: "--pdf-red-wash", value: "oklch(0.95 0.04 25)", section: "semantic", usage: "Error bg" },
+  { name: "--pdf-info", value: "oklch(0.50 0.12 270)", section: "semantic", usage: "Info / links" },
+  { name: "--pdf-info-wash", value: "oklch(0.94 0.035 270)", section: "semantic", usage: "Info bg" },
+];
+
+// ── WCAG contrast helpers ──────────────────────────────────────────
+function oklchToLinear(c) {
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
+function oklchToRgb(l, c, h) {
+  const hRad = h * Math.PI / 180;
+  const a = c * Math.cos(hRad);
+  const b = c * Math.sin(hRad);
+  const l_ = l + 0.3963377774 * a + 0.2158037573 * b;
+  const m_ = l - 0.1055613458 * a - 0.0638541728 * b;
+  const s_ = l - 0.0894841775 * a - 1.2914855480 * b;
+  const l_3 = l_ * l_ * l_;
+  const m_3 = m_ * m_ * m_;
+  const s_3 = s_ * s_ * s_;
+  const r = +4.0767416621 * l_3 - 3.3077115913 * m_3 + 0.2309699292 * s_3;
+  const g = -1.2684380046 * l_3 + 2.6097574011 * m_3 - 0.3413193965 * s_3;
+  const b2 = -0.0041960863 * l_3 - 0.7034186147 * m_3 + 1.7076147010 * s_3;
+  return [
+    Math.round(Math.min(255, Math.max(0, r * 255))),
+    Math.round(Math.min(255, Math.max(0, g * 255))),
+    Math.round(Math.min(255, Math.max(0, b2 * 255)))
+  ];
+}
+
+function relativeLuminance(r, g, b) {
+  return 0.2126 * oklchToLinear(r / 255) + 0.7152 * oklchToLinear(g / 255) + 0.0722 * oklchToLinear(b / 255);
+}
+
+function parseOklch(str) {
+  const m = str.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*\)/);
+  if (!m) return null;
+  return { l: parseFloat(m[1]), c: parseFloat(m[2]), h: parseFloat(m[3]) };
+}
+
+function contrastRatio(rgb1, rgb2) {
+  const l1 = relativeLuminance(...rgb1);
+  const l2 = relativeLuminance(...rgb2);
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+function wcagLevel(ratio) {
+  if (ratio >= 7) return "AAA";
+  if (ratio >= 4.5) return "AA";
+  if (ratio >= 3) return "AA-large";
+  return "fail";
+}
+
+function tokenToRgb(token) {
+  const o = parseOklch(token.value);
+  if (!o) return [128, 128, 128];
+  return oklchToRgb(o.l, o.c, o.h);
+}
+
+// ── Reference backgrounds ──────────────────────────────────────────
+const bgRefs = [
+  { name: "paper", rgb: tokenToRgb(tokens.find(t => t.name === "--pdf-paper")) },
+  { name: "canvas", rgb: tokenToRgb(tokens.find(t => t.name === "--pdf-canvas")) },
+  { name: "surface", rgb: tokenToRgb(tokens.find(t => t.name === "--pdf-surface")) },
+  { name: "shell", rgb: tokenToRgb(tokens.find(t => t.name === "--pdf-shell")) },
+];
+
+// ── Render swatches ────────────────────────────────────────────────
+function renderSwatches(containerId, tokenList) {
+  const container = document.getElementById(containerId);
+  for (const token of tokenList) {
+    const rgb = tokenToRgb(token);
+    const o = parseOklch(token);
+    const hex = `#${rgb.map(c => c.toString(16).padStart(2, "0")).join("")}`;
+
+    // Best contrast against reference backgrounds
+    let bestRatio = 0;
+    let bestBg = "";
+    for (const bg of bgRefs) {
+      const ratio = contrastRatio(rgb, bg.rgb);
+      if (ratio > bestRatio) { bestRatio = ratio; bestBg = bg.name; }
+    }
+
+    const swatch = document.createElement("div");
+    swatch.className = "swatch";
+    swatch.innerHTML = `
+      <div class="swatch-color" style="background: ${token.value}">
+        <span class="contrast-badge">${bestRatio.toFixed(1)}:1 vs ${bestBg}</span>
+      </div>
+      <div class="swatch-info">
+        <div class="swatch-name">${token.name}</div>
+        <div class="swatch-value">${token.value}<br>${hex}</div>
+        <div class="swatch-usage">${token.usage}</div>
+      </div>
+    `;
+    container.appendChild(swatch);
+  }
+}
+
+// ── Render contrast pairs ──────────────────────────────────────────
+function renderPairs() {
+  const pairs = [
+    { fg: "--pdf-ink", bg: "--pdf-paper", label: "Primary text on paper" },
+    { fg: "--pdf-ink", bg: "--pdf-surface", label: "Primary text on surface" },
+    { fg: "--pdf-ink-soft", bg: "--pdf-paper", label: "Secondary text on paper" },
+    { fg: "--pdf-ink-faint", bg: "--pdf-paper", label: "Tertiary text on paper" },
+    { fg: "--pdf-shell-text", bg: "--pdf-shell", label: "Shell text on dark" },
+    { fg: "--pdf-shell-muted", bg: "--pdf-shell", label: "Muted text on dark" },
+    { fg: "--pdf-accent", bg: "--pdf-surface", label: "Accent on surface" },
+    { fg: "--pdf-accent-deep", bg: "--pdf-surface", label: "Deep accent on surface" },
+    { fg: "--pdf-green-ink", bg: "--pdf-green-wash", label: "Success text on wash" },
+    { fg: "--pdf-red-ink", bg: "--pdf-red-wash", label: "Error text on wash" },
+    { fg: "--pdf-amber", bg: "--pdf-amber-wash", label: "Warning on wash" },
+    { fg: "--pdf-info", bg: "--pdf-info-wash", label: "Info text on wash" },
+    { fg: "--pdf-accent", bg: "--pdf-accent-deep", label: "White-on-accent (button)" },
+  ];
+
+  const grid = document.getElementById("pairGrid");
+  for (const pair of pairs) {
+    const fgToken = tokens.find(t => t.name === pair.fg);
+    const bgToken = tokens.find(t => t.name === pair.bg);
+    if (!fgToken || !bgToken) continue;
+
+    const fgRgb = tokenToRgb(fgToken);
+    const bgRgb = tokenToRgb(bgToken);
+    const ratio = contrastRatio(fgRgb, bgRgb);
+    const level = wcagLevel(ratio);
+
+    const card = document.createElement("div");
+    card.className = "pair-card";
+    card.innerHTML = `
+      <div class="pair-preview" style="background: ${bgToken.value}; color: ${fgToken.value}">
+        <span class="text-sample">Aa Sample</span>
+        <span style="font: 700 var(--type-sm)/1 monospace">${ratio.toFixed(2)}:1</span>
+      </div>
+      <div class="pair-meta">
+        <span>${pair.label}</span>
+        <span class="${level === 'fail' ? 'fail' : 'pass'}" style="font-weight:700">${level}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────────
+renderSwatches("inkSwatches", tokens.filter(t => t.section === "ink"));
+renderSwatches("surfaceSwatches", tokens.filter(t => t.section === "surface"));
+renderSwatches("shellSwatches", tokens.filter(t => t.section === "shell"));
+renderSwatches("accentSwatches", tokens.filter(t => t.section === "accent"));
+renderSwatches("semanticSwatches", tokens.filter(t => t.section === "semantic"));
+renderPairs();
+</script>
+
+</body>
+</html>

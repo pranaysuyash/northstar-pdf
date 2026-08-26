@@ -1,6 +1,9 @@
 # PDF Editor Pricing & Marketing Exploration — Native Mac First
 
 **Date:** 2026-08-25
+**Product:** Northstar PDF (canonical product name "Northstar," per
+`docs/northstar-macos-landscape-and-product-direction-2026-08-25.md`;
+identifiers use `com.northstar.pdf`)
 **Status:** Exploration and recommendation; not an approved decision (see
 `docs/decisions.md` for the canonical decision process)
 **Scope:** Pricing and go-to-market for the native macOS product, with a brief
@@ -246,15 +249,25 @@ Three implications:
   local agent runs under a **fair-use monthly cap (~300 runs) that exists to
   stop scripted abuse, not humans.** State the cap openly; nobody organic will
   hit it.
-- **Agent+ $4.99/mo or $39/yr:** cloud escalation only. Monthly credit
-  allowance (≈300–500 credits; 1 credit ≈ 1 cloud step), spent only when the
-  local stack abstains or the user explicitly consents per document. BYOK
-  option for users who bring their own API key.
-- **Agent (BYOK) $29 one-time — test SKU:** permanent local + bring-your-own-
-  key agentic capability for the never-subscribe segment. We sell
-  orchestration; the user pays their model provider directly. Margin-safe by
-  construction. Add only if it doesn't muddy the pricing page.
+- **Agent+ $4.99/mo or $39/yr, 500 cloud credits/mo:** cloud escalation only
+  (1 credit ≈ 1 cloud step), spent only when the local stack abstains or the
+  user explicitly consents per document. 500 chosen over 300 because the
+  verified worst-case P95 cost is bounded at $5–15/mo against $4.99 revenue
+  while average subscribers cost $1–3 — generosity against a hard cap is the
+  anti-Acrobat story (300 credits is the strictly non-negative conservative
+  fallback).
+- **BYOK $29 one-time — deferred, not killed:** permanent local + bring-your-
+  own-key agentic capability for the never-subscribe segment. It fails the
+  launch test today (no shipped feature gate; its buyer doesn't exist until
+  agentic ships). Revisit at Agent+ launch as a one-line addition.
 - **Workspace $12.99–$14.99/mo — later, evidence-gated** (§5.3).
+
+**SKU admission rule (owner-accepted 2026-08-25):** a SKU earns a
+pricing-page slot only when it (a) has a shipped feature gate, (b) maps to a
+distinct buyer, and (c) explains in one line. Launch set is exactly **Free /
+Pro / Agent+**, with Agent+ appearing only when the cloud lane ships (two
+columns until then). The local fair-use cap number is decided at agent launch.
+Tier naming avoids "AI" — "Agent+" names the paid capability.
 
 ### 5.3 The agentic tier in detail (my take)
 
@@ -359,7 +372,8 @@ limits and asking for multi-device / team review. Until that signal exists,
 
 ### 5.4 Pricing-page presentation
 
-Three columns: **Free / Pro $79 (own it) / Agent+ $4.99/mo**. Anchor row at
+Two columns at launch — **Free / Pro $79 (own it)** — becoming three with
+**Agent+ $4.99/mo** when the cloud lane ships. Anchor row at
 the top of the comparison: *"Acrobat Pro: $239.88/yr. Nitro: $139.99/yr.
 This: $79. Once."* Honest FAQ: *"What happens after 12 months?"* — you keep
 everything; updates continue at $39/yr, optionally. *"What does Agent+ pay
@@ -415,7 +429,7 @@ subscription-fatigued buyers ask.
    we show them to you." No competitor says this.
 
 **Positioning statement (draft):** *For Mac users with documents that matter,
-[Product] is the native PDF editor you own outright — $79, once — that fills
+Northstar PDF is the native PDF editor you own outright — $79, once — that fills
 and edits only what you approve, proves the rest of the document is untouched,
 and never sends your files anywhere.*
 
@@ -532,7 +546,7 @@ Full exploration deferred to its own doc, per the owner's split.
 |---|---|---|
 | Free | Free-forever basic reader | **Keep.** Free = reading + annotation + native form fill + limited export; gated: detection, templates, batch, OCR, full export |
 | Pro | $79 one-time, all non-AI capabilities | **Keep the price; change the mechanic:** $79 = perpetual + 12 months of updates; $39/yr optional renewal; $59 launch window |
-| AI | +$9/mo add-on | **Re-anchor:** on-device AI included with Pro updates (fair-use run caps; hardware-tiered, abstains honestly on 8 GB); cloud escalation as **Agent+ $4.99/mo / $39/yr credits** (+ $29 BYOK one-time test SKU); agentic "Workspace" $12.99–$14.99/mo only after hosted multi-doc demand is proven (§5.3) |
+| AI | +$9/mo add-on | **Re-anchor:** on-device AI included with Pro updates (fair-use cap decided at agent launch; hardware-tiered, abstains honestly on 8 GB); cloud escalation as **Agent+ $4.99/mo / $39/yr, 500 credits/mo** (BYOK deferred to Agent+ launch review); agentic "Workspace" $12.99–$14.99/mo only after hosted multi-doc demand is proven (§5.3) |
 | Extras | — | Edu 40%, 2–3 Macs per license, direct-first checkout, MAS parity, Setapp/team later |
 
 **Immediate next steps (validation, not build):**

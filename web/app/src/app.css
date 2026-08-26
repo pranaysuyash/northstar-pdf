@@ -56,11 +56,71 @@
   margin: 0 14px 14px;
 }
 
+.pdf-page-wrap {
+  position: relative;
+}
+
+.match-highlight-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.match-highlight {
+  position: absolute;
+  background: oklch(0.92 0.055 258 / 0.45);
+  outline: 1px solid var(--pdf-accent-wash);
+  border-radius: 2px;
+}
+
+.match-highlight.is-active {
+  background: oklch(0.85 0.12 95 / 0.55);
+  outline: 1px solid var(--pdf-amber);
+}
+
 .pdf-stage canvas {
   max-width: 100%;
   height: auto;
   box-shadow: var(--pdf-shadow);
   background: var(--pdf-paper);
+  display: block;
+}
+
+.field-input,
+.field-input input,
+.field-input select {
+  width: 100%;
+  margin-top: 4px;
+  padding: 4px 6px;
+  font: inherit;
+  font-size: var(--type-sm);
+  color: var(--pdf-ink);
+  background: var(--pdf-surface);
+  border: 1px solid var(--pdf-border);
+  border-radius: 5px;
+}
+
+.op-log {
+  margin: 6px 0;
+  padding-inline-start: 18px;
+}
+
+.validation-report {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.validation-report li[data-status="passed"] {
+  color: var(--pdf-green-ink);
+}
+
+.validation-report li[data-status="failed"] {
+  color: var(--pdf-red-ink);
+}
+
+.validation-report li[data-status="skipped"] {
+  color: var(--pdf-ink-faint);
 }
 
 .pdf-stage-empty {

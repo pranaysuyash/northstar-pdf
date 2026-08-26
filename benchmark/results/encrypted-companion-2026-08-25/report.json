@@ -1,0 +1,41 @@
+{
+  "contract": "pdf-editor.encrypted-companion-export",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "status": "passed",
+  "source": {
+    "digest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
+    "encrypted": {
+      "encrypted": true,
+      "algorithm": "AESv3",
+      "permissions": true
+    }
+  },
+  "plaintextStage": {
+    "digest": "71a28acb1fc22f20b930d67096d0404535c50ee7cc8f87964a6a5a3123511e18",
+    "browserProvider": "pdfjs-pdflib",
+    "validation": "validated"
+  },
+  "operationIDs": [
+    "cf7f2d66-adaf-43c4-9569-99225e0e6576"
+  ],
+  "output": {
+    "digest": "7c947579519e0465348974ad4d27b4ac37de49d0ccf57f847bc83faba1900e6e",
+    "encrypted": {
+      "encrypted": true,
+      "algorithm": "AESv3",
+      "permissions": true
+    }
+  },
+  "independent": {
+    "sourceReopen": "passed",
+    "outputReopen": "passed",
+    "text": "passed",
+    "raster": "passed"
+  },
+  "wrongPasswordRejected": true,
+  "rawContentInReport": false,
+  "providerBoundary": "qpdf companion encryption around a browser-reviewed plaintext operation"
+}

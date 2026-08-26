@@ -128,21 +128,30 @@ struct DiffComparisonView: View {
     HStack(spacing: 12) {
       Button { pageGoTo(0) } label: { Image(systemName: "backward.fill") }
         .disabled(pageIndex <= 0)
+        .accessibilityLabel("First page")
       Button { pageGoTo(pageIndex - 1) } label: { Image(systemName: "chevron.left") }
         .disabled(pageIndex <= 0)
+        .accessibilityLabel("Previous page")
       Text("Page \(pageIndex + 1) of \(sourceInspection?.pages.count ?? 0)")
         .font(.callout.monospacedDigit())
         .frame(minWidth: 120)
+        .accessibilityLabel("Page \(pageIndex + 1) of \(sourceInspection?.pages.count ?? 0)")
+        .accessibilityAddTraits(.isStaticText)
       Button { pageGoTo(pageIndex + 1) } label: { Image(systemName: "chevron.right") }
         .disabled(pageIndex >= maxPage - 1)
+        .accessibilityLabel("Next page")
       Button { pageGoTo(maxPage - 1) } label: { Image(systemName: "forward.fill") }
         .disabled(pageIndex >= maxPage - 1)
+        .accessibilityLabel("Last page")
       Spacer()
       Slider(value: $zoom, in: 0.5...3.0)
         .frame(width: 140)
+        .accessibilityLabel("Zoom level")
+        .accessibilityValue("\(Int(zoom * 100)) percent")
       Text("\(Int(zoom * 100))%")
         .font(.caption.monospacedDigit())
         .frame(width: 40)
+        .accessibilityHidden(true)
     }
     .padding(.horizontal, 16)
     .padding(.vertical, 8)

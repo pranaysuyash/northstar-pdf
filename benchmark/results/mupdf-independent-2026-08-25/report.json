@@ -1,0 +1,24 @@
+{
+  "contract": "pdf-editor.mupdf-independent-reopen",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "status": "passed",
+  "provider": "mupdf",
+  "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "outputDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "text": {
+    "status": "passed",
+    "sourcePageCount": 1,
+    "outputPageCount": 1
+  },
+  "raster": {
+    "status": "passed",
+    "sourcePageCount": 1,
+    "outputPageCount": 1
+  },
+  "reopen": "passed",
+  "rawContentInReport": false,
+  "editedOperationRegions": "notMeasured"
+}

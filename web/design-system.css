@@ -172,8 +172,12 @@ body {
 
 .control-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .item {
@@ -190,9 +194,10 @@ body {
 /* ------------------------------------------------------------------ */
 .toolbar {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 8px 12px;
-  align-items: center;
+  align-items: stretch;
   padding: 9px 14px;
   color: var(--pdf-shell-text);
   /* Apple Design §12: translucent material — content scrolls under */
@@ -201,12 +206,16 @@ body {
   -webkit-backdrop-filter: var(--pdf-material-blur);
   border-bottom: 1px solid var(--pdf-material-border);
   z-index: 3;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .toolbar-title {
   display: flex;
   flex-direction: column;
   min-width: 140px;
+  max-width: 100%;
   margin-inline-end: 4px;
 }
 
@@ -336,6 +345,11 @@ body {
   border-radius: 0;
   padding: 12px;
   box-shadow: none;
+}
+
+.panel-sidebar {
+  content-visibility: auto;
+  contain-intrinsic-size: 280px;
 }
 
 .workspace > aside:first-child {
@@ -913,7 +927,7 @@ body {
 /* ------------------------------------------------------------------ */
 .mode-stage {
   border-bottom: 1px solid var(--pdf-border);
-  background: var(--pdf-surface);
+  background: oklch(0.975 0.006 80);
 }
 
 .mode-panel {
@@ -922,6 +936,8 @@ body {
 
 .mode-panel[hidden] {
   display: none;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
 }
 
 .mode-panel-reader {
@@ -1030,9 +1046,10 @@ body {
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
-  padding: 9px 11px;
+  padding: 9px 11px 9px 14px;
   background: var(--pdf-amber-wash);
   border: 1px solid var(--pdf-amber-line);
+  border-left: 3px solid var(--pdf-amber);
   border-radius: 5px;
   font-size: var(--type-xs);
 }
@@ -1078,6 +1095,7 @@ body {
 
 .guardrail-decision.is-satisfied {
   border-left-color: var(--pdf-green);
+  background: var(--pdf-green-wash);
 }
 
 .guardrail-decision.is-pending {
@@ -1124,6 +1142,7 @@ body {
 .vr-state.passed {
   border-color: color-mix(in oklch, var(--pdf-green) 55%, transparent);
   color: var(--pdf-green-ink);
+  background: var(--pdf-green-wash);
 }
 
 .vr-state.warning {
@@ -1140,6 +1159,7 @@ body {
 .vr-state.failed {
   border-color: color-mix(in oklch, var(--pdf-red) 55%, transparent);
   color: var(--pdf-red-ink);
+  background: var(--pdf-red-wash);
 }
 
 .vr-note {
@@ -1269,6 +1289,7 @@ body {
 .analysis-signal.is-active {
   color: var(--pdf-accent-deep);
   border-color: color-mix(in oklch, var(--pdf-accent) 45%, transparent);
+  background: var(--pdf-accent-wash);
 }
 
 .analysis-signal.is-active::before {
@@ -1278,6 +1299,7 @@ body {
 .analysis-signal.is-done {
   color: var(--pdf-green-ink);
   border-color: color-mix(in oklch, var(--pdf-green) 45%, transparent);
+  background: var(--pdf-green-wash);
 }
 
 .analysis-signal.is-done::before {
@@ -1543,6 +1565,30 @@ body {
 @media (max-width: 760px) {
   #app {
     height: auto;
+  }
+
+  /* Mobile no-horizontal-scroll contract (viewport matrix): flex/grid children
+     must be allowed to shrink below their intrinsic content width, and inline
+     input widths must clamp to the viewport. */
+  .workspace > aside:first-child,
+  .workspace > aside:last-child,
+  #viewerMain,
+  .toolbar,
+  .toolbar .control-row {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .workspace > aside:first-child .thumb .small {
+    overflow-wrap: anywhere;
+  }
+
+  .product-mode-copy strong {
+    white-space: normal;
+  }
+
+  .toolbar input[type="text"] {
+    max-width: 58vw;
   }
 
   /* iOS Safari zooms when input text < 16px (principle 15) */

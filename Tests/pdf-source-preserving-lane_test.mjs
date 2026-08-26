@@ -15,6 +15,7 @@ import {
   ContractMutationError
 } from "../web/pdf-contract-mutation-gate.mjs";
 import { incrementalFieldUpdate } from "../web/pdf-incremental-form-writer.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const srcBuf = new Uint8Array(fs.readFileSync(SRC));
@@ -106,7 +107,7 @@ console.log("PASS gate export: provider=incremental-form-writer, prefix preserve
 const tmpPdf = path.join(os.tmpdir(), `lane-out-${Date.now()}.pdf`);
 fs.writeFileSync(tmpPdf, result.bytes);
 const res = JSON.parse(execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     "import pikepdf,sys,json;p=pikepdf.open(sys.argv[1]);f={str(x.get('/T')):x for x in p.Root.AcroForm.Fields[0].Kids};k=f.get('contact');kids=list(k.Kids);print(json.dumps({'v':str(k.V),'as':[str(x.AS) for x in kids]}))",
     tmpPdf],

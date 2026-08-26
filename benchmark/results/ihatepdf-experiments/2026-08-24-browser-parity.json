@@ -13,7 +13,7 @@
       "id": "E-001-C-001",
       "experimentID": "E-001",
       "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "operationKind": "textRunReplacement",
       "coordinate": {
         "unit": "points",
@@ -104,7 +104,7 @@
       "id": "E-003-C-001",
       "experimentID": "E-003",
       "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "operationKind": "privacyPreflight",
       "coordinate": {
         "unit": "points",
@@ -237,7 +237,7 @@
       "id": "E-006-C-001",
       "experimentID": "E-006",
       "sourceFixture": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "0b890ace1eadcb22ee1d2dc2958379dd9e144e271037969bac8ab2cb87f4f040",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "operationKind": "compareImpactMap",
       "coordinate": {
         "unit": "points",

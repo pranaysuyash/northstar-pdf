@@ -6,7 +6,7 @@
 import assert from "node:assert";
 import { spawn } from "node:child_process";
 import path from "node:path";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 
 const ROOT = "/Users/pranay/Projects/pdf_editor";
 const FIXTURE = path.join(ROOT, "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf");

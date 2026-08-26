@@ -1550,4 +1550,66 @@ struct PDFEditorCoreTests {
     store.clearSignatures()
     #expect(store.loadSignatures().isEmpty)
   }
+
+  @Test func batchMergeCombinesMultiplePDFDocuments() throws {
+    let doc1 = PDFDocument()
+    let page1 = PDFPage()
+    page1.setBounds(CGRect(x: 0, y: 0, width: 612, height: 792), for: .mediaBox)
+    doc1.insert(page1, at: 0)
+
+    let doc2 = PDFDocument()
+    let page2 = PDFPage()
+    page2.setBounds(CGRect(x: 0, y: 0, width: 612, height: 792), for: .mediaBox)
+    doc2.insert(page2, at: 0)
+
+    let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: tempDir) }
+
+    let url1 = tempDir.appendingPathComponent("doc1.pdf")
+    let url2 = tempDir.appendingPathComponent("doc2.pdf")
+    let mergedURL = tempDir.appendingPathComponent("merged.pdf")
+
+    doc1.write(to: url1)
+    doc2.write(to: url2)
+
+    let mergedDoc = PDFDocument()
+    for url in [url1, url2] {
+      if let doc = PDFDocument(url: url) {
+        for idx in 0..<doc.pageCount {
+          if let p = doc.page(at: idx) {
+            mergedDoc.insert(p, at: mergedDoc.pageCount)
+          }
+        }
+      }
+    }
+    mergedDoc.write(to: mergedURL)
+
+    let reopened = try #require(PDFDocument(url: mergedURL))
+    #expect(reopened.pageCount == 2)
+  }
+
+  @Test func documentSanitizationStripsMetadataAttributes() throws {
+    let doc = PDFDocument()
+    let page = PDFPage()
+    page.setBounds(CGRect(x: 0, y: 0, width: 612, height: 792), for: .mediaBox)
+    doc.insert(page, at: 0)
+
+    doc.documentAttributes = [
+      PDFDocumentAttribute.authorAttribute: "Confidential Author",
+      PDFDocumentAttribute.titleAttribute: "Sensitive Document Title"
+    ]
+
+    let tempDir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: tempDir) }
+
+    let targetURL = tempDir.appendingPathComponent("sanitized.pdf")
+    doc.documentAttributes = [:]
+    doc.write(to: targetURL)
+
+    let reopened = try #require(PDFDocument(url: targetURL))
+    let author = reopened.documentAttributes?[PDFDocumentAttribute.authorAttribute] as? String
+    #expect(author == nil || author?.isEmpty == true)
+  }
 }

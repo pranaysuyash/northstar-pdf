@@ -63,6 +63,8 @@ export interface PdfSnapshot {
   searchComplete: boolean;
   metadata: Record<string, unknown>;
   error: string | null;
+  /** Monotonic marker incremented after each completed page raster. */
+  renderedAt: number;
 }
 
 const INITIAL_SNAPSHOT: PdfSnapshot = {
@@ -77,7 +79,8 @@ const INITIAL_SNAPSHOT: PdfSnapshot = {
   activeMatchIndex: -1,
   searchComplete: true,
   metadata: {},
-  error: null
+  error: null,
+  renderedAt: 0
 };
 
 type Listener = () => void;
@@ -250,6 +253,9 @@ export class PdfController {
       const renderTask = page.render({ canvasContext: context, viewport });
       signal?.addEventListener("abort", () => renderTask.cancel(), { once: true });
       await renderTask.promise.catch(() => undefined);
+      if (token === this.#renderToken) {
+        this.#patch({ renderedAt: Date.now(), error: null });
+      }
     };
 
     void run().catch((error) => {
@@ -301,6 +307,214 @@ export class PdfController {
     const next = (activeMatchIndex + step + matches.length) % matches.length;
     this.#patch({ activeMatchIndex: next, currentPage: matches[next].page });
   }
+
+  /**
+   * Device-space rectangles of every match on a page, in canvas CSS pixel
+   * coordinates. Uses the geometry recorded by the last render so highlights
+   * always align with the visible raster.
+   */
+  async getMatchRects(pageNumber: number): Promise<MatchRect[]> {
+    const doc = this.#doc;
+    const geometry = this.#lastRenderGeometry;
+    if (!doc || !geometry || this.#snapshot.status !== "ready") return [];
+    const pageMatches = this.#snapshot.matches.filter((match) => match.page === pageNumber);
+    if (!pageMatches.length) return [];
+
+    const page = await doc.getPage(pageNumber);
+    const content = await page.getTextContent();
+    const viewport = page.getViewport({
+      scale: geometry.scale,
+      rotation: geometry.rotation
+    });
+
+    // Rebuild the joined text with per-item offsets so occurrences map back
+    // to the text items that produced them.
+    let full = "";
+    const spans: Array<{ start: number; end: number; str: string; transform: number[]; width: number; height: number }> = [];
+    for (const item of content.items) {
+      const str = item.str;
+      if (!str) continue;
+      spans.push({
+        start: full.length,
+        end: full.length + str.length,
+        str,
+        transform: item.transform,
+        width: item.width ?? 0,
+        height: item.height ?? 0
+      });
+      full += `${str} `;
+    }
+
+    const needle = this.#snapshot.searchQuery.trim().toLowerCase();
+    const rects: MatchRect[] = [];
+    for (const match of pageMatches) {
+      let occurrence = -1;
+      let cursor = 0;
+      for (let i = 0; i <= match.index; i++) {
+        occurrence = full.toLowerCase().indexOf(needle, cursor);
+        if (occurrence === -1) break;
+        cursor = occurrence + needle.length;
+      }
+      if (occurrence === -1) continue;
+      const occurrenceEnd = occurrence + needle.length;
+      const hit = spans.filter((span) => span.start < occurrenceEnd && span.end > occurrence);
+      for (const span of hit) {
+        const t = pdfjs.Util.transform(viewport.transform, span.transform);
+        const fontSize = Math.max(1, Math.hypot(t[0], t[1]));
+        rects.push({
+          left: t[4],
+          top: t[5] - fontSize,
+          width: Math.max(span.width * geometry.scale, fontSize),
+          height: fontSize
+        });
+      }
+    }
+    return rects;
+  }
+
+  /** Enumerates native AcroForm widgets across all pages. */
+  async listNativeFields(): Promise<NativeField[]> {
+    const doc = this.#doc;
+    if (!doc || this.#snapshot.status !== "ready") return [];
+    const fields: NativeField[] = [];
+    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
+      const page = await doc.getPage(pageNumber);
+      const annotations = await page.getAnnotations({ intent: "display" });
+      annotations
+        .filter((annotation) => annotation.subtype === "Widget" || "fieldName" in annotation)
+        .forEach((annotation, index) => {
+          const name =
+            (annotation as { fieldName?: string }).fieldName ??
+            (annotation as { id?: string }).id ??
+            `field-${pageNumber}-${index + 1}`;
+          const kind = fieldKindOf(annotation);
+          const rawValue = String(
+            (annotation as { fieldValue?: unknown }).fieldValue ?? ""
+          );
+          const value =
+            kind === "checkbox" || kind === "radio"
+              ? /^off$/i.test(rawValue)
+                ? ""
+                : rawValue
+              : rawValue;
+          fields.push({ id: name, name, kind, pageIndex: pageNumber - 1, value, choices: [] });
+        });
+    }
+    return fields;
+  }
+
+  /**
+   * Produces a new PDF copy with pending field edits applied through pdf-lib,
+   * then independently reopens it with pdf.js to verify preservation.
+   * The source bytes are never modified.
+   */
+  async exportCopy(operations: FieldEditOperation[]): Promise<ExportReport> {
+    const checks: ValidationCheck[] = [];
+    if (!this.#sourceBytes) {
+      throw new Error("No source document is open.");
+    }
+    if (!window.PDFLib) {
+      throw new Error("pdf-lib did not load in this browser.");
+    }
+
+    const outputBytes = await writeFieldEdits(this.#sourceBytes, operations);
+
+    checks.push({
+      id: "writer",
+      status: "passed",
+      detail: operations.length
+        ? `pdf-lib replayed ${operations.length} confirmed operation(s) onto a new copy.`
+        : "No confirmed operations; export is a new byte copy of the source."
+    });
+
+    // Independent reopen lane: pdf.js must reopen the export and confirm the
+    // page structure and edited field names survived the round trip.
+    const reopened = await pdfjs.getDocument({ data: outputBytes.slice() }).promise;
+    try {
+      checks.push({
+        id: "outputReopen",
+        status:
+          !this.#doc || reopened.numPages === this.#doc.numPages ? "passed" : "failed",
+        detail: `Export reopened in PDF.js with ${reopened.numPages} page(s).`
+      });
+
+      const fieldObjects = (await reopened.getFieldObjects?.()) ?? {};
+      const fieldNames = Object.keys(fieldObjects);
+      const missing = operations.filter((op) => !fieldNames.includes(op.targetID));
+      checks.push({
+        id: "editedFieldsReopen",
+        status: missing.length ? "failed" : operations.length ? "passed" : "skipped",
+        detail: missing.length
+          ? `${missing.length} edited field(s) did not reopen.`
+          : operations.length
+            ? `${operations.length} edited field(s) reopened in the independent PDF.js lane.`
+            : "No edited fields to verify."
+      });
+    } finally {
+      await reopened.destroy();
+    }
+
+    const passed = checks.every((check) => check.status !== "failed");
+    if (passed) {
+      triggerDownload(outputBytes, exportFileName());
+    }
+    return { checks, passed };
+  }
+}
+
+function fieldKindOf(annotation: Record<string, unknown>): NativeField["kind"] {
+  switch (annotation.fieldType) {
+    case "Tx":
+      return "text";
+    case "Btn":
+      return Number(annotation.fieldFlags) & 32768 ? "radio" : "checkbox";
+    case "Ch":
+      return "choice";
+    default:
+      return "other";
+  }
+}
+
+async function writeFieldEdits(source: Uint8Array, operations: FieldEditOperation[]): Promise<Uint8Array> {
+  const pdfLib = window.PDFLib;
+  if (!pdfLib) throw new Error("pdf-lib did not load in this browser.");
+  const { PDFDocument, StandardFonts } = pdfLib;
+  const outputDocument = await PDFDocument.load(source.slice());
+  if (!operations.length) {
+    return await outputDocument.save({ useObjectStreams: false });
+  }
+  const form = outputDocument.getForm();
+  const font = await outputDocument.embedFont(StandardFonts.Helvetica);
+  for (const operation of operations) {
+    const field = form.getField(operation.targetID);
+    if (typeof field.setText === "function") {
+      field.setText(operation.value);
+    } else if (typeof field.check === "function" && typeof field.uncheck === "function") {
+      /^(1|true|yes|on|checked)$/i.test(operation.value.trim()) ? field.check() : field.uncheck();
+    } else if (typeof field.select === "function") {
+      field.select(operation.value);
+    } else {
+      throw new Error(`Field ${operation.targetID} does not expose a supported pdf-lib setter.`);
+    }
+  }
+  form.updateFieldAppearances(font);
+  return await outputDocument.save({ useObjectStreams: false });
+}
+
+function exportFileName(): string {
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  return `pdf-editor-export-${stamp}.pdf`;
+}
+
+function triggerDownload(bytes: Uint8Array, fileName: string): void {
+  const buffer = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(buffer).set(bytes);
+  const url = URL.createObjectURL(new Blob([buffer], { type: "application/pdf" }));
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
 export const pdfController = new PdfController();

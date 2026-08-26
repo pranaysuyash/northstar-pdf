@@ -170,8 +170,7 @@ public struct PDFLocalStoreRecoveryEnvelope: Codable, Equatable, Hashable, Senda
     guard contractName == "pdf-editor.local-store-recovery",
           version == PDFContractVersion(major: 1, minor: 0),
           kdf == "PBKDF2-HMAC-SHA256",
-          keyIdentifier.isEmpty == false,
-          iterations >= 100_000,
+          keyIdentifier.isEmpty == false,           iterations >= 600_000,
           !salt.isEmpty,
           !nonce.isEmpty,
           !ciphertext.isEmpty,
@@ -402,7 +401,7 @@ public enum PDFLocalCrossDeviceBundleCodec {
 
 public enum PDFLocalStoreRecoveryCrypto {
   public static let minimumPassphraseLength = 12
-  public static let defaultIterations = 150_000
+  public static let defaultIterations = 600_000
 
   public static func validatePassphrase(_ passphrase: String) throws {
     guard passphrase.count >= minimumPassphraseLength else {

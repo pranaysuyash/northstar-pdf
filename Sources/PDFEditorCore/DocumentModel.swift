@@ -147,8 +147,15 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
   public let suggestedFieldType: SuggestedFieldType?
   public let entryMode: CandidateEntryMode
   public let labelText: String?
+  /// Human-facing name canonicalized from `labelText` at detection time
+  /// ("Full Name:" → "Full Name"). Nil when the source predates the field or
+  /// no label was associated; consumers fall back to type/mode nouns.
+  public var displayName: String?
   public let groupMemberCount: Int
   public let memberBounds: [PDFRect]
+  /// Per-member option names for checkbox/radio groups, extracted from the
+  /// static text adjacent to each cell ("Yes", "No"). Empty when unknown.
+  public let memberLabels: [String]
   public let evidenceItems: [CandidateEvidence]
   public let sourceDigest: String?
   public let fusion: EvidenceFusionResult?
@@ -166,8 +173,10 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     case suggestedFieldType
     case entryMode
     case labelText
+    case displayName
     case groupMemberCount
     case memberBounds
+    case memberLabels
     case evidenceItems
     case sourceDigest
     case fusion
@@ -186,8 +195,10 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     suggestedFieldType: SuggestedFieldType? = nil,
     entryMode: CandidateEntryMode = .unknown,
     labelText: String? = nil,
+    displayName: String? = nil,
     groupMemberCount: Int = 1,
     memberBounds: [PDFRect] = [],
+    memberLabels: [String] = [],
     evidenceItems: [CandidateEvidence] = [],
     sourceDigest: String? = nil,
     fusion: EvidenceFusionResult? = nil
@@ -204,8 +215,11 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     self.suggestedFieldType = suggestedFieldType
     self.entryMode = entryMode
     self.labelText = labelText
+    self.displayName = displayName
+      ?? labelText.flatMap { FieldLabelCanonicalizer.canonicalize($0)?.displayName }
     self.groupMemberCount = max(1, groupMemberCount)
     self.memberBounds = memberBounds
+    self.memberLabels = memberLabels
     self.evidenceItems = evidenceItems
     self.sourceDigest = sourceDigest
     self.fusion = fusion ?? EvidenceFusion.fuse(signals: evidenceItems.enumerated().map { index, item in
@@ -236,9 +250,13 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
     self.entryMode =
       try container.decodeIfPresent(CandidateEntryMode.self, forKey: .entryMode) ?? .unknown
     self.labelText = try container.decodeIfPresent(String.self, forKey: .labelText)
+    self.displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
+      ?? self.labelText.flatMap { FieldLabelCanonicalizer.canonicalize($0)?.displayName }
     self.groupMemberCount = max(
       1, try container.decodeIfPresent(Int.self, forKey: .groupMemberCount) ?? 1)
     self.memberBounds = try container.decodeIfPresent([PDFRect].self, forKey: .memberBounds) ?? []
+    self.memberLabels =
+      try container.decodeIfPresent([String].self, forKey: .memberLabels) ?? []
     self.evidenceItems =
       try container.decodeIfPresent([CandidateEvidence].self, forKey: .evidenceItems) ?? []
     self.sourceDigest = try container.decodeIfPresent(String.self, forKey: .sourceDigest)
@@ -251,6 +269,26 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
       return true
     case .checkbox, .radioGroup, .unknown:
       return false
+    }
+  }
+
+  /// Display-name fallback chain used by every suggestion surface: stored
+  /// canonical name → canonicalized label → type noun → mode noun.
+  public var effectiveDisplayName: String {
+    if let displayName, !displayName.isEmpty { return displayName }
+    return FieldLabelCanonicalizer.displayName(
+      labelText: labelText,
+      fieldType: suggestedFieldType,
+      entryMode: entryMode,
+      groupMemberCount: groupMemberCount)
+  }
+
+  /// Named choice options when available, falling back to positional names.
+  public var effectiveOptionLabels: [String] {
+    memberLabels.map { label in
+      let trimmed = label.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard trimmed.isEmpty == false else { return "" }
+      return FieldLabelCanonicalizer.canonicalize(trimmed)?.displayName ?? trimmed
     }
   }
 }

@@ -17,6 +17,7 @@ responsive breakpoints actually render — not how they look in code.
 |---|---|---|
 | **Type Scale Specimen** | `web/typography-specimen.html` | All 7 type scale tokens at every weight, font stacks, hierarchy comparison, tabular numbers, letter spacing, and role usage examples |
 | **Viewport Regression** | `web/typography-regression.html` | Toolbar + sidebar rendered at 5 viewport widths (1200px, 1000px, 750px, 500px) with a before→after token comparison table |
+| **Color Palette Specimen** | `web/color-palette-specimen.html` | All 30 oklch color tokens as swatches with WCAG contrast ratios against key backgrounds, 13 contrast pair previews with AAA/AA/fail levels |
 
 ## How to View
 
@@ -29,8 +30,9 @@ python3 -m http.server 4173 --bind 127.0.0.1
 Then open:
 - http://127.0.0.1:4173/web/typography-specimen.html
 - http://127.0.0.1:4173/web/typography-regression.html
+- http://127.0.0.1:4173/web/color-palette-specimen.html
 
-Both pages are self-contained (inline CSS tokens) and work without a build step.
+All pages are self-contained (inline CSS/JS) and work without a build step.
 
 ## Type Scale Tokens
 
@@ -81,6 +83,18 @@ the web editor.
 - **Scale on press:** `scale(0.96)` on all 8 button types
 - **Reduced motion:** `prefers-reduced-motion` disables all transitions/animations
 
+## Color Tokens
+
+| Category | Key tokens |
+|---|---|
+| **Ink** | `--pdf-ink` (primary text), `--pdf-ink-soft` (secondary), `--pdf-ink-faint` (tertiary) |
+| **Surfaces** | `--pdf-paper` (PDF page), `--pdf-canvas` (workspace), `--pdf-surface` (cards) |
+| **Shell** | `--pdf-shell` (dark sidebar), `--pdf-shell-text`, `--pdf-shell-muted` |
+| **Accent** | `--pdf-accent` (cobalt blue), `--pdf-accent-deep`, `--pdf-accent-wash` |
+| **Semantic** | `--pdf-green/wash`, `--pdf-amber/wash`, `--pdf-red/wash`, `--pdf-info/wash` |
+
+All colors use OKLCH for perceptual uniformity. Neutral temperatures shifted from cold blue-gray (hue 255) to warm charcoal (hue 50–80).
+
 ## When to Re-check
 
 Re-run the specimen and regression pages when:
@@ -90,6 +104,13 @@ Re-run the specimen and regression pages when:
 - Adding new interactive elements (verify press feedback)
 - Updating color tokens (verify contrast in specimen)
 - Before any release (regression page catches visual drift)
+
+## Key Principles Verified (Color)
+
+- **Warm neutrals:** Canvas, surfaces, and shell shifted from cold blue-gray to warm charcoal
+- **Semantic washes:** Green, amber, red, and info each have a `*-wash` background token
+- **Accent borders:** Review cards, next-action cards, and guardrails use colored left-border accents
+- **WCAG contrast:** All text/background pairs meet AA minimum (4.5:1); key pairs verified in specimen
 
 ## Related Documents
 

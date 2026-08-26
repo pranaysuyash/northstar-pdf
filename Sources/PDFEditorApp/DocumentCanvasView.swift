@@ -42,6 +42,8 @@ public struct DocumentCanvasView: View {
   @Bindable var model: AppModel
   let inspection: DocumentInspection
   @Binding var searchProjectionState: SearchProjectionState
+  // RG-058: honor Reduce Motion for canvas-level transitions.
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   public init(
     model: AppModel,
@@ -53,11 +55,29 @@ public struct DocumentCanvasView: View {
     self._searchProjectionState = searchProjectionState
   }
 
+  @State private var isSearchExpanded = false
+
   public var body: some View {
-    ZStack(alignment: .bottomTrailing) {
+    ZStack {
       pdfCanvas
-      floatingCanvasHUD
-        .padding(16)
+
+      VStack {
+        HStack {
+          Spacer()
+          floatingSearchHUD
+        }
+        .padding(.top, 14)
+        .padding(.trailing, 16)
+
+        Spacer()
+
+        HStack {
+          Spacer()
+          floatingCanvasHUD
+        }
+        .padding(.bottom, 16)
+        .padding(.trailing, 16)
+      }
     }
     .frame(minWidth: 480)
   }
@@ -66,6 +86,7 @@ public struct DocumentCanvasView: View {
     PDFKitView(
       document: model.liveDocument,
       projectionRevision: model.documentProjectionRevision,
+      operations: model.operations,
       pageIndex: model.selectedPageIndex,
       viewMode: model.readerViewMode,
       scaleMode: model.readerScaleMode,
@@ -78,6 +99,9 @@ public struct DocumentCanvasView: View {
       isManualPlacementMode: model.isManualPlacementMode,
       fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
       activeInlineEditor: model.activeInlineEditor,
+      applyPresentationOperation: { operation, document in
+        model.applyOperationForPresentation(operation, to: document)
+      },
       onManualPlacement: { pageIndex, point in
         model.receiveManualPlacement(pageIndex: pageIndex, point: point)
       },
@@ -105,7 +129,7 @@ public struct DocumentCanvasView: View {
       return "Search result on page \(match.pageIndex + 1): \(match.snippet)"
     }
     if let candidate = model.selectedCandidate {
-      return "Selected suggested area on page \(candidate.pageIndex + 1), \(candidate.entryMode.rawValue)"
+      return "Selected suggested area \(candidate.effectiveDisplayName) on page \(candidate.pageIndex + 1), \(candidate.entryMode.rawValue)"
     }
     if let field = model.selectedField {
       return "Selected native field \(field.name) on page \(field.pageIndex + 1)"
@@ -129,10 +153,13 @@ public struct DocumentCanvasView: View {
           .font(.caption.weight(.bold))
       }
       .buttonStyle(.plain)
+      .accessibilityLabel("Zoom out")
 
       Text("\(Int(model.readerZoom * 100))%")
         .font(.caption.weight(.semibold).monospacedDigit())
         .frame(width: 38)
+        .accessibilityLabel("Zoom level \(Int(model.readerZoom * 100)) percent")
+        .accessibilityAddTraits(.isStaticText)
 
       Button {
         model.setZoom(min(3.0, model.readerZoom + 0.1))
@@ -141,9 +168,11 @@ public struct DocumentCanvasView: View {
           .font(.caption.weight(.bold))
       }
       .buttonStyle(.plain)
+      .accessibilityLabel("Zoom in")
 
       Divider()
         .frame(height: 12)
+        .accessibilityHidden(true)
 
       Button {
         model.rotateLeft()
@@ -152,6 +181,7 @@ public struct DocumentCanvasView: View {
           .font(.caption)
       }
       .buttonStyle(.plain)
+      .accessibilityLabel("Rotate left 90 degrees")
       .help("Rotate Left 90°")
 
       Button {
@@ -161,7 +191,120 @@ public struct DocumentCanvasView: View {
           .font(.caption)
       }
       .buttonStyle(.plain)
+      .accessibilityLabel("Rotate right 90 degrees")
       .help("Rotate Right 90°")
+    }
+    .padding(.horizontal, 10)
+    .padding(.vertical, 6)
+    .background(.ultraThinMaterial)
+    .clipShape(Capsule())
+    .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
+    .overlay(
+      Capsule()
+        .stroke(Color.white.opacity(0.2), lineWidth: 1)
+    )
+  }
+
+  private var floatingSearchHUD: some View {
+    HStack(spacing: 8) {
+      if isSearchExpanded || !model.searchQuery.isEmpty {
+        Image(systemName: "magnifyingglass")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+
+        TextField("Find in document…", text: $model.searchQuery)
+          .textFieldStyle(.plain)
+          .frame(minWidth: 160, maxWidth: 220)
+          .onSubmit { model.runSearch() }
+          .onChange(of: model.searchQuery) { _, newValue in
+            if !newValue.isEmpty {
+              model.runSearch()
+            }
+          }
+
+        if !model.searchMatches.isEmpty {
+          Text("\(model.selectedSearchMatchIndex.map { $0 + 1 } ?? 1)/\(model.searchMatches.count)")
+            .font(.caption2.monospacedDigit())
+            .foregroundStyle(.secondary)
+
+          Button {
+            model.selectPreviousSearchMatch()
+          } label: {
+            Image(systemName: "chevron.up")
+              .font(.caption2.weight(.bold))
+          }
+          .buttonStyle(.plain)
+          .help("Previous match (⇧⌘G)")
+
+          Button {
+            model.selectNextSearchMatch()
+          } label: {
+            Image(systemName: "chevron.down")
+              .font(.caption2.weight(.bold))
+          }
+          .buttonStyle(.plain)
+          .help("Next match (⌘G)")
+        } else if !model.searchQuery.isEmpty {
+          Text("0 results")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+
+        if searchProjectionState != .none && searchProjectionState != .exact {
+          Image(systemName: searchProjectionState.symbolName)
+            .font(.caption2)
+            .foregroundStyle(searchProjectionState == .approximate ? Color.orange : Color.secondary)
+            .help(searchProjectionState.message)
+        }
+
+        Button {
+          model.searchQuery = ""
+          isSearchExpanded = false
+        } label: {
+          Image(systemName: "xmark.circle.fill")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+        .help("Clear search")
+      } else {
+        Button {
+          // RG-058: skip the expand animation under Reduce Motion.
+          if reduceMotion {
+            isSearchExpanded = true
+          } else {
+            withAnimation(.easeInOut(duration: 0.15)) {
+              isSearchExpanded = true
+            }
+          }
+        } label: {
+          HStack(spacing: 4) {
+            Image(systemName: "magnifyingglass")
+            Text("Find")
+              .font(.caption.weight(.medium))
+            Text("⌘F")
+              .font(.caption2.weight(.semibold))
+              .foregroundStyle(.secondary)
+          }
+          .padding(.horizontal, 8)
+          .padding(.vertical, 4)
+        }
+        .buttonStyle(.plain)
+        .help("Search in document (⌘F)")
+      }
+
+      Divider()
+        .frame(height: 12)
+
+      Button {
+        model.copyCurrentPageText()
+      } label: {
+        Image(systemName: "doc.on.doc")
+          .font(.caption)
+      }
+      .buttonStyle(.plain)
+      .disabled(!(model.inspection?.permissions.canCopy ?? false))
+      .help("Copy current page text to clipboard")
     }
     .padding(.horizontal, 10)
     .padding(.vertical, 6)
@@ -196,18 +339,26 @@ public struct PDFPresentationHighlight: @unchecked Sendable {
   public let page: PDFPage
   public let bounds: CGRect
   public let memberBounds: [CGRect]
+  /// Human-facing suggestion name rendered as an on-canvas chip.
+  public let label: String?
 
-  public init(kind: Kind, page: PDFPage, bounds: CGRect, memberBounds: [CGRect] = []) {
+  public init(
+    kind: Kind, page: PDFPage, bounds: CGRect, memberBounds: [CGRect] = [],
+    label: String? = nil
+  ) {
     self.kind = kind
     self.page = page
     self.bounds = bounds
     self.memberBounds = memberBounds
+    self.label = label
   }
 }
 
 // MARK: - Inline Editor TextField Host
 public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
   public let textField: NSTextField
+  /// Names the region being filled so the user never edits an anonymous box.
+  public let nameLabel: NSTextField
   public var onCommit: (String) -> Void
   public var onDismiss: () -> Void
 
@@ -215,6 +366,7 @@ public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
     self.onCommit = onCommit
     self.onDismiss = onDismiss
     self.textField = NSTextField()
+    self.nameLabel = NSTextField(labelWithString: "")
     super.init(frame: .zero)
 
     wantsLayer = true
@@ -224,24 +376,47 @@ public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
     layer?.borderWidth = 1.5
     layer?.backgroundColor = NSColor.textBackgroundColor.cgColor
 
+    nameLabel.font = NSFont.systemFont(ofSize: 9, weight: .semibold)
+    nameLabel.textColor = .secondaryLabelColor
+    nameLabel.lineBreakMode = .byTruncatingTail
+    addSubview(nameLabel)
+
     textField.isBordered = false
     textField.drawsBackground = false
     textField.font = NSFont.preferredFont(forTextStyle: .callout)
     textField.focusRingType = .none
-    textField.delegate = self
-    textField.autoresizingMask = [.width, .height]
-    textField.frame = bounds.insetBy(dx: 4, dy: 2)
-
+    textField.autoresizingMask = [.width]
     addSubview(textField)
+    layoutEditorSubviews()
   }
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 
+  private func layoutEditorSubviews() {
+    let showLabel = !nameLabel.stringValue.isEmpty
+    let labelHeight: CGFloat = showLabel ? 12 : 0
+    nameLabel.frame = CGRect(
+      x: 6, y: bounds.height - labelHeight - 2,
+      width: max(0, bounds.width - 12), height: labelHeight)
+    nameLabel.isHidden = !showLabel
+    textField.frame = CGRect(
+      x: 6, y: 3,
+      width: max(0, bounds.width - 12),
+      height: max(14, bounds.height - labelHeight - 8))
+  }
+
+  public func setLabel(_ label: String) {
+    guard nameLabel.stringValue != label else { return }
+    nameLabel.stringValue = label
+    textField.placeholderString = label
+    layoutEditorSubviews()
+  }
+
   public override func resizeSubviews(withOldSize oldSize: NSSize) {
     super.resizeSubviews(withOldSize: oldSize)
-    textField.frame = bounds.insetBy(dx: 4, dy: 2)
+    layoutEditorSubviews()
   }
 
   public func updateText(_ text: String) {
@@ -285,6 +460,10 @@ public final class PDFPresentationOverlayView: NSView {
   public override func draw(_ dirtyRect: NSRect) {
     guard let pdfView = superview as? PDFView else { return }
 
+    // Name chips render only when the page is large enough to read them.
+    let chipsEnabled = pdfView.scaleFactor >= 0.5
+    var occupiedChipRects: [CGRect] = []
+
     for highlight in highlights {
       let pdfViewBounds = pdfView.convert(highlight.bounds, from: highlight.page)
       let overlayBounds = convert(pdfViewBounds, from: pdfView)
@@ -308,6 +487,10 @@ public final class PDFPresentationOverlayView: NSView {
           cell.fill()
           cell.stroke()
         }
+        drawChip(
+          label: highlight.label, anchor: overlayBounds,
+          tint: NSColor.controlAccentColor, chipsEnabled: chipsEnabled,
+          occupied: &occupiedChipRects)
         continue
       }
 
@@ -372,6 +555,10 @@ public final class PDFPresentationOverlayView: NSView {
       path.lineWidth = lineWidth
       path.fill()
       path.stroke()
+      drawChip(
+        label: highlight.label, anchor: overlayBounds,
+        tint: strokeColor, chipsEnabled: chipsEnabled,
+        occupied: &occupiedChipRects)
       if highlight.kind == .search {
         let underline = NSBezierPath()
         underline.move(to: NSPoint(x: overlayBounds.minX, y: overlayBounds.minY + 1))
@@ -381,6 +568,50 @@ public final class PDFPresentationOverlayView: NSView {
         underline.stroke()
       }
     }
+  }
+
+  /// Draws the suggestion's display name docked above-left of its region so
+  /// each suggestion introduces itself by name without leaving the page.
+  ///
+  /// Chips stack upward when they would overlap an already-drawn chip and
+  /// disappear entirely below a readability zoom threshold.
+  private func drawChip(
+    label: String?, anchor: NSRect, tint: NSColor,
+    chipsEnabled: Bool, occupied: inout [CGRect]
+  ) {
+    guard chipsEnabled, let label, !label.isEmpty else { return }
+
+    let font = NSFont.systemFont(ofSize: 9, weight: .semibold)
+    let attributes: [NSAttributedString.Key: Any] = [
+      .font: font,
+      .foregroundColor: NSColor.white,
+    ]
+    let textSize = (label as NSString).size(withAttributes: attributes)
+    var chipFrame = CGRect(
+      x: anchor.minX,
+      y: anchor.maxY + 2,
+      width: ceil(textSize.width) + 12,
+      height: ceil(textSize.height) + 4
+    )
+
+    // Stack above previously placed chips instead of overlapping them.
+    var attempts = 0
+    while occupied.contains(where: { $0.intersects(chipFrame.insetBy(dx: -1, dy: -1)) }),
+      attempts < 5
+    {
+      chipFrame.origin.y += chipFrame.height + 1
+      attempts += 1
+    }
+    // Never cover the region it names.
+    guard chipFrame.minY > anchor.maxY - 1 else { return }
+    occupied.append(chipFrame)
+
+    let chip = NSBezierPath(roundedRect: chipFrame, xRadius: 3.5, yRadius: 3.5)
+    tint.withAlphaComponent(0.88).setFill()
+    chip.fill()
+
+    let textRect = chipFrame.insetBy(dx: 6, dy: 2)
+    (label as NSString).draw(in: textRect, withAttributes: attributes)
   }
 }
 
@@ -408,15 +639,18 @@ public final class InteractivePDFView: PDFView {
 
   public func applyRequestedScale() {
     guard bounds.width > 0 else { return }
+    let target: CGFloat
     switch requestedScaleMode {
     case .fitWidth:
       let availableWidth = max(240, bounds.width - 28)
-      scaleFactor = min(3.0, max(0.25, availableWidth / requestedRowWidth))
+      target = min(3.0, max(0.25, availableWidth / requestedRowWidth))
     case .fitPage:
-      scaleFactor = scaleFactorForSizeToFit * 0.95
+      target = scaleFactorForSizeToFit * 0.95
     case .zoom:
-      scaleFactor = requestedZoom
+      target = requestedZoom
     }
+    guard abs(target - scaleFactor) > 0.0005 else { return }
+    scaleFactor = target
     onProjectionInvalidated?()
   }
 
@@ -462,6 +696,7 @@ public final class InteractivePDFView: PDFView {
 public struct PDFKitView: NSViewRepresentable {
   public let document: PDFDocument?
   public let projectionRevision: UInt64
+  public let operations: [EditOperation]
   public let pageIndex: Int
   public let viewMode: ReaderViewMode
   public let scaleMode: ReaderScaleMode
@@ -474,6 +709,7 @@ public struct PDFKitView: NSViewRepresentable {
   public let isManualPlacementMode: Bool
   public let fillHighlights: [FillHighlight]
   public let activeInlineEditor: InlineEditorState?
+  public let applyPresentationOperation: (EditOperation, PDFDocument) -> Bool
   public let onManualPlacement: (Int, CGPoint) -> Void
   public let onDirectEdit: (Int, CGPoint) -> Void
   public let onPageTap: (Int, CGPoint) -> Void
@@ -483,6 +719,7 @@ public struct PDFKitView: NSViewRepresentable {
   public init(
     document: PDFDocument?,
     projectionRevision: UInt64,
+    operations: [EditOperation],
     pageIndex: Int,
     viewMode: ReaderViewMode,
     scaleMode: ReaderScaleMode,
@@ -495,6 +732,7 @@ public struct PDFKitView: NSViewRepresentable {
     isManualPlacementMode: Bool,
     fillHighlights: [FillHighlight],
     activeInlineEditor: InlineEditorState?,
+    applyPresentationOperation: @escaping (EditOperation, PDFDocument) -> Bool,
     onManualPlacement: @escaping (Int, CGPoint) -> Void,
     onDirectEdit: @escaping (Int, CGPoint) -> Void,
     onPageTap: @escaping (Int, CGPoint) -> Void,
@@ -503,6 +741,7 @@ public struct PDFKitView: NSViewRepresentable {
   ) {
     self.document = document
     self.projectionRevision = projectionRevision
+    self.operations = operations
     self.pageIndex = pageIndex
     self.viewMode = viewMode
     self.scaleMode = scaleMode
@@ -515,6 +754,7 @@ public struct PDFKitView: NSViewRepresentable {
     self.isManualPlacementMode = isManualPlacementMode
     self.fillHighlights = fillHighlights
     self.activeInlineEditor = activeInlineEditor
+    self.applyPresentationOperation = applyPresentationOperation
     self.onManualPlacement = onManualPlacement
     self.onDirectEdit = onDirectEdit
     self.onPageTap = onPageTap
@@ -537,6 +777,10 @@ public struct PDFKitView: NSViewRepresentable {
     var presentationDocument: PDFDocument?
     var presentationRotation: Int?
     var presentationRevision: UInt64?
+    /// Number of ledger operations already applied to the presentation
+    /// clone. Anchors the incremental sync so edits never force a full
+    /// document copy. Nil when no clone-based anchor exists.
+    var presentationOperationCount: Int?
     weak var overlayView: PDFPresentationOverlayView?
     weak var observedRootView: NSView?
     weak var observedScrollContentView: NSView?
@@ -545,6 +789,9 @@ public struct PDFKitView: NSViewRepresentable {
     private let projectionObserverTokenStore = ProjectionObserverTokenStore()
     var lastNavigatedPageIndex: Int?
     var lastSearchSignature: String?
+    var lastScaleSignature: String?
+    var lastDisplayMode: PDFDisplayMode?
+    var didForceInitialLayout = false
 
     func invalidateOverlay() {
       overlayView?.invalidateProjection()
@@ -682,16 +929,23 @@ public struct PDFKitView: NSViewRepresentable {
       coordinator?.invalidateOverlay()
     }
     context.coordinator.installProjectionObservers(for: view)
-    view.needsLayout = true
-    view.layoutSubtreeIfNeeded()
+    if !context.coordinator.didForceInitialLayout {
+      context.coordinator.didForceInitialLayout = true
+      view.needsLayout = true
+      view.layoutSubtreeIfNeeded()
+    }
 
+    let nextDisplayMode: PDFDisplayMode
     switch viewMode {
     case .singlePage:
-      view.displayMode = .singlePage
+      nextDisplayMode = .singlePage
     case .continuous:
-      view.displayMode = .singlePageContinuous
+      nextDisplayMode = .singlePageContinuous
     case .twoPage:
-      view.displayMode = .twoUp
+      nextDisplayMode = .twoUp
+    }
+    if view.displayMode != nextDisplayMode {
+      view.displayMode = nextDisplayMode
     }
 
     view.autoScales = false
@@ -699,7 +953,11 @@ public struct PDFKitView: NSViewRepresentable {
     view.requestedScaleMode = scaleMode
     view.requestedRowWidth = viewMode == .twoPage ? pageWidth * 2 + 18 : pageWidth
     view.requestedZoom = CGFloat(zoom)
-    view.applyRequestedScale()
+    let scaleSignature = "\(scaleMode)|\(zoom)|\(view.requestedRowWidth)"
+    if context.coordinator.lastScaleSignature != scaleSignature {
+      context.coordinator.lastScaleSignature = scaleSignature
+      view.applyRequestedScale()
+    }
     context.coordinator.invalidateOverlay()
 
     var highlights: [PDFPresentationHighlight] = []
@@ -722,7 +980,8 @@ public struct PDFKitView: NSViewRepresentable {
             PDFPresentationHighlight(
               kind: kind,
               page: page,
-              bounds: highlight.bounds.cgRect
+              bounds: highlight.bounds.cgRect,
+              label: (highlight.label?.isEmpty == false) ? highlight.label : nil
             )
           )
         }
@@ -737,7 +996,8 @@ public struct PDFKitView: NSViewRepresentable {
           bounds: selectedCandidate.bounds.cgRect,
           memberBounds: selectedCandidate.entryMode == .characterGrid
             ? selectedCandidate.memberBounds.map(\.cgRect)
-            : []
+            : [],
+          label: suggestionName(for: selectedCandidate)
         )
       )
     } else if let selectedField,
@@ -747,7 +1007,8 @@ public struct PDFKitView: NSViewRepresentable {
         PDFPresentationHighlight(
           kind: .field,
           page: page,
-          bounds: selectedField.bounds.cgRect
+          bounds: selectedField.bounds.cgRect,
+          label: selectedField.name
         )
       )
     }
@@ -827,13 +1088,118 @@ public struct PDFKitView: NSViewRepresentable {
         height: max(28, viewBounds.size.height)
       )
       hostView.frame = editorFrame
+      if !hostView.isDescendant(of: view) {
+        view.addSubview(hostView)
+      }
+      hostView.setLabel(inlineEditor.label ?? "")
       hostView.updateText(inlineEditor.draftText)
       hostView.isHidden = false
-      view.window?.makeFirstResponder(hostView.textField)
+      if view.window?.firstResponder !== hostView.textField,
+        hostView.textField.currentEditor() == nil
+      {
+        view.window?.makeFirstResponder(hostView.textField)
+      }
     } else {
       context.coordinator.inlineEditorHostView?.removeFromSuperview()
       context.coordinator.inlineEditorHostView = nil
     }
+  }
+
+  /// Keeps the rotated presentation clone in sync with the live document.
+  ///
+  /// The previous policy deep-copied the entire PDF on every projection
+  /// revision, which put a full-document clone on each edit click — a main
+  /// thread hang proportional to page count. The clone is now rebuilt only
+  /// when document identity changes (open, undo/redo replay). Rotation is
+  /// reapplied in place, and newly recorded operations are applied to the
+  /// clone as a ledger delta. A revision bump the ledger cannot explain, or a
+  /// delta operation that fails to apply, falls back to a full rebuild from
+  /// ground truth.
+  private func syncPresentationDocument(
+    view: InteractivePDFView,
+    context: Context,
+    document: PDFDocument?,
+    rotation: Int,
+    projectionRevision: UInt64,
+    operations: [EditOperation]
+  ) {
+    let coordinator = context.coordinator
+
+    func rebuildPresentationDocument() {
+      coordinator.sourceDocument = document
+      coordinator.presentationRotation = rotation
+      coordinator.presentationRevision = projectionRevision
+      coordinator.lastNavigatedPageIndex = nil
+      coordinator.lastSearchSignature = nil
+      if let document,
+        let presentationDocument = document.copy() as? PDFDocument
+      {
+        for pageNumber in 0..<presentationDocument.pageCount {
+          presentationDocument.page(at: pageNumber)?.rotation = rotation
+        }
+        coordinator.presentationDocument = presentationDocument
+        coordinator.presentationOperationCount = operations.count
+        view.document = presentationDocument
+      } else {
+        coordinator.presentationDocument = document
+        coordinator.presentationOperationCount = nil
+        view.document = document
+      }
+    }
+
+    if coordinator.sourceDocument !== document {
+      rebuildPresentationDocument()
+      return
+    }
+
+    if coordinator.presentationRotation != rotation {
+      coordinator.presentationRotation = rotation
+      if let presentationDocument = coordinator.presentationDocument,
+        presentationDocument !== document
+      {
+        // Rotation is presentation state on the clone; reapply it in place
+        // instead of rebuilding the clone.
+        for pageNumber in 0..<presentationDocument.pageCount {
+          presentationDocument.page(at: pageNumber)?.rotation = rotation
+        }
+      }
+    }
+
+    guard coordinator.presentationRevision != projectionRevision else { return }
+
+    // The revision advanced without the document identity changing. The
+    // preferred explanation is ledger growth: apply only the delta.
+    if let presentationDocument = coordinator.presentationDocument,
+      document == nil || presentationDocument !== document,
+      let appliedCount = coordinator.presentationOperationCount,
+      appliedCount >= 0, appliedCount <= operations.count
+    {
+      for operation in operations[appliedCount...] {
+        // The clone diverged (an operation no longer applies cleanly); fall
+        // back to ground truth rather than rendering a stale projection.
+        guard applyPresentationOperation(operation, presentationDocument) else {
+          rebuildPresentationDocument()
+          return
+        }
+      }
+      coordinator.presentationOperationCount = operations.count
+      coordinator.presentationRevision = projectionRevision
+      return
+    }
+
+    // No ledger anchor explains the bump: an in-place mutation bypassed the
+    // ledger. Rebuild from the live document.
+    rebuildPresentationDocument()
+  }
+
+  /// Display-name fallback chain shared by every suggestion surface.
+  private func suggestionName(for candidate: RegionCandidate) -> String {
+    candidate.displayName
+      ?? FieldLabelCanonicalizer.displayName(
+        labelText: candidate.labelText,
+        fieldType: candidate.suggestedFieldType,
+        entryMode: candidate.entryMode,
+        groupMemberCount: candidate.groupMemberCount)
   }
 
   private func searchSignature(for match: SearchMatch) -> String {
@@ -847,18 +1213,19 @@ public struct PDFKitView: NSViewRepresentable {
     guard let page = document.page(at: match.pageIndex) else {
       return (nil, .unavailable)
     }
-    let pageMatches = document.findString(match.query, withOptions: [.caseInsensitive]).filter {
-      $0.pages.contains(where: { $0 === page }) && !$0.bounds(for: page).isEmpty
+    // The match's character range is page-relative (search scans page.string),
+    // so the exact selection is available locally. The previous projection
+    // ran `document.findString` over every page on each view update, which
+    // re-searched the whole document for one already-known range.
+    guard
+      let selection = page.selection(
+        for: NSRange(location: match.charStart, length: match.charLength))
+    else {
+      return (nil, .unavailable)
     }
-    guard !pageMatches.isEmpty else { return (nil, .unavailable) }
-
-    if let exact = pageMatches.first(where: {
-      let bounds = $0.bounds(for: page)
-      return !bounds.isEmpty
-    }) {
-      return (exact, .exact)
+    if selection.bounds(for: page).isEmpty {
+      return (selection, .approximate)
     }
-
-    return (pageMatches[0], .approximate)
+    return (selection, .exact)
   }
 }

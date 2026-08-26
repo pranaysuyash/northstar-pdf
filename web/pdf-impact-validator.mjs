@@ -29,8 +29,9 @@ function rectContainsPoint(rect, x, y) {
     && y >= rect.y && y <= rect.y + rect.height;
 }
 
-function operationRegions(operations, pageCount) {
+function operationRegions(operations, pageViews) {
   const list = Array.isArray(operations) ? operations : [];
+  const pageCount = Array.isArray(pageViews) ? pageViews.length : Number(pageViews || 0);
   const regions = [];
   const issues = [];
   for (const operation of list) {
@@ -51,12 +52,16 @@ function operationRegions(operations, pageCount) {
       // rectangle. Keep the operation geometry exact, but authorize that small
       // provider-rendering envelope for synthesized fields during impact proof.
       const margin = operation.kind === "synthesizeNativeField" ? 3 : 0;
+      const pageView = Array.isArray(pageViews) ? pageViews[operation.pageIndex] : null;
+      const cropOrigin = operation.coordinate?.coordinateSpace?.pageBox === "crop" && pageView
+        ? { x: Number(pageView[0]) || 0, y: Number(pageView[1]) || 0 }
+        : { x: 0, y: 0 };
       regions.push({
         operationID: operation.id,
         pageIndex: operation.pageIndex,
         rect: {
-          x: rect.x - margin,
-          y: rect.y - margin,
+          x: rect.x + cropOrigin.x - margin,
+          y: rect.y + cropOrigin.y - margin,
           width: rect.width + (margin * 2),
           height: rect.height + (margin * 2)
         }
@@ -130,7 +135,12 @@ export async function compareOutsideRegionText({ pdfjsLib, sourceDocument, outpu
       pages: []
     };
   }
-  const regionState = operationRegions(operations, sourceDocument.numPages);
+  const pageViews = [];
+  for (let pageNum = 1; pageNum <= sourceDocument.numPages; pageNum += 1) {
+    const page = await sourceDocument.getPage(pageNum);
+    pageViews.push(Array.from(page.view || []));
+  }
+  const regionState = operationRegions(operations, pageViews);
   const regionFailure = operationRegionFailure(regionState.issues, operations);
   if (regionFailure) return regionFailure;
 
@@ -224,7 +234,12 @@ export async function compareOutsideRegionRaster({
       pages: []
     };
   }
-  const regionState = operationRegions(operations, sourceDocument.numPages);
+  const pageViews = [];
+  for (let pageNum = 1; pageNum <= sourceDocument.numPages; pageNum += 1) {
+    const page = await sourceDocument.getPage(pageNum);
+    pageViews.push(Array.from(page.view || []));
+  }
+  const regionState = operationRegions(operations, pageViews);
   const regionFailure = operationRegionFailure(regionState.issues, operations);
   if (regionFailure) return regionFailure;
 

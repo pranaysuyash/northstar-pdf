@@ -49,6 +49,7 @@ let package = Package(
             targets: ["PDFPerformanceBenchmark"]
         ),
     ],
+
     targets: [
         .target(
             name: "PDFEditorCore"

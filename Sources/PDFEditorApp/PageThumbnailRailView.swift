@@ -31,6 +31,7 @@ public struct PageThumbnailRailView: View {
         }
         .menuStyle(.borderlessButton)
         .frame(width: 16)
+        .accessibilityLabel("Insert page")
         .help("Insert page")
 
         Text("\(inspection.pages.count)")
@@ -50,8 +51,9 @@ public struct PageThumbnailRailView: View {
       // Pages List
       ScrollView {
         LazyVStack(spacing: 8) {
+          let counts = pageBadgeCounts
           ForEach(inspection.pages) { page in
-            pageThumbnailCard(page)
+            pageThumbnailCard(page, counts: counts)
           }
         }
         .padding(10)
@@ -61,12 +63,38 @@ public struct PageThumbnailRailView: View {
     .background(.thinMaterial)
   }
 
+  /// Per-page badge counts, built in one pass. Computing these inside each
+  /// card filtered the fields, candidates, and operation ledger once per page
+  /// per body evaluation — O(pages × operations) work on every model change.
+  private struct PageBadgeCounts {
+    var fields: [Int: Int] = [:]
+    var candidates: [Int: Int] = [:]
+    var redactions: [Int: Int] = [:]
+  }
+
+  private var pageBadgeCounts: PageBadgeCounts {
+    var counts = PageBadgeCounts()
+    for field in inspection.fields {
+      counts.fields[field.pageIndex, default: 0] += 1
+    }
+    for candidate in model.activeCandidates {
+      counts.candidates[candidate.pageIndex, default: 0] += 1
+    }
+    for operation in model.operations where operation.kind == .redactMark {
+      counts.redactions[operation.pageIndex, default: 0] += 1
+    }
+    return counts
+  }
+
   @ViewBuilder
-  private func pageThumbnailCard(_ page: PageSnapshot) -> some View {
+  private func pageThumbnailCard(
+    _ page: PageSnapshot,
+    counts: PageBadgeCounts
+  ) -> some View {
     let isSelected = model.selectedPageIndex == page.pageIndex
-    let fieldCount = inspection.fields.filter { $0.pageIndex == page.pageIndex }.count
-    let candidateCount = model.activeCandidates.filter { $0.pageIndex == page.pageIndex }.count
-    let redactionCount = model.operations.filter { $0.pageIndex == page.pageIndex && $0.kind == .redactMark }.count
+    let fieldCount = counts.fields[page.pageIndex, default: 0]
+    let candidateCount = counts.candidates[page.pageIndex, default: 0]
+    let redactionCount = counts.redactions[page.pageIndex, default: 0]
 
     Button {
       model.selectedPageIndex = page.pageIndex
@@ -76,10 +104,11 @@ public struct PageThumbnailRailView: View {
         ZStack {
           RoundedRectangle(cornerRadius: 4)
             .fill(Color(NSColor.textBackgroundColor))
-            .shadow(color: Color.black.opacity(isSelected ? 0.2 : 0.08), radius: isSelected ? 3 : 1, x: 0, y: 1)
+            .shadow(color: Color.black.opacity(isSelected ? 0.15 : 0.06), radius: isSelected ? 3 : 1, x: 0, y: 1)
 
+          /* Apple Design: colored border for selected state */
           RoundedRectangle(cornerRadius: 4)
-            .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.2), lineWidth: isSelected ? 2 : 1)
+            .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.15), lineWidth: isSelected ? 2 : 1)
 
           VStack(spacing: 2) {
             Image(systemName: isSelected ? "doc.fill" : "doc")

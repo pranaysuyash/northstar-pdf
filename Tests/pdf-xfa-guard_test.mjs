@@ -7,13 +7,14 @@ import os from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { detectXfa, assertNoXfaFormEdits, XfaEditBlockError } from "../web/pdf-xfa-guard.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "xfa-"));
 const xfaPath = path.join(tmpDir, "xfa.pdf");
 
 execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     [
       "import pikepdf, sys",

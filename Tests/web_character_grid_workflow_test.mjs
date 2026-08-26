@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
@@ -14,6 +14,20 @@ page.setDefaultTimeout(10_000);
 
 try {
   await page.goto(baseURL, { waitUntil: "networkidle" });
+  // index.html loads design-system.css asynchronously (rel=preload swap);
+  // wait until it is parsed before making style assertions.
+  await page.waitForFunction(() => {
+    for (const sheet of document.styleSheets) {
+      if ((sheet.href || "").includes("design-system.css")) {
+        try {
+          return sheet.cssRules.length > 50;
+        } catch {
+          return false;
+        }
+      }
+    }
+    return false;
+  });
   await page.waitForFunction(() => Boolean(window.pdfjsLib && window.PDFLib));
   await page.locator("#fileInput").setInputFiles(fixture);
   await page.waitForFunction(() => Boolean(window.__pdfEditorContractFixture?.snapshot?.()?.document));
@@ -62,7 +76,12 @@ try {
   await page.locator("#searchInput").fill("Application");
   await page.locator("#searchButton").click();
   await page.waitForSelector(".text-layer mark");
-  assert.match(await page.locator(".text-layer mark").first().evaluate((element) => getComputedStyle(element).backgroundColor), /0\.16\)/, "search highlight opacity should preserve the underlying PDF text");
+  const markBackground = await page.locator(".text-layer mark").first().evaluate((element) => getComputedStyle(element).backgroundColor);
+  // The wash may be authored in rgba or oklch; what matters is that its
+  // alpha stays low enough for the underlying PDF text to remain legible.
+  const alphaMatch = markBackground.match(/\/\s*([\d.]+)\s*\)/) || markBackground.match(/,\s*([\d.]+)\)$/);
+  const markAlpha = alphaMatch ? Number(alphaMatch[1]) : 1;
+  assert.ok(markAlpha > 0 && markAlpha <= 0.3, `search highlight opacity should preserve the underlying PDF text (got ${markBackground})`);
 
   await page.locator("#completionValue").fill("AB");
   await page.locator("#applyOverlayButton").click();

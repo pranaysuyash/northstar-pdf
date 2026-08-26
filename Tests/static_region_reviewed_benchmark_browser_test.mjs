@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 import { candidateMatchesTarget, reviewedStaticRegionCorpus } from "./fixtures/static_region_reviewed_corpus.mjs";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));

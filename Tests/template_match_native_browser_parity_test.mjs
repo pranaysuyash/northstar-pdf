@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { chromium } from "/Users/pranay/.agents/skills/testing/playwright-skill/node_modules/playwright/index.mjs";
+import { chromium } from "playwright";
 import {
   calibrateDocumentClassPolicies,
   TEMPLATE_MATCH_BENCHMARK_VERSION
@@ -13,7 +13,7 @@ import { REVIEWED_TEMPLATE_FIXTURES } from "./fixtures/template_matching_reviewe
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
-const baseURL = process.env.PDF_PROOF_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
 const outputDirectory = path.join(projectRoot, "benchmark/results/template-matching");
 const corpusPath = path.join(outputDirectory, "2026-08-24-reviewed-corpus.json");
 const nativeRunPath = path.join(outputDirectory, "2026-08-24-native-run.json");

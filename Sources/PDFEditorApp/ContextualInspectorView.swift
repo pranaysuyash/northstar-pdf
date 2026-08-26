@@ -152,7 +152,7 @@ public struct ContextualInspectorView: View {
         .help("Run local Vision OCR on the selected page.")
       }
 
-      let markedRedactions = model.operations.filter { $0.kind == .redactMark }.count
+      let markedRedactions = model.redactionMarkCount
       if markedRedactions > 0 {
         HStack(spacing: 8) {
           Label("\(markedRedactions) area(s) marked for redaction", systemImage: "eye.slash")
@@ -171,14 +171,15 @@ public struct ContextualInspectorView: View {
       }
     }
     .padding(10)
-    .background(Color.secondary.opacity(0.05))
+    /* Warm-tinted section background */
+    .background(Color.orange.opacity(0.04))
     .clipShape(RoundedRectangle(cornerRadius: 8))
   }
 
   private func selectedCandidateCard(_ candidate: RegionCandidate) -> some View {
     VStack(alignment: .leading, spacing: 10) {
       HStack {
-        Label("Selected Suggestion", systemImage: "scope")
+        Label(candidate.effectiveDisplayName, systemImage: "scope")
           .font(.subheadline.weight(.semibold))
         Spacer()
         Text(confidenceLabel(candidate.score))
@@ -207,6 +208,28 @@ public struct ContextualInspectorView: View {
             overlayDraft = ""
           }
 
+        if !model.lastValueSuggestions.isEmpty {
+          HStack(spacing: 6) {
+            ForEach(model.lastValueSuggestions, id: \.self) { suggestion in
+              Button {
+                overlayDraft = suggestion
+                model.applyOverlay(suggestion)
+                overlayDraft = ""
+              } label: {
+                Text(suggestion)
+                  .font(.caption2)
+                  .lineLimit(1)
+                  .padding(.horizontal, 8)
+                  .padding(.vertical, 3)
+                  .background(Color.blue.opacity(0.10))
+                  .clipShape(Capsule())
+              }
+              .buttonStyle(.plain)
+              .help("Use suggested value")
+            }
+          }
+        }
+
         HStack {
           Button("Place Text") {
             model.applyOverlay(overlayDraft)
@@ -228,9 +251,10 @@ public struct ContextualInspectorView: View {
         }
         .font(.caption)
       } else if [.checkbox, .radioGroup].contains(candidate.entryMode) {
+        let optionNames = namedOptions(for: candidate)
         Picker("Choice Box", selection: $choiceCellIndex) {
           ForEach(candidate.memberBounds.indices, id: \.self) { index in
-            Text("Option \(index + 1)").tag(index)
+            Text(optionNames[index]).tag(index)
           }
         }
         .pickerStyle(.menu)
@@ -299,6 +323,27 @@ public struct ContextualInspectorView: View {
           .onSubmit {
             model.applyFieldValue(fieldDraft)
           }
+
+        if !model.lastValueSuggestions.isEmpty {
+          HStack(spacing: 6) {
+            ForEach(model.lastValueSuggestions, id: \.self) { suggestion in
+              Button {
+                fieldDraft = suggestion
+                model.applyFieldValue(suggestion)
+              } label: {
+                Text(suggestion)
+                  .font(.caption2)
+                  .lineLimit(1)
+                  .padding(.horizontal, 8)
+                  .padding(.vertical, 3)
+                  .background(Color.blue.opacity(0.10))
+                  .clipShape(Capsule())
+              }
+              .buttonStyle(.plain)
+              .help("Use suggested value")
+            }
+          }
+        }
       }
 
       Button("Apply Field Value") {
@@ -360,7 +405,8 @@ public struct ContextualInspectorView: View {
       }
     }
     .padding(10)
-    .background(Color.secondary.opacity(0.05))
+    /* Warm-tinted section background */
+    .background(Color.orange.opacity(0.04))
     .clipShape(RoundedRectangle(cornerRadius: 8))
   }
 
@@ -375,16 +421,28 @@ public struct ContextualInspectorView: View {
           Button("Prev", systemImage: "chevron.left") { model.selectPreviousCandidate() }
             .buttonStyle(.plain)
             .font(.caption)
+            .accessibilityLabel("Previous suggestion")
           Button("Next", systemImage: "chevron.right") { model.selectNextCandidate() }
             .buttonStyle(.plain)
             .font(.caption)
+            .accessibilityLabel("Next suggestion")
         }
       }
 
       if model.activeCandidates.isEmpty {
-        Text("No active detected suggestions on this document.")
-          .font(.caption)
-          .foregroundStyle(.secondary)
+        VStack(spacing: 4) {
+          Image(systemName: "doc.text.magnifyingglass")
+            .font(.title3)
+            .foregroundStyle(.tertiary)
+          Text("No suggestions detected")
+            .font(.caption.weight(.medium))
+          Text("Switch to Fill mode to detect form fields, or run OCR to extract text regions.")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+            .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
       } else {
         ForEach(model.activeCandidates.prefix(6)) { candidate in
           Button {
@@ -395,12 +453,13 @@ public struct ContextualInspectorView: View {
             HStack {
               Image(systemName: model.selectedCandidateID == candidate.id ? "scope" : "circle.dotted")
                 .foregroundStyle(model.selectedCandidateID == candidate.id ? Color.accentColor : Color.secondary)
-              VStack(alignment: .leading, spacing: 1) {
-                Text("p.\(candidate.pageIndex + 1) · \(candidate.labelText ?? candidateEntryLabel(candidate))")
-                  .font(.caption)
-                  .lineLimit(1)
-              }
+              Text(candidate.effectiveDisplayName)
+                .font(.caption)
+                .lineLimit(1)
               Spacer()
+              Text("p.\(candidate.pageIndex + 1)")
+                .font(.caption2.monospacedDigit())
+                .foregroundStyle(.secondary)
               Text(confidenceLabel(candidate.score))
                 .font(.caption2.monospacedDigit())
                 .foregroundStyle(.secondary)
@@ -410,6 +469,9 @@ public struct ContextualInspectorView: View {
             .clipShape(RoundedRectangle(cornerRadius: 4))
           }
           .buttonStyle(.plain)
+          .accessibilityLabel("\(candidate.effectiveDisplayName), page \(candidate.pageIndex + 1), \(confidenceLabel(candidate.score))")
+          .accessibilityHint(model.selectedCandidateID == candidate.id ? "Currently selected" : "Selects this suggestion")
+          .accessibilityAddTraits(model.selectedCandidateID == candidate.id ? .isSelected : [])
         }
       }
     }
@@ -421,7 +483,7 @@ public struct ContextualInspectorView: View {
         .font(.caption.weight(.bold))
         .foregroundStyle(.secondary)
 
-      ForEach(Array(model.searchMatches.prefix(5).enumerated()), id: \.offset) { offset, match in
+      ForEach(Array(model.searchMatches.prefix(5).enumerated()), id: \.element.id) { offset, match in
         Button {
           model.setSearchMatch(offset)
         } label: {
@@ -435,6 +497,9 @@ public struct ContextualInspectorView: View {
           .clipShape(RoundedRectangle(cornerRadius: 4))
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Search result page \(match.pageIndex + 1): \(match.snippet)")
+        .accessibilityHint(model.selectedSearchMatchIndex == offset ? "Currently selected" : "Jump to this result")
+        .accessibilityAddTraits(model.selectedSearchMatchIndex == offset ? .isSelected : [])
       }
     }
   }
@@ -603,6 +668,16 @@ public struct ContextualInspectorView: View {
     case .radioGroup: return "Choice group"
     case .signature: return "Signature"
     case .unknown: return "Entry region"
+    }
+  }
+
+  /// Per-cell choice names extracted from adjacent document text, falling
+  /// back to positional naming only when no option text was found.
+  private func namedOptions(for candidate: RegionCandidate) -> [String] {
+    let named = candidate.effectiveOptionLabels
+    return candidate.memberBounds.indices.map { index in
+      let name = index < named.count ? named[index] : ""
+      return name.isEmpty ? "Option \(index + 1)" : name
     }
   }
 }

@@ -1,57 +1,49 @@
-/**
- * Minimal structural typings for the vendored pdf.js ESM runtime
- * (web/vendor/pdfjs/pdf.min.mjs). Only the surface the controller boundary
- * actually uses is declared; the full API stays behind the adapter.
- */
-declare module "*/vendor/pdfjs/pdf.min.mjs" {
-  export interface PdfViewport {
-    width: number;
-    height: number;
-    rotation: number;
-    readonly transform: number[];
+/** Ambient window.PDFLib typing for the vendored UMD pdf-lib bundle. */
+/** Minimal surface of the vendored UMD pdf-lib bundle (window.PDFLib). */
+declare global {
+  interface PdfLibFormField {
+    setText?(value: string): void;
+    check?(): void;
+    uncheck?(): void;
+    select?(value: string): void;
   }
 
-  export interface PdfTextItem {
-    str: string;
-    transform: number[];
-    width: number;
-    height: number;
+  interface PdfLibEmbeddedImage {
+    readonly width: number;
+    readonly height: number;
   }
 
-  export interface PdfTextContent {
-    items: Array<PdfTextItem | { str?: undefined }>;
+  interface PdfLibCreatedPage {
+    drawImage(
+      image: PdfLibEmbeddedImage,
+      options: { x: number; y: number; width: number; height: number }
+    ): void;
   }
 
-  export interface PdfPageProxy {
-    readonly pageNumber: number;
-    rotate: number;
-    getViewport(options: { scale: number; rotation?: number }): PdfViewport;
-    render(options: {
-      canvasContext: CanvasRenderingContext2D;
-      viewport: PdfViewport;
-    }): { promise: Promise<void>; cancel(): void };
-    getTextContent(): Promise<PdfTextContent>;
-    cleanup(): void;
+  interface PdfLibCreatedDocument {
+    addPage(size: [number, number]): PdfLibCreatedPage;
+    embedPng(bytes: Uint8Array): Promise<PdfLibEmbeddedImage>;
+    embedJpg(bytes: Uint8Array): Promise<PdfLibEmbeddedImage>;
+    save(): Promise<Uint8Array>;
   }
 
-  export interface PdfDocumentProxy {
-    readonly numPages: number;
-    getPage(pageNumber: number): Promise<PdfPageProxy>;
-    destroy(): Promise<void>;
-    getMetadata(): Promise<{ info: Record<string, unknown> }>;
+  interface PdfLibGlobal {
+    PDFDocument: {
+      load(source: Uint8Array): Promise<{
+        save(options?: { useObjectStreams?: boolean }): Promise<Uint8Array>;
+        getForm(): {
+          getField(name: string): PdfLibFormField;
+          updateFieldAppearances(font?: unknown): void;
+        };
+        embedFont(name: string): Promise<unknown>;
+      }>;
+      create(): Promise<PdfLibCreatedDocument>;
+    };
+    StandardFonts: { Helvetica: string };
   }
 
-  export interface PdfLoadingTask {
-    promise: Promise<PdfDocumentProxy>;
-    destroy(): Promise<void>;
-    onPassword?: (callback: (password: string) => void, reason: number) => void;
-  }
-
-  export const GlobalWorkerOptions: { workerSrc: string };
-  export const PasswordResponses: { NEED_PASSWORD: 1; INCORRECT_PASSWORD: 2 };
-  export const Util: { transform(m1: number[], m2: number[]): number[] };
-  export function getDocument(options: {
-    data: Uint8Array | ArrayBuffer;
-    password?: string;
-  }): PdfLoadingTask;
+  // eslint-disable-next-line no-var
+  var PDFLib: PdfLibGlobal | undefined;
 }
+
+export {};

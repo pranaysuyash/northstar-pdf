@@ -15,6 +15,7 @@ import crypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { analyzeHiddenRevisions } from "../web/pdf-hidden-revision-analyzer.mjs";
 import { incrementalFieldUpdate, readSourceXref } from "../web/pdf-incremental-form-writer.mjs";
+import { pdfPython } from "./pdf-python.mjs";
 
 const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
 const srcBuf = fs.readFileSync(SRC);
@@ -53,7 +54,7 @@ console.log("PASS incremental update: 2 revisions, shadowed = {24,25,30} (the ed
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "hr-"));
 const dirtyPath = path.join(tmpDir, "dirty.pdf");
 execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     "import pikepdf,sys\np=pikepdf.open(sys.argv[1])\np.Root['/OpenAction']=pikepdf.Dictionary(JS=pikepdf.String('app.alert(1)'))\np.save(sys.argv[2])",
     SRC, dirtyPath],
@@ -77,7 +78,7 @@ console.log(`PASS remnant detection: /JS flagged in shadowed revision 1, object 
 
 // Current revision is genuinely clean despite the remnant.
 const curCheck = JSON.parse(execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     "import pikepdf,sys,json\np=pikepdf.open(sys.argv[1])\noa=p.Root.get('/OpenAction')\nclean=(oa is None) or (str(oa)=='null')\nprint(json.dumps({'clean':clean}))",
     pathJoinTmp(dirtyPath, cleaned, tmpDir)],
@@ -89,7 +90,7 @@ console.log("PASS current-vs-hidden split: current clean, /JS only in shadowed h
 // --- 4. Falsifier: full rewrite collapses revision history ----------------
 const rewrittenPath = path.join(tmpDir, "rewritten.pdf");
 execFileSync(
-  "python3",
+  pdfPython,
   ["-c",
     "import pikepdf,sys\np=pikepdf.open(sys.argv[1])\nif '/OpenAction' in p.Root: del p.Root['/OpenAction']\np.save(sys.argv[2])",
     dirtyPath, rewrittenPath],

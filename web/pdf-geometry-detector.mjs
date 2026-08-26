@@ -303,7 +303,139 @@ function entryMode(fieldType, grouped = false) {
   return grouped ? "characterGrid" : "singleText";
 }
 
-function candidate({ pageIndex, pageRotation, bounds, kind, score, status = "suggested", fieldType = "text", mode, labelText = null, evidenceItems, evidence, sourceDigest, groupMemberCount = 1, memberBounds = [] }) {
+// Mirror of PDFEditorCore.FieldLabelCanonicalizer: deterministic, value-free
+// display-name derivation from raw label text.
+const GENERIC_LABEL_TOKENS = new Set([
+  "section", "note", "notes", "page", "please", "print", "for", "of",
+  "the", "and", "or", "to", "use", "only", "office", "official",
+  "continued", "form", "rev", "date", "here", "hereby", "applicant's",
+]);
+const TITLE_CASE_MINOR_WORDS = new Set(["of", "the", "and", "or", "to", "in", "on", "at", "a", "an"]);
+
+export function canonicalizeLabelText(raw) {
+  let text = String(raw ?? "").trim();
+  if (!text.length) return null;
+  let adjusted = false;
+  const patterns = [/^\(?[ivx]+[\.\)]\s+/i, /^\(?[a-z][\.\)]\s+/i, /^\d{1,3}[\.\)]\s+/];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) {
+      text = text.slice(match[0].length);
+      adjusted = true;
+      break;
+    }
+  }
+  if (/_{2,}/.test(text)) adjusted = true;
+  text = text.replaceAll(/_+/g, " ").replaceAll(/\s+/g, " ").trim();
+  while (text.length && ":.*-\u2014\u2013".includes(text.at(-1))) {
+    text = text.slice(0, -1);
+    adjusted = true;
+  }
+  text = text.trim();
+  if (text.length < 2) return null;
+  const words = text.split(" ").filter(Boolean);
+  const meaningful = words.filter((word) => !GENERIC_LABEL_TOKENS.has(word.toLowerCase()));
+  if (!meaningful.length) return null;
+  if (words.length > meaningful.length) adjusted = true;
+  const letters = [...text].filter((char) => /\p{L}/u.test(char));
+  if (letters.length >= 3) {
+    const uppercaseCount = [...text].filter((char) => /\p{Lu}/u.test(char)).length;
+    if (uppercaseCount >= Math.floor(letters.length * 0.8)) {
+      text = words
+        .map((word, index) => {
+          const lower = word.toLowerCase();
+          if (index > 0 && TITLE_CASE_MINOR_WORDS.has(lower)) return lower;
+          return lower.charAt(0).toUpperCase() + lower.slice(1);
+        })
+        .join(" ");
+      adjusted = true;
+    }
+  }
+  return { displayName: text, confidence: adjusted ? 0.7 : 0.95 };
+}
+
+// Isolate the fillable portion of a line containing an underscore blank run.
+// Mirrors StaticRegionDetector.blankRunBounds (proportional interpolation).
+export function blankRunBounds(text, lineBounds) {
+  const match = String(text ?? "").match(/_{3,}/);
+  if (!match || match.index === undefined) return null;
+  const total = Math.max(1, String(text).length);
+  const charWidth = lineBounds.width / total;
+  const x = lineBounds.x + match.index * charWidth;
+  const width = Math.max(12, match[0].length * charWidth);
+  return { x, y: lineBounds.y, width, height: lineBounds.height };
+}
+
+// Clip a synthesized whitespace-entry width to the nearest same-row text run
+// so suggestions cannot overflow into neighboring content.
+export function clippedWhitespaceWidth(rect, pageLines, labelLine) {
+  const top = rect.y + rect.height;
+  let limit = rect.width;
+  for (const line of pageLines) {
+    if (line.text === labelLine.text && JSON.stringify(line.rect) === JSON.stringify(labelLine.rect)) continue;
+    const lineTop = line.rect.y + line.rect.height;
+    if (!(line.rect.y < top - 1 && lineTop > rect.y + 1)) continue;
+    if (line.rect.x < labelLine.rect.x + labelLine.rect.width) continue;
+    const available = line.rect.x - 8 - rect.x;
+    if (available >= 0 && available < limit) limit = available;
+  }
+  return Math.max(0, limit);
+}
+
+// Fraction of a box interior covered by static text other than its label.
+// Decorative rectangles sit over dense text; entry areas are empty inside.
+export function interiorTextCoverage(box, pageLines, excluded) {
+  if (!(box.width > 0 && box.height > 0)) return 0;
+  let covered = 0;
+  for (const line of pageLines) {
+    if (excluded && line.text === excluded.text && line.rect === excluded.rect) continue;
+    const intersectionX = Math.max(0, Math.min(box.x + box.width, line.rect.x + line.rect.width) - Math.max(box.x, line.rect.x));
+    const intersectionY = Math.max(0, Math.min(box.y + box.height, line.rect.y + line.rect.height) - Math.max(box.y, line.rect.y));
+    covered += intersectionX * intersectionY;
+  }
+  return covered / (box.width * box.height);
+}
+
+// One option name per choice cell from adjacent static text ("☐ Yes ☐ No").
+export function optionLabels(members, pageLines) {
+  return [...members]
+    .sort((left, right) => left.x - right.x)
+    .map((member) => {
+      let best = null;
+      let bestDistance = 120;
+      for (const line of pageLines) {
+        const baselineOverlap =
+          Math.abs(line.rect.y + line.rect.height / 2 - (member.y + member.height / 2))
+          <= Math.max(member.height * 0.75, 8);
+        if (!baselineOverlap) continue;
+        const gapRight = line.rect.x - (member.x + member.width);
+        const gapLeft = member.x - (line.rect.x + line.rect.width);
+        if (gapRight >= -1 && gapRight < bestDistance) {
+          bestDistance = gapRight;
+          best = line;
+        } else if (gapRight < -1 && gapLeft >= -1 && gapLeft < bestDistance) {
+          bestDistance = gapLeft;
+          best = line;
+        }
+      }
+      return best ? best.text.trim() : "";
+    });
+}
+
+// Split width-signature outliers out of a grouped cell run so one stray wide
+// rectangle cannot balloon the union bounds past the intended field.
+export function splittingOutliers(group) {
+  if (!group.length) return { kept: group, removed: 0 };
+  const widths = group.map((cell) => cell.width).sort((left, right) => left - right);
+  const mid = Math.floor(widths.length / 2);
+  const medianWidth = widths.length % 2 === 0 ? (widths[mid - 1] + widths[mid]) / 2 : widths[mid];
+  if (!medianWidth || medianWidth <= 0) return { kept: group, removed: 0 };
+  const ceiling = Math.max(medianWidth * 2, medianWidth + 8);
+  const kept = group.filter((cell) => cell.width <= ceiling);
+  return { kept, removed: group.length - kept.length };
+}
+
+function candidate({ pageIndex, pageRotation, bounds, kind, score, status = "suggested", fieldType = "text", mode, labelText = null, displayName = null, evidenceItems, evidence, sourceDigest, groupMemberCount = 1, memberBounds = [], memberLabels = [] }) {
   const coordinate = {
     pageIndex,
     rect: bounds,
@@ -323,8 +455,10 @@ function candidate({ pageIndex, pageRotation, bounds, kind, score, status = "sug
     suggestedFieldType: fieldType,
     entryMode: mode || entryMode(fieldType),
     labelText,
+    displayName: displayName ?? (labelText ? (canonicalizeLabelText(labelText)?.displayName ?? null) : null),
     groupMemberCount,
     memberBounds,
+    memberLabels,
     evidenceItems: normalizedEvidenceItems,
     fusion: fuseCandidateEvidence({
       signals: normalizedEvidenceItems.map((item) => ({
@@ -462,12 +596,16 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
   const isClaimed = (rect) => claimed.some((claimedRect) => rectIntersects(claimedRect, rect, 0.5));
   const claim = (rect) => claimed.push(rect);
 
-  for (const group of adjacentGroups(squareRects)) {
+  for (const originalGroup of adjacentGroups(squareRects)) {
+    const { kept, removed } = splittingOutliers(originalGroup);
+    if (kept.length < 3) continue;
+    const group = kept;
     const bounds = unionRects(group);
     const label = nearestLabel(bounds, lines, 160);
     if (!label) continue;
     const labelText = label?.text || null;
     const fieldType = inferFieldType(labelText);
+    const mode = entryMode(fieldType, true);
     found.push(candidate({
       pageIndex,
       pageRotation,
@@ -476,12 +614,14 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       score: 0.90,
       status: fieldType === "checkbox" ? "unknown" : "suggested",
       fieldType,
-      mode: entryMode(fieldType, true),
+      mode,
       labelText,
       groupMemberCount: group.length,
       memberBounds: group,
+      memberLabels: (fieldType === "checkbox" || fieldType === "radio") ? optionLabels(group, lines) : [],
       evidence: [
         `Grouped ${group.length} adjacent vector cells into one entry region.`,
+        ...(removed > 0 ? [`Split ${removed} width-signature outlier(s) from the group.`] : []),
         `Associated label: "${labelText}"`
       ],
       evidenceItems: [
@@ -501,6 +641,8 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
     // page decoration. Do not promote it to an actionable checkbox review.
     if (!label) continue;
     if (rect.height < 8) continue;
+    // Squares over dense static text are decoration, not fillable cells.
+    if (interiorTextCoverage(rect, lines, label) > 0.40) continue;
     const labelText = label?.text || null;
     found.push(candidate({
       pageIndex,
@@ -514,6 +656,7 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       labelText,
       groupMemberCount: 1,
       memberBounds: [rect],
+      memberLabels: optionLabels([rect], lines),
       evidence: [
         `Vector checkbox-shaped rectangle detected (${Math.round(rect.width)}x${Math.round(rect.height)}pt).`,
         `Associated label: "${labelText}"`
@@ -535,6 +678,8 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
     // it as raw provider evidence, but do not promote it to an editable
     // suggestion without a semantic anchor.
     if (!label) continue;
+    // Rectangles whose interior is mostly static text are decorative panels.
+    if (interiorTextCoverage(rect, lines, label) > 0.40) continue;
     const labelText = label?.text || null;
     const fieldType = inferFieldType(labelText);
     found.push(candidate({
@@ -561,12 +706,16 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
 
   for (const line of horizontalLines) {
     if (isClaimed(line)) continue;
-    const region = { x: line.x, y: line.y, width: line.width, height: 18 };
-    const label = nearestLabel(region, lines, 120);
+    const searchRegion = { x: line.x, y: line.y, width: line.width, height: 18 };
+    const label = nearestLabel(searchRegion, lines, 120);
     // A bare horizontal rule is ambiguous: it may be a page border, table
     // rule, or decoration. Without text association it is not sufficient
     // evidence for an editable entry region.
     if (!label) continue;
+    // Derive the entry-band height from the label's own line metrics so the
+    // suggestion matches the real writing area instead of a fixed 18 pt.
+    const bandHeight = Math.min(26, Math.max(10, label.rect.height * 1.35));
+    const region = { x: line.x, y: line.y, width: line.width, height: bandHeight };
     const labelText = label?.text || null;
     const fieldType = inferFieldType(labelText);
     found.push(candidate({
@@ -580,6 +729,7 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       labelText,
       evidence: [
         `Vector underline stroke detected (${Math.round(line.width)}pt).`,
+        `Entry band height derived from label line metrics (${bandHeight.toFixed(1)}pt).`,
         `Associated label: "${labelText}"`
       ],
       evidenceItems: [
@@ -595,17 +745,42 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
     if (!/[:：]$/.test(line.text) && !/_{3,}|\.{3,}$/.test(line.text)) continue;
     if (!isLikelyFieldLabel(line.text)) continue;
     if (claimed.some((rect) => rectIntersects(rect, line.rect, 2))) continue;
-    const whitespace = clipRectToPage({
-      x: line.rect.x + line.rect.width + 8,
-      y: line.rect.y,
-      width: Math.max(72, Math.min(220, pageBounds.x + pageBounds.width - line.rect.x - line.rect.width - 20)),
-      height: Math.max(14, line.rect.height + 5)
-    }, pageBounds);
+    const hasBlankRun = /_{3,}/.test(line.text);
+    let boundsEvidence = [];
+    // A line with an underscore blank run highlights only the blank run,
+    // never the static label words next to it.
+    const blankBounds = hasBlankRun ? blankRunBounds(line.text, line.rect) : null;
+    let candidateBounds;
+    if (blankBounds) {
+      candidateBounds = blankBounds;
+      boundsEvidence = ["Blank-run isolated from label text within the line."];
+    } else {
+      // Colon-label entries synthesize whitespace after the label, clipped
+      // to the nearest same-row text run to prevent column overflow.
+      const proposedX = line.rect.x + line.rect.width + 8;
+      const proposedWidth = Math.max(0, Math.min(220, pageBounds.x + pageBounds.width - proposedX - 20));
+      const clippedWidth = clippedWhitespaceWidth(
+        { x: proposedX, y: line.rect.y, width: proposedWidth, height: line.rect.height },
+        lines,
+        line
+      );
+      const usableWidth = Math.min(proposedWidth, clippedWidth);
+      if (usableWidth < 48) continue;
+      candidateBounds = clipRectToPage({
+        x: proposedX,
+        y: line.rect.y,
+        width: usableWidth,
+        height: Math.max(14, line.rect.height + 5)
+      }, pageBounds);
+      if (clippedWidth < proposedWidth) {
+        boundsEvidence = ["Entry width clipped to the nearest same-row content."];
+      }
+    }
     const fieldType = inferFieldType(line.text);
     found.push(candidate({
       pageIndex,
       pageRotation,
-      bounds: whitespace,
+      bounds: candidateBounds,
       kind: "textAnchored",
       score: /_{3,}|\.{3,}$/.test(line.text) ? 0.45 : 0.58,
       fieldType,
@@ -613,16 +788,17 @@ export async function detectGeometryCandidates({ pdfjsLib, page, pageIndex, page
       labelText: line.text,
       evidence: [
         `Whitespace entry region inferred after the text label "${line.text}".`,
+        ...boundsEvidence,
         "No vector geometry overlapped the suggested area."
       ],
       evidenceItems: [
-        { kind: "whitespace", origin: "textExtraction", summary: "Whitespace adjacent to a label was promoted to a reviewable candidate", region: { pageIndex, rect: whitespace, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, text: line.text, score: 0.58 },
+        { kind: "whitespace", origin: "textExtraction", summary: "Whitespace adjacent to a label was promoted to a reviewable candidate", region: { pageIndex, rect: candidateBounds, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, text: line.text, score: 0.58 },
         { kind: "textLabel", origin: "textExtraction", summary: "Label text anchors the whitespace candidate", region: { pageIndex, rect: line.rect, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, text: line.text },
         { kind: "spatialRelationship", origin: "textExtraction", summary: "Whitespace is positioned after the label text", region: { pageIndex, rect: line.rect, coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop", rotationDegrees: pageRotation } }, text: line.text, score: 0.58 }
       ],
       sourceDigest
     }));
-    claim(whitespace);
+    claim(candidateBounds);
   }
   return found.slice(0, 200);
 }

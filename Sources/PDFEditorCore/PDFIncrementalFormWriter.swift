@@ -115,6 +115,10 @@ public enum PDFIncrementalFormWriter {
 
   struct XrefInfo {
     var entries: [Int: (offset: Int, generation: Int)]
+    /// Object numbers living inside compressed object streams (xref type 2).
+    /// Targeting one fails closed with a precise diagnostic instead of a
+    /// generic not-found.
+    var compressedObjects: Set<Int>
     var trailer: [String: String]
     var size: Int
   }
@@ -185,7 +189,9 @@ public enum PDFIncrementalFormWriter {
     }
     guard sawTrailer else { throw WriterError.unsupportedXref("no trailer") }
     let declaredSize = Int(trailer["/Size"]?.trimmingCharacters(in: .whitespaces) ?? "0") ?? size
-    return XrefInfo(entries: entries, trailer: trailer, size: max(size, declaredSize))
+    return XrefInfo(
+        entries: entries, compressedObjects: [], trailer: trailer,
+        size: max(size, declaredSize))
   }
 
   static func extractTrailerKeys(_ dict: String, keys: [String]) -> [String: String] {
@@ -205,10 +211,14 @@ public enum PDFIncrementalFormWriter {
     guard let streamMarker = region.range(of: "stream") else {
       throw WriterError.unsupportedXref("xref stream has no stream keyword")
     }
-    guard let dictClose = region.range(
-      of: ">>", range: region.startIndex..<streamMarker.lowerBound)
+    // Depth-matched dict extraction: nested dicts (/DecodeParms etc.) close
+    // with the first ">>", so a naive first-match search truncates the dict
+    // before /W, /Index, /Root, and /Size.
+    guard let dictOpen = region.range(
+      of: "<<", range: region.startIndex..<streamMarker.lowerBound)
     else { throw WriterError.unsupportedXref("xref stream dict") }
-    let dict = String(region[region.startIndex..<dictClose.upperBound])
+    let dictEnd = skipValue(region, dictOpen.lowerBound)
+    let dict = String(region[dictOpen.lowerBound..<dictEnd])
     let trailer = extractTrailerKeys(
       dict, keys: ["/Root", "/Encrypt", "/Info", "/ID", "/Size", "/Prev"])
     guard trailer["/Encrypt"] == nil else { throw WriterError.encryptedUnsupported }
@@ -260,13 +270,39 @@ public enum PDFIncrementalFormWriter {
       indexPairs = [(0, size)]
     }
 
+    // /DecodeParms: PNG predictor undo. qpdf and most writers emit
+    // /Predictor 12 (Up) with /Columns = sum(/W); without undo the inflated
+    // bytes are filter deltas, not entry values.
+    var entryBytes = inflated
+    if let parmsToken = valueOfKey("/DecodeParms", in: dict), parmsToken.hasPrefix("<<") {
+      let predictor =
+        Int(
+          valueOfKey("/Predictor", in: parmsToken)?
+            .trimmingCharacters(in: .whitespaces) ?? "0") ?? 0
+      if predictor >= 10 {
+        guard let columnsToken = valueOfKey("/Columns", in: parmsToken),
+          let parsedColumns = Int(columnsToken.trimmingCharacters(in: .whitespaces)),
+          parsedColumns > 0
+        else {
+          throw WriterError.unsupportedXref("predictor stream without /Columns")
+        }
+        guard let unfiltered = applyPngUpPredictor(entryBytes, columns: parsedColumns) else {
+          throw WriterError.unsupportedXref("xref stream predictor undo failed")
+        }
+        entryBytes = unfiltered
+      } else if predictor > 0 && predictor < 10 {
+        throw WriterError.unsupportedXref("unsupported TIFF predictor \(predictor)")
+      }
+    }
+
     var entries: [Int: (offset: Int, generation: Int)] = [:]
+    var compressedObjects: Set<Int> = []
     var size = 0
     var pos = 0
     func readInt(_ at: Int, _ len: Int) -> Int {
       var v = 0
-      for i in 0..<len where at + i < inflated.count {
-        v = (v << 8) | Int(inflated[at + i])
+      for i in 0..<len where at + i < entryBytes.count {
+        v = (v << 8) | Int(entryBytes[at + i])
       }
       return v
     }
@@ -281,48 +317,18 @@ public enum PDFIncrementalFormWriter {
         if type == 1 {
           entries[start + i] = (f1, f2)
           if start + i + 1 > size { size = start + i + 1 }
+        } else if type == 2 {
+          compressedObjects.insert(start + i)
         }
-        // Type 2 entries (objects inside compressed object streams) are not
-        // recorded; targeting such an object later fails closed precisely.
+        // Type 2 entries (objects inside compressed object streams) are
+        // recorded only as compressed; targeting such an object later fails
+        // closed with the precise compressedObject diagnostic.
       }
     }
     let declaredSize = Int(trailer["/Size"]?.trimmingCharacters(in: .whitespaces) ?? "0") ?? size
-    return XrefInfo(entries: entries, trailer: trailer, size: max(size, declaredSize))
-  }
-
-  /// Undo PNG row filters (None = 0, Up = 2) over predictor-encoded stream
-  /// bytes. Each row is prefixed with one filter byte. Rows using any other
-  /// filter, or a truncated final row, fail closed (nil) rather than
-  /// producing silently wrong output.
-  static func applyPngUpPredictor(_ data: [UInt8], columns: Int) -> [UInt8]? {
-    guard columns > 0 else { return nil }
-    let rowLength = columns + 1
-    guard data.count >= rowLength, data.count % rowLength == 0 else { return nil }
-    var previous = [UInt8](repeating: 0, count: columns)
-    var output: [UInt8] = []
-    output.reserveCapacity(data.count - (data.count / rowLength))
-    var position = 0
-    while position < data.count {
-      let filter = data[position]
-      let rowStart = position + 1
-      switch filter {
-      case 0:
-        let row = Array(data[rowStart..<(rowStart + columns)])
-        output.append(contentsOf: row)
-        previous = row
-      case 2:
-        var row = [UInt8](repeating: 0, count: columns)
-        for column in 0..<columns {
-          row[column] = data[rowStart + column] &+ previous[column]
-        }
-        output.append(contentsOf: row)
-        previous = row
-      default:
-        return nil
-      }
-      position += rowLength
-    }
-    return output
+    return XrefInfo(
+      entries: entries, compressedObjects: compressedObjects, trailer: trailer,
+      size: max(size, declaredSize))
   }
 
   static func inflateZlib(_ bytes: [UInt8]) -> [UInt8]? {
@@ -350,11 +356,49 @@ public enum PDFIncrementalFormWriter {
     return nil
   }
 
+  /// Undoes PNG row filters (None = 0, Up = 2) from a predicted xref stream.
+  /// Each row is one filter byte followed by `columns` data bytes. Sub/
+  /// Average/Paeth rows are refused (fail closed) rather than misdecoded.
+  static func applyPngUpPredictor(_ data: [UInt8], columns: Int) -> [UInt8]? {
+    let rowSize = columns + 1
+    guard columns > 0, rowSize > 1, !data.isEmpty, data.count % rowSize == 0 else {
+      return nil
+    }
+    var result = [UInt8]()
+    result.reserveCapacity(data.count / rowSize * columns)
+    var previous = [UInt8](repeating: 0, count: columns)
+    var i = 0
+    while i + rowSize <= data.count {
+      let filter = data[i]
+      let row = Array(data[(i + 1)..<(i + rowSize)])
+      switch filter {
+      case 0:
+        result.append(contentsOf: row)
+        previous = row
+      case 2:
+        var unfiltered = [UInt8]()
+        unfiltered.reserveCapacity(columns)
+        for (index, byte) in row.enumerated() {
+          unfiltered.append(byte &+ previous[index])
+        }
+        result.append(contentsOf: unfiltered)
+        previous = unfiltered
+      default:
+        return nil
+      }
+      i += rowSize
+    }
+    return result
+  }
+
   // MARK: - Object access
 
   static func objectSpan(
     _ data: Data, xref: XrefInfo, objectNumber: Int
   ) throws -> (generation: Int, text: String) {
+    if xref.compressedObjects.contains(objectNumber) {
+      throw WriterError.compressedObject(objectNumber)
+    }
     guard let entry = xref.entries[objectNumber] else {
       throw WriterError.objectNotFound(objectNumber)
     }
@@ -633,8 +677,24 @@ public enum PDFIncrementalFormWriter {
     public let childObjectNumbers: [Int]
   }
 
+  /// Extended AcroForm model with document-level safety facts.
+  public struct AcroFormModel {
+    public let nodes: [FormObjectNode]
+    /// The /AcroForm dictionary's own object number (for NeedAppearances-style
+    /// patches), when found as an indirect reference.
+    public let acroFormObjectNumber: Int?
+    /// Raw /SigFlags value from the AcroForm dict; nil when absent.
+    public let sigFlags: Int?
+    /// True when any walked field declares /FT /Sig.
+    public let hasSignatureField: Bool
+  }
+
   /// Walks the AcroForm field tree over raw (uncompressed) objects.
   public static func walkAcroForm(_ source: Data) throws -> [FormObjectNode] {
+    try walkAcroFormModel(source).nodes
+  }
+
+  public static func walkAcroFormModel(_ source: Data) throws -> AcroFormModel {
     let xrefOffset = try findLastStartxrefOffset(source)
     let xref = try parseXref(source, offset: xrefOffset)
     guard xref.trailer["/Encrypt"] == nil else { throw WriterError.encryptedUnsupported }
@@ -659,7 +719,16 @@ public enum PDFIncrementalFormWriter {
         source, xref: xref, objectNumber: number, parentPath: "", visited: [],
         into: &nodes)
     }
-    return nodes
+    // RG-014 parity: signature-field presence through /SigFlags or /FT /Sig.
+    var sigFlags: Int?
+    if let sigFlagsToken = valueOfKey("/SigFlags", in: acroFormText) {
+      sigFlags = Int(sigFlagsToken.trimmingCharacters(in: .whitespaces))
+    }
+    let hasSignatureField =
+      nodes.contains { $0.fieldType == "Sig" } || (sigFlags.map { $0 != 0 } ?? false)
+    return AcroFormModel(
+      nodes: nodes, acroFormObjectNumber: acroFormNumber, sigFlags: sigFlags,
+      hasSignatureField: hasSignatureField)
   }
 
   private static func walkField(

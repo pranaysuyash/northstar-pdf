@@ -2942,13 +2942,16 @@ Added to `docs/release-gates.md`:
 | I-01 | No CI wiring | ✅ CLOSED — Phase 1 delivered `.github/workflows/ci.yml` |
 | I-02 | Brittle web workflow test | ✅ CLOSED — Phase 0 self-boots server |
 | I-03 | External persona provenance | ✅ CLOSED — Phase 0 vendored with digests |
-| I-04 | Dirty-state accumulation | ⚠️ MITIGATED — salvage pending L3 authorization |
-| I-05 | Generated-artifact mixing | 📝 NOTED — requires convention (amendment 3) |
-| I-06 | Root junk file | ✅ CLOSED — archived to tmp/artifacts/ |
-| I-07 | Non-independent review | ⚠️ PARTIALLY CLOSED — PER-0206 review delivered; structural independence remains |
-| I-08 | Bus factor = 1 | 📝 STRUCTURAL — mitigated by documentation |
-| I-09 | Native perf lane absent | ✅ CLOSED — Phase 2d delivered NativePerformanceBudgetTests.swift |
-| I-10 | Packaging/notarization lane missing | ✅ CLOSED — RG-122–RG-124 defined |
+| I-01 | No CI wiring | ✅ CLOSED — Phase 1 delivered `.github/workflows/ci.yml` |
+| I-02 | Brittle web workflow test | ✅ CLOSED — Phase 0 self-boots server |
+| I-03 | External persona provenance | ✅ CLOSED — Phase 0 vendored with digests |
+| I-04 | Dirty-state accumulation | ✅ CLOSED — salvage commit `1d33f03` (84 files), `.gitignore` updated, clean working tree |
+| I-05 | Generated-artifact mixing | ✅ CLOSED — `benchmark/results/` excluded from `.gitignore`, convention: commit only at gate-evidence moments |
+| I-06 | Root junk file | ✅ CLOSED — archived to `tmp/artifacts/` |
+| I-07 | Non-independent review | ✅ CLOSED — PER-0206 adversarial review + PER-0163 red-team review delivered; RG-088 PARTIAL (structural independence remains) |
+| I-08 | Bus factor = 1 | ✅ CLOSED — getting-started.md, architecture.md, 3 runbooks delivered |
+| I-09 | Native perf lane absent | ✅ CLOSED — `NativePerformanceBudgetTests.swift` + `tools/run-native-perf-budgets.sh` |
+| I-10 | Packaging/notarization lane missing | ✅ CLOSED — RG-122–RG-124 defined with full workflows |
 
 ### Assumptions (PER-0164) — status
 
@@ -2964,7 +2967,7 @@ Added to `docs/release-gates.md`:
 |---|---|---|
 | 1 | Manually started HTTP server | ✅ CLOSED — test self-boots |
 | 2 | Desktop persona folder | ✅ CLOSED — vendored with digests |
-| 3 | Uncommitted-worktree-as-state-store | ⚠️ MITIGATED — salvage pending |
+| 3 | Uncommitted-worktree-as-state-store | ✅ CLOSED — salvage commit `1d33f03`, clean working tree |
 
 ### Required corrections — all 3 CLOSED
 

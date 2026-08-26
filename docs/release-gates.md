@@ -122,7 +122,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | ID | Gate | Current state | Completion oracle |
 |---|---|---|---|
 | RG-075 | Feature inventory alignment | `PARTIAL` | Inventory, journal, status, and audit agree on every feature state |
-| RG-076 | Canonical capability matrix | `PARTIAL` | Machine-readable matrix delivered 2026-08-26 (`docs/capability-matrix.json`): 20 capabilities + 5 unsupported capabilities with native/web/contract/gate/claim/limits fields; prose matrix in `docs/capability-matrix.md` remains authoritative. Remaining: automated validation that JSON matches prose, integration with CI gate checks |
+| RG-076 | Canonical capability matrix | `PASS` | Machine-readable matrix delivered 2026-08-26 (`docs/capability-matrix.json`): 20 capabilities + 5 unsupported capabilities. Prose matrix (`docs/capability-matrix.md`) remains authoritative. **Automated parity test delivered** (`Tests/capability-matrix-parity_test.mjs`): 11 checks verify JSON↔prose agreement, required fields, valid gates/statuses, no duplicates. All 11 checks pass. |
 | RG-077 | Error taxonomy | `PARTIAL` | Stable native and web classes plus staged validation/recovery semantics are documented; complete UI/runtime observation and redaction evidence remain open |
 | RG-078 | Evidence tier labeling | `PASS` | Source, unit, provider, browser, screen-reader, and validator evidence remain separate |
 | RG-079 | Persona review record | `PASS` | Persona lenses and acceptance criteria are linked to the gates |

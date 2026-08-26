@@ -1,0 +1,245 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-08-26",
+  "authority": "Canonical capability matrix — single source of truth per D-055",
+  "rule": "A capability is not advertised as supported unless provider, fixture, validator, and failure behavior are all identified.",
+  "capabilities": [
+    {
+      "id": "CAP-001",
+      "name": "Open/import",
+      "native": { "provider": "PDFKit", "status": "implemented" },
+      "web": { "provider": "PDF.js", "status": "implemented" },
+      "contract": "DocumentSource",
+      "gates": ["RG-001", "RG-060"],
+      "claim": "Supported for bounded local files",
+      "limits": "File size, page count, and encryption type bounded by provider admission"
+    },
+    {
+      "id": "CAP-002",
+      "name": "Render/navigation",
+      "native": { "provider": "PDFKit/PDFView", "status": "implemented" },
+      "web": { "provider": "PDF.js canvas/text layer", "status": "implemented" },
+      "contract": "ViewState",
+      "gates": ["RG-031", "RG-032", "RG-033", "RG-034", "RG-035", "RG-036", "RG-037", "RG-038"],
+      "claim": "Supported on reviewed PDFs",
+      "limits": "Rotation, crop boxes, mixed page sizes all covered"
+    },
+    {
+      "id": "CAP-003",
+      "name": "Extractable text",
+      "native": { "provider": "PDFKit", "status": "implemented" },
+      "web": { "provider": "PDF.js", "status": "implemented" },
+      "contract": "page text evidence",
+      "gates": ["RG-039", "RG-060"],
+      "claim": "Supported with provider caveats",
+      "limits": "Font-shaping ligatures and RTL text remain provider-dependent"
+    },
+    {
+      "id": "CAP-004",
+      "name": "OCR fallback",
+      "native": { "provider": "Vision adapter", "status": "partial", "note": "English only, deterministic raster fixture" },
+      "web": { "provider": "Not yet wired", "status": "not-implemented" },
+      "contract": "OCR evidence",
+      "gates": ["RG-008", "RG-009", "RG-061"],
+      "claim": "Not a general release claim",
+      "limits": "English OCR only; multilingual, handwriting, low-contrast remain open"
+    },
+    {
+      "id": "CAP-005",
+      "name": "Search",
+      "native": { "provider": "PDFKit document search", "status": "implemented" },
+      "web": { "provider": "PDF.js text content", "status": "implemented" },
+      "contract": "search match contract",
+      "gates": ["RG-041", "RG-042", "RG-043"],
+      "claim": "Supported for extractable text",
+      "limits": "OCR-only and scanned text not yet searchable"
+    },
+    {
+      "id": "CAP-006",
+      "name": "Text copy",
+      "native": { "provider": "NSPasteboard", "status": "implemented" },
+      "web": { "provider": "Clipboard/fallback", "status": "implemented" },
+      "contract": "page text",
+      "gates": ["RG-039", "RG-055"],
+      "claim": "Supported for extractable text",
+      "limits": "Clipboard denied/empty/large-copy paths handled"
+    },
+    {
+      "id": "CAP-007",
+      "name": "Links",
+      "native": { "provider": "PDFKit actions", "status": "implemented" },
+      "web": { "provider": "PDF.js annotations", "status": "implemented" },
+      "contract": "PDFLink",
+      "gates": ["RG-044", "RG-045"],
+      "claim": "Safe internal/external subset",
+      "limits": "Dangerous schemes blocked; only permitted schemes proceed after confirmation"
+    },
+    {
+      "id": "CAP-008",
+      "name": "Outlines",
+      "native": { "provider": "PDFKit outline", "status": "implemented" },
+      "web": { "provider": "PDF.js outline", "status": "implemented" },
+      "contract": "PDFOutlineItem",
+      "gates": ["RG-046", "RG-065"],
+      "claim": "Supported when source exposes targets",
+      "limits": "Missing-target, duplicate, empty, and deep outlines handled"
+    },
+    {
+      "id": "CAP-009",
+      "name": "Metadata",
+      "native": { "provider": "PDFKit attributes", "status": "implemented" },
+      "web": { "provider": "PDF.js metadata", "status": "implemented" },
+      "contract": "PDFDocumentMetadata",
+      "gates": ["RG-047", "RG-066"],
+      "claim": "Provider-dependent facts",
+      "limits": "Malformed, Unicode, date, creator, producer, custom metadata safe"
+    },
+    {
+      "id": "CAP-010",
+      "name": "Permissions",
+      "native": { "provider": "PDFKit permissions", "status": "implemented" },
+      "web": { "provider": "PDF.js permissions", "status": "implemented" },
+      "contract": "PDFPermissionsSummary",
+      "gates": ["RG-027", "RG-048"],
+      "claim": "Informational until enforcement corpus passes",
+      "limits": "Missing, restricted, encrypted, provider-specific permissions surfaced"
+    },
+    {
+      "id": "CAP-011",
+      "name": "Attachments",
+      "native": { "provider": "PDFKit inventory", "status": "implemented" },
+      "web": { "provider": "PDF.js inventory", "status": "implemented" },
+      "contract": "attachment facts",
+      "gates": ["RG-024", "RG-049", "RG-067"],
+      "claim": "Inventory only until safe extraction passes",
+      "limits": "Name-tree inventory with Kids-subtree, duplicate detection, 8-entry synthetic corpus"
+    },
+    {
+      "id": "CAP-012",
+      "name": "Password open",
+      "native": { "provider": "PDFKit unlock", "status": "implemented" },
+      "web": { "provider": "PDF.js callback", "status": "implemented" },
+      "contract": "PDFSecuritySummary",
+      "gates": ["RG-010", "RG-050", "RG-068"],
+      "claim": "Supported for provider-compatible encryption",
+      "limits": "AES-256 user/owner password; wrong, empty, restricted paths handled"
+    },
+    {
+      "id": "CAP-013",
+      "name": "Native AcroForms",
+      "native": { "provider": "PDFKit inspect/apply", "status": "implemented", "note": "Incremental form writer with appearance-stream regeneration" },
+      "web": { "provider": "pdf-lib bounded path", "status": "implemented" },
+      "contract": "field operation contract",
+      "gates": ["RG-001", "RG-002", "RG-069"],
+      "claim": "Restricted pending provider decision",
+      "limits": "Text, checkbox, radio fields; source-preserving incremental update; non-FlateDecode xref streams fail closed"
+    },
+    {
+      "id": "CAP-014",
+      "name": "Overlays",
+      "native": { "provider": "PDFKit FreeText", "status": "implemented" },
+      "web": { "provider": "pdf-lib drawText", "status": "implemented" },
+      "contract": "EditOperation",
+      "gates": ["RG-018", "RG-020"],
+      "claim": "Bounded overlay subset",
+      "limits": "Reversible FreeText overlays; outside-region validation passes"
+    },
+    {
+      "id": "CAP-015",
+      "name": "Signatures",
+      "native": { "provider": "Detection not complete", "status": "partial", "note": "Guard delivered: refuses edit on signed docs" },
+      "web": { "provider": "Detection not complete", "status": "partial" },
+      "contract": "security facts",
+      "gates": ["RG-014", "RG-070"],
+      "claim": "Not supported for editing claims",
+      "limits": "Structural detection only; cryptographic validity and trust evaluation remain open"
+    },
+    {
+      "id": "CAP-016",
+      "name": "XFA",
+      "native": { "provider": "Not established", "status": "partial", "note": "Guard delivered: refuses edit on XFA docs" },
+      "web": { "provider": "Not established", "status": "partial" },
+      "contract": "unsupported capability",
+      "gates": ["RG-015", "RG-071"],
+      "claim": "Explicitly unsupported until proven",
+      "limits": "Static/dynamic/hybrid classification via heuristic; real XFA corpus remains open"
+    },
+    {
+      "id": "CAP-017",
+      "name": "Tagged PDF",
+      "native": { "provider": "Conditional", "status": "partial", "note": "StructTreeRoot detection and preservation delivered" },
+      "web": { "provider": "Conditional", "status": "partial" },
+      "contract": "accessibility facts",
+      "gates": ["RG-004", "RG-005", "RG-052"],
+      "claim": "No PDF/UA claim",
+      "limits": "Detection and preservation only; authoring and compliant output remain open"
+    },
+    {
+      "id": "CAP-018",
+      "name": "Reader accessibility",
+      "native": { "provider": "Native UI", "status": "partial", "note": "38+ accessibility annotations across 6 views" },
+      "web": { "provider": "DOM landmarks/text layer", "status": "partial", "note": "46+ aria- attributes" },
+      "contract": "status/focus semantics",
+      "gates": ["RG-006", "RG-007", "RG-051", "RG-056", "RG-057", "RG-058", "RG-059"],
+      "claim": "Surface implemented, observation pending",
+      "limits": "Human VoiceOver observation across all controls remains open"
+    },
+    {
+      "id": "CAP-019",
+      "name": "Export validation",
+      "native": { "provider": "PDFKit reopen checks", "status": "implemented" },
+      "web": { "provider": "pdf-lib reopen checks", "status": "implemented" },
+      "contract": "ValidationReport",
+      "gates": ["RG-016", "RG-017", "RG-018", "RG-019", "RG-020"],
+      "claim": "No unrestricted fidelity claim",
+      "limits": "Bounded overlay/form exports validated; unrestricted external-form fidelity remains open"
+    },
+    {
+      "id": "CAP-020",
+      "name": "Provider admission and revocation",
+      "native": { "provider": "Registry and native negotiator", "status": "partial" },
+      "web": { "provider": "Registry and browser negotiator", "status": "partial" },
+      "contract": "pdf-editor.provider-capability-*",
+      "gates": ["RG-091"],
+      "claim": "Contract slice implemented; installer and live companion remain open",
+      "limits": "Exact artifact measurement, license-state rejection, source-limit checks; installer, cryptographic transport, sandboxing, live measurement, revocation feed remain open"
+    }
+  ],
+  "unsupported_capabilities": [
+    {
+      "id": "UNS-001",
+      "name": "Arbitrary text editing",
+      "status": "not-implemented",
+      "note": "Text-run replacement (simple ASCII) under active development; font/glyph/RTL/ligature preservation remains open",
+      "gate": "RG-103"
+    },
+    {
+      "id": "UNS-002",
+      "name": "Image/vector/object redaction",
+      "status": "not-implemented",
+      "note": "Whiteout overlay rejection delivered; content removal remains open",
+      "gate": "RG-118"
+    },
+    {
+      "id": "UNS-003",
+      "name": "Collaboration",
+      "status": "not-implemented",
+      "note": "Gen 3 target per PER-0926 evolution map",
+      "gate": "N/A"
+    },
+    {
+      "id": "UNS-004",
+      "name": "Sync",
+      "status": "not-implemented",
+      "note": "Gen 3 target per PER-0926 evolution map",
+      "gate": "N/A"
+    },
+    {
+      "id": "UNS-005",
+      "name": "PDF/UA authoring",
+      "status": "not-implemented",
+      "note": "Tagged structure authoring remains open",
+      "gate": "RG-120"
+    }
+  ]
+}

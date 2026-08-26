@@ -2886,3 +2886,42 @@ Added to `docs/release-gates.md`:
 - `swift test`: 252/252 pass
 - All Node tests pass
 - RG-088 updated to reflect two independent reviews
+
+## 2026-08-26 Remaining gate delivery (RG-076, RG-084, RG-122–RG-124, native perf lane)
+
+### RG-076: Canonical capability matrix — PARTIAL
+- Machine-readable matrix: `docs/capability-matrix.json` (20 capabilities + 5 unsupported)
+- Prose matrix: `docs/capability-matrix.md` (21 rows, authoritative)
+- Agreement: JSON and prose matrices agree on every capability state
+- Remaining: automated validation and CI integration
+
+### RG-084: Support policy — PARTIAL
+- Support policy: `docs/support-policy.md`
+- macOS 15+ (Apple Silicon primary), Safari/Chrome primary
+- 14 PDF types mapped, encryption support matrix, OCR (English only)
+- Remaining: human product decision on version numbers, page limits, encryption levels
+
+### RG-122: Codesign + notarize — BLOCKED
+- Workflow: `docs/codesign-notarize-workflow.md`
+- Full build-sign-notarize-staple-verify pipeline documented
+- CI/CD GitHub Actions template included
+- Blocked: Apple Developer account ($99/year) and signing credentials
+
+### RG-123: Auto-update — BLOCKED
+- Plan: `docs/auto-update-integration.md`
+- Sparkle 2.x framework recommended, EdDSA signing
+- Appcast feed format, update flow, rollback strategy
+- Blocked: hosting setup and EdDSA key generation
+
+### RG-124: Crash-reporting boundary — PARTIAL
+- Boundary: `docs/crash-reporting-boundary.md`
+- No-telemetry recommendation (safest), opt-in consent flow defined
+- Privacy boundary (RG-028) maintained
+- Remaining: product decision on telemetry scope
+
+### Native perf lane runner — DELIVERED
+- Script: `tools/run-native-perf-budgets.sh`
+- Tests: `NativePerformanceBudgetTests.swift` (4 budgets)
+- Results: All budgets pass (cold 0.045s, walk 0.013s, write 0.002s, lookup 0.05ms)
+
+Live-truth snapshot: `swift test` 274/274 pass; native perf runner reports all budgets pass.

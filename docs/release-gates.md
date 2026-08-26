@@ -122,7 +122,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | ID | Gate | Current state | Completion oracle |
 |---|---|---|---|
 | RG-075 | Feature inventory alignment | `PARTIAL` | Inventory, journal, status, and audit agree on every feature state |
-| RG-076 | Canonical capability matrix | `OPEN` | Native, web, provider, OCR, validator, and unsupported states are centralized |
+| RG-076 | Canonical capability matrix | `PARTIAL` | Machine-readable matrix delivered 2026-08-26 (`docs/capability-matrix.json`): 20 capabilities + 5 unsupported capabilities with native/web/contract/gate/claim/limits fields; prose matrix in `docs/capability-matrix.md` remains authoritative. Remaining: automated validation that JSON matches prose, integration with CI gate checks |
 | RG-077 | Error taxonomy | `PARTIAL` | Stable native and web classes plus staged validation/recovery semantics are documented; complete UI/runtime observation and redaction evidence remain open |
 | RG-078 | Evidence tier labeling | `PASS` | Source, unit, provider, browser, screen-reader, and validator evidence remain separate |
 | RG-079 | Persona review record | `PASS` | Persona lenses and acceptance criteria are linked to the gates |
@@ -130,7 +130,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-081 | Release runbook | `PARTIAL` | Reproducible ordered runbook written 2026-08-25 (`docs/release-runbook.md`) and extended same day: veraPDF PDF/UA validation (`tools/verapdf --flavour ua1 ...`, RG-004), corpus-sweep regeneration (`Tests/fixtures/generate_corpus_sweep.py` + `Tests/fixture-corpus-sweep_test.mjs`), and the continuous-view perf measurement (`Tests/perf-continuous-view_test.mjs`). **CI wiring delivered 2026-08-26** (`.github/workflows/ci.yml`): three independent gates (Swift test + release build / 31 pure-Node contract tests / Playwright browser E2E via self-booting `run-web-e2e.mjs`); evidence gate summarizes results and gates the push. `Tests/web_editor_workflow_test.mjs` now self-boots its static server — zero external choreography required. Local pre-push hook mirror at `tools/pre-push-hook.sh`. Remaining: external-tool-dependent tests (qpdf, poppler, veraPDF, pikepdf) added to CI or gated behind tool-detection, full 78-file E2E suite stabilization. Verification at audit time: 230/230 Swift tests, 51 web contract checks, workflow test passes self-contained. |
 | RG-082 | Fixture provenance | `PASS` | Existing corpus paths, hashes, generation commands, expected security outcomes, and the 16-entry privacy/provenance governed manifest are recorded; external source/license facts remain explicitly unresolved where applicable |
 | RG-083 | Dependency provenance | `PARTIAL` | Vendored runtime versions, sources, hashes, licenses, and local validation-tool versions are recorded; veraPDF 1.30.2 added 2026-08-25 (`tools/verapdf-cli-1.30.2`, extracted from software.verapdf.org installer pack, Apache-2.0/GPL dual license upstream, digest-provenanced in `benchmark/results/verapdf-2026-08-25/result.json`); upgrade policy and shipped-provider licensing remain open |
-| RG-084 | Support policy | `OPEN` | Supported macOS, browsers, PDF types, limits, encryption, and OCR languages are explicit |
+| RG-084 | Support policy | `PARTIAL` | Support policy drafted 2026-08-26 (`docs/support-policy.md`): macOS 15+ (Apple Silicon primary), Safari/Chrome primary, 14 PDF types mapped, encryption support matrix, OCR (English only), accessibility status, supported/unsupported operations, update lifecycle. Remaining: human product decision on version numbers, page limits, and encryption levels before activation |
 | RG-085 | Observability policy | `PARTIAL` | Canonical diagnostics boundary is documented; implementation and automated redaction evidence remain open |
 | RG-086 | Recovery documentation | `PARTIAL` | Interrupted export, corrupt input, password, runtime, and unsupported-feature recovery are documented |
 | RG-087 | Accessibility claim policy | `PASS` | Reader surface, extraction, tags, and PDF/UA are clearly separated |
@@ -165,9 +165,9 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-119 | GUI control-app observation | `PARTIAL` | Preview observation opens the public fixture and records front-document/window evidence without retaining raw PDF content or screenshots. Multi-page interaction, another independent GUI viewer, accessibility automation, and edited-output observations remain open |
 | RG-120 | PDF/UA conformance baseline and authoring | `PARTIAL` | Vendored veraPDF reports are generated and normalized for the corpus; current synthetic outputs fail PDF/UA-1 with clause-level evidence. Tagged structure authoring, preservation, remediation, and compliant output evidence remain open |
 | RG-121 | Arbitrary-PDF production preservation | `OPEN` | Long-term release gate covering general semantic editing, byte/object preservation, AcroForm/XFA/signatures, redaction, PDF/UA, independent viewers, malformed/encrypted recovery, resource budgets, cancellation, and support evidence. The full capability mandate remains active; no unrestricted production claim is made yet |
-| RG-122 | Native macOS codesign and notarization | `OPEN` | App binary is codesign-identified, notarized by Apple, and staple-verified before any distribution claim; release artifacts carry a valid signature chain |
-| RG-123 | Auto-update mechanism | `OPEN` | A documented update channel (Sparkle, App Store, or manual) delivers signed updates to users; rollback and version-compatibility are explicit |
-| RG-124 | Crash-reporting boundary | `OPEN` | Crash telemetry is bounded by the privacy policy (RG-028); opt-in consent is explicit; no raw PDF bytes or user content leak into crash reports |
+| RG-122 | Native macOS codesign and notarization | `BLOCKED` | Codesign workflow documented 2026-08-26 (`docs/codesign-notarize-workflow.md`): full build-sign-notarize-staple-verify pipeline with CI/CD GitHub Actions template, verification checklist, troubleshooting guide. Blocked on Apple Developer account ($99/year) and signing credentials |
+| RG-123 | Auto-update mechanism | `BLOCKED` | Auto-update integration plan documented 2026-08-26 (`docs/auto-update-integration.md`): Sparkle 2.x framework recommended, EdDSA signing, appcast feed format, update flow, rollback strategy, privacy compliance, hosting requirements. 1-2 day implementation estimate. Blocked on hosting setup and EdDSA key generation |
+| RG-124 | Crash-reporting boundary | `PARTIAL` | Crash-reporting boundary documented 2026-08-26 (`docs/crash-reporting-boundary.md`): privacy boundary recap, no-telemetry recommendation (safest), opt-in consent flow, what crash reports may/must-not contain, local-only crash logs alternative, network boundary, GDPR/CCPA compliance. Remaining: product decision on telemetry scope before implementation |
 | RG-125 | Native performance budget ratification | `PARTIAL` | `Tests/PDFEditorCoreTests/NativePerformanceBudgetTests.swift` establishes cold-inspection (<2s), field-tree walk (<0.5s), incremental write (<0.5s), and field-lookup (<10ms/100) budgets on the public AcroForm fixture; provisional baselines recorded. Formal ratification requires device-matrix measurement across M1/M2/Intel configurations |
 | RG-126 | Browser network-egression invariant | `PARTIAL` | `Tests/browser_network_egression_assertion_test.mjs` proves zero external HTTP requests during the full browser workflow cycle (Tier 2/S1). Covers the core editor surface; companion, OCR-worker, and hosted-mode lanes require separate egress proofs |
 | RG-127 | S3 mutation-sweep coverage | `PARTIAL` | Deliberate-mutation tests delivered for PDFIncrementalFormWriter (12 Swift mutations), redaction completeness validator (7 Node mutations), and signature guard (12 Node mutations). Each proves a guard kills a specific tampering pattern. Broader S3 coverage for remaining validators and detectors remains open |
@@ -356,3 +356,48 @@ Documentation is part of completion. A gate is not complete until its implementa
   [`../Tests/fixtures/pdf_fingerprint_parity_fixture.json`](../Tests/fixtures/pdf_fingerprint_parity_fixture.json),
   [`../Tests/native_browser_fingerprint_parity_test.mjs`](../Tests/native_browser_fingerprint_parity_test.mjs),
   and [`../benchmark/results/semantic-parity/2026-08-25/fingerprint-parity-report.json`](../benchmark/results/semantic-parity/2026-08-25/fingerprint-parity-report.json).
+
+### RG-076: Canonical capability matrix
+
+- **Scope:** Single source of truth for every capability, provider implementation state, evidence gates, and product claim.
+- **Required evidence:** A machine-readable registry (`capability-matrix.json`) and prose matrix (`capability-matrix.md`) that agree on every capability state.
+- **Current evidence:** Machine-readable matrix delivered 2026-08-26 (`docs/capability-matrix.json`): 20 capabilities + 5 unsupported capabilities with native/web/contract/gate/claim/limits fields. Prose matrix (`docs/capability-matrix.md`) remains authoritative with 21 capability rows covering native macOS, web companion, shared contract, evidence gate, and product claim.
+- **Disposition:** `PARTIAL` — JSON and prose matrices exist and agree; automated validation and CI integration remain open.
+- **Falsifier:** JSON and prose matrices disagree on any capability state, or a capability is advertised without evidence gate linkage.
+- **Evidence:** [`capability-matrix.json`](capability-matrix.json), [`capability-matrix.md`](capability-matrix.md).
+
+### RG-084: Support policy
+
+- **Scope:** Explicit boundaries for supported platforms, browsers, PDF types, limits, encryption, and OCR languages.
+- **Required evidence:** A document that defines what is supported, what is not, and what limits apply.
+- **Current evidence:** Support policy drafted 2026-08-26 (`docs/support-policy.md`): macOS 15+ (Apple Silicon primary), Safari/Chrome primary, 14 PDF types mapped, encryption support matrix, OCR (English only), accessibility status, supported/unsupported operations, update lifecycle.
+- **Disposition:** `PARTIAL` — document exists with recommendations; human product decision required before activation.
+- **Falsifier:** A capability is advertised as supported outside the boundaries defined in this policy.
+- **Evidence:** [`support-policy.md`](support-policy.md).
+
+### RG-122: Native macOS codesign and notarization
+
+- **Scope:** App binary is codesign-identified, notarized by Apple, and staple-verified before any distribution claim.
+- **Required evidence:** Successful codesign, notarization, and stapling with a valid signature chain.
+- **Current evidence:** Codesign workflow documented 2026-08-26 (`docs/codesign-notarize-workflow.md`): full build-sign-notarize-staple-verify pipeline with CI/CD GitHub Actions template, verification checklist, troubleshooting guide.
+- **Disposition:** `BLOCKED` — requires Apple Developer account ($99/year) and signing credentials.
+- **Falsifier:** `spctl --assess --type execute` fails on the app bundle, or notarization ticket is missing.
+- **Evidence:** [`codesign-notarize-workflow.md`](codesign-notarize-workflow.md).
+
+### RG-123: Auto-update mechanism
+
+- **Scope:** A documented update channel delivers signed updates to users; rollback and version-compatibility are explicit.
+- **Required evidence:** Update mechanism configured, tested, and privacy-compliant.
+- **Current evidence:** Auto-update integration plan documented 2026-08-26 (`docs/auto-update-integration.md`): Sparkle 2.x framework recommended, EdDSA signing, appcast feed format, update flow, rollback strategy, privacy compliance, hosting requirements. 1-2 day implementation estimate.
+- **Disposition:** `BLOCKED` — requires hosting setup and EdDSA key generation.
+- **Falsifier:** Update mechanism sends data without consent, or fails to verify EdDSA signatures.
+- **Evidence:** [`auto-update-integration.md`](auto-update-integration.md).
+
+### RG-124: Crash-reporting boundary
+
+- **Scope:** Crash telemetry is bounded by the privacy policy (RG-028); opt-in consent is explicit; no raw PDF bytes or user content leak into crash reports.
+- **Required evidence:** Crash reporting respects privacy boundary and requires explicit consent.
+- **Current evidence:** Crash-reporting boundary documented 2026-08-26 (`docs/crash-reporting-boundary.md`): privacy boundary recap, no-telemetry recommendation (safest), opt-in consent flow, what crash reports may/must-not contain, local-only crash logs alternative, network boundary, GDPR/CCPA compliance.
+- **Disposition:** `PARTIAL` — boundary document exists; product decision on telemetry scope required before implementation.
+- **Falsifier:** Crash report contains PDF content, user data, or file paths, or telemetry is sent without consent.
+- **Evidence:** [`crash-reporting-boundary.md`](crash-reporting-boundary.md).

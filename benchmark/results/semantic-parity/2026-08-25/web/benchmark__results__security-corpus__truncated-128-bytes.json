@@ -7,12 +7,12 @@
   "sourcePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
   "expectedFailure": true,
   "status": "inspectionFailed",
-  "sourceDigest": null,
+  "sourceDigest": "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
   "document": null,
   "coordinates": null,
   "candidates": null,
   "editSession": null,
   "preflight": null,
   "validation": null,
-  "error": "cannot-open: Invalid PDF structure."
+  "error": "fixture failed browser inspection (expected-failure corpus entry)"
 }

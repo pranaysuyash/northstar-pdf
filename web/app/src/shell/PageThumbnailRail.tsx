@@ -1,4 +1,4 @@
-import React from "react";
+import { memo } from "react";
 
 interface PageThumbnailRailProps {
   pageCount: number;
@@ -7,12 +7,12 @@ interface PageThumbnailRailProps {
   fieldCountsByPage?: Record<number, number>;
 }
 
-export const PageThumbnailRail: React.FC<PageThumbnailRailProps> = ({
+export const PageThumbnailRail = memo(function PageThumbnailRail({
   pageCount,
   currentPageIndex,
   onSelectPage,
   fieldCountsByPage = {}
-}) => {
+}: PageThumbnailRailProps) {
   return (
     <nav aria-label="Page Thumbnails" className="w-52 border-r border-slate-800 bg-slate-950/80 backdrop-blur flex flex-col h-full overflow-y-auto p-3 space-y-3">
       <div className="text-[10px] uppercase font-bold text-slate-500 tracking-wider px-1">
@@ -27,11 +27,12 @@ export const PageThumbnailRail: React.FC<PageThumbnailRailProps> = ({
           return (
             <div
               key={idx}
-              className={`p-2.5 rounded-lg cursor-pointer border transition-all ${
+              className={`p-2.5 rounded-lg cursor-pointer border transition-all thumbnail-card ${
                 isSelected
                   ? "bg-slate-900 border-cyan-500 shadow-md ring-1 ring-cyan-500/50"
                   : "bg-slate-900/40 border-slate-800 hover:border-slate-700 hover:bg-slate-900/80"
               }`}
+              style={{ contentVisibility: "auto", containIntrinsicSize: "160px" }}
               onClick={() => onSelectPage(idx)}
             >
               <div className="aspect-[3/4] bg-slate-950 rounded border border-slate-800 flex items-center justify-center relative overflow-hidden mb-2">
@@ -53,4 +54,5 @@ export const PageThumbnailRail: React.FC<PageThumbnailRailProps> = ({
       </div>
     </nav>
   );
-};
+});
+

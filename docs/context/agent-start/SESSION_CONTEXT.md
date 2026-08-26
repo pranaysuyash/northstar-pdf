@@ -1,6 +1,6 @@
 # Session Context
 
-- Generated: 2026-08-26T05:27:08Z
+- Generated: 2026-08-26T05:58:24Z
 - Project: `pdf_editor`
 - Provider: `local`
 - Model: `BAAI/bge-m3`
@@ -13,7 +13,7 @@
 - Operating doctrine: `OPERATING_DOCTRINE.md` v8.0 (sha256 `93dc8e76f2c26489…`) — always applies
 - Project: `pdf_editor`
 - Routing mechanism: agent-start doctrine-family router v1.0 (deterministic intent-signal model)
-- Generated at: 2026-08-26T05:27:08Z
+- Generated at: 2026-08-26T05:58:24Z
 - Generator: agent-start lib/doctrine_family.py
 
 Doctrine routing for this run (task intent not supplied; deferred):

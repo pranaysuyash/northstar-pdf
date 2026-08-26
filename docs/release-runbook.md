@@ -54,21 +54,21 @@ node Tests/pdf-attachment-scanner_test.mjs           # RG-024/RG-049/RG-067 corp
 
 ## 2. Browser contract tests (Playwright)
 
-Browser lanes need the repo served over HTTP. **Do not use port 4173** — it is
-commonly squatted by unrelated local dev servers; pick a free port and export
-`PDF_PROOF_BASE_URL`.
+Use the canonical runner. It starts a static server on a **free port** (never
+4173 — commonly squatted by unrelated dev servers), serves the project root so
+`/web/`, `/Tests/`, and `/benchmark/` modules all resolve, and exports the
+unified `PDF_EDITOR_BASE_URL` to every test.
 
 ```sh
-python3 -m http.server 4923 >/dev/null 2>&1 &
-sleep 1
-PDF_PROOF_BASE_URL=http://127.0.0.1:4923/web/index.html \
-  node Tests/web_pdf_contract_mutation_test.mjs
-PDF_PROOF_BASE_URL=http://127.0.0.1:4923/web/index.html \
-  node Tests/web_reader_contract_test.mjs
-kill %1
+node Tests/run-web-e2e.mjs              # full web Playwright suite (30 files)
+node Tests/run-web-e2e.mjs web_editor   # only files matching a name filter
 ```
 
-(Add further `web_*_test.mjs` browser lanes as needed; each accepts the same env var.)
+Requirements: `playwright` resolvable from the repo root (`npm i playwright`),
+`npx playwright install chromium`, and Chrome for the `channel: "chrome"` lanes.
+Tests that invoke pikepdf resolve Python via `Tests/pdf-python.mjs` (override
+with `PDF_PYTHON`). All 30 browser tests read `PDF_EDITOR_BASE_URL`; individual
+files keep their previous hardcoded URL as fallback when the env var is absent.
 
 ## 3. Native lane
 

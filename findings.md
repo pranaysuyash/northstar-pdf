@@ -996,6 +996,47 @@ not instruction. Claims remain **Observed**, **Verified**, **Inferred**,
   `benchmark/results/2026-08-25-native-incremental/`,
   `web/pdf-incremental-form-writer.mjs`.
 
+### F-072: Accessibility, recovery, and structural-fidelity pass closes the OPEN gate list
+
+- **Date:** 2026-08-25
+- **Status:** Implementation-verified (Tier 2/S1); human-observation
+  remainders documented per gate.
+- **Evidence:** All nine previously OPEN gates now carry implementation
+  evidence; the registry stands at 55 PARTIAL / 4 PASS with zero FAIL and
+  zero OPEN:
+  - RG-005/RG-052: structural tag-tree detection via the CGPDF catalog
+    (`/StructTreeRoot`, `/MarkInfo` `/Marked`) — PDFKit document attributes
+    proved unreliable for tagging. Inspection reports the authored tree or
+    explicitly marks it unavailable; export validation fails structure-tree
+    loss with evidence and passes byte-preserving lanes by construction.
+  - RG-043: search match counts, current match (position + page + snippet),
+    page changes, and no-match states post via `NSAccessibility`
+    `.announcementRequested` and are recorded in
+    `lastAccessibilityAnnouncement` for verification. (The parallel lane had
+    independently added the announcer; the two implementations were merged
+    rather than duplicated.)
+  - RG-057: the ⌘F focus event previously fired without effect; the document
+    canvas now consumes it, expands the search HUD, and focuses the field.
+  - RG-058: the last unguarded canvas animation (search expand) now honors
+    Reduce Motion.
+  - RG-059: window minimum reduced 1080×700 → 720×480; HUD chrome is
+    contrast-aware under Increased Contrast; no fixed-size fonts exist
+    (Dynamic Type intact).
+  - RG-029: recovery evidence mapped — crash-interruption suite (payload/
+    pair/metadata generation preservation, first-save absence), termination
+    flush, provider-level export-failure tests, malformed-input rejection.
+  - RG-006/007: implementation surfaces (native announcements/focus/motion/
+    contrast; web lane's 46+11 aria- attributes) documented with explicit
+    human-observation remainders.
+- **Implication:** every gate now has either a passing oracle or a PARTIAL
+  status with named, owned remainders — mostly human observation
+  (VoiceOver/screen-reader workflows, 200%-zoom passes) and corpus breadth.
+- **Sources:** `Sources/PDFEditorCore/PDFKitProvider.swift`,
+  `Sources/PDFEditorRecovery/AppModel.swift`,
+  `Sources/PDFEditorApp/DocumentCanvasView.swift`,
+  `Sources/PDFEditorApp/PDFEditorApp.swift`,
+  `Tests/PDFEditorAppRecoveryTests/`, `docs/release-gates.md`.
+
 ## Open Questions
 
 - Exact native macOS engine/provider and the boundary to the browser companion.

@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-25T01:10:29Z",
+    "generatedAt" : "2026-08-26T06:02:24Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -39,7 +39,7 @@
       "platform" : "macOS",
       "version" : "Version 15.7.7 (Build 24G720)"
     },
-    "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+    "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
     "version" : {
       "major" : 1,
       "minor" : 0
@@ -48,7 +48,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-25T01:10:29Z",
+      "generatedAt" : "2026-08-26T06:02:24Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -62,7 +62,7 @@
         "platform" : "macOS",
         "version" : "Version 15.7.7 (Build 24G720)"
       },
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -74,7 +74,8 @@
         "hasTaggedContent" : false,
         "notes" : [
           "No usable extracted text was found; OCR or a tagged-content provider is required.",
-          "PDF\/UA conformance and authored tag-tree preservation require a validator-backed lane."
+          "No \/StructTreeRoot in the catalog: this document has no authored tag tree (screen-reader structure is unavailable at the source).",
+          "PDF\/UA conformance requires the validator-backed lane (veraPDF)."
         ]
       },
       "annotationTypeCounts" : {
@@ -94,10 +95,10 @@
       ],
       "metadata" : {
         "author" : "https:\/\/imagemagick.org",
-        "creationDate" : "24\/8\/2026, 5:58 PM",
+        "creationDate" : "25\/8\/2026, 10:04 AM",
         "creator" : "https:\/\/imagemagick.org",
         "keywords" : "",
-        "modificationDate" : "24\/8\/2026, 5:58 PM",
+        "modificationDate" : "25\/8\/2026, 10:04 AM",
         "producer" : "https:\/\/imagemagick.org",
         "subject" : "",
         "title" : "printed-scan"
@@ -160,7 +161,7 @@
       "source" : {
         "byteCount" : 14506,
         "fileName" : "printed-scan.pdf",
-        "sha256" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364"
+        "sha256" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3"
       },
       "warnings" : [
 
@@ -170,7 +171,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-25T01:10:29Z",
+      "generatedAt" : "2026-08-26T06:02:24Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -184,7 +185,7 @@
         "platform" : "macOS",
         "version" : "Version 15.7.7 (Build 24G720)"
       },
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -199,7 +200,7 @@
     "source" : {
       "byteCount" : 14506,
       "fileName" : "printed-scan.pdf",
-      "sha256" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364"
+      "sha256" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3"
     }
   },
   "expectedFailure" : false,
@@ -219,7 +220,7 @@
         "platform" : "macOS",
         "version" : "Version 15.7.7 (Build 24G720)"
       },
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 1
@@ -677,7 +678,7 @@
         "version" : "Version 15.7.7 (Build 24G720)"
       },
       "sessionID" : "native-(inspection.source.sha256.prefix(16))",
-      "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+      "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -687,9 +688,9 @@
       "export" : {
         "exporterID" : "pdfkit",
         "operationCount" : 0,
-        "outputDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+        "outputDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
         "outputReopenable" : true,
-        "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+        "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
         "state" : "succeeded",
         "storage" : "local-file",
         "validation" : "validated",
@@ -727,13 +728,13 @@
       }
     }
   },
-  "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+  "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
   "sourcePath" : "benchmark\/results\/ocr-corpus\/printed-scan.pdf",
   "status" : "inspected",
   "validation" : {
     "checks" : [
       {
-        "id" : "39D26EF1-25B8-4DA3-82A7-0A69D1D74FBA",
+        "id" : "5CB150DD-3150-43AB-B3A1-AC461BBCAD7A",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -742,7 +743,7 @@
         "status" : "passed"
       },
       {
-        "id" : "83345525-A5BD-4E6B-8887-A313F02ECA5C",
+        "id" : "1C35C35F-D218-4154-8BD3-D9248973FC94",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 1 page(s).",
         "operationIDs" : [
@@ -751,7 +752,7 @@
         "status" : "passed"
       },
       {
-        "id" : "19290F6E-2E84-44FD-8C18-2094A89F98D3",
+        "id" : "AD5362AA-C727-4870-9419-CB955FFAC102",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -760,7 +761,7 @@
         "status" : "passed"
       },
       {
-        "id" : "EC6397EE-F8E6-4A32-86D2-B87FDC909497",
+        "id" : "93F79D37-0731-418D-9F46-3F8C976A3FEF",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -769,7 +770,7 @@
         "status" : "passed"
       },
       {
-        "id" : "C3957E66-659F-4A41-B313-A627BC098730",
+        "id" : "D307640B-F4F6-4326-9245-7BB435AD4AD9",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -778,7 +779,7 @@
         "status" : "passed"
       },
       {
-        "id" : "81B20B6B-BC30-4FD3-A9DB-18DA4D21DBFB",
+        "id" : "98D0FF20-22A0-45C1-AA45-38A6CABD5B5B",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -787,7 +788,7 @@
         "status" : "passed"
       },
       {
-        "id" : "C791CCEE-80F3-49A4-A1DD-6BDFF8D6953D",
+        "id" : "6EA35510-9FD2-483F-BDFB-5618EC78A0F7",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -802,7 +803,7 @@
     "operationIDs" : [
 
     ],
-    "outputDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+    "outputDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
     "outputReopenable" : true,
     "provider" : {
       "capabilities" : [
@@ -815,10 +816,10 @@
       "platform" : "macOS",
       "version" : "Version 15.7.7 (Build 24G720)"
     },
-    "sourceDigest" : "9ce5e5c2d9a58e43fa61c1a612512a5dba31f11900aad625304d83681be14364",
+    "sourceDigest" : "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-25T01:10:30Z"
+    "validatedAt" : "2026-08-26T06:02:26Z"
   },
   "version" : {
     "major" : 1,

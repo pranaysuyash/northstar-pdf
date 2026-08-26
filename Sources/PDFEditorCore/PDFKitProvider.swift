@@ -231,6 +231,7 @@ public struct PDFKitProvider: PDFProvider {
     }
 
     var objectEdits: [PDFIncrementalFormWriter.ObjectEdit] = []
+    var newObjects: [String] = []
     do {
       for operation in operations {
         try validateSourceBinding(operation, source: source.source)
@@ -238,15 +239,17 @@ public struct PDFKitProvider: PDFProvider {
           throw PDFEditorError.invalidOperation(
             "A native field edit on an AcroForm document requires a field name.")
         }
-        objectEdits.append(
-          contentsOf: try PDFIncrementalFormWriter.resolveEdits(
-            nodes: nodes,
-            targetFieldName: targetID,
-            requestedValue: operation.value
-          ))
+        let plan = try PDFIncrementalFormWriter.resolveEditPlan(
+          nodes: nodes,
+          targetFieldName: targetID,
+          requestedValue: operation.value,
+          source: sourceData
+        )
+        objectEdits.append(contentsOf: plan.objectEdits)
+        newObjects.append(contentsOf: plan.newObjectBodies)
       }
       let updated = try PDFIncrementalFormWriter.incrementalFieldUpdate(
-        sourceData, edits: objectEdits)
+        sourceData, edits: objectEdits, newObjects: newObjects)
       // Defense in depth: the prefix invariant is asserted inside the writer
       // and verified again here before anything touches disk.
       guard updated.prefix(sourceData.count) == sourceData else {
@@ -297,6 +300,82 @@ public struct PDFKitProvider: PDFProvider {
     }
   }
 
+  /// Replays structural page operations onto a document copy.
+  ///
+  /// The value payloads mirror the ones recorded by the AppModel page
+  /// management actions so replay reproduces the live mutation exactly:
+  /// `blank:widthxheight`, `index`, `source -> destination`, and a rotation
+  /// degree multiple of 90.
+  private func applyStructural(_ operation: EditOperation, to document: PDFDocument) throws {
+    switch operation.kind {
+    case .pageInsert:
+      guard operation.value.hasPrefix("blank:") else {
+        throw PDFEditorError.invalidOperation(
+          "Imported page inserts cannot be replayed against an opened source file. Page assembly from other PDFs is available for documents created in the app, which export their live document directly.")
+      }
+      let dimensions = operation.value.dropFirst("blank:".count)
+        .split(separator: "x")
+        .compactMap { Double($0) }
+      guard dimensions.count == 2, dimensions[0] > 0, dimensions[1] > 0 else {
+        throw PDFEditorError.invalidOperation(
+          "A blank page insert requires a blank:widthxheight payload with positive dimensions.")
+      }
+      let page = PDFPage()
+      let mediaBox = CGRect(
+        origin: .zero,
+        size: CGSize(width: dimensions[0], height: dimensions[1]))
+      page.setBounds(mediaBox, for: .mediaBox)
+      page.setBounds(mediaBox, for: .cropBox)
+      let index = min(max(operation.pageIndex, 0), document.pageCount)
+      document.insert(page, at: index)
+
+    case .pageDelete:
+      guard let index = Int(operation.value),
+        index >= 0,
+        index < document.pageCount
+      else {
+        throw PDFEditorError.invalidOperation(
+          "A page delete requires the index of an existing page.")
+      }
+      document.removePage(at: index)
+
+    case .pageMove:
+      let parts = operation.value
+        .split(separator: "->")
+        .compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+      guard parts.count == 2 else {
+        throw PDFEditorError.invalidOperation(
+          "A page move requires a \"source -> destination\" payload.")
+      }
+      let (sourceIndex, destinationIndex) = (parts[0], parts[1])
+      guard sourceIndex >= 0, sourceIndex < document.pageCount else {
+        throw PDFEditorError.invalidOperation(
+          "A page move requires the index of an existing source page.")
+      }
+      guard let page = document.page(at: sourceIndex) else {
+        throw PDFEditorError.invalidPage(sourceIndex)
+      }
+      document.removePage(at: sourceIndex)
+      document.insert(page, at: min(max(destinationIndex, 0), document.pageCount))
+
+    case .pageTransform:
+      guard let degrees = Int(operation.value),
+        [0, 90, 180, 270].contains(degrees),
+        operation.pageIndex >= 0,
+        operation.pageIndex < document.pageCount,
+        let page = document.page(at: operation.pageIndex)
+      else {
+        throw PDFEditorError.invalidOperation(
+          "A page transform requires a 0/90/180/270 degree value and an existing page.")
+      }
+      page.rotation = degrees
+
+    default:
+      throw PDFEditorError.invalidOperation(
+        "\(operation.kind.rawValue) is not a structural page operation.")
+    }
+  }
+
   private func validateSourceBinding(_ operation: EditOperation, source: DocumentSource) throws {
     if let operationDigest = operation.sourceDigest, operationDigest != source.sha256 {
       throw PDFEditorError.invalidOperation(
@@ -328,6 +407,16 @@ public struct PDFKitProvider: PDFProvider {
 
   public func apply(_ operation: EditOperation, to document: PDFDocument) throws {
     try validateOperationShape(operation)
+    // Structural operations resolve their own page targets: an insert may
+    // target the one-past-the-end index, which the per-page guard below
+    // would wrongly reject.
+    switch operation.kind {
+    case .pageInsert, .pageDelete, .pageMove, .pageTransform:
+      try applyStructural(operation, to: document)
+      return
+    default:
+      break
+    }
     guard let page = document.page(at: operation.pageIndex) else {
       throw PDFEditorError.invalidPage(operation.pageIndex)
     }
@@ -815,7 +904,20 @@ public struct PDFKitProvider: PDFProvider {
       for: outputDocument, source: makeSource(url: outputURL, data: outputData), data: outputData)
     var messages: [String] = []
 
-    guard output.pages.count == source.pages.count else {
+    // Structural page operations change the page count and shift page
+    // indices, so the expected count is derived from the operation ledger
+    // rather than assumed equal to the source. Imported-page inserts cannot
+    // replay against an opened file (applyStructural rejects them), so only
+    // blank inserts contribute.
+    let structuralOperations = operations.filter {
+      [.pageInsert, .pageDelete, .pageMove, .pageTransform].contains($0.kind)
+    }
+    let expectedPageCount =
+      source.pages.count
+      + operations.filter { $0.kind == .pageInsert && $0.value.hasPrefix("blank:") }.count
+      - operations.filter { $0.kind == .pageDelete }.count
+
+    guard output.pages.count == expectedPageCount else {
       messages.append("Page count changed during export.")
       checks.append(
         ValidationCheck(
@@ -842,20 +944,34 @@ public struct PDFKitProvider: PDFProvider {
         operationIDs: operations.map(\.id)
       )
     }
-    for (expected, actual) in zip(source.pages, output.pages) {
-      if expected.bounds != actual.bounds || expected.rotation != actual.rotation {
-        messages.append("Page geometry or rotation changed on page \(expected.pageIndex + 1).")
+    if structuralOperations.isEmpty {
+      for (expected, actual) in zip(source.pages, output.pages) {
+        if expected.bounds != actual.bounds || expected.rotation != actual.rotation {
+          messages.append("Page geometry or rotation changed on page \(expected.pageIndex + 1).")
+        }
       }
+      checks.append(
+        ValidationCheck(
+          kind: .pageGeometry,
+          status: messages.contains(where: { $0.contains("Page geometry") }) ? .failed : .passed,
+          message: messages.contains(where: { $0.contains("Page geometry") })
+            ? "Page geometry or rotation changed during export."
+            : "Page count, page boxes, and rotations are unchanged.",
+          operationIDs: operations.map(\.id)
+        ))
+    } else {
+      // Index-aligned geometry assertions do not hold once pages are
+      // inserted, deleted, or reordered; the expected-page-count and reopen
+      // checks carry the structural evidence instead.
+      checks.append(
+        ValidationCheck(
+          kind: .pageGeometry,
+          status: .warning,
+          message:
+            "Structural page operations bypass index-aligned geometry comparison; the reopened page count matched the operation-derived expectation.",
+          operationIDs: structuralOperations.map(\.id)
+        ))
     }
-    checks.append(
-      ValidationCheck(
-        kind: .pageGeometry,
-        status: messages.contains(where: { $0.contains("Page geometry") }) ? .failed : .passed,
-        message: messages.contains(where: { $0.contains("Page geometry") })
-          ? "Page geometry or rotation changed during export."
-          : "Page count, page boxes, and rotations are unchanged.",
-        operationIDs: operations.map(\.id)
-      ))
 
     let sourceFields = source.fields.sorted { $0.id < $1.id }
     let outputFields = output.fields.sorted { $0.id < $1.id }
@@ -972,6 +1088,11 @@ public struct PDFKitProvider: PDFProvider {
           messages.append(
             "Overlay edit \(operation.id.uuidString) could not be located after reopen.")
         }
+      case .pageInsert, .pageDelete, .pageMove, .pageTransform:
+        // Per-operation structural evidence is carried by the
+        // expected-page-count and reopen checks; index-aligned per-page
+        // assertions do not hold once pages move.
+        continue
       default:
         messages.append(
           "Validation for \(operation.kind.rawValue) is not implemented by the PDFKit adapter.")
@@ -979,6 +1100,20 @@ public struct PDFKitProvider: PDFProvider {
     }
 
     let (textImpact, rasterImpact) = PerformanceTelemetry.shared.measureImpactValidation {
+      if !structuralOperations.isEmpty {
+        return (
+          PDFImpactResult(
+            status: .warning,
+            message:
+              "Structural page operations bypass index-aligned outside-region text comparison."
+          ),
+          PDFImpactResult(
+            status: .warning,
+            message:
+              "Structural page operations bypass index-aligned outside-region raster comparison."
+          )
+        )
+      }
       let tImpact = PDFImpactValidator.compareTextOutsideRegions(
         source: sourceDocument,
         output: outputDocument,

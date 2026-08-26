@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { memo, useMemo, useState } from "react";
 import type { NativeField } from "../pdf/PdfController";
 
 interface ContextualInspectorProps {
@@ -10,17 +10,20 @@ interface ContextualInspectorProps {
   onAutofillProfile: () => void;
 }
 
-export const ContextualInspector: React.FC<ContextualInspectorProps> = ({
+export const ContextualInspector = memo(function ContextualInspector({
   fields,
   selectedFieldId,
   onSelectField,
   onUpdateFieldValue,
   onRunOCR,
   onAutofillProfile
-}) => {
+}: ContextualInspectorProps) {
   const [activeTab, setActiveTab] = useState<"focus" | "document" | "trust">("focus");
 
-  const selectedField = fields.find((f) => f.id === selectedFieldId);
+  const selectedField = useMemo(
+    () => fields.find((f) => f.id === selectedFieldId),
+    [fields, selectedFieldId]
+  );
 
   return (
     <aside className="w-80 border-l border-slate-800 bg-slate-900/90 backdrop-blur flex flex-col h-full text-slate-200">
@@ -120,6 +123,7 @@ export const ContextualInspector: React.FC<ContextualInspectorProps> = ({
                         ? "bg-cyan-950/60 border border-cyan-700 text-cyan-200"
                         : "hover:bg-slate-800/50 text-slate-400"
                     }`}
+                    style={{ contentVisibility: "auto", containIntrinsicSize: "32px" }}
                     onClick={() => onSelectField(f.id)}
                   >
                     <span className="font-mono truncate max-w-[150px]">{f.name}</span>
@@ -175,4 +179,5 @@ export const ContextualInspector: React.FC<ContextualInspectorProps> = ({
       </div>
     </aside>
   );
-};
+});
+

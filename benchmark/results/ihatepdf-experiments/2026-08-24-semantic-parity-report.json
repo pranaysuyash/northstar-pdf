@@ -12,7 +12,7 @@
   "mutationCount": 4,
   "mutationsKilled": 4,
   "browser": {
-    "baseURL": "http://127.0.0.1:61906/web/index.html",
+    "baseURL": "http://127.0.0.1:49460/web/index.html",
     "consoleErrors": [],
     "pageErrors": []
   },

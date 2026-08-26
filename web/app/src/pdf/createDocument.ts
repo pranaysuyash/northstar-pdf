@@ -5,6 +5,8 @@
  * same export-copy contract, nothing leaves the device.
  */
 
+import { ensurePdfLib } from "./ensurePdfLib";
+
 export interface ScratchPageSize {
   readonly id: string;
   readonly width: number;
@@ -18,13 +20,6 @@ export const SCRATCH_PAGE_SIZES: readonly ScratchPageSize[] = [
   { id: "Legal", width: 612, height: 1008 }
 ];
 
-function requirePdfLib(): PdfLibGlobal {
-  if (!window.PDFLib) {
-    throw new Error("pdf-lib is still loading. Try again in a moment.");
-  }
-  return window.PDFLib;
-}
-
 export function resolvePageSize(sizeID: string | undefined): ScratchPageSize {
   return (
     SCRATCH_PAGE_SIZES.find((size) => size.id === sizeID) ?? SCRATCH_PAGE_SIZES[0]
@@ -34,7 +29,7 @@ export function resolvePageSize(sizeID: string | undefined): ScratchPageSize {
 export async function createBlankPdfBytes(
   pageSize: ScratchPageSize
 ): Promise<Uint8Array> {
-  const pdfLib = requirePdfLib();
+  const pdfLib = await ensurePdfLib();
   const doc = await pdfLib.PDFDocument.create();
   doc.addPage([pageSize.width, pageSize.height]);
   return doc.save();
@@ -48,19 +43,31 @@ export async function createBlankPdfBytes(
 export async function createPdfFromImageFiles(
   files: File[]
 ): Promise<Uint8Array> {
-  const pdfLib = requirePdfLib();
+  const supportedFiles = files.filter(
+    (file) => file.type === "image/png" || file.type === "image/jpeg"
+  );
+  if (supportedFiles.length === 0) {
+    throw new Error("No supported images (PNG or JPEG) were selected.");
+  }
+
+  // Parallelize reading array buffers across all files (async-parallel)
+  const [pdfLib, imagePayloads] = await Promise.all([
+    ensurePdfLib(),
+    Promise.all(
+      supportedFiles.map(async (file) => ({
+        type: file.type as "image/png" | "image/jpeg",
+        bytes: new Uint8Array(await file.arrayBuffer())
+      }))
+    )
+  ]);
+
   const doc = await pdfLib.PDFDocument.create();
-  let embedded = 0;
-  for (const file of files) {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    let image: PdfLibEmbeddedImage;
-    if (file.type === "image/png") {
-      image = await doc.embedPng(bytes);
-    } else if (file.type === "image/jpeg") {
-      image = await doc.embedJpg(bytes);
-    } else {
-      continue;
-    }
+  for (const { type, bytes } of imagePayloads) {
+    const image =
+      type === "image/png"
+        ? await doc.embedPng(bytes)
+        : await doc.embedJpg(bytes);
+
     const page = doc.addPage([image.width, image.height]);
     page.drawImage(image, {
       x: 0,
@@ -68,10 +75,8 @@ export async function createPdfFromImageFiles(
       width: image.width,
       height: image.height
     });
-    embedded += 1;
   }
-  if (embedded === 0) {
-    throw new Error("No supported images (PNG or JPEG) were selected.");
-  }
+
   return doc.save();
 }
+

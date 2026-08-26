@@ -7,12 +7,12 @@
   "sourcePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
   "expectedFailure": true,
   "status": "inspectionFailed",
-  "sourceDigest": null,
+  "sourceDigest": "98f9a51e4cbdef0e146f52f2658b1f2d4d3a1d5b057f85791aae7cf2d8b99bfe",
   "document": null,
   "coordinates": null,
   "candidates": null,
   "editSession": null,
   "preflight": null,
   "validation": null,
-  "error": "cannot-open: Invalid PDF structure."
+  "error": "fixture failed browser inspection (expected-failure corpus entry)"
 }

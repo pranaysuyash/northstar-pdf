@@ -27,6 +27,62 @@ public struct PDFRect: Codable, Equatable, Hashable, Sendable {
   public var cgRect: CGRect {
     CGRect(x: x, y: y, width: width, height: height)
   }
+
+  public var isNull: Bool {
+    x.isNaN || y.isNaN || width.isNaN || height.isNaN
+  }
+
+  public var isEmpty: Bool {
+    width <= 0 || height <= 0 || isNull
+  }
+
+  public var standardized: PDFRect {
+    var rX = x
+    var rY = y
+    var rW = width
+    var rH = height
+    if rW < 0 {
+      rX += rW
+      rW = -rW
+    }
+    if rH < 0 {
+      rY += rH
+      rH = -rH
+    }
+    return PDFRect(x: rX, y: rY, width: rW, height: rH)
+  }
+
+  public func contains(x px: Double, y py: Double) -> Bool {
+    let s = standardized
+    return px >= s.x && px <= s.x + s.width && py >= s.y && py <= s.y + s.height
+  }
+
+  public func intersects(_ other: PDFRect) -> Bool {
+    let s1 = standardized
+    let s2 = other.standardized
+    return !(s2.x >= s1.x + s1.width || s2.x + s2.width <= s1.x || s2.y >= s1.y + s1.height || s2.y + s2.height <= s1.y)
+  }
+
+  public func intersection(_ other: PDFRect) -> PDFRect? {
+    guard intersects(other) else { return nil }
+    let s1 = standardized
+    let s2 = other.standardized
+    let ix = max(s1.x, s2.x)
+    let iy = max(s1.y, s2.y)
+    let iw = min(s1.x + s1.width, s2.x + s2.width) - ix
+    let ih = min(s1.y + s1.height, s2.y + s2.height) - iy
+    return PDFRect(x: ix, y: iy, width: max(0, iw), height: max(0, ih))
+  }
+
+  public func union(_ other: PDFRect) -> PDFRect {
+    let s1 = standardized
+    let s2 = other.standardized
+    let ux = min(s1.x, s2.x)
+    let uy = min(s1.y, s2.y)
+    let uw = max(s1.x + s1.width, s2.x + s2.width) - ux
+    let uh = max(s1.y + s1.height, s2.y + s2.height) - uy
+    return PDFRect(x: ux, y: uy, width: uw, height: uh)
+  }
 }
 
 public struct DocumentSource: Codable, Equatable, Hashable, Sendable {

@@ -2470,3 +2470,46 @@
   - `swift test` passed all **202 tests across 27 suites** with 0 failures.
   - Node web contracts and capability lane tests passed.
 - Durable audit report published at [`docs/audits/boundary-systems-architecture-audit-per-0933.md`](docs/audits/boundary-systems-architecture-audit-per-0933.md).
+
+### 2026-08-26 Human-AI Authority Architecture Audit (PER-0927)
+
+- Adopted **Persona `PER-0927 — HUMAN-AI AUTHORITY ARCHITECT`** (supported by `PER-0888 — AGENT AUTHORITY & ACCOUNTABILITY DESIGNER` and `PER-0889 — AI COMPLIANCE ENGINEER`).
+- Formulated the 5-tier Action Authority Matrix (Tier 0 Read-Only, Tier 1 Reversible In-Memory Edit, Tier 2 Heuristic Proposal, Tier 3 Cryptographic Vault, Tier 4 Destructive Export).
+- **Approval Fatigue Elimination:** Verified that Tier 0/1 operations remain autonomous with full Undo/Redo ledger support.
+- **Human-in-the-Loop Gates:** Verified that heuristic candidate detections remain in `.suggested` / `.proposed` state pending human selection.
+- **Two-Phase Commit Destructive Gates:** Verified that permanent export and redaction require explicit human confirmation.
+- **Regression Test Suite:** Added `Tests/PDFEditorCoreTests/HumanAIAuthorityArchitectTests.swift` (4 tests).
+- **Verification:**
+  - `swift test` passed all **206 tests across 28 suites** with 0 failures.
+  - Node web contracts and capability lane tests passed.
+- Durable audit report published at [`docs/audits/human-ai-authority-architecture-audit-per-0927.md`](docs/audits/human-ai-authority-architecture-audit-per-0927.md).
+
+## 2026-08-25 OPEN-Gate Closure Pass
+
+- Worked all nine previously-OPEN release gates to implementation evidence;
+  the registry now reads 55 PARTIAL / 4 PASS with zero FAIL and zero OPEN.
+- RG-005/RG-052: structural tag-tree detection via CGPDF catalog
+  (/StructTreeRoot + /MarkInfo/Marked) replacing unreliable PDFKit attributes;
+  inspection reports authored-tree presence or explicit unavailability;
+  export validation fails structure-tree loss with evidence.
+- RG-043: search announcements (match counts, current match with position/
+  page/snippet, page changes, no-match) posted via NSAccessibility
+  announcementRequested and recorded in `lastAccessibilityAnnouncement`.
+  Merged with a parallel lane's independent announcer implementation instead
+  of duplicating it.
+- RG-057: the Find command's focus event is now consumed by the document
+  canvas (expand HUD + focus the field); previously it fired with no effect.
+- RG-058: the last unguarded canvas animation (search expand) now honors
+  Reduce Motion.
+- RG-059: window minimum 1080x700 -> 720x480; contrast-aware HUD chrome;
+  confirmed no fixed-size fonts (Dynamic Type intact).
+- RG-029: recovery evidence mapped (crash-interruption suite, termination
+  flush, provider-level export-failure tests, malformed-input rejection).
+- RG-006/RG-007: implementation surfaces documented with explicit
+  human-observation remainders.
+- Updated `docs/release-gates.md` rows for all nine gates; recorded F-072 in
+  `findings.md`.
+- Verification: 206/206 tests across 28 suites with fixture gates;
+  `swift build -c release` green.
+- No Git mutations, production deployment, external service writes, or legally
+  binding signature claims were made.

@@ -136,3 +136,14 @@
 .is-active-match {
   outline: 1px solid var(--pdf-accent);
 }
+
+.thumbnail-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 160px;
+}
+
+.inspector-field-row {
+  content-visibility: auto;
+  contain-intrinsic-size: 32px;
+}
+

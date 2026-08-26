@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import {
   productSurfaceReducer,
   type CapabilityState
@@ -13,7 +13,6 @@ import {
 import { pdfController } from "./pdf/PdfController";
 import type { ExportReport, NativeField } from "./pdf/PdfController";
 import { usePdfSnapshot } from "./pdf/usePdfSnapshot";
-import { ensurePdfLib } from "./pdf/ensurePdfLib";
 import { Toolbar } from "./shell/Toolbar";
 import { ModeRail } from "./shell/ModeRail";
 import { ReaderStage } from "./modes/ReaderStage";
@@ -25,13 +24,15 @@ import {
 } from "./modes/ModePanels";
 import { CompleteWorkbench } from "./modes/CompleteWorkbench";
 import { ReviewWorkbench } from "./modes/ReviewWorkbench";
-import { AgentCommandHUD, type CommandItem } from "./shell/AgentCommandHUD";
+import type { CommandItem } from "./shell/AgentCommandHUD";
 import { ContextualInspector } from "./shell/ContextualInspector";
 import { PageThumbnailRail } from "./shell/PageThumbnailRail";
 
-export function App() {
-  ensurePdfLib();
+const AgentCommandHUD = lazy(() =>
+  import("./shell/AgentCommandHUD").then((m) => ({ default: m.AgentCommandHUD }))
+);
 
+export function App() {
   const [surface, dispatch] = useReducer(productSurfaceReducer, undefined, () =>
     // Lazy init keeps the reducer's contract module as the single state source.
     productSurfaceReducer(undefined, { type: "select-mode", modeID: "reader" })
@@ -143,22 +144,45 @@ export function App() {
       address: "123 Market St, San Francisco, CA"
     };
 
-    setFields((current) =>
-      current.map((f) => {
+    setFields((current) => {
+      const updates: Array<{ field: NativeField; value: string }> = [];
+      const nextFields = current.map((f) => {
         const lower = f.name.toLowerCase();
         for (const [k, v] of Object.entries(sampleProfile)) {
-          if (lower.includes(k)) {
-            handleConfirmEdit(f, v);
+          if (lower.includes(k) && f.value !== v) {
+            updates.push({ field: f, value: v });
             return { ...f, value: v };
           }
         }
         return f;
-      })
-    );
-  }, [handleConfirmEdit]);
+      });
+
+      if (updates.length > 0) {
+        setHistory((hist) => {
+          let updatedHist = hist;
+          for (const { field, value } of updates) {
+            updatedHist = recordOperation(updatedHist, {
+              kind: "nativeFieldValue",
+              targetID: field.id,
+              pageIndex: field.pageIndex,
+              value,
+              previousValue: field.value
+            });
+          }
+          return updatedHist;
+        });
+      }
+
+      return nextFields;
+    });
+  }, []);
 
   const handleRunOCR = useCallback(() => {
     dispatch({ type: "select-mode", modeID: "understand" });
+  }, []);
+
+  const handleSelectPage = useCallback((p: number) => {
+    pdfController.setPage(p + 1);
   }, []);
 
   const readerCapability: CapabilityState =
@@ -173,45 +197,48 @@ export function App() {
   const capabilities = { ...surface.capabilities, reader: readerCapability };
   const pendingOps: HistoryOperation[] = pendingOperations(history);
 
-  // Command Palette Items
-  const commands: CommandItem[] = [
-    {
-      id: "autofill",
-      title: "Autofill Document Profile",
-      subtitle: "Apply verified local identity profile to matched fields",
-      category: "autofill",
-      shortcut: "⌥⌘A",
-      icon: "⚡",
-      action: handleAutofillProfile
-    },
-    {
-      id: "ocr",
-      title: "Run On-Device OCR Analysis",
-      subtitle: "Detect text lines and form boxes using local vision models",
-      category: "analysis",
-      shortcut: "⇧⌘O",
-      icon: "🔍",
-      action: handleRunOCR
-    },
-    {
-      id: "export",
-      title: "Export Validated Copy",
-      subtitle: "Write incremental AcroForm changes with structural validation",
-      category: "export",
-      shortcut: "⌘E",
-      icon: "💾",
-      action: handleExport
-    },
-    {
-      id: "undo",
-      title: "Undo Last Action",
-      subtitle: "Revert latest field value or candidate edit non-destructively",
-      category: "tools",
-      shortcut: "⌘Z",
-      icon: "↩",
-      action: handleUndo
-    }
-  ];
+  // Command Palette Items (memoized to avoid full tree re-render on ticks)
+  const commands: CommandItem[] = useMemo(
+    () => [
+      {
+        id: "autofill",
+        title: "Autofill Document Profile",
+        subtitle: "Apply verified local identity profile to matched fields",
+        category: "autofill",
+        shortcut: "⌥⌘A",
+        icon: "⚡",
+        action: handleAutofillProfile
+      },
+      {
+        id: "ocr",
+        title: "Run On-Device OCR Analysis",
+        subtitle: "Detect text lines and form boxes using local vision models",
+        category: "analysis",
+        shortcut: "⇧⌘O",
+        icon: "🔍",
+        action: handleRunOCR
+      },
+      {
+        id: "export",
+        title: "Export Validated Copy",
+        subtitle: "Write incremental AcroForm changes with structural validation",
+        category: "export",
+        shortcut: "⌘E",
+        icon: "💾",
+        action: handleExport
+      },
+      {
+        id: "undo",
+        title: "Undo Last Action",
+        subtitle: "Revert latest field value or candidate edit non-destructively",
+        category: "tools",
+        shortcut: "⌘Z",
+        icon: "↩",
+        action: handleUndo
+      }
+    ],
+    [handleAutofillProfile, handleRunOCR, handleExport, handleUndo]
+  );
 
   return (
     <>
@@ -228,13 +255,13 @@ export function App() {
           />
         </aside>
 
-        {documentOpen && (
+        {documentOpen ? (
           <PageThumbnailRail
             pageCount={snapshot.pageCount}
             currentPageIndex={snapshot.currentPage - 1}
-            onSelectPage={(p) => pdfController.setPage(p + 1)}
+            onSelectPage={handleSelectPage}
           />
-        )}
+        ) : null}
 
         <main id="viewerMain" className="panel" tabIndex={-1} aria-label="PDF document viewer">
           <ReaderStage snapshot={snapshot} />
@@ -284,11 +311,15 @@ export function App() {
         </aside>
       </div>
 
-      <AgentCommandHUD
-        isOpen={isCommandHUDOpen}
-        onClose={() => setIsCommandHUDOpen(false)}
-        commands={commands}
-      />
+      {isCommandHUDOpen ? (
+        <Suspense fallback={null}>
+          <AgentCommandHUD
+            isOpen={isCommandHUDOpen}
+            onClose={() => setIsCommandHUDOpen(false)}
+            commands={commands}
+          />
+        </Suspense>
+      ) : null}
     </>
   );
 }

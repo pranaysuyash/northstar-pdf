@@ -24,6 +24,18 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
-    target: "es2022"
+    target: "es2022",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("vendor/pdfjs")) {
+            return "pdfjs";
+          }
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
+            return "react-vendor";
+          }
+        }
+      }
+    }
   }
 });

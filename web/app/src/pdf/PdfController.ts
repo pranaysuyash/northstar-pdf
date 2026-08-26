@@ -1,4 +1,5 @@
 import * as pdfjs from "../../../vendor/pdfjs/pdf.min.mjs";
+import { ensurePdfLib } from "./ensurePdfLib";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "../../../vendor/pdfjs/pdf.worker.min.mjs",
@@ -372,35 +373,40 @@ export class PdfController {
     return rects;
   }
 
-  /** Enumerates native AcroForm widgets across all pages. */
+  /** Enumerates native AcroForm widgets across all pages in parallel. */
   async listNativeFields(): Promise<NativeField[]> {
     const doc = this.#doc;
     if (!doc || this.#snapshot.status !== "ready") return [];
-    const fields: NativeField[] = [];
-    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
-      const page = await doc.getPage(pageNumber);
-      const annotations = await page.getAnnotations({ intent: "display" });
-      annotations
-        .filter((annotation) => annotation.subtype === "Widget" || "fieldName" in annotation)
-        .forEach((annotation, index) => {
-          const name =
-            (annotation as { fieldName?: string }).fieldName ??
-            (annotation as { id?: string }).id ??
-            `field-${pageNumber}-${index + 1}`;
-          const kind = fieldKindOf(annotation);
-          const rawValue = String(
-            (annotation as { fieldValue?: unknown }).fieldValue ?? ""
-          );
-          const value =
-            kind === "checkbox" || kind === "radio"
-              ? /^off$/i.test(rawValue)
-                ? ""
-                : rawValue
-              : rawValue;
-          fields.push({ id: name, name, kind, pageIndex: pageNumber - 1, value, choices: [] });
-        });
-    }
-    return fields;
+
+    const pageIndices = Array.from({ length: doc.numPages }, (_, i) => i + 1);
+    const perPageFields = await Promise.all(
+      pageIndices.map(async (pageNumber) => {
+        const page = await doc.getPage(pageNumber);
+        const annotations = await page.getAnnotations({ intent: "display" });
+        const fieldsOnPage: NativeField[] = [];
+        annotations
+          .filter((annotation) => annotation.subtype === "Widget" || "fieldName" in annotation)
+          .forEach((annotation, index) => {
+            const name =
+              (annotation as { fieldName?: string }).fieldName ??
+              (annotation as { id?: string }).id ??
+              `field-${pageNumber}-${index + 1}`;
+            const kind = fieldKindOf(annotation);
+            const rawValue = String(
+              (annotation as { fieldValue?: unknown }).fieldValue ?? ""
+            );
+            const value =
+              kind === "checkbox" || kind === "radio"
+                ? /^off$/i.test(rawValue)
+                  ? ""
+                  : rawValue
+                : rawValue;
+            fieldsOnPage.push({ id: name, name, kind, pageIndex: pageNumber - 1, value, choices: [] });
+          });
+        return fieldsOnPage;
+      })
+    );
+    return perPageFields.flat();
   }
 
   /**
@@ -413,11 +419,9 @@ export class PdfController {
     if (!this.#sourceBytes) {
       throw new Error("No source document is open.");
     }
-    if (!window.PDFLib) {
-      throw new Error("pdf-lib did not load in this browser.");
-    }
+    const pdfLib = await ensurePdfLib();
 
-    const outputBytes = await writeFieldEdits(this.#sourceBytes, operations);
+    const outputBytes = await writeFieldEdits(this.#sourceBytes, operations, pdfLib);
 
     checks.push({
       id: "writer",
@@ -439,8 +443,8 @@ export class PdfController {
       });
 
       const fieldObjects = (await reopened.getFieldObjects?.()) ?? {};
-      const fieldNames = Object.keys(fieldObjects);
-      const missing = operations.filter((op) => !fieldNames.includes(op.targetID));
+      const fieldNames = new Set(Object.keys(fieldObjects));
+      const missing = operations.filter((op) => !fieldNames.has(op.targetID));
       checks.push({
         id: "editedFieldsReopen",
         status: missing.length ? "failed" : operations.length ? "passed" : "skipped",
@@ -475,9 +479,11 @@ function fieldKindOf(annotation: Record<string, unknown>): NativeField["kind"] {
   }
 }
 
-async function writeFieldEdits(source: Uint8Array, operations: FieldEditOperation[]): Promise<Uint8Array> {
-  const pdfLib = window.PDFLib;
-  if (!pdfLib) throw new Error("pdf-lib did not load in this browser.");
+async function writeFieldEdits(
+  source: Uint8Array,
+  operations: FieldEditOperation[],
+  pdfLib: PdfLibGlobal
+): Promise<Uint8Array> {
   const { PDFDocument, StandardFonts } = pdfLib;
   const outputDocument = await PDFDocument.load(source.slice());
   if (!operations.length) {

@@ -524,11 +524,15 @@ public enum PDFIncrementalFormWriter {
 
   // MARK: - Incremental update
 
-  /// Appends an incremental update redefining each edited object, with a new
-  /// xref section and `/Prev`-chained trailer. The source must remain a
-  /// byte-exact prefix of the returned data (asserted after the write).
-  public static func incrementalFieldUpdate(_ source: Data, edits: [ObjectEdit]) throws -> Data {
-    guard !edits.isEmpty else { return source }
+  /// Appends an incremental update redefining each edited object and adding
+  /// any new objects, with a new xref section and `/Prev`-chained trailer.
+  /// New objects are numbered sequentially after the highest existing object
+  /// number; `/Size` is bumped to match. The source must remain a byte-exact
+  /// prefix of the returned data (asserted after the write).
+  public static func incrementalFieldUpdate(
+    _ source: Data, edits: [ObjectEdit], newObjects: [String] = []
+  ) throws -> Data {
+    guard !edits.isEmpty || !newObjects.isEmpty else { return source }
     let xrefOffset = try findLastStartxrefOffset(source)
     let xref = try parseXref(source, offset: xrefOffset)
     guard xref.trailer["/Encrypt"] == nil else { throw WriterError.encryptedUnsupported }
@@ -547,6 +551,17 @@ public enum PDFIncrementalFormWriter {
       chunks.append(Data(appended))
       total += appended.count
       subsections.append((edit.objectNumber, generation, offset))
+    }
+
+    var nextNumber = max(xref.size, (edits.map { $0.objectNumber + 1 }.max() ?? 0))
+    for body in newObjects {
+      let objectNumber = nextNumber
+      nextNumber += 1
+      var appended = latin1Bytes("\(objectNumber) 0 obj\n\(body)\nendobj\n")
+      let offset = total
+      chunks.append(Data(appended))
+      total += appended.count
+      subsections.append((objectNumber, 0, offset))
     }
 
     var xrefBody = "xref\n"
@@ -751,10 +766,21 @@ public enum PDFIncrementalFormWriter {
     return String(objectText[match.valueRange]).trimmingCharacters(in: .whitespacesAndNewlines)
   }
 }
-
 // MARK: - Edit-plan resolution
 
 extension PDFIncrementalFormWriter {
+  /// A complete edit plan: redefinitions of existing objects plus brand-new
+  /// objects (appearance streams, fonts) numbered by the writer.
+  public struct ResolvedEditPlan {
+    public let objectEdits: [ObjectEdit]
+    public let newObjectBodies: [String]
+
+    public init(objectEdits: [ObjectEdit], newObjectBodies: [String] = []) {
+      self.objectEdits = objectEdits
+      self.newObjectBodies = newObjectBodies
+    }
+  }
+
   /// Builds object-level edits for one native field-value operation.
   ///
   /// Semantics mirror the verified web lane: text/choice fields get `/V` on
@@ -766,6 +792,39 @@ extension PDFIncrementalFormWriter {
     targetFieldName: String,
     requestedValue: String
   ) throws -> [ObjectEdit] {
+    // Compatibility wrapper without appearance generation (no source bytes).
+    let fieldNodes = nodes.filter { $0.fullyQualifiedName == targetFieldName }
+    guard !fieldNodes.isEmpty else { throw WriterError.fieldNotFound(targetFieldName) }
+    let terminal =
+      fieldNodes.first { !$0.isWidget || fieldNodes.count == 1 }
+      ?? fieldNodes[0]
+    let widgetKids = nodes.filter {
+      $0.isWidget && $0.objectNumber != terminal.objectNumber
+        && $0.fullyQualifiedName == targetFieldName
+    }
+    if terminal.fieldType == "Btn" {
+      return try buttonEdits(
+        terminal: terminal, widgetKids: widgetKids,
+        targetFieldName: targetFieldName, requestedValue: requestedValue)
+    }
+    return [
+      ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", pdfString(requestedValue))])
+    ]
+  }
+
+  /// Full edit plan with appearance-stream generation for text/choice edits.
+  ///
+  /// The edited widget receives a self-contained `/AP /N` Form XObject
+  /// (Helvetica, own /Resources) so strict viewers render the new value
+  /// without relying on `/NeedAppearances` regeneration — which would force
+  /// unrelated fields to re-render and is therefore deliberately avoided.
+  public static func resolveEditPlan(
+    nodes: [FormObjectNode],
+    targetFieldName: String,
+    requestedValue: String,
+    source: Data,
+    generateAppearances: Bool = true
+  ) throws -> ResolvedEditPlan {
     // The terminal field node for a name: the deepest node with that FQN that
     // is not itself a pure widget kid of another node with the same FQN.
     let fieldNodes = nodes.filter { $0.fullyQualifiedName == targetFieldName }
@@ -773,62 +832,121 @@ extension PDFIncrementalFormWriter {
     let terminal =
       fieldNodes.first { !$0.isWidget || fieldNodes.count == 1 }
       ?? fieldNodes[0]
-
     let widgetKids = nodes.filter {
       $0.isWidget && $0.objectNumber != terminal.objectNumber
         && $0.fullyQualifiedName == targetFieldName
     }
 
     if terminal.fieldType == "Btn" {
-      let onStates = Set(
-        (terminal.buttonStates + widgetKids.flatMap { $0.buttonStates }).map {
-          $0.trimmingCharacters(in: .whitespaces)
-        }
-      )
-      let namedOnStates = onStates.filter { $0 != "/Off" }
-      let normalized = requestedValue.trimmingCharacters(in: .whitespacesAndNewlines)
-      let lowered = normalized.lowercased()
-      let offTokens: Set<String> = ["off", "0", "", "false", "no", "unchecked"]
-      let booleanOnTokens: Set<String> = ["true", "yes", "on", "1", "checked"]
+      return ResolvedEditPlan(
+        objectEdits: try buttonEdits(
+          terminal: terminal, widgetKids: widgetKids,
+          targetFieldName: targetFieldName, requestedValue: requestedValue))
+    }
 
-      if offTokens.contains(lowered) {
-        var edits = [ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", "/Off")])]
-        for kid in widgetKids {
-          edits.append(ObjectEdit(objectNumber: kid.objectNumber, pairs: [("/AS", "/Off")]))
+    // Text and choice fields: /V with a PDF string on the terminal node.
+    var objectEdits = [
+      ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", pdfString(requestedValue))])
+    ]
+    var newObjects: [String] = []
+
+    // Appearance generation: patch /AP /N on the widget leaf so the rendered
+    // page shows the new value even in viewers that never regenerate.
+    if generateAppearances {
+      let widgetLeaf =
+        widgetKids.first
+        ?? (terminal.isWidget ? terminal : nil)
+      if let leaf = widgetLeaf, let rect = leaf.rect, rect.count >= 4 {
+        let width = abs(rect[2] - rect[0])
+        let height = abs(rect[3] - rect[1])
+        if width >= 4, height >= 4 {
+          let xrefOffset = try findLastStartxrefOffset(source)
+          let xref = try parseXref(source, offset: xrefOffset)
+          let baseNumber = max(
+            xref.size, objectEdits.map { $0.objectNumber + 1 }.max() ?? 0)
+          let fontNumber = baseNumber
+          let streamNumber = baseNumber + 1
+
+          // Self-contained Helvetica font object (no /DR dependency).
+          let fontBody =
+            "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>"
+
+          // Appearance stream: field-annotated text draw, left-aligned.
+          let fontSize = max(6, min(14, height - 8))
+          let baseline = Int(max(2, (height - fontSize) * 0.3))
+          let content =
+            "/Tx BMC\nq\nBT\n/Helv \(fontSize) Tf 0 g\n2 \(baseline) Td\n"
+            + "\(pdfString(requestedValue)) Tj\nET\nQ\nEMC"
+          let contentBytes = latin1Bytes(content)
+          let streamBody =
+            "<< /Type /XObject /Subtype /Form /FormType 1 "
+            + "/BBox [0 0 \(Int(width.rounded())) \(Int(height.rounded()))] "
+            + "/Resources << /Font << /Helv \(fontNumber) 0 R >> >> "
+            + "/Length \(contentBytes.count) >>\nstream\n"
+            + content + "\nendstream"
+
+          newObjects = [fontBody, streamBody]
+          objectEdits.append(
+            ObjectEdit(
+              objectNumber: leaf.objectNumber,
+              pairs: [("/AP", "<< /N \(streamNumber) 0 R >>")]))
         }
-        if widgetKids.isEmpty {
-          edits[0].pairs.append(("/AS", "/Off"))
-        }
-        return edits
       }
+    }
 
-      let selectedState: String
-      if let exact = namedOnStates.first(where: { $0.trimmingCharacters(in: CharacterSet(charactersIn: "/")).lowercased() == lowered }) {
-        selectedState = exact
-      } else if namedOnStates.count == 1, booleanOnTokens.contains(lowered) {
-        selectedState = namedOnStates.first!
-      } else {
-        throw WriterError.requestedStateUnavailable(
-          field: targetFieldName, state: normalized)
+    return ResolvedEditPlan(objectEdits: objectEdits, newObjectBodies: newObjects)
+  }
+
+  private static func buttonEdits(
+    terminal: FormObjectNode,
+    widgetKids: [FormObjectNode],
+    targetFieldName: String,
+    requestedValue: String
+  ) throws -> [ObjectEdit] {
+    let onStates = Set(
+      (terminal.buttonStates + widgetKids.flatMap { $0.buttonStates }).map {
+        $0.trimmingCharacters(in: .whitespaces)
       }
+    )
+    let namedOnStates = onStates.filter { $0 != "/Off" }
+    let normalized = requestedValue.trimmingCharacters(in: .whitespacesAndNewlines)
+    let lowered = normalized.lowercased()
+    let offTokens: Set<String> = ["off", "0", "", "false", "no", "unchecked"]
+    let booleanOnTokens: Set<String> = ["true", "yes", "on", "1", "checked"]
 
-      var edits = [ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", selectedState)])]
+    if offTokens.contains(lowered) {
+      var edits = [ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", "/Off")])]
+      for kid in widgetKids {
+        edits.append(ObjectEdit(objectNumber: kid.objectNumber, pairs: [("/AS", "/Off")]))
+      }
       if widgetKids.isEmpty {
-        edits[0].pairs.append(("/AS", selectedState))
-      } else {
-        for kid in widgetKids {
-          let kidStates = Set(kid.buttonStates)
-          let kidState = kidStates.contains(selectedState) ? selectedState : "/Off"
-          edits.append(ObjectEdit(objectNumber: kid.objectNumber, pairs: [("/AS", kidState)]))
-        }
+        edits[0].pairs.append(("/AS", "/Off"))
       }
       return edits
     }
 
-    // Text and choice fields: /V with a PDF string on the terminal node.
-    return [
-      ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", pdfString(requestedValue))])
-    ]
+    let selectedState: String
+    if let exact = namedOnStates.first(where: {
+      $0.trimmingCharacters(in: CharacterSet(charactersIn: "/")).lowercased() == lowered
+    }) {
+      selectedState = exact
+    } else if namedOnStates.count == 1, booleanOnTokens.contains(lowered) {
+      selectedState = namedOnStates.first!
+    } else {
+      throw WriterError.requestedStateUnavailable(field: targetFieldName, state: normalized)
+    }
+
+    var edits = [ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", selectedState)])]
+    if widgetKids.isEmpty {
+      edits[0].pairs.append(("/AS", selectedState))
+    } else {
+      for kid in widgetKids {
+        let kidStates = Set(kid.buttonStates)
+        let kidState = kidStates.contains(selectedState) ? selectedState : "/Off"
+        edits.append(ObjectEdit(objectNumber: kid.objectNumber, pairs: [("/AS", kidState)]))
+      }
+    }
+    return edits
   }
 
   /// Serializes a Swift string as a PDF literal string with required escapes.
@@ -854,5 +972,4 @@ extension PDFIncrementalFormWriter {
     return escaped
   }
 }
-
 // PART2_SENTINEL

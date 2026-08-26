@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { pdfController, type FitMode } from "../pdf/PdfController";
 import type { PdfSnapshot } from "../pdf/PdfController";
 import {
@@ -13,7 +13,7 @@ interface ToolbarProps {
   onDocumentOpened: () => void;
 }
 
-export function Toolbar({ snapshot, onDocumentOpened }: ToolbarProps) {
+export const Toolbar = memo(function Toolbar({ snapshot, onDocumentOpened }: ToolbarProps) {
   const fileInput = useRef<HTMLInputElement>(null);
   const pageInput = useRef<HTMLInputElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
@@ -214,4 +214,5 @@ export function Toolbar({ snapshot, onDocumentOpened }: ToolbarProps) {
       </span>
     </div>
   );
-}
+});
+

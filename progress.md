@@ -2809,3 +2809,23 @@ Added to `docs/release-gates.md`:
 - `swift test`: **244/244 tests in 34 suites pass**
 - All Node mutation tests pass
 - Workflow test self-contained
+
+## 2026-08-26 Tool-Dependent CI Gate
+
+**Approval source:** User request: "Wire the external-tool-dependent node tests into CI with graceful skip"
+**Authorization envelope:** L1 workspace mutations.
+
+### Delivered
+
+- `Tests/run-tool-dependent-tests.mjs`: CI runner that detects qpdf, poppler, pikepdf, verapdf, python3 at runtime and runs only tests whose dependencies are satisfied. Skipped tests reported with clear diagnostics, not treated as failures.
+- `.github/workflows/ci.yml` updated: added Gate 4 (`tool-dependent` job) that installs qpdf+poppler via brew and pikepdf via pip, then runs the tool-dependent runner. Evidence-summary job now evaluates 4 gates.
+- `docs/release-gates.md` RG-081 updated with tool-dependent CI evidence.
+- 15 tests registered: 2 available (qpdf+poppler present), 13 skipped (pikepdf missing locally). On CI runner with pikepdf installed, all 15 would run.
+- 2 tests (`cross_project_evidence_ledger_parity_test.mjs`, `perf-continuous-view_test.mjs`) removed from tool-dependent registry — they need Playwright and are handled by `run-web-e2e.mjs` instead.
+
+### Verification
+
+- `node Tests/run-tool-dependent-tests.mjs --dry-run`: 2 available, 13 skipped (correct)
+- `node Tests/run-tool-dependent-tests.mjs`: 2 passed, 0 failed, 13 skipped (pass)
+- `swift test`: 244/244 pass
+- All other tests unchanged

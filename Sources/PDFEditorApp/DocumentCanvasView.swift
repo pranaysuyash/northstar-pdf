@@ -114,6 +114,11 @@ public struct DocumentCanvasView: View {
       isManualPlacementMode: model.isManualPlacementMode,
       fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
       activeInlineEditor: model.activeInlineEditor,
+      initialAnchor: model.stagedInitialAnchor,
+      initialAnchorToken: model.pendingInitialAnchorToken,
+      onViewportAnchorChange: { anchor in
+        model.reportViewportAnchor(anchor)
+      },
       applyPresentationOperation: { operation, document in
         model.applyOperationForPresentation(operation, to: document)
       },
@@ -410,7 +415,6 @@ public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
     textField.font = NSFont.preferredFont(forTextStyle: .callout)
     textField.focusRingType = .none
     textField.autoresizingMask = [.width]
-    textField.delegate = self
     addSubview(textField)
     layoutEditorSubviews()
   }
@@ -580,19 +584,10 @@ public final class PDFPresentationOverlayView: NSView {
       path.lineWidth = lineWidth
       path.fill()
       path.stroke()
-      // Only name the focused region and completed fields; naming every
-      // unfilled candidate on a dense form paints a wall of repeated,
-      // overlapping captions that hides the document.
-      let showChip = highlight.kind == .focused
-        || highlight.kind == .candidateFilled
-        || highlight.kind == .field
-        || highlight.kind == .signatureRegion
-      if showChip {
-        drawChip(
-          label: highlight.label, anchor: overlayBounds,
-          tint: strokeColor, chipsEnabled: chipsEnabled,
-          occupied: &occupiedChipRects)
-      }
+      drawChip(
+        label: highlight.label, anchor: overlayBounds,
+        tint: strokeColor, chipsEnabled: chipsEnabled,
+        occupied: &occupiedChipRects)
       if highlight.kind == .search {
         let underline = NSBezierPath()
         underline.move(to: NSPoint(x: overlayBounds.minX, y: overlayBounds.minY + 1))
@@ -615,22 +610,12 @@ public final class PDFPresentationOverlayView: NSView {
   ) {
     guard chipsEnabled, let label, !label.isEmpty else { return }
 
-    // Long neighbor-line labels (e.g. a shared section header) would overflow
-    // the page; clip to a readable length with an ellipsis.
-    let maxChipLength = 28
-    let displayLabel: String
-    if label.count > maxChipLength {
-      displayLabel = String(label.prefix(maxChipLength)).trimmingCharacters(in: .whitespaces) + "…"
-    } else {
-      displayLabel = label
-    }
-
     let font = NSFont.systemFont(ofSize: 9, weight: .semibold)
     let attributes: [NSAttributedString.Key: Any] = [
       .font: font,
       .foregroundColor: NSColor.white,
     ]
-    let textSize = (displayLabel as NSString).size(withAttributes: attributes)
+    let textSize = (label as NSString).size(withAttributes: attributes)
     var chipFrame = CGRect(
       x: anchor.minX,
       y: anchor.maxY + 2,
@@ -655,7 +640,7 @@ public final class PDFPresentationOverlayView: NSView {
     chip.fill()
 
     let textRect = chipFrame.insetBy(dx: 6, dy: 2)
-    (displayLabel as NSString).draw(in: textRect, withAttributes: attributes)
+    (label as NSString).draw(in: textRect, withAttributes: attributes)
   }
 }
 

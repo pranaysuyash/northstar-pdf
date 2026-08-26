@@ -214,7 +214,8 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
   public let memberLabels: [String]
   public let evidenceItems: [CandidateEvidence]
   public let sourceDigest: String?
-  public let fusion: EvidenceFusionResult?
+  /// Var since Stage 2: recalibration re-fuses with learned weights.
+  public var fusion: EvidenceFusionResult?
 
   private enum CodingKeys: String, CodingKey {
     case id
@@ -337,6 +338,29 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
       fieldType: suggestedFieldType,
       entryMode: entryMode,
       groupMemberCount: groupMemberCount)
+  }
+
+  /// Stage 2: re-fuses this candidate's evidence with learned per-kind
+  /// weights. Identity, geometry, labels, and review status are preserved;
+  /// only `fusion` (and its derived explanation) changes.
+  public func recalibratingFusion(
+    weights: [CandidateEvidenceKind: Double]
+  ) -> RegionCandidate {
+    let signals = evidenceItems.map { item in
+      EvidenceFusionSignal(
+        id: item.id.uuidString,
+        kind: item.kind,
+        origin: item.origin,
+        providerID: item.provider?.id,
+        score: item.score ?? 0,
+        region: item.region?.rect
+      )
+    }
+    var updated = self
+    updated.fusion = EvidenceFusion.fuse(
+      signals: signals,
+      weightsOverride: weights)
+    return updated
   }
 
   /// Named choice options when available, falling back to positional names.
@@ -523,6 +547,16 @@ public struct FillHighlight: Equatable, Hashable, Sendable {
   }
 }
 
+/// How a saved signature was originally produced. Acts as provenance so the
+/// library can show where each stamp came from (drawn, typed, imported photo,
+/// or CV-extracted). Mirrors SignKit's source-tagged library concept.
+public enum SignatureSource: String, Codable, Equatable, Hashable, Sendable {
+  case drawn
+  case typed
+  case image
+  case extracted
+}
+
 /// A user-saved signature stored in the app sandbox.
 ///
 /// Signatures are never stored in the source PDF or in any external service.
@@ -534,6 +568,12 @@ public struct SavedSignature: Codable, Equatable, Hashable, Identifiable, Sendab
   /// PNG data URL for the signature image.
   public let dataURL: String
   public let createdAt: Date
+  /// Provenance: where this stamp came from.
+  public let source: SignatureSource
+  /// Number of times this saved signature has been placed on a document.
+  public var useCount: Int
+  /// Last time this saved signature was placed, if ever.
+  public var lastUsedAt: Date?
 
   public var rawImageData: Data? {
     let prefix = "base64,"
@@ -544,11 +584,35 @@ public struct SavedSignature: Codable, Equatable, Hashable, Identifiable, Sendab
     return Data(base64Encoded: dataURL)
   }
 
-  public init(id: UUID = UUID(), label: String, dataURL: String, createdAt: Date = Date()) {
+  public init(
+    id: UUID = UUID(),
+    label: String,
+    dataURL: String,
+    createdAt: Date = Date(),
+    source: SignatureSource = .image,
+    useCount: Int = 0,
+    lastUsedAt: Date? = nil
+  ) {
     self.id = id
     self.label = label
     self.dataURL = dataURL
     self.createdAt = createdAt
+    self.source = source
+    self.useCount = useCount
+    self.lastUsedAt = lastUsedAt
+  }
+
+  /// Decoding is backward-compatible: vault entries written before
+  /// `source`/`useCount`/`lastUsedAt` existed default to a plain imported image.
+  public init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    id = try c.decode(UUID.self, forKey: .id)
+    label = try c.decode(String.self, forKey: .label)
+    dataURL = try c.decode(String.self, forKey: .dataURL)
+    createdAt = try c.decode(Date.self, forKey: .createdAt)
+    source = try c.decodeIfPresent(SignatureSource.self, forKey: .source) ?? .image
+    useCount = try c.decodeIfPresent(Int.self, forKey: .useCount) ?? 0
+    lastUsedAt = try c.decodeIfPresent(Date.self, forKey: .lastUsedAt)
   }
 }
 

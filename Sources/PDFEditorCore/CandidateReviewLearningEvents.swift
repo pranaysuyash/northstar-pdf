@@ -29,6 +29,9 @@ public struct CandidateReviewLearningEvent: Codable, Equatable, Hashable, Sendab
     public let score: Double
     /// Reviewed region geometry. Layout facts are retained; content is not.
     public let bounds: PDFRect
+    /// Evidence-family labels that supported the candidate (enum names
+    /// only, never prose). Feeds Stage 2 evidence-kind calibration.
+    public let evidenceKinds: [String]
     public let createdAt: Date
 
     public init(
@@ -44,6 +47,7 @@ public struct CandidateReviewLearningEvent: Codable, Equatable, Hashable, Sendab
         memberCount: Int,
         score: Double,
         bounds: PDFRect,
+        evidenceKinds: [String] = [],
         createdAt: Date = Date()
     ) {
         self.id = id
@@ -58,9 +62,40 @@ public struct CandidateReviewLearningEvent: Codable, Equatable, Hashable, Sendab
         self.memberCount = max(1, memberCount)
         self.score = min(1, max(0, score))
         self.bounds = bounds
+        self.evidenceKinds = evidenceKinds
         self.createdAt = createdAt
     }
 }
+
+extension CandidateReviewLearningEvent: DecodableDefaulting {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        sourceDigest = try container.decode(String.self, forKey: .sourceDigest)
+        candidateID = try container.decode(UUID.self, forKey: .candidateID)
+        pageIndex = try container.decode(Int.self, forKey: .pageIndex)
+        kind = try container.decode(CandidateKind.self, forKey: .kind)
+        entryMode = try container.decode(CandidateEntryMode.self, forKey: .entryMode)
+        suggestedFieldType = try container.decodeIfPresent(
+            SuggestedFieldType.self, forKey: .suggestedFieldType)
+        decision = try container.decode(CandidateReviewDecisionKind.self, forKey: .decision)
+        hadLabel = try container.decode(Bool.self, forKey: .hadLabel)
+        memberCount = try container.decode(Int.self, forKey: .memberCount)
+        score = try container.decode(Double.self, forKey: .score)
+        bounds = try container.decode(PDFRect.self, forKey: .bounds)
+        evidenceKinds = try container.decodeIfPresent([String].self, forKey: .evidenceKinds) ?? []
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, sourceDigest, candidateID, pageIndex, kind, entryMode
+        case suggestedFieldType, decision, hadLabel, memberCount, score
+        case bounds, evidenceKinds, createdAt
+    }
+}
+
+/// Marker protocol documenting which contracts decode with per-key defaults.
+public protocol DecodableDefaulting: Codable {}
 
 public struct CandidateReviewLearningEventJournal: Codable, Equatable, Sendable {
     public static let contractName = "pdf-editor.candidate-review-learning-journal"
@@ -120,6 +155,7 @@ public enum CandidateReviewLearningEventFactory {
             memberCount: candidate?.groupMemberCount ?? 1,
             score: candidate?.score ?? 0,
             bounds: candidate?.bounds ?? PDFRect(x: 0, y: 0, width: 0, height: 0),
+            evidenceKinds: (candidate?.evidenceItems ?? []).map { $0.kind.rawValue },
             createdAt: Date()
         )
     }
@@ -212,5 +248,67 @@ public struct CandidateReviewLearningEventStore {
               let journal = try? JSONDecoder().decode(CandidateReviewLearningEventJournal.self, from: data)
         else { return [] }
         return journal.events
+    }
+}
+
+// MARK: - Stage 2: learned evidence calibration
+
+/// Per-evidence-kind trust multipliers derived from review history: kinds
+/// that repeatedly appear in *confirmed* candidates gain weight; kinds in
+/// *rejected* candidates lose it. Neutral until the journal has signal.
+public struct LearnedEvidenceCalibration: Equatable, Sendable {
+    /// Multipliers in [0.5, 1.5]; absent kinds mean "no opinion" (1.0).
+    public let multipliers: [String: Double]
+    public let sampleCount: Int
+
+    public static let minimumSamplesForSignal = 3
+
+    public init(multipliers: [String: Double], sampleCount: Int) {
+        self.multipliers = multipliers
+        self.sampleCount = sampleCount
+    }
+
+    public var hasSignal: Bool { sampleCount >= Self.minimumSamplesForSignal }
+
+    public static func from(events: [CandidateReviewLearningEvent]) -> LearnedEvidenceCalibration {
+        var confirmed: [String: Int] = [:]
+        var rejected: [String: Int] = [:]
+        var terminal = 0
+        for event in events {
+            let accepted: Bool?
+            switch event.decision {
+            case .confirmed: accepted = true
+            case .rejected: accepted = false
+            case .moved, .resized, .retyped, .manuallyCreated: accepted = nil
+            }
+            guard let accepted else { continue }
+            terminal += 1
+            for kind in event.evidenceKinds {
+                if accepted { confirmed[kind, default: 0] += 1 } else { rejected[kind, default: 0] += 1 }
+            }
+        }
+        var multipliers: [String: Double] = [:]
+        for kind in Set(confirmed.keys).union(rejected.keys) {
+            let accepted = confirmed[kind] ?? 0
+            let total = accepted + (rejected[kind] ?? 0)
+            // Acceptance rate with Beta(1,1)-style smoothing toward chance
+            // (0.5); mapped onto [0.5, 1.5] so chance ⇒ exactly neutral 1.0,
+            // consistently-confirmed families gain trust, consistently-
+            // rejected ones lose it.
+            let rate = Double(accepted + 1) / Double(total + 2)
+            multipliers[kind] = min(1.5, max(0.5, 0.5 + rate))
+        }
+        return LearnedEvidenceCalibration(multipliers: multipliers, sampleCount: terminal)
+    }
+
+    public func overrideWeights() -> [CandidateEvidenceKind: Double]? {
+        guard hasSignal else { return nil }
+        var result: [CandidateEvidenceKind: Double] = [:]
+        for (raw, multiplier) in multipliers {
+            if let kind = CandidateEvidenceKind(rawValue: raw) {
+                result[kind] = multiplier
+            }
+        }
+        return result.isEmpty ? nil : result
     }
 }

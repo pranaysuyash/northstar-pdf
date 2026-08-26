@@ -16,6 +16,10 @@ let package = Package(
             name: "PDFEditorRecovery",
             targets: ["PDFEditorRecovery"]
         ),
+        .library(
+            name: "PDFEditorInlineEditor",
+            targets: ["PDFEditorInlineEditor"]
+        ),
         .executable(
             name: "PDFEditor",
             targets: ["PDFEditorApp"]
@@ -60,7 +64,10 @@ let package = Package(
         ),
         .executableTarget(
             name: "PDFEditorApp",
-            dependencies: ["PDFEditorCore", "PDFEditorRecovery"]
+            dependencies: ["PDFEditorCore", "PDFEditorRecovery", "PDFEditorInlineEditor"]
+        ),
+        .target(
+            name: "PDFEditorInlineEditor"
         ),
         .executableTarget(
             name: "PDFRecoveryInterruptionHarness",
@@ -97,6 +104,10 @@ let package = Package(
         .testTarget(
             name: "PDFEditorAppRecoveryTests",
             dependencies: ["PDFEditorRecovery"]
+        ),
+        .testTarget(
+            name: "PDFEditorInlineEditorTests",
+            dependencies: ["PDFEditorInlineEditor"]
         )
     ]
 )

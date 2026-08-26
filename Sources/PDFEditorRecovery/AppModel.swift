@@ -152,6 +152,38 @@ public final class AppModel {
   public var readerRotation = 0
   public var pageJumpInput = ""
 
+  // MARK: - View memory state (D-057)
+
+  /// Viewport position reported by the canvas layer after scroll settles.
+  /// Never treated as edit geometry; consumed only for view-state autosave.
+  public struct ViewportAnchor: Equatable, Sendable {
+    public let pageIndex: Int
+    public let fractionIntoPage: Double
+    public let anchorX: Double
+    public let anchorY: Double
+
+    public init(pageIndex: Int, fractionIntoPage: Double, anchorX: Double, anchorY: Double) {
+      self.pageIndex = pageIndex
+      self.fractionIntoPage = min(1.0, max(0.0, fractionIntoPage))
+      self.anchorX = min(1.0, max(0.0, anchorX))
+      self.anchorY = min(1.0, max(0.0, anchorY))
+    }
+  }
+
+  /// The most recently reported canvas viewport anchor (nil until the canvas
+  /// reports a settled position).
+  public private(set) var liveViewportAnchor: ViewportAnchor?
+  /// The pinned layout carried in this document's durable view state. Only
+  /// `savePinnedLayout()` / `clearPinnedLayout()` mutate it; ordinary view
+  /// state autosaves carry it through unchanged so zooming never silently
+  /// rewrites a user's saved layout.
+  public private(set) var activePinnedLayout: DocumentSessionPinnedLayout?
+  /// Staged anchor to apply once the canvas has laid out a freshly opened or
+  /// restored document. Consumed exactly once by the canvas via
+  /// `pendingInitialAnchorToken`.
+  public private(set) var stagedInitialAnchor: ViewportAnchor?
+  public private(set) var pendingInitialAnchorToken = 0
+
   // MARK: - Editor mode (D-010)
   /// Current intent mode. Resets to `.read` on open unless `persistModeAcrossDocuments` is true.
   public var editorMode: EditorMode = .read
@@ -160,6 +192,107 @@ public final class AppModel {
   public var persistModeAcrossDocuments: Bool {
     get { UserDefaults.standard.bool(forKey: "persistModeAcrossDocuments") }
     set { UserDefaults.standard.set(newValue, forKey: "persistModeAcrossDocuments") }
+  }
+
+  // MARK: - Layout restore policy (D-057)
+  /// How the magnification/layout fields (scale mode, zoom, rotation) are
+  /// chosen when a document opens. Resume fields (page index, scroll anchor,
+  /// element selections) always restore from the digest-keyed session
+  /// regardless of this policy. An explicit per-document pinned layout
+  /// (File ▸ Save This Layout) overrides this policy for that document.
+  public enum LayoutRestorePolicy: String, Codable, CaseIterable, Sendable {
+    /// Always open with the neutral default layout (fit-width, continuous,
+    /// 100%, unrotated). Mirrors the D-010 reset-on-open default.
+    case fixedDefault
+    /// New documents open with the layout most recently used on any document.
+    case lastUsedGlobally
+    /// Documents without a saved session fall back to the fixed default;
+    /// documents with one restore their own last layout (historical behavior).
+    case perDocument
+  }
+
+  /// User preference for how magnification/layout is chosen on open (D-057).
+  public var layoutRestorePolicy: LayoutRestorePolicy {
+    get {
+      LayoutRestorePolicy(
+        rawValue: UserDefaults.standard.string(forKey: "layoutRestorePolicy") ?? ""
+      ) ?? .fixedDefault
+    }
+    set { UserDefaults.standard.set(newValue.rawValue, forKey: "layoutRestorePolicy") }
+  }
+
+  private struct GlobalLayoutRecord: Codable, Equatable {
+    let viewModeRaw: String
+    let scaleModeRaw: String
+    let zoom: Double
+    let rotation: Int
+  }
+
+  private static let globalLayoutDefaultsKey = "lastUsedReaderLayout"
+
+  /// The layout most recently set by the user on any document, persisted so
+  /// `layoutRestorePolicy == .lastUsedGlobally` can offer it to new opens.
+  private var globalLastUsedLayout: GlobalLayoutRecord? {
+    get {
+      guard let data = UserDefaults.standard.data(forKey: Self.globalLayoutDefaultsKey) else {
+        return nil
+      }
+      return try? JSONDecoder().decode(GlobalLayoutRecord.self, from: data)
+    }
+    set {
+      guard let newValue,
+        let data = try? JSONEncoder().encode(newValue)
+      else {
+        UserDefaults.standard.removeObject(forKey: Self.globalLayoutDefaultsKey)
+        return
+      }
+      UserDefaults.standard.set(data, forKey: Self.globalLayoutDefaultsKey)
+    }
+  }
+
+  /// Records the current reader layout as the global last-used layout.
+  /// Called from every user-facing reader layout mutation.
+  private func recordGlobalLayoutUsage() {
+    guard liveDocument != nil || inspection != nil else { return }
+    globalLastUsedLayout = GlobalLayoutRecord(
+      viewModeRaw: readerViewMode.rawValue,
+      scaleModeRaw: readerScaleMode.rawValue,
+      zoom: readerZoom,
+      rotation: readerRotation
+    )
+  }
+
+  /// Applies the configured restore policy's layout for an opening document
+  /// that has no durable session (or before a session restores). Resume
+  /// fields are untouched; only view/scale/zoom/rotation are set.
+  private func applyLayoutForFreshOpen() {
+    switch layoutRestorePolicy {
+    case .fixedDefault:
+      applyNeutralReaderLayout()
+    case .perDocument:
+      // No durable session exists on this path, so per-document memory has
+      // nothing to read; the contract falls back to the neutral default.
+      applyNeutralReaderLayout()
+    case .lastUsedGlobally:
+      if let record = globalLastUsedLayout,
+        let viewMode = ReaderViewMode(rawValue: record.viewModeRaw),
+        let scaleMode = ReaderScaleMode(rawValue: record.scaleModeRaw)
+      {
+        readerViewMode = viewMode
+        readerScaleMode = scaleMode
+        readerZoom = min(3.0, max(0.25, record.zoom))
+        readerRotation = ((record.rotation % 360) + 360) % 360
+      } else {
+        applyNeutralReaderLayout()
+      }
+    }
+  }
+
+  private func applyNeutralReaderLayout() {
+    readerViewMode = .continuous
+    readerScaleMode = .fitWidth
+    readerZoom = 1.0
+    readerRotation = 0
   }
   /// When true, the status bar shows a "This document has fields — fill them?" chip.
   public var isFillOfferVisible = false
@@ -1126,9 +1259,10 @@ public final class AppModel {
       cachedSourceData = data
       // Stage 1 learning loop: load value-free priors so remaining
       // suggestions rank by what the user historically accepted here.
-      candidatePriors = CandidatePriors(
-        events: candidateReviewEventStore.events(
-          sourceDigest: nextInspection.source.sha256))
+      let events = candidateReviewEventStore.events(
+        sourceDigest: nextInspection.source.sha256)
+      candidatePriors = CandidatePriors(events: events)
+      applyLearnedCalibration(events: events)
       // Preflight build/validate is CPU-bound; keep the open path responsive by
       // computing it off the main thread and publishing the report when ready.
       // The session digest guards against publishing a stale report after the
@@ -1199,6 +1333,15 @@ public final class AppModel {
       pageJumpInput = ""
       hasSavedSession = false
       lastSessionInfo = nil
+
+      // D-057: view memory resets with the document. The previous document's
+      // viewport anchor and pin never leak into the next one, and this open
+      // starts from the configured layout policy until a durable session
+      // restores (whose pin/policy may override the magnification fields).
+      activePinnedLayout = nil
+      liveViewportAnchor = nil
+      stagedInitialAnchor = nil
+      applyLayoutForFreshOpen()
 
       // D-010: Reset mode on open unless user has opted into persistence.
       if !persistModeAcrossDocuments {
@@ -1271,6 +1414,10 @@ public func resetDocument() {
     selectedFieldID = nil
     selectedCandidateID = nil
     selectedSearchMatchIndex = nil
+    // D-057: no document, no view memory.
+    activePinnedLayout = nil
+    liveViewportAnchor = nil
+    stagedInitialAnchor = nil
     searchQuery = ""
     searchMatches = []
     templateContract = nil
@@ -1929,9 +2076,39 @@ public func resetDocument() {
     } catch {
       // Learning is best-effort by contract; a full disk must not break a fill.
     }
-    // Re-aggregate so the remaining suggestions re-rank immediately.
-    candidatePriors = CandidatePriors(
-      events: candidateReviewEventStore.events(sourceDigest: sourceDigest))
+    // Re-aggregate so the remaining suggestions re-rank immediately, and
+    // re-fuse evidence with Stage 2 learned weights.
+    let events = candidateReviewEventStore.events(sourceDigest: sourceDigest)
+    candidatePriors = CandidatePriors(events: events)
+    applyLearnedCalibration(events: events)
+  }
+
+  /// Stage 2: when review history carries signal, re-fuse every active
+  /// candidate's evidence with learned per-kind trust multipliers. Fusion
+  /// state feeds explanation cards and cautions; statuses are untouched.
+  private func applyLearnedCalibration(events: [CandidateReviewLearningEvent]) {
+    let calibration = LearnedEvidenceCalibration.from(events: events)
+    guard calibration.hasSignal,
+      let weights = calibration.overrideWeights(),
+      let current = inspection
+    else { return }
+    let recalibrated = current.candidates.map { candidate in
+      candidate.recalibratingFusion(weights: weights)
+    }
+    inspection = DocumentInspection(
+      source: current.source,
+      pages: current.pages,
+      fields: current.fields,
+      candidates: recalibrated,
+      warnings: current.warnings,
+      links: current.links,
+      outlines: current.outlines,
+      metadata: current.metadata,
+      permissions: current.permissions,
+      attachments: current.attachments,
+      accessibility: current.accessibility,
+      security: current.security
+    )
   }
 
   public var dismissedCandidates: [RegionCandidate] { _dismissedCandidates }
@@ -2478,8 +2655,8 @@ public func resetDocument() {
   }
 
   /// Persist a newly drawn/typed/imported signature into the Keychain-backed vault.
-  public func saveSignatureToVault(label: String, dataURL: String) {
-    let newSig = SavedSignature(label: label, dataURL: dataURL)
+  public func saveSignatureToVault(label: String, dataURL: String, source: SignatureSource = .image) {
+    let newSig = SavedSignature(label: label, dataURL: dataURL, source: source)
     var current = savedSignatures
     current.append(newSig)
     let store = KeychainSignatureStore()
@@ -2496,6 +2673,18 @@ public func resetDocument() {
     store.saveSignatures(current)
     savedSignatures = current
     statusMessage = "Removed signature from Keychain vault."
+  }
+
+  /// Record that a saved signature was placed, incrementing its reuse count
+  /// and last-used timestamp. Persists to the Keychain-backed vault.
+  public func recordSignatureUse(id: UUID) {
+    guard let index = savedSignatures.firstIndex(where: { $0.id == id }) else { return }
+    var sig = savedSignatures[index]
+    sig.useCount += 1
+    sig.lastUsedAt = Date()
+    savedSignatures[index] = sig
+    let store = KeychainSignatureStore()
+    store.saveSignatures(savedSignatures)
   }
 
   private func requirePermission(_ requirement: PermissionRequirement, action: String) -> Bool {
@@ -3401,6 +3590,7 @@ public func resetDocument() {
     if mode == .continuous {
       readerScaleMode = .fitWidth
     }
+    recordGlobalLayoutUsage()
     scheduleViewStateAutosave()
   }
 
@@ -3409,23 +3599,27 @@ public func resetDocument() {
     if mode == .zoom && readerZoom == 1.0 {
       readerZoom = 1.0
     }
+    recordGlobalLayoutUsage()
     scheduleViewStateAutosave()
   }
 
   public func setZoom(_ value: Double) {
     readerZoom = max(0.25, min(3.0, value))
+    recordGlobalLayoutUsage()
     scheduleViewStateAutosave()
   }
 
   public func rotateLeft() {
     readerRotation = (readerRotation + 270) % 360
     refreshRotation()
+    recordGlobalLayoutUsage()
     scheduleViewStateAutosave()
   }
 
   public func rotateRight() {
     readerRotation = (readerRotation + 90) % 360
     refreshRotation()
+    recordGlobalLayoutUsage()
     scheduleViewStateAutosave()
   }
 
@@ -3562,6 +3756,42 @@ public func resetDocument() {
     pageJumpInput = ""
     clearSearch()
   }
+
+  // MARK: - View memory API (D-057)
+
+  /// Called by the canvas layer when the viewport position settles (debounced
+  /// there). The anchor is presentation-only view state: it never enters the
+  /// document model, the operation ledger, or any export.
+  public func reportViewportAnchor(_ anchor: ViewportAnchor) {
+    liveViewportAnchor = anchor
+  }
+
+  /// File ▸ Save This Layout. Captures the current magnification/layout into
+  /// this document's durable view state, overriding the global restore policy
+  /// for this digest until cleared.
+  public func savePinnedLayout() {
+    guard inspection != nil else { return }
+    activePinnedLayout = DocumentSessionPinnedLayout(
+      viewMode: readerViewMode,
+      scaleMode: readerScaleMode,
+      zoomScale: readerScaleMode == .zoom ? readerZoom : nil,
+      pageRotation: readerRotation
+    )
+    scheduleViewStateAutosave()
+    statusMessage = "Saved layout for this document."
+  }
+
+  /// Clears a previously saved layout; restore behavior returns to the
+  /// configured global policy for this document.
+  public func clearPinnedLayout() {
+    guard activePinnedLayout != nil else { return }
+    activePinnedLayout = nil
+    scheduleViewStateAutosave()
+    statusMessage = "Cleared saved layout. Restores follow the default setting again."
+  }
+
+  /// True while the current document carries an explicit saved layout.
+  public var hasPinnedLayout: Bool { activePinnedLayout != nil }
 
   private func refreshRotation() {
     // Reader rotation is session/view state. The PDFKit presentation layer
@@ -3917,7 +4147,8 @@ public func resetDocument() {
   }
 
   private func recoveryViewState() -> DocumentSessionViewState {
-    DocumentSessionViewState(
+    let anchor = liveViewportAnchor
+    return DocumentSessionViewState(
       selectedPageIndex: selectedPageIndex,
       viewMode: readerViewMode,
       scaleMode: readerScaleMode,
@@ -3928,7 +4159,13 @@ public func resetDocument() {
       searchQueryDigest: searchQuery.isEmpty
         ? nil
         : RecoveryLedgerIdentity.identifierDigest(searchQuery),
-      selectedSearchMatchIndex: selectedSearchMatchIndex
+      selectedSearchMatchIndex: selectedSearchMatchIndex,
+      // D-057: the canvas-reported scroll anchor rides with the autosaved
+      // view state. It is presentation context only.
+      anchorPageFraction: anchor.flatMap { $0.pageIndex == selectedPageIndex ? $0.fractionIntoPage : nil },
+      anchorViewportX: anchor?.anchorX,
+      anchorViewportY: anchor?.anchorY,
+      pinnedLayout: activePinnedLayout
     )
   }
 
@@ -4264,6 +4501,10 @@ public func resetDocument() {
       inspection = stagedInspection
       operations = payload.operations
       restoreViewState(stagedViewState)
+      // D-057: adopt this document's saved layout (if any) and stage the
+      // fractional scroll anchor for the canvas's first post-layout pass.
+      activePinnedLayout = envelope.session.viewState.pinnedLayout
+      stageInitialAnchorIfAvailable(envelope.session.viewState)
       searchQuery = ""
       searchMatches = []
       selectedSearchMatchIndex = nil
@@ -4278,7 +4519,11 @@ public func resetDocument() {
       recoveryDiagnostics.removeAll()
       lastPersistedViewStateDigest = expectedViewStateDigest
       refreshInMemoryRecoverySnapshot()
-      statusMessage = "Restored \(operations.count) edits from the local recovery session."
+      if activePinnedLayout != nil {
+        statusMessage = "Restored \(operations.count) edits from the local recovery session. Restored saved layout."
+      } else {
+        statusMessage = "Restored \(operations.count) edits from the local recovery session."
+      }
       return true
     } catch {
       let message: String
@@ -4333,6 +4578,82 @@ public func resetDocument() {
     )
   }
 
+  /// D-057 resolution result: which magnification/layout values an opening
+  /// document should present.
+  private struct ResolvedRestoreLayout {
+    let scaleMode: ReaderScaleMode
+    let zoom: Double
+    let rotation: Int
+    let usedPinnedLayout: Bool
+
+    static let neutral = ResolvedRestoreLayout(
+      scaleMode: .fitWidth,
+      zoom: 1.0,
+      rotation: 0,
+      usedPinnedLayout: false
+    )
+  }
+
+  /// Resolves the layout fields for a restored document: an explicit pinned
+  /// layout wins over everything; otherwise the configured policy decides.
+  private func resolvedRestoreLayout(from state: DocumentSessionViewState) -> ResolvedRestoreLayout {
+    if let pin = state.pinnedLayout {
+      return ResolvedRestoreLayout(
+        scaleMode: pin.scaleMode,
+        zoom: min(3.0, max(0.25, pin.zoomScale ?? 1.0)),
+        rotation: ((pin.pageRotation % 360) + 360) % 360,
+        usedPinnedLayout: true
+      )
+    }
+    switch layoutRestorePolicy {
+    case .fixedDefault:
+      return .neutral
+    case .perDocument:
+      return ResolvedRestoreLayout(
+        scaleMode: state.scaleMode,
+        zoom: min(3.0, max(0.25, state.zoomScale ?? 1.0)),
+        rotation: ((state.pageRotation % 360) + 360) % 360,
+        usedPinnedLayout: false
+      )
+    case .lastUsedGlobally:
+      if let record = globalLastUsedLayout,
+        let scaleMode = ReaderScaleMode(rawValue: record.scaleModeRaw)
+      {
+        return ResolvedRestoreLayout(
+          scaleMode: scaleMode,
+          zoom: min(3.0, max(0.25, record.zoom)),
+          rotation: ((record.rotation % 360) + 360) % 360,
+          usedPinnedLayout: false
+        )
+      }
+      return .neutral
+    }
+  }
+
+  /// Stages the fractional scroll anchor (Branch 15) so the canvas layer can
+  /// navigate to the exact restored position after its first layout pass.
+  private func stageInitialAnchorIfAvailable(_ state: DocumentSessionViewState) {
+    if let pageIndex = state.anchorPageIndex, let fraction = state.anchorPageFraction {
+      stagedInitialAnchor = ViewportAnchor(
+        pageIndex: min(max(pageIndex, 0), max(0, currentPageCount - 1)),
+        fractionIntoPage: fraction,
+        anchorX: state.anchorViewportX ?? 0.5,
+        anchorY: state.anchorViewportY ?? 0.0
+      )
+      pendingInitialAnchorToken += 1
+    } else if let fraction = state.anchorPageFraction {
+      // Fall back to anchoring on the selected page itself when a fraction
+      // was captured without an explicit page index.
+      stagedInitialAnchor = ViewportAnchor(
+        pageIndex: state.selectedPageIndex,
+        fractionIntoPage: fraction,
+        anchorX: state.anchorViewportX ?? 0.5,
+        anchorY: state.anchorViewportY ?? 0.0
+      )
+      pendingInitialAnchorToken += 1
+    }
+  }
+
   private func recoveryViewStateSnapshot(
     _ state: DocumentSessionViewState,
     inspection: DocumentInspection?
@@ -4348,20 +4669,29 @@ public func resetDocument() {
         RecoveryLedgerIdentity.identifierDigest($0.id) == digest
       })?.id
     }
+    // D-057: resume fields (page index, selections, view mode) restore
+    // unconditionally; magnification/layout follows pin-over-policy. Every
+    // persisted value is snapped to a legal range at this boundary — stale
+    // state is treated like untrusted input, never trusted blindly.
+    let layout = resolvedRestoreLayout(from: state)
     return ViewStateSnapshot(
       selectedPageIndex: min(max(state.selectedPageIndex, 0), max(0, pageCount - 1)),
       selectedFieldID: selectedFieldID,
       selectedCandidateID: selectedCandidateID,
       selectedSearchMatchIndex: nil,
       readerViewMode: state.viewMode,
-      readerScaleMode: state.scaleMode,
-      readerZoom: max(0.25, min(3.0, state.zoomScale ?? 1.0)),
-      readerRotation: state.pageRotation
+      readerScaleMode: layout.scaleMode,
+      readerZoom: layout.zoom,
+      readerRotation: layout.rotation
     )
   }
 
   private func restoreRecoveryViewState(_ state: DocumentSessionViewState) {
     restoreViewState(recoveryViewStateSnapshot(state, inspection: inspection))
+    // D-057: adopt pin + stage anchor on this restore path as well so both
+    // durable-restore entry points behave identically.
+    activePinnedLayout = state.pinnedLayout
+    stageInitialAnchorIfAvailable(state)
     searchQuery = ""
     searchMatches = []
     selectedSearchMatchIndex = nil

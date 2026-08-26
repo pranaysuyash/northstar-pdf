@@ -710,18 +710,23 @@ private struct SignatureSheet: View {
 
       Group {
         if selectedTab == 0 {
-          SignatureDrawTab(onApply: applySignature)
+          SignatureDrawTab(onApply: { applySignature($0, source: .drawn) })
         } else if selectedTab == 1 {
           SignatureTypeTab(
             typedName: $typedName,
             selectedFontIndex: $selectedFontIndex,
             fontNames: scriptFonts,
-            onApply: { applySignature(renderTypedSignature()) }
+            onApply: { applySignature(renderTypedSignature(), source: .typed) }
           )
         } else if selectedTab == 2 {
           SignatureImageTab(onApply: applySignature)
         } else {
-          SignatureSavedTab(signatures: model.savedSignatures, onApply: applySignature)
+          SignatureSavedTab(
+            signatures: model.savedSignatures,
+            onApply: applySavedSignature,
+            onDelete: { model.deleteSignatureFromVault(id: $0) },
+            onExport: exportSignature
+          )
         }
       }
       .frame(height: 200)
@@ -744,29 +749,55 @@ private struct SignatureSheet: View {
     .frame(width: 500)
   }
 
-  private func applySignature(_ imageData: Data) {
+  private func signaturePlacementBounds() -> PDFRect? {
+    guard let inspection = model.inspection else { return nil }
+    if let region = model.pendingSignatureRegion {
+      return region.bounds
+    }
+    let page = inspection.pages.indices.contains(model.selectedPageIndex)
+      ? inspection.pages[model.selectedPageIndex] : inspection.pages[0]
+    let w = page.bounds.width * 0.35
+    let h = 60.0
+    return PDFRect(x: page.bounds.x + (page.bounds.width - w) / 2,
+                   y: page.bounds.y + 60,
+                   width: w, height: h)
+  }
+
+  private func applySignature(_ imageData: Data, source: SignatureSource = .image) {
     guard let inspection = model.inspection,
-      let pageIndex = model.pendingSignatureRegion?.pageIndex ?? inspection.pages.first?.pageIndex
+      let pageIndex = model.pendingSignatureRegion?.pageIndex ?? inspection.pages.first?.pageIndex,
+      let bounds = signaturePlacementBounds()
     else { return }
 
-    let bounds: PDFRect
-    if let region = model.pendingSignatureRegion {
-      bounds = region.bounds
-    } else {
-      let page = inspection.pages.indices.contains(model.selectedPageIndex)
-        ? inspection.pages[model.selectedPageIndex] : inspection.pages[0]
-      let w = page.bounds.width * 0.35
-      let h = 60.0
-      bounds = PDFRect(x: page.bounds.x + (page.bounds.width - w) / 2,
-                       y: page.bounds.y + 60,
-                       width: w, height: h)
-    }
     model.applySignature(imageData, to: bounds, on: pageIndex)
 
     if saveForLater {
       let label = signatureLabel.isEmpty ? "Signature \(model.savedSignatures.count + 1)" : signatureLabel
       let dataURL = "data:image/png;base64,\(imageData.base64EncodedString())"
-      model.savedSignatures.append(SavedSignature(label: label, dataURL: dataURL))
+      model.saveSignatureToVault(label: label, dataURL: dataURL, source: source)
+    }
+  }
+
+  /// Place a signature already stored in the library and record its reuse.
+  private func applySavedSignature(_ sig: SavedSignature) {
+    guard let data = sig.signatureImageData,
+      let inspection = model.inspection,
+      let pageIndex = model.pendingSignatureRegion?.pageIndex ?? inspection.pages.first?.pageIndex,
+      let bounds = signaturePlacementBounds()
+    else { return }
+
+    model.applySignature(data, to: bounds, on: pageIndex)
+    model.recordSignatureUse(id: sig.id)
+  }
+
+  /// Export a library signature as a standalone PNG via a save panel.
+  private func exportSignature(_ sig: SavedSignature) {
+    guard let data = sig.signatureImageData else { return }
+    let panel = NSSavePanel()
+    panel.allowedContentTypes = [.png]
+    panel.nameFieldStringValue = (sig.label.isEmpty ? "signature" : sig.label) + ".png"
+    if panel.runModal() == .OK, let url = panel.url {
+      try? data.write(to: url)
     }
   }
 
@@ -892,20 +923,35 @@ private struct SignatureTypeTab: View {
 }
 
 private struct SignatureImageTab: View {
-  let onApply: (Data) -> Void
+  let onApply: (Data, SignatureSource) -> Void
   @State private var isImporterPresented = false
-  @State private var loadedImage: NSImage?
   @State private var loadedData: Data?
+  @State private var cleanBackground = true
+
+  /// The signature data to apply: the CV-cleaned result when extraction is on,
+  /// otherwise the raw import.
+  private var effectiveData: Data? {
+    guard let data = loadedData else { return nil }
+    if cleanBackground {
+      return (try? SignatureExtractor().clean(data)) ?? data
+    }
+    return data
+  }
 
   var body: some View {
     VStack(spacing: 8) {
-      if let image = loadedImage {
-        Image(nsImage: image)
+      Toggle("Clean background (auto-extract ink)", isOn: $cleanBackground)
+        .font(.caption)
+        .padding(.horizontal, 24)
+        .disabled(loadedData == nil)
+
+      if let data = effectiveData, let img = NSImage(data: data) {
+        Image(nsImage: img)
           .resizable()
           .scaledToFit()
-          .frame(maxHeight: 120)
+          .frame(maxHeight: 110)
           .padding(8)
-      } else {
+      } else if loadedData == nil {
         Button("Choose an image…") {
           isImporterPresented = true
         }
@@ -913,16 +959,18 @@ private struct SignatureImageTab: View {
       }
 
       HStack {
-        if loadedImage != nil {
+        if loadedData != nil {
           Button("Choose another…") { isImporterPresented = true }
             .buttonStyle(.bordered)
         }
         Spacer()
         Button("Use signature") {
-          if let data = loadedData { onApply(data) }
+          if let data = effectiveData {
+            onApply(data, cleanBackground ? .extracted : .image)
+          }
         }
         .buttonStyle(.borderedProminent)
-        .disabled(loadedData == nil)
+        .disabled(effectiveData == nil)
       }
       .padding(.horizontal, 24)
       .padding(.bottom, 8)
@@ -933,9 +981,8 @@ private struct SignatureImageTab: View {
       allowsMultipleSelection: false
     ) { result in
       if case .success(let urls) = result, let url = urls.first {
-        if let data = try? Data(contentsOf: url), let img = NSImage(data: data) {
+        if let data = try? Data(contentsOf: url) {
           loadedData = data
-          loadedImage = img
         }
       }
     }
@@ -944,7 +991,9 @@ private struct SignatureImageTab: View {
 
 private struct SignatureSavedTab: View {
   let signatures: [SavedSignature]
-  let onApply: (Data) -> Void
+  let onApply: (SavedSignature) -> Void
+  let onDelete: (UUID) -> Void
+  let onExport: (SavedSignature) -> Void
   @State private var selectedSignatureID: UUID?
 
   var body: some View {
@@ -955,28 +1004,47 @@ private struct SignatureSavedTab: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       } else {
         List(signatures, selection: $selectedSignatureID) { sig in
-          HStack {
-            Text(sig.label)
-            Spacer()
+          HStack(spacing: 8) {
             if let data = sig.signatureImageData, let img = NSImage(data: data) {
               Image(nsImage: img)
                 .resizable()
                 .scaledToFit()
                 .frame(height: 30)
             }
+            VStack(alignment: .leading, spacing: 1) {
+              Text(sig.label).lineLimit(1)
+              HStack(spacing: 6) {
+                Text(sig.source.rawValue.capitalized)
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+                if sig.useCount > 0 {
+                  Text("· used \(sig.useCount)×")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                }
+              }
+            }
+            Spacer()
           }
           .tag(sig.id)
+          .contextMenu {
+            Button("Use") { onApply(sig) }
+            Button("Export PNG…") { onExport(sig) }
+            Button("Delete", role: .destructive) { onDelete(sig.id) }
+          }
         }
         .frame(maxHeight: 130)
 
         HStack {
+          Button("Export…") {
+            if let id = selectedSignatureID,
+               let sig = signatures.first(where: { $0.id == id }) { onExport(sig) }
+          }
+          .disabled(selectedSignatureID == nil)
           Spacer()
           Button("Use signature") {
-            if let selectedID = selectedSignatureID,
-               let sig = signatures.first(where: { $0.id == selectedID }),
-               let data = sig.signatureImageData {
-              onApply(data)
-            }
+            if let id = selectedSignatureID,
+               let sig = signatures.first(where: { $0.id == id }) { onApply(sig) }
           }
           .buttonStyle(.borderedProminent)
           .disabled(selectedSignatureID == nil)

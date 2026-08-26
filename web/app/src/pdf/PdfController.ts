@@ -17,6 +17,13 @@ export type PdfControllerStatus = "idle" | "loading" | "ready" | "password" | "f
 
 export type FitMode = "fitWidth" | "fitPage" | "zoom";
 
+export type ViewMode = "single" | "continuous";
+
+export interface PageSize {
+  width: number;
+  height: number;
+}
+
 export interface PdfSearchMatch {
   page: number;
   index: number;
@@ -117,6 +124,8 @@ export interface ExportReport {
 }
 
 export interface PdfSnapshot {
+  viewMode: ViewMode;
+  pageSizes: PageSize[];
   status: PdfControllerStatus;
   pageCount: number;
   currentPage: number;
@@ -135,6 +144,8 @@ export interface PdfSnapshot {
 
 const INITIAL_SNAPSHOT: PdfSnapshot = {
   status: "idle",
+  viewMode: "single",
+  pageSizes: [],
   pageCount: 0,
   currentPage: 0,
   zoomPercent: 100,
@@ -189,6 +200,23 @@ export class PdfController {
     for (const listener of this.#listeners) listener();
   }
 
+  /** Page dimensions at scale 1, for continuous-scroll placeholders. */
+  async #capturePageSizes(
+    doc: import("../../../vendor/pdfjs/pdf.min.mjs").PdfDocumentProxy
+  ): Promise<PageSize[]> {
+    const sizes: PageSize[] = [];
+    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
+      try {
+        const page = await doc.getPage(pageNumber);
+        const viewport = page.getViewport({ scale: 1 });
+        sizes.push({ width: viewport.width, height: viewport.height });
+      } catch {
+        sizes.push({ width: 612, height: 792 });
+      }
+    }
+    return sizes;
+  }
+
   async open(data: ArrayBuffer): Promise<void> {
     await this.close();
     this.#patch({ status: "loading", error: null });
@@ -211,11 +239,13 @@ export class PdfController {
       } catch {
         metadata = {};
       }
+      const pageSizes = await this.#capturePageSizes(doc);
       this.#patch({
         status: "ready",
         pageCount: doc.numPages,
         currentPage: 1,
-        metadata
+        metadata,
+        pageSizes
       });
     } catch (error) {
       if ((error as { name?: string }).name === "PasswordException") {
@@ -277,6 +307,10 @@ export class PdfController {
     this.#patch({ fitMode });
   }
 
+  setViewMode(viewMode: ViewMode): void {
+    this.#patch({ viewMode });
+  }
+
   setZoom(zoomPercent: number): void {
     this.#patch({ zoomPercent: Math.min(400, Math.max(25, zoomPercent)) });
   }
@@ -293,13 +327,46 @@ export class PdfController {
    */
   renderInto(canvas: HTMLCanvasElement, signal?: AbortSignal): () => void {
     const token = ++this.#renderToken;
+    if (this.#snapshot.status !== "ready") return () => undefined;
+    const internal = new AbortController();
+    signal?.addEventListener("abort", () => internal.abort(), { once: true });
+    void this.#renderPage(canvas, this.#snapshot.currentPage, internal.signal, token);
+    return () => {
+      internal.abort();
+      this.#renderToken += 1;
+    };
+  }
+
+  /**
+   * Renders one specific page into a canvas without touching the global
+   * single-page render token — continuous scroll renders many pages whose
+   * in-flight work must not cancel each other. Per-call AbortSignal owns
+   * cancellation.
+   */
+  renderPageInto(
+    canvas: HTMLCanvasElement,
+    pageNumber: number,
+    signal?: AbortSignal
+  ): () => void {
+    const internal = new AbortController();
+    signal?.addEventListener("abort", () => internal.abort(), { once: true });
+    void this.#renderPage(canvas, pageNumber, internal.signal);
+    return () => internal.abort();
+  }
+
+  async #renderPage(
+    canvas: HTMLCanvasElement,
+    pageNumber: number,
+    signal: AbortSignal | undefined,
+    token?: number
+  ): Promise<void> {
     const snapshot = this.#snapshot;
     const doc = this.#doc;
-    if (!doc || snapshot.status !== "ready") return () => undefined;
+    if (!doc || snapshot.status !== "ready") return;
 
-    const run = async (): Promise<void> => {
-      const page = await doc.getPage(snapshot.currentPage);
-      if (token !== this.#renderToken) return;
+    try {
+      const page = await doc.getPage(pageNumber);
+      if (signal?.aborted) return;
 
       const baseViewport = page.getViewport({ scale: 1 });
       const containerWidth = canvas.parentElement?.clientWidth ?? baseViewport.width;
@@ -326,20 +393,14 @@ export class PdfController {
       const renderTask = page.render({ canvasContext: context, viewport });
       signal?.addEventListener("abort", () => renderTask.cancel(), { once: true });
       await renderTask.promise.catch(() => undefined);
-      if (token === this.#renderToken) {
+      if ((token === undefined || token === this.#renderToken) && !signal?.aborted) {
         this.#patch({ renderedAt: Date.now(), error: null });
       }
-    };
-
-    void run().catch((error) => {
-      if (token === this.#renderToken) {
+    } catch (error) {
+      if (!signal?.aborted) {
         this.#patch({ error: error instanceof Error ? error.message : String(error) });
       }
-    });
-
-    return () => {
-      this.#renderToken += 1;
-    };
+    }
   }
 
   async search(query: string): Promise<void> {

@@ -206,9 +206,36 @@ public struct DocumentSessionOperationMetadata: Codable, Equatable, Hashable, Id
 
 // MARK: - View session metadata
 
+/// An explicitly user-saved layout ("Save This Layout"). When present in a
+/// document's persisted view state it overrides any global restore policy for
+/// the magnification/layout fields; resume fields are never pinned.
+public struct DocumentSessionPinnedLayout: Codable, Equatable, Hashable, Sendable {
+  public let viewMode: ReaderViewMode
+  public let scaleMode: ReaderScaleMode
+  public let zoomScale: Double?
+  public let pageRotation: Int
+
+  public init(
+    viewMode: ReaderViewMode,
+    scaleMode: ReaderScaleMode,
+    zoomScale: Double?,
+    pageRotation: Int
+  ) {
+    self.viewMode = viewMode
+    self.scaleMode = scaleMode
+    self.zoomScale = zoomScale
+    self.pageRotation = ((pageRotation % 360) + 360) % 360
+  }
+}
+
 /// View state is recoverable session context, not document content. Search
 /// text is not persisted; only a digest and selection index may be supplied
 /// by a caller that explicitly wants search restoration.
+///
+/// D-057: all anchor/pin fields are optional so payloads written before this
+/// contract extension decode unchanged (synthesized Codable uses
+/// encodeIfPresent/decodeIfPresent for optionals), keeping stored view-state
+/// digests stable across the schema addition.
 public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
   public let selectedPageIndex: Int
   public let viewMode: ReaderViewMode
@@ -219,6 +246,19 @@ public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
   public let selectedFieldIDDigest: String?
   public let searchQueryDigest: String?
   public let selectedSearchMatchIndex: Int?
+  /// Page the fractional scroll anchor was captured on. Nil in older
+  /// sessions; decode defaults keep stored view-state digests stable.
+  public let anchorPageIndex: Int?
+  /// Fractional scroll position within the selected page, measured from the
+  /// top of the presented page (0 = top edge, 1 = bottom edge). Nil when the
+  /// canvas has not reported a settled viewport position.
+  public let anchorPageFraction: Double?
+  /// Horizontal pin of the viewport center within the page, normalized 0–1.
+  public let anchorViewportX: Double?
+  /// Vertical pin of the viewport center within the page, normalized 0–1.
+  public let anchorViewportY: Double?
+  /// Explicit user-saved layout. Overrides restore policy for layout fields.
+  public let pinnedLayout: DocumentSessionPinnedLayout?
 
   public init(
     selectedPageIndex: Int = 0,
@@ -229,7 +269,12 @@ public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
     selectedCandidateID: UUID? = nil,
     selectedFieldIDDigest: String? = nil,
     searchQueryDigest: String? = nil,
-    selectedSearchMatchIndex: Int? = nil
+    selectedSearchMatchIndex: Int? = nil,
+    anchorPageIndex: Int? = nil,
+    anchorPageFraction: Double? = nil,
+    anchorViewportX: Double? = nil,
+    anchorViewportY: Double? = nil,
+    pinnedLayout: DocumentSessionPinnedLayout? = nil
   ) {
     self.selectedPageIndex = max(0, selectedPageIndex)
     self.viewMode = viewMode
@@ -240,6 +285,30 @@ public struct DocumentSessionViewState: Codable, Equatable, Hashable, Sendable {
     self.selectedFieldIDDigest = selectedFieldIDDigest
     self.searchQueryDigest = searchQueryDigest
     self.selectedSearchMatchIndex = selectedSearchMatchIndex.map { max(0, $0) }
+    self.anchorPageIndex = anchorPageIndex.map { max(0, $0) }
+    self.anchorPageFraction = anchorPageFraction.map { min(1.0, max(0.0, $0)) }
+    self.anchorViewportX = anchorViewportX.map { min(1.0, max(0.0, $0)) }
+    self.anchorViewportY = anchorViewportY.map { min(1.0, max(0.0, $0)) }
+    self.pinnedLayout = pinnedLayout
+  }
+
+  /// Pure anchor math (D-057 Branch 15): converts a top-measured scroll
+  /// fraction into a point in unrotated page space (PDFKit page coordinates
+  /// have origin at bottom-left, y increasing upward). X is the horizontal
+  /// page center. The result feeds PDFView navigation via a PDFDestination
+  /// after magnification and layout have been applied — never before.
+  /// Viewport-relative pinning (`anchorViewportY`) is applied by the canvas
+  /// layer, which alone knows the post-layout viewport geometry.
+  public static func anchorPoint(
+    pageBounds: CGRect,
+    fractionIntoPage: Double
+  ) -> CGPoint {
+    let clampedFraction = min(1.0, max(0.0, fractionIntoPage))
+    let x = pageBounds.minX + pageBounds.width / 2
+    // Distance from the top of the page, expressed in page space where y
+    // grows upward from the bottom edge.
+    let offsetFromTop = CGFloat(clampedFraction) * pageBounds.height
+    return CGPoint(x: x, y: pageBounds.maxY - offsetFromTop)
   }
 }
 

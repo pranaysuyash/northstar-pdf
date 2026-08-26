@@ -135,6 +135,33 @@
   padding: 32px;
 }
 
+.pdf-continuous {
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding: 4px 14px 18px;
+  scroll-behavior: smooth;
+}
+
+.pdf-continuous .pdf-page-placeholder {
+  position: relative;
+  width: min(100%, 900px);
+  background: var(--pdf-paper);
+  box-shadow: var(--pdf-shadow);
+  border-radius: 2px;
+  min-height: 120px;
+}
+
+.pdf-page-placeholder canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
 #viewerMain.panel {
   display: flex;
   flex-direction: column;

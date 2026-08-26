@@ -2705,3 +2705,69 @@ Supersedes the pricing hypotheses in
   only the already-landed controller capabilities.
 - **Revisit trigger:** When the legacy entry retires, or when a non-zero
   crop-origin fixture enters the corpus.
+
+## D-057: Decoupled view memory — resume point always restores, magnification follows a user policy, plus an explicit per-document layout pin
+
+- **Date:** 2026-08-26
+- **Context:** User feedback: new documents should open centered or at the user's last choice, ideally with an explicit "save this layout"; view-state restore had page-level fidelity only; opening document B inherited document A's zoom because `open()` never reset reader layout when no durable session existed. Exploration (`Docs/explorations/ux-open-close-tabs-exploration-2026-08-26.md`, Part I Branch 1, Part IV Branch 15) established the design and competitor parity (Acrobat/Foxit opt-in restore; Preview toggle; D-010 reset+preference precedent).
+- **Problem:** One persisted blob conflated two memories users manage differently — where they were reading (page + scroll position) versus how the page was magnified (fit mode / zoom / rotation). No global default policy existed for new documents, no explicit pin existed, and restore precision was page-granular.
+- **Options considered:**
+  1. Keep single-blob restore, add only a Settings zoom default (rejected: leaves B-inherits-A bug and page-level anchor).
+  2. Split restore into resume point (always restored from digest-keyed session) + magnification governed by `LayoutRestorePolicy {fixedDefault, lastUsedGlobally, perDocument}`, with an explicit File ▸ Save This Layout pin overriding any policy for that digest (chosen).
+  3. Auto-persist after N customizations or heuristic per-document-type defaults (rejected: unexplainable state, doctrine violation).
+- **Decision:** Option 2, extended with Branch 15's fractional scroll anchor. Contract changes in `DocumentSessionViewState` are additive optionals (`anchorPageIndex`, `anchorPageFraction`, `anchorViewportX/Y`, `pinnedLayout`) so synthesized `encodeIfPresent` semantics keep existing payload digests stable (verified reasoning against the pair-manifest validation path, AppModel ~4244). Policy gating applies ONLY when building staged view state from durable recovery and fresh opens; `restoreViewState` used by undo/redo stays verbatim. Resume fields (page index, anchor, selections, view mode) always restore; scale mode / zoom / rotation follow policy unless pinned.
+- **Tradeoffs / risks:** Anchor math depends on post-layout viewport geometry — restoration defers to the canvas layer after initial layout; wrong-position flash possible on slow layout (mitigated by applying during the same update pass that navigates). Global last-used layout lives in UserDefaults (non-sensitive, value-free). Pin rides inside the autosaved view state and must be carried through unchanged by ordinary autosaves; only Save This Layout / Clear Pin mutate it.
+- **Validation plan:** S2 unit tests — policy-gated restore (all three policies), pin override and clear, out-of-bounds snapping (rotation/page/zoom/anchor clamps), old-payload Codable backward compatibility, anchor round-trip; manual Tier 4 verification across two documents and rotation/resize.
+- **Rollback:** All contract additions are optional-keyed; removing the policy gate restores prior behavior with no data migration. The pin field degrades to an ignored key on older builds.
+- **Owner:** Native macOS lane. **Revisit trigger:** if digest-stability assumption breaks on any encoder change, or when Wave 4 split views need multi-anchor state.
+
+## D-058: React shell is the canonical web surface; vanilla `app.js` presentation layer sunsets through gated parity
+
+- **Date:** 2026-08-26
+- **Context:** Two browser frontends share one contract layer: vanilla
+  `web/app.js` (~5,543 lines) and the React/TypeScript/Vite shell
+  (`web/app/src/*`). Dual maintenance without a cutover criterion was flagged
+  as long-term debt (audit F-T3; owner gate P3.2). Owner decision 2026-08-26:
+  sunset the vanilla presentation layer; React plus its build toolchain is the
+  long-term surface.
+- **Decision:** React shell becomes the only browser entry point once — and
+  only once — each gate below carries evidence. The zero-build shared contract
+  modules (`web/*.mjs`) remain canonical and framework-independent; React
+  consumes them via source imports (`vite.config.ts` single-source rule), never
+  copies. Cutover gates:
+  - **G1 Mutation-gate adoption:** `PdfController.exportCopy` routes through
+    `pdf-contract-mutation-gate.mjs` (`assertExportableContract` /
+    `guardedPdfLibExport`) + `pdf-preflight` instead of its hand-rolled writer
+    path. No export claim survives outside the canonical gate.
+  - **G2 Capability parity:** template capture/review/store/sync/migration,
+    profile vault + completion panel, session persistence, backup/cross-device
+    recovery UI, preflight report surface, outlines/links, text-layer search +
+    copy, candidate restore-dismissed, static choice marks & field synthesis,
+    diff overlay toggle, redo, keyboard scheme + help — implemented in React
+    or explicitly revoked per capability lane before deletion. Demo stubs
+    (hardcoded SAMPLE_PROFILE autofill, cosmetic OCR command) do not count.
+  - **G3 Evidence migration:** behavioral browser tests retargeted from legacy
+    DOM to the React bundle (currently ~35:1); accessibility gate proven
+    against React markup; corpus/parity suites run against the new entry.
+  - **G4 Deployment integrity:** `tools/deploy-web.mjs` gains a prebuilt-dist
+    staging mode for Vite hashed assets (current closure walker cannot follow
+    `/assets/<hash>` URLs); MANIFEST verification covers runtime-loaded pdf-lib
+    asset and worker; RT-004 contract test + `run-web-e2e.mjs` repointed.
+  - **G5 Interaction parity or acceptance of loss:** rubber-band scroll,
+    drag-pan/wheel-zoom, copy-page-text either ported or recorded as accepted
+    revocations with reasons.
+- **Options considered:** keep both frontends indefinitely — rejected
+  (unbounded dual-maintenance cost, split evidence base); sunset immediately —
+  rejected (deletes live product features and the entire browser-evidence
+  chain); freeze app.js at current state as read-only reference during
+  migration — adopted implicitly by the gating above.
+- **Trade-offs:** near-term continued double maintenance while G1–G5 close;
+  in exchange, one frontend, one evidence chain, and no silent capability loss.
+- **Validation:** each gate closes with Tier-3 evidence pointers recorded in
+  the implementation plan completion ledger; sunset commit happens only when
+  all five are green.
+- **Revisit trigger:** if React/Vite toolchain conflicts with the air-gap CSP
+  or zero-dependency posture beyond mitigation, revisit with an owner gate.
+- **Owner:** Web lane; decision recorded by PER-0428 continuation on owner
+  instruction.
+

@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import ImageIO
 import PDFKit
 import Testing
 
@@ -1648,5 +1649,52 @@ struct PDFEditorCoreTests {
     #expect(report.totalTaggedElements >= 2)
     #expect(elements.contains { $0.type == .document })
     #expect(elements.contains { $0.type == .formField && $0.actualText == "Full Name" })
+  }
+
+  @Test func signatureExtractorSeparatesInkFromPaper() throws {
+    // Build a 100x100 white image with a dark ink blob in the center.
+    let size = CGSize(width: 100, height: 100)
+    let ctx = CGContext(
+      data: nil, width: 100, height: 100,
+      bitsPerComponent: 8, bytesPerRow: 100 * 4,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    )!
+    ctx.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
+    ctx.fill(CGRect(origin: .zero, size: size))
+    ctx.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+    ctx.fillEllipse(in: CGRect(x: 35, y: 35, width: 30, height: 30))
+
+    let srcData = NSMutableData()
+    let dst = CGImageDestinationCreateWithData(srcData as CFMutableData, kUTTypePNG, 1, nil)!
+    CGImageDestinationAddImage(dst, ctx.makeImage()!, nil)
+    #expect(CGImageDestinationFinalize(dst))
+
+    let cleaned = try SignatureExtractor().clean(srcData as Data)
+    let outCG = CGImageSourceCreateWithData(cleaned as CFData, nil)
+      .flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) }!
+    #expect(outCG.alphaInfo != .none)
+
+    // Read back the whole cropped result: it should contain both opaque ink
+    // pixels and transparent paper pixels (extraction removed the background).
+    let outCtx = CGContext(
+      data: nil, width: outCG.width, height: outCG.height,
+      bitsPerComponent: 8, bytesPerRow: outCG.width * 4,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    )!
+    outCtx.draw(outCG, in: CGRect(x: 0, y: 0, width: outCG.width, height: outCG.height))
+    let ptr = outCtx.data!.bindMemory(to: UInt8.self, capacity: outCG.width * outCG.height * 4)
+
+    var opaque = 0
+    var transparent = 0
+    for i in 0..<(outCG.width * outCG.height) {
+      if ptr[i * 4 + 3] > 200 { opaque += 1 }
+      else if ptr[i * 4 + 3] < 32 { transparent += 1 }
+    }
+    #expect(opaque > 0)
+    #expect(transparent > 0)
+    // Background must be mostly removed: ink should be a minority of pixels.
+    #expect(Double(opaque) < Double(outCG.width * outCG.height) * 0.9)
   }
 }

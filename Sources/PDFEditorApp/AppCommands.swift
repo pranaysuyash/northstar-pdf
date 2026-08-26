@@ -29,6 +29,8 @@ private enum PDFEditorCommand: Hashable {
     case openDocument
     case closeWindow
     case exportCopy
+    case savePinnedLayout
+    case clearPinnedLayout
     case undo
     case redo
     case find
@@ -67,21 +69,18 @@ private struct PDFEditorCommandRouter {
             return model != nil
         case .closeWindow:
             return model != nil && windowController?.window != nil
-        case .exportCopy, .undo, .redo:
+        case .exportCopy:
             guard let model else { return false }
-            switch command {
-            case .exportCopy:
-                guard model.canExportCurrentOperations,
-                      let permissions = model.inspection?.permissions
-                else { return false }
-                return permissions.canModify || permissions.canAddAnnotations
-            case .undo:
-                return model.canUndo
-            case .redo:
-                return model.canRedo
-            default:
-                return false
-            }
+            guard model.canExportCurrentOperations,
+                  let permissions = model.inspection?.permissions
+            else { return false }
+            return permissions.canModify || permissions.canAddAnnotations
+        case .savePinnedLayout, .clearPinnedLayout:
+            return model?.liveDocument != nil
+        case .undo:
+            return model?.canUndo ?? false
+        case .redo:
+            return model?.canRedo ?? false
         case .find:
             guard let model else { return false }
             return model.liveDocument != nil && (model.inspection?.permissions.canCopy ?? false)
@@ -146,6 +145,10 @@ private struct PDFEditorCommandRouter {
             withCloseConfirmation(model: model, windowController: windowController)
         case .exportCopy:
             model?.export()
+        case .savePinnedLayout:
+            model?.savePinnedLayout()
+        case .clearPinnedLayout:
+            model?.clearPinnedLayout()
         case .undo:
             model?.undo()
         case .redo:
@@ -351,6 +354,24 @@ Button("Append PDF Pages...") {
         }
 
         CommandGroup(after: .saveItem) {
+            Button("Save This Layout") {
+                router.perform(.savePinnedLayout)
+            }
+            .disabled(!router.isEnabled(.savePinnedLayout))
+            .help(
+                "Remember this document's zoom and orientation. Reopening this PDF restores it, regardless of the default setting."
+            )
+
+            Button("Clear Saved Layout") {
+                router.perform(.clearPinnedLayout)
+            }
+            .disabled(!(model?.hasPinnedLayout ?? false))
+            .help(
+                "Forget this document's saved layout. Restores follow the default setting again."
+            )
+
+            Divider()
+
             Button("Export Copy...") {
                 router.perform(.exportCopy)
             }

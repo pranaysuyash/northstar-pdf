@@ -128,29 +128,37 @@ public enum EvidenceFusion {
     return pairs > 0 ? total / Double(pairs) : 1
   }
 
-  public static func fuse(
-    signals: [EvidenceFusionSignal],
-    thresholds: EvidenceFusionThresholds = EvidenceFusionThresholds()
-  ) -> EvidenceFusionResult {
-    guard !signals.isEmpty else {
-      return EvidenceFusionResult(
-        state: "abstain",
-        score: 0,
-        supportScore: 0,
-        coverageScore: 0,
-        agreementScore: 0,
-        evidenceIDs: [],
-        independentGroups: [],
-        conflict: false,
-        reasonCodes: ["noEvidence"]
-      )
-    }
-    let weightedTotal = signals.reduce(0.0) { partial, signal in
-      partial + clamp(signal.score) * (weights[signal.kind] ?? 0.40)
-    }
-    let weightTotal = signals.reduce(0.0) { partial, signal in
-      partial + (weights[signal.kind] ?? 0.40)
-    }
+    public static func fuse(
+        signals: [EvidenceFusionSignal],
+        thresholds: EvidenceFusionThresholds = EvidenceFusionThresholds(),
+        /// Stage 2: optional learned per-kind weight multipliers (1.0 = the
+        /// canonical weight). Values outside [0, 2] are clamped.
+        weightsOverride: [CandidateEvidenceKind: Double]? = nil
+    ) -> EvidenceFusionResult {
+        guard !signals.isEmpty else {
+            return EvidenceFusionResult(
+                state: "abstain",
+                score: 0,
+                supportScore: 0,
+                coverageScore: 0,
+                agreementScore: 0,
+                evidenceIDs: [],
+                independentGroups: [],
+                conflict: false,
+                reasonCodes: ["noEvidence"]
+            )
+        }
+        func effectiveWeight(for kind: CandidateEvidenceKind) -> Double {
+            let canonical = weights[kind] ?? 0.40
+            guard let override = weightsOverride?[kind] else { return canonical }
+            return canonical * min(2.0, max(0.0, override))
+        }
+        let weightedTotal = signals.reduce(0.0) { partial, signal in
+            partial + clamp(signal.score) * effectiveWeight(for: signal.kind)
+        }
+        let weightTotal = signals.reduce(0.0) { partial, signal in
+            partial + effectiveWeight(for: signal.kind)
+        }
     let supportScore = weightTotal > 0 ? weightedTotal / weightTotal : 0
     let groups = Set(signals.compactMap { group(for: $0.kind) }).sorted()
     let coverageScore = Double(groups.count) / 4.0

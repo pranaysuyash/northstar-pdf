@@ -1,5 +1,5 @@
 import { memo, useRef, useState } from "react";
-import { pdfController, type FitMode } from "../pdf/PdfController";
+import { pdfController, type FitMode, type ViewMode } from "../pdf/PdfController";
 import type { PdfSnapshot } from "../pdf/PdfController";
 import {
   SCRATCH_PAGE_SIZES,
@@ -119,6 +119,15 @@ export const Toolbar = memo(function Toolbar({ snapshot, onDocumentOpened }: Too
           <option value="fitWidth">Width</option>
           <option value="fitPage">Page</option>
           <option value="zoom">Zoom</option>
+        </select>
+        <label htmlFor="viewMode">View</label>
+        <select
+          id="viewMode"
+          value={snapshot.viewMode}
+          onChange={(event) => pdfController.setViewMode(event.target.value as ViewMode)}
+        >
+          <option value="single">Single</option>
+          <option value="continuous">Continuous</option>
         </select>
         <button
           type="button"

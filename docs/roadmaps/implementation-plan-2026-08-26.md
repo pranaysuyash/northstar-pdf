@@ -98,6 +98,38 @@ identified and still valid; sequencing them before the automation/determinism
 layer would compound risk rather than value. Each gets its own decision record
 when promoted.
 
+## Phase P7 — React canonical / vanilla sunset program (D-058)
+
+**Decision:** D-058 (2026-08-26, owner): React shell is the long-term surface;
+vanilla `app.js` presentation sunsets only through the five gates below. The
+shared `web/*.mjs` contract layer stays canonical and framework-independent.
+
+Parity-basis evidence: exploration pass 2026-08-26 — React covers rendering,
+search basics, field enumeration (partial), bounded overlays, export
+validation, five-mode model; **no React implementation exists for** template
+capture/review/store/sync/migration/index, profile vault + completion,
+session persistence, backup/cross-device recovery UI, preflight report,
+outlines/links, text-layer search/copy, candidate restore-dismissed,
+choice marks/synthesis, diff toggle, redo, keyboard help. React "autofill"
+and "OCR" commands are demo stubs. Test coupling ≈ 35 legacy-coupled browser
+tests vs 1 React smoke.
+
+| Gate | Scope | Oracle |
+|---|---|---|
+| P7.G1 | Wire `PdfController.exportCopy` through `pdf-contract-mutation-gate.mjs` + `pdf-preflight`; delete hand-rolled writer path | Mutation-gate unit tests pass against PdfController; no export path bypasses `assertExportableContract` (grep-gate in CI) |
+| P7.G2a | Port vault/session/backup/recovery UI (IndexedDB sessions, passphrase store, worker backup, cross-device bundles) | Feature tests against React surface; parity with app.js behaviors enumerated one-for-one |
+| P7.G2b | Port template domain UI (contract/capture/review/store/sync/migration/resolver/index) | Same method; template browser test retargeted and green |
+| P7.G2c | Port profiles/completion panel replacing SAMPLE_PROFILE stub | Completion flow test; no hardcoded profile values remain |
+| P7.G2d | Port reader completeness: outlines/links, text-layer search + copy-page-text, restore-dismissed, choice marks/synthesis, diff toggle, redo, preflight report surface | Per-feature tests; each either green or an owner-signed revocation record |
+| P7.G3 | Retarget ~35 legacy-coupled browser tests to the React bundle; prove accessibility gate on React markup | Full retargeted suite green ×2 consecutive runs against `/web/app/dist` entry |
+| P7.G4 | Deploy tooling: prebuilt-dist staging mode in `deploy-web.mjs` (Vite hashed assets), MANIFEST incl. runtime pdf-lib asset + worker; repoint RT-004 test & `run-web-e2e.mjs` | End-to-end Playwright proof against staged `dist/web` of the built bundle; manifest verification passes |
+| P7.G5 | Interaction parity dispositions: rubber-band scroll, drag-pan/wheel-zoom, copy-page-text — port or record accepted revocation | Ledger rows with reasons signed by owner |
+| P7.G6 | Sunset: remove `app.js` + legacy DOM from `index.html`, retire `mode-stage.mjs` if unreferenced, archive legacy-only tests with supersession pointers | Deploy closure contains no app.js; all gates' evidence linked; final audit row |
+
+Sequencing note: G1 first (correctness), then G2a/G2b/G2c (largest capability
+gaps), G3 continuously as each feature lands, G4 before first deploy attempt,
+G6 last.
+
 ---
 
 ## Completion ledger (append-only)
@@ -118,6 +150,7 @@ when promoted.
 | 2026-08-26 PM | P0-class repair: restored `applyPngUpPredictor` static helper in `PDFIncrementalFormWriter.swift` (implementation lost in salvage while its tests landed). `swift test` now **250/250 across 35 suites** (S2: compile error before, pass after) | `swift test` output |
 | 2026-08-26 PM | Collision event documented: concurrent sessions cross-clobbered tracked-file repairs (test import, D-055, banners); ~16:31 bulk Git restore reverted both; all three re-applied and verified present exactly once. Validates E-10/I-02 — lanes need a claim mechanism before editing shared canonical files | decisions.md D-055 validation note; `docs/flaky-register.md` |
 | 2026-08-26 PM | Suite reds fully classified (final): 7 = SwiftPM `.build` lock contention under suite load (pass standalone + via filtered runner, 11.8s with visible lock-wait); 2 = deterministic drift (A-5/P6.7 bundle regen, A-6 ledger reconcile), lane-owned. Ambient stale servers :4173/:4174 found & killed | `docs/flaky-register.md` final rows |
+| 2026-08-26 PM | **P3.2 resolved by owner**: React canonical, vanilla sunsets → decision **D-058** with gates G1–G6; Phase **P7** added from a fresh parity exploration (React covers ~half of app.js surface; template/profile/vault/recovery domains have zero React implementation; test coupling ~35:1) | decisions.md D-058; this phase P7 |
 
 **Maintenance rule:** same as task-inventory — completed items move down with
 evidence pointers, never deleted.

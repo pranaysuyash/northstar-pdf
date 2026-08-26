@@ -11,7 +11,7 @@
   "fixtures": {
     "plain-text.pdf": {
       "category": "plain-text",
-      "sha256": "7b93eb0aa948e882783773c58b638cf82bbd163f6e7944b41419e0adbf62fab4",
+      "sha256": "f1474121f9bd53bd7d00bda2176052108eb7371d4911eee6be019cbdc7917bb7",
       "qpdf": "clean",
       "expected": {
         "pages": 3
@@ -19,7 +19,7 @@
     },
     "multi-column.pdf": {
       "category": "multi-column",
-      "sha256": "7aed9c98d7273f75dd0a4a347cfa3854365eea4a7dfab4043c1477473a4cad47",
+      "sha256": "313f473d09c0087dd43ad9e237f89050174d9b8e82507ed043f4886fc3d80060",
       "qpdf": "clean",
       "expected": {
         "pages": 2
@@ -27,7 +27,7 @@
     },
     "geometry.pdf": {
       "category": "geometry",
-      "sha256": "cc3a9606c95ba0c24528c3d6368cd0f89c098ff02693e9158b8c66746eaa8435",
+      "sha256": "8e5130b6de31d57eca6801e0d9166152b7216f434afbee42e1b78cd5f4ec81e9",
       "qpdf": "clean",
       "expected": {
         "pages": 4,
@@ -81,7 +81,7 @@
     },
     "navigation.pdf": {
       "category": "navigation",
-      "sha256": "f1ca5e7df24500c0c3117fa93921d382098d18beca6cd3227e997d595185e9d9",
+      "sha256": "c234edd718b062fac44c311a687e4818bbfa26e575ac416c8cdbd15df3488d8d",
       "qpdf": "clean",
       "expected": {
         "pages": 3,
@@ -99,7 +99,7 @@
     },
     "metadata-complete.pdf": {
       "category": "metadata",
-      "sha256": "b060b8dc61f3de8bb86172675fb1f64415a7a67aa72a6ae75962cbcf6416b2f3",
+      "sha256": "f174d5cedd7ab5a9f7aa568144e608a36d3cfad08f142870fecbc3c0de7bb299",
       "qpdf": "clean",
       "expected": {
         "title": "Complete Metadata Fixture",
@@ -108,7 +108,7 @@
     },
     "metadata-absent.pdf": {
       "category": "metadata",
-      "sha256": "e177ad209e93ef844ae16b13c2e99054af36c19bd4af0a4c5f89048a1a160a92",
+      "sha256": "82c668650f9b7f395109628d54e6c2eee1d7121820afc8f852e31da0288ad3c8",
       "qpdf": "clean",
       "expected": {
         "infoKeys": [],
@@ -117,7 +117,7 @@
     },
     "metadata-unicode.pdf": {
       "category": "metadata",
-      "sha256": "3d0757ceb2b82580cbb57490f731b9380c90173cb8c3e247d51e2457f9546dea",
+      "sha256": "0dc10b6222944610341b6d07d18f827d094746b2ccec7f59bcea05fe33496370",
       "qpdf": "clean",
       "expected": {
         "title": "Título — Ünïcødé ✓ 日本語"
@@ -125,13 +125,13 @@
     },
     "metadata-custom.pdf": {
       "category": "metadata",
-      "sha256": "d0832672b12e43431fc792987f9bea4ae5787fc777bac03c96a5cb3ff0dd54cc",
+      "sha256": "c0e45965dbfa37564bd6b40c9644edb2002eb15fb244e2b32c84d6fbb4a0cebc",
       "qpdf": "clean",
       "expected": {}
     },
     "metadata-malformed.pdf": {
       "category": "metadata",
-      "sha256": "f1eba8881d7eb75bae326761778d9a8166f405eb764e2df6ee2271b854d3368e",
+      "sha256": "957a21aa4f9c326ab06fd2503474e04ed240b013d5cfbc3924b26e5e09da24b6",
       "qpdf": "clean",
       "expected": {
         "weirdType": "int"
@@ -139,7 +139,7 @@
     },
     "signed-valid-structure.pdf": {
       "category": "signed",
-      "sha256": "a361abf2e9ab4e321efbe9fc59eae99adb94e4c8da472cda7ac746372efc2595",
+      "sha256": "f18dd36ccb6de8567ba6ee0d71a9a1104fe26f48353ab7c04e129a73f7e09928",
       "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
       "expected": {
         "pages": 1
@@ -155,7 +155,7 @@
     },
     "signed-invalid-structure.pdf": {
       "category": "signed",
-      "sha256": "aef5ec73651d79e476f2b0b76b86ae21a887bc9312cc885b9b2d9dd6de31a75d",
+      "sha256": "10c0e2d83eaf3ef95a65b112aac867a8328e95d35301a7e57d8557df2a29e257",
       "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
       "expected": {
         "pages": 1
@@ -171,7 +171,7 @@
     },
     "signed-multiple.pdf": {
       "category": "signed",
-      "sha256": "bea6f553519f48d141c534f736ce9b352e60654fee2d1c7c4f089b1d8edf1997",
+      "sha256": "0424e3fccac0137a9853e5bea3d40f4618b73b38d63317a8efad842cf49b43fb",
       "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
       "expected": {
         "pages": 1
@@ -187,7 +187,7 @@
     },
     "xfa-static.pdf": {
       "category": "xfa",
-      "sha256": "2a077e72fad0268275492f319f3567376fdb38ab6ec12624fc7598803b179633",
+      "sha256": "45a003dbc096625d5241bf617e0ef877c750d5dab54148f80d7fb3065e897269",
       "qpdf": "clean",
       "expected": {
         "pages": 1
@@ -202,7 +202,7 @@
     },
     "xfa-dynamic.pdf": {
       "category": "xfa",
-      "sha256": "60eb7445f4882e440ce8b54dbfa18810db8cb3ddd53c0c83b549e79d601ba49a",
+      "sha256": "d772b0a91f6633fe9e2095cfeac9d4006f6106192df397d940ca9ccad5840756",
       "qpdf": "clean",
       "expected": {
         "pages": 1
@@ -217,7 +217,7 @@
     },
     "xfa-hybrid.pdf": {
       "category": "xfa",
-      "sha256": "7b0d70c9ddb773a9b05124bdd8c53f86464ca2c983b50a72b54577c508a710ec",
+      "sha256": "d80c7003f094b44fca02f88336d148e17f13043ae77764aae5266c64407af660",
       "qpdf": "success-with-warnings(inherited-base-widget-reachability)",
       "expected": {
         "pages": 1,

@@ -78,6 +78,13 @@
   outline: 1px solid var(--pdf-amber);
 }
 
+.region-marker {
+  position: absolute;
+  border: 1.5px dashed var(--pdf-accent);
+  background: oklch(0.57 0.19 258 / 0.08);
+  border-radius: 3px;
+}
+
 .pdf-stage canvas {
   max-width: 100%;
   height: auto;

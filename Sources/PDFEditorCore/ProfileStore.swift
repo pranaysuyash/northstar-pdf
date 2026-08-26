@@ -736,26 +736,26 @@ extension UserProfile {
   ]
 
   /// Normalizes a label or alias phrase into comparable tokens.
-  private static func normalizedTokens(_ text: String) -> Set<String> {
+  static func normalizedTokenSet(_ text: String) -> Set<String> {
     let cleaned = text.lowercased()
       .map { $0.isLetter || $0.isNumber ? $0 : " " }
       .reduce(into: "") { $0.append($1) }
     return Set(cleaned.split(separator: " ").map(String.init))
   }
 
-  /// Scores how well a raw document label names a semantic key.
-  ///
-  /// 1.0 = exact alias-phrase equality; otherwise graded token overlap.
-  /// Short labels (<2 meaningful tokens) never match multi-token aliases
-  /// partially, so "Name" cannot pull the first-name value.
-  static func matchScore(label rawLabel: String, semanticKey: String) -> Double {
-    guard let aliases = labelAliases[semanticKey] else { return 0 }
-    let labelTokens = normalizedTokens(rawLabel)
+  private static func normalizedTokens(_ text: String) -> Set<String> {
+    normalizedTokenSet(text)
+  }
+
+  /// Scoring core over an explicit alias list; shared with the benchmark
+  /// harness so measurements exercise exactly what production runs.
+  static func scoreAliases(_ aliases: [String], for rawLabel: String) -> Double {
+    let labelTokens = normalizedTokenSet(rawLabel)
     guard !labelTokens.isEmpty else { return 0 }
 
     var best = 0.0
     for alias in aliases {
-      let aliasTokens = normalizedTokens(alias)
+      let aliasTokens = normalizedTokenSet(alias)
       guard !aliasTokens.isEmpty else { continue }
 
       if labelTokens == aliasTokens { return 1.0 }
@@ -779,6 +779,16 @@ extension UserProfile {
       }
     }
     return min(best, 0.99)
+  }
+
+  /// Scores how well a raw document label names a semantic key.
+  ///
+  /// 1.0 = exact alias-phrase equality; otherwise graded token overlap.
+  /// Short labels (<2 meaningful tokens) never match multi-token aliases
+  /// partially, so "Name" cannot pull the first-name value.
+  static func matchScore(label rawLabel: String, semanticKey: String) -> Double {
+    guard let aliases = labelAliases[semanticKey] else { return 0 }
+    return scoreAliases(aliases, for: rawLabel)
   }
 
   /// Best profile entry for a raw document label, or nil below threshold.

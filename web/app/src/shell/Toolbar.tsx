@@ -165,7 +165,7 @@ export const Toolbar = memo(function Toolbar({ snapshot, onDocumentOpened }: Too
           }}
         />
         <button type="button" onClick={() => pdfController.setPage(Number(pageInput.current?.value))}>
-          Go
+          Open page
         </button>
         <span className="small">
           {snapshot.status === "ready" ? `${snapshot.currentPage} / ${snapshot.pageCount}` : "—"}
@@ -178,7 +178,7 @@ export const Toolbar = memo(function Toolbar({ snapshot, onDocumentOpened }: Too
           id="searchInput"
           ref={searchInput}
           type="text"
-          placeholder="Search..."
+          placeholder="Search…"
           style={{ width: 200 }}
           aria-label="Search document text"
           onKeyDown={(event) => {

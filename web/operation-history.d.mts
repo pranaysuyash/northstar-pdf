@@ -24,10 +24,7 @@ export interface HistoryOperation {
   readonly confirmedAt: string;
   readonly undoneBy?: number;
   readonly undoes?: number;
-  /**
-   * Provider-shaped authorization rectangle for coordinate-bearing operations
-   * (overlay text placement). Additive; consumers without coordinates ignore it.
-   */
+  /** Provider-shaped authorization rectangle for coordinate-bearing operations. */
   readonly coordinate?: {
     pageIndex: number;
     rect: { x: number; y: number; width: number; height: number };

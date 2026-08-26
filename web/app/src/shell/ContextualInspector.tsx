@@ -76,21 +76,27 @@ export const ContextualInspector = memo(function ContextualInspector({
             {selectedField ? (
               <div className="bg-slate-950/60 p-3 rounded-lg border border-slate-800 space-y-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Field Name</label>
+                  <span className="text-[10px] uppercase font-bold text-slate-500">Field Name</span>
                   <div className="text-sm font-mono text-cyan-300 font-medium">{selectedField.name}</div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Type / Page</label>
+                  <span className="text-[10px] uppercase font-bold text-slate-500">Type / Page</span>
                   <div className="text-xs text-slate-300 capitalize">
                     {selectedField.kind} • Page {selectedField.pageIndex + 1}
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] uppercase font-bold text-slate-500">Value</label>
+                  <label
+                    htmlFor="inspectorFieldValue"
+                    className="text-[10px] uppercase font-bold text-slate-500"
+                  >
+                    Value
+                  </label>
                   {selectedField.kind === "checkbox" || selectedField.kind === "radio" ? (
                     <input
+                      id="inspectorFieldValue"
                       type="checkbox"
                       className="h-4 w-4 rounded border-slate-700 text-cyan-500 focus:ring-cyan-400"
                       checked={selectedField.value === "true" || selectedField.value === "/Yes" || selectedField.value === "/1"}
@@ -98,6 +104,7 @@ export const ContextualInspector = memo(function ContextualInspector({
                     />
                   ) : (
                     <input
+                      id="inspectorFieldValue"
                       type="text"
                       className="w-full bg-slate-900 border border-slate-700 rounded px-2.5 py-1.5 text-slate-100 text-xs focus:border-cyan-500 focus:outline-none"
                       value={selectedField.value}
@@ -116,9 +123,10 @@ export const ContextualInspector = memo(function ContextualInspector({
               <div className="text-[10px] uppercase font-bold text-slate-500">Form Fields</div>
               <div className="space-y-1 max-h-56 overflow-y-auto">
                 {fields.map((f) => (
-                  <div
+                  <button
+                    type="button"
                     key={f.id}
-                    className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors ${
+                    className={`p-2 rounded cursor-pointer flex items-center justify-between transition-colors w-full text-left ${
                       f.id === selectedFieldId
                         ? "bg-cyan-950/60 border border-cyan-700 text-cyan-200"
                         : "hover:bg-slate-800/50 text-slate-400"
@@ -128,7 +136,7 @@ export const ContextualInspector = memo(function ContextualInspector({
                   >
                     <span className="font-mono truncate max-w-[150px]">{f.name}</span>
                     <span className="text-[10px] text-slate-500">P{f.pageIndex + 1}</span>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -146,7 +154,7 @@ export const ContextualInspector = memo(function ContextualInspector({
 
             <div className="text-[10px] uppercase font-bold text-slate-500">Document Intelligence</div>
             <button
-              className="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200 font-medium flex items-center justify-center space-x-2"
+              className="w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-200 font-medium flex items-center justify-center gap-2"
               onClick={onRunOCR}
             >
               <span>🔍</span>

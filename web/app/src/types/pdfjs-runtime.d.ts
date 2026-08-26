@@ -9,6 +9,8 @@ declare module "*/vendor/pdfjs/pdf.min.mjs" {
     height: number;
     rotation: number;
     readonly transform: number[];
+    convertToPdfPoint(x: number, y: number): [number, number];
+    convertToViewportPoint(x: number, y: number): [number, number];
   }
 
   export interface PdfTextItem {
@@ -24,6 +26,7 @@ declare module "*/vendor/pdfjs/pdf.min.mjs" {
 
   export interface PdfPageProxy {
     readonly pageNumber: number;
+    readonly view: number[];
     rotate: number;
     getViewport(options: { scale: number; rotation?: number }): PdfViewport;
     render(options: {
@@ -33,6 +36,7 @@ declare module "*/vendor/pdfjs/pdf.min.mjs" {
     getTextContent(): Promise<PdfTextContent>;
     cleanup(): void;
     getAnnotations(options?: { intent?: string }): Promise<Array<Record<string, any>>>;
+    getOperatorList(): Promise<{ fnArray: number[]; argsArray: unknown[] }>;
   }
 
   export interface PdfDocumentProxy {

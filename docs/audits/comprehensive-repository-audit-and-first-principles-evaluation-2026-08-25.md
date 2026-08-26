@@ -1,5 +1,15 @@
 # Comprehensive Repository Audit, Multi-Persona First-Principles Evaluation, and Technical Master Plan
 
+> **SUPERSEDED IN PART — 2026-08-26 (PER-0428 doctrine-alignment audit).**
+> One claim in §5.2 is falsified by live code: "zero React/Angular runtime
+> dependencies" — a React 19 + TypeScript + Vite shell now exists at
+> `web/app/` sharing the same contract modules (`web/app/package.json`).
+> Test counts (122 tests) also predate later sessions (226/226 recorded in
+> `progress.md`, 2026-08-26). Its five invariant pillars, findings ledger
+> F-000–F-045, and capability roadmap remain valid context. Current status
+> authority: `docs/release-gates.md`; current plan:
+> `docs/roadmaps/implementation-plan-2026-08-26.md`.
+
 **Project:** Decision-Grade Local-First PDF Platform (`/Users/pranay/Projects/pdf_editor`)  
 **Date:** 2026-08-25  
 **Doctrine Baseline:** Operating Doctrine 6.1 / 8.0 (`/Users/pranay/Downloads/OPERATING_DOCTRINE.md`)  

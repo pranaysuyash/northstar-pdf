@@ -107,6 +107,25 @@ provider and validation evidence.
   regions, field synthesis, overlay text placement, page organization, and
   template persistence remain unconnected and render their true capability
   states rather than simulated success.
+- Export-depth parity landed (2026-08-26, D-056): `PdfController.exportCopy`
+  replays page boxes and rotation from the untouched source before edits,
+  asserts source-digest stability, refuses encrypted-source mutation,
+  fit-plans bounded overlays via the new pure contract
+  `web/pdf-write-planning.mjs`, and validates through the canonical
+  `pdf-impact-validator.mjs` outside-region lanes. Candidate-evidence and
+  overlay-placement capabilities exist on the controller
+  (`listCandidates`, `proposePlacement`, `getRegionMarkers`); their
+  Complete-workbench wiring is pending on the concurrent UI refactor of
+  `App.tsx` / `CompleteWorkbench.tsx` (see D-056 ownership note).
+- Verification harness: `benchmark/react-surface-smoke.mjs` covers open →
+  search highlights → confirm edit → validated export download → undo across
+  the nine-breakpoint handoff matrix with zero horizontal overflow.
+- Open hardening gate for the React entry (deploy blocker, not a dev blocker):
+  the strict CSP contract from `web/index.html` (`script-src 'self'`,
+  `connect-src 'none'`) is not yet restored on the Vite build output because
+  the default build inlines a module preload script. Restoring it requires a
+  nonce or externalized preload strategy before any deployment; until then the
+  air-gap guarantee holds only for the legacy entry.
 
 ## Explicit non-goals of this record
 

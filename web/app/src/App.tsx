@@ -4,14 +4,19 @@ import {
   type CapabilityState
 } from "./state/productSurface";
 import {
-  createOperationHistory,
-  pendingOperations,
-  recordOperation,
-  undoLastOperation,
-  type HistoryOperation
-} from "../../operation-history.mjs";
+  createEditorSessionState,
+  editorSessionReducer,
+  type AutofillUpdate
+} from "./state/editorSession";
+import { undoLastOperation, type HistoryOperation } from "../../operation-history.mjs";
 import { pdfController } from "./pdf/PdfController";
-import type { ExportReport, NativeField } from "./pdf/PdfController";
+import type {
+  ExportReport,
+  GeometryCandidate,
+  NativeField,
+  PdfEditOperation,
+  Rect
+} from "./pdf/PdfController";
 import { usePdfSnapshot } from "./pdf/usePdfSnapshot";
 import { Toolbar } from "./shell/Toolbar";
 import { ModeRail } from "./shell/ModeRail";
@@ -32,36 +37,85 @@ const AgentCommandHUD = lazy(() =>
   import("./shell/AgentCommandHUD").then((m) => ({ default: m.AgentCommandHUD }))
 );
 
+const SAMPLE_PROFILE: Record<string, string> = {
+  name: "Jane Doe",
+  email: "jane.doe@example.com",
+  phone: "555-0199",
+  address: "123 Market St, San Francisco, CA"
+};
+
 export function App() {
   const [surface, dispatch] = useReducer(productSurfaceReducer, undefined, () =>
     // Lazy init keeps the reducer's contract module as the single state source.
     productSurfaceReducer(undefined, { type: "select-mode", modeID: "reader" })
   );
+  const [session, dispatchSession] = useReducer(
+    editorSessionReducer,
+    undefined,
+    createEditorSessionState
+  );
   const snapshot = usePdfSnapshot();
   const documentOpen = snapshot.status === "ready";
+  const { history } = session;
 
-  const [fields, setFields] = useState<NativeField[]>([]);
-  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
-  const [history, setHistory] = useState(createOperationHistory);
-  const [exporting, setExporting] = useState(false);
-  const [exportReport, setExportReport] = useState<ExportReport | null>(null);
-  const [exportError, setExportError] = useState<string | null>(null);
   const [isCommandHUDOpen, setIsCommandHUDOpen] = useState(false);
+  const [regionRects, setRegionRects] = useState<Rect[]>([]);
+  const [candidates, setCandidates] = useState<GeometryCandidate[]>([]);
+  const [candidatesLoading, setCandidatesLoading] = useState(false);
+  const [dismissedIDs, setDismissedIDs] = useState<ReadonlySet<string>>(new Set());
+  const [pendingPlacement, setPendingPlacement] = useState<{ pageIndex: number; rect: Rect } | null>(null);
 
   useEffect(() => {
     if (!documentOpen) {
-      setFields([]);
-      setSelectedFieldId(null);
-      setHistory(createOperationHistory());
-      setExportReport(null);
-      setExportError(null);
+      dispatchSession({ type: "reset-session" });
+      setRegionRects([]);
       return;
     }
     void pdfController.listNativeFields().then((f) => {
-      setFields(f);
-      if (f.length > 0) setSelectedFieldId(f[0].id);
+      dispatchSession({ type: "fields-loaded", fields: f });
     });
-  }, [snapshot.status]);
+  }, [documentOpen]);
+
+  // Geometry-detected candidate regions for the currently rendered page.
+  const currentPage = snapshot.currentPage;
+  const analysisModeActive = surface.activeMode === "understand" || surface.activeMode === "complete";
+  useEffect(() => {
+    if (!documentOpen || currentPage < 1) {
+      setRegionRects([]);
+      setCandidates([]);
+      return;
+    }
+    let cancelled = false;
+    void pdfController.listCandidates(currentPage).then((found) => {
+      if (cancelled) return;
+      setCandidates(found);
+      setRegionRects(found.map((candidate) => candidate.bounds));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [documentOpen, currentPage]);
+
+  // Load candidate evidence only where a review surface actually needs it.
+  useEffect(() => {
+    if (!analysisModeActive || !documentOpen || currentPage < 1) return;
+    let token = true;
+    setCandidatesLoading(true);
+    void pdfController
+      .listCandidates(currentPage)
+      .then((found) => {
+        if (token) setCandidates(found);
+      })
+      .catch(() => {
+        if (token) setCandidates([]);
+      })
+      .finally(() => {
+        if (token) setCandidatesLoading(false);
+      });
+    return () => {
+      token = false;
+    };
+  }, [analysisModeActive, documentOpen, currentPage]);
 
   // Global ⌘K Shortcut Listener
   useEffect(() => {
@@ -80,102 +134,71 @@ export function App() {
   }, []);
 
   const handleConfirmEdit = useCallback((field: NativeField, value: string) => {
-    setFields((current) =>
-      current.map((candidate) => (candidate.id === field.id ? { ...candidate, value } : candidate))
-    );
-    setHistory((current) =>
-      recordOperation(current, {
-        kind: "nativeFieldValue",
-        targetID: field.id,
-        pageIndex: field.pageIndex,
-        value,
-        previousValue: field.value
-      })
-    );
-  }, []);
-
-  const handleUndo = useCallback(() => {
-    setHistory((current) => {
-      const result = undoLastOperation(current);
-      if (!result) return current;
-      const restore = result.undoEntry.value;
-      setFields((currentFields) =>
-        currentFields.map((field) =>
-          field.id === result.undoneTarget.targetID ? { ...field, value: restore } : field
-        )
-      );
-      return result.history;
+    dispatchSession({
+      type: "edit-field",
+      fieldID: field.id,
+      pageIndex: field.pageIndex,
+      value,
+      previousValue: field.value
     });
   }, []);
 
+  const handleUndo = useCallback(() => {
+    const outcome = undoLastOperation(history);
+    if (!outcome) return;
+    dispatchSession({ type: "undo-applied", outcome });
+  }, [history]);
+
   const handleExport = useCallback(() => {
-    if (exporting) return;
-    setExporting(true);
-    setExportError(null);
+    if (session.exporting) return;
+    const operations: PdfEditOperation[] = [];
+    for (const op of history.operations) {
+      if (!op.undoneBy && !op.undoes && (op.kind === "nativeFieldValue" || op.kind === "overlayText")) {
+        operations.push({
+          id: `op-${op.sequence}`,
+          kind: op.kind,
+          targetID: op.targetID,
+          pageIndex: op.pageIndex,
+          value: op.value,
+          previousValue: op.previousValue
+        });
+      }
+    }
+    dispatchSession({ type: "export-started" });
     void pdfController
-      .exportCopy(
-        pendingOperations(history)
-          .filter((op) => op.kind === "nativeFieldValue")
-          .map((op) => ({
-            kind: "nativeFieldValue" as const,
-            targetID: op.targetID,
-            pageIndex: op.pageIndex,
-            value: op.value
-          }))
-      )
-      .then((report) => {
-        setExportReport(report);
+      .exportCopy(operations)
+      .then((report: ExportReport) => {
+        dispatchSession({ type: "export-succeeded", report });
         if (report.passed) {
           dispatch({ type: "set-capability", modeID: "review", capability: "validated" });
         }
       })
       .catch((error: unknown) => {
-        setExportError(error instanceof Error ? error.message : String(error));
-      })
-      .finally(() => setExporting(false));
-  }, [exporting, history]);
+        dispatchSession({
+          type: "export-failed",
+          message: error instanceof Error ? error.message : String(error)
+        });
+      });
+  }, [dispatch, session.exporting, history]);
 
   const handleAutofillProfile = useCallback(() => {
-    // Fill standard demo profile fields
-    const sampleProfile: Record<string, string> = {
-      name: "Jane Doe",
-      email: "jane.doe@example.com",
-      phone: "555-0199",
-      address: "123 Market St, San Francisco, CA"
-    };
-
-    setFields((current) => {
-      const updates: Array<{ field: NativeField; value: string }> = [];
-      const nextFields = current.map((f) => {
-        const lower = f.name.toLowerCase();
-        for (const [k, v] of Object.entries(sampleProfile)) {
-          if (lower.includes(k) && f.value !== v) {
-            updates.push({ field: f, value: v });
-            return { ...f, value: v };
-          }
+    const updates: AutofillUpdate[] = [];
+    for (const field of session.fields) {
+      const lower = field.name.toLowerCase();
+      for (const [key, value] of Object.entries(SAMPLE_PROFILE)) {
+        if (lower.includes(key) && field.value !== value) {
+          updates.push({
+            targetID: field.id,
+            pageIndex: field.pageIndex,
+            previousValue: field.value,
+            value
+          });
+          break;
         }
-        return f;
-      });
-
-      if (updates.length > 0) {
-        setHistory((hist) => {
-          let updatedHist = hist;
-          for (const { field, value } of updates) {
-            updatedHist = recordOperation(updatedHist, {
-              kind: "nativeFieldValue",
-              targetID: field.id,
-              pageIndex: field.pageIndex,
-              value,
-              previousValue: field.value
-            });
-          }
-          return updatedHist;
-        });
       }
-
-      return nextFields;
-    });
-  }, []);
+    }
+    dispatchSession({ type: "autofill-applied", updates });
+  }, [session.fields]);
 
   const handleRunOCR = useCallback(() => {
     dispatch({ type: "select-mode", modeID: "understand" });
@@ -183,6 +206,40 @@ export function App() {
 
   const handleSelectPage = useCallback((p: number) => {
     pdfController.setPage(p + 1);
+  }, []);
+
+  const handleCanvasClick = useCallback(
+    (deviceX: number, deviceY: number) => {
+      void pdfController
+        .proposePlacement(snapshot.currentPage, deviceX, deviceY)
+        .then((placement) => {
+          if (!placement) return;
+          setPendingPlacement(placement);
+          dispatch({ type: "select-mode", modeID: "complete" });
+        });
+    },
+    [snapshot.currentPage]
+  );
+
+  const handleConfirmPlacement = useCallback(
+    (value: string) => {
+      setPendingPlacement((current) => {
+        if (!current) return null;
+        dispatchSession({
+          type: "placement-confirmed",
+          targetID: `overlay-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          pageIndex: current.pageIndex,
+          value,
+          rect: current.rect
+        });
+        return null;
+      });
+    },
+    []
+  );
+
+  const handleDismissCandidate = useCallback((id: string) => {
+    setDismissedIDs((current) => new Set([...current, id]));
   }, []);
 
   const readerCapability: CapabilityState =
@@ -195,7 +252,27 @@ export function App() {
           : surface.capabilities.reader;
 
   const capabilities = { ...surface.capabilities, reader: readerCapability };
-  const pendingOps: HistoryOperation[] = pendingOperations(history);
+  const pendingFieldOps: HistoryOperation[] = [];
+  for (const op of history.operations) {
+    if (!op.undoneBy && !op.undoes && op.kind === "nativeFieldValue") {
+      pendingFieldOps.push(op);
+    }
+  }
+
+  // Authorized regions visible on the current page: detector candidates, the
+  // pending placement, and every confirmed overlay awaiting export.
+  const allRegionRects: Rect[] = useMemo(() => {
+    const rects: Rect[] = [...regionRects];
+    if (pendingPlacement && pendingPlacement.pageIndex === currentPage - 1) {
+      rects.push(pendingPlacement.rect);
+    }
+    for (const op of history.operations) {
+      if (!op.undoneBy && !op.undoes && op.kind === "overlayText" && op.coordinate?.pageIndex === currentPage - 1) {
+        rects.push(op.coordinate.rect);
+      }
+    }
+    return rects;
+  }, [regionRects, pendingPlacement, history.operations, currentPage]);
 
   // Command Palette Items (memoized to avoid full tree re-render on ticks)
   const commands: CommandItem[] = useMemo(
@@ -264,21 +341,37 @@ export function App() {
         ) : null}
 
         <main id="viewerMain" className="panel" tabIndex={-1} aria-label="PDF document viewer">
-          <ReaderStage snapshot={snapshot} />
+          <ReaderStage
+            snapshot={snapshot}
+            regionRects={allRegionRects}
+            onCanvasClick={handleCanvasClick}
+          />
         </main>
 
         <aside className="panel" aria-label="Session detail">
           {surface.activeMode === "understand" && (
-            <UnderstandPanel hasDocument={documentOpen} />
+            <UnderstandPanel
+              hasDocument={documentOpen}
+              candidates={candidates.filter((candidate) => !dismissedIDs.has(candidate.id))}
+              loading={candidatesLoading}
+            />
           )}
           {surface.activeMode === "complete" && (
             <>
               <CompletePanel hasDocument={documentOpen} />
               <CompleteWorkbench
-                fields={fields}
+                fields={session.fields}
                 onConfirmEdit={handleConfirmEdit}
                 canUndo={history.operations.some((op) => !op.undoneBy && !op.undoes)}
                 onUndo={handleUndo}
+                candidates={candidates.filter((candidate) => !dismissedIDs.has(candidate.id))}
+                candidatesLoading={candidatesLoading}
+                dismissedIDs={dismissedIDs}
+                onDismissCandidate={handleDismissCandidate}
+                pendingPlacement={pendingPlacement}
+                onConfirmPlacement={handleConfirmPlacement}
+                onCancelPlacement={() => setPendingPlacement(null)}
+                onProposePlacement={setPendingPlacement}
               />
             </>
           )}
@@ -289,20 +382,20 @@ export function App() {
             <>
               <ReviewPanel hasDocument={documentOpen} pageCount={snapshot.pageCount} />
               <ReviewWorkbench
-                pendingOps={pendingOps}
+                pendingOps={pendingFieldOps}
                 totalEntries={history.operations.length}
-                exporting={exporting}
-                report={exportReport}
-                error={exportError}
+                exporting={session.exporting}
+                report={session.exportReport}
+                error={session.exportError}
                 onExport={handleExport}
               />
             </>
           )}
           {surface.activeMode === "reader" && (
             <ContextualInspector
-              fields={fields}
-              selectedFieldId={selectedFieldId}
-              onSelectField={setSelectedFieldId}
+              fields={session.fields}
+              selectedFieldId={session.selectedFieldId}
+              onSelectField={(fieldID) => dispatchSession({ type: "select-field", fieldID })}
               onUpdateFieldValue={handleConfirmEdit}
               onRunOCR={handleRunOCR}
               onAutofillProfile={handleAutofillProfile}

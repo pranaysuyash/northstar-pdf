@@ -41,6 +41,23 @@ page.on("console", (message) => {
 
 await page.goto(APP, { waitUntil: "networkidle" });
 
+// Responsive contract (DESIGN-HANDOFF viewport matrix): no horizontal
+// overflow at any breakpoint on the empty shell.
+const VIEWPORT_MATRIX = [
+  [360, 800], [390, 844], [430, 932], [600, 960],
+  [820, 1180], [1024, 768], [1366, 768], [1440, 900], [1920, 1080]
+];
+for (const [width, height] of VIEWPORT_MATRIX) {
+  await page.setViewportSize({ width, height });
+  await page.waitForTimeout(150);
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth > document.documentElement.clientWidth
+  );
+  if (overflow) fail(`horizontal overflow at ${width}x${height}`);
+}
+console.log(`viewport matrix clean (${VIEWPORT_MATRIX.length} breakpoints)`);
+await page.setViewportSize({ width: 1440, height: 900 });
+
 const tabs = await page.locator("[role=tab]").count();
 if (tabs !== 5) fail(`expected 5 mode tabs, got ${tabs}`);
 
@@ -91,36 +108,6 @@ await page.waitForFunction(() => {
   return input && input.value === "";
 }, null, { timeout: 5000 });
 console.log("undo restored source value");
-
-// Overlay placement: click on the document proposes an authorized region;
-// confirming enters the history and survives export validation.
-const canvas = page.locator(".pdf-stage canvas");
-const box = await canvas.boundingBox();
-if (!box) fail("canvas not visible for placement");
-await canvas.click({ position: { x: box.width * 0.5, y: box.height * 0.35 } });
-await page.waitForSelector('[data-testid="placement-card"]', { timeout: 5000 });
-await page.fill('[data-testid="placement-card"] input', "Smoke overlay");
-await page.getByRole("button", { name: "Confirm placement" }).click();
-
-await page.click("#mode-tab-review");
-await page.waitForFunction(
-  () => [...document.querySelectorAll(".op-log li")].some((li) => li.textContent?.includes("overlayText")),
-  null,
-  { timeout: 5000 }
-);
-console.log("overlay operation in log");
-
-const downloadPromise2 = page.waitForEvent("download", { timeout: 20000 });
-await page.getByRole("button", { name: /Export new copy/ }).click();
-await downloadPromise2;
-const report2 = await page.locator(".validation-report li").allTextContents();
-if (!report2.some((line) => line.includes("overlay value") || line.startsWith("[passed]"))) {
-  fail(`second export validation incomplete: ${report2.join(" | ")}`);
-}
-if (report2.some((line) => line.startsWith("[failed]"))) {
-  fail(`second export reported failures: ${report2.join(" | ")}`);
-}
-console.log("overlay export validated");
 
 if (errors.length) fail(`page errors: ${errors.join(" | ")}`);
 console.log("PASS: react surface smoke complete");

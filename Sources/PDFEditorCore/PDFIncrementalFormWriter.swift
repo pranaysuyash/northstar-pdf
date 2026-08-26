@@ -206,7 +206,35 @@ public enum PDFIncrementalFormWriter {
     return result
   }
 
-  private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> XrefInfo {
+  
+
+  /// RG-001: find the closing >> of the outermost dict, accounting for nested
+  /// << >> pairs (e.g. /DecodeParms << /Columns 4 /Predictor 12 >>).
+  /// The original first-">>" search truncates at the inner >>, silently losing
+  /// /W, /Index, /Root, /Size; we track nesting depth instead.
+  /// Returns the String.Index of the first character after the outermost >>,
+  /// or nil if the dict close cannot be found.
+  private static func dictCloseRange(_ region: String, before streamEnd: String.Index) -> String.Index? {
+    var depth = 0
+    var i = region.startIndex
+    while i < streamEnd {
+      if let openRange = region.range(of: "<<", range: i..<streamEnd) {
+        depth += 1
+        i = openRange.upperBound
+      } else if let closeRange = region.range(of: ">>", range: i..<streamEnd) {
+        depth -= 1
+        if depth == 0 {
+          return closeRange.upperBound
+        }
+        i = closeRange.upperBound
+      } else {
+        break
+      }
+    }
+    return nil
+  }
+
+private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> XrefInfo {
     let region = latin1(bytes[offset...])
     guard let streamMarker = region.range(of: "stream") else {
       throw WriterError.unsupportedXref("xref stream has no stream keyword")

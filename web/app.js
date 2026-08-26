@@ -2766,7 +2766,15 @@
         const detail = document.createElement("div");
         detail.className = "small";
         const evidenceText = candidate.evidenceItems?.[0]?.text || "document structure";
-        detail.textContent = `Page ${candidate.pageIndex + 1} · ${candidateEntryLabel(candidate)} · ${evidenceText}`;
+        const candidateName = candidate.displayName || candidateEntryLabel(candidate);
+        const nameLine = document.createElement("div");
+        nameLine.className = "small";
+        nameLine.textContent = candidateName;
+        nameLine.style.fontWeight = "600";
+        const metaLine = document.createElement("div");
+        metaLine.className = "small muted";
+        metaLine.textContent = `Page ${candidate.pageIndex + 1} · ${candidateEntryLabel(candidate)} · ${evidenceText}`;
+        detail.append(nameLine, metaLine);
         const score = document.createElement("div");
         score.className = "small candidate-score";
         score.textContent = candidate.status === "rejected" ? "Dismissed" : confidenceLabel(candidate.score);
@@ -2800,10 +2808,14 @@
     ui.applyFieldButton.disabled = true;
     if (isChoiceCandidate) {
       ui.choiceCellSelect.innerHTML = "";
+      const memberLabels = selectedCandidate.memberLabels || [];
       (selectedCandidate.memberBounds || []).forEach((_, index) => {
         const option = document.createElement("option");
         option.value = String(index);
-        option.textContent = `Option ${index + 1}`;
+        // Prefer the option's adjacent document text ("Yes", "No") over a
+        // positional name when the detector extracted it.
+        const named = (memberLabels[index] || "").trim();
+        option.textContent = named || `Option ${index + 1}`;
         ui.choiceCellSelect.appendChild(option);
       });
       setHidden(ui.choiceCellControl, false);
@@ -2828,7 +2840,7 @@
       const editability = candidateIsDirectlyEditable(selectedCandidate)
         ? "Adding text creates a reversible overlay."
         : "This pattern is reviewable. Choose a detected box to place a reversible mark, or dismiss it.";
-      ui.candidateActionDetail.textContent = `Page ${selectedCandidate.pageIndex + 1} · ${confidenceLabel(selectedCandidate.score)} · ${candidateEntryLabel(selectedCandidate)}. ${evidenceText} ${editability}`;
+      ui.candidateActionDetail.textContent = `${selectedCandidate.displayName || candidateEntryLabel(selectedCandidate)} — page ${selectedCandidate.pageIndex + 1} · ${confidenceLabel(selectedCandidate.score)} · ${candidateEntryLabel(selectedCandidate)}. ${evidenceText} ${editability}`;
     } else if (manualPlacement) {
       ui.candidateActionDetail.textContent = `Manual text area on page ${manualPlacement.pageIndex + 1}. This is a reversible overlay placed by you.`;
     } else if (selectedOperation) {

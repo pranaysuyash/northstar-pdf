@@ -41,3 +41,6 @@ export declare function detectGeometryCandidates(options: {
 }): Promise<GeometryCandidate[]>;
 
 export declare function canonicalizeLabelText(raw: string): { displayName?: string } | null;
+
+/** Alias used by the React surface (web/app) for detector output. */
+export type DetectedCandidate = GeometryCandidate;

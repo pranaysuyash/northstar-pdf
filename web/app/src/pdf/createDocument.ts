@@ -62,12 +62,13 @@ export async function createPdfFromImageFiles(
   ]);
 
   const doc = await pdfLib.PDFDocument.create();
-  for (const { type, bytes } of imagePayloads) {
-    const image =
-      type === "image/png"
-        ? await doc.embedPng(bytes)
-        : await doc.embedJpg(bytes);
-
+  // Embeds are independent parses — run them concurrently, then lay out pages.
+  const images = await Promise.all(
+    imagePayloads.map(({ type, bytes }) =>
+      type === "image/png" ? doc.embedPng(bytes) : doc.embedJpg(bytes)
+    )
+  );
+  for (const image of images) {
     const page = doc.addPage([image.width, image.height]);
     page.drawImage(image, {
       x: 0,

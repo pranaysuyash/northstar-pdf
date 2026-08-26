@@ -223,6 +223,22 @@ public struct ContextualInspectorView: View {
           .font(.caption.weight(.medium))
       }
 
+      // Deterministic evidence card (R7 baseline): why this suggestion
+      // exists and what to double-check before applying it.
+      let explanation = SuggestionExplainer.explain(candidate)
+      VStack(alignment: .leading, spacing: 3) {
+        ForEach(explanation.reasons, id: \.self) { reason in
+          Label(reason, systemImage: "checkmark.circle")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+        ForEach(explanation.cautions, id: \.self) { caution in
+          Label(caution, systemImage: "exclamationmark.triangle")
+            .font(.caption2)
+            .foregroundStyle(.orange)
+        }
+      }
+
       if candidate.isDirectlyEditable {
         TextField("Enter value to place here", text: $overlayDraft)
           .textFieldStyle(.roundedBorder)

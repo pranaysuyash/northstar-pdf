@@ -27,6 +27,26 @@ at the repository root for them, matching the documented local-preview
 pattern, and tears it down afterwards. Exit code is non-zero on any failure,
 so the runner is CI-ready as-is.
 
+## `verify-all.sh` — whole-system verification entry point
+
+Single command proving both planes healthy: `swift build` → `swift test` →
+contract suite. Introduced by the 2026-08-26 doctrine-alignment audit
+(`docs/audits/repository-audit-per-0428-doctrine-alignment-2026-08-26.md`,
+Phase P1) so that a red build or red suite cannot persist unnoticed.
+
+```bash
+tools/verify-all.sh              # all three stages
+tools/verify-all.sh --quick      # build + contracts (skip swift test)
+tools/verify-all.sh --contracts  # contract suite only
+```
+
+Exit code 0 only when every selected stage passes. For scheduled local runs
+(air-gap compatible), see the installable launchd template
+`com.owner.pdfeditor.verify.plist` in this directory.
+
+Flaky failures are never silently ignored: record them in
+`docs/flaky-register.md`.
+
 ## `deploy-web.mjs` — static web deployment packager
 
 Packages the browser deployment surface of `web/` into `dist/web/` by walking

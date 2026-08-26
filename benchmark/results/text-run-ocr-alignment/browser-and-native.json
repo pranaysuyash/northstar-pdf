@@ -4,7 +4,7 @@
     "major": 1,
     "minor": 0
   },
-  "generatedAt": "2026-08-26T11:07:39.833Z",
+  "generatedAt": "2026-08-26T11:37:20.674Z",
   "corpusManifest": "docs/fixtures/manifest.md",
   "nativeEvidence": "benchmark/results/text-run-ocr-alignment/native.json",
   "browserProvider": "pdfjs-pdflib",

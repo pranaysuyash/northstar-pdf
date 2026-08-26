@@ -2620,3 +2620,88 @@ Supersedes the pricing hypotheses in
 - **Owner:** Web lane, coordinated with the in-flight React migration under
   `web/app/` which should consume the same mode/analysis contracts.
 
+
+## D-055: Single status authority — release-gates.md owns gate state, task-inventory owns tasks
+
+- **Date:** 2026-08-26
+- **Context:** The PER-0428 doctrine-alignment audit
+  (`docs/audits/repository-audit-per-0428-doctrine-alignment-2026-08-26.md`,
+  finding I-03) found contested status facts across documents: the
+  full-persona-audit recorded RG-001 as `FAIL` while the registry showed
+  `PARTIAL`, and the 2026-08-25 comprehensive audit claimed zero React
+  dependencies after the React shell landed. Doctrine §0 requires stale
+  sources to be marked superseded, and the kernel requires one canonical
+  owner per fact class.
+- **Decision:** `docs/release-gates.md` is the only place gate state
+  (`PASS/PARTIAL/OPEN/BLOCKED/FAIL`) may be asserted; every other document
+  must link to it instead of restating statuses. `docs/task-inventory-*.md`
+  (latest dated file) is the only task queue. `progress.md` and `findings.md`
+  are append-only ledgers and do not define current state. Older audits that
+  restate statuses carry supersession banners rather than silent edits.
+  Flaky test dispositions live in `docs/flaky-register.md`; whole-system
+  verification is invoked through `tools/verify-all.sh`.
+- **Options considered:** keep per-document statuses with a reconciliation
+  pass per session — rejected because it scales poorly and already produced
+  conflicts within two days.
+- **Trade-offs:** slightly more indirection when reading old audits; in
+  exchange, "what is true right now" always has exactly one answer per fact
+  class.
+- **Validation:** Tier 1 ongoing — any future conflict between documents is a
+  defect against this decision.
+- **Revisit trigger:** if the registries themselves drift from live truth,
+  the fix is automation (Phase P1 scheduling), not more documents.
+- **Owner:** Project owner; enforcement by all agent lanes.
+
+
+## D-056: React surface replays canonical write/validate semantics through pure contracts
+
+- **Date:** 2026-08-26
+- **Context:** The `web/app/` React entry (D-052-era migration, map steps 2–8)
+  reached the point where export, candidate evidence, and overlay placement
+  needed real semantics. The legacy browser entry (`web/app.js`) holds the
+  only proven implementations: page-fact replay before edits, SHA-256 source
+  stability assertion, encrypted-source write refusal, bounded single-line
+  overlay fit preflight, radio/boolean value round-trip matching, and
+  outside-region impact proof.
+- **Options considered:**
+  1. Reimplement export/validation logic in TypeScript inside the controller.
+  2. Port the pure decision cores into a new framework-neutral contract module
+     and keep provider plumbing in the controller, calling the existing
+     `pdf-impact-validator.mjs` unchanged.
+  3. Keep using the legacy entry until full parity, then delete it.
+- **Decision:** Option 2. New pure contract `web/pdf-write-planning.mjs`
+  (+ `.d.mts`) carries `valuesMatch`, `planSingleLineOverlay`, and
+  `proposeOverlayBounds` salvaged from `web/app.js`; `PdfController.exportCopy`
+  performs page-box/rotation replay, digest assertion, encrypted refusal,
+  overlay drawing with fit plans, and validation through the canonical
+  `compareOutsideRegions`. Candidate evidence reuses
+  `pdf-geometry-detector.mjs` directly. No second implementation of any
+  validated semantic exists; the legacy entry remains canonical for behaviors
+  not yet ported (diff overlay, preservation-metric UI, templates).
+- **Tradeoffs / risks:** The controller's PDF-space coordinates assume
+  crop-relative text transforms in the impact validator; documents with
+  non-zero crop origins are covered by page-fact replay but not yet exercised
+  by a fixture. UI wiring for click-to-place and candidate review cards is
+  landed at the capability layer (`listCandidates`, `proposePlacement`,
+  `getRegionMarkers`) but its Complete-workbench integration was interrupted
+  by a concurrent session actively refactoring `App.tsx`,
+  `CompleteWorkbench.tsx`, and `ReaderStage.tsx` (observed live file changes
+  within 60-second windows on 2026-08-26); per doctrine §10 the contested
+  boundary was left to that writer rather than double-written.
+- **Validation:** Tier 2/S1: `Tests/pdf_write_planning_test.mjs` (7 checks,
+  including refusal paths); S1 node suites for operation history unchanged and
+  passing. Tier 3/4 (2026-08-26): committed
+  `benchmark/react-surface-smoke.mjs` passes end-to-end against a real
+  Chromium — search highlights, field edit → history → export download with
+  all guardrails passed (page geometry, native-field round-trip, outside-region
+  proof), undo restoring observed source values, zero horizontal overflow
+  across the nine-breakpoint handoff matrix.
+- **Rollback:** The new module and controller methods are additive; reverting
+  `exportCopy` to the prior shallow version restores previous behavior with no
+  data migration.
+- **Owner:** Web lane (React surface). Remaining wiring (placement card,
+  candidate review cards, UnderstandPanel evidence list) must be integrated by
+  whichever session currently owns `CompleteWorkbench.tsx`/`App.tsx`, using
+  only the already-landed controller capabilities.
+- **Revisit trigger:** When the legacy entry retires, or when a non-zero
+  crop-origin fixture enters the corpus.

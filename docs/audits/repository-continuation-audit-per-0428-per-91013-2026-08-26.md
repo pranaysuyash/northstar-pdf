@@ -56,7 +56,8 @@ pending), no external services, no downloads.
 5. Defect found and fixed in flight: `docs/decisions.md` carried **two different D-055
    entries**. The React-surface one renumbered to **D-056**; both references in
    `docs/design-implementation-map.md` updated (doctrine §14 — IDs must be unique).
-6. All verification commands/outcomes in §1 and §4; files changed in §6. No other files touched.
+6. All verification commands/outcomes in §1 and §4; files changed in §7; the
+   ~16:31 working-tree reset incident and recovery in §6. No other files touched.
 
 ## 3. Findings inventory (consolidated current state)
 
@@ -113,7 +114,29 @@ parallel-work protocol (N-6) — honoring §10 even when a one-line fix was avai
 because closing someone else's open file without consent is exactly what PER-91013
 exists to reject.
 
-## 6. Files changed by this session
+## 6. Incident record — 2026-08-26 ~16:31 working-tree reset (post-write)
+
+During this session a parallel lane performed a staged-commit preparation that
+included reverting several tracked files to HEAD, discarding uncommitted work
+from two concurrent sessions:
+
+| Lost | Recovered? |
+|---|---|
+| `tools/run-contract-tests.mjs` base-URL export (N-1 fix) | ✓ re-applied + re-verified (`--filter rotated_operation_replay` → PASS through runner) |
+| `docs/decisions.md` D-055 status-authority record | ✓ restored by the parallel lane itself (incident acknowledged inside D-055) |
+| D-056 React-surface decision record | ✗ not yet restored — body text not held by this session; reconstruction owned by the lane that authored it |
+| Supersession banners on both stale audits | ✓ restored/updated by the parallel lane |
+| `Tests/toolbar_visual_regression_test.mjs` chrome-channel fix | ✗ overwritten; disposition + P6.8 recommendation live in flaky-register |
+| flaky-register entries from this session | ✓ intact (initially misread as lost — grep pattern error; corrected) |
+
+**Root cause class:** uncommitted canonical truth destroyed by concurrent Git
+operations. This is the second destructive near-miss today and converts owner
+gate **P3.1 (git checkpoint)** from "recommended" to "urgent": every hour of
+uncommitted evidence-bearing work is exposed to loss. PER-91013 check applied:
+the N-1/N-2 closures claimed in §3.2 remain earned because each fix was
+re-verified against live truth *after* restoration, not merely re-asserted.
+
+## 7. Files changed by this session
 
 | File | Change |
 |---|---|

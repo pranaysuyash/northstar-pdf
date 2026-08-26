@@ -128,89 +128,7 @@ Plus Cluster A items as cheap hardening riders on Branch 1's restore path (out-o
 
 ---
 
-# PART III — Round 3: acceleration, emergence, provenance — and the fantasy line
-
-*Appended 2026-08-26. User direction: "keep exploring until you think now everything is just fantasy." Five frames not yet used: speedrunner, ant colony, regulator, hardware engineer, $0-budget.*
-
-## 18. Round 3 wide pool (30 ideas, clustered, scored N/V/F out of 10)
-
-### Cluster I — Workflow acceleration (speedrunner)
-- ★ **Cross-document field graph**: fill one form; matching fields across all open PDFs populate from one value set `[N8 V7 F9]` *(synergy: extends existing field-suggestions architecture)*
-- **Universal omnibox**: one input resolves text/page/field/annotation + selection-context verbs (`[N6 V8 F8]`
-- Selection-as-verb-target palette (select amount → extract / sum / find-everywhere) `[N7 V7 F7]`
-- Ghost-keystroke macros with positional anchors replayable across documents `[N6 V6 F6]`
-- Edge-fling park slivers at screen boundaries `[N7 V5 F6]` *(overlaps Reference PiP)*
-- Batch-inspect folder as one continuous canvas with global operations `[N7 V4 F5]`
-
-### Cluster J — Emergent organization (ant colony)
-- Field "scent": repeated same-value fills offer that value on focus anywhere `[N8 V6 F8]` *(merges into field graph)*
-- Copy-paste traffic trails surface diff-and-merge candidates `[N8 V4 F5]`
-- Co-open timing threads auto-assemble tab groups `[N8 V4 F5]`
-- Heat-momentum scroll physics near annotated hotspots `[N8 V4 F4]`
-- Ink desaturation lived-in map; highlight-color code drift `[N8/N9 V2-3 F3-4]`
-
-### Cluster K — Provenance made tangible (regulator) ★ moat cluster
-- **Sealed-signature graying**: post-signature edits desaturate the signature in real time `[N8 V7 F8]`
-- **Field blame gutter**: op-id + timestamp per filled value, version-control style `[N8 V7 F8]`
-- **Digest notary slots**: pin a page digest; every open shows green/red vs recomputed bytes `[N7 V8 F7]`
-- Chain-break quarantine naming the first failing operation `[N7 V7 F7]`
-- Break-the-seal ritual with recorded refusal acknowledgment `[N7 V7 F7]`
-- **Counterparty receipt**: export emits a hand-off verifiable digest-chain receipt `[N8 V6 F7]`
-
-### Cluster L — Rendering physics as interaction (hardware engineer)
-- Tile-cache patina, backpressure scrolling, prefetch frontier, frame-budget time dilation, memory tide, ink-curing commits `[N8-9 V2-4 F2-5]`
-
-### Cluster M — $0-budget crude versions (validates cheap fallbacks for everything)
-- View memory via NSWindow state restoration + xattr stash (~50 lines); hub via `NSDocumentController.recentDocumentURLs` + Quick Look thumbnails; tabs = one line `.tabbingMode = .preferred`; split/PiP = NSSplitViewController + second PDFView on shared PDFDocument / nonactivating NSPanels; scrub slider bound to UndoManager steps
-- New crude ideas: **page tear-off** (drag thumbnail to Finder → single-page PDF, ~20 lines) `[V9]`; **cross-document find bar** (one search across all open docs → NSTableView of hits) `[V9]`
-
-## 19. Round 3 convergence
-
-1. **Cross-document field graph** `[7.85]` — highest score of all three rounds. Deepen-agent verified it layers onto the *existing* pipeline (FieldLabelCanonicalizer → ProfileStore.matchScore → suggestion chips): only scope, fan-out, provenance badges, and consent UX are new.
-2. **Tangible provenance instruments** `[~7.5 avg]` — four UIs over ONE ledger-query engine; they can never disagree about tamper state. Unique to our architecture.
-3. **Universal omnibox** `[7.3]` — extends the northstar's already-specified ⌘G stable-result-ID language into browser-command-palette territory.
-
-## 20. Round 3 deepened branches
-
-### Branch 7 — Cross-document field graph
-**Sketch:** Session-scoped index keyed by canonicalized displayName mapping confirmed fills to {docDigest, fieldID, value, timestamp}. On confirm, publish; other open documents' inspector cards show the same provenance-badged chip ("from W-4.pdf · Full Name"). Scent variant falls out free: frequency-ranked values per canonical label. Consent is load-bearing: chips stay opt-in taps; "apply to all matching" is an explicit batch action with a review list — never silent population.
-**Load-bearing risk:** wrong-value propagation into N legal documents (same-label-different-meaning collisions, e.g., "Date"). Mitigations: match-explanation cards, per-field gates never bypassed, label-collision abstention, provenance chain walk for retract.
-**First concrete step:** extend ProfileStore.lastValueSuggestions into CrossDocumentFieldGraph; provenance-badged chips before profile suggestions; validate against two documents in swift tests.
-**Sub-ideas:** batch-apply sheet with diff preview; hover provenance chain + one-click retract everywhere; scent decay ranking; collision disambiguation card; additive session-contract entries carrying label *hashes* not raw values (zero-content logging doctrine).
-
-### Branch 8 — Tangible provenance instruments
-**Sketch:** One engine — `query(digest, since_op_id?) -> OpChain` with signature-boundary markers. Graying = live subscription (ops after signature sequence number ⇒ desaturate). Notary slots = pinned queries recomputed on open. Blame gutter = reverse scan for last-setting op. Receipt = canonical serialization of chain head. All consume identical projection ⇒ consistent tamper state by construction.
-**Load-bearing risk:** quasi-legal weight of visuals — graying could falsely imply invalidity for legitimate post-signature annotation; green slots confer false confidence on third-party signatures we never witnessed being applied. Engine must distinguish "bytes unchanged since first observation" from "cryptographically valid," and copy must say so.
-**First concrete step:** implement the query API with signature-boundary markers; build graying as first consumer.
-**Sub-ideas:** tamper-distance meter (op-count/byte-delta badge); receipt verification endpoint (paste receipt → diff since issuance); notary slot export inside review report; "unwitnessed" boundary marker for pre-existing third-party signatures; ledger-navigable time-travel scrubber *(links back to Branch 5)*.
-
-### Branch 9 — Universal omnibox
-**Sketch:** ⌘K overlay normalizing queries into typed results: text hits (PDFDocument.findString), pages ("p12"), form fields (fuzzy over AcroForm names+labels, cached per document), annotations, recents. Ranking = kind prior × match quality × position boost × recency; stable result IDs let ⌘G/⇧⌘G cycle without re-ranking. Selection publishes a SelectionContext that pins verb rows (Sum / Extract / Find Everywhere) which vanish when selection clears. Existing find infrastructure becomes omnibox providers, not a parallel path.
-**Load-bearing risk:** heterogeneous ranking feels unpredictable — "12" must deterministically mean page 12, not a text hit. Explicit prefixes (p:/f:/a:/) and sticky last-used-kind are load-bearing day one.
-**First concrete step:** Provider protocol + shell with two providers (findString, page-number parsing) wired to existing ⌘G cycling.
-**Sub-ideas:** namespace prefixes doubling as filters; recent-destinations ring as zero-query state; inline HUD preview during ⌘G traversal; fuzzy field provider cached with document; verb bar under highlighted results.
-
-## 21. THE FANTASY LINE — saturation verdict
-
-After 3 rounds, 10 cognitive frames, ~90 raw ideas, and 9 deepened branches, the idea space is mapped. Classification of the residual tail:
-
-**Still real (would survive a build-feasibility filter):**
-- Everything in waves 1–7 (Part II §15) plus Branches 7–9 above, plus the $0-budget fallbacks (Cluster M) proving each has a cheap entry version, plus page tear-off and cross-document find bar as micro-features.
-
-**Theater — looks profound, fails the productivity test (why we stop here):**
-- Rendering-physics interactions (memory tide, time dilation, backpressure friction, cache patina): they surface *internal plumbing* as gameplay. Fascinating demo, daily tax for a form-filler. Violates "user must be able to explain what happened."
-- Emergent social-ish behaviors (co-open silk threads, ink desaturation maps, color-code telepathy): state the user cannot predict, verify, or turn off meaningfully. Same doctrine violation, worse: silently changes what documents look like.
-- Attention auctions/futures leasing (markets tail): metaphor collapse — nobody wants to manage a portfolio of pixels.
-
-**The pattern across all three rounds:** ideas stayed viable exactly as long as they transplanted a *mechanism* (resume memory, PiP containment, ledger replay, label matching). They turned fantastical the moment they transplanted a *mood* (thermal warmth, living ink, market anxiety). That's the falsifiable line, and we've hit it.
-
-**Recommendation:** exploration is saturated. Freeze the frontier map as: Waves 1–7 + Branches 7–9 (ten buildable units), each with a documented $0-budget fallback. Next action should be building Wave 1, not Round 4.
-
-## 22. Part III provenance
-
-- Idea generation: 5 isolated divergent agents (frames: speedrunner, ant colony, regulator, hardware engineer, $0-budget) + 3 focus/deepen agents, run 2026-08-26.
-- Repo synergy evidence: `Docs/explorations/field-suggestions-exploration-2026-08-25.md`, `Docs/provider-capability-system-design.md` (read by Branch 7 deepen agent); northstar ⌘G spec (Branch 9).
-
+# PART II — Round 2: beyond parity (cross-industry transplants)
 
 *Appended 2026-08-26 after user direction: "we don't fall into what everyone's doing, we also explore new ideas, what maybe works in other industries, new age solutions."*
 
@@ -331,6 +249,312 @@ Rationale for ordering: waves 1–3 settle the *memory and container* contracts 
 
 ## Part I provenance
 
-- Competitive facts: Adobe support docs/community (superuser.com/questions/149948), Apple Preview support pages (support.apple.com/guide/preview/prvw1495), Foxit KB (kb.foxit.com/s/articles/360040661331), PDF Expert blog (pdfexpert.com/how-to-read-pdf), superuser.com/questions/20675 (Okular/Foxit/Skim tab support), makeuseof.com Okular review.
-- Repo evidence: file:line citations in §1 and §3 above.
-- Idea generation: 5 isolated divergent agents (frames: game designer, inversion, 3am on-call, hostile competitor, 10-year-old) + 3 focus/deepen agents, run 2026-08-26.
+---
+
+# PART III — Round 3: acceleration, emergence, provenance — and the fantasy line
+
+*Appended 2026-08-26. User direction: "keep exploring until you think now everything is just fantasy." Five frames not yet used: speedrunner, ant colony, regulator, hardware engineer, $0-budget.*
+
+## 18. Round 3 wide pool (30 ideas, clustered, scored N/V/F out of 10)
+
+### Cluster I — Workflow acceleration (speedrunner)
+- ★ **Cross-document field graph**: fill one form; matching fields across all open PDFs populate from one value set `[N8 V7 F9]` *(synergy: extends existing field-suggestions architecture)*
+- **Universal omnibox**: one input resolves text/page/field/annotation + selection-context verbs (`[N6 V8 F8]`
+- Selection-as-verb-target palette (select amount → extract / sum / find-everywhere) `[N7 V7 F7]`
+- Ghost-keystroke macros with positional anchors replayable across documents `[N6 V6 F6]`
+- Edge-fling park slivers at screen boundaries `[N7 V5 F6]` *(overlaps Reference PiP)*
+- Batch-inspect folder as one continuous canvas with global operations `[N7 V4 F5]`
+
+### Cluster J — Emergent organization (ant colony)
+- Field "scent": repeated same-value fills offer that value on focus anywhere `[N8 V6 F8]` *(merges into field graph)*
+- Copy-paste traffic trails surface diff-and-merge candidates `[N8 V4 F5]`
+- Co-open timing threads auto-assemble tab groups `[N8 V4 F5]`
+- Heat-momentum scroll physics near annotated hotspots `[N8 V4 F4]`
+- Ink desaturation lived-in map; highlight-color code drift `[N8/N9 V2-3 F3-4]`
+
+### Cluster K — Provenance made tangible (regulator) ★ moat cluster
+- **Sealed-signature graying**: post-signature edits desaturate the signature in real time `[N8 V7 F8]`
+- **Field blame gutter**: op-id + timestamp per filled value, version-control style `[N8 V7 F8]`
+- **Digest notary slots**: pin a page digest; every open shows green/red vs recomputed bytes `[N7 V8 F7]`
+- Chain-break quarantine naming the first failing operation `[N7 V7 F7]`
+- Break-the-seal ritual with recorded refusal acknowledgment `[N7 V7 F7]`
+- **Counterparty receipt**: export emits a hand-off verifiable digest-chain receipt `[N8 V6 F7]`
+
+### Cluster L — Rendering physics as interaction (hardware engineer)
+- Tile-cache patina, backpressure scrolling, prefetch frontier, frame-budget time dilation, memory tide, ink-curing commits `[N8-9 V2-4 F2-5]`
+
+### Cluster M — $0-budget crude versions (validates cheap fallbacks for everything)
+- View memory via NSWindow state restoration + xattr stash (~50 lines); hub via `NSDocumentController.recentDocumentURLs` + Quick Look thumbnails; tabs = one line `.tabbingMode = .preferred`; split/PiP = NSSplitViewController + second PDFView on shared PDFDocument / nonactivating NSPanels; scrub slider bound to UndoManager steps
+- New crude ideas: **page tear-off** (drag thumbnail to Finder → single-page PDF, ~20 lines) `[V9]`; **cross-document find bar** (one search across all open docs → NSTableView of hits) `[V9]`
+
+## 19. Round 3 convergence
+
+1. **Cross-document field graph** `[7.85]` — highest score of all three rounds. Deepen-agent verified it layers onto the *existing* pipeline (FieldLabelCanonicalizer → ProfileStore.matchScore → suggestion chips): only scope, fan-out, provenance badges, and consent UX are new.
+2. **Tangible provenance instruments** `[~7.5 avg]` — four UIs over ONE ledger-query engine; they can never disagree about tamper state. Unique to our architecture.
+3. **Universal omnibox** `[7.3]` — extends the northstar's already-specified ⌘G stable-result-ID language into browser-command-palette territory.
+
+## 20. Round 3 deepened branches
+
+### Branch 7 — Cross-document field graph
+**Sketch:** Session-scoped index keyed by canonicalized displayName mapping confirmed fills to {docDigest, fieldID, value, timestamp}. On confirm, publish; other open documents' inspector cards show the same provenance-badged chip ("from W-4.pdf · Full Name"). Scent variant falls out free: frequency-ranked values per canonical label. Consent is load-bearing: chips stay opt-in taps; "apply to all matching" is an explicit batch action with a review list — never silent population.
+**Load-bearing risk:** wrong-value propagation into N legal documents (same-label-different-meaning collisions, e.g., "Date"). Mitigations: match-explanation cards, per-field gates never bypassed, label-collision abstention, provenance chain walk for retract.
+**First concrete step:** extend ProfileStore.lastValueSuggestions into CrossDocumentFieldGraph; provenance-badged chips before profile suggestions; validate against two documents in swift tests.
+**Sub-ideas:** batch-apply sheet with diff preview; hover provenance chain + one-click retract everywhere; scent decay ranking; collision disambiguation card; additive session-contract entries carrying label *hashes* not raw values (zero-content logging doctrine).
+
+### Branch 8 — Tangible provenance instruments
+**Sketch:** One engine — `query(digest, since_op_id?) -> OpChain` with signature-boundary markers. Graying = live subscription (ops after signature sequence number ⇒ desaturate). Notary slots = pinned queries recomputed on open. Blame gutter = reverse scan for last-setting op. Receipt = canonical serialization of chain head. All consume identical projection ⇒ consistent tamper state by construction.
+**Load-bearing risk:** quasi-legal weight of visuals — graying could falsely imply invalidity for legitimate post-signature annotation; green slots confer false confidence on third-party signatures we never witnessed being applied. Engine must distinguish "bytes unchanged since first observation" from "cryptographically valid," and copy must say so.
+**First concrete step:** implement the query API with signature-boundary markers; build graying as first consumer.
+**Sub-ideas:** tamper-distance meter (op-count/byte-delta badge); receipt verification endpoint (paste receipt → diff since issuance); notary slot export inside review report; "unwitnessed" boundary marker for pre-existing third-party signatures; ledger-navigable time-travel scrubber *(links back to Branch 5)*.
+
+### Branch 9 — Universal omnibox
+**Sketch:** ⌘K overlay normalizing queries into typed results: text hits (PDFDocument.findString), pages ("p12"), form fields (fuzzy over AcroForm names+labels, cached per document), annotations, recents. Ranking = kind prior × match quality × position boost × recency; stable result IDs let ⌘G/⇧⌘G cycle without re-ranking. Selection publishes a SelectionContext that pins verb rows (Sum / Extract / Find Everywhere) which vanish when selection clears. Existing find infrastructure becomes omnibox providers, not a parallel path.
+**Load-bearing risk:** heterogeneous ranking feels unpredictable — "12" must deterministically mean page 12, not a text hit. Explicit prefixes (p:/f:/a:/) and sticky last-used-kind are load-bearing day one.
+**First concrete step:** Provider protocol + shell with two providers (findString, page-number parsing) wired to existing ⌘G cycling.
+**Sub-ideas:** namespace prefixes doubling as filters; recent-destinations ring as zero-query state; inline HUD preview during ⌘G traversal; fuzzy field provider cached with document; verb bar under highlighted results.
+
+## 21. THE FANTASY LINE — saturation verdict
+
+After 3 rounds, 10 cognitive frames, ~90 raw ideas, and 9 deepened branches, the idea space is mapped. Classification of the residual tail:
+
+**Still real (would survive a build-feasibility filter):**
+- Everything in waves 1–7 (Part II §15) plus Branches 7–9 above, plus the $0-budget fallbacks (Cluster M) proving each has a cheap entry version, plus page tear-off and cross-document find bar as micro-features.
+
+**Theater — looks profound, fails the productivity test (why we stop here):**
+- Rendering-physics interactions (memory tide, time dilation, backpressure friction, cache patina): they surface *internal plumbing* as gameplay. Fascinating demo, daily tax for a form-filler. Violates "user must be able to explain what happened."
+- Emergent social-ish behaviors (co-open silk threads, ink desaturation maps, color-code telepathy): state the user cannot predict, verify, or turn off meaningfully. Same doctrine violation, worse: silently changes what documents look like.
+- Attention auctions/futures leasing (markets tail): metaphor collapse — nobody wants to manage a portfolio of pixels.
+
+**The pattern across all three rounds:** ideas stayed viable exactly as long as they transplanted a *mechanism* (resume memory, PiP containment, ledger replay, label matching). They turned fantastical the moment they transplanted a *mood* (thermal warmth, living ink, market anxiety). That's the falsifiable line, and we've hit it.
+
+**Recommendation:** exploration is saturated. Freeze the frontier map as: Waves 1–7 + Branches 7–9 (ten buildable units), each with a documented $0-budget fallback. Next action should be building Wave 1, not Round 4.
+
+## 22. Part III provenance
+
+- Idea generation: 5 isolated divergent agents (frames: speedrunner, ant colony, regulator, hardware engineer, $0-budget) + 3 focus/deepen agents, run 2026-08-26.
+- Repo synergy evidence: `Docs/explorations/field-suggestions-exploration-2026-08-25.md`, `Docs/provider-capability-system-design.md` (read by Branch 7 deepen agent); northstar ⌘G spec (Branch 9).
+
+---
+
+# PART IV — Round 4: lead deepens + Lightroom/DAW transplants
+
+*Appended 2026-08-26 per user direction to continue exploring remaining leads (F35–F40) and follow newly found transplant domains.*
+
+## 24. Round 4 results
+
+### 24.1 Deepened leads (Branches 10–15)
+
+**Branch 10 — Selection-as-verb palette** *(F35)*
+One `VerbEngine` in PDFEditorCore: selection classified into typed SelectionContext (span, numeric tokens, nearby fields); verbs are pure `(context) -> [Verb]` with applicability predicates. Omnibox ⌘K and anchored palette are **two renderers over one ranked verb list**. Palette wins where the verb's argument IS the selection (page-local sum, fill-this-field); appears ~150ms post-selection-settle, <30ms classification budget; heavy verbs stream results via badge instead of blocking. **Risk:** verb spam — each verb needs measured false-positive rate before shipping. **First step:** prototype "Sum amounts on page" end-to-end against cached page text. Sub-ideas: deferred-result streaming badge; find-everywhere bridge into search infra; fired-vs-dismissed telemetry loop.
+
+**Branch 11 — Anchored macros** *(F36)*
+Because edits are already typed ops carrying labels/page indices (not pixel coords), recording a macro = serializing a contiguous op range — undo history and macro candidates are the same data structure viewed differently. Replay resolves anchors at run time ("field labeled Date"), dodging the coordinate-brittleness that killed IDE macros. Ledger immutability adds what Photoshop never had: dry-run replay on shadow copy + first-class failure ops + transactional rollback. **Risk:** brittleness moves from coordinates to ambiguity — silent wrong-stamping; mitigation = mandatory resolution report gated behind confirmation. **First step:** "save last N ops as macro" with verbatim coordinate passthrough (proves plumbing, serves same-template workflows immediately). Sub-ideas: ghost-preview overlay diff before commit; parameterized slots with prompts; insert-pause anchors; fallback chains (exact→fuzzy→relative→abort); folder-batch replays recorded as auditable success/failure entries.
+
+**Branch 12 — Batch-inspect mode** *(F37)*
+Four phases over the headless core: scan/index (existing preflight per file + match extraction keyed by digest) → aggregate (unified result surface, hits carry {docID, page, rect}) → review (diff-style preview, nothing mutates until commit) → commit (per-document transactions, sequential headless, recovery manifest records {sourceDigest → backupPath + opLog}). Failure of 3 of 50 files ⇒ 47 committed, 3 quarantined with reasons, all reversible. **Risk:** irreversible bulk redaction across corpora — mandatory preview, digest-keyed originals retention with explicit purge policy, per-document atomicity. **First step:** `batchSession(folderURL)` returning scan/index report as JSON before any UI. Sub-ideas: virtualized unified match surface; named re-runnable operation bundles ("redact SSNs + stamp DRAFT"); progressive commit streaming with cancel-safe checkpoints.
+
+**Branch 13 — Paste traffic ledger** *(F38 — ant-colony idea salvaged to explainable form)*
+Relationship discovery kept, pheromone field dropped: every copy/paste or cross-doc field write appends a visible row to a per-document Traffic list (source→target→timestamp). Clustering runs only when the user opens Traffic view; suggestions cite their evidence rows inline; one-line compare suggestion only at explicit moments (open/export), dismissible once. **Risk:** provenance decay — clusters must stay traceable to concrete transfer rows forever, else opacity returns. **First step:** instrument flows into a persisted traffic log + read-only Traffic inspector panel (no suggestions yet).
+
+**Branch 14 — Named-layouts library** *(F39)*
+App-wide array of `{id, name, scaleMode, zoom(absolute-only), viewMode, rotation, pagePositionPolicy}` — fit-modes rather than absolute zoom keeps layouts sensible across page sizes. Precedence: doc pin > last applied named layout > global LayoutRestorePolicy. Layouts are **apply-once snapshots**, not sticky state — no enum change needed. **Risk:** scope creep into preset-manager-with-sync; stickiness would duplicate the pin's job. **First step:** refactor pin path into shared `LayoutSnapshot` struct + `apply(snapshot:)`; "Save Current as Layout…" serializes through the identical pipeline. Sub-ideas: "Reset to policy default" menu item; aspect-ratio auto-naming; .json export before any iCloud sync.
+
+**Branch 15 — Fractional scroll anchor** *(F40)*
+Extend ViewStateSnapshot to `{pageIndex, fractionIntoPage, anchorX, anchorY}` — both normalized against intrinsic unrotated crop-box geometry, so they survive resize/fit changes free; rotation maps axes at restore time. Restore order load-bearing: displayMode → magnification → force layout → single `go(to:on:)`. Single-page mode ignores fractions; crop-box change >10% discards anchor, keeps page. **Risk:** continuous-mode layout isn't final until after a layout pass — restore must defer one cycle, causing potential wrong-position flash unless drawing is suppressed one frame. **First step:** failing unit test capturing mid-doc snapshot, simulating 90° rotation + resize, asserting restored visible-rect-center matches within epsilon. Sub-ideas: page-space CGPoint anchor variant; "pin to text" refinement via nearest-character resolution; debug crosshair overlay.
+
+### 24.2 New-frame pools (scored N/V/F out of 10)
+
+**Lightroom transplants:**
+- ★ **Before/after Y|Y split** — original vs edited state side-by-side, zero diff algorithm needed `[N6 V8 F8]`
+- Ledger snapshots: named in-session bookmarks pointing into the op ledger for quick A/B `[N7 V7 F7]`
+- Copy settings between documents (annotation/stamp/crop styles like Develop sync) `[N7 V6 F7]`
+- Session filmstrip `[N5 V7 F6]` *(overlaps hub/recents)* · flags/smart collections on sessions `[N6 V5 F5]` · auto-sync batch replay `[N7 V6 F6]` *(overlaps macros+batch)*
+
+**DAW transplants:**
+- ★ **Bounce-in-place**: bake selected pages' ops into a self-contained PDF handoff artifact; original untouched — the natural exit ramp from non-destructive editing `[N7 V7 F8]`
+- **Workspace scenes**: named snapshots of entire multi-window arrangement recallable in one click (mixer scenes → window management) `[N7 V6 F7]`
+- Freeze/flatten document → locked render cache, cheap reopen without full ledger replay `[N7 V6 F6]`
+- Comping edit-takes per page `[N9 V4 F5]`, loop-brace review ranges `[N8 V4 F5]`, automation lanes `[N9 V3 F4]` *(drifting toward fantasy for productivity use)*
+
+### 24.3 Round 4 convergence
+
+Six leads fully designed (Branches 10–15), plus **three new buildable units**: Y|Y before-after split, bounce-in-place handoff, workspace scenes. Heavy overlap observed (filmstrip≈hub, auto-sync≈macros+batch, copy-settings≈macro subset) — marginal novelty declining sharply.
+
+### 24.4 Updated saturation verdict
+
+Round 4 was worth running: it converted six vague leads into engineered designs and added three units. But the overlap ratio tripled versus Round 3, and the DAW tail (comping, automation lanes) already shows mood-transplant drift. Marginal value per additional round is now clearly negative-to-flat. **Saturation re-confirmed at Round 4. Exploration closes here.**
+
+## 25. Part IV inventory additions
+
+| # | Finding | Type |
+|---|---|---|
+| F41 | VerbEngine: omnibox verbs and selection palette must be renderers of ONE ranked verb engine | B/C |
+| F42 | Macro record/replay ≈ serialized ledger range; dry-run + transactional replay possible due to immutability | B |
+| F43 | Anchor resolution needs mandatory resolution-report gate; failure modes move from coords to ambiguity | H |
+| F44 | Batch mode: per-document transactions + quarantine lane + digest recovery manifest; redaction demands originals-retention policy | B/H |
+| F45 | Paste traffic must be an inspectable ledger, never ambient behavior; clusters cite evidence rows | B/C |
+| F46 | Named layouts are apply-once snapshots; sticky state would duplicate pins and break precedence | C |
+| F47 | Scroll anchor stored in unrotated crop-box normalized space survives rotation/resize by construction; restore defers one layout cycle (flash risk) | H/B |
+| F48 | Y\|Y before/after split requires no diff algorithm — render two states | B |
+| F49 | Bounce-in-place is the canonical exit ramp from non-destructive ledger to shareable artifacts | B |
+| F50 | Workspace scenes = mixer-scene model applied to multi-window arrangements; supersedes per-doc layouts for power users | E |
+| F51 | Freeze/flatten as perf primitive: frozen docs skip full ledger replay on reopen | E |
+
+## Part IV provenance
+
+- Idea generation: 6 focus/deepen agents (leads F35–F40) + 2 divergent agents (frames: Lightroom/photo-editing pipeline, DAW/music production), run 2026-08-26.
+
+---
+
+---
+
+# PART V — Round 5: CAD / legal / cartography / archive / aviation
+
+*Appended 2026-08-26 per user direction ("another pass… when you feel it's getting into fantasy"). Five untouched transplant domains.*
+
+## 26. Round 5 pool (30 ideas, scored N/V/F out of 10)
+
+### CAD/architecture
+- ★ **Export profiles**: each export declares which op types are included/flattened/omitted (print flags over the ledger) `[N8 V6 F8]`
+- **Live-linked overlays**: attach another PDF as digest-aware reference overlay; stale-marker until re-synced (xrefs) `[N8 V6 F7]`
+- Model-bound vs view-bound annotation anchoring (survive crop/rotation) `[N7 V6 F6]` *(also a correctness finding)*
+- Per-region edit locks `[N7 V6 F6]` · design options per page picked at export `[N8 V5 F6]` · sheet-set issues with generated index `[N6 V5 F5]`
+
+### Legal practice
+- ★ **Bates stamping engine** with ledger-recorded renumber-on-insert `[N6 V9 F7]`
+- Exhibit tags → auto-generated linked exhibit list `[N7 V7 F7]` · redline mode w/ accept/reject state `[N7 V6 F7]` · playbook review checkpoints `[N7 V6 F7]` · clause library `[N6 V7 F6]` · privilege log builder `[N6 V5 F5]`
+- *(Cluster insight: these five are one vertical — a "matter" workspace — not five features)*
+
+### Cartography
+- ★ **Thematic overlays**: toggleable layers — all links / all fields / all tracked changes over the rasterized page `[N6 V8 F7]`
+- **Legend panel** decoding annotation symbols with live counts per page `[N6 V8 F7]`
+- Inset viewport map in corner of spread `[N5 V8 F7]` · citable document-coordinate graticule `[N7 V5 F5]` · route/reading-path annotations `[N8 V4 F5]` · zoom-dependent text generalization `[N8 V3 F4]` *(fantasy for text documents)*
+
+### Museum/archive
+- Custody-transfer logging on export (loans) `[N7 V6 F7]` *(extends counterparty receipt)*
+- Finding aids: auto-generated hierarchical session inventory `[N7 V5 F5]` · deaccession workflow for deliberate deletion `[N6 V5 F5]` · significance-based safeguard tiers (appraisal) `[N8 V4 F5]` · exhibition labels on share `[N7 V4 F5]` · conservation treatment records `[N6 V5 F5]`
+
+### Aviation CRM
+- ★ **Sterile mode** during sign/submit (Focus-filter integration, default-on, reversible) `[N8 V7 F7]`
+- Challenge-response field checklist with learned collapse `[N7 V6 F7]` · post-flight debrief toast `[N7 V6 F7]` · typed 'GO' for undo-exceeding bulk ops `[N7 V6 F6]` · readback only on overwrite collisions `[N7 V6 F6]` · fixed scan-order flows `[N7 V5 F6]`
+
+## 27. Deepened bundles (Branches 16–18)
+
+**Branch 16 — Legal practitioner toolkit** *(one primitive, four shells)*
+Everything reduces to a typed `DesignationOp`: region anchor (page/rect or text range) + metadata template. Bates = designation family whose projection is the numbering map; exhibit tags generate the linked list; redlines add accept/reject resolution state; privilege marks assemble the running log. Index documents are pure projections over the op stream — regenerate free after undo or renumbering. One anchor-resolution layer, one projection renderer, four thin shells. **Risk:** renumbering cascades corrupt positional anchors ⇒ anchors must be identity-based; redline fidelity will be judged against Word compare/Litera. **First step:** `DesignationOp` in the typed ledger + one projection rendering an index table; prove insert-a-page-mid-document survival before any UI.
+
+**Branch 17 — Export profiles**
+Declarative predicates over the ledger: `rebuild(ledger.filter(profile))` — northstar's "export never reads view state" satisfied by construction. Three-layer schema: type-level defaults, instance pins ("keep op #47 verbatim"), dependency manifest from the ledger's causal graph. Resolver computes transitive closure of retained-op dependencies; omission fails fast on dangling references; flattening replaces subtree with leaf op. Export sheet shows read-only include/flatten/omit buckets + validation report. Composes: bounce-in-place bakes profile ID+hash into artifacts; receipts cite `{profileId, profileHash, ledgerRange}` ⇒ every export reproducible from `(ledger, profile)` alone. **Risk:** dependency-manifest incompleteness silently under-reports breakage — must be exhaustive and versioned with op schemas. **First step:** pure `resolveProfile(ledger, profile) -> violations` dry-run + three seed profiles as fixtures against a synthetic cross-referencing ledger. Sub-ideas: inheritance deltas ("Client copy + legal hold"); user-language loss lint enumerating what recipients won't see; live bucket inspector scrubbing ops in real time.
+
+**Branch 18 — Commit-discipline suite (calibrated)**
+Frequency × irreversibility matrix decides which mechanisms earn friction: typed GO non-negotiable but reserved for ops exceeding undo capacity or touching signed/flattened documents; readback fires only on overwrite collision (silent pass-through otherwise); checklist collapses to a green summary banner after demonstrated mastery (learned-preference doctrine); sterile mode default-on via macOS Focus integration (free, familiar, reversible); debrief is a dismissible toast, never modal. **Composition rule: ceremony substitutes for undo ONLY where undo is impossible — everywhere else undoability wins.** **Risk:** ceremony creep breeds dismissal reflexes, weakening even the typed-GO gate when it matters. **First step:** typed-GO as modifier on the planned batch confirmation sheet + dismissal-latency telemetry before adding any other member.
+
+## 28. Round 5 verdict — the axis shift
+
+Round 5 still yielded mechanisms (the well was deeper than Round 4 suggested), **but every viable idea moved off the app shell onto two new axes**:
+1. **Vertical domains** — legal/matter workflows (Branch 16), compliance/export semantics (17)
+2. **Commit & exit semantics** — how work leaves the app safely (17, 18)
+
+Zero new shell-interaction units surfaced (overlays/legend/inset-map are inspector features, not navigation models). Further shell rounds would now yield mood transplants — cartography's generalization and the archive tail already show the drift. **Shell exploration: closed at Round 5. Vertical/export exploration: opened, with Branches 16–18 as its founding candidates.** Whether to run vertical-domain passes (healthcare, government forms, insurance) is a product-strategy decision, not an exploration-momentum one.
+
+## 29. Part V inventory additions
+
+| # | Finding | Type |
+|---|---|---|
+| F52 | Legal toolkit = ONE DesignationOp primitive + projections; identity-based anchors mandatory for renumber survival | B/H |
+| F53 | Redline fidelity bar is Word compare/Litera — ship only if round-trip parity plausible, else abstain | C |
+| F54 | Export profiles make "export never reads view state" true by construction; receipts/bounce artifacts should cite `{profileId, hash, ledgerRange}` | B/C |
+| F55 | Op dependency manifest must be exhaustive + versioned with schemas or profile resolution silently under-reports breakage | H |
+| F56 | Commit ceremony substitutes for undo ONLY where undo impossible; universal trigger = undo-capacity threshold | C/B |
+| F57 | Dismissal-latency telemetry should gate rollout of any commit-ceremony mechanism | H |
+| F58 | Sterile mode best implemented as macOS Focus-filter integration, not in-app dimming | E |
+| F59 | Thematic overlays + legend are cheap inspector wins sharing one annotation-index query | M/E |
+| F60 | Live-linked overlays need digest-watch + stale markers — same machinery as parked-reference rot checks (F22) | E/C |
+
+
+## 30. Parked exploration area: vertical-domain passes (for later)
+
+*Recorded 2026-08-26 per user direction. This is deliberately **not** run now.*
+
+**What was observed:** Rounds 1–5 exhausted the app-shell interaction space; Round 5's surviving ideas all migrated onto vertical domains and exit/commit semantics. The shell question ("what's left to discover about how the app itself should behave?") is answered. A different question remains open and parked: *"which user domains deserve purpose-built depth on top of our primitives?"*
+
+**Candidate verticals identified but not explored:**
+| Vertical | Anchor evidence | Hypothesized fit with existing primitives |
+|---|---|---|
+| Legal / litigation | Branch 16 toolkit; Bates/exhibits/redlines/privilege log all reduce to DesignationOp | High — ledger + designations are the natural substrate |
+| Government forms | Existing form-fill candidate detection + field-suggestions + cross-doc field graph (Branch 7) | High — repetitive labeled fields across form families |
+| Healthcare (HIPAA-sensitive) | Redaction/batch machinery (Branch 12), provenance instruments (Branch 8) | Medium — privacy constraints raise the bar |
+| Insurance / claims | Batch mode + export profiles + custody logging | Medium — document-heavy claim packets |
+| Compliance/audit shops | Review reports, notary slots, receipts (northstar ledger-report concept) | Medium |
+
+**Entry criteria for running this pass later:**
+1. Product-strategy prioritization has chosen commercial direction (anchor: `Docs/pdf-pricing-marketing-exploration-2026-08-25.md`, `Docs/market-strategy.md`).
+2. At least Waves 1–3 shipped (shell contracts stable), ideally Wave 7 time-scrub proving the ledger-projection engine.
+3. Each pass must reuse the established method: divergent transplant frames per domain → score → deepen → explainability filter (mechanisms yes, moods no).
+
+**Why parked rather than dropped:** the legal toolkit (F52) already shows verticals multiply value of core primitives cheaply — one primitive became four features. The same leverage likely exists in the other rows. This is expansion *of* the moat, not discovery of it.
+
+## Part V provenance
+
+- Idea generation: 5 isolated divergent agents (frames: CAD/architecture, legal practice, cartography, museum/archive curation, aviation CRM) + 3 focus/deepen agents (Branches 16–18), run 2026-08-26.
+- Parked verticals recorded per user direction same day.
+
+# APPENDIX — Master findings inventory (explicit + implicit)
+
+*Extracted 2026-08-26 as the actionable index of Parts I–III; extended by Parts IV–V (F41–F60). Status legend: **B** = buildable unit, **H** = hardening/correctness finding, **C** = constraint to respect, **M** = micro-feature, **E** = future exploration.*
+
+### Explicit findings (directly observed/stated) — Parts I–III
+| # | Finding | Type | Source |
+|---|---|---|---|
+| F1 | New docs open fit-width/continuous fixed; no global last-used preference | B (Wave 1) | §1, `AppModel.swift:131-134` |
+| F2 | Per-digest view autosave already exceeds competitor parity (Acrobat/Foxit are opt-in) | C (asset) | §1–2 |
+| F3 | No "Save This Layout" control anywhere | B (Wave 1) | §1 |
+| F4 | Close is window-scoped only; last-doc close strands app window-less with no designed state | B (Wave 2) | §1 |
+| F5 | No tabs; multi-window ⌥⌘N; roadmap pre-seeds "Move Tab to New Window when tabs are supported" | B (Wave 3) | §1, northstar:420 |
+| F6 | Document PiP API (2024) proves always-on-top arbitrary-content panes are a mainstream pattern | E→B (Wave 5) | §11 |
+| F7 | Meet auto-PiP trigger model (navigate-away ⇒ context survives as float) transplantable | B (Wave 5) | §11 |
+| F8 | Edge/Chrome split-view-in-one-tab + VS Code split-in-group are now standard patterns | B (Wave 4) | §11 |
+| F9 | Two independently-scrolling panes drift; paired-row single scroller is the robust diff/split structure | C | §11 |
+| F10 | Field-suggestions pipeline (canonicalizer→matchScore→chips) extends directly cross-document | B (Branch 7) | §20 |
+| F11 | Immutable operation ledger uniquely enables time-scrub, provenance instruments, change reports — competitors can't copy without the ledger | B/C (moat) | §14, §20 |
+| F12 | Every major candidate has a ~50-line crude fallback ($0-budget proof) | C (de-risking) | §18 Cluster M |
+| F13 | Planned Open Recent (G-04) is the shared substrate for hub/recents/recently-closed | C | §3 |
+| F14 | IMP-07 reserved Settings slot fits the LayoutRestorePolicy picker | C | §3 |
+
+### Implicit findings (surfaced by analysis) — Parts I–III
+| # | Finding | Type | Source |
+|---|---|---|---|
+| F15 | Latent restore-order hazard: magnification must apply BEFORE scroll-anchor recompute, else anchor lands wrong even today | H | §6 Branch 1 |
+| F16 | Restore path lacks out-of-bounds snapping (page > EOF, rotation ∉ {0,90,180,270}, zoom outside clamps) | H | §4 Cluster A |
+| F17 | Saved-state apply should gate on first successful render pass (corrupt blob must not wedge initial UI) | H | §4 Cluster A |
+| F18 | Atomic-write + previous-generation self-heal worth auditing in SessionStore | H | §4 Cluster A |
+| F19 | Recently-closed stack must unify with Open Recent persistence or be explicitly session-scoped | H/C | §6 Branch 2 |
+| F20 | SwiftUI WindowGroup can silently recreate NSWindows — tabbingMode/delegates need defensive reassertion | C/H | §6 Branch 3 |
+| F21 | PiP live-link requires a narrow read-only projection protocol; snapshot-first with staleness pulse badge is safe default | C/B | §14 Branch 4 |
+| F22 | Parked-reference descriptors rot when source bytes change — borrow-time digest check + "reference drifted" affordance required | H | §14 Branch 6 |
+| F23 | Visual tamper signals acquire quasi-legal weight; must distinguish "bytes unchanged since observation" from "cryptographically valid"; third-party signatures are "unwitnessed" boundary | C/H | §20 Branch 8 |
+| F24 | Cross-doc value propagation needs consent gates never bypassed + label-collision abstention + provenance-chain retract | C/H | §20 Branch 7 |
+| F25 | Zero-content logging doctrine ⇒ field-graph session entries carry label hashes, not raw values | C | §20 Branch 7 |
+| F26 | Omnibox heterogeneous ranking must be deterministic (namespace prefixes p:/f:/a:/) or muscle memory breaks | C/H | §20 Branch 9 |
+| F27 | Hub entry is a natural trigger for stale-recovery compaction | E | §6 Branch 2 sub-idea |
+| F28 | UndoManager is a sufficient cheap ledger-projection for v1 scrub (before full typed-op replay) | E | §18 Cluster M |
+| F29 | Split/diff alignment should be unrepresentable-by-construction (row tuples), independent panes only on explicit break | C | §11, §14 Branch 5 |
+| F30 | Fantasy boundary falsifier: mechanism transplants stay viable; mood transplants fail explainability doctrine | C (scope guard) | §21 |
+
+### Micro-features
+| # | Finding | Type |
+|---|---|---|
+| F31 | Page tear-off: drag thumbnail to Finder → single-page PDF (~20 lines) | M |
+| F32 | Cross-document find bar across all open documents → results table | M |
+| F33 | "Restored saved layout" transient status message on pinned-layout open | M |
+| F34 | Pinned-layout toolbar badge near zoom readout with one-click clear | M |
+
+### Exploration leads — status after Rounds 4–5
+| # | Lead | Outcome |
+|---|---|---|
+| F35 | Selection-as-verb palette | Designed — Branch 10 |
+| F36 | Ghost-keystroke macros w/ positional anchors | Designed — Branch 11 |
+| F37 | Batch-inspect folder canvas | Designed — Branch 12 |
+| F38 | Copy-paste traffic trails | Salvaged to ledger — Branch 13 |
+| F39 | Named-layouts library | Designed — Branch 14 |
+| F40 | Fractional scroll anchor | Designed — Branch 15 |

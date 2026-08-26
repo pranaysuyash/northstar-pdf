@@ -1,13 +1,34 @@
 import { useEffect, useRef, useState } from "react";
 import { pdfController } from "../pdf/PdfController";
-import type { MatchRect, PdfSnapshot } from "../pdf/PdfController";
+import type { MatchRect, PdfSnapshot, Rect } from "../pdf/PdfController";
 import { CapabilityNotice } from "./ModePanels";
 
-export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
+interface ReaderStageProps {
+  snapshot: PdfSnapshot;
+  regionRects: Rect[];
+  onCanvasClick?(deviceX: number, deviceY: number): void;
+}
+
+export function ReaderStage({ snapshot, regionRects, onCanvasClick }: ReaderStageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [password, setPassword] = useState("");
   const [matchRects, setMatchRects] = useState<MatchRect[]>([]);
+  const [markers, setMarkers] = useState<MatchRect[]>([]);
   const passwordOpen = snapshot.status === "password";
+
+  useEffect(() => {
+    if (snapshot.status !== "ready" || !snapshot.renderedAt || !regionRects.length) {
+      setMarkers([]);
+      return;
+    }
+    let cancelled = false;
+    void pdfController.getRegionMarkers(snapshot.currentPage, regionRects).then((rects) => {
+      if (!cancelled) setMarkers(rects);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [snapshot.status, snapshot.renderedAt, snapshot.currentPage, regionRects]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -50,8 +71,8 @@ export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
         >
           <span className="mode-context-line">
             {snapshot.status === "ready"
-              ? `Page ${snapshot.currentPage} of ${snapshot.pageCount} — nothing leaves this device.`
-              : "Open a PDF to begin — nothing leaves this device."}
+              ? `Page ${snapshot.currentPage} of ${snapshot.pageCount}. Nothing leaves this device.`
+              : "Open a PDF to begin. Nothing leaves this device."}
           </span>
           <CapabilityNotice state={snapshot.status === "loading" ? "loading" : "available"} />
         </section>
@@ -60,8 +81,30 @@ export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
       <div className="pdf-stage" id="viewerCanvasWrap">
         {snapshot.status === "ready" ? (
           <div className="pdf-page-wrap">
-            <canvas ref={canvasRef} aria-label="PDF page rendering" />
+            {/* react-doctor-disable-next-line react-doctor/click-events-have-key-events */}{/* Canvas coordinate picking has no keyboard analog; keyboard users select regions via the thumbnail rail and inspector field list. */}
+            <canvas
+              ref={canvasRef}
+              aria-label="PDF page rendering"
+              style={onCanvasClick ? { cursor: "crosshair" } : undefined}
+              onClick={(event) => {
+                if (!onCanvasClick) return;
+                const bounds = event.currentTarget.getBoundingClientRect();
+                onCanvasClick(event.clientX - bounds.left, event.clientY - bounds.top);
+              }}
+            />
             <div className="match-highlight-layer" aria-hidden="true">
+              {markers.map((rect, i) => (
+                <span
+                  key={`marker-${i}`}
+                  className="region-marker"
+                  style={{
+                    left: rect.left,
+                    top: rect.top,
+                    width: rect.width,
+                    height: rect.height
+                  }}
+                />
+              ))}
               {matchRects.map((rect, i) => (
                 <span
                   key={i}
@@ -89,7 +132,15 @@ export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
         )}
       </div>
 
-      <div className={`password-card${passwordOpen ? " show" : ""}`} hidden={!passwordOpen} role="dialog" aria-modal="true" aria-labelledby="passwordTitle-react">
+      {/* Native <dialog> gives focus handling and Esc semantics for free;
+          visibility stays CSS-driven via the `show` class. */}
+      <dialog
+        open
+        className={`password-card${passwordOpen ? " show" : ""}`}
+        hidden={!passwordOpen}
+        aria-labelledby="passwordTitle-react"
+        style={{ border: "none", padding: 0, background: "none" }}
+      >
         <form
           id="passwordForm"
           className="password-panel"
@@ -124,7 +175,7 @@ export function ReaderStage({ snapshot }: { snapshot: PdfSnapshot }) {
             <button type="submit">Open</button>
           </div>
         </form>
-      </div>
+      </dialog>
     </>
   );
 }

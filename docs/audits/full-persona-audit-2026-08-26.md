@@ -5,9 +5,8 @@
 > claims. Specifically: the "FAIL Gates" table records RG-001 as `FAIL`, but
 > `docs/release-gates.md` shows RG-001 as `PARTIAL` with delivered evidence
 > (incremental writer, appearance streams, compressed-object corpus support).
-> **The release-gate registry is the sole authority for gate status** (see the
-> status-authority decision record in `docs/decisions.md`). Its remaining task
-> priorities were folded into
+> **The release-gate registry is the sole authority for gate status** (see
+> decision record D-055). Its remaining task priorities were folded into
 > `docs/roadmaps/implementation-plan-2026-08-26.md`. Retained as historical
 > evidence; do not cite its status tables.
 

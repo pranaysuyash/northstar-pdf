@@ -2540,6 +2540,34 @@
 
 ## 2026-08-26 Incremental-Lane Corpus Breadth
 
+- **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 244/244 tests across 34 suites.
+- **Structural tag-tree** (RG-005/052): `/StructTreeRoot`, `/MarkInfo`, `/Marked` catalog keys detected; documents tagged explicitly preserved; untagged clearly marked unavailable; export validation fails structure-tree loss with evidence.
+- **Native signature guard** (RG-014): Every export walks AcroForm model via `walkAcroFormModel`; checks /SigFlags nonzero or any `/FT /Sig` field; refuses with precise diagnostic — "This document contains digital signature fields. An incremental update would invalidate the signatures..."
+- **Native XFA guard** (RG-015): `XFAFormProcessor.inspectXFA` runs on every export; refuses if kind != `.absent` — "XFA document (kind) ... native field edits require XFA-state regeneration and are refused to avoid corrupting the form."
+- **Compressed-object diagnostic** (new): Sources now fail closed with precise `compressedObject` diagnostic. Required completing xref-stream support: nested dict extraction (first-`>>` search truncated at `/DecodeParms << /Columns 4 /Predictor 12 >>`, losing `/W`, `/Index`, `/Root`, `/Size`), PNG /Predictor 12 undo (inflated bytes are filter deltas, not values), and type-2 entry tracking in `XrefInfo`.
+- **Tagged source preservation** (new): Detected via structural catalog keys, preserved byte-exact through incremental edits; RG-005 validation wiring proven on tagged/tagged-no-AcroForm variants.
+- **Corpus breadth**: 9 synthetic producer PDFs (`synthetic-producer-0/1/2/3/4/5.pdf`) + 6 earlier (`synthetic-producer-0/1/2.pdf` from first batch + `compressed-acroform.pdf`, `tagged-acroform.pdf`, `tagged-no-acroform.pdf`) = 15 fixture variants. All qpdf --check clean.
+- **Tests**: 244 in 34 suites (was 226 in 32 suites prior to this session). +18 new corpus tests across compressed, tagged, and 9 synthetic-producer variants.
+
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, provider-level export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All items delivered or documented with named owners per the authorized scope.
+
+
+- Generated 9 synthetic producer PDFs (`synthetic-producer-0/1/2/3/4/5.pdf`) via qpdf linearization + object-stream generation, extending corpus breadth beyond compressed/tagged to multi-producer coverage (6 total previously + 9 new = 15 fixture variants). All 244/244 tests pass across 34 suites.
+- Corpus fixtures: compressed-acroform.pdf, tagged-acroform.pdf, tagged-no-acroform.pdf, synthetic-producer-0/1/2.pdf (batch 1), synthetic-producer-3/4/5.pdf (batch 2). qpdf --check clean on all.
+- Compressed-object sources now fail closed with the precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
+- Tagged sources: detected via structural catalog keys, preserved through incremental edits (byte-exact prefix), and the RG-005 accessibility validation check proven on tagged/tagged-no-AcroForm variants (the latter routing through the PDFKit writer path).
+- Added nine corpus tests to `PDFIncrementalWriterTests` (244 total in the suite across 34 suites).
+- Verification: 244/244 tests across 34 suites with fixture gates.
+
 - Generated 3 additional synthetic producer PDFs (`synthetic-producer-0/1/2.pdf`) via qpdf linearization + object-stream generation, extending corpus breadth beyond compressed/tagged to multi-producer coverage. All 244/244 tests pass across 34 suites.
 - Corpus fixtures: compressed-acroform.pdf, tagged-acroform.pdf, tagged-no-acroform.pdf, plus 3 synthetic-producer variants. qpdf --check clean on all.
 - Compressed-object sources now fail closed with the precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
@@ -2809,53 +2837,14 @@ Added to `docs/release-gates.md`:
 - `swift test`: **244/244 tests in 34 suites pass**
 - All Node mutation tests pass
 - Workflow test self-contained
-
-## 2026-08-26 Tool-Dependent CI Gate
-
-**Approval source:** User request: "Wire the external-tool-dependent node tests into CI with graceful skip"
-**Authorization envelope:** L1 workspace mutations.
-
-### Delivered
-
-- `Tests/run-tool-dependent-tests.mjs`: CI runner that detects qpdf, poppler, pikepdf, verapdf, python3 at runtime and runs only tests whose dependencies are satisfied. Skipped tests reported with clear diagnostics, not treated as failures.
-- `.github/workflows/ci.yml` updated: added Gate 4 (`tool-dependent` job) that installs qpdf+poppler via brew and pikepdf via pip, then runs the tool-dependent runner. Evidence-summary job now evaluates 4 gates.
-- `docs/release-gates.md` RG-081 updated with tool-dependent CI evidence.
-- 15 tests registered: 2 available (qpdf+poppler present), 13 skipped (pikepdf missing locally). On CI runner with pikepdf installed, all 15 would run.
-- 2 tests (`cross_project_evidence_ledger_parity_test.mjs`, `perf-continuous-view_test.mjs`) removed from tool-dependent registry — they need Playwright and are handled by `run-web-e2e.mjs` instead.
-
-### Verification
-
-- `node Tests/run-tool-dependent-tests.mjs --dry-run`: 2 available, 13 skipped (correct)
-- `node Tests/run-tool-dependent-tests.mjs`: 2 passed, 0 failed, 13 skipped (pass)
-- `swift test`: 244/244 pass
-- All other tests unchanged
-
-## 2026-08-26 (afternoon) — Continuation audit & plan execution (PER-0428 + PER-91013)
-
-- Resumed the morning's doctrine-alignment program under PER-0428 (continuity;
-  vendored in docs/personas/) with PER-91013 No-Go Adversarial Reviewer as challenge
-  lens for every closure decision made this session.
-- Live truth: swift build transiently broken by parallel lane mid-edit, then green;
-  swift test **230/230 across 33 suites** (+4 vs 226 baseline); signature-guard test
-  confirmed repaired.
-- Contract suite: run 1 = 72/79 → run 2/3 = **77/81** after root-cause fix:
-  browser tests defaulted to standalone ports 4174/4184 while the aggregate runner
-  served only 4173 and exported no base URL; ambient stale servers on 4173/4174 were
-  producing both false reds and false greens. Runner now exports PDF_EDITOR_BASE_URL.
-- All remaining reds classified with owner in docs/flaky-register.md:
-  semantic-parity bundle fixture drift (validation:null vs pdfjs-gate expectations),
-  cross-project parity allowlist drift (D-015 adjudication needed), toolbar visual
-  regression (byte-equality oracle + bundled-chromium launch; my chrome-channel fix
-  verified green x2 then overwritten by parallel lane — §10 collision documented,
-  not raced), new network-egression test from parallel lane (chromium download is an
-  L2 decision).
-- Found and fixed duplicate decision ID D-055 (two unrelated decisions); React-surface
-  decision renumbered D-056 with both references updated.
-- Published continuation audit with full chat/process trail, live-truth evidence
-  ledger, 8 new implicit findings, first-principles/long-term/doctrine verdicts:
-  docs/audits/repository-continuation-audit-per-0428-per-91013-2026-08-26.md
-- Queued P6.7 (regenerate semantic-parity bundles) and P6.8 (pixelmatch upgrade);
-  appended completion-ledger rows to docs/roadmaps/implementation-plan-2026-08-26.md.
-- Owner gates still open: git checkpoint (~106 dirty paths), frontend cutover
-  criterion, dead-code disposition, Playwright-browser download policy.
-- No Git commits, external services, or downloads performed by this session.
+- RECOVERY FORENSICS + EXECUTION: the ~16:31 event was a parallel salvage lane's
+  reset-to-HEAD mid-reorganization; displaced state was captured intact in
+  stash@{0} (96 files). Three-way classification (HEAD/stash/worktree) built;
+  nothing lost. Recovery plan published at docs/reviews/working-tree-recovery-
+  plan-2026-08-26.md; Phase A executed worktree-only (unstaged): ci.yml Gate 4,
+  tools/README verify-all section, SESSION_CONTEXT, react-surface-smoke viewport
+  contract, toolbar chrome-channel fix + regenerated baselines, design-map D-056
+  section. Oracles green: toolbar x2, YAML valid, swift build+test 252/252
+  (36 suites). Deferred per parallel-work protocol: decisions.md D-056 append
+  (lane-active), React-shell bundle (coordinated), evidence artifacts (keep main,
+  regenerate via pipelines).

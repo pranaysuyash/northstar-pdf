@@ -97,7 +97,9 @@ async function run() {
   let browser;
   try {
     const { chromium } = await import("playwright");
-    browser = await chromium.launch({ headless: true });
+    // Repo convention: use system Chrome ("chrome" channel) so the suite does
+    // not depend on Playwright-managed browser downloads (air-gap friendly).
+    browser = await chromium.launch({ channel: "chrome", headless: true });
 
     const results = [];
 

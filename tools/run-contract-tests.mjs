@@ -90,7 +90,10 @@ function runTest(file) {
   return new Promise((resolve) => {
     const child = spawn("node", [file], {
       cwd: repoRoot,
-      env: { ...process.env },
+      // Browser tests resolve their page via PDF_EDITOR_BASE_URL (some default
+      // to ports 4174/4184 when run standalone). Always point them at THIS
+      // runner's canonical server so the aggregate suite is deterministic.
+      env: { ...process.env, PDF_EDITOR_BASE_URL: "http://127.0.0.1:4173/web/index.html" },
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";

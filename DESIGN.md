@@ -456,3 +456,105 @@ tokens before committing.
 When a capability or provider is not ready, keep the surface present with an honest state.
 The visual system must make it easy to understand what is available now, what is being
 measured, what requires review, and what will happen on export.
+
+## New-Age PDF Editor Possibilities
+
+### Why "new age"?
+
+The current PDF editor landscape is dominated by two poles:
+
+| Pole | Characteristics |
+|------|-----------------|
+| **Adobe Acrobat / Foxit** | Skeuomorphic leather, opaque panels, modal dialogs, plugin-based AI, menu-heavy workflows, source-overwrite-prone, platform-inconsistent |
+| **Minimal web viewers** | Read-only, no structural ops, no AI, no touch/gesture, no native feel, no local preservation guarantees |
+
+PDF Editor occupies a third space: **local-first, reversible, evidence-aware, and native**. The "possibilities" below are not a roadmap—they are a design space to explore, prototype, and discard. The product must remain usable and reliable at every step.
+
+### 1. Visual Design Language (already in DESIGN.md)
+
+The existing DESIGN.md visual system (dark shell, slate canvas, warm paper, evidence-visible, calm precision) is the foundation. The possibilities below extend or diverge from it intentionally.
+
+| Direction | When It's Worth Exploring |
+|-----------|--------------------------|
+| **Liquid Glass / dynamic transparency** (macOS Tahoe) | When the product needs to feel "of this macOS version"; provides instant recognizability |
+| **Noise-textured glassmorphism** | When the product wants a more tactile, less "digital" feel; adds subtle materiality |
+| **Dark/Light auto-switch with palette-aware accents** | Already partially present; full token system would extend the color roles to all surfaces |
+| **Glass panels with noise** | Sidebars/inspectors that feel frosted but not "blurry"; better for long sessions |
+
+### 2. Interaction Paradigms
+
+| Interaction | Concept | Value |
+|-------------|---------|-------|
+| **Gesture-driven page navigation** | Two-finger swipe → continuous scroll; pinch → zoom; three-finger tap → rotate handle | Moves beyond toolbar buttons; feels more "app-like"; reduces mode-switching friction |
+| **Voice commands** | "Select page 3", "Rotate 90° left", "Delete this page" | Accessibility + power-user speed; cross-platform (Web Speech on web, AVFoundation on macOS) |
+| **AI-assisted operations** | "Extract text from this page", "Summarize this PDF", "Redact confidential info" | AI as copilot, not just gimmick; leverages on-device MLX/Transformers or hosted models; all ops remain reversible until user confirms |
+| **Touch-first gestures** (macOS trackpad) | Swipe-up for thumbnail grid; pinch-to-select; long-press for menu | Bridges mobile intuition with desktop precision; expands to iPad |
+| **Drag‑and‑drop anywhere** | Drop PDF onto window → open; drag page thumbnail to reorder; drag image onto canvas → insert | Removes modal panels entirely; "direct manipulation" is the primary UI mode |
+
+### 3. Workflow Innovations
+
+| Feature | Description | Value |
+|---------|-------------|-------|
+| **AI-powered smart reflow** | When editing a page, surrounding content automatically reflows; no manual margin adjustment | Saves time for long documents; reduces "where does my text go?" frustration |
+| **Live symbolic preview** | Top toolbar shows document "symbolic summary" (e.g., "3-chapter report, 27 pages") that updates in real time | Cognitive offload; reduces "where am I?" disorientation |
+| **Non-destructive structural editing** | All page ops (insert/move/rotate/delete) live in an undo stack; export always preserves original source unless explicitly "flattened" | User confidence; experimentation safety net; aligns with export-only workflow |
+| **One‑click "export to web"** | Generates a static, optimized HTML/PDF bundle with embedded fonts, no plugin required | Lowers barrier to sharing; modern publishing workflow; aligns with local-first ethos |
+| **Comparison mode (2‑up)** | Side‑by‑side diff of two PDF versions; highlight changed pages, text, images | Editorial use case; replaces external diff tools; supports contract review |
+
+### 4. Novel UI Patterns
+
+| Pattern | Sketch | Technical Notes |
+|---------|--------|-----------------|
+| **Radial page‑menu** | Click page thumbnail → fan-out radial menu with Rotate Left/Right, Delete, Extract, Properties | Uses `NSMenu` with `NSVisualEffectView` as superview; `.menuStyle(.bordered)` on macOS 13+ |
+| **Inline page dragging** | Thumbnail drag inside main view → ghost preview drops at target index | Uses `NSVisualEffectView` + `NSDragOperationGeneric`; `NSCollectionView` drag‑delegate |
+| **Floating toolpalette** | Auto‑hide sidebar that slides in from left edge on swipe; contains frequently used tools (zoom, rotate, add page) | `NSViewController` presented as `.style(.modalPanel)` with `ember`-based auto‑hide |
+| **AI‑chat pane** | Collapsible right drawer with prompt input; outputs: "rotate all pages 180°", "extract tables to CSV" | Uses `NSDrawer` or `NSPanel` with `titlebarAppearsTransparent`; SwiftUI `View` container |
+| **Canvas‑overlaid thumbnails** | Main PDF view with thumbnails as semi-transparent overlay along bottom edge; drag to reorder | `NSCollectionView` in a `NSView` subclass with `wantsLayer = true`; `α`-blended cells |
+
+### 5. Differentiation Matrix
+
+| Area | Adobe/Foxit | **PDF Editor (current)** | **Possibilities** |
+|------|-------------|-------------------------|-------------------|
+| **Launch** | Modal "Open File" dialog | **Instant canvas** on `⌘N`; welcome page‑size picker; no modal dialog by default | **Zero‑step canvas** on any new‑doc flow |
+| **Tool palette** | Fixed left/right docked panels | **Radial / edge‑slide gestures**; auto‑hide; context-sensitive | **Radial menu + floating palette** |
+| **Page operations** | Menus + dialog boxes | **Drag‑and‑drop**, **gesture**, **voice** + inline controls | **Full gesture + voice + drag** |
+| **Export** | "Save As…" dialog each time | **One‑click export**; preset profiles; "export to web" single step | **One-click + preset + web bundle** |
+| **AI features** | Plugin‑based (expensive) | **Baked-in AI** (redact, summarize, OCR, redaction) via local or on‑device model | **On-device LLM (MLX) + optional hosted** |
+| **Appearance** | Skeuomorphic leather / blue-gray | **Liquid Glass / glassmorphism**; dynamic color; macOS‑native feel | **Liquid Glass + noise texture + auto-switch** |
+
+### 6. Risks & Tradeoffs (for any possibility)
+
+| Risk | Mitigation |
+|------|------------|
+| **Feature creep** — too many gestures/AI features dilute core PDF editing | Phase-gate: core ops (rotate, move, insert) must remain 100% reliable first; AI features as optional toggles with clear ON/OFF |
+| **Platform fragmentation** — web vs macOS vs iOS UI differences | Share the DESIGN.md token system; keep core logic in PDFEditorCore; UI adapters per platform |
+| **AI reliability** — hallucinated ops corrupt document | Ops always go through `PDFKitProvider.apply` with validation; AI suggestions emit `.warning` status, never auto-apply |
+| **Gesture/voice confusion** — accidental triggers | Require explicit intent (e.g., three-finger tap + hold 0.5s; "Hey Assistant" wake word); optional disabled |
+| **Visual overload** — too many new layers compete with the document | Every new layer must pass the "document-first" test: does it enhance or distract? If distract, discard. |
+
+### 7. Quick Experiment Ideas (prototype, don't commit)
+
+| Idea | Estimated effort | What it tests |
+|------|-----------------|---------------|
+| **Radial page‑menu** (mock in SwiftUI) | 1 day | Can we build a non-modal page-action menu that feels discoverable? |
+| **Voice "rotate page 90°"** (Web Speech + pdf‑lib call) | 2 days | Does the voice pipeline integrate without breaking the export contract? |
+| **Smart reflow overlay** (CoreImage + pdf‑context) | 3 days | When we move a page, does surrounding content reflow credibly? |
+| **Liquid Glass panel** (NSVisualEffectView on macOS 13+) | 1 day | Does the glassmorphism look "of this macOS version" and not like a Windows port? |
+| **Drag‑and‑drop PDF onto window canvas** | 1 day | Does the open‑panel flow remain reliable when the user drops instead of clicking? |
+
+### 8. Decision Framework
+
+Any new possibility must pass **all** of these gates before it becomes a committed feature:
+
+1. **Reliability gate** — the feature cannot introduce a single path to document corruption or data loss
+2. **Export contract gate** — export must still produce a valid PDF with the same semantic identity; no silent data loss
+3. **Undo‑redo compatibility** — the feature's state must be fully reversible through the existing undo stack
+4. **Capability manifest binding** — the UI must bind to the capability manifest (`canEdit`, `canExport`, etc.), not assume capability
+5. **Visual sanity** — a quick prototype must pass the "document-first" test: the document remains the visual center of gravity
+6. **No mode regression** — the feature must not break any of the five existing modes (Reader, Understand, Complete, Organize, Review)
+
+If a possibility passes all six gates, it may be promoted to a **partial feature** (opt-in, toggleable, labeled as "experimental"). If it passes only the reliability + export + undo gates, it may remain a **prototype only**.
+
+---
+
+**Next step**: The product team chooses one possibility to prototype for the next sprint. The prototype must be timeboxed to 1 week and must include a "kill switch" to disable it entirely if the gates aren't met.

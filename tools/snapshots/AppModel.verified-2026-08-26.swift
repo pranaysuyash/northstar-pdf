@@ -190,7 +190,6 @@ public final class AppModel {
   @ObservationIgnored private var cachedSourceDocument: PDFDocument?
   private var ocrProcessedPageIndices: Set<Int> = []
   /// Auto-scan dedup for in-flight OCR passes (fill/sign mode).
-  /// Auto-scan dedup for in-flight OCR passes (fill/sign mode).
   @ObservationIgnored private var autoOCRPendingPages: Set<Int> = []
 
   public var searchQuery = ""

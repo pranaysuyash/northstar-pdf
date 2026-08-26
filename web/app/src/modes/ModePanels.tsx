@@ -33,7 +33,15 @@ function PanelFrame({ mode, title, body }: ModePanelProps) {
   );
 }
 
-export function UnderstandPanel({ hasDocument }: { hasDocument: boolean }) {
+export function UnderstandPanel({
+  hasDocument,
+  candidates = [],
+  loading = false
+}: {
+  hasDocument: boolean;
+  candidates?: import("../pdf/PdfController").GeometryCandidate[];
+  loading?: boolean;
+}) {
   return (
     <PanelFrame
       mode="understand"
@@ -52,10 +60,27 @@ export function UnderstandPanel({ hasDocument }: { hasDocument: boolean }) {
             </div>
             <div className="understand-block">
               <h3>Evidence origins</h3>
-              <p>
-                Geometry-detected regions are not yet connected in this entry point. Findings will
-                appear here with page-indexed coordinates and provenance before any confirmation.
-              </p>
+              {loading && <p className="small muted">Reading page geometry…</p>}
+              {!loading && candidates.length === 0 && (
+                <p className="small muted">
+                  No geometry-detected findings on this page. Findings appear here with
+                  page-indexed coordinates and provenance before any confirmation.
+                </p>
+              )}
+              {candidates.slice(0, 8).map((candidate) => (
+                <div key={candidate.id} className="review-card" style={{ marginTop: 6 }}>
+                  <strong>{candidate.displayName || candidate.labelText || "Unlabeled region"}</strong>{" "}
+                  <span className="muted">
+                    · {candidate.suggestedFieldType ?? "region"} · score{" "}
+                    {candidate.score.toFixed(2)} · p{candidate.pageIndex + 1}
+                  </span>
+                  {candidate.evidence.slice(0, 2).map((line, i) => (
+                    <p key={i} className="small muted" style={{ margin: "4px 0 0" }}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              ))}
             </div>
           </>
         )

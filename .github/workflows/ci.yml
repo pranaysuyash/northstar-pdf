@@ -131,18 +131,40 @@ jobs:
       - name: Run browser E2E suite
         run: node Tests/run-web-e2e.mjs
 
+  # ── Gate 4: External-tool-dependent tests ────────────────────────────
+  tool-dependent:
+    name: Tool-dependent tests (graceful skip)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install tools
+        run: |
+          # qpdf and poppler for PDF structural/text validation
+          brew install qpdf poppler || true
+          # pikepdf for Python PDF manipulation
+          pip3 install pikepdf || true
+
+      - name: Run tool-dependent tests
+        run: node Tests/run-tool-dependent-tests.mjs
+
   # ── Evidence summary ─────────────────────────────────────────────────
   ci-evidence:
     name: CI evidence gate
     runs-on: ubuntu-latest
-    needs: [swift-gate, node-contract, web-e2e]
+    needs: [swift-gate, node-contract, web-e2e, tool-dependent]
     if: always()
     steps:
       - name: Evaluate gates
         run: |
-          echo "Swift gate:    ${{ needs.swift-gate.result }}"
-          echo "Node contract: ${{ needs.node-contract.result }}"
-          echo "Web E2E:       ${{ needs.web-e2e.result }}"
+          echo "Swift gate:        ${{ needs.swift-gate.result }}"
+          echo "Node contract:     ${{ needs.node-contract.result }}"
+          echo "Web E2E:           ${{ needs.web-e2e.result }}"
+          echo "Tool-dependent:    ${{ needs.tool-dependent.result }}"
 
           if [ "${{ needs.swift-gate.result }}" != "success" ]; then
             echo "::error::Swift gate failed"
@@ -152,8 +174,11 @@ jobs:
             echo "::error::Node contract gate failed"
             exit 1
           fi
-          # Web E2E is advisory until the suite stabilizes; warn but don't block.
+          # Web E2E and tool-dependent are advisory until suites stabilize.
           if [ "${{ needs.web-e2e.result }}" != "success" ]; then
             echo "::warning::Web E2E suite reported failures (advisory until RG-081 PASS)"
+          fi
+          if [ "${{ needs.tool-dependent.result }}" != "success" ]; then
+            echo "::warning::Tool-dependent tests had failures (advisory — tools may be missing on runner)"
           fi
           echo "CI gates satisfied."

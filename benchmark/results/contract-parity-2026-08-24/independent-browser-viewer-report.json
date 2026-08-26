@@ -213,7 +213,7 @@
         },
         "checks": [
           {
-            "id": "e4b25c53-5091-41fa-9b89-d1a2b7427518",
+            "id": "63827e69-198b-4021-89f5-9f01bde66efc",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -221,7 +221,7 @@
             "operationIDs": []
           },
           {
-            "id": "0d966cf8-cdfd-4292-a4fc-039f1fba1002",
+            "id": "a574bb45-eda5-4849-8148-8e0c0d1019ff",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -229,7 +229,7 @@
             "operationIDs": []
           },
           {
-            "id": "5a4c3c8e-1df0-4b85-aa13-ffa52fd81c46",
+            "id": "5ba37433-b352-4971-b96a-654b938a26e2",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -237,7 +237,7 @@
             "operationIDs": []
           },
           {
-            "id": "959d5451-7e86-43cf-94c7-ad0d04d41a85",
+            "id": "fc556bd1-2dfc-474d-bd17-3acd7217b82a",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -245,7 +245,7 @@
             "operationIDs": []
           },
           {
-            "id": "de9a7317-0255-4277-aa50-f0c10bc60070",
+            "id": "cec92654-96ba-476c-bef6-028904c994e4",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -253,7 +253,7 @@
             "operationIDs": []
           },
           {
-            "id": "97a7302d-e504-4126-be75-7dee7725275f",
+            "id": "11428324-58c8-495e-b7e7-a4f97582ed72",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -269,7 +269,7 @@
             }
           },
           {
-            "id": "d5788898-83a4-4f00-b634-fdfd7ed1754b",
+            "id": "7d8e4e74-b331-40bf-8f92-f8738c0efaa6",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -293,7 +293,7 @@
             }
           },
           {
-            "id": "cf6e62b1-516d-4c2b-a4bb-407bb3d80f1c",
+            "id": "93e72194-0504-4982-a67c-1b30ba369d32",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -334,7 +334,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "97a7302d-e504-4126-be75-7dee7725275f",
+          "checkID": "11428324-58c8-495e-b7e7-a4f97582ed72",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -384,7 +384,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "d5788898-83a4-4f00-b634-fdfd7ed1754b",
+          "checkID": "7d8e4e74-b331-40bf-8f92-f8738c0efaa6",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -569,7 +569,7 @@
         },
         "checks": [
           {
-            "id": "fac153ed-25d7-4304-ac59-2e1311d28625",
+            "id": "54b244a8-cc38-44e6-9301-078d0b60a34b",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -577,7 +577,7 @@
             "operationIDs": []
           },
           {
-            "id": "f7a87f93-ad35-4be8-a2e9-29d9f1d1a40b",
+            "id": "d1578dfa-c49f-46cb-9499-ee6525054269",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -585,7 +585,7 @@
             "operationIDs": []
           },
           {
-            "id": "51ada805-e718-4801-b87e-ee72968de727",
+            "id": "4dfeaa35-0f0b-4faa-9671-b49321117d4d",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -593,7 +593,7 @@
             "operationIDs": []
           },
           {
-            "id": "42f0ab02-4289-4791-ada1-f3467ec0928a",
+            "id": "e0293ecc-73dc-4ad4-83fe-f3cdf75a00d9",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -601,7 +601,7 @@
             "operationIDs": []
           },
           {
-            "id": "f1c37dbc-4f71-42b0-a69a-e3f0509587ec",
+            "id": "62fb669f-d596-4a78-8fd7-b3c7a44bee74",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -609,7 +609,7 @@
             "operationIDs": []
           },
           {
-            "id": "1b53a20b-dcb4-438b-ad2f-51f331b50733",
+            "id": "bdd7c65d-d4b8-4826-9b77-09815e020a8e",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -625,7 +625,7 @@
             }
           },
           {
-            "id": "b2ff0db5-ce2d-414f-8cc0-27b882c4c801",
+            "id": "07def076-28b6-4493-89e4-5925e1082cd0",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -649,7 +649,7 @@
             }
           },
           {
-            "id": "4c93f402-3522-4ca4-8ede-9bf4e0637f81",
+            "id": "1d584b4b-fb53-41e3-8ca5-f29c2ffc6bec",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -690,7 +690,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "1b53a20b-dcb4-438b-ad2f-51f331b50733",
+          "checkID": "bdd7c65d-d4b8-4826-9b77-09815e020a8e",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -740,7 +740,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "b2ff0db5-ce2d-414f-8cc0-27b882c4c801",
+          "checkID": "07def076-28b6-4493-89e4-5925e1082cd0",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -961,7 +961,7 @@
         },
         "checks": [
           {
-            "id": "e4886c38-4fb9-4cca-8163-7f30764455d0",
+            "id": "74abd8f8-fdd0-4398-90a7-ed8a9da7fd20",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -969,7 +969,7 @@
             "operationIDs": []
           },
           {
-            "id": "a5ec6ad1-e505-461e-8ebe-d4b7f1a29ff6",
+            "id": "35c3d83a-363a-413b-9972-b4656fdc1b25",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 2 page(s).",
@@ -977,7 +977,7 @@
             "operationIDs": []
           },
           {
-            "id": "bf865d76-cbb6-4a33-ab78-87156cf7c3e1",
+            "id": "6686b574-ddce-4adf-b1fe-d9c2b8e78f00",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -985,7 +985,7 @@
             "operationIDs": []
           },
           {
-            "id": "321d8f2f-b024-47cb-921e-40c10bf236dd",
+            "id": "2184573f-6681-4f90-b029-3b148ba31e78",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -993,7 +993,7 @@
             "operationIDs": []
           },
           {
-            "id": "3e96c81f-61a8-48ad-ba0f-838b3828ac89",
+            "id": "fea7a49e-9fcf-408a-90fc-c0e30ce7f9a8",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -1001,7 +1001,7 @@
             "operationIDs": []
           },
           {
-            "id": "7ec9a26a-d996-4617-8dc0-877663404819",
+            "id": "22911288-1e44-4182-b991-8523efda889d",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -1017,7 +1017,7 @@
             }
           },
           {
-            "id": "7bf7dd54-326d-4aca-85ff-9566635e5102",
+            "id": "6c6c8f9c-3e4e-4897-a6ec-d3ebbdd73217",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -1041,7 +1041,7 @@
             }
           },
           {
-            "id": "b46fdea0-4b63-438a-8788-ef7e7f857533",
+            "id": "94c194fe-75ea-4f8b-825f-fe51fa2d6e1b",
             "kind": "providerCapability",
             "status": "passed",
             "message": "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported.",
@@ -1095,7 +1095,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "7ec9a26a-d996-4617-8dc0-877663404819",
+          "checkID": "22911288-1e44-4182-b991-8523efda889d",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -1154,7 +1154,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "7bf7dd54-326d-4aca-85ff-9566635e5102",
+          "checkID": "6c6c8f9c-3e4e-4897-a6ec-d3ebbdd73217",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -1375,7 +1375,7 @@
         },
         "checks": [
           {
-            "id": "249667ed-59bd-4fdf-b055-91a4dac397e0",
+            "id": "3b3450a2-25cc-4fd7-8dee-13d607eac1f9",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -1383,7 +1383,7 @@
             "operationIDs": []
           },
           {
-            "id": "4e90e705-1f64-4ba4-b341-8039a0132953",
+            "id": "17682609-50df-4710-b01e-21adcae17824",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 2 page(s).",
@@ -1391,7 +1391,7 @@
             "operationIDs": []
           },
           {
-            "id": "00d9035e-b682-4d0e-ab47-378e5c3ba968",
+            "id": "3ef88216-1c14-44e4-9b8d-68f13ff6ea55",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -1399,7 +1399,7 @@
             "operationIDs": []
           },
           {
-            "id": "1f4c85dd-d87f-4267-b1a5-b741d613c3d2",
+            "id": "9e0badb5-0673-4a69-a73b-7c28685d88e6",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -1407,7 +1407,7 @@
             "operationIDs": []
           },
           {
-            "id": "71addf9d-8106-478c-ac96-a9d9da87f6d1",
+            "id": "517324df-0376-4aee-9526-1c5019f3a686",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -1415,7 +1415,7 @@
             "operationIDs": []
           },
           {
-            "id": "19ff91a5-854a-4cf8-8ff7-3ccfa63b1916",
+            "id": "713ed2be-2f50-4562-ad2d-694f2e6105cf",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -1431,7 +1431,7 @@
             }
           },
           {
-            "id": "b62b8e7a-59cb-4d9e-8464-605fc9e6a5e1",
+            "id": "5653ce30-992c-4ff6-908b-25f7098d019f",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -1455,7 +1455,7 @@
             }
           },
           {
-            "id": "37fb27c5-cae7-41dc-b9ed-fb83a71d7b00",
+            "id": "d329870c-c5a2-457f-bb56-ba711acfa762",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -1509,7 +1509,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "19ff91a5-854a-4cf8-8ff7-3ccfa63b1916",
+          "checkID": "713ed2be-2f50-4562-ad2d-694f2e6105cf",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -1568,7 +1568,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "b62b8e7a-59cb-4d9e-8464-605fc9e6a5e1",
+          "checkID": "5653ce30-992c-4ff6-908b-25f7098d019f",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -3157,7 +3157,7 @@
         },
         "checks": [
           {
-            "id": "90acdad1-5c7e-4855-a0be-9b143c683e21",
+            "id": "77008d09-b8c1-4e04-962f-081047848412",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -3165,7 +3165,7 @@
             "operationIDs": []
           },
           {
-            "id": "c7ed081c-d032-4412-94be-ee646d31a9d7",
+            "id": "6663fe58-e84b-4ee8-a15c-5992f9642556",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 40 page(s).",
@@ -3173,7 +3173,7 @@
             "operationIDs": []
           },
           {
-            "id": "a6787cab-2f07-4d58-8753-1bed9eba8c95",
+            "id": "7bbab27d-4815-41e5-9491-ffa5d8c5f7fa",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -3181,7 +3181,7 @@
             "operationIDs": []
           },
           {
-            "id": "c8131e6b-f632-4c1c-bc92-4653e3f027c0",
+            "id": "00213cf3-581d-4b09-b362-af07dcd050f9",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -3189,7 +3189,7 @@
             "operationIDs": []
           },
           {
-            "id": "b34370bb-e51e-4a65-8f06-e6a68d8d9e39",
+            "id": "9966f983-bc90-421b-b871-3694b32bf6db",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -3197,7 +3197,7 @@
             "operationIDs": []
           },
           {
-            "id": "a2558dd9-f6ed-417c-807e-57f247f1e192",
+            "id": "c9d7abb4-f7a0-47d2-9573-6db8b636f19f",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -3213,7 +3213,7 @@
             }
           },
           {
-            "id": "41a9c28d-93ff-4a8d-9d8e-fdf762c28f9f",
+            "id": "43a0f63a-0bd3-4472-b747-7659193891e0",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -3237,7 +3237,7 @@
             }
           },
           {
-            "id": "5797afc4-c2e4-4720-909c-94bc83287e6b",
+            "id": "4b4868bf-305b-4473-948b-78112c54ad82",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -3785,7 +3785,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "a2558dd9-f6ed-417c-807e-57f247f1e192",
+          "checkID": "c9d7abb4-f7a0-47d2-9573-6db8b636f19f",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -4186,7 +4186,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "41a9c28d-93ff-4a8d-9d8e-fdf762c28f9f",
+          "checkID": "43a0f63a-0bd3-4472-b747-7659193891e0",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -4570,7 +4570,7 @@
         },
         "checks": [
           {
-            "id": "7c852593-99df-4f86-a869-7ae65c6b740a",
+            "id": "68ea88d9-7600-4bf1-b0e0-06117aa4d492",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -4578,7 +4578,7 @@
             "operationIDs": []
           },
           {
-            "id": "6ef57598-fb19-4d74-9b5b-010f9bc49946",
+            "id": "ea0beef7-9b34-44c0-b8e9-8b90f827ada6",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 2 page(s).",
@@ -4586,7 +4586,7 @@
             "operationIDs": []
           },
           {
-            "id": "a71080ff-5ec4-457f-9d96-5d99bccf3e0c",
+            "id": "6de1101e-3f23-4fb0-a81a-1730e0caefc6",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -4594,7 +4594,7 @@
             "operationIDs": []
           },
           {
-            "id": "d898c1dc-83bd-46ad-8110-d475d558e9b6",
+            "id": "9e3957ac-ff2b-44c8-986d-6a35b881b6ee",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -4602,7 +4602,7 @@
             "operationIDs": []
           },
           {
-            "id": "fffac3c9-6937-4777-bfe3-2b2b488fd917",
+            "id": "54e8014e-7a65-40c2-bb1f-64f03e4cc2d9",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -4610,7 +4610,7 @@
             "operationIDs": []
           },
           {
-            "id": "e1a437db-c71d-4a17-9efe-2bce2c521ee3",
+            "id": "29893133-b8aa-458d-bc7c-ee7946152d19",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -4626,7 +4626,7 @@
             }
           },
           {
-            "id": "e87daf1a-9d12-4a0b-aee4-4fff09b3d7d0",
+            "id": "0e711f06-93cf-4a83-82e5-3bc8db69e910",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -4650,7 +4650,7 @@
             }
           },
           {
-            "id": "9cd71d7c-3c79-40ff-86d0-c443644cf8fe",
+            "id": "08eb2ed1-d56c-450f-9980-73e46d945e7a",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -4704,7 +4704,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "e1a437db-c71d-4a17-9efe-2bce2c521ee3",
+          "checkID": "29893133-b8aa-458d-bc7c-ee7946152d19",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -4763,7 +4763,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "e87daf1a-9d12-4a0b-aee4-4fff09b3d7d0",
+          "checkID": "0e711f06-93cf-4a83-82e5-3bc8db69e910",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -4948,7 +4948,7 @@
         },
         "checks": [
           {
-            "id": "7f3fb1ce-6746-4a37-9725-88d6ca964cc4",
+            "id": "42ea7f35-f1bf-43a6-ae4a-e199e31ea88c",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -4956,7 +4956,7 @@
             "operationIDs": []
           },
           {
-            "id": "c4ec4faf-7e26-4f0a-9609-0304dd0b2af4",
+            "id": "93794825-498f-4b6c-acd7-d1e36a80fb63",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -4964,7 +4964,7 @@
             "operationIDs": []
           },
           {
-            "id": "6809e17f-e055-4c17-88f9-ae4a522b96be",
+            "id": "fa4a061c-9056-4fc9-b868-8c91922f043f",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -4972,7 +4972,7 @@
             "operationIDs": []
           },
           {
-            "id": "f511a01d-4cd4-44f3-8c62-4a623992104e",
+            "id": "ff8e9959-c4f8-44cc-8a14-76a3d583d189",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -4980,7 +4980,7 @@
             "operationIDs": []
           },
           {
-            "id": "1d964afa-20a0-4a37-94b4-8681507cfb2b",
+            "id": "8320e699-b4e4-4b10-aad2-2518b491c375",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -4988,7 +4988,7 @@
             "operationIDs": []
           },
           {
-            "id": "a7e153a7-6a3e-4c1a-a545-2717892778c8",
+            "id": "7b26a9ec-ec7b-4005-96e2-766b38f468a6",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -5004,7 +5004,7 @@
             }
           },
           {
-            "id": "174e7733-6d1b-4501-a8f7-21476640fd4e",
+            "id": "31504be8-0e91-4747-8369-6e6ac7778276",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -5028,7 +5028,7 @@
             }
           },
           {
-            "id": "0983049c-7986-42e0-8f3f-43639f83be4c",
+            "id": "40f0b7f3-3762-4e73-a310-1d3b4a71180f",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -5069,7 +5069,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "a7e153a7-6a3e-4c1a-a545-2717892778c8",
+          "checkID": "7b26a9ec-ec7b-4005-96e2-766b38f468a6",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -5119,7 +5119,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "174e7733-6d1b-4501-a8f7-21476640fd4e",
+          "checkID": "31504be8-0e91-4747-8369-6e6ac7778276",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -5304,7 +5304,7 @@
         },
         "checks": [
           {
-            "id": "0345375a-c204-4422-9f41-341fce70241e",
+            "id": "742090fc-5b22-4b20-8dde-0e86d1bd312a",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -5312,7 +5312,7 @@
             "operationIDs": []
           },
           {
-            "id": "372e7a68-bf96-4d11-b00c-93e20369607c",
+            "id": "a7f1ab6e-09a6-4f16-ad8d-ad3fa7819494",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -5320,7 +5320,7 @@
             "operationIDs": []
           },
           {
-            "id": "eb0d0b59-0f40-4a3f-8fb3-9d15493b4d87",
+            "id": "dcdd3584-2e88-4c56-b10b-abbfae0d46c6",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -5328,7 +5328,7 @@
             "operationIDs": []
           },
           {
-            "id": "58375458-820f-4c9f-b238-9cbc5e90ed6c",
+            "id": "a3f0e074-482d-4feb-9c73-e84e4e9ee3dd",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -5336,7 +5336,7 @@
             "operationIDs": []
           },
           {
-            "id": "89cde760-6400-4957-971a-b710d2dfdcd4",
+            "id": "a82e7e1e-f0dd-4bdf-aa93-ee8f9b9c18f8",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -5344,7 +5344,7 @@
             "operationIDs": []
           },
           {
-            "id": "010305ca-dc25-4323-a89f-b07b2b512169",
+            "id": "2b6c0bdd-1760-4b91-b9bb-2b915929a96b",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -5360,7 +5360,7 @@
             }
           },
           {
-            "id": "f4f51386-8b46-45c9-bf11-052ce87fd974",
+            "id": "be577c85-e3b2-4074-9d9d-7226b8fdc4d5",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -5384,7 +5384,7 @@
             }
           },
           {
-            "id": "d4ca2878-9733-46fb-8836-43a597a405a2",
+            "id": "646ec9ba-3299-4091-9fb1-d6d868b33b9e",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -5425,7 +5425,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "010305ca-dc25-4323-a89f-b07b2b512169",
+          "checkID": "2b6c0bdd-1760-4b91-b9bb-2b915929a96b",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -5475,7 +5475,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "f4f51386-8b46-45c9-bf11-052ce87fd974",
+          "checkID": "be577c85-e3b2-4074-9d9d-7226b8fdc4d5",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -5732,7 +5732,7 @@
         },
         "checks": [
           {
-            "id": "9ceccccb-8886-49ea-a127-e69c8f39bee9",
+            "id": "ae6da068-b385-47fb-84e9-f52b3c227b17",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -5740,7 +5740,7 @@
             "operationIDs": []
           },
           {
-            "id": "eb57536f-0a84-47cb-9174-62a23f55d2f4",
+            "id": "271950d8-de7d-4bf2-bce8-393c7af2458b",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 3 page(s).",
@@ -5748,7 +5748,7 @@
             "operationIDs": []
           },
           {
-            "id": "443cd156-cee8-4cc4-aa60-ff87ac940f45",
+            "id": "08cdd1a7-606f-482e-8222-12bfcc4d235d",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -5756,7 +5756,7 @@
             "operationIDs": []
           },
           {
-            "id": "413a5e17-fddb-4e53-8c88-428bf1507928",
+            "id": "a3c0e69f-b1aa-4134-965c-7f0c2a26f511",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -5764,7 +5764,7 @@
             "operationIDs": []
           },
           {
-            "id": "7d53e379-e05e-494d-9147-3d8860053533",
+            "id": "6d84b6e4-0330-4683-b9c6-b7d86d503e5f",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -5772,7 +5772,7 @@
             "operationIDs": []
           },
           {
-            "id": "7bcac6d2-a662-4d92-bafb-f9d095766713",
+            "id": "536b6d9e-e3b5-499b-bd79-4836341789fa",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -5788,7 +5788,7 @@
             }
           },
           {
-            "id": "1c29f86f-861f-4561-aa78-2f4802ff6a55",
+            "id": "fd4a05fb-836c-41af-bad0-b741d6cd04a9",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -5812,7 +5812,7 @@
             }
           },
           {
-            "id": "74a36b9a-3b11-4b31-a367-a4dcbc37d764",
+            "id": "fe49bea5-2bbd-4d53-a47f-c2154371f693",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -5879,7 +5879,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "7bcac6d2-a662-4d92-bafb-f9d095766713",
+          "checkID": "536b6d9e-e3b5-499b-bd79-4836341789fa",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -5947,7 +5947,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "1c29f86f-861f-4561-aa78-2f4802ff6a55",
+          "checkID": "fd4a05fb-836c-41af-bad0-b741d6cd04a9",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -6132,7 +6132,7 @@
         },
         "checks": [
           {
-            "id": "902ace18-d3bb-427d-8e36-c401b3bd3774",
+            "id": "7145c227-d301-4b0c-8a5a-71c6a86904b7",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -6140,7 +6140,7 @@
             "operationIDs": []
           },
           {
-            "id": "6f268a7d-76ad-403c-8aa5-3102b3c661af",
+            "id": "b7058cc7-d149-498a-8e8c-e5c96b37e759",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -6148,7 +6148,7 @@
             "operationIDs": []
           },
           {
-            "id": "b2486516-6394-44e2-ae4d-116e4fa3559f",
+            "id": "b4a28018-3d25-4e52-89e4-511f318010cd",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -6156,7 +6156,7 @@
             "operationIDs": []
           },
           {
-            "id": "2f5e8ccb-5a7b-467e-911f-a411ce3d1985",
+            "id": "7e733ec9-acc3-4a11-8dc1-578f62f1de02",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -6164,7 +6164,7 @@
             "operationIDs": []
           },
           {
-            "id": "d87864a4-b474-47c7-9cf6-e8c99c128f5b",
+            "id": "8f96c0f0-cf54-4fec-af9e-c281f27476dd",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -6172,7 +6172,7 @@
             "operationIDs": []
           },
           {
-            "id": "accc8267-a815-4176-8c12-deb6661345ad",
+            "id": "986d20b6-cefa-4450-aa8a-920b3da784f4",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -6188,7 +6188,7 @@
             }
           },
           {
-            "id": "45d569ea-96d9-417d-a101-ee8744d24bf6",
+            "id": "c1074d85-c854-4251-b457-db93936ab8ac",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -6212,7 +6212,7 @@
             }
           },
           {
-            "id": "c53be123-35d5-44f6-bae0-e30a7d69f80c",
+            "id": "771d06f6-8076-4fdc-91dd-81ef2f49d2d2",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -6253,7 +6253,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "accc8267-a815-4176-8c12-deb6661345ad",
+          "checkID": "986d20b6-cefa-4450-aa8a-920b3da784f4",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -6303,7 +6303,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "45d569ea-96d9-417d-a101-ee8744d24bf6",
+          "checkID": "c1074d85-c854-4251-b457-db93936ab8ac",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -6488,7 +6488,7 @@
         },
         "checks": [
           {
-            "id": "a2a668a7-8c98-44ad-a794-31fd09a34850",
+            "id": "ce2ddc98-7121-46a6-855a-9e5f3cb440d9",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -6496,7 +6496,7 @@
             "operationIDs": []
           },
           {
-            "id": "97427b29-1061-4777-a4df-acdce0dc92a4",
+            "id": "9e6ad131-7ba0-424a-a7ec-ed876b36c911",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -6504,7 +6504,7 @@
             "operationIDs": []
           },
           {
-            "id": "a2535e36-7a3c-42c4-b83e-b05372b83ecd",
+            "id": "46906a87-5ff6-4a94-aa9f-0523383d3f54",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -6512,7 +6512,7 @@
             "operationIDs": []
           },
           {
-            "id": "757059a5-3c59-4977-8382-8acdb728d083",
+            "id": "ba01b044-b6c6-4f66-a048-63a1630cc587",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -6520,7 +6520,7 @@
             "operationIDs": []
           },
           {
-            "id": "4775b830-ed73-4923-9d09-1e0b616512ef",
+            "id": "8cea6101-7772-43a7-98ab-23b7b2538a40",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -6528,7 +6528,7 @@
             "operationIDs": []
           },
           {
-            "id": "2164e61a-c807-41fd-b98e-cc3d8dd56c67",
+            "id": "4f7df444-e0cc-4608-98cd-e30529d9ba79",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -6544,7 +6544,7 @@
             }
           },
           {
-            "id": "52ead464-f46e-4979-965c-9a15f1dc2988",
+            "id": "9ec68253-e062-4d84-8925-39ebd23c8246",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -6568,7 +6568,7 @@
             }
           },
           {
-            "id": "3c2a19c7-774d-4217-bad5-0c0cd10221d4",
+            "id": "963d024f-fc8c-4e64-a442-7f47c8ac95f8",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -6609,7 +6609,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "2164e61a-c807-41fd-b98e-cc3d8dd56c67",
+          "checkID": "4f7df444-e0cc-4608-98cd-e30529d9ba79",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -6659,7 +6659,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "52ead464-f46e-4979-965c-9a15f1dc2988",
+          "checkID": "9ec68253-e062-4d84-8925-39ebd23c8246",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -6880,7 +6880,7 @@
         },
         "checks": [
           {
-            "id": "80e8121d-34db-43a2-aca5-491f2ac3f8ee",
+            "id": "2727b7c0-9437-45bd-9486-8af3a1717d0e",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -6888,7 +6888,7 @@
             "operationIDs": []
           },
           {
-            "id": "8aa0928d-6ece-4290-aa22-ec227fecfef2",
+            "id": "a93d573d-a558-4f01-abc2-5d9633ccf861",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 2 page(s).",
@@ -6896,7 +6896,7 @@
             "operationIDs": []
           },
           {
-            "id": "6b7594e0-3127-41ed-9da9-263fd74c3642",
+            "id": "9b0bd3b6-1e54-400e-b270-e6b28919d366",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -6904,7 +6904,7 @@
             "operationIDs": []
           },
           {
-            "id": "08ae71d7-e434-4811-a368-8240f34ef510",
+            "id": "17023637-90c7-4165-9c1e-7131218da966",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -6912,7 +6912,7 @@
             "operationIDs": []
           },
           {
-            "id": "9a78a276-5714-4170-a949-0e6d72c9ba90",
+            "id": "127cb83e-dd1b-4122-a8db-eb47b6c2fd99",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -6920,7 +6920,7 @@
             "operationIDs": []
           },
           {
-            "id": "7bc47ae5-c2b7-4e80-8700-7ba83bae8931",
+            "id": "69a02900-2ee9-4850-8649-9745d61a3dd2",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -6936,7 +6936,7 @@
             }
           },
           {
-            "id": "4596d826-f2d6-43e7-928f-795ae199b9da",
+            "id": "ebd2c135-0521-4b22-9ce5-e8e0f032f4ef",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -6960,7 +6960,7 @@
             }
           },
           {
-            "id": "33e2504a-5030-40b1-9504-1cda028a4f4b",
+            "id": "f7e49de8-ca0d-4e6e-b158-60eb5a91a31a",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -7014,7 +7014,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "7bc47ae5-c2b7-4e80-8700-7ba83bae8931",
+          "checkID": "69a02900-2ee9-4850-8649-9745d61a3dd2",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -7073,7 +7073,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "4596d826-f2d6-43e7-928f-795ae199b9da",
+          "checkID": "ebd2c135-0521-4b22-9ce5-e8e0f032f4ef",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -7258,7 +7258,7 @@
         },
         "checks": [
           {
-            "id": "7c6495fd-775d-4800-88d0-0dbf80feffae",
+            "id": "a9cb4311-6fc1-4b64-90a1-d74c7e6b6ec7",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -7266,7 +7266,7 @@
             "operationIDs": []
           },
           {
-            "id": "6df5f3fb-06c9-4207-b0b3-357c893c9b16",
+            "id": "29e25a34-278f-4b15-b846-150ff614b735",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -7274,7 +7274,7 @@
             "operationIDs": []
           },
           {
-            "id": "12880f92-c1d5-4f8d-b847-c91ea5523a05",
+            "id": "f8c1de05-9e05-4e0a-b2bd-be4615cf97c6",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -7282,7 +7282,7 @@
             "operationIDs": []
           },
           {
-            "id": "7eaf7198-5994-4a8a-b675-a01f375647a4",
+            "id": "336b1835-4d9b-41ce-805a-eba7579a68ca",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -7290,7 +7290,7 @@
             "operationIDs": []
           },
           {
-            "id": "7c380ae8-a35d-4085-a185-8d72cb54fef4",
+            "id": "f153ef6e-7586-4587-9d9c-21cd4ae9adfa",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -7298,7 +7298,7 @@
             "operationIDs": []
           },
           {
-            "id": "9b27a793-9d52-4c1f-a89f-3f67ba821b66",
+            "id": "fca789b9-eaa6-46c3-81f6-2d3b6f71f213",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -7314,7 +7314,7 @@
             }
           },
           {
-            "id": "540442f0-ce4a-4f1d-b7d6-2cd39d002a47",
+            "id": "7c979496-b5e6-4f61-934e-60c689554d13",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -7338,7 +7338,7 @@
             }
           },
           {
-            "id": "463669bf-f1c0-4aac-a822-6aed37cde5e4",
+            "id": "52d72e44-43ad-4c01-896c-0089440566f8",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -7379,7 +7379,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "9b27a793-9d52-4c1f-a89f-3f67ba821b66",
+          "checkID": "fca789b9-eaa6-46c3-81f6-2d3b6f71f213",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -7429,7 +7429,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "540442f0-ce4a-4f1d-b7d6-2cd39d002a47",
+          "checkID": "7c979496-b5e6-4f61-934e-60c689554d13",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -7614,7 +7614,7 @@
         },
         "checks": [
           {
-            "id": "14fd21c9-47cd-4fca-b9b1-a502da1dde0a",
+            "id": "1f45c2de-ecf2-4620-95b5-cbaea51ee779",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -7622,7 +7622,7 @@
             "operationIDs": []
           },
           {
-            "id": "1f029aac-689f-40e8-80b6-2fb7a1f9dad9",
+            "id": "d214b8bc-7b36-49c0-aba7-509477404065",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -7630,7 +7630,7 @@
             "operationIDs": []
           },
           {
-            "id": "2ae2d3f7-7876-446a-a9f5-d104879b6f1c",
+            "id": "0e37a684-a623-49c6-96a2-2ecb428a90dc",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -7638,7 +7638,7 @@
             "operationIDs": []
           },
           {
-            "id": "5fdb7809-7159-4ef1-af49-52fe58fcd41c",
+            "id": "cb8d96b5-fb7b-486b-9181-13ca0a706c3f",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -7646,7 +7646,7 @@
             "operationIDs": []
           },
           {
-            "id": "0bf9a3dc-ea10-4456-9371-217f305d2e56",
+            "id": "96c3f8a7-d466-4878-9f9c-3309c586758a",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -7654,7 +7654,7 @@
             "operationIDs": []
           },
           {
-            "id": "dca63357-7da2-42bc-847c-5ecad55b33e1",
+            "id": "cb595fd6-34d5-432e-8de8-4879684882ec",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -7670,7 +7670,7 @@
             }
           },
           {
-            "id": "2249c22c-5b26-4e91-8be6-73679f3ac61f",
+            "id": "28312b69-f8ac-427c-a01e-90854961c452",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -7694,7 +7694,7 @@
             }
           },
           {
-            "id": "277ae53c-65f8-4b92-8a24-b4791ab29350",
+            "id": "7cdcc0bf-1cdd-4192-97f9-6744ed418491",
             "kind": "providerCapability",
             "status": "passed",
             "message": "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported.",
@@ -7735,7 +7735,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "dca63357-7da2-42bc-847c-5ecad55b33e1",
+          "checkID": "cb595fd6-34d5-432e-8de8-4879684882ec",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -7785,7 +7785,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "2249c22c-5b26-4e91-8be6-73679f3ac61f",
+          "checkID": "28312b69-f8ac-427c-a01e-90854961c452",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -8654,7 +8654,7 @@
         },
         "checks": [
           {
-            "id": "23f43789-5653-446a-9d91-c432864805db",
+            "id": "84d0ae94-8d33-4bd3-bd74-655139b51999",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -8662,7 +8662,7 @@
             "operationIDs": []
           },
           {
-            "id": "7b73987e-fe0c-4ff3-b0d4-2adb24fdea16",
+            "id": "c6dca51a-ad1b-4e9a-8d79-0bd330d6bcc3",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 20 page(s).",
@@ -8670,7 +8670,7 @@
             "operationIDs": []
           },
           {
-            "id": "d7d10bc0-530c-47eb-b7c0-ab032b110648",
+            "id": "12320c68-201e-421c-a899-5038085d51d1",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -8678,7 +8678,7 @@
             "operationIDs": []
           },
           {
-            "id": "bb009d0e-829d-4d22-b205-9688048ca437",
+            "id": "f23404cb-86a8-4891-8880-34bf160d76a2",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -8686,7 +8686,7 @@
             "operationIDs": []
           },
           {
-            "id": "5b9eef27-839d-4d16-999a-6207613d0b03",
+            "id": "c37bd7bd-63da-407c-a276-ea2810dd5d72",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -8694,7 +8694,7 @@
             "operationIDs": []
           },
           {
-            "id": "c4646513-e42e-4fb8-9653-9d620df5aeed",
+            "id": "f0f6142a-14ba-463d-92e0-2999e49557e8",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -8710,7 +8710,7 @@
             }
           },
           {
-            "id": "8c6e5fcd-1a79-4a29-8c25-c4a1472a366d",
+            "id": "505fc50c-5785-43ca-8df7-3973e4fc151d",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -8734,7 +8734,7 @@
             }
           },
           {
-            "id": "5d28dd56-c57b-486f-a178-9aeb3fe67484",
+            "id": "f9b463f1-068d-4bd7-bb86-9a582830c461",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -9022,7 +9022,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "c4646513-e42e-4fb8-9653-9d620df5aeed",
+          "checkID": "f0f6142a-14ba-463d-92e0-2999e49557e8",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -9243,7 +9243,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "8c6e5fcd-1a79-4a29-8c25-c4a1472a366d",
+          "checkID": "505fc50c-5785-43ca-8df7-3973e4fc151d",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -9627,7 +9627,7 @@
         },
         "checks": [
           {
-            "id": "923b0e36-e932-492d-8c4b-ac7ed5d646d6",
+            "id": "4f37be80-7f4a-42c0-8078-39fed7fa706d",
             "kind": "sourceDigest",
             "status": "passed",
             "message": "Source bytes still match the inspected SHA-256.",
@@ -9635,7 +9635,7 @@
             "operationIDs": []
           },
           {
-            "id": "6f9e65d6-643e-4cd7-8191-c6940c16a585",
+            "id": "f5fd9e1e-3c2e-4562-afae-e6af38623144",
             "kind": "outputReopen",
             "status": "passed",
             "message": "Encrypted source remains open in PDF.js with 2 page(s).",
@@ -9643,7 +9643,7 @@
             "operationIDs": []
           },
           {
-            "id": "fc6c7c44-bc81-466f-8b0a-5cbb71ede23a",
+            "id": "85949a4d-7f60-4a0a-875a-419128651e20",
             "kind": "pageGeometry",
             "status": "passed",
             "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -9651,7 +9651,7 @@
             "operationIDs": []
           },
           {
-            "id": "fbe248bf-cb70-43e2-8b3a-2e3422c4d493",
+            "id": "96090494-4f40-40ac-a391-f2d72e8f76dc",
             "kind": "nativeFields",
             "status": "skipped",
             "message": "No native field operations were requested.",
@@ -9659,7 +9659,7 @@
             "operationIDs": []
           },
           {
-            "id": "941977ff-3345-4ea6-8b0b-18d68450409c",
+            "id": "a8265a57-4a3e-4f0e-b565-857709674f79",
             "kind": "appliedOperations",
             "status": "passed",
             "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -9667,7 +9667,7 @@
             "operationIDs": []
           },
           {
-            "id": "e604d91a-0efc-4632-930d-bb3132a430d3",
+            "id": "7c7eb8fe-940d-4322-bc56-9c13ce3e9c22",
             "kind": "outsideRegionText",
             "status": "passed",
             "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -9683,7 +9683,7 @@
             }
           },
           {
-            "id": "4db23417-6bde-4140-80ec-23b537d6514a",
+            "id": "06adb77c-1cb8-4ae8-aa3a-5d23c4bd43b1",
             "kind": "visualDiff",
             "status": "passed",
             "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -9707,7 +9707,7 @@
             }
           },
           {
-            "id": "9e1fc2f4-4eb6-4155-83d3-f7a1ef92ddb4",
+            "id": "57370a59-3d2c-46cc-99a4-0d65a04db44f",
             "kind": "providerCapability",
             "status": "passed",
             "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -9761,7 +9761,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "e604d91a-0efc-4632-930d-bb3132a430d3",
+          "checkID": "7c7eb8fe-940d-4322-bc56-9c13ce3e9c22",
           "message": "No page content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {
@@ -9820,7 +9820,7 @@
         "pdfjs": {
           "provider": "pdfjs",
           "status": "passed",
-          "checkID": "4db23417-6bde-4140-80ec-23b537d6514a",
+          "checkID": "06adb77c-1cb8-4ae8-aa3a-5d23c4bd43b1",
           "message": "No raster content changed because the protected source was copied byte-for-byte.",
           "operationIDs": [],
           "metrics": {

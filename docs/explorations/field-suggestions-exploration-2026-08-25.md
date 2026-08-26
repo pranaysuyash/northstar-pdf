@@ -373,3 +373,69 @@ benchmark, all four web workflow suites, and web typecheck.
   adoption gates in the local-models exploration.
 - Web (React) workbench does not yet render displayName chips or memberLabels;
   contracts now carry them, so the web UI can adopt without further core work.
+
+---
+
+## 9. Follow-up completion record (2026-08-26)
+
+Items 2–5 from the post-exploration backlog, all validated:
+
+### Frozen parity artifacts regenerated (item 3)
+
+- Native bundles: `swift run PDFContractHarness --manifest docs/fixtures/manifest.md
+  --output-dir benchmark/results/semantic-parity/2026-08-25/native` — now produced
+  by the refined detector.
+- Browser bundles: new reproducible crawler
+  `tools/regenerate_browser_contract_bundles.mjs` (handles the password modal for
+  the two encrypted corpus entries via their documented reader password, and
+  writes explicit `inspectionFailed` envelopes for the two expected-failure
+  fixtures).
+- `candidate-parity-report.json` regenerated against fresh bundles:
+  passed; 144 native / 112 browser candidates, 90 matched pairs.
+
+### Web adoption of naming contracts (item 2)
+
+`web/app.js` suggestion list rows now lead with `candidate.displayName`
+(falling back to the entry-mode noun), with page/evidence demoted to a muted
+meta line; the choice-cell picker uses `memberLabels` before "Option N"; the
+action detail leads with the display name. The React workbench (`web/app/src`)
+remains native-fields-only by design ("geometry-detected regions connect through
+a later milestone") — nothing to adopt there yet without building candidate
+detection into `PdfController`.
+
+### R6 Stage 0 closed (item 4)
+
+New `Sources/PDFEditorCore/CandidateReviewLearningEvents.swift`:
+
+- `CandidateReviewLearningEvent`: value-free structural decision record
+  (digest, geometry, detection family, entry mode, field type enum, decision,
+  label-presence flag, score). No label text, values, paths, or signatures.
+- `ValueFreeEventGuard`: fail-closed scan of encoded payloads for forbidden
+  keys; the store refuses to write offending records.
+- `CandidateReviewLearningEventStore`: one JSON journal per source digest.
+- AppModel wiring: every confirm/dismiss of a suggestion appends an event;
+  learning failures never block the fill flow.
+
+Tests: `CandidateReviewLearningEventTests` (4) including a smuggled-key
+rejection and a "Jane Doe" leak assertion.
+
+### R7 gated assist lane landed (item 5)
+
+New `Sources/PDFEditorCore/LocalAssistLane.swift`:
+
+- `SuggestionExplainer`: deterministic evidence cards (reasons + cautions from
+  evidence items and fusion reason codes); now rendered in the inspector's
+  selected-suggestion card.
+- `LabelCanonicalizationAssist` protocol with `DeterministicLabelAssist`
+  baseline and `FoundationModelsLabelAssist` behind `#if canImport(FoundationModels)`
+  + `@available(macOS 26, *)`; model output re-enters through the deterministic
+  canonicalizer so formatting rules stay authoritative. Model consultation only
+  happens when the deterministic pass returns nothing. Toolchain check confirmed
+  FoundationModels imports on this machine.
+- Tests: `LocalAssistLaneTests` (4).
+
+### Validation
+
+`swift test` 230/230 · calibration parity passed · parity report passed ·
+candidate mutation + fusion suites passed · web editor + character-grid suites
+passed · React typecheck clean.

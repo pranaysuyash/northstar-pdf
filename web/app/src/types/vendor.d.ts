@@ -27,6 +27,36 @@ declare global {
     save(): Promise<Uint8Array>;
   }
 
+  interface PdfLibBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
+  interface PdfLibFont {
+    widthOfTextAtSize(text: string, size: number): number;
+    heightAtSize(size: number): number;
+  }
+
+  interface PdfLibPage {
+    getMediaBox(): PdfLibBox;
+    getCropBox(): PdfLibBox;
+    getBleedBox(): PdfLibBox;
+    getTrimBox(): PdfLibBox;
+    getArtBox(): PdfLibBox;
+    setMediaBox(x: number, y: number, width: number, height: number): void;
+    setCropBox(x: number, y: number, width: number, height: number): void;
+    setBleedBox(x: number, y: number, width: number, height: number): void;
+    setTrimBox(x: number, y: number, width: number, height: number): void;
+    setArtBox(x: number, y: number, width: number, height: number): void;
+    setRotation(rotation: { angle: number }): void;
+    drawText(
+      text: string,
+      options: { x: number; y: number; size: number; font: PdfLibFont }
+    ): void;
+  }
+
   interface PdfLibGlobal {
     PDFDocument: {
       load(source: Uint8Array): Promise<{
@@ -35,11 +65,14 @@ declare global {
           getField(name: string): PdfLibFormField;
           updateFieldAppearances(font?: unknown): void;
         };
-        embedFont(name: string): Promise<unknown>;
+        embedFont(name: string): Promise<PdfLibFont>;
+        getPages(): PdfLibPage[];
+        getPage(index: number): PdfLibPage;
       }>;
       create(): Promise<PdfLibCreatedDocument>;
     };
     StandardFonts: { Helvetica: string };
+    degrees(angle: number): { angle: number };
   }
 
   // eslint-disable-next-line no-var

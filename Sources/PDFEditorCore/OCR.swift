@@ -33,6 +33,68 @@ public protocol OCRProvider: Sendable {
   func recognize(image: CGImage) throws -> [OCRObservation]
 }
 
+/// Hybrid OCR routing: detects scanned vs digital documents and routes accordingly.
+/// Adopted from invoice-intelligence pattern for capability routing (OPERATING_DOCTRINE §8).
+public struct HybridOCRRouter {
+  /// Minimum text length to consider a document "digital" (has extractable text)
+  private let digitalTextThreshold: Int
+  /// Confidence threshold for OCR results
+  private let ocrConfidenceThreshold: Double
+
+  public init(
+    digitalTextThreshold: Int = 50,
+    ocrConfidenceThreshold: Double = 0.7
+  ) {
+    self.digitalTextThreshold = digitalTextThreshold
+    self.ocrConfidenceThreshold = ocrConfidenceThreshold
+  }
+
+  /// Route a document to the appropriate extraction method.
+  /// - Parameters:
+  ///   - text: Extracted text from the document (may be empty for scanned PDFs)
+  ///   - pageCount: Number of pages in the document
+  /// - Returns: The recommended processing route
+  public func route(text: String, pageCount: Int) -> ProcessingRoute {
+    let hasText = text.count >= digitalTextThreshold
+    
+    if hasText {
+      return .digital
+    } else {
+      return .scanned(recommendedEngine: .vision)
+    }
+  }
+
+  /// Check if a document is probably scanned based on text content.
+  public func isProbablyScanned(text: String) -> Bool {
+    return text.count < digitalTextThreshold
+  }
+}
+
+/// Processing route for hybrid document handling.
+public enum ProcessingRoute: Sendable, Equatable {
+  /// Document has extractable text — use text-based processing
+  case digital
+  /// Document is scanned — use OCR
+  case scanned(recommendedEngine: OCREngine)
+  /// Document has mixed content — use both
+  case mixed
+}
+
+/// Available OCR engines.
+public enum OCREngine: String, Sendable, CaseIterable {
+  case vision = "Vision"
+  case tesseract = "Tesseract"
+  case paddle = "PaddleOCR"
+  
+  public var displayName: String {
+    switch self {
+    case .vision: return "Apple Vision"
+    case .tesseract: return "Tesseract CLI"
+    case .paddle: return "PaddleOCR"
+    }
+  }
+}
+
 public struct CVRectangleObservation: Equatable, Hashable, Sendable {
   /// Vision normalized coordinates use a lower-left origin, matching the PDF contract.
   public let normalizedBounds: PDFRect

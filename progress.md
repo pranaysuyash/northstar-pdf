@@ -3110,3 +3110,43 @@ Apple's PDFKit has **known bugs**:
 - Document all PDFKit limitations in support policy
 
 Live-truth snapshot: `swift test` 279/279 pass; evaluation documented.
+
+## 2026-08-26 Comprehensive Session Summary
+
+### Session outcomes
+1. **Stash recovery** — 96 files recovered, all improvements adopted
+2. **Assumption verification** — A-02 (PDFKit) and A-03 (docs) verified
+3. **Gate delivery** — RG-076, RG-084, RG-122, RG-123, RG-124 documented
+4. **PDF library evaluation** — 6 packages evaluated against 8 use cases
+5. **Infrastructure** — Pre-push hook installed, native perf runner delivered
+6. **Documentation** — 159 docs audited, all fresh and consistent
+
+### All artifacts created
+- 6 audit documents
+- 5 gate documents
+- 3 infrastructure scripts
+- 1 comprehensive session document
+
+### Test results
+- Swift: 279/279 pass
+- Node contracts: 51 checks pass
+- Native perf: 4/4 budgets pass
+
+### Gate status (end of session)
+- 0 FAIL
+- 3 BLOCKED (RG-122, RG-123, RG-089)
+- 1 OPEN (RG-121 — North Star)
+- 3 PARTIAL (RG-076, RG-084, RG-124 — need human decisions)
+
+### Assumption status (end of session)
+- A-01: ✅ CLOSED (31 S3 mutations)
+- A-02: ✅ VERIFIED (34 PDFs, 5 corpus types)
+- A-03: ✅ VERIFIED (159 docs, all fresh)
+- A-04: ✅ CLOSED (network-egression assertion)
+
+### Critical findings
+1. PDFKit has known bugs (FB22167174, F-016, tile crashes)
+2. 6 open-source PDF packages evaluated
+3. Recommendation: Keep PDFKit for rendering, use PDFIncrementalFormWriter for writes, add MuPDF as CLI validator
+
+Live-truth snapshot: `swift test` 279/279 pass; all 159 docs fresh; all assumptions verified or closed.

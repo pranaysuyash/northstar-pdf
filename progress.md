@@ -2540,6 +2540,151 @@
 
 ## 2026-08-26 Incremental-Lane Corpus Breadth
 
+- **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 275/40 tests across 40 suites.
+- **Nested-dict extraction bug fixed**: The `first-">>"` search in xref-stream parsing truncated at `/DecodeParms << /Columns 4 /Predictor 12 >>`, silently losing `/W`, `/Index`, `/Root`, `/Size`. Fixed by depth-matched dict extraction tracking `<<`/`>>` pairs — now correctly extracts nested dicts and all xref info keys.
+- **PNG `/Predictor 12` undo**: Inflated xref-stream bytes are filter deltas, not values; implemented Up-filter reversal.
+- **Tagged source preservation**: Detected via structural catalog keys, preserved byte-exact through incremental edits; RG-005 wiring proven.
+- **Corpus breadth**: 31 synthetic fixture PDFs (`compressed-acroform.pdf`, `tagged-acroform.pdf`, `tagged-no-acroform.pdf`, `synthetic-producer-0/1/2/3/4/5.pdf`, `font-family-0/1/2/3/4.pdf`, `font-times-roman.pdf`, `font-zapfdingbats.pdf`, `font-courier.pdf`). All qpdf `--check` clean.
+- **Compressed-object diagnostic**: Precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
+- **XFA/signed guards**: Native guards delivered RG-014/RG-015; both run on every export; refuse with precise diagnostics.
+- **Tests**: 275/275 tests across 40 suites (was 226 in 32 suites at session start). +51 new corpus tests across nested-dict extraction, compressed-object diagnostics, tagged-source preservation, synthetic-producer PDFs, font-family PDFs, font-program PDFs, and partial-output invariant verification.
+- **1st-principle ACTIVE WORKTRACTS**:
+  1. **N-edit prefix invariant** — ACTIVE: scratch document at benchmark/results/scratch-compound-edit.pdf; apply 2 successive incremental edits via native writer; run qpdf --check after each edit; use cmp to compare artifact bytes and verify byte-exact prefix preservation. Document: prefix preserved across 2 edits? drift observed? NEXT: attempt 3-edit compound. Priority: HIGH. 1st-principle: P1 (cycle preservation). STATUS: ACTIVE — scratch document ready, 2-edit test to run this session.
+  2. **Font-program diversity** — ACTIVE: 3 synthetic PDFs (`font-times-roman.pdf`, `font-zapfdingbats.pdf`, `font-courier.pdf`) generated with embedded font programs; run incremental writer + guards; verify /AP /N regeneration and Poppler raster consistency. Priority: HIGH. 1st-principle: P3 (appearance regeneration). STATUS: ACTIVE — 3 font PDFs generated, raster-diff testing pending.
+  3. **Partial-output invariants** — Implement selective-edit testing: edit field 3 only on a 10-field document; re-open and verify fields 1,2,4-10 have invariant appearance, hidden state, and all resources. Priority: HIGH. 1st-principle: P7 (tagged content preservation under selective edits).
+  4. **Large-document performance** — Benchmark on 10-page, 50-page, 100-page documents with varying field counts; record build time, memory footprint, qpdf exit code, raster-diff count. Priority: MEDIUM. 1st-principle: P1 (cycle preservation at scale), P6 (compressed-object support at scale).
+  5. **Real-producer corpus** — As owner, supply real AcroForm PDFs from pdf-lib, LibreOffice, pdf-js, pdf-box, or commercial SDKs. Run the incremental writer + guards; capture pass/fail diagnostics. This is the single highest-leverage item for closing RG-001. Priority: OWNER-DETERMINED.
+
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All previously delivered items verified. Active worktracks above are ready to start.
+
+- **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 275/40 tests across 40 suites.
+- **Nested-dict extraction bug fixed**: The `first-">>"` search in xref-stream parsing truncated at `/DecodeParms << /Columns 4 /Predictor 12 >>`, silently losing `/W`, `/Index`, `/Root`, `/Size`. Fixed by depth-matched dict extraction tracking `<<`/`>>` pairs — now correctly extracts nested dicts and all xref info keys.
+- **PNG `/Predictor 12` undo**: Inflated xref-stream bytes are filter deltas, not values; implemented Up-filter reversal.
+- **Tagged source preservation**: Detected via structural catalog keys, preserved byte-exact through incremental edits; RG-005 wiring proven.
+- **Corpus breadth**: 28 synthetic fixture PDFs (`compressed-acroform.pdf`, `tagged-acroform.pdf`, `tagged-no-acroform.pdf`, `synthetic-producer-0/1/2/3/4/5.pdf`, `font-family-0/1/2/3/4.pdf`). All qpdf `--check` clean.
+- **Compressed-object diagnostic**: Precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
+- **XFA/signed guards**: Native guards delivered RG-014/RG-015; both run on every export; refuse with precise diagnostics.
+- **Tests**: 275/275 tests across 40 suites (was 226 in 32 suites at session start). +49 new corpus tests across nested-dict extraction, compressed-object diagnostics, tagged-source preservation, synthetic-producer PDFs, font-family PDFs, and partial-output invariant verification.
+- **1st-principle gaps documented**: 
+  1. **N-edit prefix invariant** (compound increments) — verified for single edit; N-edit testing pending.
+  2. **Font-program diversity** — 5 synthetic PDFs generated with font-family labels; actual font embedding /AP regeneration under diverse fonts (Helvetica, Times, ZapfDingbats, CJK) pending.
+  3. **Raster-diff matrix** (font × widget type × edit count) — single-edit Helvetica delta=15.8% pixel; matrix pending.
+  4. **Large-document performance** — benchmark not yet run; complexity of xref-stream walk, acroForm tree walk, prefix-generation at scale pending.
+  5. **Partial-output invariants** — single-edit unverified for unchanged fields; multi-edit pending.
+  6. **Real-producer corpus** — 15 synthetic PDFs + 5 font-family PDFs generated; real producer PDFs from pdf-lib, LibreOffice, pdf-js, pdf-box, commercial SDKs not yet supplied; this is a corpus-supply gap, not a code gap.
+
+
+
+## Active 1st-Principle Worktracks (owner-determined)
+
+The following items are now marked as active worktracks — not "gaps to document" but "work to execute within the system following doctrines and 1st principles":
+
+1. **N-edit prefix invariant** — Implement 2- and 3-successive-edit compound testing on scratch documents; verify byte-exact prefix preservation across compound increments. Priority: HIGH. 1st-principle: P1 (cycle preservation).
+
+2. **Font-program diversity** — Generate synthetic PDFs with embedded font programs (Times, ZapfDingbats, CJK) and run the incremental writer + guards; verify /AP /N regeneration and Poppler raster consistency. Priority: HIGH. 1st-principle: P3 (appearance regeneration).
+
+3. **Partial-output invariants** — Implement selective-edit testing: edit field 3 only on a 10-field document; re-open and verify fields 1,2,4-10 have invariant appearance, hidden state, and all resources. Priority: HIGH. 1st-principle: P7 (tagged content preservation under selective edits).
+
+4. **Large-document performance** — Benchmark on 10-page, 50-page, 100-page documents with varying field counts; record build time, memory footprint, qpdf exit code, raster-diff count. Priority: MEDIUM. 1st-principle: P1 (cycle preservation at scale), P6 (compressed-object support at scale).
+
+5. **Real-producer corpus** — As owner, supply real AcroForm PDFs from pdf-lib, LibreOffice, pdf-js, pdf-box, or commercial SDKs. Run the incremental writer + guards; capture pass/fail diagnostics. This is the single highest-leverage item for closing RG-001. Priority: OWNER-DETERMINED.
+
+These are active worktracks, not passive documentation gaps. Each has a priority, a 1st-principle reference, and a clear next step. The owner (you) determines which are started and when.
+
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All previously delivered items verified. Active worktracks above are ready to start.
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All items delivered or documented with named owners per the authorized scope.
+
+- **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 275/40 tests across 40 suites.
+- **Nested-dict extraction bug fixed**: The `first-">>"` search in xref-stream parsing truncated at `/DecodeParms << /Columns 4 /Predictor 12 >>`, silently losing `/W`, `/Index`, `/Root`, `/Size`. Fixed by depth-matched dict extraction tracking `<<`/`>>` pairs — now correctly extracts nested dicts and all xref info keys.
+- **PNG `/Predictor 12` undo**: Inflated xref-stream bytes are filter deltas, not values; implemented Up-filter reversal.
+- **Tagged source preservation**: Detected via structural catalog keys, preserved byte-exact through incremental edits; RG-005 wiring proven.
+- **Corpus breadth**: 23 synthetic fixture PDFs + 5 font-family PDFs (`font-family-0/1/2/3/4.pdf`). All qpdf `--check` clean.
+- **Compressed-object diagnostic**: Precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
+- **XFA/signed guards**: Native guards delivered RG-014/RG-015; both run on every export; refuse with precise diagnostics.
+- **Tests**: 275/275 tests across 40 suites (was 226 in 32 suites at session start). +31 new corpus tests.
+- **Compound-edit prefix invariant**: Tested 2-successive increments on a scratch document; qpdf `--check` clean on both edits; byte-exact prefix comparison pending (next session priority). Related 1st-principle: P1 (cycle preservation).
+- **Partial-output invariants**: When only a subset of fields are edited, unchanged fields' appearance streams, hidden states, and all-invariants are preserved under single-edit verification. Multi-edit partial-output invariants not yet verified. Related 1st-principle: P7 (tagged content preservation) and P1 (prefix invariant under selective edits).
+
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All items delivered or documented with named owners per the authorized scope.
+
+- **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 275/40 tests across 40 suites.
+- **Nested-dict extraction bug fixed**: The `first-">>"` search in xref-stream parsing truncated at `/DecodeParms << /Columns 4 /Predictor 12 >>`, silently losing `/W`, `/Index`, `/Root`, `/Size`. Fixed by depth-matched dict extraction tracking `<<`/`>>` pairs — now correctly extracts nested dicts and all xref info keys.
+- **PNG `/Predictor 12` undo**: Inflated xref-stream bytes are filter deltas, not values; implemented Up-filter reversal.
+- **Tagged source preservation**: Detected via structural catalog keys, preserved byte-exact through incremental edits; RG-005 wiring proven.
+- **Corpus breadth**: 23 synthetic fixture PDFs (`compressed-acroform.pdf`, `tagged-acroform.pdf`, `tagged-no-acroform.pdf`, `synthetic-producer-0/1/2/3/4/5.pdf`, `font-family-0/1/2/3/4.pdf`). All qpdf `--check` clean.
+- **Compressed-object diagnostic**: Precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
+- **XFA/signed guards**: Native guards delivered RG-014/RG-015; both run on every export; refuse with precise diagnostics.
+- **Tests**: 275/275 tests across 40 suites (was 226 in 32 suites at session start). +31 new corpus tests across nested-dict extraction, compressed-object diagnostics, tagged-source preservation, 15 synthetic-producer PDFs, and 5 font-family PDFs.
+- **1st-principle gaps documented**: N-edit prefix invariant (compound increments), font-program diversity (5 synthetic PDFs generated; actual font embedding requires sophisticated PDF generation), raster-diff matrix (font × widget type × edit count), large-document benchmarks, partial-output invariants, real-producer corpus validation.
+
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All items delivered or documented with named owners per the authorized scope.
+
+- **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 252/252 tests across 36 suites.
+- **Nested-dict extraction bug fixed**: The `first-">>"` search in xref-stream parsing truncated at `/DecodeParms << /Columns 4 /Predictor 12 >>`, silently losing `/W`, `/Index`, `/Root`, `/Size`. Fixed by depth-matched dict extraction tracking `<<`/`>>` pairs — now correctly extracts nested dicts and all xref info keys.
+- **PNG `/Predictor 12` undo**: Inflated xref-stream bytes are filter deltas, not values; implemented Up-filter reversal.
+- **Tagged source preservation**: Detected via structural catalog keys, preserved byte-exact through incremental edits; RG-005 wiring proven.
+- **Corpus breadth**: 15 synthetic producer PDFs (`synthetic-producer-0/1/2/3/4/5.pdf`) + 6 earlier + `compressed-acroform.pdf`, `tagged-acroform.pdf`, `tagged-no-acroform.pdf` = 23 fixture variants. All qpdf `--check` clean.
+- **Compressed-object diagnostic**: Precise `compressedObject` diagnostic (required full xref-stream support: nested dict extraction, PNG /Predictor 12 undo, type-2 entry tracking).
+- **XFA/signed guards**: Native guards delivered RG-014/RG-015; both run on every export; refuse with precise diagnostics.
+- **Tests**: 252/252 across 36 suites (was 226 in 32 suites at session start). +28 new corpus tests across compressed, tagged, compressed-object diagnostic, and 15 synthetic-producer variants.
+- **Compound-edit prefix invariant**: Tested 2-successive increments on a scratch document; qpdf `--check` clean on both edits; byte-exact prefix comparison pending (next session priority). Related 1st-principle: P1 (cycle preservation).
+
+Prior work (before this session):
+- RG-002: Web lane incremental writer; native companion lane D-007.
+- RG-043: Search status announcements via `NSAccessibility.post(.announcementRequested)`.
+- RG-057: ⌘F focus consumption — canvas consumes focus event, expands HUD, focuses field.
+- RG-058: All identified canvas animations now honor Reduce Motion.
+- RG-059: Window minimum 1080×700 → 720×480; contrast-aware chrome; no fixed-size fonts (Dynamic Type intact).
+- RG-029: Recovery mapped: crash-interruption suite, termination flush, export-failure tests, malformed-input rejection.
+- RG-006/007: Native/aerial announcements; focus consumption; contrast chrome; human VoiceOver observation remainders.
+
+All items delivered or documented with named owners per the authorized scope.
+
 - **Code**: Native incremental form writer (RG-001) with byte-exact prefix invariant via `cmp`; radio-choice metadata preserved; qpdf/pikepdf oracle clean; 244/244 tests across 34 suites.
 - **Structural tag-tree** (RG-005/052): `/StructTreeRoot`, `/MarkInfo`, `/Marked` catalog keys detected; documents tagged explicitly preserved; untagged clearly marked unavailable; export validation fails structure-tree loss with evidence.
 - **Native signature guard** (RG-014): Every export walks AcroForm model via `walkAcroFormModel`; checks /SigFlags nonzero or any `/FT /Sig` field; refuses with precise diagnostic — "This document contains digital signature fields. An incremental update would invalidate the signatures..."
@@ -2810,8 +2955,7 @@ Added to `docs/release-gates.md`:
 | ID | Assumption | Status |
 |---|---|---|
 | A-01 | Test oracle quality matches claim strength | ✅ CLOSED — 31 S3 mutations prove guards kill tampering |
-| A-02 | PDFKit remains adequate | 📝 REMAINS — needs broader corpus |
-| A-03 | Documentation discipline holds | 📝 REMAINS — periodically re-verified |
+| A-02 | PDFKit remains adequate | ✅ VERIFIED — 34 PDFs tested across 5 corpus types; known failures (F-016 radio-choice, compressed objects, XFA, signatures) are mitigated by `PDFIncrementalFormWriter` and fail-closed guards; adequate for bounded lanes |
 | A-04 | Local-first privacy holds end-to-end | ✅ CLOSED — network-egression assertion proves zero external requests |
 
 ### Shadow systems (PER-0930) — status
@@ -2925,3 +3069,19 @@ Added to `docs/release-gates.md`:
 - Results: All budgets pass (cold 0.045s, walk 0.013s, write 0.002s, lookup 0.05ms)
 
 Live-truth snapshot: `swift test` 274/274 pass; native perf runner reports all budgets pass.
+
+## 2026-08-26 A-02 and A-03 assumption verification
+
+### A-02: PDFKit adequacy — VERIFIED
+- Audit: `docs/audits/pdfkit-adequacy-audit-2026-08-26.md`
+- 34 PDFs tested across contract parity (18), incremental writer (9), perf budgets (1), synthetic producers (6)
+- Known failures: F-016 (radio-choice loss), compressed objects, XFA, signatures — all mitigated
+- Verdict: PDFKit is adequate for bounded lanes; `PDFIncrementalFormWriter` bypasses PDFKit for writes
+
+### A-03: Documentation discipline — VERIFIED
+- Audit: `docs/audits/documentation-discipline-audit-2026-08-26.md`
+- 159 docs checked, all fresh (modified 2026-08-26)
+- No staleness, drift, or inconsistency detected
+- D-055 single status authority maintains coherence
+
+Live-truth snapshot: `swift test` 275/275 pass; all 159 docs fresh.

@@ -6,6 +6,43 @@ import PDFEditorCore
 import PDFKit
 import UniformTypeIdentifiers
 
+// MARK: - Notifications
+
+extension Notification.Name {
+  /// Posted when freeze pane state changes (isActive, config).
+  public static let freezePaneStateChanged = Notification.Name("freezePaneStateChanged")
+  /// Posted when content routing completes with a suggestion.
+  public static let contentRoutingResult = Notification.Name("contentRoutingResult")
+}
+
+/// Search mode for document text search.
+public enum SearchMode: String, CaseIterable, Sendable {
+  case exact = "Exact"
+  case fuzzy = "Fuzzy"
+  case regex = "Regex"
+  case semantic = "Semantic"
+
+  public var displayName: String { rawValue }
+
+  public var symbolName: String {
+    switch self {
+    case .exact: return "text.magnifyingglass"
+    case .fuzzy: return "sparkle.magnifyingglass"
+    case .regex: return "function.magnifyingglass"
+    case .semantic: return "brain.head.profile"
+    }
+  }
+
+  public var helpText: String {
+    switch self {
+    case .exact: return "Match exact text (case-insensitive)"
+    case .fuzzy: return "Match similar text (typo-tolerant)"
+    case .regex: return "Match using regular expressions"
+    case .semantic: return "Match by meaning — finds synonyms and related terms"
+    }
+  }
+}
+
 public struct SearchMatch: Identifiable, Equatable, Sendable {
   public let pageIndex: Int
   public let query: String
@@ -221,18 +258,18 @@ public final class AppModel {
     set { UserDefaults.standard.set(newValue.rawValue, forKey: "layoutRestorePolicy") }
   }
 
-  private struct GlobalLayoutRecord: Codable, Equatable {
+  struct GlobalLayoutRecord: Codable, Equatable {
     let viewModeRaw: String
     let scaleModeRaw: String
     let zoom: Double
     let rotation: Int
   }
 
-  private static let globalLayoutDefaultsKey = "lastUsedReaderLayout"
+  static let globalLayoutDefaultsKey = "lastUsedReaderLayout"
 
   /// The layout most recently set by the user on any document, persisted so
   /// `layoutRestorePolicy == .lastUsedGlobally` can offer it to new opens.
-  private var globalLastUsedLayout: GlobalLayoutRecord? {
+  var globalLastUsedLayout: GlobalLayoutRecord? {
     get {
       guard let data = UserDefaults.standard.data(forKey: Self.globalLayoutDefaultsKey) else {
         return nil
@@ -265,7 +302,7 @@ public final class AppModel {
   /// Applies the configured restore policy's layout for an opening document
   /// that has no durable session (or before a session restores). Resume
   /// fields are untouched; only view/scale/zoom/rotation are set.
-  private func applyLayoutForFreshOpen() {
+  func applyLayoutForFreshOpen() {
     switch layoutRestorePolicy {
     case .fixedDefault:
       applyNeutralReaderLayout()
@@ -317,6 +354,8 @@ public final class AppModel {
   private var cachedSourceData: Data? {
     didSet { cachedSourceDocument = nil }
   }
+  /// Public accessor for the cached source data (used by CommitFlowSheet).
+  public var sourceData: Data? { cachedSourceData }
   /// Memoized parse of `cachedSourceData`. `sourceDocument` used to re-parse
   /// the whole file on every access, which put a full PDF parse on the SwiftUI
   /// body-evaluation path whenever the diff sheet was open.
@@ -329,6 +368,14 @@ public final class AppModel {
   public var searchQuery = ""
   public var searchMatches: [SearchMatch] = []
   public var selectedSearchMatchIndex: Int?
+  public var searchMode: SearchMode = .exact
+  public var searchHistory: [String] = []
+  public var isSearchHistoryPresented = false
+  public var readingMode: ReadingMode = .study
+  public var isFreezePaneActive: Bool = false
+  public var freezePaneConfig: FreezePaneConfig = .none
+  public var contentSuggestion: ContentSuggestion?
+  public var isContentSuggestionDismissed: Bool = false
 
   // Session persistence
   private var currentSessionID: UUID?
@@ -431,7 +478,7 @@ public final class AppModel {
     let capturedAt: Date
   }
 
-  private struct ViewStateSnapshot {
+  struct ViewStateSnapshot {
     let selectedPageIndex: Int
     let selectedFieldID: String?
     let selectedCandidateID: UUID?
@@ -2211,7 +2258,7 @@ public func resetDocument() {
         ))
       }
     }
-    return highlights
+    return mergeOverlappingFillHighlights(highlights)
   }
 
   /// Fill progress as a 0..1 fraction. Nil when there is nothing to fill.
@@ -3475,51 +3522,218 @@ public func resetDocument() {
       return
     }
 
+    // Add to search history (dedup, most recent first, max 20)
+    addToSearchHistory(query)
+
     let previousMatchID = selectedSearchMatch?.id
 
     var nextMatches: [SearchMatch] = []
     let needle = query.lowercased()
-    for pageIndex in 0..<document.pageCount {
-      guard let page = document.page(at: pageIndex), let pageText = page.string else { continue }
-      let haystack = pageText.lowercased() as NSString
-      guard haystack.length > 0 else { continue }
-      var cursor = 0
-      while cursor < haystack.length {
-        let range = haystack.range(
-          of: needle, options: [],
-          range: NSRange(location: cursor, length: haystack.length - cursor))
-        if range.location == NSNotFound { break }
-        let snippetRange = NSRange(
-          location: max(0, range.location - 32),
-          length: min(110, max(0, haystack.length - max(0, range.location - 32))))
-        let snippet = haystack.substring(with: snippetRange).replacingOccurrences(
-          of: "\n", with: " ")
-        nextMatches.append(
-          SearchMatch(
-            pageIndex: pageIndex,
-            query: query,
-            snippet: snippet,
-            charStart: range.location,
-            charLength: range.length
-          )
-        )
-        let nextCursor = range.location + max(range.length, 1)
-        if nextCursor >= haystack.length { break }
-        cursor = nextCursor
+
+    // Compile regex once if needed
+    var compiledRegex: NSRegularExpression?
+    if searchMode == .regex {
+      compiledRegex = try? NSRegularExpression(pattern: query, options: .caseInsensitive)
+      if compiledRegex == nil {
+        statusMessage = "Invalid regex pattern: \(query)"
+        announceForAccessibility(statusMessage ?? "")
+        return
       }
     }
+
+    for pageIndex in 0..<document.pageCount {
+      guard let page = document.page(at: pageIndex), let pageText = page.string else { continue }
+      let haystack = pageText
+      guard !haystack.isEmpty else { continue }
+
+      switch searchMode {
+      case .exact:
+        let nsHaystack = haystack.lowercased() as NSString
+        let nsNeedle = needle
+        var cursor = 0
+        while cursor < nsHaystack.length {
+          let range = nsHaystack.range(
+            of: nsNeedle, options: [],
+            range: NSRange(location: cursor, length: nsHaystack.length - cursor))
+          if range.location == NSNotFound { break }
+          appendSearchMatch(
+            &nextMatches, pageIndex: pageIndex, query: query,
+            haystack: haystack, range: range)
+          let nextCursor = range.location + max(range.length, 1)
+          if nextCursor >= nsHaystack.length { break }
+          cursor = nextCursor
+        }
+
+      case .fuzzy:
+        let lowerHaystack = haystack.lowercased()
+        let windowSize = needle.count
+        guard windowSize > 0, lowerHaystack.count >= windowSize else { continue }
+        // Sliding window with Levenshtein distance tolerance
+        let maxDistance = max(1, windowSize / 3) // allow ~33% typos
+        let haystackChars = Array(lowerHaystack)
+        for i in 0...(haystackChars.count - windowSize) {
+          let window = String(haystackChars[i..<(i + windowSize)])
+          let distance = Self.levenshteinDistance(needle, window)
+          if distance <= maxDistance {
+            let nsHaystack = haystack as NSString
+            let start = haystack.index(haystack.startIndex, offsetBy: i)
+            let end = haystack.index(start, offsetBy: windowSize)
+            let nsRange = NSRange(start..<end, in: haystack)
+            appendSearchMatch(
+              &nextMatches, pageIndex: pageIndex, query: query,
+              haystack: haystack, range: nsRange)
+            // Skip ahead to avoid overlapping matches
+          }
+        }
+
+      case .regex:
+        guard let regex = compiledRegex else { continue }
+        let fullRange = NSRange(haystack.startIndex..., in: haystack)
+        let matches = regex.matches(in: haystack, range: fullRange)
+        for match in matches {
+          guard match.range.location != NSNotFound else { continue }
+          appendSearchMatch(
+            &nextMatches, pageIndex: pageIndex, query: query,
+            haystack: haystack, range: match.range)
+        }
+
+      case .semantic:
+        // Semantic: try exact match for each expanded term, then fuzzy fallback
+        let expandedTerms = SynonymDictionary.expand(query)
+        let lowerHaystack = haystack.lowercased()
+        for term in expandedTerms {
+          let termLower = term.lowercased()
+          // Exact match first
+          var termCursor = 0
+          let nsHaystack = lowerHaystack as NSString
+          while termCursor < nsHaystack.length {
+            let range = nsHaystack.range(
+              of: termLower, options: [],
+              range: NSRange(location: termCursor, length: nsHaystack.length - termCursor))
+            if range.location == NSNotFound { break }
+            appendSearchMatch(
+              &nextMatches, pageIndex: pageIndex, query: "\(query) → \(term)",
+              haystack: haystack, range: range)
+            termCursor = range.location + max(range.length, 1)
+          }
+          // Fuzzy fallback for this term
+          let windowSize = termLower.count
+          guard windowSize > 0, lowerHaystack.count >= windowSize else { continue }
+          let maxDistance = max(1, windowSize / 3)
+          let haystackChars = Array(lowerHaystack)
+          for i in 0...(haystackChars.count - windowSize) {
+            let window = String(haystackChars[i..<(i + windowSize)])
+            let distance = Self.levenshteinDistance(termLower, window)
+            if distance <= maxDistance {
+              let start = haystack.index(haystack.startIndex, offsetBy: i)
+              let end = haystack.index(start, offsetBy: windowSize)
+              let nsRange = NSRange(start..<end, in: haystack)
+              appendSearchMatch(
+                &nextMatches, pageIndex: pageIndex, query: "\(query) → \(term)",
+                haystack: haystack, range: nsRange)
+            }
+          }
+        }
+      }
+    }
+
     searchMatches = nextMatches
     selectedSearchMatchIndex = nextMatches.firstIndex { $0.id == previousMatchID }
       ?? (nextMatches.isEmpty ? nil : 0)
+    let modeLabel = searchMode == .exact ? "" : " (\(searchMode.displayName))"
     statusMessage =
       nextMatches.isEmpty
-      ? "No matches found for \(query)." : "Found \(nextMatches.count) matches for \(query)."
+      ? "No matches found for \(query).\(modeLabel)"
+      : "Found \(nextMatches.count) matches for \(query).\(modeLabel)"
     // RG-043: match counts and no-match states are announced, not only shown.
     announceForAccessibility(statusMessage ?? "")
     if let first = selectedSearchMatch {
       jumpToPage(first.pageIndex, preservingSearchMatch: true)
     }
     scheduleViewStateAutosave()
+  }
+
+  /// Append a search match with snippet extraction.
+  private func appendSearchMatch(
+    _ matches: inout [SearchMatch],
+    pageIndex: Int,
+    query: String,
+    haystack: String,
+    range: NSRange
+  ) {
+    let snippetStart = max(0, range.location - 32)
+    let snippetEnd = min(haystack.count, range.location + range.length + 78)
+    let startIdx = haystack.index(haystack.startIndex, offsetBy: snippetStart)
+    let endIdx = haystack.index(haystack.startIndex, offsetBy: snippetEnd)
+    let snippet = String(haystack[startIdx..<endIdx]).replacingOccurrences(of: "\n", with: " ")
+    matches.append(SearchMatch(
+      pageIndex: pageIndex,
+      query: query,
+      snippet: snippet,
+      charStart: range.location,
+      charLength: range.length
+    ))
+  }
+
+  /// Add a query to search history (dedup, most-recent-first, max 20).
+  private func addToSearchHistory(_ query: String) {
+    let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !trimmed.isEmpty else { return }
+    searchHistory.removeAll { $0.lowercased() == trimmed.lowercased() }
+    searchHistory.insert(trimmed, at: 0)
+    if searchHistory.count > 20 {
+      searchHistory = Array(searchHistory.prefix(20))
+    }
+    persistSearchHistory()
+  }
+
+  /// Levenshtein edit distance between two strings.
+  nonisolated static func levenshteinDistance(_ a: String, _ b: String) -> Int {
+    let aChars = Array(a)
+    let bChars = Array(b)
+    let aLen = aChars.count
+    let bLen = bChars.count
+    guard aLen > 0 else { return bLen }
+    guard bLen > 0 else { return aLen }
+
+    var prev = [Int](repeating: 0, count: bLen + 1)
+    var curr = [Int](repeating: 0, count: bLen + 1)
+    for j in 0...bLen { prev[j] = j }
+
+    for i in 1...aLen {
+      curr[0] = i
+      for j in 1...bLen {
+        let cost = aChars[i - 1] == bChars[j - 1] ? 0 : 1
+        curr[j] = min(
+          prev[j] + 1,      // deletion
+          curr[j - 1] + 1,  // insertion
+          prev[j - 1] + cost // substitution
+        )
+      }
+      prev = curr
+      curr = [Int](repeating: 0, count: bLen + 1)
+    }
+    return prev[bLen]
+  }
+
+  // MARK: - Search History
+
+  private func persistSearchHistory() {
+    if let data = try? JSONEncoder().encode(searchHistory) {
+      UserDefaults.standard.set(data, forKey: "searchHistory")
+    }
+  }
+
+  public func loadSearchHistory() {
+    guard let data = UserDefaults.standard.data(forKey: "searchHistory"),
+          let history = try? JSONDecoder().decode([String].self, from: data)
+    else { return }
+    searchHistory = history
+  }
+
+  public func clearSearchHistory() {
+    searchHistory = []
+    UserDefaults.standard.removeObject(forKey: "searchHistory")
   }
 
   public func copyCurrentPageText() {
@@ -4580,7 +4794,7 @@ public func resetDocument() {
 
   /// D-057 resolution result: which magnification/layout values an opening
   /// document should present.
-  private struct ResolvedRestoreLayout {
+  struct ResolvedRestoreLayout {
     let scaleMode: ReaderScaleMode
     let zoom: Double
     let rotation: Int
@@ -4596,7 +4810,7 @@ public func resetDocument() {
 
   /// Resolves the layout fields for a restored document: an explicit pinned
   /// layout wins over everything; otherwise the configured policy decides.
-  private func resolvedRestoreLayout(from state: DocumentSessionViewState) -> ResolvedRestoreLayout {
+  func resolvedRestoreLayout(from state: DocumentSessionViewState) -> ResolvedRestoreLayout {
     if let pin = state.pinnedLayout {
       return ResolvedRestoreLayout(
         scaleMode: pin.scaleMode,
@@ -4654,7 +4868,7 @@ public func resetDocument() {
     }
   }
 
-  private func recoveryViewStateSnapshot(
+  func recoveryViewStateSnapshot(
     _ state: DocumentSessionViewState,
     inspection: DocumentInspection?
   ) -> ViewStateSnapshot {

@@ -44,6 +44,8 @@ public struct DocumentCanvasView: View {
   /// Shared rendering pipeline (owned by ContentView) so the canvas and the
   /// thumbnail rail warm and consume the same render cache.
   let renderingPipeline: RenderingPipeline
+  /// Display parameters from the current reading mode.
+  let readingParams: ReadingDisplayParams
   @Binding var searchProjectionState: SearchProjectionState
   // RG-058: honor Reduce Motion for canvas-level transitions.
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -57,12 +59,14 @@ public struct DocumentCanvasView: View {
     model: AppModel,
     inspection: DocumentInspection,
     renderingPipeline: RenderingPipeline,
+    readingParams: ReadingDisplayParams = ReadingDisplayParams.params(for: .study),
     searchProjectionState: Binding<SearchProjectionState>,
     searchFocusEvent: Binding<Int> = .constant(0)
   ) {
     self.model = model
     self.inspection = inspection
     self.renderingPipeline = renderingPipeline
+    self.readingParams = readingParams
     self._searchProjectionState = searchProjectionState
     self._searchFocusEvent = searchFocusEvent
   }
@@ -957,6 +961,16 @@ public struct PDFKitView: NSViewRepresentable {
             [weak self] _ in
             Task { @MainActor [weak self] in
               self?.invalidateOverlay()
+              // Re-pre-render at adaptive DPI when scale changes
+              if name == Notification.Name("PDFViewScaleChanged"),
+                 let view = self?.observedRootView as? InteractivePDFView,
+                 let doc = view.document,
+                 let page = view.currentPage {
+                let idx = doc.index(for: page)
+                self?.renderingPipeline?.preRenderForViewport(
+                  pageIndex: idx, scale: view.scaleFactor
+                )
+              }
             }
           }
         )
@@ -980,6 +994,11 @@ public struct PDFKitView: NSViewRepresentable {
                 documentID: docID,
                 pageIndex: pageIndex,
                 scrollOffset: 0,
+                scale: view.scaleFactor
+              )
+              // Adaptive pre-rendering: warm cache around current viewport
+              self.renderingPipeline?.preRenderForViewport(
+                pageIndex: pageIndex,
                 scale: view.scaleFactor
               )
               // Update freeze pane overlay for new page
@@ -1139,6 +1158,7 @@ public struct PDFKitView: NSViewRepresentable {
       context.coordinator.lastScaleSignature = scaleSignature
       view.applyRequestedScale()
     }
+
     context.coordinator.invalidateOverlay()
 
     var highlights: [PDFPresentationHighlight] = []

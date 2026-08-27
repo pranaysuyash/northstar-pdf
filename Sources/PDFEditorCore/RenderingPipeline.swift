@@ -376,6 +376,40 @@ public final class RenderingPipeline: @unchecked Sendable {
     }
   }
 
+  // MARK: - Adaptive Quality
+
+  /// Returns the optimal DPI for the given zoom scale.
+  /// Low zoom (≤0.5) → 72 DPI, medium zoom (0.5–1.5) → 150 DPI, high zoom (>1.5) → 300 DPI.
+  public func adaptiveDPI(for scale: CGFloat) -> Int {
+    if scale <= 0.5 { return config.lowDPI }
+    if scale <= 1.5 { return config.mediumDPI }
+    return config.highDPI
+  }
+
+  /// Pre-render tiles around the current viewport for smooth scrolling.
+  /// Called on page change and scale change to keep the cache warm.
+  public func preRenderForViewport(pageIndex: Int, scale: CGFloat) {
+    lock.lock()
+    let data = documentData
+    let pageCount = documentModel?.pageCount ?? 0
+    lock.unlock()
+    guard let data, pageIndex >= 0, pageIndex < pageCount else { return }
+
+    let dpi = adaptiveDPI(for: scale)
+    let margin = config.preRenderMargin
+    let startPage = max(0, pageIndex - margin)
+    let endPage = min(pageCount - 1, pageIndex + margin)
+
+    DispatchQueue.global(qos: .utility).async { [weak self] in
+      guard let self = self else { return }
+      for idx in startPage...endPage {
+        if self.renderer.getCached(pageIndex: idx, dpi: dpi) == nil {
+          _ = self.renderer.renderPage(data: data, pageIndex: idx, dpi: dpi)
+        }
+      }
+    }
+  }
+
   // MARK: - Text Extraction
 
   /// Extract text from the document.

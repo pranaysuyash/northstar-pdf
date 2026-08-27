@@ -15,7 +15,7 @@ private enum HapticTrigger {
 }
 
 extension NSImage {
-  fileprivate var pngData: Data? {
+  var pngData: Data? {
     guard let tiffData = tiffRepresentation,
           let bitmap = NSBitmapImageRep(data: tiffData) else { return nil }
     return bitmap.representation(using: .png, properties: [:])
@@ -23,7 +23,7 @@ extension NSImage {
 }
 
 extension SavedSignature {
-  fileprivate var signatureImageData: Data? {
+  var signatureImageData: Data? {
     if dataURL.hasPrefix("data:image"), let comma = dataURL.firstIndex(of: ",") {
       return Data(base64Encoded: String(dataURL[dataURL.index(after: comma)...]))
     }
@@ -69,6 +69,7 @@ public struct ContentView: View {
   /// same cache so thumbnails and progressive renders warm each other.
   @State private var renderingPipeline = RenderingPipeline()
   @StateObject private var themeManager = ThemeManager()
+  @StateObject private var readingHistory = ReadingHistoryManager()
   @State private var searchProjectionState: SearchProjectionState = .none
   @State private var isAgentCommandPresented = false
   @State private var isSecurityVaultPresented = false
@@ -95,7 +96,14 @@ public struct ContentView: View {
   public var body: some View {
     mainContent
       .applyTheme(using: themeManager)
-      .toolbar { appToolbar }
+      .toolbar {
+        if readingParams.showToolbar {
+          appToolbar
+        } else {
+          // Skim mode: only show essential items (mode picker + page nav)
+          skimToolbar
+        }
+      }
       .onAppear {
         NotificationCenter.default.addObserver(
           forName: .contentRoutingResult,
@@ -138,7 +146,7 @@ public struct ContentView: View {
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.isSignatureSheetPresented) {
-        SignatureSheet(model: model)
+        CommitFlowSheet(model: model)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $isSecurityVaultPresented) {
@@ -191,6 +199,11 @@ public struct ContentView: View {
 
   private func inspectionContent(inspection: DocumentInspection) -> some View {
     ZStack {
+      // Background tint for Reference mode
+      Color.yellow
+        .opacity(readingParams.backgroundOpacity * 0.3)
+        .allowsHitTesting(false)
+
       VStack(spacing: 0) {
         RecoveryStatusBanner(model: model)
 
@@ -208,6 +221,7 @@ public struct ContentView: View {
             model: model,
             inspection: inspection,
             renderingPipeline: renderingPipeline,
+            readingParams: readingParams,
             searchProjectionState: $searchProjectionState,
             searchFocusEvent: $searchFocusEvent
           )
@@ -220,6 +234,29 @@ public struct ContentView: View {
               isSecurityVaultPresented: $isSecurityVaultPresented
             )
             .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
+          }
+        }
+
+        // Reading progress bar (shown in Study/Review modes)
+        if readingParams.showProgress, let inspection = model.inspection {
+          let totalPages = inspection.pages.count
+          VStack(spacing: 0) {
+            Divider()
+            HStack {
+              Text("Page \(model.selectedPageIndex + 1) of \(totalPages)")
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+              Spacer()
+              ProgressView(
+                value: Double(model.selectedPageIndex + 1),
+                total: Double(totalPages)
+              )
+              .progressViewStyle(.linear)
+              .frame(width: 120)
+              .tint(.accentColor)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
           }
         }
       }
@@ -499,6 +536,54 @@ public struct ContentView: View {
       )
     }
 
+    // Bookmark button
+    ToolbarItem {
+      Menu {
+        Button {
+          let docID = model.sourceURL?.lastPathComponent ?? "unknown"
+          let pageIdx = model.selectedPageIndex ?? 0
+          let _ = readingHistory.addBookmark(
+            documentID: docID,
+            pageIndex: pageIdx,
+            title: "Page \(pageIdx + 1)"
+          )
+        } label: {
+          Label("Add Bookmark", systemImage: "bookmark")
+        }
+
+        Divider()
+
+        let docID = model.sourceURL?.lastPathComponent ?? "unknown"
+        let bookmarks = readingHistory.bookmarks(for: docID)
+        if bookmarks.isEmpty {
+          Text("No bookmarks")
+            .foregroundStyle(.secondary)
+        } else {
+          ForEach(bookmarks) { bm in
+            Button {
+              model.jumpToPage(bm.pageIndex)
+            } label: {
+              Label(bm.title, systemImage: "bookmark.fill")
+            }
+          }
+        }
+
+        if !bookmarks.isEmpty {
+          Divider()
+          Button("Clear Bookmarks", role: .destructive) {
+            for bm in readingHistory.bookmarks(for: docID) {
+              readingHistory.removeBookmark(id: bm.id, documentID: docID)
+            }
+          }
+        }
+      } label: {
+        Image(systemName: "bookmark")
+          .font(.caption)
+      }
+      .menuStyle(.borderlessButton)
+      .help("Bookmarks for this document")
+    }
+
     // Content suggestion indicator
     ToolbarItem(placement: .status) {
       if let suggestion = model.contentSuggestion,
@@ -580,12 +665,54 @@ public struct ContentView: View {
     }
   }
 
+  /// Minimal toolbar for Skim mode — only reading mode picker and page nav.
+  private var skimToolbar: some ToolbarContent {
+    ToolbarItemGroup {
+      // Reading mode picker (always visible)
+      Menu {
+        ForEach(ReadingMode.allCases) { mode in
+          Button {
+            model.readingMode = mode
+          } label: {
+            Label {
+              Text(mode.displayName)
+            } icon: {
+              Image(systemName: mode.symbolName)
+            }
+          }
+        }
+      } label: {
+        Label(model.readingMode.displayName, systemImage: model.readingMode.symbolName)
+          .font(.caption)
+      }
+      .help("Reading mode: \(model.readingMode.helpText)")
+
+      // Page indicator
+      if let inspection = model.inspection {
+        Text("\(model.selectedPageIndex + 1)/\(inspection.pages.count)")
+          .font(.caption.monospacedDigit())
+          .foregroundStyle(.secondary)
+      }
+
+      Spacer()
+
+      // Minimal status
+      Text(model.statusMessage ?? "Ready")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .lineLimit(1)
+    }
+  }
+
   private func openImportedPDF(_ url: URL) {
-    // No probe parse: a throwaway `PDFDocument(url:)` used to parse the whole
-    // file just to validate readability before `model.open` parsed it again.
-    // `open` keeps the current document on failure and reports the provider's
-    // own locked/empty/unreadable diagnostics.
     model.open(url: url)
+    // Start reading history session
+    let docID = url.lastPathComponent
+    readingHistory.startSession(
+      documentID: docID,
+      fileName: url.lastPathComponent,
+      startPage: 0
+    )
   }
 
   @MainActor
@@ -938,7 +1065,7 @@ private struct SignatureSheet: View {
   }
 }
 
-private struct SignatureDrawTab: View {
+struct SignatureDrawTab: View {
   let onApply: (Data) -> Void
   @State private var strokes: [[CGPoint]] = []
   @State private var currentStroke: [CGPoint] = []
@@ -1007,7 +1134,7 @@ private struct SignatureDrawTab: View {
   }
 }
 
-private struct SignatureTypeTab: View {
+struct SignatureTypeTab: View {
   @Binding var typedName: String
   @Binding var selectedFontIndex: Int
   let fontNames: [String]
@@ -1042,7 +1169,7 @@ private struct SignatureTypeTab: View {
   }
 }
 
-private struct SignatureImageTab: View {
+struct SignatureImageTab: View {
   let onApply: (Data, SignatureSource) -> Void
   @State private var isImporterPresented = false
   @State private var loadedData: Data?
@@ -1203,7 +1330,7 @@ private struct SignatureImageTab: View {
   }
 }
 
-private struct SignatureSavedTab: View {
+struct SignatureSavedTab: View {
   let signatures: [SavedSignature]
   let onApply: (SavedSignature) -> Void
   let onDelete: (UUID) -> Void

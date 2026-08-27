@@ -65,6 +65,10 @@ extension SavedSignature {
 public struct ContentView: View {
   @Bindable var model: AppModel
   @Binding private var searchFocusEvent: Int
+  /// Shared rendering pipeline: the canvas and the thumbnail rail consume the
+  /// same cache so thumbnails and progressive renders warm each other.
+  @State private var renderingPipeline = RenderingPipeline()
+  @StateObject private var themeManager = ThemeManager()
   @State private var searchProjectionState: SearchProjectionState = .none
   @State private var isAgentCommandPresented = false
   @State private var isSecurityVaultPresented = false
@@ -83,9 +87,27 @@ public struct ContentView: View {
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+  /// Display parameters derived from the current reading mode.
+  private var readingParams: ReadingDisplayParams {
+    ReadingDisplayParams.params(for: model.readingMode)
+  }
+
   public var body: some View {
     mainContent
+      .applyTheme(using: themeManager)
       .toolbar { appToolbar }
+      .onAppear {
+        NotificationCenter.default.addObserver(
+          forName: .contentRoutingResult,
+          object: nil,
+          queue: .main
+        ) { notification in
+          if let suggestion = notification.userInfo?["suggestion"] as? ContentSuggestion {
+            model.contentSuggestion = suggestion
+            model.isContentSuggestionDismissed = false
+          }
+        }
+      }
       // Apple Design §12: translucent toolbar — .ultraThinMaterial on macOS
       .fileImporter(
         isPresented: $model.isImporterPresented,
@@ -173,22 +195,32 @@ public struct ContentView: View {
         RecoveryStatusBanner(model: model)
 
         HSplitView {
-          PageThumbnailRailView(model: model, inspection: inspection)
+          if readingParams.showThumbnailRail {
+            PageThumbnailRailView(
+              model: model,
+              inspection: inspection,
+              renderingPipeline: renderingPipeline
+            )
             .frame(minWidth: 200, idealWidth: 230, maxWidth: 280)
+          }
 
           DocumentCanvasView(
             model: model,
             inspection: inspection,
+            renderingPipeline: renderingPipeline,
             searchProjectionState: $searchProjectionState,
             searchFocusEvent: $searchFocusEvent
           )
 
-          ContextualInspectorView(
-            model: model,
-            inspection: inspection,
-            isSecurityVaultPresented: $isSecurityVaultPresented
-          )
-          .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
+          if readingParams.showInspector {
+            ContextualInspectorView(
+              model: model,
+              inspection: inspection,
+              renderingPipeline: renderingPipeline,
+              isSecurityVaultPresented: $isSecurityVaultPresented
+            )
+            .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
+          }
         }
       }
 
@@ -414,6 +446,94 @@ public struct ContentView: View {
       }
       .disabled(model.sourceInspection == nil)
       .help("Visual diff: overlay highlights on the page, or open a side-by-side comparison.")
+    }
+
+    // Reading mode picker
+    ToolbarItem {
+      Menu {
+        ForEach(ReadingMode.allCases) { mode in
+          Button {
+            model.readingMode = mode
+          } label: {
+            Label {
+              Text(mode.displayName)
+            } icon: {
+              Image(systemName: mode.symbolName)
+            }
+          }
+        }
+      } label: {
+        Label(model.readingMode.displayName, systemImage: model.readingMode.symbolName)
+          .font(.caption)
+      }
+      .help("Reading mode: \(model.readingMode.helpText)")
+    }
+
+    // Freeze pane toggle
+    ToolbarItem {
+      FreezePaneToggleButton(
+        isFrozen: $model.isFreezePaneActive,
+        onAutoDetect: {
+          if let extraction = try? renderingPipeline.extractText(),
+             !extraction.tables.isEmpty {
+            let table = extraction.tables[0]
+            let config = FreezePaneConfig.autoDetect(
+              rows: table.rows,
+              columns: table.columns,
+              confidence: table.confidence
+            )
+            model.freezePaneConfig = config
+            model.isFreezePaneActive = config.isActive
+          }
+        },
+        onToggle: {
+          NotificationCenter.default.post(
+            name: .freezePaneStateChanged,
+            object: nil,
+            userInfo: [
+              "isActive": model.isFreezePaneActive,
+              "config": model.freezePaneConfig
+            ]
+          )
+        }
+      )
+    }
+
+    // Content suggestion indicator
+    ToolbarItem(placement: .status) {
+      if let suggestion = model.contentSuggestion,
+         suggestion.isActionable,
+         !model.isContentSuggestionDismissed,
+         model.readingMode != suggestion.contentType.suggestedMode {
+        Button {
+          model.readingMode = suggestion.contentType.suggestedMode
+          model.isContentSuggestionDismissed = true
+        } label: {
+          HStack(spacing: 4) {
+            Image(systemName: suggestion.contentType.symbolName)
+            Text(suggestion.contentType.suggestedAction)
+              .fontWeight(.medium)
+          }
+          .font(.caption)
+          .padding(.horizontal, 8)
+          .padding(.vertical, 3)
+          .background(Color.accentColor.opacity(0.12))
+          .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Suggest \(suggestion.contentType.suggestedAction)")
+        .help(suggestion.reason)
+
+        Button {
+          model.isContentSuggestionDismissed = true
+        } label: {
+          Image(systemName: "xmark")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+        .help("Dismiss suggestion")
+      }
     }
 
     ToolbarItem(placement: .status) {
@@ -927,15 +1047,44 @@ private struct SignatureImageTab: View {
   @State private var isImporterPresented = false
   @State private var loadedData: Data?
   @State private var cleanBackground = true
+  /// 0 = conservative (keeps more), 1 = aggressive (removes more background).
+  @State private var removalStrength: Double = 0.5
+  @State private var eraseMode = false
+  @State private var eraseStrokes: [EraseStroke] = []
+  @State private var currentStroke: [CGPoint] = []
+  @State private var containerSize: CGSize = .zero
 
-  /// The signature data to apply: the CV-cleaned result when extraction is on,
-  /// otherwise the raw import.
+  private var cleanContrast: Double { 0.5 - removalStrength * 0.45 }
+
+  /// The signature data to apply: CV-cleaned + erase-applied when enabled.
   private var effectiveData: Data? {
     guard let data = loadedData else { return nil }
-    if cleanBackground {
-      return (try? SignatureExtractor().clean(data)) ?? data
+    let base: Data = cleanBackground
+      ? (try? SignatureExtractor().clean(data)) ?? data
+      : data
+    if !eraseStrokes.isEmpty || !currentStroke.isEmpty {
+      return (try? SignatureExtractor().applyingErase(
+        base,
+        strokes: eraseStrokes + (currentStroke.isEmpty ? [] : [EraseStroke(points: currentStroke)]),
+        brush: 0.04
+      )) ?? base
     }
-    return data
+    return base
+  }
+
+  private var displayedSize: CGSize? {
+    guard let d = effectiveData, let img = NSImage(data: d) else { return nil }
+    return img.size
+  }
+
+  private func drawnRect(in container: CGSize) -> CGRect {
+    guard let n = displayedSize, n.width > 0, n.height > 0,
+          container.width > 0, container.height > 0 else {
+      return CGRect(origin: .zero, size: container)
+    }
+    let scale = min(container.width / n.width, container.height / n.height)
+    let w = n.width * scale, h = n.height * scale
+    return CGRect(x: (container.width - w) / 2, y: (container.height - h) / 2, width: w, height: h)
   }
 
   var body: some View {
@@ -946,23 +1095,70 @@ private struct SignatureImageTab: View {
         .disabled(loadedData == nil)
 
       if let data = effectiveData, let img = NSImage(data: data) {
-        Image(nsImage: img)
-          .resizable()
-          .scaledToFit()
-          .frame(maxHeight: 110)
-          .padding(8)
-      } else if loadedData == nil {
-        Button("Choose an image…") {
-          isImporterPresented = true
+        GeometryReader { geo in
+          let dRect = drawnRect(in: geo.size)
+          let strokes = eraseStrokes + (currentStroke.isEmpty ? [] : [EraseStroke(points: currentStroke)])
+          ZStack {
+            Image(nsImage: img)
+              .resizable()
+              .scaledToFit()
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if eraseMode {
+              Canvas { cx, _ in
+                for stroke in strokes {
+                  var path = Path()
+                  for (i, p) in stroke.points.enumerated() {
+                    let px = dRect.origin.x + p.x * dRect.width
+                    let py = dRect.origin.y + p.y * dRect.height
+                    if i == 0 { path.move(to: CGPoint(x: px, y: py)) }
+                    else { path.addLine(to: CGPoint(x: px, y: py)) }
+                  }
+                  cx.stroke(path, with: .color(.red.opacity(0.55)),
+                            lineWidth: max(3, dRect.width * 0.04))
+                }
+              }
+            }
+          }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .contentShape(Rectangle())
+          .gesture(eraseMode ? dragGesture(dRect: dRect) : nil)
+          .onAppear { containerSize = geo.size }
+          .onChange(of: geo.size) { _, newSize in containerSize = newSize }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(height: 160)
+        .padding(8)
+        .background(.quaternary)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+      } else if loadedData == nil {
+        Button("Choose an image…") { isImporterPresented = true }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+      }
+
+      if loadedData != nil {
+        HStack(spacing: 12) {
+          Button("Choose another…") { isImporterPresented = true }
+            .buttonStyle(.bordered)
+          Spacer()
+          if eraseMode {
+            Button("Clear erases") { eraseStrokes.removeAll(); currentStroke.removeAll() }
+              .buttonStyle(.bordered)
+          }
+          Toggle("Erase smudges", isOn: $eraseMode)
+            .font(.caption)
+            .toggleStyle(.switch)
+        }
+        .padding(.horizontal, 24)
+
+        if cleanBackground {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Background removal strength").font(.caption2)
+            Slider(value: $removalStrength, in: 0...1, step: 0.01)
+          }
+          .padding(.horizontal, 24)
+        }
       }
 
       HStack {
-        if loadedData != nil {
-          Button("Choose another…") { isImporterPresented = true }
-            .buttonStyle(.bordered)
-        }
         Spacer()
         Button("Use signature") {
           if let data = effectiveData {
@@ -980,12 +1176,30 @@ private struct SignatureImageTab: View {
       allowedContentTypes: [.png, .jpeg],
       allowsMultipleSelection: false
     ) { result in
-      if case .success(let urls) = result, let url = urls.first {
-        if let data = try? Data(contentsOf: url) {
-          loadedData = data
-        }
+      if case .success(let urls) = result, let url = urls.first,
+         let data = try? Data(contentsOf: url) {
+        loadedData = data
+        eraseStrokes.removeAll()
+        currentStroke.removeAll()
       }
     }
+  }
+
+  private func dragGesture(dRect: CGRect) -> some Gesture {
+    DragGesture(minimumDistance: 0)
+      .onChanged { value in
+        let nx = (value.location.x - dRect.origin.x) / dRect.width
+        let ny = (value.location.y - dRect.origin.y) / dRect.height
+        guard nx >= 0, nx <= 1, ny >= 0, ny <= 1 else { return }
+        let p = CGPoint(x: nx, y: ny)
+        if currentStroke.isEmpty { currentStroke = [p] } else { currentStroke.append(p) }
+      }
+      .onEnded { _ in
+        if !currentStroke.isEmpty {
+          eraseStrokes.append(EraseStroke(points: currentStroke))
+          currentStroke.removeAll()
+        }
+      }
   }
 }
 
@@ -1098,9 +1312,50 @@ public struct SettingsView: View {
       } header: {
         Text("Safety")
       }
+
+      AppearanceSettingsSection()
     }
     .formStyle(.grouped)
     .scenePadding()
     .frame(width: 460)
+  }
+}
+
+// MARK: - Appearance Settings
+
+/// Appearance section in Settings (light/dark/system + high contrast).
+///
+/// Uses `ThemeManager`'s persisted `@AppStorage` directly so it works
+/// without an environment object — Settings is a separate scene.
+private struct AppearanceSettingsSection: View {
+  @AppStorage("appearanceMode") private var appearanceModeRaw: String = AppearanceMode.system.rawValue
+  @AppStorage("isHighContrast") private var isHighContrast: Bool = false
+
+  private var appearanceMode: AppearanceMode {
+    get { AppearanceMode(rawValue: appearanceModeRaw) ?? .system }
+    set { appearanceModeRaw = newValue.rawValue }
+  }
+
+  var body: some View {
+    Section {
+      Picker("Appearance", selection: Binding(
+        get: { appearanceMode },
+        set: { appearanceModeRaw = $0.rawValue }
+      )) {
+        ForEach(AppearanceMode.allCases, id: \.self) { mode in
+          Text(mode.displayName).tag(mode)
+        }
+      }
+      .pickerStyle(.radioGroup)
+
+      Toggle("High contrast", isOn: $isHighContrast)
+        .help("Thicker borders, stronger focus rings, and higher contrast ratios.")
+
+      Text("High contrast is independent of light/dark. It strengthens visual boundaries for accessibility.")
+        .font(.callout)
+        .foregroundStyle(.secondary)
+    } header: {
+      Text("Appearance")
+    }
   }
 }

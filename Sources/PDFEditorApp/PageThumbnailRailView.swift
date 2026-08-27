@@ -6,10 +6,18 @@ import SwiftUI
 public struct PageThumbnailRailView: View {
   let model: AppModel
   let inspection: DocumentInspection
+  /// Shared rendering pipeline (owned by ContentView) whose cache this rail
+  /// both consumes and warms.
+  let renderingPipeline: RenderingPipeline
 
-  public init(model: AppModel, inspection: DocumentInspection) {
+  public init(
+    model: AppModel,
+    inspection: DocumentInspection,
+    renderingPipeline: RenderingPipeline
+  ) {
     self.model = model
     self.inspection = inspection
+    self.renderingPipeline = renderingPipeline
   }
 
   public var body: some View {
@@ -100,26 +108,14 @@ public struct PageThumbnailRailView: View {
       model.selectedPageIndex = page.pageIndex
     } label: {
       HStack(alignment: .top, spacing: 10) {
-        // Page representation icon / preview box
-        ZStack {
-          RoundedRectangle(cornerRadius: 4)
-            .fill(Color(NSColor.textBackgroundColor))
-            .shadow(color: Color.black.opacity(isSelected ? 0.15 : 0.06), radius: isSelected ? 3 : 1, x: 0, y: 1)
-
-          /* Apple Design: colored border for selected state */
-          RoundedRectangle(cornerRadius: 4)
-            .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.15), lineWidth: isSelected ? 2 : 1)
-
-          VStack(spacing: 2) {
-            Image(systemName: isSelected ? "doc.fill" : "doc")
-              .font(.title3)
-              .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
-
-            Text("\(page.pageLabel)")
-              .font(.caption2.weight(.bold))
-              .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
-          }
-        }
+        // Real page thumbnail rendered through the shared pipeline, with a
+        // graceful fallback to the generic document icon while it loads.
+        RailThumbnail(
+          pipeline: renderingPipeline,
+          pageIndex: page.pageIndex,
+          isSelected: isSelected,
+          label: page.pageLabel
+        )
         .frame(width: 38, height: 48)
 
         // Metadata & semantic badges
@@ -217,5 +213,65 @@ public struct PageThumbnailRailView: View {
     .accessibilityLabel("Page \(page.pageLabel), \(page.characterCount) characters, \(fieldCount) fields, \(candidateCount) suggestions")
     .accessibilityHint("Selects page \(page.pageLabel)")
     .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : [.isButton])
+  }
+}
+
+/// A page thumbnail rendered through the shared rendering pipeline.
+///
+/// Renders asynchronously off the main thread and falls back to a generic
+/// document icon until the render is available or if rendering fails.
+private struct RailThumbnail: View {
+  let pipeline: RenderingPipeline
+  let pageIndex: Int
+  let isSelected: Bool
+  let label: String
+
+  @State private var image: NSImage?
+
+  var body: some View {
+    ZStack {
+      RoundedRectangle(cornerRadius: 4)
+        .fill(Color(NSColor.textBackgroundColor))
+        .shadow(
+          color: Color.black.opacity(isSelected ? 0.15 : 0.06),
+          radius: isSelected ? 3 : 1,
+          x: 0,
+          y: 1
+        )
+
+      /* Apple Design: colored border for selected state */
+      RoundedRectangle(cornerRadius: 4)
+        .stroke(
+          isSelected ? Color.accentColor : Color.secondary.opacity(0.15),
+          lineWidth: isSelected ? 2 : 1
+        )
+
+      if let image {
+        Image(nsImage: image)
+          .resizable()
+          .interpolation(.high)
+          .aspectRatio(contentMode: .fit)
+          .padding(3)
+      } else {
+        Image(systemName: isSelected ? "doc.fill" : "doc")
+          .font(.title3)
+          .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+      }
+
+      Text(label)
+        .font(.caption2.weight(.bold))
+        .foregroundStyle(isSelected ? Color.accentColor : Color.primary)
+        .padding(.horizontal, 3)
+        .padding(.vertical, 1)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 2))
+        .frame(maxHeight: .infinity, alignment: .bottom)
+        .padding(.bottom, 2)
+    }
+    .task(id: "thumb-\(pageIndex)") {
+      guard image == nil else { return }
+      let rendered = await pipeline.renderThumbnailAsync(pageIndex: pageIndex, maxPixelWidth: 110)
+      guard let rendered, let nsImage = NSImage(data: rendered.imageData) else { return }
+      image = nsImage
+    }
   }
 }

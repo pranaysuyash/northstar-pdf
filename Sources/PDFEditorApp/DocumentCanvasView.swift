@@ -41,6 +41,9 @@ public enum SearchProjectionState: Equatable, Sendable {
 public struct DocumentCanvasView: View {
   @Bindable var model: AppModel
   let inspection: DocumentInspection
+  /// Shared rendering pipeline (owned by ContentView) so the canvas and the
+  /// thumbnail rail warm and consume the same render cache.
+  let renderingPipeline: RenderingPipeline
   @Binding var searchProjectionState: SearchProjectionState
   // RG-058: honor Reduce Motion for canvas-level transitions.
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -53,11 +56,13 @@ public struct DocumentCanvasView: View {
   public init(
     model: AppModel,
     inspection: DocumentInspection,
+    renderingPipeline: RenderingPipeline,
     searchProjectionState: Binding<SearchProjectionState>,
     searchFocusEvent: Binding<Int> = .constant(0)
   ) {
     self.model = model
     self.inspection = inspection
+    self.renderingPipeline = renderingPipeline
     self._searchProjectionState = searchProjectionState
     self._searchFocusEvent = searchFocusEvent
   }
@@ -100,6 +105,7 @@ public struct DocumentCanvasView: View {
   private var pdfCanvas: some View {
     PDFKitView(
       document: model.liveDocument,
+      renderingPipeline: renderingPipeline,
       projectionRevision: model.documentProjectionRevision,
       operations: model.operations,
       pageIndex: model.selectedPageIndex,
@@ -247,9 +253,24 @@ public struct DocumentCanvasView: View {
   private var floatingSearchHUD: some View {
     HStack(spacing: 8) {
       if isSearchExpanded || !model.searchQuery.isEmpty {
-        Image(systemName: "magnifyingglass")
-          .font(.caption)
-          .foregroundStyle(.secondary)
+        // Search mode picker
+        Menu {
+          ForEach(SearchMode.allCases, id: \.self) { mode in
+            Button {
+              model.searchMode = mode
+              if !model.searchQuery.isEmpty { model.runSearch() }
+            } label: {
+              Label(mode.displayName, systemImage: mode.symbolName)
+            }
+          }
+        } label: {
+          Image(systemName: model.searchMode.symbolName)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .menuStyle(.borderlessButton)
+        .frame(width: 20)
+        .help(model.searchMode.helpText)
 
         TextField("Find in document…", text: $model.searchQuery)
           .textFieldStyle(.plain)
@@ -307,6 +328,29 @@ public struct DocumentCanvasView: View {
         }
         .buttonStyle(.plain)
         .help("Clear search")
+
+        // Search history
+        if !model.searchHistory.isEmpty {
+          Menu {
+            ForEach(model.searchHistory, id: \.self) { recent in
+              Button(recent) {
+                model.searchQuery = recent
+                model.runSearch()
+              }
+            }
+            Divider()
+            Button("Clear History", role: .destructive) {
+              model.clearSearchHistory()
+            }
+          } label: {
+            Image(systemName: "clock.arrow.circlepath")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
+          .menuStyle(.borderlessButton)
+          .frame(width: 20)
+          .help("Recent searches")
+        }
       } else {
         Button {
           // RG-058: skip the expand animation under Reduce Motion.
@@ -739,6 +783,7 @@ public final class InteractivePDFView: PDFView {
 
 public struct PDFKitView: NSViewRepresentable {
   public let document: PDFDocument?
+  public let renderingPipeline: RenderingPipeline
   public let projectionRevision: UInt64
   public let operations: [EditOperation]
   public let pageIndex: Int
@@ -762,6 +807,7 @@ public struct PDFKitView: NSViewRepresentable {
 
   public init(
     document: PDFDocument?,
+    renderingPipeline: RenderingPipeline,
     projectionRevision: UInt64,
     operations: [EditOperation],
     pageIndex: Int,
@@ -784,6 +830,7 @@ public struct PDFKitView: NSViewRepresentable {
     onDismissInlineEditor: @escaping () -> Void
   ) {
     self.document = document
+    self.renderingPipeline = renderingPipeline
     self.projectionRevision = projectionRevision
     self.operations = operations
     self.pageIndex = pageIndex
@@ -817,6 +864,11 @@ public struct PDFKitView: NSViewRepresentable {
 
   @MainActor
   public final class Coordinator {
+    /// Unified rendering pipeline for progressive rendering and position persistence.
+    /// Assigned in `makeNSView` from the shared pipeline owned by ContentView.
+    var renderingPipeline: RenderingPipeline?
+    weak var freezePaneOverlay: FreezePaneOverlayView?
+    var freezePaneState = FreezePaneState()
     weak var sourceDocument: PDFDocument?
     var presentationDocument: PDFDocument?
     var presentationRotation: Int?
@@ -909,6 +961,53 @@ public struct PDFKitView: NSViewRepresentable {
           }
         )
       }
+
+      // Observe page changes for reading position persistence
+      projectionObserverTokenStore.tokens.append(
+        notificationCenter.addObserver(
+          forName: .PDFViewPageChanged,
+          object: view,
+          queue: .main
+        ) { [weak self] _ in
+          Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            guard let view = self.observedRootView as? InteractivePDFView else { return }
+            if let currentPage = view.currentPage,
+               let doc = view.document {
+              let pageIndex = doc.index(for: currentPage)
+              let docID = self.sourceDocument?.documentURL?.lastPathComponent ?? "unknown"
+              self.renderingPipeline?.updateReadingPosition(
+                documentID: docID,
+                pageIndex: pageIndex,
+                scrollOffset: 0,
+                scale: view.scaleFactor
+              )
+              // Update freeze pane overlay for new page
+              self.freezePaneOverlay?.currentPageIndex = pageIndex
+              self.freezePaneOverlay?.pdfDocument = doc
+              self.freezePaneOverlay?.zoomScale = view.scaleFactor
+              self.freezePaneOverlay?.needsDisplay = true
+            }
+          }
+        }
+      )
+
+      // Observe freeze pane state changes
+      projectionObserverTokenStore.tokens.append(
+        notificationCenter.addObserver(
+          forName: .freezePaneStateChanged,
+          object: nil,
+          queue: .main
+        ) { [weak self] notification in
+          let isActive = notification.userInfo?["isActive"] as? Bool ?? false
+          let config = notification.userInfo?["config"] as? FreezePaneConfig ?? .none
+          Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            self.freezePaneOverlay?.config = isActive ? config : .none
+            self.freezePaneOverlay?.needsDisplay = true
+          }
+        }
+      )
     }
   }
 
@@ -918,6 +1017,7 @@ public struct PDFKitView: NSViewRepresentable {
 
   public func makeNSView(context: Context) -> InteractivePDFView {
     let view = InteractivePDFView()
+    context.coordinator.renderingPipeline = renderingPipeline
     view.autoScales = false
     view.displayMode = .singlePageContinuous
     view.displayBox = .cropBox
@@ -931,6 +1031,15 @@ public struct PDFKitView: NSViewRepresentable {
     overlayView.wantsLayer = true
     view.addSubview(overlayView)
     context.coordinator.overlayView = overlayView
+
+    // Freeze pane overlay — sits above the presentation overlay
+    let freezeOverlay = FreezePaneOverlayView(frame: view.bounds)
+    freezeOverlay.autoresizingMask = [.width, .height]
+    freezeOverlay.wantsLayer = true
+    freezeOverlay.layer?.zPosition = 100 // above presentation overlay
+    view.addSubview(freezeOverlay)
+    context.coordinator.freezePaneOverlay = freezeOverlay
+
     view.onProjectionInvalidated = { @MainActor [weak coordinator = context.coordinator] in
       coordinator?.invalidateOverlay()
     }
@@ -957,6 +1066,34 @@ public struct PDFKitView: NSViewRepresentable {
         }
         context.coordinator.presentationDocument = presentationDocument
         view.document = presentationDocument
+
+        // Progressive rendering: load document into pipeline for caching and position persistence
+        if let data = presentationDocument.dataRepresentation() {
+          let docID = document.documentURL?.lastPathComponent ?? "unknown"
+          Task {
+            _ = try? await context.coordinator.renderingPipeline?.loadDocument(data: data, documentID: docID)
+            // Warm the render cache for the first pages so the thumbnail rail
+            // and progressive renderer paint from cache.
+            context.coordinator.renderingPipeline?.warmUpPages(
+              pageIndexes: Array(0..<min(8, presentationDocument.pageCount)),
+              dpi: 72
+            )
+            // Restore saved reading position if available
+            if let position = context.coordinator.renderingPipeline?.getReadingPosition(documentID: docID) {
+              if position.pageIndex < presentationDocument.pageCount {
+                view.go(to: presentationDocument.page(at: position.pageIndex) ?? presentationDocument.page(at: 0)!)
+              }
+            }
+            // Content routing: detect dominant content type
+            if let suggestion = try? context.coordinator.renderingPipeline?.routeContent() {
+              NotificationCenter.default.post(
+                name: .contentRoutingResult,
+                object: nil,
+                userInfo: ["suggestion": suggestion]
+              )
+            }
+          }
+        }
       } else {
         context.coordinator.presentationDocument = document
         view.document = document

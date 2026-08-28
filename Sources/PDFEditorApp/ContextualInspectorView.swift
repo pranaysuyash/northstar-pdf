@@ -5,6 +5,8 @@ import SwiftUI
 
 public enum InspectorTab: String, CaseIterable, Identifiable {
   case focus = "Focus & Edit"
+  case understand = "Understand"
+  case learn = "Learn"
   case document = "Document"
   case trust = "Trust & Safety"
 
@@ -12,6 +14,8 @@ public enum InspectorTab: String, CaseIterable, Identifiable {
   public var symbolName: String {
     switch self {
     case .focus: return "scope"
+    case .understand: return "brain.head.profile"
+    case .learn: return "book"
     case .document: return "doc.text"
     case .trust: return "lock.shield"
     }
@@ -21,8 +25,14 @@ public enum InspectorTab: String, CaseIterable, Identifiable {
 public struct ContextualInspectorView: View {
   @Bindable var model: AppModel
   let inspection: DocumentInspection
+  let renderingPipeline: RenderingPipeline
   @Binding var isSecurityVaultPresented: Bool
+  @ObservedObject var annotationStore: AnnotationStore
   @State private var selectedTab: InspectorTab = .focus
+  // UNDERSTAND tab state
+  @State private var understandResult: (summary: DocumentSummary?, entities: EntityRecognitionResult?, keyPoints: KeyPointExtractionResult?) = (nil, nil, nil)
+  @State private var understandError: String?
+  @State private var isLoadingUnderstand = false
   @State private var fieldDraft = ""
   @State private var overlayDraft = ""
   @State private var choiceCellIndex = 0
@@ -33,11 +43,15 @@ public struct ContextualInspectorView: View {
   public init(
     model: AppModel,
     inspection: DocumentInspection,
-    isSecurityVaultPresented: Binding<Bool>
+    renderingPipeline: RenderingPipeline,
+    isSecurityVaultPresented: Binding<Bool>,
+    annotationStore: AnnotationStore
   ) {
     self.model = model
     self.inspection = inspection
+    self.renderingPipeline = renderingPipeline
     self._isSecurityVaultPresented = isSecurityVaultPresented
+    self.annotationStore = annotationStore
   }
 
   public var body: some View {
@@ -61,6 +75,10 @@ public struct ContextualInspectorView: View {
           switch selectedTab {
           case .focus:
             focusTabContent
+          case .understand:
+            understandTabContent
+          case .learn:
+            learnTabContent
           case .document:
             documentTabContent
           case .trust:
@@ -543,6 +561,266 @@ public struct ContextualInspectorView: View {
     }
   }
 
+  // MARK: - Understand Tab
+  private var understandTabContent: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      // Run Analysis button
+      if understandResult.summary == nil && !isLoadingUnderstand {
+        VStack(alignment: .leading, spacing: 8) {
+          Text("Document Analysis")
+            .font(.subheadline.weight(.semibold))
+          Text("Extract key points, entities, and structure from this document.")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+          Button {
+            Task { await runUnderstandAnalysis() }
+          } label: {
+            Label("Analyze Document", systemImage: "brain.head.profile")
+          }
+          .buttonStyle(.borderedProminent)
+        }
+      }
+
+      if isLoadingUnderstand {
+        HStack(spacing: 8) {
+          ProgressView()
+            .controlSize(.small)
+          Text("Analyzing...")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+      }
+
+      if let error = understandError {
+        Label(error, systemImage: "exclamationmark.triangle")
+          .font(.caption)
+          .foregroundStyle(.red)
+      }
+
+      if let summary = understandResult.summary {
+        understandSummarySection(summary)
+      }
+
+      if let entities = understandResult.entities, entities.totalCount > 0 {
+        understandEntitiesSection(entities)
+      }
+
+      if let keyPoints = understandResult.keyPoints, keyPoints.totalCount > 0 {
+        understandKeyPointsSection(keyPoints)
+      }
+    }
+  }
+
+  @MainActor
+  private func runUnderstandAnalysis() async {
+    isLoadingUnderstand = true
+    understandError = nil
+    defer { isLoadingUnderstand = false }
+
+    do {
+      let result = try renderingPipeline.understand()
+      understandResult = (result.summary, result.entities, result.keyPoints)
+    } catch {
+      understandError = "Analysis failed: \(error.localizedDescription)"
+    }
+  }
+
+  private func understandSummarySection(_ summary: DocumentSummary) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label("Summary", systemImage: "doc.text")
+        .font(.subheadline.weight(.semibold))
+
+      Text(summary.summary)
+        .font(.caption)
+        .fixedSize(horizontal: false, vertical: true)
+
+      // Stats
+      HStack(spacing: 12) {
+        LabeledContent("Sentences", value: "\(summary.totalSentences)")
+        LabeledContent("Key points", value: "\(summary.keyPoints.count)")
+      }
+      .font(.caption2)
+
+      // Structure
+      if !summary.structure.isEmpty {
+        VStack(alignment: .leading, spacing: 4) {
+          Text("Structure")
+            .font(.caption.weight(.semibold))
+          ForEach(summary.structure) { section in
+            HStack {
+              Text(String(repeating: "  ", count: section.level))
+              + Text(section.title)
+                .font(.caption)
+              Spacer()
+              Text("p\(section.pageIndex + 1)")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+          }
+        }
+      }
+    }
+    .padding(8)
+    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+  }
+
+  private func understandEntitiesSection(_ entities: EntityRecognitionResult) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label("Entities", systemImage: "magnifyingglass")
+        .font(.subheadline.weight(.semibold))
+
+      Text("\(entities.totalCount) found across \(entities.typeCount) types")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      ForEach(EntityType.allCases.filter { entities.byType[$0]?.isEmpty == false }, id: \.self) { type in
+        let ofType = entities.byType[type] ?? []
+        VStack(alignment: .leading, spacing: 4) {
+          Text(type.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+            .font(.caption.weight(.semibold))
+          ForEach(ofType.prefix(5)) { entity in
+            HStack {
+              Text(entity.value)
+                .font(.caption)
+              Spacer()
+              Text("p\(entity.sourcePageIndex + 1)")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+          }
+          if ofType.count > 5 {
+            Text("+ \(ofType.count - 5) more")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
+      }
+    }
+    .padding(8)
+    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+  }
+
+  private func understandKeyPointsSection(_ keyPoints: KeyPointExtractionResult) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label("Key Points", systemImage: "lightbulb.max")
+        .font(.subheadline.weight(.semibold))
+
+      Text("\(keyPoints.totalCount) found across \(keyPoints.typeCount) types")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      ForEach(KeyPointType.allCases.filter { keyPoints.byType[$0]?.isEmpty == false }, id: \.self) { type in
+        let ofType = keyPoints.byType[type] ?? []
+        VStack(alignment: .leading, spacing: 4) {
+          Text(type.rawValue.capitalized)
+            .font(.caption.weight(.semibold))
+          ForEach(ofType.prefix(3)) { kp in
+            HStack(alignment: .top) {
+              Text(kp.text)
+                .font(.caption)
+                .lineLimit(3)
+              Spacer()
+              Text(String(format: "%.0f%%", kp.importance * 100))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+          }
+          if ofType.count > 3 {
+            Text("+ \(ofType.count - 3) more")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
+      }
+    }
+    .padding(8)
+    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+  }
+
+  // MARK: - Learn Tab (Study Loop)
+  private var learnTabContent: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      // Study Loop Header
+      HStack {
+        Image(systemName: "book")
+          .font(.title2)
+          .foregroundColor(.purple)
+        VStack(alignment: .leading) {
+          Text("Study Your Marks")
+            .font(.subheadline.weight(.semibold))
+          Text("Active recall from annotation marks")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        }
+        Spacer()
+      }
+
+      // Annotation marks count
+      let visibleMarks = annotationStore.marks.filter { $0.isVisible }
+      if visibleMarks.isEmpty {
+        VStack(spacing: 12) {
+          Image(systemName: "highlighter")
+            .font(.title)
+            .foregroundColor(.secondary)
+          Text("No annotation marks yet")
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+          Text("Select text in the document to create highlights, underlines, or notes. These marks become your study material.")
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+      } else {
+        // Quick stats
+        VStack(alignment: .leading, spacing: 8) {
+          Text("\(visibleMarks.count) mark\(visibleMarks.count == 1 ? "" : "s") available for study")
+            .font(.subheadline)
+
+          // Mark type breakdown
+          let highlights = visibleMarks.filter { $0.type == .highlight }.count
+          let underlines = visibleMarks.filter { $0.type == .underline }.count
+          let notes = visibleMarks.filter { $0.type == .note }.count
+          let others = visibleMarks.count - highlights - underlines - notes
+
+          HStack(spacing: 12) {
+            if highlights > 0 {
+              Label("\(highlights) highlight\(highlights == 1 ? "" : "s")", systemImage: "highlighter")
+                .font(.caption)
+                .foregroundColor(.yellow)
+            }
+            if underlines > 0 {
+              Label("\(underlines) underline\(underlines == 1 ? "" : "s")", systemImage: "underline")
+                .font(.caption)
+                .foregroundColor(.blue)
+            }
+            if notes > 0 {
+              Label("\(notes) note\(notes == 1 ? "" : "s")", systemImage: "note.text")
+                .font(.caption)
+                .foregroundColor(.green)
+            }
+            if others > 0 {
+              Label("\(others) other", systemImage: "pencil.line")
+                .font(.caption)
+                .foregroundColor(.gray)
+            }
+          }
+        }
+        .padding(10)
+        .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+
+        // Study Loop View
+        StudyLoopView(
+          documentID: annotationStore.documentID,
+          marks: visibleMarks,
+          annotationStore: annotationStore
+        )
+        .frame(minHeight: 300)
+      }
+    }
+  }
+
   // MARK: - Document Tab
   private var documentTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
@@ -642,6 +920,17 @@ public struct ContextualInspectorView: View {
           }
           .font(.caption2)
           .foregroundStyle(.secondary)
+
+          // RG-097: Native preflight parity with web — show sanitization and security
+          Text("Sanitization: \(report.payload.sanitization.status)")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          Text("External URLs: \(report.payload.networkBoundaries.externalURLCount) (\(report.payload.networkBoundaries.unsafeExternalURLCount) unsafe)")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          Text("Encrypted: \(report.payload.security.encrypted ? "Yes" : "No")")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
         }
         .padding(10)
         .background(Color.secondary.opacity(0.05))

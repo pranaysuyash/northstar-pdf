@@ -84,6 +84,28 @@ public struct ReadingDisplayParams: Sendable {
   /// Whether to show a reading progress indicator.
   public let showProgress: Bool
 
+  // MARK: - Zoom & Navigation
+
+  /// Default zoom level when switching to this mode (0 = fit width, >0 = absolute scale).
+  public let defaultZoomLevel: Double
+  /// Page fit mode on mode switch.
+  public let pageFitMode: PageFitMode
+  /// Scroll speed multiplier (1.0 = normal, >1 = faster, <1 = slower).
+  public let scrollSpeedMultiplier: Double
+  /// Whether kinetic scrolling is enabled.
+  public let kineticScrolling: Bool
+
+  // MARK: - Font Rendering
+
+  /// Font weight adjustment (-1.0 to 1.0, 0 = normal).
+  public let fontWeightAdjustment: Double
+  /// Whether to use subpixel anti-aliasing.
+  public let subpixelAntialiasing: Bool
+  /// Minimum font size override (nil = use document default).
+  public let minimumFontSize: Double?
+  /// Line height multiplier independent of textSpacingMultiplier.
+  public let lineHeightMultiplier: Double
+
   /// Derive display parameters from a reading mode.
   public static func params(for mode: ReadingMode) -> ReadingDisplayParams {
     switch mode {
@@ -98,7 +120,15 @@ public struct ReadingDisplayParams: Sendable {
         backgroundOpacity: 0.0,
         continuousScroll: true,
         showPageNumbers: true,
-        showProgress: true
+        showProgress: true,
+        defaultZoomLevel: 0,
+        pageFitMode: .fitWidth,
+        scrollSpeedMultiplier: 1.0,
+        kineticScrolling: true,
+        fontWeightAdjustment: 0,
+        subpixelAntialiasing: true,
+        minimumFontSize: nil,
+        lineHeightMultiplier: 1.3
       )
     case .skim:
       return ReadingDisplayParams(
@@ -111,7 +141,15 @@ public struct ReadingDisplayParams: Sendable {
         backgroundOpacity: 0.0,
         continuousScroll: true,
         showPageNumbers: true,
-        showProgress: true
+        showProgress: true,
+        defaultZoomLevel: 0,
+        pageFitMode: .fitPage,
+        scrollSpeedMultiplier: 2.0,
+        kineticScrolling: true,
+        fontWeightAdjustment: 0.1,
+        subpixelAntialiasing: false,
+        minimumFontSize: nil,
+        lineHeightMultiplier: 1.0
       )
     case .reference:
       return ReadingDisplayParams(
@@ -124,7 +162,15 @@ public struct ReadingDisplayParams: Sendable {
         backgroundOpacity: 0.02,
         continuousScroll: true,
         showPageNumbers: true,
-        showProgress: false
+        showProgress: false,
+        defaultZoomLevel: 0,
+        pageFitMode: .fitWidth,
+        scrollSpeedMultiplier: 0.8,
+        kineticScrolling: false,
+        fontWeightAdjustment: 0,
+        subpixelAntialiasing: true,
+        minimumFontSize: nil,
+        lineHeightMultiplier: 1.2
       )
     case .review:
       return ReadingDisplayParams(
@@ -137,8 +183,48 @@ public struct ReadingDisplayParams: Sendable {
         backgroundOpacity: 0.0,
         continuousScroll: true,
         showPageNumbers: true,
-        showProgress: true
+        showProgress: true,
+        defaultZoomLevel: 0,
+        pageFitMode: .fitWidth,
+        scrollSpeedMultiplier: 1.0,
+        kineticScrolling: true,
+        fontWeightAdjustment: 0,
+        subpixelAntialiasing: true,
+        minimumFontSize: nil,
+        lineHeightMultiplier: 1.25
       )
+    }
+  }
+}
+
+// MARK: - Page Fit Mode
+
+/// How pages fit in the viewport.
+public enum PageFitMode: String, Codable, Sendable, CaseIterable {
+  /// Zoom to fill the viewport width.
+  case fitWidth
+  /// Zoom to fit the entire page.
+  case fitPage
+  /// Zoom to a specific scale (use defaultZoomLevel).
+  case absolute
+  /// Zoom to fill height (for landscape pages).
+  case fitHeight
+
+  public var displayName: String {
+    switch self {
+    case .fitWidth: return "Fit Width"
+    case .fitPage: return "Fit Page"
+    case .absolute: return "Actual Size"
+    case .fitHeight: return "Fit Height"
+    }
+  }
+
+  public var symbolName: String {
+    switch self {
+    case .fitWidth: return "rectangle.righthalf.inward.filled"
+    case .fitPage: return "rectangle.inset.filled"
+    case .absolute: return "1.magnifyingglass"
+    case .fitHeight: return "rectangle.bottomhalf.inward.filled"
     }
   }
 }

@@ -47,6 +47,8 @@ public struct DocumentCanvasView: View {
   /// Display parameters from the current reading mode.
   let readingParams: ReadingDisplayParams
   @Binding var searchProjectionState: SearchProjectionState
+  /// Annotation store for creating marks from text selection.
+  var annotationStore: AnnotationStore?
   // RG-058: honor Reduce Motion for canvas-level transitions.
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   // RG-059: raised-contrast chrome under the Increased Contrast setting.
@@ -55,13 +57,20 @@ public struct DocumentCanvasView: View {
   @Binding var searchFocusEvent: Int
   @FocusState private var isSearchFieldFocused: Bool
 
+  // MARK: - Annotation Text Selection State
+  @State private var selectedAnnotationText: String = ""
+  @State private var selectedAnnotationBounds: PDFRect = PDFRect(x: 0, y: 0, width: 0, height: 0)
+  @State private var selectedAnnotationPageIndex: Int = 0
+  @State private var isAnnotationToolbarVisible: Bool = false
+
   public init(
     model: AppModel,
     inspection: DocumentInspection,
     renderingPipeline: RenderingPipeline,
     readingParams: ReadingDisplayParams = ReadingDisplayParams.params(for: .study),
     searchProjectionState: Binding<SearchProjectionState>,
-    searchFocusEvent: Binding<Int> = .constant(0)
+    searchFocusEvent: Binding<Int> = .constant(0),
+    annotationStore: AnnotationStore? = nil
   ) {
     self.model = model
     self.inspection = inspection
@@ -69,6 +78,7 @@ public struct DocumentCanvasView: View {
     self.readingParams = readingParams
     self._searchProjectionState = searchProjectionState
     self._searchFocusEvent = searchFocusEvent
+    self.annotationStore = annotationStore
   }
 
   @State private var isSearchExpanded = false
@@ -141,8 +151,49 @@ public struct DocumentCanvasView: View {
       },
       onDismissInlineEditor: {
         model.dismissInlineEditor()
+      },
+      onTextSelectionChanged: { text, bounds, pageIndex in
+        selectedAnnotationText = text
+        selectedAnnotationBounds = bounds
+        selectedAnnotationPageIndex = pageIndex
+        isAnnotationToolbarVisible = true
+      },
+      onSelectionCleared: {
+        isAnnotationToolbarVisible = false
+        selectedAnnotationText = ""
       }
     )
+    .overlay {
+      if isAnnotationToolbarVisible, let store = annotationStore {
+        VStack {
+          Spacer()
+          AnnotationCreationToolbar(
+            store: store,
+            selectedText: selectedAnnotationText,
+            selectedBounds: selectedAnnotationBounds,
+            pageIndex: selectedAnnotationPageIndex,
+            documentURL: model.sourceURL,
+            onDismiss: {
+              isAnnotationToolbarVisible = false
+              selectedAnnotationText = ""
+            }
+          )
+          .padding(.bottom, 20)
+        }
+      }
+    }
+    // Annotation marks overlay (gated by reading mode)
+    .overlay {
+      if readingParams.showAnnotations, let store = annotationStore {
+        let snapshot = model.inspection?.pages.first { $0.pageIndex == model.selectedPageIndex }
+        AnnotationMarksOverlay(
+          marks: store.marks,
+          pageIndex: model.selectedPageIndex,
+          pageBounds: snapshot.map { CGRect(x: $0.bounds.x, y: $0.bounds.y, width: $0.bounds.width, height: $0.bounds.height) } ?? .zero,
+          zoomScale: 1.0
+        )
+      }
+    }
     .accessibilityElement(children: .contain)
     .accessibilityLabel("PDF document page \(model.selectedPageIndex + 1)")
     .accessibilityValue(accessibilityValueDescription)
@@ -712,6 +763,8 @@ public final class InteractivePDFView: PDFView {
   public var onManualPlacement: ((Int, CGPoint) -> Void)?
   public var onDirectEdit: ((Int, CGPoint) -> Void)?
   public var onPageTap: ((Int, CGPoint) -> Void)?
+  public var onTextSelectionChanged: ((String, PDFRect, Int) -> Void)?
+  public var onSelectionCleared: (() -> Void)?
   public var onProjectionInvalidated: (@MainActor @Sendable () -> Void)?
   public var requestedScaleMode: ReaderScaleMode = .fitWidth
   public var requestedRowWidth: CGFloat = 612
@@ -767,6 +820,26 @@ public final class InteractivePDFView: PDFView {
     }
   }
 
+  public override func mouseUp(with event: NSEvent) {
+    super.mouseUp(with: event)
+    detectTextSelection()
+  }
+
+  /// Detect the current PDFKit text selection and fire the callback.
+  public func detectTextSelection() {
+    guard let selection = currentSelection,
+      let selectedText = selection.string,
+      !selectedText.isEmpty,
+      let page = selection.pages.first,
+      let document else {
+      onSelectionCleared?()
+      return
+    }
+    let bounds = selection.bounds(for: page)
+    let pageIndex = document.index(for: page)
+    onTextSelectionChanged?(selectedText, PDFRect(bounds), pageIndex)
+  }
+
   public override func keyDown(with event: NSEvent) {
     guard isManualPlacementMode,
       event.keyCode == 36 || event.keyCode == 49,
@@ -808,6 +881,8 @@ public struct PDFKitView: NSViewRepresentable {
   public let onPageTap: (Int, CGPoint) -> Void
   public let onCommitInlineEditor: (String) -> Void
   public let onDismissInlineEditor: () -> Void
+  public let onTextSelectionChanged: ((String, PDFRect, Int) -> Void)?
+  public let onSelectionCleared: (() -> Void)?
 
   public init(
     document: PDFDocument?,
@@ -831,7 +906,9 @@ public struct PDFKitView: NSViewRepresentable {
     onDirectEdit: @escaping (Int, CGPoint) -> Void,
     onPageTap: @escaping (Int, CGPoint) -> Void,
     onCommitInlineEditor: @escaping (String) -> Void,
-    onDismissInlineEditor: @escaping () -> Void
+    onDismissInlineEditor: @escaping () -> Void,
+    onTextSelectionChanged: ((String, PDFRect, Int) -> Void)? = nil,
+    onSelectionCleared: (() -> Void)? = nil
   ) {
     self.document = document
     self.renderingPipeline = renderingPipeline
@@ -855,6 +932,8 @@ public struct PDFKitView: NSViewRepresentable {
     self.onPageTap = onPageTap
     self.onCommitInlineEditor = onCommitInlineEditor
     self.onDismissInlineEditor = onDismissInlineEditor
+    self.onTextSelectionChanged = onTextSelectionChanged
+    self.onSelectionCleared = onSelectionCleared
   }
 
   private final class ProjectionObserverTokenStore {
@@ -1044,6 +1123,8 @@ public struct PDFKitView: NSViewRepresentable {
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
     view.onPageTap = onPageTap
+    view.onTextSelectionChanged = onTextSelectionChanged
+    view.onSelectionCleared = onSelectionCleared
 
     let overlayView = PDFPresentationOverlayView(frame: view.bounds)
     overlayView.autoresizingMask = [.width, .height]
@@ -1125,6 +1206,8 @@ public struct PDFKitView: NSViewRepresentable {
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
     view.onPageTap = onPageTap
+    view.onTextSelectionChanged = onTextSelectionChanged
+    view.onSelectionCleared = onSelectionCleared
     view.onProjectionInvalidated = { @MainActor [weak coordinator = context.coordinator] in
       coordinator?.invalidateOverlay()
     }

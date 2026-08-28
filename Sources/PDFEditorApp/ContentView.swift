@@ -70,10 +70,17 @@ public struct ContentView: View {
   @State private var renderingPipeline = RenderingPipeline()
   @StateObject private var themeManager = ThemeManager()
   @StateObject private var readingHistory = ReadingHistoryManager()
+  @StateObject private var annotationStore = AnnotationStore()
+  @StateObject private var documentIndex = DocumentIndex()
+  @StateObject private var versionStore = VersionStore()
+  @StateObject private var governanceEngine = GovernanceEngine()
   @State private var searchProjectionState: SearchProjectionState = .none
   @State private var isAgentCommandPresented = false
   @State private var isSecurityVaultPresented = false
   @State private var isBatchMergePresented = false
+  @State private var isDocumentBrowserPresented = false
+  @State private var isVersionComparePresented = false
+  @State private var isGovernanceDashboardPresented = false
   // Apple Design §13: haptic trigger tokens
   @State private var hapticNew = UUID()
   @State private var hapticOpen = UUID()
@@ -157,6 +164,18 @@ public struct ContentView: View {
         BatchMergeSheet(model: model)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
+      .sheet(isPresented: $isDocumentBrowserPresented) {
+        DocumentBrowserView(documentIndex: documentIndex)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
+      }
+      .sheet(isPresented: $isVersionComparePresented) {
+        VersionCompareView(versionStore: versionStore)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
+      }
+      .sheet(isPresented: $isGovernanceDashboardPresented) {
+        GovernanceDashboardView(engine: governanceEngine)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
+      }
       .sheet(isPresented: $model.showDiffSheet) {
         DiffComparisonView(
           sourceDocument: model.sourceDocument,
@@ -223,7 +242,8 @@ public struct ContentView: View {
             renderingPipeline: renderingPipeline,
             readingParams: readingParams,
             searchProjectionState: $searchProjectionState,
-            searchFocusEvent: $searchFocusEvent
+            searchFocusEvent: $searchFocusEvent,
+            annotationStore: annotationStore
           )
 
           if readingParams.showInspector {
@@ -231,7 +251,8 @@ public struct ContentView: View {
               model: model,
               inspection: inspection,
               renderingPipeline: renderingPipeline,
-              isSecurityVaultPresented: $isSecurityVaultPresented
+              isSecurityVaultPresented: $isSecurityVaultPresented,
+              annotationStore: annotationStore
             )
             .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
           }
@@ -395,6 +416,27 @@ public struct ContentView: View {
       .accessibilityLabel("Export edited PDF copy")
       .disabled(!canExportCopy(model))
       .help(exportCopyHelp(model))
+
+      Menu {
+        Button("Document Browser…", systemImage: "books.vertical") {
+          isDocumentBrowserPresented = true
+        }
+        .help("Browse and organize your document corpus")
+
+        Button("Version History…", systemImage: "clock.arrow.circlepath") {
+          isVersionComparePresented = true
+        }
+        .help("Compare and revert document versions")
+
+        Button("Governance Dashboard…", systemImage: "checkmark.shield") {
+          isGovernanceDashboardPresented = true
+        }
+        .help("View compliance status and policy rules")
+      } label: {
+        Label("Manager", systemImage: "slider.horizontal.3")
+      }
+      .accessibilityLabel("Manager power tools")
+      .help("Corpus organization, versioning, and governance tools")
     }
 
     ToolbarItem {
@@ -523,6 +565,18 @@ public struct ContentView: View {
             model.isFreezePaneActive = config.isActive
           }
         },
+        onApplyPreset: { preset in
+          model.freezePaneConfig = preset.config
+          model.isFreezePaneActive = preset.config.isActive
+          NotificationCenter.default.post(
+            name: .freezePaneStateChanged,
+            object: nil,
+            userInfo: [
+              "isActive": model.isFreezePaneActive,
+              "config": model.freezePaneConfig
+            ]
+          )
+        },
         onToggle: {
           NotificationCenter.default.post(
             name: .freezePaneStateChanged,
@@ -532,7 +586,18 @@ public struct ContentView: View {
               "config": model.freezePaneConfig
             ]
           )
-        }
+        },
+        matchedPresets: {
+          guard let extraction = try? renderingPipeline.extractText(),
+                !extraction.tables.isEmpty else { return [] }
+          let table = extraction.tables[0]
+          let cellTexts = table.cells.flatMap { $0 }
+          return FreezePanePresetMatcher().match(
+            rows: table.rows,
+            columns: table.columns,
+            cellTexts: cellTexts
+          )
+        }()
       )
     }
 

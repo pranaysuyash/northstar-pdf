@@ -1697,4 +1697,102 @@ struct PDFEditorCoreTests {
     // Background must be mostly removed: ink should be a minority of pixels.
     #expect(Double(opaque) < Double(outCG.width * outCG.height) * 0.9)
   }
+
+  // MARK: - SignatureExtractor coverage
+
+  private func pngData(from image: CGImage) -> Data {
+    let d = NSMutableData()
+    let dst = CGImageDestinationCreateWithData(d as CFMutableData, kUTTypePNG, 1, nil)!
+    CGImageDestinationAddImage(dst, image, nil)
+    #expect(CGImageDestinationFinalize(dst))
+    return d as Data
+  }
+
+  private func drawPNG(size: Int, _ body: (CGContext) -> Void) -> Data {
+    let ctx = CGContext(
+      data: nil, width: size, height: size,
+      bitsPerComponent: 8, bytesPerRow: size * 4,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    )!
+    body(ctx)
+    return pngData(from: ctx.makeImage()!)
+  }
+
+  private func alphaStats(_ data: Data) -> (opaque: Int, transparent: Int, total: Int, centerBlue: UInt8, centerRGBA: (UInt8, UInt8, UInt8, UInt8), maxBlue: UInt8, dims: (Int, Int)) {
+    let cg = CGImageSourceCreateWithData(data as CFData, nil)
+      .flatMap { CGImageSourceCreateImageAtIndex($0, 0, nil) }!
+    let ctx = CGContext(
+      data: nil, width: cg.width, height: cg.height,
+      bitsPerComponent: 8, bytesPerRow: cg.width * 4,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    )!
+    ctx.draw(cg, in: CGRect(x: 0, y: 0, width: cg.width, height: cg.height))
+    let ptr = ctx.data!.bindMemory(to: UInt8.self, capacity: cg.width * cg.height * 4)
+    var op = 0, tr = 0, maxB: UInt8 = 0
+    for i in 0..<(cg.width * cg.height) {
+      if ptr[i * 4 + 3] > 200 { op += 1 } else if ptr[i * 4 + 3] < 32 { tr += 1 }
+      maxB = max(maxB, ptr[i * 4 + 2])
+    }
+    let c = ((cg.height / 2) * cg.width + cg.width / 2) * 4
+    return (op, tr, cg.width * cg.height, ptr[c + 2], (ptr[c], ptr[c + 1], ptr[c + 2], ptr[c + 3]), maxB, (cg.width, cg.height))
+  }
+
+  @Test func signatureExtractorKeepsTransparentGraphic() throws {
+    // Already-transparent graphic: must not be misread as solid ink.
+    let data = drawPNG(size: 100) { ctx in
+      ctx.clear(CGRect(x: 0, y: 0, width: 100, height: 100))
+      ctx.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+      ctx.fillEllipse(in: CGRect(x: 35, y: 35, width: 30, height: 30))
+    }
+    let cleaned = try SignatureExtractor().clean(data)
+    let stats = alphaStats(cleaned)
+    #expect(stats.opaque > 0)
+    #expect(stats.transparent > 0)
+    #expect(Double(stats.opaque) < Double(stats.total) * 0.9)
+  }
+
+  @Test func signatureExtractorPreservesColoredInk() throws {
+    // Blue ink on white: color must survive extraction.
+    let data = drawPNG(size: 100) { ctx in
+      ctx.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
+      ctx.fill(CGRect(x: 0, y: 0, width: 100, height: 100))
+      ctx.setFillColor(red: 0, green: 0, blue: 1, alpha: 1)
+      ctx.fillEllipse(in: CGRect(x: 35, y: 35, width: 30, height: 30))
+    }
+    let stats = alphaStats(try SignatureExtractor().clean(data))
+    #expect(stats.opaque > 0)
+    #expect(stats.transparent > 0)
+    #expect(stats.centerBlue > 150, "center rgba=\(stats.centerRGBA) maxBlue=\(stats.maxBlue) dims=\(stats.dims) opaque=\(stats.opaque) total=\(stats.total)")
+  }
+
+  @Test func signatureExtractorHandlesUnevenLighting() throws {
+    // Strong vertical gradient (light top -> dark bottom) with ink in the dark half.
+    let data = drawPNG(size: 120) { ctx in
+      let colors = [CGColor(red: 1, green: 1, blue: 1, alpha: 1), CGColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1)] as CFArray
+      let grad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors, locations: [0, 1])!
+      ctx.drawLinearGradient(grad, start: CGPoint(x: 0, y: 0), end: CGPoint(x: 0, y: 120), options: [])
+      ctx.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+      ctx.fillEllipse(in: CGRect(x: 45, y: 45, width: 30, height: 30))
+    }
+    let stats = alphaStats(try SignatureExtractor().clean(data))
+    #expect(stats.opaque > 0)
+    #expect(stats.transparent > 0)
+  }
+
+  @Test func signatureExtractorEraseRemovesInk() throws {
+    let data = drawPNG(size: 100) { ctx in
+      ctx.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
+      ctx.fill(CGRect(x: 0, y: 0, width: 100, height: 100))
+      ctx.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+      ctx.fillEllipse(in: CGRect(x: 35, y: 35, width: 30, height: 30))
+    }
+    let cleaned = try SignatureExtractor().clean(data)
+    let before = alphaStats(cleaned).opaque
+    #expect(before > 0)
+    let stroke = EraseStroke(points: [CGPoint(x: 0.2, y: 0.5), CGPoint(x: 0.8, y: 0.5)])
+    let after = alphaStats(try SignatureExtractor().applyingErase(cleaned, strokes: [stroke], brush: 0.08)).opaque
+    #expect(after < before)
+  }
 }

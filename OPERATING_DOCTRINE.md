@@ -22,6 +22,7 @@ method for particular modes of work without replacing this source:
 - `SECURITY_PRIVACY_SAFETY_DOCTRINE.md` — how agents reason about trust, authority, sensitive data, abuse, harmful failure, and residual risk.
 - `RELEASE_READINESS_DOCTRINE.md` — how agents determine whether a bounded change is responsibly ready for real exposure, rollout, or launch.
 - `DOCUMENTATION_DOCTRINE.md` — how durable knowledge, decisions, architecture, evidence, and handoffs are recorded and maintained.
+- `INQUIRY_ANALYSIS_DOCTRINE.md` — how agents structure serious analysis through 5W1H and extended lenses for ownership, scale, alternatives, change, provenance, uncertainty, significance, and action.
 
 Load only the specialist doctrine or doctrines materially relevant to the task.
 All specialist doctrines inherit this doctrine's authority model, truth taxonomy,
@@ -291,6 +292,7 @@ real recurring need.
 - Use `EXPLORATION_DOCTRINE.md` for substantial discovery, frontier mapping, opportunity expansion, cross-domain transfer, negative-space analysis, and exploration-map work.
 - Hand evidence-seeking questions to `RESEARCH_DOCTRINE.md` instead of letting exploration guesses harden into facts.
 - Use `DOCUMENTATION_DOCTRINE.md` whenever exploration or research becomes durable knowledge.
+- Use `INQUIRY_ANALYSIS_DOCTRINE.md` when a question needs structured 5W1H analysis, causal decomposition, comparison, attribution, uncertainty, significance, or a clear next action.
 
 ## 10. Parallel work and contested state
 
@@ -398,6 +400,7 @@ doctrines are conditional method layers. Route work as follows:
 | Security / privacy / safety / threat / abuse / trust assessment | `SECURITY_PRIVACY_SAFETY_DOCTRINE.md` | protecting authority, sensitive data, trust boundaries, users, and operators from misuse or harmful failure |
 | Release / deployment / rollout / launch readiness | `RELEASE_READINESS_DOCTRINE.md` | deciding whether a bounded change has sufficient product, technical, operational, trust, recovery, and evidence readiness for exposure |
 | Documentation / decisions / runbooks / handoff / durable knowledge | `DOCUMENTATION_DOCTRINE.md` | creating or updating durable project truth |
+| Serious inquiry / 5W1H / causal analysis / comparison / attribution / uncertainty | `INQUIRY_ANALYSIS_DOCTRINE.md` | structuring who, what, when, where, why, how, and extended questions so an analysis is decision-grade |
 
 Rules:
 
@@ -411,7 +414,8 @@ Rules:
 4. Review judges; exploration expands; research establishes knowledge; architecture
    structures; testing falsifies and verifies; security/privacy/safety constrains
    trust and harm; release readiness decides exposure readiness; documentation
-   preserves and communicates.
+   preserves and communicates; inquiry and analysis structures the questions,
+   evidence, comparisons, uncertainty, implications, and next action.
 5. Implementation remains governed by the Operating Doctrine and project-local
    engineering instructions. Specialist doctrines may generate implementation
    tasks but do not grant permission to execute them.
@@ -507,7 +511,7 @@ The active instruction chain is:
 2. `/Users/pranay/Projects/AGENTS.md`
 3. repo-local `AGENTS.md` or `CLAUDE.md`
 4. project-local `OPERATING_DOCTRINE.md` (generated copy of the canonical `/Users/pranay/Projects/agent-start/doctrines/OPERATING_DOCTRINE.md`)
-5. task-relevant specialist doctrine(s) at the canonical root `/Users/pranay/Projects/agent-start/doctrines/`: `REVIEW_DOCTRINE.md`, `EXPLORATION_DOCTRINE.md`, `RESEARCH_DOCTRINE.md`, `ARCHITECTURE_DOCTRINE.md`, `TESTING_DOCTRINE.md`, `SECURITY_PRIVACY_SAFETY_DOCTRINE.md`, `RELEASE_READINESS_DOCTRINE.md`, `DOCUMENTATION_DOCTRINE.md`
+5. task-relevant specialist doctrine(s) at the canonical root `/Users/pranay/Projects/agent-start/doctrines/`: `REVIEW_DOCTRINE.md`, `EXPLORATION_DOCTRINE.md`, `RESEARCH_DOCTRINE.md`, `ARCHITECTURE_DOCTRINE.md`, `TESTING_DOCTRINE.md`, `SECURITY_PRIVACY_SAFETY_DOCTRINE.md`, `RELEASE_READINESS_DOCTRINE.md`, `DOCUMENTATION_DOCTRINE.md`, `INQUIRY_ANALYSIS_DOCTRINE.md`
 6. generated `Docs/context/agent-start/*`
 
 Compatibility surfaces forward into this chain. Generated context must identify

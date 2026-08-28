@@ -496,6 +496,32 @@ Button("Append PDF Pages...") {
                 .disabled(!router.isEnabled(.twoUp))
             }
 
+            Menu("Reading Mode") {
+                Button("Study") {
+                    model?.readingMode = .study
+                }
+                .keyboardShortcut("1", modifiers: .command)
+                .help("Deep reading with annotations and dense text.")
+
+                Button("Skim") {
+                    model?.readingMode = .skim
+                }
+                .keyboardShortcut("2", modifiers: .command)
+                .help("Fast scanning with minimal chrome.")
+
+                Button("Reference") {
+                    model?.readingMode = .reference
+                }
+                .keyboardShortcut("3", modifiers: .command)
+                .help("Reading with yellow tint and slight spacing.")
+
+                Button("Review") {
+                    model?.readingMode = .review
+                }
+                .keyboardShortcut("4", modifiers: .command)
+                .help("Change tracking and annotation review.")
+            }
+
             Divider()
 
             Button("Compare Visual Diff...") {

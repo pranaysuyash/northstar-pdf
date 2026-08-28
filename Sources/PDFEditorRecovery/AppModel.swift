@@ -77,6 +77,22 @@ public final class AppModel {
   /// Stage 1: priors aggregated from those events, used for ranking only.
   public private(set) var candidatePriors = CandidatePriors(sampleCount: 0)
 
+  // MARK: - Companion Capability Negotiation
+  /// Registry of available companion providers.
+  public let providerRegistry = ProviderRegistry()
+  /// Persistent store of validated handshakes.
+  public let contractStore = ContractStore()
+  /// The bridge for companion communication.
+  public let companionBridge = CompanionBridge(resourceLimits: ResourceLimits())
+  /// Orchestrates capability negotiation on document open.
+  public let companionNegotiator: CompanionNegotiator
+  /// Negotiated capabilities for the current document.
+  public private(set) var negotiatedCapabilities: [NegotiatedCapability] = []
+  /// The most recent negotiation result.
+  public private(set) var negotiationResult: NegotiationResult?
+  /// Whether negotiation is currently in progress.
+  public private(set) var isNegotiating = false
+
   public var inspection: DocumentInspection? {
     didSet { refreshCandidateCaches() }
   }
@@ -565,6 +581,11 @@ public final class AppModel {
     self.profileStore = profileStore
     self.templateStore = templateStore
     self.candidateReviewEventStore = candidateReviewEventStore
+    self.companionNegotiator = CompanionNegotiator(
+      registry: providerRegistry,
+      contractStore: contractStore,
+      bridge: companionBridge
+    )
     if initializeLocalVaultState {
       refreshProfiles()
       refreshTemplateIDs()
@@ -1346,6 +1367,26 @@ public final class AppModel {
           }
         }
       }
+      // Companion capability negotiation: discover and handshake with
+      // available companion providers. Runs in background; the app works
+      // without companions (first principle: companion is optional).
+      let sourceDigest = nextInspection.source.sha256
+      let openedSessionIDForNegotiation = openedSessionID
+      isNegotiating = true
+      Task.detached(priority: .utility) { [weak self] in
+        let result = await self?.companionNegotiator.negotiate(sourceDigest: sourceDigest)
+        await MainActor.run { [weak self] in
+          guard let self else { return }
+          // Only update if this is still the same document session.
+          guard self.currentSessionID == openedSessionIDForNegotiation else { return }
+          self.isNegotiating = false
+          self.negotiatedCapabilities = result?.capabilities ?? []
+          self.negotiationResult = result
+          if let result, !result.capabilities.isEmpty {
+            self.statusMessage = "Companion negotiation: \(result.capabilities.count) capabilities from \(result.providerIDs.count) providers (\(String(format: "%.2f", result.duration))s)"
+          }
+        }
+      }
       ocrProcessedPageIndices = []
       operations = []
       replayCheckpoints = []
@@ -1448,6 +1489,10 @@ public func resetDocument() {
     isScratchDocument = false
     cachedSourceData = nil
     preflightReport = nil
+    companionNegotiator.reset()
+    negotiatedCapabilities = []
+    negotiationResult = nil
+    isNegotiating = false
     ocrProcessedPageIndices = []
     operations = []
     showDiff = false

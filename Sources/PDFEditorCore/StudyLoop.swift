@@ -166,6 +166,24 @@ public struct MarkMastery: Codable, Sendable, Identifiable {
   /// When the mark is next due for review.
   public var nextReviewDate: Date?
 
+  // MARK: - FSRS DSR Fields
+  /// Which algorithm this mastery record uses.
+  public var algorithm: SRSAlgorithm
+  /// FSRS difficulty (1–10). Intrinsic property of the card.
+  public var fsrsDifficulty: Double
+  /// FSRS stability (days). Time for retrievability to drop to 90%.
+  public var fsrsStability: Double
+  /// Timestamp of last FSRS review (for computing current retrievability).
+  public var fsrsLastReviewTimestamp: Date?
+  /// User's desired retention target (0.7–0.95, default 0.9).
+  public var desiredRetention: Double
+  /// Learning steps (in days) before graduation into the main schedule.
+  public var learningSteps: [Double]
+  /// Current learning step index (-1 = graduated).
+  public var currentLearningStep: Int
+  /// Number of lapses (for leech detection).
+  public var lapseCount: Int
+
   public var id: UUID { markID }
 
   public var accuracy: Double {
@@ -186,12 +204,33 @@ public struct MarkMastery: Codable, Sendable, Identifiable {
     return nextReview.timeIntervalSinceNow / 86400.0
   }
 
+  /// Whether this mark is a leech (too many lapses).
+  public var isLeech: Bool { lapseCount >= 8 }
+
+  /// Current FSRS retrievability.
+  public var currentRetrievability: Double {
+    let state = FSRS.MemoryState(
+      difficulty: fsrsDifficulty,
+      stability: fsrsStability,
+      lastReviewTimestamp: fsrsLastReviewTimestamp
+    )
+    return state.retrievability()
+  }
+
   public init(
     markID: UUID,
     easeFactor: Double = 2.5,
     intervalDays: Double = 0,
     repetitions: Int = 0,
-    nextReviewDate: Date? = nil
+    nextReviewDate: Date? = nil,
+    algorithm: SRSAlgorithm = .sm2,
+    fsrsDifficulty: Double = 5.0,
+    fsrsStability: Double = 1.0,
+    fsrsLastReviewTimestamp: Date? = nil,
+    desiredRetention: Double = 0.9,
+    learningSteps: [Double] = [1.0/1440, 10.0/1440, 1.0],
+    currentLearningStep: Int = -1,
+    lapseCount: Int = 0
   ) {
     self.markID = markID
     self.level = .new
@@ -204,60 +243,153 @@ public struct MarkMastery: Codable, Sendable, Identifiable {
     self.intervalDays = intervalDays
     self.repetitions = repetitions
     self.nextReviewDate = nextReviewDate
+    self.algorithm = algorithm
+    self.fsrsDifficulty = fsrsDifficulty
+    self.fsrsStability = fsrsStability
+    self.fsrsLastReviewTimestamp = fsrsLastReviewTimestamp
+    self.desiredRetention = desiredRetention
+    self.learningSteps = learningSteps
+    self.currentLearningStep = currentLearningStep
+    self.lapseCount = lapseCount
   }
 
+  // MARK: - Unified Grading
+
+  /// Record a review using the unified 4-grade system.
+  /// Routes to SM-2 or FSRS based on the algorithm field.
+  public mutating func recordGrade(_ grade: UnifiedGrade) {
+    switch algorithm {
+    case .sm2:
+      recordSM2Grade(grade)
+    case .fsrs:
+      recordFSRSGrade(grade)
+    }
+  }
+
+  // MARK: - SM-2 Path (backward compatible)
+
   /// Record a correct recall using SM-2 algorithm.
+  /// Uses .easy grade for backward compatibility with pre-FSRS behavior.
   public mutating func recordCorrect() {
-    totalAttempts += 1
-    correctCount += 1
-    correctStreak += 1
-    lastReviewedAt = Date()
-
-    // SM-2: advance repetitions and compute new interval
-    repetitions += 1
-    switch repetitions {
-    case 1:
-      intervalDays = 1      // 1 day
-    case 2:
-      intervalDays = 3      // 3 days
-    default:
-      intervalDays = intervalDays * easeFactor
-    }
-
-    // Update ease factor: q is quality (5 = perfect)
-    // EF' = EF + (0.1 - (5-q) * (0.08 + (5-q) * 0.02))
-    // For correct: q = 5, so EF' = EF + 0.1
-    easeFactor = min(3.0, easeFactor + 0.1)
-
-    // Set next review date
-    nextReviewDate = Date().addingTimeInterval(intervalDays * 86400)
-
-    // Update mastery level based on SM-2 state
-    // 1 correct → learning, 2-3 correct → review, 4+ correct → mastered
-    if repetitions >= 4 {
-      level = .mastered
-    } else if repetitions >= 2 {
-      level = .review
-    } else if repetitions >= 1 {
-      level = .learning
-    }
+    recordSM2Grade(.easy)
   }
 
   /// Record an incorrect recall (resets SM-2 state).
   public mutating func recordIncorrect() {
+    recordSM2Grade(.again)
+  }
+
+  private mutating func recordSM2Grade(_ grade: UnifiedGrade) {
     totalAttempts += 1
-    correctStreak = 0
     lastReviewedAt = Date()
 
-    // SM-2: reset repetitions, reduce ease factor, immediate re-review
-    repetitions = 0
-    intervalDays = 0
-    easeFactor = max(1.3, easeFactor - 0.2)
-    nextReviewDate = nil // Due immediately
+    if grade.isCorrect {
+      correctCount += 1
+      correctStreak += 1
+      repetitions += 1
 
-    // Demote one level
-    if level.rawValue > 0 {
-      level = MasteryLevel(rawValue: level.rawValue - 1) ?? .new
+      // Ease-hell prevention: boost EF after 3 consecutive corrects at low EF
+      if correctStreak >= 3 && easeFactor < 1.5 {
+        easeFactor = min(2.5, easeFactor + 0.15)
+      }
+
+      switch repetitions {
+      case 1:
+        intervalDays = 1
+      case 2:
+        intervalDays = 6  // SM-2 standard: 1d, 6d
+      default:
+        intervalDays = intervalDays * easeFactor
+      }
+
+      // EF update based on quality
+      let q = grade.sm2Quality
+      let efDelta = 0.1 - Double(5 - q) * (0.08 + Double(5 - q) * 0.02)
+      easeFactor = min(3.0, max(1.3, easeFactor + efDelta))
+
+      // Learning steps: if still in learning phase, step through short intervals
+      if currentLearningStep >= 0 && currentLearningStep < learningSteps.count {
+        intervalDays = learningSteps[currentLearningStep]
+        currentLearningStep += 1
+        if currentLearningStep >= learningSteps.count {
+          currentLearningStep = -1 // graduated
+        }
+      }
+
+      // Minimum interval: 3 days for graduated cards (ease-hell prevention)
+      if currentLearningStep == -1 {
+        intervalDays = max(3.0, intervalDays)
+      }
+
+      nextReviewDate = Date().addingTimeInterval(intervalDays * 86400)
+
+      // Update mastery level
+      if repetitions >= 4 {
+        level = .mastered
+      } else if repetitions >= 2 {
+        level = .review
+      } else if repetitions >= 1 {
+        level = .learning
+      }
+
+    } else {
+      // Lapse
+      correctStreak = 0
+      lapseCount += 1
+      repetitions = 0
+      intervalDays = 0
+      easeFactor = max(1.3, easeFactor - 0.2)
+      currentLearningStep = 0 // restart learning steps
+      nextReviewDate = nil // Due immediately
+
+      if level.rawValue > 0 {
+        level = MasteryLevel(rawValue: level.rawValue - 1) ?? .new
+      }
+    }
+  }
+
+  // MARK: - FSRS Path
+
+  private mutating func recordFSRSGrade(_ grade: UnifiedGrade) {
+    totalAttempts += 1
+    lastReviewedAt = Date()
+
+    let fsrsGrade = grade.fsrsGrade
+    let currentState = FSRS.MemoryState(
+      difficulty: fsrsDifficulty,
+      stability: fsrsStability,
+      lastReviewTimestamp: fsrsLastReviewTimestamp
+    )
+
+    let (newState, nextInterval) = FSRS.nextState(
+      current: currentState,
+      grade: fsrsGrade,
+      desiredRetention: desiredRetention
+    )
+
+    fsrsDifficulty = newState.difficulty
+    fsrsStability = newState.stability
+    fsrsLastReviewTimestamp = newState.lastReviewTimestamp
+    intervalDays = nextInterval
+    nextReviewDate = Date().addingTimeInterval(nextInterval * 86400)
+
+    if grade.isCorrect {
+      correctCount += 1
+      correctStreak += 1
+      repetitions += 1
+    } else {
+      correctStreak = 0
+      lapseCount += 1
+      repetitions = 0
+    }
+
+    // Update mastery level based on stability and repetitions
+    if fsrsStability > 30 && repetitions >= 4 {
+      level = .mastered
+    } else if fsrsStability > 7 && repetitions >= 2 {
+      level = .review
+    } else if repetitions >= 1 {
+      level = .learning
     }
   }
 }
@@ -584,6 +716,44 @@ public final class StudyLoopManager: ObservableObject, @unchecked Sendable {
     var docMastery = masteryByDocument[documentID] ?? [:]
     var mastery = docMastery[markID] ?? MarkMastery(markID: markID)
     mastery.recordIncorrect()
+    docMastery[markID] = mastery
+    masteryByDocument[documentID] = docMastery
+    save()
+  }
+
+  /// Record a review using the unified 4-grade system.
+  /// Routes to SM-2 or FSRS based on the mark's algorithm setting.
+  public func recordGrade(_ grade: UnifiedGrade, documentID: String, markID: UUID) {
+    var docMastery = masteryByDocument[documentID] ?? [:]
+    var mastery = docMastery[markID] ?? MarkMastery(markID: markID)
+    mastery.recordGrade(grade)
+    docMastery[markID] = mastery
+    masteryByDocument[documentID] = docMastery
+    save()
+  }
+
+  /// Set the SRS algorithm for a specific mark.
+  public func setAlgorithm(_ algorithm: SRSAlgorithm, documentID: String, markID: UUID) {
+    var docMastery = masteryByDocument[documentID] ?? [:]
+    var mastery = docMastery[markID] ?? MarkMastery(markID: markID)
+    mastery.algorithm = algorithm
+    if algorithm == .fsrs {
+      // Initialize FSRS state from SM-2 state if migrating
+      if mastery.fsrsStability <= 1.0 && mastery.repetitions > 0 {
+        mastery.fsrsStability = max(1.0, mastery.intervalDays / 2.0)
+        mastery.fsrsDifficulty = max(1.0, min(10.0, 10.0 - (mastery.easeFactor - 1.3) * 5.0))
+      }
+    }
+    docMastery[markID] = mastery
+    masteryByDocument[documentID] = docMastery
+    save()
+  }
+
+  /// Set desired retention for a specific mark (FSRS only).
+  public func setDesiredRetention(_ retention: Double, documentID: String, markID: UUID) {
+    var docMastery = masteryByDocument[documentID] ?? [:]
+    var mastery = docMastery[markID] ?? MarkMastery(markID: markID)
+    mastery.desiredRetention = min(0.95, max(0.7, retention))
     docMastery[markID] = mastery
     masteryByDocument[documentID] = docMastery
     save()

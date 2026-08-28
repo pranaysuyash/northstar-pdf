@@ -294,25 +294,28 @@ struct StudyLoopTests {
     #expect(m.isDue == true)
   }
 
-  @Test("SM-2: first correct sets 1 day interval")
+  @Test("SM-2: first correct sets interval with minimum floor")
   func sm2FirstCorrect() {
     var m = MarkMastery(markID: UUID())
     m.recordCorrect()
     #expect(m.repetitions == 1)
-    #expect(m.intervalDays == 1)
-    #expect(m.easeFactor == 2.6)
+    // SM-2: first interval is 1 day, but minimum floor is 3 days
+    #expect(m.intervalDays == 3.0)
+    // .easy grade (q=5): EF increases by 0.1
+    #expect(abs(m.easeFactor - 2.6) < 0.01)
     #expect(m.nextReviewDate != nil)
     #expect(m.isDue == false)
   }
 
-  @Test("SM-2: second correct sets 3 day interval")
+  @Test("SM-2: second correct sets 6 day interval")
   func sm2SecondCorrect() {
     var m = MarkMastery(markID: UUID())
     m.recordCorrect()
     m.recordCorrect()
     #expect(m.repetitions == 2)
-    #expect(m.intervalDays == 3)
-    #expect(m.easeFactor == 2.7)
+    // SM-2: second interval is 6 days
+    #expect(m.intervalDays == 6.0)
+    #expect(abs(m.easeFactor - 2.7) < 0.01)
   }
 
   @Test("SM-2: third correct uses ease factor multiplication")
@@ -322,8 +325,11 @@ struct StudyLoopTests {
     m.recordCorrect()
     m.recordCorrect()
     #expect(m.repetitions == 3)
-    // interval = 3 * 2.7 = 8.1 days
-    #expect(abs(m.intervalDays - 8.1) < 0.01)
+    // Standard SM-2: 1d, 6d, then interval × EF
+    // recordCorrect() uses .easy grade (q=5): EF increases by 0.1 each time
+    // After 3 correct: interval uses EF before update (2.7) → 6 * 2.7 = 16.2
+    // EF then updates to 2.8
+    #expect(abs(m.intervalDays - 16.2) < 0.01)
     #expect(abs(m.easeFactor - 2.8) < 0.01)
   }
 
@@ -342,9 +348,11 @@ struct StudyLoopTests {
     var m = MarkMastery(markID: UUID())
     m.recordCorrect()
     m.recordCorrect()
+    // .easy grade: EF increases by 0.1 each time → 2.7
     #expect(abs(m.easeFactor - 2.7) < 0.01)
 
     m.recordIncorrect()
+    // EF decreases by 0.2 on lapse → 2.5
     #expect(abs(m.easeFactor - 2.5) < 0.01) // 2.7 - 0.2
     #expect(m.repetitions == 0)
     #expect(m.intervalDays == 0)
@@ -508,8 +516,10 @@ struct StudyLoopTests {
     #expect(report.marks.count == 1)
     let markReport = report.marks[0]
     #expect(markReport.repetitions == 2)
+    // recordCorrect() uses .easy grade: EF increases by 0.1 each time
     #expect(markReport.easeFactor == 2.7)
-    #expect(markReport.intervalDays == 3)
+    // Standard SM-2: 1d, 6d intervals
+    #expect(markReport.intervalDays == 6)
     #expect(markReport.totalAttempts == 2)
     #expect(markReport.correctCount == 2)
   }

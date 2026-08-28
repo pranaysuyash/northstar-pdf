@@ -202,8 +202,38 @@ public actor CompanionBridge {
     /// Request history (append-only, value-free).
     public private(set) var requestLog: [RequestLogEntry] = []
     
+    /// The transport layer for companion communication.
+    private var transport: (any CompanionTransport)?
+    
+    /// Transport configuration.
+    public var transportConfiguration: TransportConfiguration?
+    
     public init(resourceLimits: ResourceLimits = ResourceLimits()) {
         self.resourceLimits = resourceLimits
+    }
+    
+    /// Initialize with a specific transport.
+    public init(transport: any CompanionTransport, resourceLimits: ResourceLimits = ResourceLimits()) {
+        self.transport = transport
+        self.resourceLimits = resourceLimits
+    }
+    
+    /// Initialize with transport configuration (creates transport lazily).
+    public init(configuration: TransportConfiguration, resourceLimits: ResourceLimits = ResourceLimits()) {
+        self.transportConfiguration = configuration
+        self.transport = CompanionTransportFactory.transport(for: configuration)
+        self.resourceLimits = resourceLimits
+    }
+    
+    /// The active transport (creates from config if needed).
+    private func getTransport() throws -> any CompanionTransport {
+        if let transport { return transport }
+        if let config = transportConfiguration {
+            let t = CompanionTransportFactory.transport(for: config)
+            self.transport = t
+            return t
+        }
+        throw TransportError.notConnected
     }
     
     // MARK: - Authentication
@@ -227,6 +257,53 @@ public actor CompanionBridge {
     /// Invalidate current authentication.
     public func invalidate() {
         authentication = nil
+    }
+    
+    // MARK: - Transport Handshake
+    
+    /// Perform a handshake with the companion through the transport layer.
+    public func performHandshake(
+        sourceDigest: String,
+        contractVersion: Int = 1
+    ) async throws -> HandshakeResponse {
+        let activeTransport = try getTransport()
+        
+        let request = HandshakeRequest(
+            sourceDigest: sourceDigest,
+            contractVersion: contractVersion
+        )
+        let requestData = try JSONEncoder().encode(request)
+        
+        let responseData = try await activeTransport.handshake(requestData)
+        
+        let response = try JSONDecoder().decode(HandshakeResponse.self, from: responseData)
+        logRequest(.init(kind: .handshake, providerID: response.provider.providerID, success: true))
+        
+        return response
+    }
+    
+    /// Connect the transport (for local IPC that needs explicit connect).
+    public func connectTransport() throws {
+        if let localTransport = transport as? LocalCompanionTransport {
+            try localTransport.connect()
+        }
+    }
+    
+    /// Connect the transport by launching a companion process.
+    public func connectTransport(launchPath: String, arguments: [String] = []) throws {
+        if let localTransport = transport as? LocalCompanionTransport {
+            try localTransport.connect(launchPath: launchPath, arguments: arguments)
+        }
+    }
+    
+    /// Disconnect the transport.
+    public func disconnectTransport() async {
+        await transport?.disconnect()
+    }
+    
+    /// Whether the transport is currently connected.
+    public var isTransportConnected: Bool {
+        get async { await transport?.isConnected ?? false }
     }
     
     // MARK: - Request Lifecycle
@@ -276,14 +353,31 @@ public actor CompanionBridge {
             hmac: Data() // HMAC computed in production
         )
         
-        // 7. In production: send via IPC/HTTP with timeout
-        // For now, return a placeholder
-        let response = BridgeResponse(
-            state: .unsupported,
-            message: "Bridge transport not yet implemented"
-        )
+        // 7. Send via transport with timeout
+        let responseData: Data
+        do {
+            let activeTransport = try getTransport()
+            responseData = try await activeTransport.send(
+                try JSONEncoder().encode(message),
+                timeout: resourceLimits.requestTimeoutSeconds
+            )
+        } catch {
+            pendingRequests.remove(correlationID)
+            logRequest(.init(kind: .response, providerID: providerID, success: false, error: String(describing: error)))
+            throw error
+        }
         
-        // 8. Clean up
+        // 8. Decode response
+        let response: BridgeResponse
+        do {
+            response = try JSONDecoder().decode(BridgeResponse.self, from: responseData)
+        } catch {
+            pendingRequests.remove(correlationID)
+            logRequest(.init(kind: .response, providerID: providerID, success: false, error: "decodeError"))
+            throw TransportError.invalidResponse("Failed to decode response: \(error.localizedDescription)")
+        }
+        
+        // 9. Clean up
         pendingRequests.remove(correlationID)
         logRequest(.init(kind: .response, providerID: providerID, success: response.state != .failed))
         

@@ -81,6 +81,7 @@ public struct ContentView: View {
   @State private var isDocumentBrowserPresented = false
   @State private var isVersionComparePresented = false
   @State private var isGovernanceDashboardPresented = false
+  @State private var isCompanionHealthPresented = false
   // Apple Design §13: haptic trigger tokens
   @State private var hapticNew = UUID()
   @State private var hapticOpen = UUID()
@@ -174,6 +175,17 @@ public struct ContentView: View {
       }
       .sheet(isPresented: $isGovernanceDashboardPresented) {
         GovernanceDashboardView(engine: governanceEngine)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
+      }
+      .sheet(isPresented: $isCompanionHealthPresented) {
+        CompanionHealthDashboardView(
+          health: CompanionHealthCheck(
+            bridge: model.companionBridge,
+            registry: model.providerRegistry,
+            egressGate: model.companionBridge.egressGate,
+            contractStore: model.contractStore
+          )
+        )
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.showDiffSheet) {
@@ -432,6 +444,13 @@ public struct ContentView: View {
           isGovernanceDashboardPresented = true
         }
         .help("View compliance status and policy rules")
+
+        Divider()
+
+        Button("Companion Health…", systemImage: "heart.text.square") {
+          isCompanionHealthPresented = true
+        }
+        .help("Provider status, egress connections, and bridge log")
       } label: {
         Label("Manager", systemImage: "slider.horizontal.3")
       }

@@ -459,15 +459,21 @@ public final class RenderingPipeline: @unchecked Sendable {
   // MARK: - UNDERSTAND: Combined Analysis
 
   /// Full UNDERSTAND analysis: summary + entities + key points in one call.
-  public func understand() throws -> (summary: DocumentSummary, entities: EntityRecognitionResult, keyPoints: KeyPointExtractionResult) {
+  public func understand() throws -> (summary: DocumentSummary, entities: EntityRecognitionResult, keyPoints: KeyPointExtractionResult, nerEntities: NERResult, tables: TableExtractionResult, enhancedSummary: EnhancedSummary) {
     let extraction = try extractText()
     let summarizer = DocumentSummarizer()
     let recognizer = EntityRecognizer()
     let kpExtractor = KeyPointExtractor()
+    let nerExtractor = NERExtractor()
+    let tableExtractor = TableExtractor()
+    let aiSummarizer = AISummarizer()
     return (
       summary: summarizer.summarize(extraction: extraction),
       entities: recognizer.recognize(extraction: extraction),
-      keyPoints: kpExtractor.extract(extraction: extraction)
+      keyPoints: kpExtractor.extract(extraction: extraction),
+      nerEntities: nerExtractor.extract(extraction: extraction),
+      tables: tableExtractor.extract(extraction: extraction),
+      enhancedSummary: aiSummarizer.summarize(extraction: extraction)
     )
   }
 

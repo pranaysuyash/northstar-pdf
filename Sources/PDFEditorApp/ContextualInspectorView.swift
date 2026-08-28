@@ -30,7 +30,7 @@ public struct ContextualInspectorView: View {
   @ObservedObject var annotationStore: AnnotationStore
   @State private var selectedTab: InspectorTab = .focus
   // UNDERSTAND tab state
-  @State private var understandResult: (summary: DocumentSummary?, entities: EntityRecognitionResult?, keyPoints: KeyPointExtractionResult?) = (nil, nil, nil)
+  @State private var understandResult: (summary: DocumentSummary?, entities: EntityRecognitionResult?, keyPoints: KeyPointExtractionResult?, nerEntities: NERResult?, tables: TableExtractionResult?, enhancedSummary: EnhancedSummary?) = (nil, nil, nil, nil, nil, nil)
   @State private var understandError: String?
   @State private var isLoadingUnderstand = false
   @State private var fieldDraft = ""
@@ -608,6 +608,14 @@ public struct ContextualInspectorView: View {
       if let keyPoints = understandResult.keyPoints, keyPoints.totalCount > 0 {
         understandKeyPointsSection(keyPoints)
       }
+
+      if let nerEntities = understandResult.nerEntities, nerEntities.totalCount > 0 {
+        understandNERSection(nerEntities)
+      }
+
+      if let tables = understandResult.tables, tables.totalTables > 0 {
+        understandTablesSection(tables)
+      }
     }
   }
 
@@ -619,7 +627,7 @@ public struct ContextualInspectorView: View {
 
     do {
       let result = try renderingPipeline.understand()
-      understandResult = (result.summary, result.entities, result.keyPoints)
+      understandResult = (result.summary, result.entities, result.keyPoints, result.nerEntities, result.tables, result.enhancedSummary)
     } catch {
       understandError = "Analysis failed: \(error.localizedDescription)"
     }
@@ -731,6 +739,167 @@ public struct ContextualInspectorView: View {
               .foregroundStyle(.secondary)
           }
         }
+      }
+    }
+    .padding(8)
+    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+  }
+
+  // MARK: - NER Section
+  private func understandNERSection(_ nerEntities: NERResult) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label("Named Entities", systemImage: "person.2.fill")
+        .font(.subheadline.weight(.semibold))
+
+      Text("\(nerEntities.totalCount) found across \(nerEntities.typeCount) types")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      ForEach(NEREntityType.allCases.filter { nerEntities.byType[$0]?.isEmpty == false }, id: \.self) { type in
+        let ofType = nerEntities.byType[type] ?? []
+        VStack(alignment: .leading, spacing: 4) {
+          HStack {
+            Text(type.rawValue.replacingOccurrences(of: "_", with: " ").capitalized)
+              .font(.caption.weight(.semibold))
+            Text("(\(ofType.count))")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+          ForEach(ofType.prefix(5)) { entity in
+            HStack(alignment: .top) {
+              Text(entity.value)
+                .font(.caption)
+              Spacer()
+              Text(String(format: "%.0f%%", entity.confidence * 100))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+          }
+          if ofType.count > 5 {
+            Text("+ \(ofType.count - 5) more")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
+      }
+    }
+    .padding(8)
+    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+  }
+
+  // MARK: - Tables Section
+  private func understandTablesSection(_ tables: TableExtractionResult) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Label("Tables", systemImage: "tablecells")
+        .font(.subheadline.weight(.semibold))
+
+      Text("\(tables.totalTables) table(s) detected")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      ForEach(tables.tables) { table in
+        VStack(alignment: .leading, spacing: 6) {
+          HStack {
+            Text("Table (\(table.rows)x\(table.columns))")
+              .font(.caption.weight(.semibold))
+            Text("Page \(table.pageIndex + 1)")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+            Spacer()
+            Text(String(format: "%.0f%%", table.confidence * 100))
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+
+          // Table preview (first 4 rows)
+          ScrollView(.horizontal, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 1) {
+              // Header row
+              if let headers = table.headers {
+                HStack(spacing: 0) {
+                  ForEach(headers, id: \.self) { header in
+                    Text(header)
+                      .font(.caption2.weight(.semibold))
+                      .frame(minWidth: 60, alignment: .leading)
+                      .padding(.horizontal, 4)
+                      .padding(.vertical, 2)
+                      .background(.quaternary)
+                  }
+                }
+              }
+
+              // Data rows (max 4)
+              ForEach(Array(table.dataRows.prefix(4).enumerated()), id: \.offset) { _, row in
+                HStack(spacing: 0) {
+                  ForEach(row, id: \.self) { cell in
+                    Text(cell)
+                      .font(.caption2)
+                      .frame(minWidth: 60, alignment: .leading)
+                      .padding(.horizontal, 4)
+                      .padding(.vertical, 2)
+                  }
+                }
+              }
+
+              if table.dataRows.count > 4 {
+                Text("+ \(table.dataRows.count - 4) more rows")
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+                  .padding(.top, 2)
+              }
+            }
+          }
+
+          // Export buttons
+          HStack(spacing: 8) {
+            Button {
+              if let json = TableExtractor().exportJSON(table) {
+                let panel = NSSavePanel()
+                panel.allowedContentTypes = [.json]
+                panel.nameFieldStringValue = "table-\(table.id.prefix(8)).json"
+                panel.begin { response in
+                  if response == .OK, let url = panel.url {
+                    try? json.write(to: url)
+                  }
+                }
+              }
+            } label: {
+              Label("JSON", systemImage: "doc.badge.gearshape")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+
+            Button {
+              let csv = TableExtractor().exportCSV(table)
+              if let data = csv.data(using: .utf8) {
+                let panel = NSSavePanel()
+                panel.allowedContentTypes = [.commaSeparatedText]
+                panel.nameFieldStringValue = "table-\(table.id.prefix(8)).csv"
+                panel.begin { response in
+                  if response == .OK, let url = panel.url {
+                    try? data.write(to: url)
+                  }
+                }
+              }
+            } label: {
+              Label("CSV", systemImage: "doc.text")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+
+            Button {
+              let md = TableExtractor().exportMarkdown(table)
+              NSPasteboard.general.clearContents()
+              NSPasteboard.general.setString(md, forType: .string)
+            } label: {
+              Label("Copy Markdown", systemImage: "doc.on.clipboard")
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+          }
+        }
+        .padding(8)
+        .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
       }
     }
     .padding(8)

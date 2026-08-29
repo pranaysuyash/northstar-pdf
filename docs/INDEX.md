@@ -111,3 +111,7 @@
 
 ## Status tags used in this index
 `canonical` · `audit` · `design` · `proposed (non-commitment)` · `archived` · `quarantine`
+
+## Status
+
+- [What's Left / What's Next (2026-08-30)](status-whats-next-2026-08-30.md) — gate census, capability depth, and ranked next units

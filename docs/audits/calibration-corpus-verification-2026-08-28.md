@@ -116,3 +116,76 @@ negatives, accuracy 1.0** on the persisted artifact.
 - Full suite: 1322/1322 pass
 - Persisted artifact regenerated: `benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json`
   (`familyThreshold: 0.9`, accuracy 1.0, zero false positives/negatives)
+
+---
+
+## §9 Addendum (2026-08-29): Persisted artifact was not deterministic
+
+### Finding (Observed → root cause Verified)
+
+The committed artifact `recurring-form-calibration-report-2026-08-28.json`
+showed a spurious diff after an unrelated `swift test` run:
+
+```diff
+     "tierBreakdown" : [
+-      "noMatch",
+-      3,
+-      "exact",
+-      3,
++      "exact",
++      3,
++      "noMatch",
++      3
+     ],
+```
+
+Two defects, one root cause:
+
+1. **Non-determinism.** `CalibrationReport.tierBreakdown` and
+   `FalsePositiveReport.tierBreakdown` are `[MatchingTier: Int]`. Swift's
+   `JSONEncoder` only produces a keyed container for `String`/`Int` keys or
+   keys conforming to `CodingKeyRepresentable`. `MatchingTier` is a
+   `String`-raw-value enum without that conformance, so the dictionary encoded
+   as an **unkeyed array of alternating key/value pairs in dictionary hash
+   order** — which is seeded per process and therefore differs run to run.
+   `OutputFormatting.sortedKeys` could not help: there was no keyed container
+   to sort. Every test run rewrote the committed artifact with a coin-flip key
+   order.
+2. **Wrong persisted shape.** An alternating array is not a usable schema for a
+   report artifact; any reader has to reconstruct pairs by position.
+
+Direct evidence (standalone `swiftc` probe, `tmp/keyrepr_check.swift`):
+
+```
+plain (no CodingKeyRepresentable): ["exact",3,"familyMatch",2,"noMatch",3]
+keyed (CodingKeyRepresentable):    {"exact":3,"familyMatch":2,"noMatch":3}
+```
+
+### Fix
+
+`MatchingTier` now conforms to `CodingKeyRepresentable` via
+`MatchingTierCodingKey` (`Sources/PDFEditorCore/RecurringFormCalibrator.swift`).
+The tier breakdown is now a real JSON object whose keys `.sortedKeys` orders
+deterministically. No consumer changed: CI's artifact gate reads
+`schema`, `thresholds.familyThreshold`, `calibration.falsePositives`, and
+`calibration.accuracy`, never `tierBreakdown`; the only other readers are
+in-memory tests.
+
+### Falsifier
+
+`tierBreakdownEncodesAsSortedObject()`
+(`Tests/PDFEditorCoreTests/CalibrationCorpusVerificationTests.swift`) asserts
+the root cause rather than the symptom. A within-process double encode cannot
+detect hash-order drift — the seed is stable for the life of a process — so the
+test asserts the breakdown encodes as a `{`-prefixed object with exactly the
+sorted key order, and that it round-trips. Losing the conformance fails both
+assertions.
+
+### Evidence
+
+- Artifact SHA-256 `5a209f27…` byte-identical across two consecutive full-suite
+  runs (cross-process determinism, Verified 2026-08-29)
+- Persisted artifact regenerated with `"tierBreakdown": {"exact": 3, "noMatch": 3}`
+- Full suite: **1329/1329 pass** on 2026-08-29T18:40Z. The count is 1322 (pre-fix
+  baseline) + 1 determinism test + 6 tests from the concurrently landing
+  dual-lane detector gate (`DualLaneDetectorGateTests`), not from this change.

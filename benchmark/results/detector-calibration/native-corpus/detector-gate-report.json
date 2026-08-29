@@ -4508,6 +4508,7 @@
   "passed" : true,
   "reviewedCaseCount" : 98,
   "schema" : "pdf-editor.detector-gate",
+  "summary" : "detector gate: 15\/15 fixtures passed",
   "unreviewedFixtureCount" : 0,
   "version" : {
     "major" : 1,

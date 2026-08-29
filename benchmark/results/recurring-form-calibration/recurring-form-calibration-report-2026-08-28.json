@@ -79,12 +79,10 @@
         "score" : 0.14814814814814814
       }
     ],
-    "tierBreakdown" : [
-      "noMatch",
-      3,
-      "exact",
-      3
-    ],
+    "tierBreakdown" : {
+      "exact" : 3,
+      "noMatch" : 3
+    },
     "totalEntries" : 6
   },
   "corpus" : "benchmark\/results\/corpus-sweep-2026-08-25",
@@ -101,9 +99,9 @@
     "recommendations" : [
       "No false positives detected. Calibration is within acceptable bounds."
     ],
-    "tierBreakdown" : [
+    "tierBreakdown" : {
 
-    ],
+    },
     "totalHardNegatives" : 2
   },
   "generatedAt" : "2026-08-28T00:00:00.000Z",

@@ -263,6 +263,7 @@ The winners in PDF reading will be the products that help users **understand** a
 
 ## 8. Evidence
 
+- **Personas & Jobs — Expanded Model** (docs/audits/personas-jobs-expanded-model-2026-08-26.md) — 12-job taxonomy, COMMIT (signing), Consumer persona, comic mode
 - Jobs to be Done framework (Clayton Christensen)
 - User interviews (implied from feature usage patterns)
 - Competitive analysis (Adobe Acrobat, Preview, PDF.js)

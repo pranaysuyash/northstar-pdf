@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
-      "generatedAt": "2026-08-26T12:18:13.915Z",
+      "generatedAt": "2026-08-27T13:07:30.600Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -5565,7 +5565,7 @@
       "minor": 0
     },
     "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
-    "generatedAt": "2026-08-26T12:18:13.915Z",
+    "generatedAt": "2026-08-27T13:07:30.600Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -13333,7 +13333,7 @@
         "minor": 1
       },
       "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
-      "generatedAt": "2026-08-26T12:18:13.915Z",
+      "generatedAt": "2026-08-27T13:07:30.600Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -13749,9 +13749,9 @@
         "major": 1,
         "minor": 0
       },
-      "sessionID": "db719ab6-936e-45f3-bda3-77d371f45d87",
+      "sessionID": "41567874-d016-43a9-8ff5-1e4dbf0c88b6",
       "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
-      "generatedAt": "2026-08-26T12:18:13.950Z",
+      "generatedAt": "2026-08-27T13:07:30.660Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -13815,7 +13815,7 @@
         "major": 1,
         "minor": 0
       },
-      "generatedAt": "2026-08-26T12:18:13.916Z",
+      "generatedAt": "2026-08-27T13:07:30.601Z",
       "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
       "provider": {
         "id": "pdfjs-pdflib",
@@ -13846,7 +13846,7 @@
         },
         "memory": {
           "state": "available",
-          "usedJSHeapSize": 20194367,
+          "usedJSHeapSize": 20573864,
           "jsHeapSizeLimit": 4395630592
         },
         "storage": {
@@ -13854,7 +13854,7 @@
           "quotaBytes": null,
           "usageBytes": null
         },
-        "browserFamily": "Not=A?Brand"
+        "browserFamily": "Chromium"
       },
       "document": {
         "byteCount": 183549,
@@ -13994,7 +13994,7 @@
         "minor": 0
       },
       "sourceDigest": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
-      "generatedAt": "2026-08-26T12:18:13.915Z",
+      "generatedAt": "2026-08-27T13:07:30.600Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -14033,7 +14033,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "48d47de3-8c56-4888-88db-61717f668328",
+        "id": "e5202f96-aab8-47e1-8c06-0064635e463f",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -14041,7 +14041,7 @@
         "operationIDs": []
       },
       {
-        "id": "6bcd151b-d65c-4f9d-bfda-5b4ab9052928",
+        "id": "12392240-8523-443b-88b5-7b731c713f01",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 40 page(s).",
@@ -14049,7 +14049,7 @@
         "operationIDs": []
       },
       {
-        "id": "35de6308-b6f5-4135-910c-9aa78cd1ff88",
+        "id": "3f808e1f-0d40-4401-b368-f0de8244d3bf",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -14057,7 +14057,7 @@
         "operationIDs": []
       },
       {
-        "id": "b8e8c0e4-3df4-495e-8946-9e6b1fba2fb4",
+        "id": "10bc613e-5332-4222-a200-ffcaf6da283c",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -14065,7 +14065,7 @@
         "operationIDs": []
       },
       {
-        "id": "a827da96-390e-4c34-8268-22b6e2ec2edd",
+        "id": "449feedd-8451-4ade-b1ed-0c92794ea4a4",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -14073,7 +14073,7 @@
         "operationIDs": []
       },
       {
-        "id": "f5c8a508-d802-4ce2-9fa0-b476a3d1476e",
+        "id": "2f35b31f-0ce4-40fc-a61e-6aa5c50489f7",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -14089,7 +14089,7 @@
         }
       },
       {
-        "id": "bfbf1d5f-6ff7-4dfc-8d40-d3f46361e5c9",
+        "id": "52b577aa-5095-4623-b72e-62f90f8b8e75",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -14113,7 +14113,7 @@
         }
       },
       {
-        "id": "235f0fd4-63e3-4fcf-aa26-cf698c25a5a4",
+        "id": "8b399262-a523-4000-97d6-e80ebb792f2d",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -14136,7 +14136,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-26T12:18:13.942Z",
+    "validatedAt": "2026-08-27T13:07:30.650Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",

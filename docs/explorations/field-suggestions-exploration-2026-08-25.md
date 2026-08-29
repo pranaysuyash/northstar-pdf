@@ -439,3 +439,92 @@ New `Sources/PDFEditorCore/LocalAssistLane.swift`:
 `swift test` 230/230 · calibration parity passed · parity report passed ·
 candidate mutation + fusion suites passed · web editor + character-grid suites
 passed · React typecheck clean.
+### Incidents during this record (2026-08-26)
+
+A parallel agent session was actively writing the repo while this exploration
+was being implemented. Two of its changes broke shared lanes and were repaired
+minimally: async `rel=preload` CSS loading that never applied the design
+system (reverted to a synchronous link; stylesheet-readiness wait added to
+`Tests/web_character_grid_workflow_test.mjs`), and a `.panel-sidebar` insertion
+that split the `.panel` rule in `web/design-system.css` (folded back).
+Separately, `Sources/PDFEditorRecovery/AppModel.swift` was twice reverted to
+stale snapshots, losing applied work until re-applied atomically.
+
+---
+
+## 10. Learning loop completion, auto-OCR, renaming, React parity, benchmark (2026-08-26, evening)
+
+**Authorization envelope (Doctrine §4):** operator request "do all, follow the
+doctrines" for the five named follow-ups plus residual-risk closure; L1
+workspace mutations only; Git gate closed by operator instruction.
+
+### 1) Priors consume the learning journal (R6 Stage 1)
+
+`CandidatePriorScorer.swift`: acceptance counts by entry mode / field type /
+detection family, Laplace-smoothed, geometric-mean multiplier clamped
+[0.6, 1.4], neutral below 3 samples. AppModel loads priors at open,
+re-aggregates after every decision, exposes `rankedActiveCandidates`; traversal
+and inspector list use ranked order. Contract scores untouched.
+Tests: `CandidatePriorScorerTests` (6).
+
+### 2) Auto-OCR for text-poor pages
+
+Fill/sign mode triggers one local Vision pass per text-poor page on mode entry
+and page arrival; dedup via processed/in-flight sets; rasterization +
+recognition off-main (`nonisolated static runRecognition` with a scoped
+`@unchecked Sendable` page box — PDFPage is not Sendable under Swift 6 strict
+mode). Results merge through the reviewed-candidate path; failures silent.
+
+### 3) User-editable display names
+
+`renameCandidate(_:to:)` validates ≤80 chars, sets `displayName`, records a
+`.retyped` learning event. Inspector pencil affordance;
+`ProfileStore.bulkFill` matches on `displayName ?? labelText`.
+
+### 4) React candidate parity (consolidated)
+
+The merged session's pipeline is canonical: PdfController detects through the
+canonical `web/pdf-geometry-detector.mjs` (types now upstream in
+`web/pdf-geometry-detector.d.mts`), supports click-to-place with bounds,
+records `overlayText` operations with crop-space coordinates, and exports them
+through the pdf-lib writer with reopen verification. My interim gateway module
+and duplicate state were removed as shadow paths once superseded.
+
+### 5) Matcher benchmark
+
+`ProfileMatcherBenchmarkTests`: scoring core extracted to
+`UserProfile.scoreAliases` so the harness runs production logic verbatim;
+29 labeled cases. Result: scored **29/29** vs legacy **23/29**; trap
+sensitivity S2 ("Guardian First Name:" mis-fires to fullName under legacy).
+
+### Residual risks closed (same evening)
+
+1. **Stage 2 — priors alter fusion weights.** Events now carry their
+   evidence-family labels (`evidenceKinds`, value-free enum names,
+   decoder-defaulted); `LearnedEvidenceCalibration` derives per-kind trust
+   multipliers (acceptance rate + 0.5 clamped [0.5, 1.5], neutral at chance);
+   `EvidenceFusion.fuse` accepts `weightsOverride`;
+   `RegionCandidate.recalibratingFusion` re-fuses preserving identity/status;
+   AppModel re-calibrates on open and after each decision. Design note:
+   support-score is scale-invariant, so calibration shifts *relative* trust
+   between families — verified bidirectionally. Tests:
+   `LearnedEvidenceCalibrationTests` (5), including legacy-journal decode.
+2. **React overlay slice:** closed by the consolidated canonical pipeline
+   above (detection → placement → overlayText export with verification).
+
+### Revert-vector mitigation
+
+Live observation identified an active parallel agent session as the writer
+(OpenCode helpers, a `claude` process, Codex Computer Use clients);
+`PDFIncrementalFormWriter.swift` was rewritten twice within two minutes during
+observation. Mitigations landed: `tools/verify_appmodel.sh` (10-anchor
+integrity guard for AppModel.swift, S2-proven detect + `--restore` from
+`tools/snapshots/AppModel.verified-2026-08-26.swift`, no Git required) and
+`.vscode/settings.json` disabling workspace autosave. Full stop requires the
+operator to quit or idle-check those sessions/processes.
+
+### Validation
+
+`swift test` **258/258** · calibration parity passed · web editor +
+character-grid suites passed · React `tsc` + `vite build` clean · AppModel
+integrity guard OK. Commit gate remains closed by operator instruction.

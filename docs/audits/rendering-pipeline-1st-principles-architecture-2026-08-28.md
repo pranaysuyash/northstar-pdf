@@ -103,3 +103,42 @@ PDFKit rendering (zPosition 0) — INVISIBLE, interaction only
 - Should PipelineCanvasView be the default, or should hybrid mode remain default?
 - How does this interact with PDFKit annotation editing (form fields, signatures)?
 - GPU rendering path for high-DPI displays?
+
+## 10. Addendum — renderer toggle wiring (2026-08-28, same day)
+
+The earlier architecture decision left one wiring gap: the pipeline was a
+**drop-in replacement** for PDFKitView but nothing switched between them.
+This addendum records the toggle wiring that closed the gap.
+
+### What was wired
+
+- `AppModel.usePipelineRendering: Bool = true` — **pipeline is the default**
+  renderer (matches the 1st-principles decision; PDFKit is the fallback).
+- `DocumentCanvasView.pdfCanvas` switches between `PipelineCanvasView` and
+  `PDFKitView` on this flag, sharing the same callbacks and interaction
+  surface (projection revision, view mode, rotation, candidates, fields,
+  fill highlights, inline editor, presentation ops, commit/dismiss).
+- `PipelineCanvasView` was extended to the full PDFKitView interface so the
+  switch is source-compatible.
+- `ContentView` exposes a **Pipeline Renderer toggle** inside the reading-mode
+  menu (cpu icon = pipeline active, doc.viewfinder = PDFKit).
+
+### Behavior matrix
+
+| Mode | Pixels | Interaction | Fallback |
+|---|---|---|---|
+| Pipeline (default) | PipelineCanvasView renders pages as images | Text selection via TextBlock hit-testing | PDFKit demoted to data source only |
+| PDFKit (legacy) | PDFKit renders | Full existing behavior | — |
+
+### Evidence
+
+- Full suite passes with pipeline as default (1294/1294 at wiring time;
+  1301/1301 after fingerprint work).
+- Files: `AppModel.swift` (+2 lines), `DocumentCanvasView.swift` (+87 net),
+  `PipelineCanvasView.swift` (383 → 446 lines), `ContentView.swift` (+8).
+
+### Open follow-ups (unchanged from §9)
+
+- PDFKit annotation editing (form fields, signatures) interaction with
+  pipeline mode remains to be verified interactively.
+- GPU rendering path for high-DPI displays remains open.

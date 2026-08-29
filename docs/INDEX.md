@@ -16,6 +16,13 @@
 
 ## Audits — Calibration & Precision (2026-08-28)
 - `docs/audits/recurring-form-calibrator-and-page-box-policy-2026-08-28.md` — 5-tier recurring form classification, canonical page-box precision/tolerance policy, 23 tests.
+- `docs/audits/calibration-corpus-verification-2026-08-28.md` — real-corpus calibration run (13 tests), fingerprint-collision findings, FalsePositiveReport.
+- `docs/audits/accepted-variance-registry-2026-08-28.md` — 14-category native/web mismatch registry with tolerances, owners, falsifying tests (24 tests).
+- `docs/audits/reviewed-candidate-ground-truth-measurement-2026-08-28.md` — 15-case reviewed ground truth (10 human-reviewed + 5 generator-manifest), native/browser precision/recall/abstention/label-agreement measurement, mjs v1.0 mirror + identity-fallback fix (19 tests).
+- `docs/audits/layout-fingerprint-collision-exploration-2026-08-28.md` — first-principles analysis of the V1 fingerprint collision + false familyMatch; LayoutFingerprintV2 prototype (structured components, field-value masking, structured similarity); 3 new Observed findings (7 tests).
+
+## Audits — Capability Governance (2026-08-28)
+- `docs/audits/capability-maturity-model-and-matrix-2026-08-28.md` — 5-dimension maturity model, 42-capability canonical matrix with real providers/gates/owners, gate-maturity bridge (35 tests).
 
 ## Audits — Creator Archetype (2026-08-28)
 - `docs/audits/creator-archetype-implementation-2026-08-28.md` — AuthoringCanvasView (CREATE), DesignSystem (DESIGN), PublishPipeline (PUBLISH), 23 tests.

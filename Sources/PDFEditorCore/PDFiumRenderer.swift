@@ -138,10 +138,25 @@ public struct PDFiumCLIRenderer: PDFiumRenderer {
     let imageData = try Data(contentsOf: tempPNG)
     let elapsed = (CFAbsoluteTimeGetCurrent() - start) * 1000
 
+    var renderedWidth = 0
+    var renderedHeight = 0
+    if imageData.count >= 24 {
+      let pngSignature = Data([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])
+      if imageData.prefix(8) == pngSignature {
+        func bigEndian(_ d: Data) -> Int {
+          var v: UInt32 = 0
+          for b in d { v = (v << 8) | UInt32(b) }
+          return Int(v)
+        }
+        renderedWidth = bigEndian(imageData.subdata(in: 16..<20))
+        renderedHeight = bigEndian(imageData.subdata(in: 20..<24))
+      }
+    }
+
     return PDFiumRenderResult(
       image: imageData,
-      width: 0, // Would need to parse PNG header
-      height: 0,
+      width: renderedWidth,
+      height: renderedHeight,
       pageIndex: pageIndex,
       scale: scale,
       rendererName: name,

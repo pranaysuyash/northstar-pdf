@@ -60,6 +60,13 @@ export function ReviewWorkbench({
             {report.checks.map((check) => (
               <li key={check.id} data-status={check.status}>
                 [{check.status}] {check.detail}
+                {check.metrics && "outsidePixelRatio" in (check.metrics as Record<string, unknown>) && (
+                  <span className="muted">
+                    {" "}· changed/compared pixels: {String(check.metrics.changedPixelCount ?? "?")}/
+                    {String(check.metrics.comparedPixelCount ?? "?")} · max channel delta:{" "}
+                    {String(check.metrics.maximumChannelDelta ?? "?")}
+                  </span>
+                )}
               </li>
             ))}
             <li data-status={report.passed ? "passed" : "failed"}>

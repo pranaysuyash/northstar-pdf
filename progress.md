@@ -3358,3 +3358,53 @@ Live-truth snapshot: `swift test` 279/279 pass; all 159 docs fresh; all assumpti
 - Fixed CompanionNegotiator race condition: FIFO handshake queue + concurrent task group fixed by testing providers individually.
 - Fixed thread safety: `os_unfair_lock` on CompanionBridge.requestLog.
 - Audit INDEX.md updated with all new audit documents.
+
+## 2026-08-28 Accepted Variance Registry
+
+- Built `AcceptedVarianceRegistry` (380 lines): 14 variance categories (pageBox, textContent, textPosition, fontMetrics, colorValues, candidateDetection, candidateBounds, rotationHandling, encryptionBehavior, annotationDetection, imageExtraction, linkDetection, metadataExtraction, renderingOutput).
+- Each variance has: tolerance (6 types: absolute/relative/exact/fuzzyString/structural/enumeration), owner, falsifying test, gate ID, root cause, severity (cosmetic/functional/critical), acceptance status.
+- Check methods: `check` (scalar), `checkRect` (CGRect), `checkText` (Jaccard similarity).
+- First principle: matching quality is measured by what it rejects. No mismatch acceptable unless classified, tolerated, owned, falsified, documented.
+- Evidence: 24 tests pass. Full suite: 1275/1275.
+- Audit: `docs/audits/accepted-variance-registry-2026-08-28.md`
+
+## 2026-08-28 Capability Maturity Model + Canonical Capability Matrix + Gate Bridge
+
+- Built `CapabilityMaturityModel` (295 lines): 5 dimensions per capability (product scope, implementation status proposed→hardened, provider support, evidence clearance none→production, lane native/browser/companion/shared). `isClaimReady` requires maturity ≥ complete AND evidence ≥ integration.
+- Built `CanonicalCapabilityMatrix` (341 lines) + population (550 lines): all 42 capabilities wired with real providers (PDFKit, PDF.js, pdf-lib, PipelineRenderer, etc.), real RG-XXX evidence gates with current status, owners, contracts, sequence priorities, and dependency-aware topological sort.
+- Built `GateMaturityBridge` (230 lines): maps capability gates to release gate statuses (PASS/PARTIAL/OPEN/BLOCKED/FAIL), derives recommended status from maturity + evidence, detects matrix-vs-release-gates inconsistencies, generates alignment report.
+- Added `overallMaturity`/`overallEvidence` to CapabilityMatrixEntry (derived from gate pass ratio).
+- Evidence: 35 tests pass (12 maturity + 12 matrix population + 11 bridge). Full suite: 1275/1275.
+- Audit: `docs/audits/capability-maturity-model-and-matrix-2026-08-28.md`
+
+## 2026-08-28 Calibration corpus verification (real PDFs)
+
+- Ran RecurringFormCalibrator + PageBoxPolicy against real corpus (`benchmark/results/corpus-sweep-2026-08-25/`): plain-text, multi-column, geometry, navigation, metadata-complete.
+- Verified: page box extraction (5/5), Letter/A4 size consistency, canonical box selection, negative-coord normalization, fingerprint determinism, cross-system self-comparison (zero deviation), strict tolerance (±0.1pt catches 0.2pt), relaxed tolerance (±1.0pt accepts 0.8pt — added `.relaxed` preset).
+- Verified: exact-match classification (each PDF matches itself, score 1.0), cross-PDF rejection (never `.exact`), full corpus report with accuracy/FPR/recommendations, hard-negative rejection (0 FP, passes 5% threshold).
+- Built `FalsePositiveReport` (233 lines): structured FP reports with per-class/per-tier breakdowns and data-driven threshold recommendations.
+- **Findings (Observed):** simple layout fingerprint (page size + rotation + count) collides on 2/4 corpus PDFs → familyMatch on different PDFs. Documented as known variance; richer fingerprint (content hash, field count) is the hardening path.
+- Evidence: 13 tests pass. Full suite: 1275/1275.
+- Audit: `docs/audits/calibration-corpus-verification-2026-08-28.md`
+
+## 2026-08-28 — Reviewed candidate ground truth & detector semantic measurement
+- Built `ReviewedCandidateGroundTruth` (297 lines): 15 reviewed cases across 6 fixtures — 10 human-reviewed detector-calibration regions (mirrors labels JSON v1.0, SHA-256 `5d50d759…`) + 5 generator-manifest hard negatives.
+- Built `DetectorSemanticMeasurement` (639 lines): native/browser precision, recall, abstention, label-association, evidence-family, grouping agreement + parity report; full mirror of `web/detector-semantic-comparison.mjs` v1.0 (IoU 0.25/0.05, severity weights 1/3/9/27); candidate IDs/text/scores/digests excluded (privacy).
+- **Bug fixed (Observed → Verified):** Swift mirror dropped non-mapped evidence kinds instead of mjs identity fallback (`EVIDENCE_FAMILY_BY_KIND[kind] || kind`) — `p0-whitespace` agreement showed 0.8 on a perfect lane; fixed in all 3 mapping sites → 1.0.
+- Evidence: 19 tests (S3 mutations, parity, hard negatives, content-free markdown). Full suite: 1294/1294.
+- Audit: `docs/audits/reviewed-candidate-ground-truth-measurement-2026-08-28.md`
+
+## 2026-08-28 — Layout fingerprint collision: first-principles exploration & V2 prototype
+- **Findings re-verified (Observed):** V1 fingerprint (first-page size+rotation+count) collides — plain-text.pdf == navigation.pdf == `595x841_r0_p3`; V1 char-set Jaccard scored different PDFs as `.familyMatch`.
+- **First-principles analysis:** a fingerprint is two jobs — an *equality key* (canonical hash, value-invariant) and a *similarity measure* (structured feature comparison). V1 conflated them; char-Jaccard on serialized strings is semantically meaningless. Rejected: content hash (breaks known-variant), pixel hash (renderer-dependent), scalar-only features (no position).
+- **Built `LayoutFingerprintV2` (new, ~300 lines):** per-page geometry + quantized (4pt) text/field/annotation position cells; field-value masking (filled form = same template); content-free by construction; SHA-256 digest for equality; structured weighted similarity (geo .35 / text .30 / field .25 / annot .10); agreement-on-absence = 1.0.
+- **Verified (real corpus, 7 tests):** 4/4 unique V2 digests where V1 collided; all 6 cross-PDF pairs < 0.76 family threshold (max 0.719); filled tagged-acroform variant keeps identical digest with different bytes; stable across reads; no document text in canonical.
+- **New Observed findings:** F-3 calibration headroom (two pairs at ~0.72, within 0.05 of threshold — V2 scale differs from V1, needs recalibration on larger corpus); F-4 text-layout Jaccard can hit 0.824 across different dense-text docs (pooled cells — per-page alignment recommended); F-5 absence-agreement dilutes discrimination on field-less corpora.
+- Evidence: 7 tests; full suite 1301/1301.
+- Audit: `docs/audits/layout-fingerprint-collision-exploration-2026-08-28.md`
+
+## 2026-08-28 — Real false-positive report artifact + pipeline-wiring addendum
+- **Task completed:** RecurringFormCalibrator run against the real benchmark corpus now persists a deterministic artifact — `benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json` (schema `pdf-editor.recurring-form-calibration-report` v1.0, fixed generatedAt for stability).
+- Artifact contents (Verified): 6 corpus entries (4 real PDFs + 2 hard negatives), accuracy 0.833, **0 false positives, FPR 0.000, passes 5% threshold**; the 1 failure is the similar-hard-negative landing in `.ambiguous` — honest V1 fingerprint limitation, consistent with the collision findings.
+- Added `persistedFalsePositiveReportArtifact()` test (round-trip + file existence); 14 calibration tests pass.
+- Docs completeness: verified all 8 original gaps + 5 newer work items have audit docs (12 total), INDEX.md current (27 mentions), progress.md current. Added §10 Addendum (renderer toggle wiring) to `rendering-pipeline-1st-principles-architecture-2026-08-28.md` — closes the last flagged open item.

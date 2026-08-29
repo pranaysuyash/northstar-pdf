@@ -16,6 +16,8 @@ interface PageOverlay {
 }
 
 export function ReaderStage({ snapshot, regionRects, onCanvasClick }: ReaderStageProps) {
+  const [showRegions, setShowRegions] = useState(true);
+  const visibleRegionRects = showRegions ? regionRects : [];
   const passwordOpen = snapshot.status === "password";
 
   return (
@@ -33,6 +35,17 @@ export function ReaderStage({ snapshot, regionRects, onCanvasClick }: ReaderStag
               : "Open a PDF to begin. Nothing leaves this device."}
           </span>
           <CapabilityNotice state={snapshot.status === "loading" ? "loading" : "available"} />
+          {snapshot.status === "ready" && regionRects.length > 0 && (
+            <label className="small" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+              <input
+                type="checkbox"
+                checked={showRegions}
+                onChange={(event) => setShowRegions(event.target.checked)}
+                aria-label="Show change regions"
+              />
+              Show change regions ({regionRects.length})
+            </label>
+          )}
         </section>
       </div>
 
@@ -41,11 +54,11 @@ export function ReaderStage({ snapshot, regionRects, onCanvasClick }: ReaderStag
           snapshot.viewMode === "continuous" && snapshot.pageSizes.length > 0 ? (
             <ContinuousScroll
               snapshot={snapshot}
-              regionRects={regionRects}
+              regionRects={visibleRegionRects}
               onCanvasClick={onCanvasClick}
             />
           ) : (
-            <SinglePageView snapshot={snapshot} regionRects={regionRects} onCanvasClick={onCanvasClick} />
+            <SinglePageView snapshot={snapshot} regionRects={visibleRegionRects} onCanvasClick={onCanvasClick} />
           )
         ) : (
           <p className="pdf-stage-empty small muted">
@@ -118,15 +131,26 @@ function SinglePageView({
 
   return (
     <div className="pdf-page-wrap">
-      {/* Canvas coordinate picking has no keyboard analog; keyboard users select regions via the thumbnail rail and inspector field list. */}
+      {/* Canvas coordinate picking is pointer-based; keyboard users press
+          Enter/Space to pick the region at the page center, or select regions
+          via the thumbnail rail and inspector field list. */}
       <canvas
         ref={canvasRef}
         aria-label={`PDF page ${snapshot.currentPage} rendering`}
+        tabIndex={onCanvasClick ? 0 : undefined}
         style={onCanvasClick ? { cursor: "crosshair" } : undefined}
         onClick={(event) => {
           if (!onCanvasClick) return;
           const bounds = event.currentTarget.getBoundingClientRect();
           onCanvasClick(event.clientX - bounds.left, event.clientY - bounds.top);
+        }}
+        onKeyDown={(event) => {
+          if (!onCanvasClick) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            const bounds = event.currentTarget.getBoundingClientRect();
+            onCanvasClick(bounds.width / 2, bounds.height / 2);
+          }
         }}
       />
       <div className="match-highlight-layer" aria-hidden="true">
@@ -218,7 +242,7 @@ function ContinuousScroll({
     <div className="pdf-continuous" ref={scrollRef} onScroll={handleScroll}>
       {snapshot.pageSizes.map((size, index) => (
         <div
-          key={index}
+          key={`page-${index + 1}`}
           data-page-number={index + 1}
           className="pdf-page-wrap pdf-page-placeholder"
           style={{ aspectRatio: `${size.width} / ${size.height}` }}
@@ -305,11 +329,20 @@ function ContinuousPage({
       <canvas
         ref={canvasRef}
         aria-label={label}
+        tabIndex={onCanvasClick ? 0 : undefined}
         style={onCanvasClick ? { cursor: "crosshair" } : undefined}
         onClick={(event) => {
           if (!onCanvasClick) return;
           const bounds = event.currentTarget.getBoundingClientRect();
           onCanvasClick(event.clientX - bounds.left, event.clientY - bounds.top);
+        }}
+        onKeyDown={(event) => {
+          if (!onCanvasClick) return;
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            const bounds = event.currentTarget.getBoundingClientRect();
+            onCanvasClick(bounds.width / 2, bounds.height / 2);
+          }
         }}
       />
       <div className="match-highlight-layer" aria-hidden="true">

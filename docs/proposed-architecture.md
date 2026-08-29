@@ -1,5 +1,7 @@
 # Proposed PDF Editor Architecture
 
+> **ARCHIVED — not current authority.** This document is superseded by `docs/decisions.md` (canonical decisions, D-001…D-057) and the single-status-authority rule (D-055). It is retained for historical trace only; it must not be cited as the current architecture, and it contains no primary gate/claim truth. See `docs/INDEX.md`.
+
 **Status:** Accepted working architecture for implementation; final provider remains open
 **Reviewed:** 2026-08-23
 **Inputs:** [`../findings.md`](../findings.md), [`pdf-engine-comparison.md`](pdf-engine-comparison.md), and [`../task_plan.md`](../task_plan.md).

@@ -110,3 +110,77 @@
 - `docs/audits/pdf-libraries-permissive-evaluation-2026-08-26.md` — 28 permissive libraries
 - `docs/audits/pdfkit-adequacy-audit-2026-08-26.md` — PDFKit limitations
 - `docs/audits/pdf-features-library-matrix-2026-08-26.md` — 42 features evaluated
+
+## Implementation Log — F-001, F-003, F-004, F-008, F-009
+
+### F-001: Library Cascade Pattern ✅ IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/LibraryCascade.swift`
+- **Tests:** `Tests/PDFEditorCoreTests/LibraryCascadeTests.swift` (6 tests)
+- **Architecture:** Protocol-based cascade with priority ordering, graceful fallback, timing
+- **Doctrine alignment:** OPERATING_DOCTRINE §8 (capability routing), §3 (verify at right level)
+
+### F-003: Shadow Mode for Extraction ✅ IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/ShadowMode.swift`
+- **Tests:** `Tests/PDFEditorCoreTests/LibraryCascadeTests.swift` (5 tests)
+- **Architecture:** Multi-engine parallel execution, result diffing, agreement scoring
+- **Doctrine alignment:** OPERATING_DOCTRINE §8 (multi-engine validation)
+
+### F-004: Hybrid OCR Routing ✅ ALREADY IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/OCR.swift`
+- **Status:** `HybridOCRRouter` with `ProcessingRoute` and `OCREngine` already in place
+
+### F-008: QPDF Validation Pipeline ✅ IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/QPDFValidator.swift`
+- **Tests:** `Tests/PDFEditorCoreTests/LibraryCascadeTests.swift` (3 tests)
+- **Architecture:** Wraps `qpdf --check` CLI, conforms to `CascadeProvider`
+- **License:** Apache-2.0 (permissive)
+- **Doctrine alignment:** OPERATING_DOCTRINE §8 (independent validator)
+
+### F-009: pdf_oxide Text Extraction ✅ IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/PdfOxideExtractor.swift`
+- **Tests:** `Tests/PDFEditorCoreTests/LibraryCascadeTests.swift` (3 tests)
+- **Architecture:** Wraps `pdf_oxide` CLI, conforms to `CascadeProvider` and `ShadowExtractor`
+- **License:** MIT (permissive)
+- **Doctrine alignment:** OPERATING_DOCTRINE §8 (fast extraction)
+
+### Test Results
+- **New tests:** 17 (all pass)
+- **Total suite:** 307 tests (up from 290)
+- **No regressions**
+
+## Implementation Log — Explorable Findings
+
+### E-001: PDFium Rendering Provider ✅ IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/PDFiumRenderer.swift`
+- **Architecture:** Protocol-based abstraction with CLI and fallback renderers
+- **Status:** Protocol defined, CLI renderer ready (requires `pdfium` installation)
+- **Fallback:** PDFKit fallback always available
+- **License:** BSD-2 (permissive)
+- **Doctrine alignment:** OPERATING_DOCTRINE §8 (capability routing), §9 (evolution)
+
+### E-004: pdfcpu Batch Operations ✅ IMPLEMENTED
+- **File:** `Sources/PDFEditorCore/PdfCpuBatchProcessor.swift`
+- **Architecture:** Wraps `pdfcpu` CLI for merge, split, rotate, watermark, validate
+- **Conforms to:** `CascadeProvider` for use in library cascades
+- **License:** Apache-2.0 (permissive)
+- **Doctrine alignment:** OPERATING_DOCTRINE §8 (capability routing)
+
+### E-009: Multi-Library Validation Tests ✅ IMPLEMENTED
+- **File:** `Tests/PDFEditorCoreTests/MultiLibraryValidationTests.swift`
+- **Tests:** 3 tests for multi-library validation consistency
+- **Doctrine alignment:** OPERATING_DOCTRINE §5 (evidence), §7 (verification)
+
+### E-010: Provenance Validation Tests ✅ IMPLEMENTED
+- **File:** `Tests/PDFEditorCoreTests/MultiLibraryValidationTests.swift`
+- **Tests:** 3 tests for ExtractionProvenance encoding and DocumentInspection
+- **Doctrine alignment:** OPERATING_DOCTRINE §2 (truth taxonomy), §5 (evidence)
+
+### E-011: Shadow Mode Comparison Tests ✅ IMPLEMENTED
+- **File:** `Tests/PDFEditorCoreTests/MultiLibraryValidationTests.swift`
+- **Tests:** 4 tests for shadow mode agreement scoring and timing
+- **Doctrine alignment:** OPERATING_DOCTRINE §3 (proportional rigor), §7 (verification)
+
+### Test Results
+- **New tests:** 10 (all pass)
+- **Total suite:** 317 tests (up from 307)
+- **No regressions**

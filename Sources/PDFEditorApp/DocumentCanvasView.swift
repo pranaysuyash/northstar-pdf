@@ -62,6 +62,10 @@ public struct DocumentCanvasView: View {
   @State private var selectedAnnotationBounds: PDFRect = PDFRect(x: 0, y: 0, width: 0, height: 0)
   @State private var selectedAnnotationPageIndex: Int = 0
   @State private var isAnnotationToolbarVisible: Bool = false
+  // MARK: - Rendering Mode
+  /// When true, the pipeline renders pixels and PDFKit is demoted to interaction-only.
+  /// When false, PDFKit handles both rendering and interaction (legacy mode).
+  /// Controlled via model.usePipelineRendering.
 
   public init(
     model: AppModel,
@@ -117,52 +121,103 @@ public struct DocumentCanvasView: View {
   }
 
   private var pdfCanvas: some View {
-    PDFKitView(
-      document: model.liveDocument,
-      renderingPipeline: renderingPipeline,
-      projectionRevision: model.documentProjectionRevision,
-      operations: model.operations,
-      pageIndex: model.selectedPageIndex,
-      viewMode: model.readerViewMode,
-      scaleMode: model.readerScaleMode,
-      zoom: model.readerZoom,
-      rotation: model.readerRotation,
-      selectedSearchMatch: model.selectedSearchMatch,
-      searchProjectionState: $searchProjectionState,
-      selectedCandidate: model.selectedCandidate,
-      selectedField: model.selectedField,
-      isManualPlacementMode: model.isManualPlacementMode,
-      fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
-      activeInlineEditor: model.activeInlineEditor,
-      applyPresentationOperation: { operation, document in
-        model.applyOperationForPresentation(operation, to: document)
-      },
-      onManualPlacement: { pageIndex, point in
-        model.receiveManualPlacement(pageIndex: pageIndex, point: point)
-      },
-      onDirectEdit: { pageIndex, point in
-        model.beginDirectTextPlacement(pageIndex: pageIndex, point: point)
-      },
-      onPageTap: { pageIndex, point in
-        model.handlePageTap(pageIndex: pageIndex, point: point)
-      },
-      onCommitInlineEditor: { text in
-        model.commitInlineEditor(text: text, andAdvance: true)
-      },
-      onDismissInlineEditor: {
-        model.dismissInlineEditor()
-      },
-      onTextSelectionChanged: { text, bounds, pageIndex in
-        selectedAnnotationText = text
-        selectedAnnotationBounds = bounds
-        selectedAnnotationPageIndex = pageIndex
-        isAnnotationToolbarVisible = true
-      },
-      onSelectionCleared: {
-        isAnnotationToolbarVisible = false
-        selectedAnnotationText = ""
+    Group {
+      if model.usePipelineRendering {
+        PipelineCanvasView(
+          document: model.liveDocument,
+          renderingPipeline: renderingPipeline,
+          projectionRevision: model.documentProjectionRevision,
+          operations: model.operations,
+          pageIndex: model.selectedPageIndex,
+          viewMode: model.readerViewMode,
+          scaleMode: model.readerScaleMode,
+          zoom: model.readerZoom,
+          rotation: model.readerRotation,
+          selectedSearchMatch: model.selectedSearchMatch,
+          searchProjectionState: $searchProjectionState,
+          selectedCandidate: model.selectedCandidate,
+          selectedField: model.selectedField,
+          isManualPlacementMode: model.isManualPlacementMode,
+          fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
+          activeInlineEditor: model.activeInlineEditor,
+          applyPresentationOperation: { operation, document in
+            model.applyOperationForPresentation(operation, to: document)
+          },
+          onManualPlacement: { pageIndex, point in
+            model.receiveManualPlacement(pageIndex: pageIndex, point: point)
+          },
+          onDirectEdit: { pageIndex, point in
+            model.beginDirectTextPlacement(pageIndex: pageIndex, point: point)
+          },
+          onPageTap: { pageIndex, point in
+            model.handlePageTap(pageIndex: pageIndex, point: point)
+          },
+          onCommitInlineEditor: { text in
+            model.commitInlineEditor(text: text, andAdvance: true)
+          },
+          onDismissInlineEditor: {
+            model.dismissInlineEditor()
+          },
+          onTextSelectionChanged: { text, bounds, pageIndex in
+            selectedAnnotationText = text
+            selectedAnnotationBounds = bounds
+            selectedAnnotationPageIndex = pageIndex
+            isAnnotationToolbarVisible = true
+          },
+          onSelectionCleared: {
+            isAnnotationToolbarVisible = false
+            selectedAnnotationText = ""
+          }
+        )
+      } else {
+        PDFKitView(
+          document: model.liveDocument,
+          renderingPipeline: renderingPipeline,
+          projectionRevision: model.documentProjectionRevision,
+          operations: model.operations,
+          pageIndex: model.selectedPageIndex,
+          viewMode: model.readerViewMode,
+          scaleMode: model.readerScaleMode,
+          zoom: model.readerZoom,
+          rotation: model.readerRotation,
+          selectedSearchMatch: model.selectedSearchMatch,
+          searchProjectionState: $searchProjectionState,
+          selectedCandidate: model.selectedCandidate,
+          selectedField: model.selectedField,
+          isManualPlacementMode: model.isManualPlacementMode,
+          fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
+          activeInlineEditor: model.activeInlineEditor,
+          applyPresentationOperation: { operation, document in
+            model.applyOperationForPresentation(operation, to: document)
+          },
+          onManualPlacement: { pageIndex, point in
+            model.receiveManualPlacement(pageIndex: pageIndex, point: point)
+          },
+          onDirectEdit: { pageIndex, point in
+            model.beginDirectTextPlacement(pageIndex: pageIndex, point: point)
+          },
+          onPageTap: { pageIndex, point in
+            model.handlePageTap(pageIndex: pageIndex, point: point)
+          },
+          onCommitInlineEditor: { text in
+            model.commitInlineEditor(text: text, andAdvance: true)
+          },
+          onDismissInlineEditor: {
+            model.dismissInlineEditor()
+          },
+          onTextSelectionChanged: { text, bounds, pageIndex in
+            selectedAnnotationText = text
+            selectedAnnotationBounds = bounds
+            selectedAnnotationPageIndex = pageIndex
+            isAnnotationToolbarVisible = true
+          },
+          onSelectionCleared: {
+            isAnnotationToolbarVisible = false
+            selectedAnnotationText = ""
+          }
+        )
       }
-    )
+    }
     .overlay {
       if isAnnotationToolbarVisible, let store = annotationStore {
         VStack {
@@ -951,6 +1006,7 @@ public struct PDFKitView: NSViewRepresentable {
     /// Assigned in `makeNSView` from the shared pipeline owned by ContentView.
     var renderingPipeline: RenderingPipeline?
     weak var freezePaneOverlay: FreezePaneOverlayView?
+    weak var tileOverlay: PipelineTileOverlayView?
     var freezePaneState = FreezePaneState()
     weak var sourceDocument: PDFDocument?
     var presentationDocument: PDFDocument?
@@ -974,6 +1030,13 @@ public struct PDFKitView: NSViewRepresentable {
 
     func invalidateOverlay() {
       overlayView?.invalidateProjection()
+      // Update tile overlay visible rect from PDFKit's current scroll position
+      if let tileOverlay,
+         let scrollView = observedRootView?.enclosingScrollView {
+        let visibleInDoc = scrollView.contentView.bounds
+        let converted = observedRootView?.convert(visibleInDoc, from: scrollView.contentView) ?? visibleInDoc
+        tileOverlay.viewportRect = converted
+      }
     }
 
     func removeProjectionObservers() {
@@ -1085,6 +1148,11 @@ public struct PDFKitView: NSViewRepresentable {
               self.freezePaneOverlay?.pdfDocument = doc
               self.freezePaneOverlay?.zoomScale = view.scaleFactor
               self.freezePaneOverlay?.needsDisplay = true
+              // Update pipeline tile overlay for new page
+              self.tileOverlay?.currentPageIndex = pageIndex
+              self.tileOverlay?.currentScale = view.scaleFactor
+              self.tileOverlay?.viewportRect = view.currentPage?.bounds(for: view.displayBox) ?? .zero
+              self.tileOverlay?.forceReload()
             }
           }
         }
@@ -1131,6 +1199,15 @@ public struct PDFKitView: NSViewRepresentable {
     overlayView.wantsLayer = true
     view.addSubview(overlayView)
     context.coordinator.overlayView = overlayView
+
+    // Pipeline tile overlay — composites pipeline-rendered tiles above PDFKit
+    let tileOverlay = PipelineTileOverlayView(frame: view.bounds)
+    tileOverlay.autoresizingMask = [.width, .height]
+    tileOverlay.wantsLayer = true
+    tileOverlay.layer?.zPosition = 50 // above PDFKit (0), below freeze panes (100)
+    tileOverlay.renderingPipeline = renderingPipeline
+    view.addSubview(tileOverlay)
+    context.coordinator.tileOverlay = tileOverlay
 
     // Freeze pane overlay — sits above the presentation overlay
     let freezeOverlay = FreezePaneOverlayView(frame: view.bounds)

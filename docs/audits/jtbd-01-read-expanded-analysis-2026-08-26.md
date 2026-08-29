@@ -795,6 +795,7 @@ The PDF is a container. The user wants the **content**. The gap between "viewer"
 
 ## 24. EVIDENCE
 
+- **Layouts & Contextual Modes** (docs/audits/jtbd-01-read-layouts-and-modes-2026-08-26.md) — window-in-window, split view, diff, freeze-panes, content-routed modes
 - Expanded Analytical Framework (docs/audits/analytical-framework-expanded-5w1h.md)
 - JTBD-01 First Principles Breakdown (docs/audits/jtbd-01-read-first-principles-2026-08-26.md)
 - JTBD-01 Technical Approaches (docs/audits/jtbd-01-read-technical-approaches-2026-08-26.md)

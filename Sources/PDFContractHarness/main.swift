@@ -226,7 +226,7 @@ private func makeSessionProvenance(
         sessionID: sessionID,
         sourceDigest: inspection.source.sha256,
         provider: providerDescriptor,
-        generatedAt: "2026-08-25T00:00:00.000Z",
+        generatedAt: Date().ISO8601Format(),
         processing: PDFSessionProcessingProvenance(
             locality: .localDevice,
             sourceInput: "local-file",
@@ -257,7 +257,7 @@ private func inspectFixture(relativePath: String, arguments: Arguments, provider
                 platform: providerDescriptor.platform,
                 capabilities: ["metadata-presence", "embedded-data-counts", "annotation-counts", "network-boundary-counts", "bounded-token-scan"]
             ),
-            generatedAt: "2026-08-25T00:00:00.000Z")
+            generatedAt: Date().ISO8601Format())
         var validation: ValidationReport?
         var exportError: String?
         let exportFilename = relativePath
@@ -275,7 +275,7 @@ private func inspectFixture(relativePath: String, arguments: Arguments, provider
         let sessionProvenance = makeSessionProvenance(
             inspection: inspection,
             validation: validation,
-            sessionID: "native-(inspection.source.sha256.prefix(16))",
+            sessionID: "native-\(inspection.source.sha256.prefix(16))",
             operationCount: 0)
         try PDFSessionPrivacyProvenanceValidator.validate(
             sessionProvenance,

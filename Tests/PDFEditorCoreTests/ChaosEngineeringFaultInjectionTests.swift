@@ -6,6 +6,10 @@ import Testing
 @Suite("Chaos Engineering and Fault Injection Tests")
 struct ChaosEngineeringFaultInjectionTests {
 
+  private static func rectIsFinite(_ r: CGRect) -> Bool {
+    r.origin.x.isFinite && r.origin.y.isFinite && r.size.width.isFinite && r.size.height.isFinite
+  }
+
   // MARK: - Chaos Experiment 1: Bit-Flipping Ciphertext Tampering (PER-PL2-0035)
   // Hypothesis: Any single-bit corruption in the AES-256-GCM encrypted envelope must cause authentication tag failure and fail closed without returning partial data.
 
@@ -74,8 +78,12 @@ struct ChaosEngineeringFaultInjectionTests {
     }
     let garbageData = Data(randomBytes)
 
-    // Parser must complete and return a valid result without crashing
-    let boxes = PDFVectorStreamParser.parse(data: garbageData)
-    #expect(boxes.isEmpty || !boxes.isEmpty)
+    // Parser must complete and return a valid result without crashing, emitting only finite geometry
+    let pages = PDFVectorStreamParser.parse(data: garbageData)
+    #expect(pages.allSatisfy { page in
+      Self.rectIsFinite(page.mediaBox)
+        && page.rectangles.allSatisfy(Self.rectIsFinite)
+        && page.horizontalLines.allSatisfy(Self.rectIsFinite)
+    }, "parser must emit only finite geometry on corrupted input")
   }
 }

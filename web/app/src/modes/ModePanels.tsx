@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { CapabilityState, ProductModeID } from "../state/productSurface";
+import { PDF_CAPABILITY_LANES } from "../../../pdf-capability-lanes.mjs";
 
 /**
  * Every non-Reader surface renders from the capability vocabulary only. A
@@ -75,7 +76,7 @@ export function UnderstandPanel({
                     {candidate.score.toFixed(2)} · p{candidate.pageIndex + 1}
                   </span>
                   {candidate.evidence.slice(0, 2).map((line, i) => (
-                    <p key={i} className="small muted" style={{ margin: "4px 0 0" }}>
+                    <p key={`${candidate.id}-evidence-${i}`} className="small muted" style={{ margin: "4px 0 0" }}>
                       {line}
                     </p>
                   ))}
@@ -106,16 +107,34 @@ export function CompletePanel({ hasDocument }: { hasDocument: boolean }) {
 }
 
 export function OrganizePanel({ hasDocument }: { hasDocument: boolean }) {
+  // Lane vocabulary comes from the canonical contract module; outcomes stay
+  // "unknown" until a provider manifest negotiates real capability evidence.
+  const lanes = PDF_CAPABILITY_LANES;
   return (
     <PanelFrame
       mode="organize"
       title="Organize — shape the document before you send it."
       body={
-        <p className="understand-block">
-          {!hasDocument
-            ? "Page operations require an open document."
-            : "This lane stays reader-only until the page provider exposes verified insert/delete/reorder/rotate/extract operations with reopen validation. Unsupported operations stay explicit rather than silently hidden."}
-        </p>
+        <>
+          <p className="understand-block">
+            {!hasDocument
+              ? "Page operations require an open document."
+              : "This lane stays reader-only until the page provider exposes verified insert/delete/reorder/rotate/extract operations with reopen validation. Unsupported operations stay explicit rather than silently hidden."}
+          </p>
+          {hasDocument && (
+            <div className="understand-block">
+              <h3>Capability lanes</h3>
+              <ul className="small lane-list">
+                {lanes.map((lane) => (
+                  <li key={lane}>
+                    <code>{lane}</code>{" "}
+                    <span className="muted">· outcome: unknown (no provider manifest in this entry point)</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
       }
     />
   );

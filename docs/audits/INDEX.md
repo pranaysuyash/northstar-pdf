@@ -78,3 +78,4 @@ read them for method and findings history only.
 | 2026-08-25 | [template-runtime-integration-evidence-2026-08-25.md](template-runtime-integration-evidence-2026-08-25.md) | Template runtime integration evidence, 2026-08-25 | current |
 | 2026-08-25 | [text-run-ocr-alignment-evidence-2026-08-25.md](text-run-ocr-alignment-evidence-2026-08-25.md) | Text-run replacement and OCR-layer alignment evidence | current |
 | 2026-08-24 | [wcag-and-accessibility-audit-per-pdev-0169.md](wcag-and-accessibility-audit-per-pdev-0169.md) | WCAG 2.1/2.2 Level AA & Assistive Technology Accessibility Audit | current |
+| 2026-08-26 | [repository-audit-2026-08-26-continuation.md](repository-audit-2026-08-26-continuation.md) | Repository Audit — 2026-08-26 Continuation (PER-0428) | current |

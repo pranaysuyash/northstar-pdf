@@ -1,10 +1,10 @@
 Use sources in this order:
 1) $HOME/AGENTS.md (or /Users/pranay/AGENTS.md on this machine)
 2) $HOME/Projects/AGENTS.md (or /Users/pranay/Projects/AGENTS.md on this machine)
-3) pdf_editor/AGENTS.md or pdf_editor/CLAUDE.md (if present)
+3) pdf_editor/AGENTS.md (canonical local instruction surface; recognized tool-specific names should symlink to it)
 4) pdf_editor/OPERATING_DOCTRINE.md (generated project copy of the canonical operating doctrine at /Users/pranay/Projects/agent-start/doctrines, if present)
 5) Task-relevant specialist doctrines at the canonical root /Users/pranay/Projects/agent-start/doctrines (see the routing record in SESSION_CONTEXT.md)
-6) Other repo-local agent instructions if present, including QWEN.md, CODEX.md, copilot-instructions.md, .cursorrules, and tool-specific guidance
+6) Other repo-local, path-specific guidance if present. Compatibility names such as QWEN.md, CODEX.md, copilot-instructions.md, and .cursorrules must not become competing editable instruction sources.
 7) Project-local docs/prompts/worklogs under pdf_editor
 8) pdf_editor/docs/context/AGENT_INTELLIGENCE_GRAPH.md (if present)
 9) pdf_editor/docs/context/agent-start/SESSION_CONTEXT.md

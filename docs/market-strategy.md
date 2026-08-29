@@ -1,5 +1,7 @@
 # PDF Editor Market and Product Strategy
 
+> **PROPOSED — not a commitment.** This is a research synthesis, not a product, pricing, or roadmap approval. It conveys no obligation to implement and asserts no capability as "Implemented."
+
 **Status:** Proposed research synthesis; not a product approval
 
 **Date:** 2026-08-24

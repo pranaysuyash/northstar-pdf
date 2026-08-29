@@ -382,7 +382,9 @@ Keep the shared operation contracts and fixtures. Replace a provider adapter or
 add a local companion without rewriting the document/session UI. Do not remove
 the existing PDFKit evidence or weaken a failed preservation gate.
 
-## D-007: Versioned Native/Web Contract Envelope
+## D-056: Versioned Native/Web Contract Envelope
+
+> **ID note:** Renumbered from `D-007` to avoid collision with the `D-007` Split-Provider Architecture decision (line 133). Original references to this decision as "D-007 (contract envelope)" should be read as `D-056`.
 
 - **Date:** 2026-08-24
 - **Status:** Accepted implementation decision; browser adapter remains pending
@@ -896,7 +898,9 @@ the existing PDFKit evidence or weaken a failed preservation gate.
 - **Owner:** Project owner; corpus review owns labels, shared matching owns
   state and abstention semantics, and native/web adapters own fingerprint parity.
 
-## D-010: Intent-Driven Editor Modes (Read / Fill / Sign / Edit)
+## D-057: Intent-Driven Editor Modes (Read / Fill / Sign / Edit)
+
+> **ID note:** Renumbered from `D-010` to avoid collision with the `D-010` Cross-Project Evidence Graph decision (line 550). Original references to this decision as "D-010 (editor modes)" should be read as `D-057`.
 
 - **Date:** 2026-08-24
 - **Status:** Accepted implementation decision
@@ -2771,3 +2775,94 @@ Supersedes the pricing hypotheses in
 - **Owner:** Web lane; decision recorded by PER-0428 continuation on owner
   instruction.
 
+
+### D-055 update 2 (2026-08-26, evening)
+
+Contention resolved with the parallel stream merged and quiescent; its own
+placement wiring landed and the committed smoke passes end-to-end including
+the overlay flow. Landed on top, per the approved "do all" scope:
+- Continuous scroll (Reader parity): view-mode select in the toolbar;
+  controller captures per-page dimensions at open and exposes
+  `renderPageInto` with per-call cancellation independent of the global
+  single-page token; ReaderStage lazily renders visible pages through an
+  IntersectionObserver, syncs scroll position to the active page both
+  directions, and keeps search highlights plus authorized-region markers
+  aligned on every rendered page.
+- Parity tail: Organize mode now renders the canonical capability-lane
+  vocabulary (`web/pdf-capability-lanes.mjs`) with honest "unknown" outcomes
+  until a provider manifest negotiates real evidence; Review shows outside-
+  region raster metrics (changed/compared pixels, max channel delta); a
+  "Show change regions" toggle controls marker visibility on the document.
+Validation: Tier 3/4 — full smoke pass at all nine breakpoints; live probe of
+continuous mode against a 20-page fixture (20 placeholders mounted, only 3
+canvases rendered initially, jump-to-page and scroll-sync verified, raster
+painted); contract suites 15/15.
+
+### D-059 update (2026-08-26, evening continuation audit)
+
+Continuation of the morning PER-0428 doctrine-alignment audit, executed per
+explicit user request to re-audit the repo, list implicit/explicit
+findings/tasks, evaluate each against first principles / long-term / doctrine
+alignment, identify "make it the best" opportunities, document chat + evidence,
+and produce an implementation plan.
+
+- Audit artifact: [`docs/audits/repository-audit-2026-08-26-continuation.md`](../audits/repository-audit-2026-08-26-continuation.md)
+- Plan: `~/.commandcode/plans/audit-and-implementation-plan-2026-08-26.md`
+- Live evidence at audit time: 62 dirty paths, 402/63 suites Swift PASS,
+  51/51 Node web-reader PASS, 124 gate rows (53 PARTIAL / 6 PASS / 0 FAIL)
+- Verdict: program is substantially first-principles-, long-term-, and
+  doctrine-aligned. Inherits all prior audit rows; writes fresh verdicts only
+  for items that changed (AF-02/03/04 commit lineage, permissive-only 28-library
+  matrix replacing 30-library mixed-license, RG-076 → PASS, P7 React canonical
+  sequencing D-058).
+- The permissive-only PDF library evaluation (commit `5856917`) supersedes
+  prior D-002/D-007/D-009/D-048 engine matrices for license-risk decisions.
+  The decision: when a future engine decision is revisited, the 28-library
+  permissive-only matrix is the default shortlist.
+- "Make it the best" top opportunities (in order of lifecycle value):
+  1. D-058 G1 — wire React `PdfController.exportCopy` through mutation gate +
+     preflight (closes the React-vs-vanilla dual-maintenance risk)
+  2. Cross-link audit of D-### → RG-### → F-### (transparency + navigation)
+  3. Mutation-test coverage expansion to template store, capability lanes,
+     browser mutation gate, encrypted companion transport
+  4. CI: extend to 78-file E2E suite stabilization
+  5. Accessibility human-observation campaign (closes Tier 4 evidence gap for
+     RG-006/007/043/057/058/059)
+- L2/L3 actions: none taken. L0/L1 envelope only. No Git mutations, no
+  production effects, no external service writes.
+- Owner: Web lane + Platform lane; decision recorded by PER-0428 continuation
+  per the user's verbatim instruction.
+
+## D-059: Salvage the tiled/compositor rendering primitive into the canonical sole renderer; integration is the outstanding improvement
+
+- **Date:** 2026-08-28
+- **Context:** Persona audit PDA-2026-08-28 (UI-04, verdict `N/?`) flagged
+  `PipelineTileOverlayView` as a free-floating overlay not wired to `AppModel`
+  — a WATCH/salvage item, not a delete. During implementation the untracked
+  `PipelineTileOverlayView.swift` was removed from the working tree. Investigation
+  showed the tiling/compositor capability was **not lost**: it is implemented and
+  documented (doctrine §3/§5/§12) in `PipelinePageView` ("intended sole renderer"
+  with progressive quality + viewport tiling). However `PipelinePageView` is
+  referenced nowhere, and `DocumentCanvasView` still renders via `PDFKitView`
+  (`InteractivePDFView: PDFView`). The removal was a correct consolidation; the
+  genuine first-principles gap is that the capability is orphaned, not wired in.
+- **Decision:** Treat `PipelinePageView` as the canonical home of the tiling
+  primitive (capability salvaged — no re-implementation needed). Correct the
+  false "sole renderer" claim in its header to PROPOSED/aspirational until wired.
+  The outstanding improvement is to integrate `PipelinePageView` as the render
+  surface in `DocumentCanvasView`, replacing the PDFKit pixel path while keeping
+  PDFKit as the data source (text rects, links, annotations) — exactly the
+  architecture `PipelinePageView` documents. Until integrated, no document may
+  claim the pipeline "renders" the app.
+- **Options considered:** (a) recreate a standalone overlay view — rejected; it
+  would re-introduce the orphan the audit warned about. (b) delete `PipelinePageView`
+  too — rejected; it is the wanted capability. (c) wire it in (selected as the
+  improvement, pending runtime UI verification).
+- **Trade-offs:** integration changes the render surface and must preserve
+  text-selection/link/annotation interaction currently provided by PDFKit's
+  `PDFView`; verify at runtime (Tier 3) before claiming done.
+- **Validation:** Tier 1 — `PipelinePageView` compiles as part of `PDFEditorApp`;
+  its header no longer asserts an unverified "sole renderer" claim. Tier 3 (required
+  before close): macOS run confirming pipeline pixels render and interaction works.
+- **Revisit trigger:** when `DocumentCanvasView` is refactored, integrate then.
+- **Owner:** macOS app lane; enforcement by all agent lanes (doctrine §6 salvage).

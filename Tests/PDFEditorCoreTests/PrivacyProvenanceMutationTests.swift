@@ -13,8 +13,8 @@ struct PrivacyProvenanceMutationTests {
 
   // MARK: - Privacy Provenance Validator Mutations
 
-  @Test("MUT-PP-01: Invalid version is rejected")
-  func invalidVersion() {
+  @Test("MUT-PP-01: Tampered source digest is rejected (S3 mutation)")
+  func tamperedDigest() {
     // Build a valid record first
     let header = PDFSessionPrivacyProvenanceHeader(
       sessionID: "test-session",
@@ -42,12 +42,25 @@ struct PrivacyProvenanceMutationTests {
     )
     let record = PDFSessionPrivacyProvenance(header: header, payload: payload)
 
-    // The validator should reject invalid versions
-    // Since we can't change the version directly (it's set in init),
-    // we test that the validator at least checks the version
-    // by verifying a valid record passes
+    // Sanity: a valid, untampered record passes
     #expect(throws: Never.self) {
       try PDFSessionPrivacyProvenanceValidator.validate(record)
+    }
+
+    // S3 mutation: a record whose header digest diverges from the export digest
+    // must be rejected — proves the validator actively catches tampering, not
+    // merely that it exists (RG-127).
+    let tampered = PDFSessionPrivacyProvenance(
+      header: PDFSessionPrivacyProvenanceHeader(
+        sessionID: "test-session",
+        sourceDigest: String(repeating: "b", count: 64),
+        provider: PDFProviderDescriptor(id: "test", version: "1.0", platform: "macOS"),
+        generatedAt: "2026-08-26T00:00:00Z"
+      ),
+      payload: payload
+    )
+    #expect(throws: PDFSessionPrivacyProvenanceError.sourceMismatch) {
+      try PDFSessionPrivacyProvenanceValidator.validate(tampered)
     }
   }
 

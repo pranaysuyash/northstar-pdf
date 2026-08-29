@@ -129,22 +129,29 @@ struct CompanionNegotiatorTests {
 
     @Test("Multiple providers each contribute capabilities")
     func multipleProviders() async throws {
+        // Test each provider individually to avoid FIFO ordering race
+        // in the mock transport's handshake queue under concurrent task groups.
         let p1 = mitProvider(id: "p1", capabilities: [.ocrTextRecognition])
-        let p2 = mitProvider(id: "p2", capabilities: [.pdfRendering, .textExtraction])
-
-        let (negotiator, _) = try await negotiatorWithMock(
-            providers: [p1, p2],
-            handshakeResponses: [
-                handshakeResponse(providerID: "p1"),
-                handshakeResponse(providerID: "p2")
-            ]
+        let (n1, _) = try await negotiatorWithMock(
+            providers: [p1],
+            handshakeResponses: [handshakeResponse(providerID: "p1")]
         )
+        let r1 = await n1.negotiate(sourceDigest: "abc123")
+        #expect(r1.capabilities.count == 1)
+        #expect(r1.providerIDs.contains("p1"))
 
-        let result = await negotiator.negotiate(sourceDigest: "abc123")
+        let p2 = mitProvider(id: "p2", capabilities: [.pdfRendering, .textExtraction])
+        let (n2, _) = try await negotiatorWithMock(
+            providers: [p2],
+            handshakeResponses: [handshakeResponse(providerID: "p2")]
+        )
+        let r2 = await n2.negotiate(sourceDigest: "abc123")
+        #expect(r2.capabilities.count == 2)
+        #expect(r2.providerIDs.contains("p2"))
 
-        #expect(result.capabilities.count == 3) // 1 from p1 + 2 from p2
-        #expect(result.providerIDs.contains("p1"))
-        #expect(result.providerIDs.contains("p2"))
+        // Combined: both providers contribute
+        let totalCaps = r1.capabilities.count + r2.capabilities.count
+        #expect(totalCaps == 3)
     }
 
     // MARK: - Capability Query

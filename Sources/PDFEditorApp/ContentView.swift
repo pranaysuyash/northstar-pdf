@@ -560,6 +560,14 @@ public struct ContentView: View {
             }
           }
         }
+        Divider()
+        Toggle(isOn: $model.usePipelineRendering) {
+          Label {
+            Text("Pipeline Renderer")
+          } icon: {
+            Image(systemName: "cpu")
+          }
+        }
       } label: {
         Label(model.readingMode.displayName, systemImage: model.readingMode.symbolName)
           .font(.caption)

@@ -160,6 +160,43 @@ public final class ContentAuthor: ObservableObject {
     elements[index].updatedAt = Date()
   }
 
+  /// Update an element's kind (e.g., change font/color of text, fill of shape).
+  public func updateElement(id: UUID, kind: ElementKind) {
+    guard let index = elements.firstIndex(where: { $0.id == id }) else { return }
+    let displayName = elements[index].kind.displayName
+    pushUndo(name: "Update \(displayName)")
+    elements[index] = DocumentElement(
+      id: elements[index].id,
+      pageIndex: elements[index].pageIndex,
+      kind: kind,
+      frame: elements[index].frame,
+      rotation: elements[index].rotation,
+      opacity: elements[index].opacity,
+      zIndex: elements[index].zIndex,
+      name: elements[index].name
+    )
+    elements[index].updatedAt = Date()
+  }
+
+  /// Update the fill color of a shape element.
+  public func updateShapeFill(id: UUID, fillColor: String) {
+    guard let index = elements.firstIndex(where: { $0.id == id }),
+          case .shape(var props) = elements[index].kind else { return }
+    pushUndo(name: "Change Color")
+    props.fillColor = fillColor
+    elements[index] = DocumentElement(
+      id: elements[index].id,
+      pageIndex: elements[index].pageIndex,
+      kind: .shape(props),
+      frame: elements[index].frame,
+      rotation: elements[index].rotation,
+      opacity: elements[index].opacity,
+      zIndex: elements[index].zIndex,
+      name: elements[index].name
+    )
+    elements[index].updatedAt = Date()
+  }
+
   /// Delete an element.
   public func deleteElement(id: UUID) {
     guard let index = elements.firstIndex(where: { $0.id == id }) else { return }

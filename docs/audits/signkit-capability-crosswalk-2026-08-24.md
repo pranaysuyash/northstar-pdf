@@ -7,6 +7,13 @@
 **Scope:** SignKit product, native workflow, explored roadmap, public web, and metadata-first workspace as inputs to the long-term PDF Editor web platform  
 **Current evidence level:** Tier 1 static inspection of current source and documents, with historical Tier 4 native/browser evidence called out separately
 
+> **Native implementation note (2026-08-26):** The signature *extraction* capability
+> discussed here was reimplemented natively inside this repository (no SignKit
+> runtime dependency), because end users do not have SignKit installed. See
+> `docs/audits/signature-extraction-native-capabilities-2026-08-26.md` for current
+> capabilities, the explicit no-ML limitation, and the roadmap. Treat SignKit as a
+> *reference*, not the canonical owner, for extraction.
+
 ## Why this map exists
 
 The PDF Editor work should build on the product and evidence-system work that

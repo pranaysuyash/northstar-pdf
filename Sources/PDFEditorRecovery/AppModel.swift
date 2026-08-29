@@ -388,6 +388,8 @@ public final class AppModel {
   public var searchHistory: [String] = []
   public var isSearchHistoryPresented = false
   public var readingMode: ReadingMode = .study
+  /// When true, the pipeline renders pixels and PDFKit is demoted to interaction-only.
+  public var usePipelineRendering: Bool = true
   public var isFreezePaneActive: Bool = false
   public var freezePaneConfig: FreezePaneConfig = .none
   public var contentSuggestion: ContentSuggestion?

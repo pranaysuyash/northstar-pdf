@@ -365,6 +365,7 @@ assert.deepEqual(consoleErrors, [], `browser console errors: ${consoleErrors.joi
 assert.deepEqual(pageErrors, [], `browser page errors: ${pageErrors.join(" | ")}`);
 assert.equal(fixtureReports.length, corpus.length);
 assert.ok(fixtureReports.every((fixture) => fixture.sourceDigest === sourceDigest(fixture.sourcePath)));
+assert.equal(report.unexpectedMismatchCount, 0, `unexpected parity mismatches: ${report.unexpectedMismatches.join("; ")}`);
 console.log(JSON.stringify({
   harness: report.harness,
   fixtureCount: report.fixtureCount,

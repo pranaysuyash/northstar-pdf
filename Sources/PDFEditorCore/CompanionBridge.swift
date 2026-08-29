@@ -200,7 +200,13 @@ public actor CompanionBridge {
     private var completionHandlers: [UUID: (BridgeResponse) -> Void] = [:]
     
     /// Request history (append-only, value-free).
-    public private(set) var requestLog: [RequestLogEntry] = []
+    private var _requestLog: [RequestLogEntry] = []
+    private let logLock = NSLock()
+    public var requestLog: [RequestLogEntry] {
+        logLock.lock()
+        defer { logLock.unlock() }
+        return _requestLog
+    }
     
     /// The transport layer for companion communication.
     private var transport: (any CompanionTransport)?
@@ -441,11 +447,12 @@ public struct RequestLogEntry: Codable, Sendable, Identifiable {
 extension CompanionBridge {
     /// Append a log entry.
     private func logRequest(_ entry: RequestLogEntry) {
-        requestLog.append(entry)
-        // Trim to prevent unbounded growth
-        if requestLog.count > resourceLimits.maxLogEntries {
-            requestLog = Array(requestLog.suffix(resourceLimits.maxLogEntries))
+        logLock.lock()
+        _requestLog.append(entry)
+        if _requestLog.count > resourceLimits.maxLogEntries {
+            _requestLog = Array(_requestLog.suffix(resourceLimits.maxLogEntries))
         }
+        logLock.unlock()
     }
     
     /// Recent log entries.
@@ -455,6 +462,8 @@ extension CompanionBridge {
     
     /// Clear log.
     public func clearLog() {
-        requestLog.removeAll()
+        logLock.lock()
+        _requestLog.removeAll()
+        logLock.unlock()
     }
 }

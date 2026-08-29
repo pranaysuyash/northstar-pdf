@@ -1,5 +1,9 @@
 # Implementation Status
 
+> **STATUS AUTHORITY (D-055):** `docs/release-gates.md` is the single authority for gate state (`PASS/PARTIAL/OPEN/BLOCKED/FAIL`). This file records implementation *evidence* only; it must not assert gate state as primary truth. See `docs/INDEX.md`.
+>
+> **EVIDENCE TIERS (OPERATING_DOCTRINE §3):** Claims below are tagged where possible — `T0` inferred · `T1` static · `T2` failed-then-fixed · `T3` mutation-verified · `T4` human-observed · `T5` production. Unverified claims stay `Unknown`/`Quarantined` and must not be promoted to "Implemented".
+
 **Reviewed:** 2026-08-25
 **Status:** Native macOS and local web vertical slices are implemented for reading,
 reviewed completion, native checkbox/radio editing, static choice marks, native
@@ -392,3 +396,16 @@ evidence record is [`audits/template-lifecycle-evidence-2026-08-25.md`](audits/t
 7. If a declared workflow triggers the companion admission gate, implement the
    typed capability handshake and run separate OCR and high-fidelity provider
    bake-offs with license, bridge, recovery, and independent-viewer evidence.
+
+## D-057 Decoupled View Memory + Save This Layout (2026-08-26, native lane)
+
+Implemented per `Docs/explorations/ux-open-close-tabs-exploration-2026-08-26.md` Part I Branch 1 + Part IV Branch 15; decision record `Docs/decisions.md` D-057.
+
+- **LayoutRestorePolicy** (`fixedDefault | lastUsedGlobally | perDocument`, UserDefaults-backed) with a radio-group picker in Settings ▸ Opening Documents.
+- **Resume/layout split:** page index, selections, view mode, and the new fractional scroll anchor always restore from the digest-keyed session; scale mode / zoom / rotation follow pin-over-policy. Fresh opens no longer inherit the previously open document's zoom (`applyLayoutForFreshOpen`).
+- **File ▸ Save This Layout / Clear Saved Layout** commands pin or release a document's layout (`DocumentSessionPinnedLayout`, additive optional in `DocumentSessionViewState`); pin rides autosaves unchanged and is only mutated by the two commands.
+- **Fractional scroll anchor (Branch 15):** canvas reports settled viewport positions debounced 300 ms (`reportViewportAnchor`), persisted via view-state autosave, staged on restore, and applied exactly once post-magnification/post-layout by the canvas (`applyRestoredAnchor` → PDFDestination). Anchor fields are clamped at the contract boundary.
+- **Boundary snapping:** stale persisted values (rotation ∉ {0,90,180,270}, zoom outside 0.25–3.0, out-of-range fractions) snap to legal values at restore.
+- **Affordances:** HUD pin badge (orange, click-to-clear) when a layout is pinned; "Restored saved layout." appended to the recovery status message on pinned restores.
+- **Digest stability:** all new contract fields are optionals; synthesized encodeIfPresent keeps legacy payload bytes and recovery-pair digests stable (pinned by tests).
+- **Evidence:** Tier 2/S1 — 16 new tests (`LayoutRestorePolicyTests`, `DocumentSessionViewStateContractTests`); full Swift suite 275 tests / 40 suites passing; app launch smoke OK. Tier 4 manual verification of Settings/pin/restore flows in the running GUI not yet performed.

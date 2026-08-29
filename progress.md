@@ -3523,3 +3523,10 @@ alone does not help, because the restriction applies to the agent process.
 - **`NativeDetectorGate` and `DualLaneDetectorGate`** pass `fixtureID` to `measure()`, adding measurement-level scoping on top of the existing gate-level `groundTruth.cases(forFixture:)` scoping.
 - **Test**: `perFixtureScopingPreventsCrossMatching` proves that with `fixtureID`, only the named fixture's ground truth cases are evaluated; without it, both fixtures' cases see the same candidates (pooled artifact).
 - **Suite**: 1330/1330 tests pass.
+
+## 2026-08-28 — Generator-manifest name-vs-structure inference audit
+- **Finding (Verified):** The review pass corrected 5 generator-manifest "no editable candidates" cases that were inferred from fixture names (e.g., "plain-text" implies no forms) rather than actual PDF structure. qpdf 12.4 structural inspection proved every fixture has 6 AcroForm widgets on page 0.
+- **Audit result:** No remaining name-vs-structure inference errors found across the codebase. All other expectations use structural inspection (qpdf, pikepdf, live pipeline measurement).
+- **Stale artifact:** The generator manifest (`benchmark/results/corpus-sweep-2026-08-25/manifest.json`) doesn't verify field presence for 12 of 14 fixtures. Only `navigation.pdf` (annots: 6) and `xfa-hybrid.pdf` (acroFormFieldCount: 1) check field presence.
+- **Recommendation:** Update manifest to include `acroFormFieldCount: 6` for all form-bearing fixtures; add CI gate to verify field presence against manifest.
+- Audit: `docs/audits/generator-manifest-name-vs-structure-audit-2026-08-28.md`

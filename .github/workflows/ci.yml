@@ -211,11 +211,22 @@ jobs:
       - name: Run tool-dependent tests
         run: node Tests/run-tool-dependent-tests.mjs
 
+  # ── Gate 5: React Doctor (security, performance, a11y, bundle) ────
+  react-doctor:
+    name: React Doctor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: millionco/react-doctor@v2
+        with:
+          directory: web/app
+
   # ── Evidence summary ─────────────────────────────────────────────────
   ci-evidence:
     name: CI evidence gate
     runs-on: ubuntu-latest
-    needs: [swift-gate, node-contract, web-e2e, tool-dependent]
+    needs: [swift-gate, node-contract, web-e2e, tool-dependent, react-doctor]
     if: always()
     steps:
       - name: Evaluate gates
@@ -224,6 +235,7 @@ jobs:
           echo "Node contract:     ${{ needs.node-contract.result }}"
           echo "Web E2E:           ${{ needs.web-e2e.result }}"
           echo "Tool-dependent:    ${{ needs.tool-dependent.result }}"
+          echo "React Doctor:      ${{ needs.react-doctor.result }}"
 
           if [ "${{ needs.swift-gate.result }}" != "success" ]; then
             echo "::error::Swift gate failed"
@@ -231,6 +243,10 @@ jobs:
           fi
           if [ "${{ needs.node-contract.result }}" != "success" ]; then
             echo "::error::Node contract gate failed"
+            exit 1
+          fi
+          if [ "${{ needs.react-doctor.result }}" != "success" ]; then
+            echo "::error::React Doctor gate failed"
             exit 1
           fi
           # Web E2E and tool-dependent are advisory until suites stabilize.

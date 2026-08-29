@@ -42,6 +42,11 @@ coverage/
 tmp/
 dist/
 
+# Root-level test artifacts (prevent test output from landing in repo root)
+/out.pdf
+/out.*
+/*.pdf
+
 # Agent-generated reports and task outputs
 outputs/
 

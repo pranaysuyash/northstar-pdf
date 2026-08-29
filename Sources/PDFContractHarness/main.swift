@@ -74,6 +74,7 @@ private struct Arguments {
     let exportDirectory: URL
     let rootURL: URL
     let runDetectorGate: Bool
+    let runDualLaneGate: Bool
 }
 
 private let providerDescriptor = PDFProviderDescriptor(
@@ -91,6 +92,7 @@ private func parseArguments() throws -> Arguments {
     var manifestURL = defaultManifest
     var outputDirectory = defaultOutput
     var runDetectorGate = false
+    var runDualLaneGate = false
     var index = 1
     let arguments = CommandLine.arguments
     while index < arguments.count {
@@ -106,6 +108,9 @@ private func parseArguments() throws -> Arguments {
         case "--detector-gate":
             runDetectorGate = true
             index += 1
+        case "--dual-lane-gate":
+            runDualLaneGate = true
+            index += 1
         default:
             throw HarnessError.invalidArgument("Unknown argument: \(arguments[index])")
         }
@@ -116,7 +121,7 @@ private func parseArguments() throws -> Arguments {
     try fileManager.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
     let exportDirectory = outputDirectory.appendingPathComponent("exports", isDirectory: true)
     try fileManager.createDirectory(at: exportDirectory, withIntermediateDirectories: true)
-    return Arguments(manifestURL: manifestURL, outputDirectory: outputDirectory, exportDirectory: exportDirectory, rootURL: rootURL, runDetectorGate: runDetectorGate)
+    return Arguments(manifestURL: manifestURL, outputDirectory: outputDirectory, exportDirectory: exportDirectory, rootURL: rootURL, runDetectorGate: runDetectorGate, runDualLaneGate: runDualLaneGate)
 }
 
 private func manifestPaths(from url: URL) throws -> [String] {
@@ -380,6 +385,23 @@ struct PDFContractHarness {
                 let reportURL = arguments.outputDirectory.appendingPathComponent("detector-gate-report.json")
                 FileHandle.standardError.write(Data(
                     "Detector gate FAILED: \(gateResult.summary)\nReport: \(reportURL.path)\n".utf8))
+                exit(1)
+            }
+        }
+
+        // Dual-lane detector gate: runs both native and browser lanes
+        // against the reviewed ground truth and fails the run non-zero on
+        // any regression. Persists a deterministic report artifact.
+        if arguments.runDualLaneGate {
+            let gate = DualLaneDetectorGate()
+            let fixtureURLs = paths.map { arguments.rootURL.appendingPathComponent($0).standardizedFileURL }
+            let gateResult = try gate.run(provider: provider, fixtures: fixtureURLs)
+            try writeJSON(gateResult, to: arguments.outputDirectory.appendingPathComponent("dual-lane-detector-gate-report.json"))
+            print(gateResult.summary)
+            if !gateResult.passed {
+                let reportURL = arguments.outputDirectory.appendingPathComponent("dual-lane-detector-gate-report.json")
+                FileHandle.standardError.write(Data(
+                    "Dual-lane detector gate FAILED: \(gateResult.summary)\nReport: \(reportURL.path)\n".utf8))
                 exit(1)
             }
         }

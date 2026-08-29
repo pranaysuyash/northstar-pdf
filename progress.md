@@ -3473,3 +3473,46 @@ Live-truth snapshot: `swift test` 279/279 pass; all 159 docs fresh; all assumpti
   2. **Threshold calibration** (`layout-v2-family-threshold-calibration-2026-08-28.json`): `familyThreshold: 0.90`, `minPositive > 0.90` (separation not collapsed), `maxHardNegative < 0.90` (no hard-negative promotions)
 - **Failure semantics**: exits non-zero with `::error::` annotations on any regression (schema drift, false-positive appearance, threshold violation, separation collapse, hard-negative promotion).
 - **Evidence**: local verification passed; full suite 1322/1322; YAML validated by `yaml.safe_load`.
+
+## 2026-08-29 — Persisted calibration artifact was not deterministic (fixed)
+
+- **Finding (Observed → root cause Verified):** `swift test` left
+  `benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json`
+  dirty after an unrelated run. The only delta was `tierBreakdown` key order.
+  `CalibrationReport.tierBreakdown` / `FalsePositiveReport.tierBreakdown` are
+  `[MatchingTier: Int]`; `MatchingTier` had no `CodingKeyRepresentable`
+  conformance, so `JSONEncoder` emitted an **unkeyed array of alternating
+  key/value pairs in per-process hash order**. `.sortedKeys` could not help —
+  there was no keyed container to sort. Every test run rewrote a committed,
+  CI-gated artifact with a coin-flip ordering.
+- **Probe evidence** (`tmp/keyrepr_check.swift`, standalone `swiftc`):
+  `plain  → ["exact",3,"familyMatch",2,"noMatch",3]`
+  `keyed  → {"exact":3,"familyMatch":2,"noMatch":3}`
+- **Fix:** `MatchingTier: CodingKeyRepresentable` via `MatchingTierCodingKey`
+  (`Sources/PDFEditorCore/RecurringFormCalibrator.swift`). Tier breakdown is now
+  a real JSON object whose keys `.sortedKeys` orders deterministically. No
+  consumer changed — CI's artifact gate reads `schema`, `familyThreshold`,
+  `falsePositives`, and `accuracy`, never `tierBreakdown`.
+- **Falsifier:** `tierBreakdownEncodesAsSortedObject()` in
+  `Tests/PDFEditorCoreTests/CalibrationCorpusVerificationTests.swift` asserts the
+  root cause (object shape + exact sorted key order + round-trip), not the
+  symptom — a within-process double encode cannot see hash-order drift because
+  the seed is stable for the life of the process.
+- **Evidence:** artifact SHA-256 `5a209f27…` byte-identical across two
+  consecutive full-suite runs; full suite 1329/1329 pass (1322 baseline + 1 new
+  determinism test + 6 concurrent dual-lane detector gate tests).
+- **Audit:** `docs/audits/calibration-corpus-verification-2026-08-28.md` §9 addendum.
+
+## 2026-08-29 — Environment note: SwiftPM requires `--disable-sandbox` here
+
+`swift test` fails in this agent environment with
+`sandbox-exec: sandbox_apply: Operation not permitted` while compiling the
+package manifest. Nested sandboxing is unavailable. Use
+`swift test --disable-sandbox` (SwiftPM's own flag); disabling the tool sandbox
+alone does not help, because the restriction applies to the agent process.
+
+## 2026-08-28 — Dual-lane detector gate wired into CI
+- **`DualLaneDetectorGate`** (Sources/PDFEditorCore/DualLaneDetectorGate.swift): runs both native and browser lanes against the same reviewed ground truth on every corpus sweep. Per-fixture scoping, fail-closed on unreviewed fixtures, privacy §12 (content-free report).
+- **CI wiring**: `PDFContractHarness --dual-lane-gate` flag added; new "Dual-lane detector gate (native + browser)" step in `.github/workflows/ci.yml` swift-gate job, after the native-only detector gate.
+- **Test suite**: 6 new tests in `DualLaneDetectorGateTests.swift` — live corpus (15 fixtures, both lanes measured), dropped-field mutation, unreviewed fail-closed, browser-lane-absent, both-lanes-measured, JSON round-trip. Full suite 1329/1329.
+- **Ground truth**: 108 cases (10 calibration + 98 sweep) — the45-case reference in earlier progress.md entries was stale documentation; the actual canonical ground truth has been 108 cases since the2026-08-28 review pass.

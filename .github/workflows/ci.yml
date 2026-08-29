@@ -53,6 +53,16 @@ jobs:
             --output-dir benchmark/results/detector-calibration/native-corpus \
             --detector-gate 2>&1
 
+      # Dual-lane detector gate: run both native and browser lanes against
+      # the reviewed ground truth. Fails the job non-zero when either lane
+      # regresses on any fixture.
+      - name: Dual-lane detector gate (native + browser)
+        run: |
+          swift run PDFContractHarness \
+            --manifest docs/fixtures/corpus-sweep-detector-manifest.md \
+            --output-dir benchmark/results/detector-calibration/native-corpus \
+            --dual-lane-gate 2>&1
+
       # Calibration artifact gate: the Swift test suite regenerates the
       # persisted false-positive report and threshold calibration artifacts.
       # Verify they exist, pass the threshold, and carry the correct schema.

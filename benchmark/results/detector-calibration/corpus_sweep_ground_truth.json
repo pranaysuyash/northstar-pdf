@@ -1,0 +1,3046 @@
+{
+  "cases" : [
+    {
+      "class" : "vectorRectangle",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : false,
+      "id" : "p0-vector-rectangle",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Labeled rectangular entry region after Applicant Name.",
+      "requiredEvidence" : [
+        "vectorRectangle"
+      ],
+      "reviewedRegionID" : "reviewed:p0:applicant-name-box",
+      "target" : {
+        "height" : 32,
+        "width" : 300,
+        "x" : 180,
+        "y" : 700
+      }
+    },
+    {
+      "class" : "checkbox",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : false,
+      "id" : "p0-checkbox",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Checkbox cell following an agreement statement.",
+      "requiredEvidence" : [
+        "vectorRectangle"
+      ],
+      "reviewedRegionID" : "reviewed:p0:agreement-checkbox",
+      "target" : {
+        "height" : 14,
+        "width" : 14,
+        "x" : 180,
+        "y" : 640
+      }
+    },
+    {
+      "class" : "underline",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "geometry",
+        "label",
+        "relationship"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : false,
+      "id" : "p0-underline",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Signature underline following a label.",
+      "requiredEvidence" : [
+        "underline"
+      ],
+      "reviewedRegionID" : "reviewed:p0:signature-rule",
+      "target" : {
+        "height" : 6,
+        "width" : 250,
+        "x" : 180,
+        "y" : 580
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "whitespace",
+        "label",
+        "relationship"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : false,
+      "id" : "p0-whitespace",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Empty whitespace entry region with a label.",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:p0:empty-entry",
+      "target" : {
+        "height" : 24,
+        "width" : 220,
+        "x" : 180,
+        "y" : 520
+      }
+    },
+    {
+      "class" : "labelAssociation",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "label",
+        "relationship"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : false,
+      "id" : "p0-label-association",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Label-to-region spatial association for a date field.",
+      "requiredEvidence" : [
+        "textLabel",
+        "spatialRelationship"
+      ],
+      "reviewedRegionID" : "reviewed:p0:date-field",
+      "target" : {
+        "height" : 24,
+        "width" : 180,
+        "x" : 180,
+        "y" : 460
+      }
+    },
+    {
+      "class" : "vectorRectangle",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "geometry"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : true,
+      "id" : "p1-decorative-rectangle",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Decorative box with no field intent — must abstain.",
+      "requiredEvidence" : [
+        "vectorRectangle"
+      ],
+      "reviewedRegionID" : "reviewed:p1:decorative-box",
+      "target" : {
+        "height" : 60,
+        "width" : 200,
+        "x" : 50,
+        "y" : 700
+      }
+    },
+    {
+      "class" : "checkbox",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "geometry"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "high",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : true,
+      "id" : "p1-isolated-square",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Isolated square without label or context — must abstain.",
+      "requiredEvidence" : [
+        "vectorRectangle"
+      ],
+      "reviewedRegionID" : "reviewed:p1:isolated-square",
+      "target" : {
+        "height" : 12,
+        "width" : 12,
+        "x" : 300,
+        "y" : 640
+      }
+    },
+    {
+      "class" : "underline",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "geometry"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "low",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : true,
+      "id" : "p1-bare-rule",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Bare horizontal rule with no label — must abstain.",
+      "requiredEvidence" : [
+        "underline"
+      ],
+      "reviewedRegionID" : "reviewed:p1:bare-rule",
+      "target" : {
+        "height" : 4,
+        "width" : 300,
+        "x" : 50,
+        "y" : 580
+      }
+    },
+    {
+      "class" : "labelAssociation",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "label",
+        "relationship"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "high",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : true,
+      "id" : "p1-generic-box",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Generic box with unrelated nearby text — must not associate.",
+      "requiredEvidence" : [
+        "textLabel",
+        "spatialRelationship"
+      ],
+      "reviewedRegionID" : "reviewed:p1:generic-box",
+      "target" : {
+        "height" : 40,
+        "width" : 150,
+        "x" : 300,
+        "y" : 500
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "detector-calibration.pdf",
+      "hardNegative" : true,
+      "id" : "p1-generic-whitespace",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Large whitespace gap with no label — must abstain.",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:p1:generic-whitespace",
+      "target" : {
+        "height" : 30,
+        "width" : 400,
+        "x" : 50,
+        "y" : 460
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : false,
+      "id" : "cs-plain-text-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : false,
+      "id" : "cs-plain-text-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : false,
+      "id" : "cs-plain-text-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : false,
+      "id" : "cs-plain-text-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : false,
+      "id" : "cs-plain-text-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : false,
+      "id" : "cs-plain-text-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : false,
+      "id" : "cs-multi-column-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : false,
+      "id" : "cs-multi-column-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : false,
+      "id" : "cs-multi-column-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : false,
+      "id" : "cs-multi-column-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : false,
+      "id" : "cs-multi-column-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : false,
+      "id" : "cs-multi-column-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : false,
+      "id" : "cs-navigation-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : false,
+      "id" : "cs-navigation-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : false,
+      "id" : "cs-navigation-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : false,
+      "id" : "cs-navigation-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : false,
+      "id" : "cs-navigation-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : false,
+      "id" : "cs-navigation-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-valid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-valid-structure-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-valid-structure:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-valid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-valid-structure-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-valid-structure:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-valid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-valid-structure-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-valid-structure:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-valid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-valid-structure-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-valid-structure:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-valid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-valid-structure-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-valid-structure:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-valid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-valid-structure-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-valid-structure:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-static.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-static-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-static:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-static.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-static-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-static:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-static.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-static-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-static:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-static.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-static-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-static:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-static.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-static-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-static:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-static.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-static-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-static:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : false,
+      "id" : "cs-geometry-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : false,
+      "id" : "cs-geometry-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : false,
+      "id" : "cs-geometry-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : false,
+      "id" : "cs-geometry-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : false,
+      "id" : "cs-geometry-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : false,
+      "id" : "cs-geometry-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-complete.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-complete-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-complete:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-complete.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-complete-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-complete:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-complete.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-complete-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-complete:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-complete.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-complete-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-complete:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-complete.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-complete-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-complete:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-complete.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-complete-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-complete:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-absent.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-absent-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-absent:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-absent.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-absent-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-absent:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-absent.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-absent-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-absent:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-absent.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-absent-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-absent:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-absent.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-absent-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-absent:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-absent.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-absent-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-absent:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-custom.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-custom-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-custom:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-custom.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-custom-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-custom:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-custom.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-custom-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-custom:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-custom.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-custom-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-custom:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-custom.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-custom-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-custom:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-custom.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-custom-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-custom:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-malformed.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-malformed-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-malformed:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-malformed.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-malformed-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-malformed:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-malformed.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-malformed-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-malformed:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-malformed.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-malformed-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-malformed:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-malformed.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-malformed-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-malformed:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-malformed.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-malformed-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-malformed:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-unicode.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-unicode-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-unicode:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-unicode.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-unicode-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-unicode:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-unicode.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-unicode-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-unicode:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-unicode.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-unicode-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-unicode:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-unicode.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-unicode-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-unicode:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "metadata-unicode.pdf",
+      "hardNegative" : false,
+      "id" : "cs-metadata-unicode-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:metadata-unicode:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-invalid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-invalid-structure-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-invalid-structure:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-invalid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-invalid-structure-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-invalid-structure:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-invalid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-invalid-structure-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-invalid-structure:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-invalid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-invalid-structure-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-invalid-structure:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-invalid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-invalid-structure-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-invalid-structure:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-invalid-structure.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-invalid-structure-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-invalid-structure:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-multiple.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-multiple-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-multiple:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-multiple.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-multiple-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-multiple:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-multiple.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-multiple-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-multiple:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-multiple.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-multiple-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-multiple:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-multiple.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-multiple-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-multiple:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "signed-multiple.pdf",
+      "hardNegative" : false,
+      "id" : "cs-signed-multiple-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:signed-multiple:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-hybrid.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-hybrid-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-hybrid:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-hybrid.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-hybrid-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-hybrid:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-hybrid.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-hybrid-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-hybrid:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-hybrid.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-hybrid-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-hybrid:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-hybrid.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-hybrid-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-hybrid:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-hybrid.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-hybrid-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-hybrid:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-dynamic.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-dynamic-field-0",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.name' on base-form page 0 (reviewed via qpdf structural inspection) (AcroForm tree empty — dynamic XFA — but widget annotations present on page).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-dynamic:field-0",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 705.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-dynamic.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-dynamic-field-1",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.notes' on base-form page 0 (reviewed via qpdf structural inspection) (AcroForm tree empty — dynamic XFA — but widget annotations present on page).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-dynamic:field-1",
+      "target" : {
+        "height" : 67,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 617.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-dynamic.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-dynamic-field-2",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.subscribe' on base-form page 0 (reviewed via qpdf structural inspection) (AcroForm tree empty — dynamic XFA — but widget annotations present on page).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-dynamic:field-2",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 567.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-dynamic.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-dynamic-field-3",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection) (AcroForm tree empty — dynamic XFA — but widget annotations present on page).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-dynamic:field-3",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 185.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-dynamic.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-dynamic-field-4",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.contact' on base-form page 0 (reviewed via qpdf structural inspection) (AcroForm tree empty — dynamic XFA — but widget annotations present on page).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-dynamic:field-4",
+      "target" : {
+        "height" : 19,
+        "width" : 19,
+        "x" : 255.5,
+        "y" : 523.39
+      }
+    },
+    {
+      "class" : "nativeField",
+      "expected" : "detected",
+      "expectedEvidenceFamilies" : [
+        "nativeField"
+      ],
+      "expectedGrouping" : {
+        "memberCount" : 1,
+        "state" : "single"
+      },
+      "expectedLabelAssociation" : "associated",
+      "fixtureID" : "xfa-dynamic.pdf",
+      "hardNegative" : false,
+      "id" : "cs-xfa-dynamic-field-5",
+      "pageIndex" : 0,
+      "provenance" : "human-reviewed",
+      "rationale" : "Native AcroForm widget 'applicant.country' on base-form page 0 (reviewed via qpdf structural inspection) (AcroForm tree empty — dynamic XFA — but widget annotations present on page).",
+      "requiredEvidence" : [
+        "nativeField"
+      ],
+      "reviewedRegionID" : "reviewed:xfa-dynamic:field-5",
+      "target" : {
+        "height" : 23,
+        "width" : 251,
+        "x" : 185.5,
+        "y" : 477.39
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : true,
+      "id" : "cs-plain-text-page-1-no-fields",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added text page 2 — no \/Annots (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:page-1:no-fields",
+      "target" : {
+        "height" : 792,
+        "width" : 612,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "plain-text.pdf",
+      "hardNegative" : true,
+      "id" : "cs-plain-text-page-2-no-fields",
+      "pageIndex" : 2,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added text page 3 — no \/Annots (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:plain-text:page-2:no-fields",
+      "target" : {
+        "height" : 792,
+        "width" : 612,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "multi-column.pdf",
+      "hardNegative" : true,
+      "id" : "cs-multi-column-page-1-no-fields",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added text page 2 — no \/Annots (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:multi-column:page-1:no-fields",
+      "target" : {
+        "height" : 612,
+        "width" : 792,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : true,
+      "id" : "cs-navigation-page-1-no-fields",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added page 2 — link annots only, no editable widgets (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:page-1:no-fields",
+      "target" : {
+        "height" : 792,
+        "width" : 612,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "navigation.pdf",
+      "hardNegative" : true,
+      "id" : "cs-navigation-page-2-no-fields",
+      "pageIndex" : 2,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added page 3 — no \/Annots (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:navigation:page-2:no-fields",
+      "target" : {
+        "height" : 792,
+        "width" : 612,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : true,
+      "id" : "cs-geometry-page-1-no-fields",
+      "pageIndex" : 1,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added tall page 2 — no \/Annots (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:page-1:no-fields",
+      "target" : {
+        "height" : 2000,
+        "width" : 200,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : true,
+      "id" : "cs-geometry-page-2-no-fields",
+      "pageIndex" : 2,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added rotated page 3 — no \/Annots (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:page-2:no-fields",
+      "target" : {
+        "height" : 792,
+        "width" : 612,
+        "x" : 0,
+        "y" : 0
+      }
+    },
+    {
+      "class" : "whitespace",
+      "expected" : "abstain",
+      "expectedEvidenceFamilies" : [
+        "whitespace"
+      ],
+      "expectedGrouping" : {
+        "state" : "abstain"
+      },
+      "expectedLabelAssociation" : "none",
+      "falsePositiveSeverity" : "medium",
+      "fixtureID" : "geometry.pdf",
+      "hardNegative" : true,
+      "id" : "cs-geometry-page-3-no-fields",
+      "pageIndex" : 3,
+      "provenance" : "human-reviewed",
+      "rationale" : "Added cropped page 4 — no \/Annots, crop box [36 36 400 700] (qpdf verified).",
+      "requiredEvidence" : [
+        "whitespace"
+      ],
+      "reviewedRegionID" : "reviewed:geometry:page-3:no-fields",
+      "target" : {
+        "height" : 664,
+        "width" : 364,
+        "x" : 36,
+        "y" : 36
+      }
+    }
+  ],
+  "fixture" : "corpus-sweep-2026-08-25",
+  "policy" : {
+    "reviewRequired" : true
+  },
+  "reviewedOn" : "2026-08-28",
+  "schema" : "pdf-editor.detector-calibration-labels"
+}

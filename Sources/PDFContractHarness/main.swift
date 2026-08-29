@@ -73,6 +73,7 @@ private struct Arguments {
     let outputDirectory: URL
     let exportDirectory: URL
     let rootURL: URL
+    let runDetectorGate: Bool
 }
 
 private let providerDescriptor = PDFProviderDescriptor(
@@ -89,6 +90,7 @@ private func parseArguments() throws -> Arguments {
     let defaultOutput = rootURL.appendingPathComponent("benchmark/results/contract-parity-2026-08-24/native", isDirectory: true)
     var manifestURL = defaultManifest
     var outputDirectory = defaultOutput
+    var runDetectorGate = false
     var index = 1
     let arguments = CommandLine.arguments
     while index < arguments.count {
@@ -101,6 +103,9 @@ private func parseArguments() throws -> Arguments {
             guard index + 1 < arguments.count else { throw HarnessError.invalidArgument("--output-dir requires a path") }
             outputDirectory = URL(fileURLWithPath: arguments[index + 1], relativeTo: rootURL).standardizedFileURL
             index += 2
+        case "--detector-gate":
+            runDetectorGate = true
+            index += 1
         default:
             throw HarnessError.invalidArgument("Unknown argument: \(arguments[index])")
         }
@@ -111,7 +116,7 @@ private func parseArguments() throws -> Arguments {
     try fileManager.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
     let exportDirectory = outputDirectory.appendingPathComponent("exports", isDirectory: true)
     try fileManager.createDirectory(at: exportDirectory, withIntermediateDirectories: true)
-    return Arguments(manifestURL: manifestURL, outputDirectory: outputDirectory, exportDirectory: exportDirectory, rootURL: rootURL)
+    return Arguments(manifestURL: manifestURL, outputDirectory: outputDirectory, exportDirectory: exportDirectory, rootURL: rootURL, runDetectorGate: runDetectorGate)
 }
 
 private func manifestPaths(from url: URL) throws -> [String] {
@@ -357,6 +362,28 @@ struct PDFContractHarness {
             fixtures: summaries
         )
         try writeJSON(summary, to: arguments.outputDirectory.appendingPathComponent("summary.json"))
+
+        // Detector measurement gate: runs the live native pipeline (candidates
+        // + fields channel) against the reviewed ground truth and fails the
+        // run non-zero on any regression. Persists a deterministic report
+        // artifact next to the bundles.
+        if arguments.runDetectorGate {
+            let gate = NativeDetectorGate()
+            let fixtureURLs = paths.map { arguments.rootURL.appendingPathComponent($0).standardizedFileURL }
+            let gateResult = try gate.run(provider: provider, fixtures: fixtureURLs)
+            try writeJSON(gateResult, to: arguments.outputDirectory.appendingPathComponent("detector-gate-report.json"))
+            print(gateResult.summary)
+            if !gateResult.passed {
+                // Explicit exit(1): a gate failure must fail the pipeline with
+                // a non-zero status and a fully visible, report-referencing
+                // message (the report is already persisted).
+                let reportURL = arguments.outputDirectory.appendingPathComponent("detector-gate-report.json")
+                FileHandle.standardError.write(Data(
+                    "Detector gate FAILED: \(gateResult.summary)\nReport: \(reportURL.path)\n".utf8))
+                exit(1)
+            }
+        }
+
         let output = try JSONEncoder().encode(summary)
         FileHandle.standardOutput.write(output)
         FileHandle.standardOutput.write(Data([10]))

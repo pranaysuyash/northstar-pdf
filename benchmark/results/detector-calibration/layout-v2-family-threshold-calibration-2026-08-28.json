@@ -1,0 +1,101 @@
+{
+  "corpusSize" : 30,
+  "excluded" : [
+    {
+      "name" : "encrypted-hybrid.pdf",
+      "reason" : "password-encrypted (pikepdf PasswordError)"
+    },
+    {
+      "name" : "malformed-hybrid-truncated.pdf",
+      "reason" : "malformed (pikepdf PdfError)"
+    }
+  ],
+  "familyThreshold" : 0.9,
+  "generatedAt" : "2026-08-28",
+  "hardNegativePairs" : 224,
+  "maxHardNegative" : 0.8132083333333333,
+  "maxPositive" : 0.9999999999999999,
+  "minHardNegative" : 0.04073093636783509,
+  "minPositive" : 0.9708333333333333,
+  "positivePairs" : 211,
+  "schema" : "pdf-editor.layout-v2-family-threshold-calibration",
+  "separationGapMidpoint" : 0.8920208333333333,
+  "topHardNegatives" : [
+    {
+      "a" : "hybrid-text-raster-form.pdf",
+      "b" : "multi-column.pdf",
+      "classes" : [
+        "B",
+        "N"
+      ],
+      "similarity" : 0.8132083333333333
+    },
+    {
+      "a" : "rotated-hybrid-90.pdf",
+      "b" : "multi-column.pdf",
+      "classes" : [
+        "B",
+        "N"
+      ],
+      "similarity" : 0.7840416666666666
+    },
+    {
+      "a" : "plain-text.pdf",
+      "b" : "navigation.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.7133156871218669
+    },
+    {
+      "a" : "plain-text.pdf",
+      "b" : "geometry.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.5860416967969221
+    },
+    {
+      "a" : "plain-text.pdf",
+      "b" : "multi-column.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.5823232323232324
+    },
+    {
+      "a" : "hybrid-text-raster-form.pdf",
+      "b" : "plain-text.pdf",
+      "classes" : [
+        "B",
+        "N"
+      ],
+      "similarity" : 0.5714687149270483
+    },
+    {
+      "a" : "rotated-hybrid-90.pdf",
+      "b" : "plain-text.pdf",
+      "classes" : [
+        "B",
+        "N"
+      ],
+      "similarity" : 0.5520242704826038
+    },
+    {
+      "a" : "public-sample-form.pdf",
+      "b" : "hybrid-text-raster-form.pdf",
+      "classes" : [
+        "A",
+        "B"
+      ],
+      "similarity" : 0.5499999999999999
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

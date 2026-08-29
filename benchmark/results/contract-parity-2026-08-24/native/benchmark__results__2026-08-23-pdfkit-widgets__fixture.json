@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-27T13:05:59Z",
+    "generatedAt" : "2026-08-29T06:13:15Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -37,7 +37,7 @@
       ],
       "id" : "pdfkit",
       "platform" : "macOS",
-      "version" : "Version 15.7.7 (Build 24G720)"
+      "version" : "Version 15.7.9 (Build 24G830)"
     },
     "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
     "version" : {
@@ -48,7 +48,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-27T13:05:59Z",
+      "generatedAt" : "2026-08-29T06:13:15Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -60,7 +60,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.7 (Build 24G720)"
+        "version" : "Version 15.7.9 (Build 24G830)"
       },
       "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
       "version" : {
@@ -242,7 +242,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-27T13:05:59Z",
+      "generatedAt" : "2026-08-29T06:13:15Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -254,7 +254,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.7 (Build 24G720)"
+        "version" : "Version 15.7.9 (Build 24G830)"
       },
       "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
       "version" : {
@@ -278,7 +278,7 @@
   "preflight" : {
     "header" : {
       "contractName" : "pdf-editor.preflight",
-      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "generatedAt" : "2026-08-29T06:13:15Z",
       "provider" : {
         "capabilities" : [
           "metadata-presence",
@@ -289,7 +289,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.7 (Build 24G720)"
+        "version" : "Version 15.7.9 (Build 24G830)"
       },
       "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
       "version" : {
@@ -734,7 +734,7 @@
   "sessionProvenance" : {
     "header" : {
       "contractName" : "pdf-editor.session-provenance",
-      "generatedAt" : "2026-08-25T00:00:00.000Z",
+      "generatedAt" : "2026-08-29T06:13:15Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -746,9 +746,9 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.7 (Build 24G720)"
+        "version" : "Version 15.7.9 (Build 24G830)"
       },
-      "sessionID" : "native-(inspection.source.sha256.prefix(16))",
+      "sessionID" : "native-b80bca995c4381f6",
       "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
       "version" : {
         "major" : 1,
@@ -805,7 +805,7 @@
   "validation" : {
     "checks" : [
       {
-        "id" : "C05816F9-AEFB-4D45-9BE6-CC2C446B5153",
+        "id" : "F65897BC-89C0-4C04-ADE8-B97DD18D340D",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -814,7 +814,7 @@
         "status" : "passed"
       },
       {
-        "id" : "CE1F335B-BA5B-45DC-BE51-E1016A8F8402",
+        "id" : "E93F7DF1-3FAA-4D0D-8BEA-3AF73A4A6B9A",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 1 page(s).",
         "operationIDs" : [
@@ -823,7 +823,7 @@
         "status" : "passed"
       },
       {
-        "id" : "82A67E9B-2A99-4B28-81ED-3A443A5691CB",
+        "id" : "31EDC805-9A8D-4A4B-BC1D-9344C02B648D",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -832,7 +832,7 @@
         "status" : "passed"
       },
       {
-        "id" : "02C6D0A4-E702-417D-8B1A-D0550B199A69",
+        "id" : "88CE7BFC-16EA-4FB6-9A3E-5A49D612F162",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -841,7 +841,7 @@
         "status" : "passed"
       },
       {
-        "id" : "034B91E4-5CE5-41A0-A0A9-8973E29148BC",
+        "id" : "31CBC3D7-E7F9-4F4D-A992-2E15DB608855",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -850,7 +850,7 @@
         "status" : "passed"
       },
       {
-        "id" : "108830E6-E21E-4916-842C-32575F60B463",
+        "id" : "99B905FF-7AC7-4372-9444-E4B45676676D",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -859,7 +859,7 @@
         "status" : "passed"
       },
       {
-        "id" : "EA2E9F5B-9D33-4F88-8CCD-888262E8F80D",
+        "id" : "CAD4C449-0739-4D92-9E06-53EDB2C07944",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -885,12 +885,12 @@
       ],
       "id" : "pdfkit",
       "platform" : "macOS",
-      "version" : "Version 15.7.7 (Build 24G720)"
+      "version" : "Version 15.7.9 (Build 24G830)"
     },
     "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-27T13:05:59Z"
+    "validatedAt" : "2026-08-29T06:13:15Z"
   },
   "version" : {
     "major" : 1,

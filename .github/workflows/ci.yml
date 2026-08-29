@@ -42,6 +42,65 @@ jobs:
       - name: Swift test
         run: swift test 2>&1
 
+      # Detector measurement gate: run the live native candidate pipeline
+      # against the reviewed ground truth. Fails the job non-zero on any
+      # detection regression (also enforced in-process by
+      # NativeDetectorGateTests above).
+      - name: Detector gate (native candidate pipeline)
+        run: |
+          swift run PDFContractHarness \
+            --manifest docs/fixtures/corpus-sweep-detector-manifest.md \
+            --output-dir benchmark/results/detector-calibration/native-corpus \
+            --detector-gate 2>&1
+
+      # Calibration artifact gate: the Swift test suite regenerates the
+      # persisted false-positive report and threshold calibration artifacts.
+      # Verify they exist, pass the threshold, and carry the correct schema.
+      - name: Calibration artifact gate
+        run: |
+          python3 - <<'PY'
+          import json, sys, pathlib
+
+          errors = []
+
+          # --- 1. False-positive report (recurring-form-calibration-report) ---
+          fp_path = pathlib.Path('benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json')
+          if not fp_path.exists():
+              errors.append(f'False-positive report not found at {fp_path}')
+          else:
+              fp = json.load(open(fp_path))
+              c = fp['calibration']
+              if fp.get('schema') != 'pdf-editor.recurring-form-calibration-report':
+                  errors.append(f'FP schema is {fp.get("schema")}')
+              if fp['thresholds'].get('familyThreshold') != 0.90:
+                  errors.append(f'familyThreshold is {fp["thresholds"]["familyThreshold"]}, expected 0.90')
+              if c.get('falsePositives', 0) > 0:
+                  errors.append(f'False positives: {c["falsePositives"]}')
+              if c.get('accuracy', 0) < 1.0:
+                  errors.append(f'Accuracy dropped to {c["accuracy"]}')
+              print(f'FP report: {c["passed"]}/{c["passed"]+c["failed"]} entries, FP={c["falsePositives"]}, FN={c["falseNegatives"]}, accuracy={c["accuracy"]}')
+
+          # --- 2. Threshold calibration artifact ---
+          th_path = pathlib.Path('benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json')
+          if not th_path.exists():
+              errors.append(f'Threshold calibration not found at {th_path}')
+          else:
+              th = json.load(open(th_path))
+              if th.get('familyThreshold') != 0.90:
+                  errors.append(f'Threshold artifact familyThreshold is {th.get("familyThreshold")}, expected 0.90')
+              if th.get('minPositive', 1.0) < 0.90:
+                  errors.append(f'minPositive {th["minPositive"]} < familyThreshold 0.90 — separation collapsed')
+              if th.get('maxHardNegative', 0.0) >= 0.90:
+                  errors.append(f'maxHardNegative {th["maxHardNegative"]} >= familyThreshold 0.90 — hard negative promoted')
+              print(f'Threshold: {th["positivePairs"]} positive, {th["hardNegativePairs"]} negative, gap={th["minPositive"]:.3f}..{th["maxHardNegative"]:.3f}')
+
+          if errors:
+              for e in errors:
+                  print(f'::error::{e}')
+              sys.exit(1)
+          print('Calibration gate passed.')
+          PY
+
       - name: Swift release build
         run: swift build -c release 2>&1
 

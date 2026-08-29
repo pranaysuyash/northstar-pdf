@@ -74,6 +74,23 @@ public struct PDFTemplatePageSignature: Codable, Equatable, Hashable, Sendable {
     public let nativeFieldNameTokens: [String]
     public let anchorTokens: [String]
     public let regionSignatures: [PDFTemplateRegionSignature]
+    /// V2 layout-cell quantization cell size (points). Unification with
+    /// `LayoutFingerprintV2` (default 4pt, matching the calibration lane).
+    public let cellSizePoints: Double
+    /// HMAC-keyed per-cell tokens for the text-layout channel (positions of
+    /// character bounds, field values masked). Empty when no V2 layout was
+    /// supplied — legacy captures and old records decode to empty.
+    public let textCellTokens: [String]
+    /// HMAC-keyed per-cell tokens for the field-widget layout channel.
+    public let fieldCellTokens: [String]
+    /// HMAC-keyed per-cell tokens for the non-widget annotation layout channel.
+    public let annotationCellTokens: [String]
+
+    /// True when the V2 cell channels are present (used to decide the
+    /// cell-aware family scoring path).
+    public var hasLayoutCells: Bool {
+        !textCellTokens.isEmpty || !fieldCellTokens.isEmpty || !annotationCellTokens.isEmpty
+    }
 
     public init(
         pageIndex: Int,
@@ -83,7 +100,11 @@ public struct PDFTemplatePageSignature: Codable, Equatable, Hashable, Sendable {
         nativeFieldKinds: [NativeFieldKind],
         nativeFieldNameTokens: [String],
         anchorTokens: [String],
-        regionSignatures: [PDFTemplateRegionSignature]
+        regionSignatures: [PDFTemplateRegionSignature],
+        cellSizePoints: Double = 4.0,
+        textCellTokens: [String] = [],
+        fieldCellTokens: [String] = [],
+        annotationCellTokens: [String] = []
     ) {
         self.pageIndex = pageIndex
         self.widthPoints = widthPoints
@@ -93,6 +114,35 @@ public struct PDFTemplatePageSignature: Codable, Equatable, Hashable, Sendable {
         self.nativeFieldNameTokens = nativeFieldNameTokens
         self.anchorTokens = anchorTokens
         self.regionSignatures = regionSignatures
+        self.cellSizePoints = cellSizePoints
+        self.textCellTokens = textCellTokens
+        self.fieldCellTokens = fieldCellTokens
+        self.annotationCellTokens = annotationCellTokens
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case pageIndex, widthPoints, heightPoints, rotationDegrees
+        case nativeFieldKinds, nativeFieldNameTokens, anchorTokens, regionSignatures
+        case cellSizePoints, textCellTokens, fieldCellTokens, annotationCellTokens
+    }
+
+    /// Backward-compatible: records written before the V2-cell unification
+    /// (no cell fields) decode to empty cell channels and the default cell
+    /// size, preserving legacy fingerprints.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        pageIndex = try c.decode(Int.self, forKey: .pageIndex)
+        widthPoints = try c.decode(Double.self, forKey: .widthPoints)
+        heightPoints = try c.decode(Double.self, forKey: .heightPoints)
+        rotationDegrees = try c.decode(Int.self, forKey: .rotationDegrees)
+        nativeFieldKinds = try c.decode([NativeFieldKind].self, forKey: .nativeFieldKinds)
+        nativeFieldNameTokens = try c.decode([String].self, forKey: .nativeFieldNameTokens)
+        anchorTokens = try c.decode([String].self, forKey: .anchorTokens)
+        regionSignatures = try c.decode([PDFTemplateRegionSignature].self, forKey: .regionSignatures)
+        cellSizePoints = try c.decodeIfPresent(Double.self, forKey: .cellSizePoints) ?? 4.0
+        textCellTokens = try c.decodeIfPresent([String].self, forKey: .textCellTokens) ?? []
+        fieldCellTokens = try c.decodeIfPresent([String].self, forKey: .fieldCellTokens) ?? []
+        annotationCellTokens = try c.decodeIfPresent([String].self, forKey: .annotationCellTokens) ?? []
     }
 }
 
@@ -126,9 +176,19 @@ public struct PDFTemplateFingerprint: Codable, Equatable, Hashable, Sendable {
     public static func make(
         from document: DocumentInspection,
         workspaceKey: Data,
-        includeExactSourceDigest: Bool = false
+        includeExactSourceDigest: Bool = false,
+        layoutV2: LayoutFingerprintV2? = nil
     ) -> PDFTemplateFingerprint {
         precondition(!workspaceKey.isEmpty, "A non-empty local workspace key is required for template fingerprints")
+        // Unification with the calibration lane (LayoutFingerprintV2): when a
+        // V2 layout is supplied, its per-page cell channels enter the
+        // production signature as HMAC-keyed per-cell tokens. Keying keeps
+        // the layout unlinkable across workspaces (privacy doctrine) while
+        // preserving within-workspace set similarity. The feature version
+        // bumps so old (cell-less) and new (cell-bearing) captures never
+        // collide on the equality fingerprint.
+        let usesLayoutV2 = layoutV2 != nil
+        let v2Pages = layoutV2.map { Dictionary(uniqueKeysWithValues: $0.pages.map { ($0.pageIndex, $0) }) } ?? [:]
         let pages = document.pages.sorted { $0.pageIndex < $1.pageIndex }
         let pageSignatures = pages.map { page in
             let pageFields = document.fields
@@ -160,6 +220,17 @@ public struct PDFTemplateFingerprint: Codable, Equatable, Hashable, Sendable {
             let anchorTokens = pageCandidates.compactMap { candidate in
                 candidate.labelText.map { keyedToken(normalizeStructuralText($0), key: workspaceKey) }
             }
+            let v2Page = v2Pages[page.pageIndex]
+            let cellTokens: (text: [String], field: [String], annotation: [String])
+            if let v2Page {
+                cellTokens = (
+                    v2Page.textCells.map { keyedToken("\($0.col),\($0.row)", key: workspaceKey) },
+                    v2Page.fieldCells.map { keyedToken("\($0.col),\($0.row)", key: workspaceKey) },
+                    v2Page.annotationCells.map { keyedToken("\($0.col),\($0.row)", key: workspaceKey) }
+                )
+            } else {
+                cellTokens = ([], [], [])
+            }
             return PDFTemplatePageSignature(
                 pageIndex: page.pageIndex,
                 widthPoints: page.bounds.width,
@@ -168,11 +239,18 @@ public struct PDFTemplateFingerprint: Codable, Equatable, Hashable, Sendable {
                 nativeFieldKinds: pageFields.map(\.kind),
                 nativeFieldNameTokens: fieldNameTokens,
                 anchorTokens: anchorTokens,
-                regionSignatures: regionSignatures
+                regionSignatures: regionSignatures,
+                cellSizePoints: layoutV2?.cellSizePoints ?? 4.0,
+                textCellTokens: cellTokens.text,
+                fieldCellTokens: cellTokens.field,
+                annotationCellTokens: cellTokens.annotation
             )
         }
         let canonical = canonicalDescriptor(pageSignatures)
         return PDFTemplateFingerprint(
+            algorithm: "layout-v1+hmac-sha256",
+            keyScope: "workspace",
+            featureVersion: usesLayoutV2 ? "layout-features-2" : "layout-features-1",
             layoutFingerprint: keyedToken(canonical, key: workspaceKey),
             exactSourceDigests: includeExactSourceDigest ? [document.source.sha256] : [],
             pageSignatures: pageSignatures
@@ -194,6 +272,11 @@ public struct PDFTemplateFingerprint: Codable, Equatable, Hashable, Sendable {
                     String(region.groupMemberCount)
                 ].joined(separator: "~")
             }.joined(separator: "|")
+            let cells = [
+                page.textCellTokens.joined(separator: ","),
+                page.fieldCellTokens.joined(separator: ","),
+                page.annotationCellTokens.joined(separator: ",")
+            ].joined(separator: ";")
             return [
                 String(page.pageIndex),
                 String(format: "%.3f,%.3f", page.widthPoints, page.heightPoints),
@@ -201,7 +284,8 @@ public struct PDFTemplateFingerprint: Codable, Equatable, Hashable, Sendable {
                 fields,
                 names,
                 anchors,
-                regions
+                regions,
+                cells
             ].joined(separator: "#")
         }.joined(separator: "\n")
     }

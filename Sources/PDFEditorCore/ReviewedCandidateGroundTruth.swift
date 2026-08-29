@@ -12,14 +12,29 @@ import Foundation
 /// - The 10 detector-calibration regions are **human-reviewed** ground truth
 ///   (provenance: 2026-08-25 reviewed calibration, source SHA-256
 ///   `5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f`).
-/// - Corpus-sweep entries are **generator-derived** reviewed labels (provenance:
-///   `benchmark/results/corpus-sweep-2026-08-25/manifest.json` expected facts),
-///   labeled `provenance: "generator-manifest"` — they are structural expectations,
-///   not human visual review.
+/// - The corpus-sweep cases were originally **generator-manifest** structural
+///   expectations. A human review pass on 2026-08-28 (qpdf 12.4 structural
+///   inspection of every fixture) found those expectations were **wrong**: all
+///   five fixtures are the base `public-sample-form.pdf` with pages added, so
+///   page 0 of each retains the 6 AcroForm widgets. The cases were corrected
+///   to 30 native-field positives + 5 page-level abstains and re-labeled
+///   `human-reviewed` with the review record below.
 ///
 /// First principle: provider candidates are never ground truth. Only reviewed
 /// sidecar labels are ground truth. Provider candidate IDs, text, scores, and
 /// digests never enter the report.
+
+// MARK: - Review Record
+
+/// Record of the human review pass that corrected the corpus-sweep cases.
+public struct GroundTruthReviewRecord: Codable, Sendable, Equatable {
+  public let reviewedOn: String
+  public let reviewer: String
+  public let method: String
+  public let tool: String
+  /// Per-fixture observed structure (widget counts, page counts, boxes).
+  public let fixtureFindings: [String: String]
+}
 
 // MARK: - Ground Truth Case
 
@@ -232,66 +247,124 @@ public struct ReviewedCandidateGroundTruth: Codable, Sendable {
     )
   ]
 
-  /// Generator-derived structural expectations for corpus-sweep fixtures.
-  /// Provenance: manifest.json expected facts (pages, rotations, sizes).
-  /// These assert *non-detection* invariants (no editable candidates on
-  /// plain text / navigation / metadata pages) plus rotation-aware geometry
-  /// on the geometry fixture.
-  public static let corpusSweepCases: [ReviewedGroundTruthCase] = [
-    ReviewedGroundTruthCase(
-      id: "cs-plain-text-no-candidates", reviewedRegionID: "reviewed:plain-text:no-editable-regions",
-      fixtureID: "plain-text.pdf", pageIndex: 0,
-      className: "whitespace", expectedState: "abstain", isHardNegative: true,
-      target: PDFRect(x: 0, y: 0, width: 612, height: 792),
-      requiredEvidence: ["whitespace"],
-      expectedEvidenceFamilies: ["whitespace"],
-      expectedLabelAssociation: "none", expectedGroupingState: "abstain",
-      falsePositiveSeverity: "medium", provenance: "generator-manifest",
-      rationale: "Plain-text page must not yield editable candidates."
-    ),
-    ReviewedGroundTruthCase(
-      id: "cs-multi-column-no-candidates", reviewedRegionID: "reviewed:multi-column:no-editable-regions",
-      fixtureID: "multi-column.pdf", pageIndex: 0,
-      className: "whitespace", expectedState: "abstain", isHardNegative: true,
-      target: PDFRect(x: 0, y: 0, width: 612, height: 792),
-      requiredEvidence: ["whitespace"],
-      expectedEvidenceFamilies: ["whitespace"],
-      expectedLabelAssociation: "none", expectedGroupingState: "abstain",
-      falsePositiveSeverity: "medium", provenance: "generator-manifest",
-      rationale: "Multi-column text page must not yield editable candidates."
-    ),
-    ReviewedGroundTruthCase(
-      id: "cs-navigation-no-candidates", reviewedRegionID: "reviewed:navigation:no-editable-regions",
-      fixtureID: "navigation.pdf", pageIndex: 0,
-      className: "whitespace", expectedState: "abstain", isHardNegative: true,
-      target: PDFRect(x: 0, y: 0, width: 612, height: 792),
-      requiredEvidence: ["whitespace"],
-      expectedEvidenceFamilies: ["whitespace"],
-      expectedLabelAssociation: "none", expectedGroupingState: "abstain",
-      falsePositiveSeverity: "medium", provenance: "generator-manifest",
-      rationale: "Navigation-only page must not yield editable candidates."
-    ),
-    ReviewedGroundTruthCase(
-      id: "cs-signature-no-candidates", reviewedRegionID: "reviewed:signed-valid:no-editable-regions",
-      fixtureID: "signed-valid-structure.pdf", pageIndex: 0,
-      className: "whitespace", expectedState: "abstain", isHardNegative: true,
-      target: PDFRect(x: 0, y: 0, width: 612, height: 792),
-      requiredEvidence: ["whitespace"],
-      expectedEvidenceFamilies: ["whitespace"],
-      expectedLabelAssociation: "none", expectedGroupingState: "abstain",
-      falsePositiveSeverity: "high", provenance: "generator-manifest",
-      rationale: "Signed document must not yield editable candidates (signature guard)."
-    ),
-    ReviewedGroundTruthCase(
-      id: "cs-xfa-no-candidates", reviewedRegionID: "reviewed:xfa-static:no-editable-regions",
-      fixtureID: "xfa-static.pdf", pageIndex: 0,
-      className: "whitespace", expectedState: "abstain", isHardNegative: true,
-      target: PDFRect(x: 0, y: 0, width: 612, height: 792),
-      requiredEvidence: ["whitespace"],
-      expectedEvidenceFamilies: ["whitespace"],
-      expectedLabelAssociation: "none", expectedGroupingState: "abstain",
-      falsePositiveSeverity: "high", provenance: "generator-manifest",
-      rationale: "XFA document must not yield editable candidates (XFA guard)."
-    )
-  ]
+  /// Human-reviewed corpus-sweep cases (corrected + extended 2026-08-28).
+  ///
+  /// The original generator-manifest cases asserted "no editable candidates"
+  /// on five fixtures. qpdf 12.4 structural inspection (every object, every
+  /// page /Annots, every widget /Rect) proved that wrong: **every** fixture is
+  /// `public-sample-form.pdf` (6 AcroForm widgets on page 0) with pages added
+  /// by `Tests/fixtures/generate_corpus_sweep.py`. The corrected truth:
+  /// - 90 native-field positives (6 widgets × 15 form-bearing fixtures,
+  ///   page 0) — the widget rects are identical across fixtures (same base
+  ///   form). xfa-dynamic is included: its AcroForm tree is empty (dynamic
+  ///   XFA characteristic) but the 6 widget annotations ARE on the page.
+  /// - 8 page-level abstains for the genuinely widget-free added pages
+  ///   (plain-text ×2, multi-column ×1, navigation ×2, geometry ×3).
+  public static let corpusSweepCases: [ReviewedGroundTruthCase] = {
+    // Widget rects observed on page 0 of every fixture (qpdf --show-object).
+    // Field order: name (Tx), notes (Tx), subscribe (Btn), contact (Btn),
+    // contact (Btn), country (Ch).
+    struct Widget { let name: String; let rect: PDFRect }
+    let widgets: [Widget] = [
+      Widget(name: "applicant.name", rect: PDFRect(x: 185.5, y: 705.39, width: 251, height: 23)),
+      Widget(name: "applicant.notes", rect: PDFRect(x: 185.5, y: 617.39, width: 251, height: 67)),
+      Widget(name: "applicant.subscribe", rect: PDFRect(x: 185.5, y: 567.39, width: 19, height: 19)),
+      Widget(name: "applicant.contact", rect: PDFRect(x: 185.5, y: 523.39, width: 19, height: 19)),
+      Widget(name: "applicant.contact", rect: PDFRect(x: 255.5, y: 523.39, width: 19, height: 19)),
+      Widget(name: "applicant.country", rect: PDFRect(x: 185.5, y: 477.39, width: 251, height: 23))
+    ]
+    // All 15 fixtures carry the base form widgets on page 0 (qpdf verified).
+    let formFixtures = [
+      "plain-text.pdf", "multi-column.pdf", "navigation.pdf",
+      "signed-valid-structure.pdf", "xfa-static.pdf",
+      "geometry.pdf", "metadata-complete.pdf", "metadata-absent.pdf",
+      "metadata-custom.pdf", "metadata-malformed.pdf", "metadata-unicode.pdf",
+      "signed-invalid-structure.pdf", "signed-multiple.pdf",
+      "xfa-hybrid.pdf", "xfa-dynamic.pdf"
+    ]
+
+    var cases: [ReviewedGroundTruthCase] = []
+    for fixture in formFixtures {
+      for (index, widget) in widgets.enumerated() {
+        let fixtureID = fixture.replacingOccurrences(of: ".pdf", with: "")
+        let xfaNote = fixture == "xfa-dynamic.pdf"
+          ? " (AcroForm tree empty — dynamic XFA — but widget annotations present on page)"
+          : ""
+        cases.append(ReviewedGroundTruthCase(
+          id: "cs-\(fixtureID)-field-\(index)",
+          reviewedRegionID: "reviewed:\(fixtureID):field-\(index)",
+          fixtureID: fixture, pageIndex: 0,
+          className: "nativeField", expectedState: "detected", isHardNegative: false,
+          target: widget.rect,
+          requiredEvidence: ["nativeField"],
+          expectedEvidenceFamilies: ["nativeField"],
+          expectedLabelAssociation: "associated", expectedGroupingState: "single",
+          rationale: "Native AcroForm widget '\(widget.name)' on base-form page 0 (reviewed via qpdf structural inspection)\(xfaNote)."
+        ))
+      }
+    }
+
+    // Page-level abstains for the genuinely widget-free added pages.
+    let abstains: [(fixture: String, page: Int, rect: PDFRect, severity: String, why: String)] = [
+      ("plain-text.pdf", 1, PDFRect(x: 0, y: 0, width: 612, height: 792), "medium",
+       "Added text page 2 — no /Annots (qpdf verified)."),
+      ("plain-text.pdf", 2, PDFRect(x: 0, y: 0, width: 612, height: 792), "medium",
+       "Added text page 3 — no /Annots (qpdf verified)."),
+      ("multi-column.pdf", 1, PDFRect(x: 0, y: 0, width: 792, height: 612), "medium",
+       "Added text page 2 — no /Annots (qpdf verified)."),
+      ("navigation.pdf", 1, PDFRect(x: 0, y: 0, width: 612, height: 792), "medium",
+       "Added page 2 — link annots only, no editable widgets (qpdf verified)."),
+      ("navigation.pdf", 2, PDFRect(x: 0, y: 0, width: 612, height: 792), "medium",
+       "Added page 3 — no /Annots (qpdf verified)."),
+      ("geometry.pdf", 1, PDFRect(x: 0, y: 0, width: 200, height: 2000), "medium",
+       "Added tall page 2 — no /Annots (qpdf verified)."),
+      ("geometry.pdf", 2, PDFRect(x: 0, y: 0, width: 612, height: 792), "medium",
+       "Added rotated page 3 — no /Annots (qpdf verified)."),
+      ("geometry.pdf", 3, PDFRect(x: 36, y: 36, width: 364, height: 664), "medium",
+       "Added cropped page 4 — no /Annots, crop box [36 36 400 700] (qpdf verified).")
+    ]
+    for abstain in abstains {
+      let fixtureID = abstain.fixture.replacingOccurrences(of: ".pdf", with: "")
+      cases.append(ReviewedGroundTruthCase(
+        id: "cs-\(fixtureID)-page-\(abstain.page)-no-fields",
+        reviewedRegionID: "reviewed:\(fixtureID):page-\(abstain.page):no-fields",
+        fixtureID: abstain.fixture, pageIndex: abstain.page,
+        className: "whitespace", expectedState: "abstain", isHardNegative: true,
+        target: abstain.rect,
+        requiredEvidence: ["whitespace"],
+        expectedEvidenceFamilies: ["whitespace"],
+        expectedLabelAssociation: "none", expectedGroupingState: "abstain",
+        falsePositiveSeverity: abstain.severity,
+        rationale: abstain.why
+      ))
+    }
+    return cases
+  }()
+
+  /// Record of the 2026-08-28 human review pass that corrected and extended
+  /// the corpus-sweep cases.
+  public static let reviewRecord = GroundTruthReviewRecord(
+    reviewedOn: "2026-08-28",
+    reviewer: "doctrine-alignment review pass (qpdf structural inspection)",
+    method: "All 15 fixtures opened with qpdf 12.4 --json + --show-object; page /Annots arrays,"
+      + " widget /Rect and /FT inspected; generator script intent cross-checked",
+    tool: "qpdf 12.4.0",
+    fixtureFindings: [
+      "plain-text.pdf": "3 pages; page 0 = base form with 6 AcroForm widgets; pages 1-2 no /Annots",
+      "multi-column.pdf": "2 pages; page 0 = base form with 6 widgets; page 1 no /Annots",
+      "navigation.pdf": "3 pages; page 0 = base form with 6 widgets; page 1 has 3 link annots only; page 2 no /Annots",
+      "signed-valid-structure.pdf": "1 page; base form with 6 widgets + signature",
+      "xfa-static.pdf": "1 page; base form with 6 widgets + XFA packet",
+      "geometry.pdf": "4 pages; page 0 = base form with 6 widgets; pages 1-3 no /Annots (200x2000, 612x792 r90, crop [36 36 400 700])",
+      "metadata-complete.pdf": "1 page; base form with 6 widgets + metadata",
+      "metadata-absent.pdf": "1 page; base form with 6 widgets, no metadata",
+      "metadata-custom.pdf": "1 page; base form with 6 widgets + custom metadata",
+      "metadata-malformed.pdf": "1 page; base form with 6 widgets + malformed metadata",
+      "metadata-unicode.pdf": "1 page; base form with 6 widgets + unicode metadata",
+      "signed-invalid-structure.pdf": "1 page; base form with 6 widgets + invalid signature structure",
+      "signed-multiple.pdf": "1 page; base form with 6 widgets + multiple signatures",
+      "xfa-hybrid.pdf": "1 page; base form with 6 widgets + hybrid XFA packet",
+      "xfa-dynamic.pdf": "1 page; 6 widget annotations present but AcroForm tree empty (dynamic XFA)"
+    ]
+  )
 }

@@ -24,6 +24,8 @@ private func candidate(
 
 /// The calibration fixture candidates as a native-like lane would produce them:
 /// 5 positives detected with full evidence + label, 5 hard negatives abstained.
+/// Plus the 6 base-form AcroForm widgets (page 0) that every corpus-sweep
+/// fixture carries.
 private func perfectNativeCandidates() -> [DetectorCandidate] {
   [
     candidate(x: 180, y: 700, width: 300, height: 32, kind: "vectorRectangle",
@@ -35,7 +37,20 @@ private func perfectNativeCandidates() -> [DetectorCandidate] {
     candidate(x: 180, y: 520, width: 220, height: 24, kind: "whitespace",
               evidence: ["whitespace", "label", "relationship"], label: true),
     candidate(x: 180, y: 460, width: 180, height: 24, kind: "textLabel",
-              evidence: ["label", "relationship"], label: true)
+              evidence: ["label", "relationship"], label: true),
+    // Base-form AcroForm widgets (identical rects across all 5 sweep fixtures).
+    candidate(x: 185.5, y: 705.39, width: 251, height: 23, kind: "nativeField",
+              evidence: ["nativeField"], label: true),
+    candidate(x: 185.5, y: 617.39, width: 251, height: 67, kind: "nativeField",
+              evidence: ["nativeField"], label: true),
+    candidate(x: 185.5, y: 567.39, width: 19, height: 19, kind: "nativeField",
+              evidence: ["nativeField"], label: true),
+    candidate(x: 185.5, y: 523.39, width: 19, height: 19, kind: "nativeField",
+              evidence: ["nativeField"], label: true),
+    candidate(x: 255.5, y: 523.39, width: 19, height: 19, kind: "nativeField",
+              evidence: ["nativeField"], label: true),
+    candidate(x: 185.5, y: 477.39, width: 251, height: 23, kind: "nativeField",
+              evidence: ["nativeField"], label: true)
   ]
 }
 
@@ -44,12 +59,12 @@ private func perfectNativeCandidates() -> [DetectorCandidate] {
 @Suite("Reviewed Candidate Ground Truth")
 struct ReviewedGroundTruthTests {
 
-  @Test("Canonical corpus has 15 cases across 6 fixtures")
+  @Test("Canonical corpus has 108 cases across 16 fixtures")
   func canonicalCorpus() {
     let gt = ReviewedCandidateGroundTruth.canonical()
-    #expect(gt.cases.count == 15, "Expected 15 cases, got \(gt.cases.count)")
-    #expect(gt.positiveCount == 5, "Expected 5 positives")
-    #expect(gt.hardNegativeCount == 10, "Expected 10 hard negatives")
+    #expect(gt.cases.count == 108, "Expected 108 cases, got \(gt.cases.count)")
+    #expect(gt.positiveCount == 95, "Expected 95 positives")
+    #expect(gt.hardNegativeCount == 13, "Expected 13 hard negatives")
   }
 
   @Test("Detector-calibration fixture has 10 human-reviewed cases")
@@ -60,14 +75,42 @@ struct ReviewedGroundTruthTests {
     #expect(cases.allSatisfy { $0.provenance == "human-reviewed" })
   }
 
-  @Test("Corpus-sweep entries are generator-derived and hard negatives")
+  @Test("Corpus-sweep entries are human-reviewed after the 2026-08-28 review pass")
   func corpusSweepEntries() {
     let gt = ReviewedCandidateGroundTruth.canonical()
     let sweep = gt.cases.filter { $0.fixtureID != "detector-calibration.pdf" }
-    #expect(sweep.count == 5)
-    #expect(sweep.allSatisfy { $0.provenance == "generator-manifest" })
-    #expect(sweep.allSatisfy { $0.isHardNegative })
-    #expect(sweep.allSatisfy { $0.expectedState == "abstain" })
+    #expect(sweep.count == 98)
+    #expect(sweep.allSatisfy { $0.provenance == "human-reviewed" })
+    #expect(sweep.filter(\.isHardNegative).count == 8)
+    #expect(sweep.filter { $0.expectedState == "detected" }.count == 90)
+  }
+
+  @Test("All 15 form-bearing fixtures have positive field expectations")
+  func formFixturesPositive() {
+    let gt = ReviewedCandidateGroundTruth.canonical()
+    let formFixtures = [
+      "plain-text.pdf", "multi-column.pdf", "navigation.pdf",
+      "signed-valid-structure.pdf", "xfa-static.pdf",
+      "geometry.pdf", "metadata-complete.pdf", "metadata-absent.pdf",
+      "metadata-custom.pdf", "metadata-malformed.pdf", "metadata-unicode.pdf",
+      "signed-invalid-structure.pdf", "signed-multiple.pdf",
+      "xfa-hybrid.pdf", "xfa-dynamic.pdf"
+    ]
+    for fixture in formFixtures {
+      let cases = gt.cases(forFixture: fixture)
+      let positives = cases.filter { $0.expectedState == "detected" }
+      #expect(positives.count == 6, "\(fixture) should have 6 positive field cases, got \(positives.count)")
+      #expect(positives.allSatisfy { $0.className == "nativeField" })
+    }
+  }
+
+  @Test("Review record captures the corrected fixture findings")
+  func reviewRecord() {
+    let record = ReviewedCandidateGroundTruth.reviewRecord
+    #expect(record.reviewedOn == "2026-08-28")
+    #expect(record.fixtureFindings.count == 15)
+    #expect(record.fixtureFindings["plain-text.pdf"]?.contains("6 AcroForm widgets") == true)
+    #expect(record.fixtureFindings["xfa-dynamic.pdf"]?.contains("AcroForm tree empty") == true)
   }
 
   @Test("Every case has stable reviewed region IDs")

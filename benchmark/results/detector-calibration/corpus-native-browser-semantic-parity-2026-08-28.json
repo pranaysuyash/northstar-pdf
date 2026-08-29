@@ -1,0 +1,2108 @@
+{
+  "schema": "pdf-editor.detector-semantic-comparison-corpus",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "generatedAt": "2026-08-28T00:00:00.000Z",
+  "groundTruth": {
+    "schema": "pdf-editor.detector-calibration-labels",
+    "caseCount": 108,
+    "fixtures": 16,
+    "reviewedOn": "2026-08-28"
+  },
+  "policy": {
+    "matching": "reviewed-region-first-score-with-one-selected-candidate",
+    "minimumIoU": 0.25,
+    "perFixtureScoping": true,
+    "candidateSource": "candidates-channel plus fields-channel mapped as nativeField candidates (confirmed fields are not re-suggested)"
+  },
+  "perFixture": [
+    {
+      "fixture": "plain-text.pdf",
+      "sourceDigest": "3120a1d6a0dee68b99aa2e84e4111120e75b1470fff34c96e374cbf5d775d0f0",
+      "reviewedRegionCount": 8,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 8,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 2,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 2,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:page-2:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 8,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 2,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 2,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:plain-text:page-2:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "multi-column.pdf",
+      "sourceDigest": "b2c3953336b9f31f025f3f120ed669e754116d032e57eb4c18312b43662bd34b",
+      "reviewedRegionCount": 7,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 7,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 1,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 1,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 7,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 1,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 1,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:multi-column:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "navigation.pdf",
+      "sourceDigest": "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+      "reviewedRegionCount": 8,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 8,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 2,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 2,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:navigation:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:page-2:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 8,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 2,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 2,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:navigation:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:navigation:page-2:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "geometry.pdf",
+      "sourceDigest": "e009a4123bbfd7c2193432494beb7add21fe8e523b06990db64d39d2e8bff4a3",
+      "reviewedRegionCount": 9,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 9,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 3,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 3,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:geometry:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:page-2:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:page-3:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 9,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 3,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 3,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": 0,
+          "correctAbstentionRate": 1,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:geometry:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:page-1:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:page-2:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:geometry:page-3:no-fields",
+            "expected": "abstain",
+            "detected": false,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "metadata-complete.pdf",
+      "sourceDigest": "9e177a2af76b5f2e5849e617491dc196f1c53130c3212cc52d804ffd453b0a30",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-complete:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "metadata-absent.pdf",
+      "sourceDigest": "5c497c9e5eea5ba49d266ed0344048bef16c360b116dbc17bf06077d02608834",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-absent:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "metadata-custom.pdf",
+      "sourceDigest": "9dbc61d3fbf0be9c914467bff765ab7919a88dd7d0c0d0e64f8009ea79ca5f65",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-custom:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "metadata-malformed.pdf",
+      "sourceDigest": "81740119e94f20c473c3bf5bb173ea44b801f8af41b30029b841583dc88eaed3",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-malformed:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "metadata-unicode.pdf",
+      "sourceDigest": "83b5887d3662dd70807c753efeac30e3968c12fff8e1283d5fac1ebf2188d904",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:metadata-unicode:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "signed-valid-structure.pdf",
+      "sourceDigest": "7b05ac8a541772014066231d71dea42fac1df55058b1a3aa1af911343a96bcdc",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-valid-structure:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "signed-invalid-structure.pdf",
+      "sourceDigest": "aa9084314092f5e46e1d21b04fdfa91bd84b5a2a9bc4af30aa9fb7167344c855",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-invalid-structure:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "signed-multiple.pdf",
+      "sourceDigest": "d03f26121832fc240de72a3788da15777f9a7573d42dac488ace970e63a65fa4",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:signed-multiple:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "xfa-static.pdf",
+      "sourceDigest": "bbdd7634ea093c7783c42d4b40cf0fb7b56d05937e5923c82a5926038e07324c",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-static:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "xfa-hybrid.pdf",
+      "sourceDigest": "7b2c8dbcba87d294fa81ea0ac1875dd06aa91256954cbe353b889c1edfccae3f",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-hybrid:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    },
+    {
+      "fixture": "xfa-dynamic.pdf",
+      "sourceDigest": "ab8b4e3e48e0d9d17686ae3ba4d5982b407e15cecff80dff9b78750a0d60884b",
+      "reviewedRegionCount": 6,
+      "passed": true,
+      "native": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "browser": {
+        "passed": true,
+        "metrics": {
+          "reviewedRegionCount": 6,
+          "positiveRegionCount": 6,
+          "hardNegativeRegionCount": 0,
+          "truePositive": 6,
+          "falseNegative": 0,
+          "falsePositive": 0,
+          "trueNegative": 0,
+          "precision": 1,
+          "recall": 1,
+          "falsePositiveRate": null,
+          "correctAbstentionRate": null,
+          "positiveAbstentionRate": 0,
+          "evidenceFamilyExactRate": 1,
+          "labelAssociationPrecision": 1,
+          "groupingAgreementRate": 1,
+          "falsePositiveSeverityCounts": {},
+          "falsePositiveSeverityBurden": 0
+        },
+        "caseStates": [
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-0",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-1",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-2",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-3",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-4",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          },
+          {
+            "reviewedRegionID": "reviewed:xfa-dynamic:field-5",
+            "expected": "detected",
+            "detected": true,
+            "state": "pass"
+          }
+        ]
+      },
+      "parity": {
+        "passed": true,
+        "mismatchCount": 0,
+        "mismatchCounts": {}
+      }
+    }
+  ],
+  "corpus": {
+    "native": {
+      "cases": 98,
+      "truePositive": 90,
+      "falseNegative": 0,
+      "falsePositive": 0,
+      "correctAbstention": 8,
+      "precision": 1,
+      "recall": 1,
+      "abstention": 1
+    },
+    "browser": {
+      "cases": 98,
+      "truePositive": 90,
+      "falseNegative": 0,
+      "falsePositive": 0,
+      "correctAbstention": 8,
+      "precision": 1,
+      "recall": 1,
+      "abstention": 1
+    },
+    "fixturePassCount": 15,
+    "fixtureCount": 15,
+    "passed": true
+  }
+}

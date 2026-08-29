@@ -1,0 +1,113 @@
+{
+  "fixtureCount" : 15,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "3120a1d6a0dee68b99aa2e84e4111120e75b1470fff34c96e374cbf5d775d0f0",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/plain-text.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "b2c3953336b9f31f025f3f120ed669e754116d032e57eb4c18312b43662bd34b",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/multi-column.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/navigation.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "e009a4123bbfd7c2193432494beb7add21fe8e523b06990db64d39d2e8bff4a3",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/geometry.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "9e177a2af76b5f2e5849e617491dc196f1c53130c3212cc52d804ffd453b0a30",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/metadata-complete.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "5c497c9e5eea5ba49d266ed0344048bef16c360b116dbc17bf06077d02608834",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/metadata-absent.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "9dbc61d3fbf0be9c914467bff765ab7919a88dd7d0c0d0e64f8009ea79ca5f65",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/metadata-custom.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "81740119e94f20c473c3bf5bb173ea44b801f8af41b30029b841583dc88eaed3",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/metadata-malformed.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "83b5887d3662dd70807c753efeac30e3968c12fff8e1283d5fac1ebf2188d904",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/metadata-unicode.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "7b05ac8a541772014066231d71dea42fac1df55058b1a3aa1af911343a96bcdc",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/signed-valid-structure.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "aa9084314092f5e46e1d21b04fdfa91bd84b5a2a9bc4af30aa9fb7167344c855",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/signed-invalid-structure.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "d03f26121832fc240de72a3788da15777f9a7573d42dac488ace970e63a65fa4",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/signed-multiple.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "bbdd7634ea093c7783c42d4b40cf0fb7b56d05937e5923c82a5926038e07324c",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/xfa-static.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "7b2c8dbcba87d294fa81ea0ac1875dd06aa91256954cbe353b889c1edfccae3f",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/xfa-hybrid.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "ab8b4e3e48e0d9d17686ae3ba4d5982b407e15cecff80dff9b78750a0d60884b",
+      "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/xfa-dynamic.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 15.7.9 (Build 24G830)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

@@ -103,15 +103,16 @@ struct LayoutFingerprintV2Tests {
             #expect(v1Plain == v1Nav, "V1 fingerprints should collide (finding)")
         }
 
-        // The fix: V2 structured similarity must stay below the family
-        // threshold (0.76 well-calibrated) for every cross-PDF pair.
+        // The fix: V2 structured similarity must stay below the calibrated
+        // family threshold (0.90, F-3 ratify — LayoutFingerprintThreshold-
+        // CalibrationTests) for every cross-PDF pair.
         for i in 0..<fingerprints.count {
             for j in (i + 1)..<fingerprints.count {
                 let a = fingerprints[i]
                 let b = fingerprints[j]
                 let similarity = a.fp.similarity(to: b.fp)
                 #expect(
-                    similarity.total < 0.76,
+                    similarity.total < LayoutFingerprintV2.familyThreshold,
                     "\(a.name) vs \(b.name) must stay below family threshold, got \(similarity.total)"
                 )
             }
@@ -127,7 +128,7 @@ struct LayoutFingerprintV2Tests {
                   let fp = LayoutFingerprintV2Extractor.extract(from: document) else { continue }
             fingerprints.append((name, fp))
         }
-        print("\n[LayoutFingerprintV2 evidence] cross-PDF similarity matrix (family threshold 0.76):")
+        print("\n[LayoutFingerprintV2 evidence] cross-PDF similarity matrix (family threshold \(LayoutFingerprintV2.familyThreshold)):")
         for i in 0..<fingerprints.count {
             for j in (i + 1)..<fingerprints.count {
                 let a = fingerprints[i]
@@ -143,6 +144,83 @@ struct LayoutFingerprintV2Tests {
             + Self.sweepNames.compactMap { name in
                 sweepURL(name).flatMap { v1Fingerprint($0) }
             }.joined(separator: " | "))
+    }
+
+    // MARK: - F-3: Calibrated threshold must recognize layout-identical re-encodings
+
+    @Test("F-3: layout-identical re-encodings are recognized at the calibrated threshold")
+    func f3PositiveRecognition() {
+        // Same single-page document re-encoded by different producers/tools:
+        // byte digests differ, but V2 must still recognize the family at the
+        // ratified threshold (0.90).
+        let baseURL = URL(fileURLWithPath: "\(Self.corpusRoot)/public-sample-form.pdf")
+        let producerURL = URL(fileURLWithPath: "\(Self.corpusRoot)/2026-08-25-native-incremental/corpus/synthetic-producer-0.pdf")
+        guard FileManager.default.fileExists(atPath: baseURL.path),
+              FileManager.default.fileExists(atPath: producerURL.path),
+              let base = LayoutFingerprintV2Extractor.extract(from: PDFDocument(url: baseURL)!),
+              let producer = LayoutFingerprintV2Extractor.extract(from: PDFDocument(url: producerURL)!) else { return }
+
+        let similarity = base.similarity(to: producer).total
+        #expect(similarity >= LayoutFingerprintV2.familyThreshold,
+                "Layout-identical re-encodings must be recognized: \(similarity) vs \(LayoutFingerprintV2.familyThreshold)")
+    }
+
+    // MARK: - F-4: Per-page alignment (replaces pooled-cell Jaccard)
+
+    @Test("F-4: dense-text cross-doc similarity drops below the family threshold")
+    func f4PerPageAlignment() {
+        // F-4 (Observed, pooled-cell lane): geometry↔navigation scored
+        // text=0.824 because pooling merged all pages into one cell set —
+        // two dense multi-page docs share most letter-grid cells. With
+        // per-page alignment, differing page content must drive the score
+        // well below the calibrated family threshold.
+        guard let geometryURL = sweepURL("geometry.pdf"),
+              let navigationURL = sweepURL("navigation.pdf"),
+              let geometryFP = LayoutFingerprintV2Extractor.extract(from: PDFDocument(url: geometryURL)!),
+              let navigationFP = LayoutFingerprintV2Extractor.extract(from: PDFDocument(url: navigationURL)!) else { return }
+
+        let similarity = geometryFP.similarity(to: navigationFP)
+        // The F-4 failure was text=0.824 — aligned comparison must be far below.
+        #expect(similarity.textLayout < LayoutFingerprintV2.familyThreshold,
+                "F-4: aligned text similarity must stay below the family threshold, got \(similarity.textLayout)")
+        #expect(similarity.total < LayoutFingerprintV2.familyThreshold,
+                "F-4: aligned total must stay below the family threshold, got \(similarity.total)")
+        print(String(format: "[F-4 evidence] geometry vs navigation aligned: text=%.3f total=%.3f (pooled lane was 0.824)",
+                      similarity.textLayout, similarity.total))
+    }
+
+    @Test("F-4: aligned comparison keeps identical pages at 1.0 and penalizes count mismatch")
+    func f4AlignmentSemantics() throws {
+        // Same cells on both shared pages → 1.0; count difference applies the penalty.
+        let shared = [
+            LayoutFingerprintV2.PageLayout(
+                pageIndex: 0, widthPoints: 612, heightPoints: 792, rotationDegrees: 0,
+                textCells: [LayoutFingerprintV2.Cell(col: 0, row: 0), LayoutFingerprintV2.Cell(col: 1, row: 0), LayoutFingerprintV2.Cell(col: 0, row: 1)],
+                fieldCells: [], annotationCells: []),
+            LayoutFingerprintV2.PageLayout(
+                pageIndex: 1, widthPoints: 612, heightPoints: 792, rotationDegrees: 0,
+                textCells: [LayoutFingerprintV2.Cell(col: 5, row: 5), LayoutFingerprintV2.Cell(col: 6, row: 5)],
+                fieldCells: [], annotationCells: [])
+        ]
+        let a = LayoutFingerprintV2(
+            algorithm: "test", featureVersion: "test", cellSizePoints: 4.0,
+            pages: shared, digest: "a")
+        let b = LayoutFingerprintV2(
+            algorithm: "test", featureVersion: "test", cellSizePoints: 4.0,
+            pages: shared, digest: "b")
+        #expect(abs(a.similarity(to: b).textLayout - 1.0) < 1e-9, "Identical pages align to 1.0")
+
+        // A third page with non-matching text: pooled would dilute less,
+        // aligned must apply the count penalty.
+        let extraPage = LayoutFingerprintV2.PageLayout(
+            pageIndex: 2, widthPoints: 612, heightPoints: 792, rotationDegrees: 0,
+            textCells: [LayoutFingerprintV2.Cell(col: 100, row: 100)], fieldCells: [], annotationCells: [])
+        let c = LayoutFingerprintV2(
+            algorithm: "test", featureVersion: "test", cellSizePoints: 4.0,
+            pages: shared + [extraPage], digest: "c")
+        let alignment = a.similarity(to: c).textLayout
+        #expect(abs(alignment - (1.0 * (1.0 - 1.0 / 3.0))) < 1e-9,
+                "Count penalty must apply to aligned components (2v3 pages → \(alignment))")
     }
 
     @Test("V2 digests are content-free (positions only, never text)")

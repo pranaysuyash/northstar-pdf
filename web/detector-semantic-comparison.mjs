@@ -303,7 +303,9 @@ function evaluateAdapter(labels, candidates) {
     metrics,
     failureClusters,
     passed: metrics.recall === 1
-      && metrics.falsePositiveRate === 0
+      // null falsePositiveRate means no hard negatives were reviewed: there
+      // is nothing to falsely accept, so the gate passes (avoid null === 0).
+      && (metrics.falsePositiveRate === 0 || metrics.falsePositiveRate === null)
       && (metrics.evidenceFamilyExactRate ?? 1) === 1
       && (metrics.labelAssociationPrecision ?? 1) === 1
       && (metrics.groupingAgreementRate ?? 1) === 1

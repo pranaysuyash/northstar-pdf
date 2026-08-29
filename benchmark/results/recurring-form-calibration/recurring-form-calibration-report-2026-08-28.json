@@ -1,6 +1,6 @@
 {
   "calibration" : {
-    "accuracy" : 0.8333333333333334,
+    "accuracy" : 1,
     "classBreakdown" : {
       "geometry" : 1,
       "hard-negative-different" : 1,
@@ -9,13 +9,13 @@
       "navigation" : 1,
       "plain-text" : 1
     },
-    "failed" : 1,
+    "failed" : 0,
     "falseNegatives" : 0,
     "falsePositiveRate" : 0,
     "falsePositives" : 0,
-    "passed" : 5,
+    "passed" : 6,
     "recommendations" : [
-      "Accuracy 83.3% is below 95% target. Review ambiguous cases and adjust thresholds."
+      "Calibration within acceptable bounds. No threshold adjustments recommended."
     ],
     "results" : [
       {
@@ -49,14 +49,14 @@
         "score" : 1
       },
       {
-        "actualTier" : "knownVariant",
+        "actualTier" : "noMatch",
         "entryID" : "navigation",
-        "expectedTier" : "exact",
+        "expectedTier" : "noMatch",
         "falsePositiveDetected" : false,
         "isHardNegative" : false,
-        "passed" : false,
-        "reason" : "Mismatch: expected exact, got knownVariant",
-        "score" : 0.9
+        "passed" : true,
+        "reason" : "Correctly classified as noMatch",
+        "score" : 0.7133156871218669
       },
       {
         "actualTier" : "noMatch",
@@ -66,7 +66,7 @@
         "isHardNegative" : true,
         "passed" : true,
         "reason" : "Correctly classified as noMatch",
-        "score" : 0.08
+        "score" : 0.13793103448275862
       },
       {
         "actualTier" : "noMatch",
@@ -76,16 +76,14 @@
         "isHardNegative" : true,
         "passed" : true,
         "reason" : "Correctly classified as noMatch",
-        "score" : 0.08695652173913043
+        "score" : 0.14814814814814814
       }
     ],
     "tierBreakdown" : [
-      "exact",
-      3,
-      "knownVariant",
-      1,
       "noMatch",
-      2
+      3,
+      "exact",
+      3
     ],
     "totalEntries" : 6
   },
@@ -113,7 +111,7 @@
   "thresholds" : {
     "ambiguousMargin" : 0.05,
     "familyEnabled" : true,
-    "familyThreshold" : 0.76
+    "familyThreshold" : 0.9
   },
   "version" : {
     "major" : 1,

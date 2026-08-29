@@ -76,18 +76,16 @@ private func extractPageBoxes(from url: URL) -> PageBoxValues? {
     )
 }
 
-// MARK: - Helper: Compute layout fingerprint from PDF
+// MARK: - Helper: Extract V2 layout fingerprint from PDF
 
-private func computeLayoutFingerprint(from url: URL) -> String? {
+/// V2 structured fingerprint (LayoutFingerprintV2) — replaces the V1
+/// first-page size + rotation + page-count string (recommendation 1 of the
+/// layout-fingerprint exploration §7; the V1 collision was Finding 1).
+/// The calibrator consumes it through the V2-aware lane with structured
+/// similarity on the F-3-calibrated scale (threshold 0.90).
+private func extractLayoutV2(from url: URL) -> LayoutFingerprintV2? {
     guard let document = PDFDocument(url: url) else { return nil }
-    guard let page = document.page(at: 0) else { return nil }
-
-    let pageBounds = page.bounds(for: .mediaBox)
-    let pageCount = document.pageCount
-    let rotation = page.rotation
-
-    // Simple structural fingerprint: page size + rotation + page count
-    return "\(Int(pageBounds.width))x\(Int(pageBounds.height))_r\(rotation)_p\(pageCount)"
+    return LayoutFingerprintV2Extractor.extract(from: document)
 }
 
 // MARK: - Calibration Verification Tests
@@ -214,8 +212,8 @@ struct CalibrationCorpusVerificationTests {
 
     // MARK: - Layout Fingerprint Verification
 
-    @Test("Layout fingerprints are computed for real corpus PDFs")
-    func layoutFingerprintsOnCorpus() {
+    @Test("V2 layout fingerprints are computed and discriminate all corpus PDFs")
+    func v2LayoutFingerprintsOnCorpus() {
         let pdfNames = [
             "plain-text.pdf",
             "multi-column.pdf",
@@ -229,40 +227,45 @@ struct CalibrationCorpusVerificationTests {
             guard FileManager.default.fileExists(atPath: path) else { continue }
             let url = URL(fileURLWithPath: path)
 
-            if let fp = computeLayoutFingerprint(from: url) {
-                fingerprints.append(fp)
+            if let fp = extractLayoutV2(from: url) {
+                fingerprints.append(fp.digest)
             }
         }
 
-        // Fingerprints may collide when PDFs share page dimensions + rotation + count.
-        // This is a known limitation of the simple fingerprint.
+        // Finding 1 resolution: V2 discriminates where V1 collided
+        // (V1 = first-page size + rotation + count collided on
+        // plain-text ↔ navigation). Every corpus PDF must have a unique
+        // V2 digest.
         let uniqueFingerprints = Set(fingerprints)
-        // At least 2 should be unique (plain-text vs geometry have different sizes)
-        #expect(uniqueFingerprints.count >= 2,
-                "At least 2 fingerprints should differ across different PDFs")
+        #expect(uniqueFingerprints.count == fingerprints.count,
+                "V2 must discriminate every corpus PDF, got \(uniqueFingerprints.count)/\(fingerprints.count)")
+        #expect(uniqueFingerprints.count >= 3,
+                "At least 3 fingerprints should differ across different PDFs")
     }
 
-    @Test("Layout fingerprints are stable across multiple reads")
-    func fingerprintStability() {
+    @Test("V2 layout fingerprints are stable across multiple reads")
+    func v2FingerprintStability() {
         let path = CorpusPath.corpusSweepPDF("plain-text.pdf")
         guard FileManager.default.fileExists(atPath: path) else {
             return
         }
         let url = URL(fileURLWithPath: path)
 
-        let fp1 = computeLayoutFingerprint(from: url)
-        let fp2 = computeLayoutFingerprint(from: url)
-        #expect(fp1 == fp2, "Fingerprint should be stable across reads")
+        let fp1 = extractLayoutV2(from: url)
+        let fp2 = extractLayoutV2(from: url)
+        #expect(fp1?.digest == fp2?.digest, "Fingerprint should be stable across reads")
+        #expect(fp1 != nil, "V2 fingerprint must extract")
     }
 
     // MARK: - RecurringFormCalibrator on Real Corpus
 
-    @Test("Calibrator classifies real corpus entries correctly")
+    @Test("Calibrator classifies real corpus entries correctly on the V2 lane")
     func calibratorOnRealCorpus() {
-        let calibrator = RecurringFormCalibrator(thresholds: .wellCalibrated)
+        // V2 lane: the F-3-calibrated structured scale (threshold 0.90).
+        let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
 
-        // Build templates from known PDFs
-        var templates: [String: (fingerprint: String, sourceDigest: String)] = [:]
+        // Build templates from known PDFs (V2 fingerprints)
+        var templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [:]
         let knownPDFs = [
             ("plain-text.pdf", "tpl-plain"),
             ("multi-column.pdf", "tpl-multi"),
@@ -274,37 +277,32 @@ struct CalibrationCorpusVerificationTests {
             guard FileManager.default.fileExists(atPath: path) else { continue }
             let url = URL(fileURLWithPath: path)
 
-            if let fp = computeLayoutFingerprint(from: url),
+            if let fp = extractLayoutV2(from: url),
                let data = try? Data(contentsOf: url) {
-                let digest = data.sha256Hex
-                templates[templateID] = (fingerprint: fp, sourceDigest: digest)
+                templatesV2[templateID] = (fingerprint: fp, sourceDigest: data.sha256Hex)
             }
         }
 
-        #expect(templates.count >= 2, "Should have at least 2 templates from real corpus")
+        #expect(templatesV2.count >= 2, "Should have at least 2 templates from real corpus")
 
         // Classify each known PDF — should match itself exactly
         for (pdfName, templateID) in knownPDFs {
             let path = CorpusPath.corpusSweepPDF(pdfName)
             guard FileManager.default.fileExists(atPath: path) else { continue }
             let url = URL(fileURLWithPath: path)
-            guard let fp = computeLayoutFingerprint(from: url),
+            guard let fp = extractLayoutV2(from: url),
                   let data = try? Data(contentsOf: url) else { continue }
 
             let digest = data.sha256Hex
             let exactDigests = Dictionary(
-                templates.map { ($0.key, $0.value.sourceDigest) },
-                uniquingKeysWith: { first, _ in first }
-            )
-            let fingerprints = Dictionary(
-                templates.map { ($0.key, $0.value.fingerprint) },
+                templatesV2.map { ($0.key, $0.value.sourceDigest) },
                 uniquingKeysWith: { first, _ in first }
             )
 
             let (tier, score, matchedTemplate) = calibrator.classify(
                 sourceDigest: digest,
-                layoutFingerprint: fp,
-                templates: fingerprints,
+                layoutV2: fp,
+                templatesV2: templatesV2.mapValues(\.fingerprint),
                 exactSourceDigests: exactDigests
             )
 
@@ -314,48 +312,54 @@ struct CalibrationCorpusVerificationTests {
         }
     }
 
-    @Test("Calibrator rejects different PDFs as non-matches")
+    @Test("Calibrator rejects different PDFs as non-matches on the V2 lane")
     func calibratorRejectsDifferent() {
-        let calibrator = RecurringFormCalibrator(thresholds: .wellCalibrated)
+        // V2 lane: multi-column vs plain-text measured 0.582 structured
+        // similarity — far below the calibrated 0.90 family threshold, so
+        // the V2 fingerprint achieves the proper rejection that V1's
+        // colliding strings could not.
+        let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
 
         // Template from plain-text.pdf
         let templatePath = CorpusPath.corpusSweepPDF("plain-text.pdf")
         guard FileManager.default.fileExists(atPath: templatePath) else { return }
         let templateURL = URL(fileURLWithPath: templatePath)
-        guard let templateFP = computeLayoutFingerprint(from: templateURL),
+        guard let templateFP = extractLayoutV2(from: templateURL),
               let templateData = try? Data(contentsOf: templateURL) else { return }
 
-        let templates: [String: String] = ["tpl-plain": templateFP]
+        let templatesV2: [String: LayoutFingerprintV2] = ["tpl-plain": templateFP]
         let exactDigests: [String: String] = ["tpl-plain": templateData.sha256Hex]
 
         // Classify multi-column.pdf — should NOT match plain-text
         let testPath = CorpusPath.corpusSweepPDF("multi-column.pdf")
         guard FileManager.default.fileExists(atPath: testPath) else { return }
         let testURL = URL(fileURLWithPath: testPath)
-        guard let testFP = computeLayoutFingerprint(from: testURL),
+        guard let testFP = extractLayoutV2(from: testURL),
               let testData = try? Data(contentsOf: testURL) else { return }
 
-        let (tier, _, _) = calibrator.classify(
+        let (tier, score, _) = calibrator.classify(
             sourceDigest: testData.sha256Hex,
-            layoutFingerprint: testFP,
-            templates: templates,
+            layoutV2: testFP,
+            templatesV2: templatesV2,
             exactSourceDigests: exactDigests
         )
 
-        // With simple fingerprints, different PDFs with same page size may get familyMatch.
-        // This is a known variance — the fingerprint needs more structure (content hashes, field counts).
-        // The important thing is it's NOT .exact (which would mean digest match).
-        #expect(tier != .exact,
-                "Different PDF should never be .exact match, got \(tier)")
+        // V2 resolution: the different PDF is properly rejected (noMatch) —
+        // the V1 string lane could only guarantee NOT-exact (it tolerated
+        // familyMatch as a documented variance).
+        #expect(tier == .noMatch, "Different PDF must be noMatch on the V2 lane, got \(tier) (score \(score))")
+        #expect(score < calibrator.thresholds.familyThreshold,
+                "Score must stay below the calibrated family threshold")
     }
 
     // MARK: - Corpus Calibration Report
 
-    @Test("Full corpus calibration produces valid report")
+    @Test("Full corpus calibration produces valid report on the V2 lane")
     func fullCorpusCalibrationReport() {
-        let calibrator = RecurringFormCalibrator(thresholds: .wellCalibrated)
+        // V2 lane: the F-3-calibrated structured scale (threshold 0.90).
+        let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
 
-        // Build corpus from all available PDFs
+        // Build corpus from all available PDFs (V2 fingerprints)
         var corpus: [CorpusEntry] = []
         let pdfNames = [
             "plain-text.pdf", "multi-column.pdf", "geometry.pdf",
@@ -366,14 +370,22 @@ struct CalibrationCorpusVerificationTests {
             let path = CorpusPath.corpusSweepPDF(name)
             guard FileManager.default.fileExists(atPath: path) else { continue }
             let url = URL(fileURLWithPath: path)
-            guard let fp = computeLayoutFingerprint(from: url),
+            guard let fp = extractLayoutV2(from: url),
                   let data = try? Data(contentsOf: url) else { continue }
 
+            // Only the template entries (first 3) can be exact: expectedTier
+            // must reflect whether the entry is in the template set. The F-3
+            // calibration (Verified 2026-08-28) measured navigation against
+            // plain-text/multi-column/geometry at 0.378-0.713, all below the
+            // 0.90 family threshold — it is a distinct document (.noMatch),
+            // not a variant of any template.
+            let isTemplateEntry = name == "plain-text.pdf" || name == "multi-column.pdf" || name == "geometry.pdf"
             corpus.append(CorpusEntry(
                 sourceDigest: data.sha256Hex,
-                layoutFingerprint: fp,
-                expectedTier: .exact, // each matches itself
-                documentClass: name.replacingOccurrences(of: ".pdf", with: "")
+                layoutFingerprint: fp.digest,
+                expectedTier: isTemplateEntry ? .exact : .noMatch,
+                documentClass: name.replacingOccurrences(of: ".pdf", with: ""),
+                layoutV2: fp
             ))
         }
 
@@ -388,13 +400,14 @@ struct CalibrationCorpusVerificationTests {
 
         #expect(corpus.count >= 5, "Corpus should have at least 5 entries")
 
-        // Build templates from first 3 entries
-        var templates: [String: (fingerprint: String, sourceDigest: String)] = [:]
+        // Build templates from first 3 entries (V2 fingerprints)
+        var templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [:]
         for (idx, entry) in corpus.prefix(3).enumerated() {
-            templates["tpl-\(idx)"] = (fingerprint: entry.layoutFingerprint, sourceDigest: entry.sourceDigest)
+            guard let entryV2 = entry.layoutV2 else { continue }
+            templatesV2["tpl-\(idx)"] = (fingerprint: entryV2, sourceDigest: entry.sourceDigest)
         }
 
-        let report = calibrator.calibrate(corpus: corpus, templates: templates)
+        let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
 
         // Verify report structure
         #expect(report.totalEntries == corpus.count)
@@ -408,12 +421,12 @@ struct CalibrationCorpusVerificationTests {
 
     // MARK: - False Positive Report Generation
 
-    @Test("False-positive report generates from real corpus calibration")
+    @Test("False-positive report generates from real corpus calibration on the V2 lane")
     func falsePositiveReportFromRealCorpus() {
-        let calibrator = RecurringFormCalibrator(thresholds: .wellCalibrated)
+        let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
         let fpGenerator = FalsePositiveReportGenerator(maxFalsePositiveRate: 0.05)
 
-        // Build corpus with hard negatives
+        // Build corpus with hard negatives (V2 fingerprints)
         var corpus: [CorpusEntry] = []
         let pdfNames = ["plain-text.pdf", "multi-column.pdf", "geometry.pdf"]
 
@@ -421,18 +434,19 @@ struct CalibrationCorpusVerificationTests {
             let path = CorpusPath.corpusSweepPDF(name)
             guard FileManager.default.fileExists(atPath: path) else { continue }
             let url = URL(fileURLWithPath: path)
-            guard let fp = computeLayoutFingerprint(from: url),
+            guard let fp = extractLayoutV2(from: url),
                   let data = try? Data(contentsOf: url) else { continue }
 
             corpus.append(CorpusEntry(
                 sourceDigest: data.sha256Hex,
-                layoutFingerprint: fp,
+                layoutFingerprint: fp.digest,
                 expectedTier: .exact,
-                documentClass: name.replacingOccurrences(of: ".pdf", with: "")
+                documentClass: name.replacingOccurrences(of: ".pdf", with: ""),
+                layoutV2: fp
             ))
         }
 
-        // Hard negatives: similar but not matching
+        // Hard negatives: similar but not matching (no V2 → legacy fallback lane)
         corpus.append(CorpusEntry(
             sourceDigest: "hard-neg-similar",
             layoutFingerprint: "similar-but-not-matching-fp",
@@ -448,27 +462,28 @@ struct CalibrationCorpusVerificationTests {
             documentClass: "hard-negative-different"
         ))
 
-        // Build templates
-        var templates: [String: (fingerprint: String, sourceDigest: String)] = [:]
+        // Build templates (V2 fingerprints)
+        var templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [:]
         for (idx, entry) in corpus.filter({ !$0.isHardNegative }).prefix(3).enumerated() {
-            templates["tpl-\(idx)"] = (fingerprint: entry.layoutFingerprint, sourceDigest: entry.sourceDigest)
+            guard let entryV2 = entry.layoutV2 else { continue }
+            templatesV2["tpl-\(idx)"] = (fingerprint: entryV2, sourceDigest: entry.sourceDigest)
         }
 
-        let calibrationReport = calibrator.calibrate(corpus: corpus, templates: templates)
+        let calibrationReport = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
         let fpReport = fpGenerator.generate(from: calibrationReport, corpus: corpus)
 
         // Verify false-positive report
         #expect(fpReport.totalHardNegatives == 2)
-        #expect(fpReport.falsePositiveCount == 0, "No false positives expected with well-calibrated thresholds")
+        #expect(fpReport.falsePositiveCount == 0, "No false positives expected with the calibrated V2 threshold")
         #expect(fpReport.passesThreshold, "False-positive rate should be within 5% threshold")
         #expect(!fpReport.recommendations.isEmpty, "Should have recommendations")
     }
 
     // MARK: - Persisted False-Positive Report Artifact
 
-    @Test("Real false-positive report artifact is generated and round-trips")
+    @Test("Real false-positive report artifact is generated and round-trips on the V2 lane")
     func persistedFalsePositiveReportArtifact() {
-        let calibrator = RecurringFormCalibrator(thresholds: .wellCalibrated)
+        let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
         let fpGenerator = FalsePositiveReportGenerator(maxFalsePositiveRate: 0.05)
 
         // Real corpus entries with deterministic IDs (artifact must be stable).
@@ -478,17 +493,26 @@ struct CalibrationCorpusVerificationTests {
             let path = CorpusPath.corpusSweepPDF(name)
             guard FileManager.default.fileExists(atPath: path) else { continue }
             let url = URL(fileURLWithPath: path)
-            guard let fp = computeLayoutFingerprint(from: url),
+            guard let fp = extractLayoutV2(from: url),
                   let data = try? Data(contentsOf: url) else { continue }
             corpus.append(CorpusEntry(
                 id: name.replacingOccurrences(of: ".pdf", with: ""),
                 sourceDigest: data.sha256Hex,
-                layoutFingerprint: fp,
-                expectedTier: .exact,
-                documentClass: name.replacingOccurrences(of: ".pdf", with: "")
+                layoutFingerprint: fp.digest,
+                // navigation is NOT in the template set (first 3), so exact is
+                // unattainable; F-3 (Verified 2026-08-28) measured it below the
+                // 0.90 family threshold against every template — a distinct
+                // document (.noMatch). Under V1 its hex-digest char-Jaccard
+                // inflated the score to 0.9 (knownVariant) — precisely the
+                // false-similarity the V2 lane fixes.
+                expectedTier: name == "navigation.pdf" ? .noMatch : .exact,
+                documentClass: name.replacingOccurrences(of: ".pdf", with: ""),
+                layoutV2: fp
             ))
         }
-        // Hard negatives: similar-but-not-matching fingerprints.
+
+        // Hard negatives: similar-but-not-matching fingerprints (no V2 →
+        // legacy fallback lane, keeping the string hard-negative machinery).
         corpus.append(CorpusEntry(
             id: "hard-neg-similar",
             sourceDigest: "hard-neg-similar-digest",
@@ -506,12 +530,13 @@ struct CalibrationCorpusVerificationTests {
             documentClass: "hard-negative-different"
         ))
 
-        var templates: [String: (fingerprint: String, sourceDigest: String)] = [:]
+        var templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [:]
         for (idx, entry) in corpus.filter({ !$0.isHardNegative }).prefix(3).enumerated() {
-            templates["tpl-\(idx)"] = (fingerprint: entry.layoutFingerprint, sourceDigest: entry.sourceDigest)
+            guard let entryV2 = entry.layoutV2 else { continue }
+            templatesV2["tpl-\(idx)"] = (fingerprint: entryV2, sourceDigest: entry.sourceDigest)
         }
 
-        let calibrationReport = calibrator.calibrate(corpus: corpus, templates: templates)
+        let calibrationReport = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
         let fpReport = fpGenerator.generate(from: calibrationReport, corpus: corpus)
 
         let artifact = RecurringFormCalibrationArtifact(

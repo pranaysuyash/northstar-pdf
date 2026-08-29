@@ -64,3 +64,55 @@ These are **documented as known variances** — the tests assert the invariant t
 - Should the layout fingerprint be upgraded to include content hashes?
 - Should the corpus expand to browser-corpus PDFs (rotated, hybrid, scanned)?
 - Should calibration results be persisted as benchmark evidence artifacts?
+## 8. V1 → V2 migration addendum (2026-08-28)
+
+### What changed
+
+The calibration corpus tests no longer use the V1 `computeLayoutFingerprint`
+(char-Jaccard over digest hex strings). They now exercise the **V2 structured
+lane** end-to-end:
+
+- `RecurringFormCalibrator` gained a V2-aware `classify`/`calibrate` path:
+  `CorpusEntry` carries an optional `layoutV2: LayoutFingerprintV2?`
+  (backward-compatible Codable), and classification uses the structured
+  `similarity(to:)` on the F-3-calibrated scale (`familyThreshold = 0.90`).
+  Entries without V2 fall back to the legacy string lane (hard-negative
+  machinery preserved).
+- `CalibrationCorpusVerificationTests` replaced every V1 fingerprint
+  computation with `LayoutFingerprintV2Extractor` (14 call sites, 0 V1
+  references remain). All 14 tests run on the V2 lane.
+
+### What the V2 lane fixed (Observed, real corpus)
+
+The persisted artifact diff documents the honest V1 → V2 delta:
+
+| Entry | V1 (char-Jaccard) | V2 (structured) | Verdict |
+|---|---|---|---|
+| navigation (not a template) | 0.900 → `knownVariant` (false positive class) | 0.713 → `noMatch` (correct) | F-4 false-similarity eliminated |
+| hard-neg-similar | 0.080 | 0.138 | correctly rejected |
+| hard-neg-different | 0.087 | 0.148 | correctly rejected |
+| 3 template entries | exact @ 1.0 | exact @ 1.0 | unchanged |
+
+V1's digest-hex Jaccard pushed a distinct document to the family boundary.
+V2's per-page aligned structural similarity measures the actual layout:
+navigation shares the same page geometry but not the text/field cells, so it
+scores 0.713 — below the calibrated 0.90 threshold. This is the same
+false-similarity class F-4 fixed in `LayoutFingerprintV2.similarity`, now
+observable in the calibrator.
+
+### Test-expectation correction (honest labeling)
+
+The pre-migration artifact expected `.exact` for **navigation** while the
+template set only contained plain-text/multi-column/geometry (first 3
+entries). `exact` is impossible for a non-template entry, so the expectation
+was wrong, not the pipeline. Corrected to `.noMatch` — the tier F-3
+(Verified 2026-08-28) measured for navigation against every template
+(0.378–0.713, all < 0.90). Result: **6/6 passed, 0 false positives, 0 false
+negatives, accuracy 1.0** on the persisted artifact.
+
+### Evidence
+
+- 14/14 calibration corpus tests pass on the V2 lane
+- Full suite: 1322/1322 pass
+- Persisted artifact regenerated: `benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json`
+  (`familyThreshold: 0.9`, accuracy 1.0, zero false positives/negatives)

@@ -86,6 +86,17 @@ public struct MatchingThresholds: Codable, Sendable {
         familyEnabled: true
     )
 
+    /// Calibrated for the `LayoutFingerprintV2` structured similarity scale
+    /// (F-3 ratified 2026-08-28: 30-fixture corpus, gap 0.813..0.971,
+    /// threshold 0.90 — see `LayoutFingerprintThresholdCalibrationTests`).
+    /// The legacy 0.76 belongs to the V1 char-set scale and does not apply
+    /// to V2's structured components.
+    public static let layoutV2Calibrated = MatchingThresholds(
+        familyThreshold: LayoutFingerprintV2.familyThreshold,
+        ambiguousMargin: 0.05,
+        familyEnabled: true
+    )
+
     /// Disabled thresholds (family matching off).
     public static let familyDisabled = MatchingThresholds(
         familyThreshold: 1.0,
@@ -113,6 +124,11 @@ public struct CorpusEntry: Codable, Sendable, Identifiable {
     public let documentClass: String
     /// Optional notes about why this entry exists.
     public let notes: String?
+    /// Optional V2 structured fingerprint (unification with
+    /// `LayoutFingerprintV2`). When present, classification uses the
+    /// structured similarity on the calibrated scale; when absent, the
+    /// legacy string fingerprint lane applies (backward compatible).
+    public let layoutV2: LayoutFingerprintV2?
 
     public init(
         id: String = UUID().uuidString,
@@ -122,7 +138,8 @@ public struct CorpusEntry: Codable, Sendable, Identifiable {
         expectedTemplateID: String? = nil,
         isHardNegative: Bool = false,
         documentClass: String,
-        notes: String? = nil
+        notes: String? = nil,
+        layoutV2: LayoutFingerprintV2? = nil
     ) {
         self.id = id
         self.sourceDigest = sourceDigest
@@ -132,6 +149,7 @@ public struct CorpusEntry: Codable, Sendable, Identifiable {
         self.isHardNegative = isHardNegative
         self.documentClass = documentClass
         self.notes = notes
+        self.layoutV2 = layoutV2
     }
 }
 
@@ -280,6 +298,121 @@ public struct RecurringFormCalibrator: Sendable {
         }
     }
 
+    /// Classify a document against templates using the V2 structured
+    /// fingerprint (unification with `LayoutFingerprintV2`).
+    ///
+    /// - exact: source digest equality
+    /// - knownVariant: V2 digest equality (equality key) with a different source
+    /// - family: structured `similarity(to:)` total on the calibrated scale
+    ///   (defaults `.layoutV2Calibrated` — 0.90, F-3 ratified)
+    public func classify(
+        sourceDigest: String,
+        layoutV2: LayoutFingerprintV2,
+        templatesV2: [String: LayoutFingerprintV2],
+        exactSourceDigests: [String: String]
+    ) -> (tier: MatchingTier, score: Double, templateID: String?) {
+        for (templateID, digest) in exactSourceDigests where digest == sourceDigest {
+            return (.exact, 1.0, templateID)
+        }
+        // Known variant: the equality key (V2 digest) matches a different source.
+        for (templateID, fingerprint) in templatesV2 where fingerprint.digest == layoutV2.digest {
+            return (.knownVariant, 0.9, templateID)
+        }
+        guard thresholds.familyEnabled else { return (.noMatch, 0, nil) }
+
+        var bestScore = 0.0
+        var bestTemplate: String?
+        for (templateID, fingerprint) in templatesV2 {
+            let similarity = layoutV2.similarity(to: fingerprint).total
+            if similarity > bestScore {
+                bestScore = similarity
+                bestTemplate = templateID
+            }
+        }
+        if bestScore >= thresholds.familyThreshold {
+            return (.familyMatch, bestScore, bestTemplate)
+        } else if bestScore >= thresholds.familyThreshold - thresholds.ambiguousMargin {
+            return (.ambiguous, bestScore, bestTemplate)
+        } else {
+            return (.noMatch, bestScore, nil)
+        }
+    }
+
+    /// Run calibration against a corpus using V2 structured fingerprints.
+    ///
+    /// Entries carrying `layoutV2` are classified on the V2 scale (structured
+    /// similarity); entries without it fall back to the legacy string lane
+    /// (their `layoutFingerprint` vs the template digests), preserving the
+    /// hard-negative machinery for synthetic entries.
+    public func calibrate(
+        corpus: [CorpusEntry],
+        templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)]
+    ) -> CalibrationReport {
+        // Legacy fallback fingerprints derived from the V2 digests (equality
+        // keys) for entries without a V2 layout (e.g., synthetic hard
+        // negatives): the string lane stays consistent with the V2 lane on
+        // exact/knownVariant while family falls back to its legacy semantics.
+        let legacyFingerprints = templatesV2.mapValues { $0.fingerprint.digest }
+        let exactDigests = Dictionary(
+            templatesV2.map { ($0.key, $0.value.sourceDigest) },
+            uniquingKeysWith: { first, _ in first }
+        )
+
+        var results: [CalibrationResult] = []
+        var falsePositives = 0
+        var falseNegatives = 0
+
+        for entry in corpus {
+            let actual: (tier: MatchingTier, score: Double, templateID: String?)
+            if let entryV2 = entry.layoutV2 {
+                actual = classify(
+                    sourceDigest: entry.sourceDigest,
+                    layoutV2: entryV2,
+                    templatesV2: templatesV2.mapValues(\.fingerprint),
+                    exactSourceDigests: exactDigests
+                )
+            } else {
+                actual = classify(
+                    sourceDigest: entry.sourceDigest,
+                    layoutFingerprint: entry.layoutFingerprint,
+                    templates: legacyFingerprints,
+                    exactSourceDigests: exactDigests
+                )
+            }
+
+            let passed = actual.tier == entry.expectedTier
+            let falsePositive = entry.isHardNegative && actual.tier.isMatch
+            let falseNegative = entry.expectedTier.isMatch && !actual.tier.isMatch
+
+            if falsePositive { falsePositives += 1 }
+            if falseNegative { falseNegatives += 1 }
+
+            let reason: String
+            if passed {
+                reason = "Correctly classified as \(actual.tier.rawValue)"
+            } else if falsePositive {
+                reason = "FALSE POSITIVE: Hard negative classified as \(actual.tier.rawValue) (expected \(entry.expectedTier.rawValue))"
+            } else if falseNegative {
+                reason = "FALSE NEGATIVE: Expected \(entry.expectedTier.rawValue) but got \(actual.tier.rawValue)"
+            } else {
+                reason = "Mismatch: expected \(entry.expectedTier.rawValue), got \(actual.tier.rawValue)"
+            }
+
+            results.append(CalibrationResult(
+                entryID: entry.id,
+                expectedTier: entry.expectedTier,
+                actualTier: actual.tier,
+                score: actual.score,
+                passed: passed,
+                isHardNegative: entry.isHardNegative,
+                falsePositiveDetected: falsePositive,
+                reason: reason
+            ))
+        }
+
+        return buildReport(results: results, corpus: corpus, falsePositives: falsePositives, falseNegatives: falseNegatives)
+    }
+
     /// Run calibration against a corpus.
     public func calibrate(
         corpus: [CorpusEntry],
@@ -336,6 +469,16 @@ public struct RecurringFormCalibrator: Sendable {
             ))
         }
 
+        return buildReport(results: results, corpus: corpus, falsePositives: falsePositives, falseNegatives: falseNegatives)
+    }
+
+    /// Shared report assembly for both calibration lanes (string + V2).
+    private func buildReport(
+        results: [CalibrationResult],
+        corpus: [CorpusEntry],
+        falsePositives: Int,
+        falseNegatives: Int
+    ) -> CalibrationReport {
         let passedCount = results.filter(\.passed).count
         let failedCount = results.count - passedCount
         let accuracy = results.isEmpty ? 0 : Double(passedCount) / Double(results.count)

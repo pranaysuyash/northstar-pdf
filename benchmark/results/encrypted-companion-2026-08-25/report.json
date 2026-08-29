@@ -14,15 +14,15 @@
     }
   },
   "plaintextStage": {
-    "digest": "04360f6552157b135dfc53fc6d4a3be810d9762a960551146a26c0a7c1d135cd",
+    "digest": "9dd1bb5870202dd1b449703ea98c7cc3c3699b60264a55d9e68b412065f1af86",
     "browserProvider": "pdfjs-pdflib",
     "validation": "validated"
   },
   "operationIDs": [
-    "d93d7a88-40e0-44de-9888-f963f09e6603"
+    "ef878381-43fd-4944-84c5-22e4e017b29a"
   ],
   "output": {
-    "digest": "fb2f494741369683bee4cd2e42a731a0b8e651d0e4024b88e43bd3391ce12a7f",
+    "digest": "9956657025219af81375f6d55eb341977005d3425b1ba9d49cccc102616f3398",
     "encrypted": {
       "encrypted": true,
       "algorithm": "AESv3",

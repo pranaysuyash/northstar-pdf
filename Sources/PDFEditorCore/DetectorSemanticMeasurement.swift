@@ -105,6 +105,28 @@ public struct DetectorCandidate: Sendable, Equatable {
     )
   }
 
+  /// Normalize a confirmed native AcroForm field (fields channel) to a
+  /// DetectorCandidate. Mirrors the cross-lane runner's `fieldCandidates`
+  /// (`Tests/browser_detector_corpus_report.mjs`): confirmed fields surface
+  /// through the fields channel, never the candidate channel, so the ground
+  /// truth's `nativeField` cases measure them as candidate-shape entries.
+  ///
+  /// The field name is the label association (mjs `labelText`), but it is not
+  /// a label *evidence family* — keeping the evidence-family agreement exact
+  /// and the report content-free.
+  public static func native(from field: NativeField) -> DetectorCandidate {
+    DetectorCandidate(
+      pageIndex: field.pageIndex,
+      bounds: field.bounds,
+      kind: "nativeField",
+      suggestedFieldType: field.kind.rawValue,
+      entryMode: "native",
+      groupMemberCount: 1,
+      evidenceFamilies: ["nativeField"],
+      labelAssociated: true
+    )
+  }
+
   /// Normalize a browser candidate from decoded JSON (mirrors mjs normalizedCandidate).
   public static func browser(from json: [String: Any]) -> DetectorCandidate? {
     guard let pageIndex = json["pageIndex"] as? Int,

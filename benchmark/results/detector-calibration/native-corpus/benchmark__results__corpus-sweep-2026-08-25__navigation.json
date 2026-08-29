@@ -1,0 +1,1101 @@
+{
+  "candidates" : [
+
+  ],
+  "contractName" : "pdf-editor.browser-fixture",
+  "coordinates" : {
+    "contractName" : "pdf-editor.coordinates",
+    "generatedAt" : "2026-08-29T17:01:27Z",
+    "pages" : [
+      {
+        "pageIndex" : 0,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 0,
+          "rect" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 1,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 1,
+          "rect" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      },
+      {
+        "pageIndex" : 2,
+        "region" : {
+          "coordinateSpace" : {
+            "origin" : "lowerLeft",
+            "pageBox" : "crop",
+            "rotationDegrees" : 0,
+            "unit" : "points"
+          },
+          "pageIndex" : 2,
+          "rect" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      }
+    ],
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "text",
+        "forms",
+        "overlay",
+        "export",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.9 (Build 24G830)"
+    },
+    "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+    "version" : {
+      "major" : 1,
+      "minor" : 0
+    }
+  },
+  "document" : {
+    "header" : {
+      "contractName" : "pdf-editor.document",
+      "generatedAt" : "2026-08-29T17:01:27Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.9 (Build 24G830)"
+      },
+      "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "accessibility" : {
+        "hasReadingOrder" : true,
+        "hasTaggedContent" : false,
+        "notes" : [
+          "Reading order is derived from provider text extraction and is not an authored-tag guarantee.",
+          "No \/StructTreeRoot in the catalog: this document has no authored tag tree (screen-reader structure is unavailable at the source).",
+          "PDF\/UA conformance requires the validator-backed lane (veraPDF)."
+        ]
+      },
+      "annotationTypeCounts" : {
+        "link" : 3,
+        "widget" : 6
+      },
+      "attachments" : [
+
+      ],
+      "candidates" : [
+
+      ],
+      "fields" : [
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 705.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.name#0",
+          "kind" : "text",
+          "name" : "applicant.name",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 67,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 617.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.notes#0",
+          "kind" : "text",
+          "name" : "applicant.notes",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 567.39
+          },
+          "choices" : [
+
+          ],
+          "id" : "applicant.subscribe#0",
+          "kind" : "button",
+          "name" : "applicant.subscribe",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 185.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant.contact#0",
+          "kind" : "button",
+          "name" : "applicant.contact",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 19,
+            "width" : 19,
+            "x" : 255.5,
+            "y" : 523.39
+          },
+          "choices" : [
+            "email",
+            "phone"
+          ],
+          "id" : "applicant.contact#0#1",
+          "kind" : "button",
+          "name" : "applicant.contact",
+          "pageIndex" : 0
+        },
+        {
+          "bounds" : {
+            "height" : 23,
+            "width" : 251,
+            "x" : 185.5,
+            "y" : 477.39
+          },
+          "choices" : [
+            "Ukraine",
+            "Poland",
+            "Germany",
+            "United States",
+            "Other"
+          ],
+          "id" : "applicant.country#0",
+          "kind" : "choice",
+          "name" : "applicant.country",
+          "pageIndex" : 0
+        }
+      ],
+      "links" : [
+        {
+          "destination" : "https:\/\/example.test\/",
+          "destinationBounds" : {
+            "height" : 30,
+            "width" : 250,
+            "x" : 50,
+            "y" : 700
+          },
+          "id" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772-1-5028393904",
+          "isSafeExternal" : true,
+          "kind" : "externalURL",
+          "label" : "Page 2 link",
+          "pageIndex" : 1
+        },
+        {
+          "destination" : "3",
+          "destinationBounds" : {
+            "height" : 30,
+            "width" : 250,
+            "x" : 50,
+            "y" : 650
+          },
+          "id" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772-1-5028397792",
+          "isSafeExternal" : true,
+          "kind" : "internalPage",
+          "label" : "Page 2 link",
+          "pageIndex" : 1,
+          "targetPageIndex" : 2
+        },
+        {
+          "destinationBounds" : {
+            "height" : 30,
+            "width" : 250,
+            "x" : 50,
+            "y" : 600
+          },
+          "id" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772-1-5028398480",
+          "isSafeExternal" : true,
+          "kind" : "internalPage",
+          "label" : "Page 2 link",
+          "pageIndex" : 1
+        }
+      ],
+      "metadata" : {
+        "author" : "tinytoolkit sample files",
+        "creationDate" : "19\/7\/2026, 5:30 AM",
+        "creator" : "https:\/\/pdftoolskit.org\/sample-pdfs",
+        "keywords" : "",
+        "modificationDate" : "19\/7\/2026, 5:30 AM",
+        "producer" : "pdf-sample-files generator (pdf-lib)",
+        "subject" : "AcroForm test file",
+        "title" : "Sample form (empty)"
+      },
+      "outlines" : [
+        {
+          "children" : [
+
+          ],
+          "destinationPageIndex" : 1,
+          "id" : "Target One-0A456715-5513-4F3A-92D9-C5B023AF3EE9",
+          "level" : 0,
+          "title" : "Target One"
+        },
+        {
+          "children" : [
+
+          ],
+          "destinationPageIndex" : 2,
+          "id" : "Target Two-F3AD1E28-F501-4150-A506-3A41E9C4BC34",
+          "level" : 0,
+          "title" : "Target Two"
+        }
+      ],
+      "pages" : [
+        {
+          "annotationCount" : 6,
+          "artBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 163,
+          "cropBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 0,
+          "pageLabel" : "1",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 841.89,
+            "width" : 595.28,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 3,
+          "artBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 22,
+          "cropBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 1,
+          "pageLabel" : "2",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        },
+        {
+          "annotationCount" : 0,
+          "artBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bleedBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "bounds" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "characterCount" : 22,
+          "cropBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          },
+          "hasSelectableText" : true,
+          "pageIndex" : 2,
+          "pageLabel" : "3",
+          "rotation" : 0,
+          "trimBox" : {
+            "height" : 792,
+            "width" : 612,
+            "x" : 0,
+            "y" : 0
+          }
+        }
+      ],
+      "permissions" : {
+        "canAddAnnotations" : true,
+        "canCopy" : true,
+        "canModify" : true,
+        "canPrint" : true,
+        "isReadOnly" : false
+      },
+      "provenance" : {
+        "confidence" : 1,
+        "extractedAt" : "1970-01-01T00:00:00Z",
+        "fieldInspector" : "CGPDF",
+        "textExtractor" : "PDFKit"
+      },
+      "security" : {
+        "isEncrypted" : false,
+        "isLocked" : false,
+        "requiresPassword" : false
+      },
+      "source" : {
+        "byteCount" : 12111,
+        "fileName" : "navigation.pdf",
+        "sha256" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772"
+      },
+      "warnings" : [
+
+      ]
+    }
+  },
+  "editSession" : {
+    "header" : {
+      "contractName" : "pdf-editor.edit-session",
+      "generatedAt" : "2026-08-29T17:01:27Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.9 (Build 24G830)"
+      },
+      "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "operations" : [
+
+    ],
+    "reviews" : [
+
+    ],
+    "source" : {
+      "byteCount" : 12111,
+      "fileName" : "navigation.pdf",
+      "sha256" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772"
+    }
+  },
+  "expectedFailure" : false,
+  "preflight" : {
+    "header" : {
+      "contractName" : "pdf-editor.preflight",
+      "generatedAt" : "2026-08-29T17:01:27Z",
+      "provider" : {
+        "capabilities" : [
+          "metadata-presence",
+          "embedded-data-counts",
+          "annotation-counts",
+          "network-boundary-counts",
+          "bounded-token-scan"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.9 (Build 24G830)"
+      },
+      "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+      "version" : {
+        "major" : 1,
+        "minor" : 1
+      }
+    },
+    "payload" : {
+      "activeContent" : {
+        "executionAttempted" : false,
+        "possibleActionTokenCounts" : {
+          "additionalAction" : 0,
+          "javascript" : 0,
+          "launch" : 0,
+          "openAction" : 0
+        }
+      },
+      "annotations" : {
+        "byKind" : {
+          "link" : 3,
+          "widget" : 6
+        },
+        "coverage" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "totalCount" : 9,
+        "unknownCount" : 0
+      },
+      "attachments" : {
+        "attachmentCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "embeddedFileNameTreeCount" : 0,
+        "fileAttachmentCount" : 0,
+        "unknownCount" : 0
+      },
+      "coverage" : {
+        "annotations" : {
+          "reasonCodes" : [
+            "pdfkitPageAnnotationEnumeration"
+          ],
+          "state" : "observed"
+        },
+        "attachments" : {
+          "reasonCodes" : [
+            "embeddedPayloadBytesNotRetained"
+          ],
+          "state" : "observed"
+        },
+        "metadata" : {
+          "reasonCodes" : [
+
+          ],
+          "state" : "observed"
+        },
+        "revisions" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "scripts" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        }
+      },
+      "embeddedData" : {
+        "attachmentCount" : 0,
+        "possibleTokenCounts" : {
+          "embeddedFiles" : 0,
+          "fileAttachment" : 0,
+          "richMedia" : 0,
+          "xfa" : 0
+        }
+      },
+      "findings" : [
+        {
+          "category" : "metadata",
+          "code" : "metadata.present",
+          "count" : 7,
+          "evidence" : "inspection",
+          "id" : "metadata-presence",
+          "reasonCodes" : [
+            "metadataValuesMayContainPersonalInformation"
+          ],
+          "severity" : "warning",
+          "state" : "observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded.attachments",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "embedded-attachments",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "embedded-file-spec-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-embedded-file-spec-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "file-attachment-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-file-attachment-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "xfa-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-xfa-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "embeddedData",
+          "code" : "rich-media-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "embeddedData-rich-media-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.external-links",
+          "count" : 1,
+          "evidence" : "inspection",
+          "id" : "network-external",
+          "reasonCodes" : [
+            "destinationNotFetchedByPreflight"
+          ],
+          "severity" : "warning",
+          "state" : "observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network.unsafe-links",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "network-unsafe",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-uri-action-token",
+          "count" : 2,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-uri-action-token",
+          "reasonCodes" : [
+            "possibleNetworkAction"
+          ],
+          "severity" : "warning",
+          "state" : "possible"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-remote-goto-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-remote-goto-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "networkBoundary",
+          "code" : "network-submit-form-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "networkBoundary-network-submit-form-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-launch-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-launch-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-javascript-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-javascript-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-open-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-open-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "activeContent",
+          "code" : "active-additional-action-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "activeContent-active-additional-action-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "signature-token",
+          "count" : 0,
+          "evidence" : "boundedTokenScan",
+          "id" : "security-signature-token",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "security",
+          "code" : "security.encryption",
+          "count" : 0,
+          "evidence" : "inspection",
+          "id" : "security-encryption",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "not-observed"
+        },
+        {
+          "category" : "preflight",
+          "code" : "preflight.byte-scan",
+          "count" : 12111,
+          "evidence" : "boundedTokenScan",
+          "id" : "byte-scan-state",
+          "reasonCodes" : [
+
+          ],
+          "severity" : "info",
+          "state" : "observed"
+        }
+      ],
+      "metadata" : {
+        "fields" : {
+          "author" : {
+            "present" : true
+          },
+          "creationDate" : {
+            "present" : true
+          },
+          "creator" : {
+            "present" : true
+          },
+          "keywords" : {
+            "present" : false
+          },
+          "modificationDate" : {
+            "present" : true
+          },
+          "producer" : {
+            "present" : true
+          },
+          "subject" : {
+            "present" : true
+          },
+          "title" : {
+            "present" : true
+          }
+        },
+        "rawValuesIncluded" : false
+      },
+      "networkBoundaries" : {
+        "externalURLCount" : 1,
+        "internalPageLinkCount" : 2,
+        "possibleActionTokenCounts" : {
+          "remoteGoTo" : 0,
+          "submitForm" : 0,
+          "uri" : 2
+        },
+        "safeExternalURLCount" : 1,
+        "unknownDestinationCount" : 0,
+        "unsafeExternalURLCount" : 0
+      },
+      "revisions" : {
+        "coverage" : {
+          "reasonCodes" : [
+            "incrementalRevisionParserNotRun"
+          ],
+          "state" : "unknown"
+        },
+        "eofMarkerCount" : 1,
+        "hiddenContentState" : "unknown",
+        "incrementalUpdateCountEstimate" : 0,
+        "previousRevisionReferenceCount" : 1,
+        "startxrefCount" : 1
+      },
+      "sanitization" : {
+        "limits" : [
+          "Preflight does not remove metadata or embedded data.",
+          "Preflight does not execute or neutralize document JavaScript or actions.",
+          "Preflight does not prove that hidden incremental revisions are absent.",
+          "Preflight does not prove that signatures remain valid after mutation.",
+          "Preflight does not certify XFA, rich media, annotations, or embedded files as preserved or removed.",
+          "A bounded token scan may report possible structures without proving reachability."
+        ],
+        "safeToClaimClean" : false,
+        "sourceUnchanged" : true,
+        "status" : "not-run",
+        "supportedModes" : [
+          "report-only",
+          "new-copy-required"
+        ]
+      },
+      "scripts" : {
+        "additionalActionCount" : 0,
+        "coverage" : {
+          "reasonCodes" : [
+            "tokenScanDoesNotProveReachability"
+          ],
+          "state" : "partial"
+        },
+        "executionAttempted" : false,
+        "javaScriptActionCount" : 0,
+        "launchActionCount" : 0,
+        "openActionCount" : 0,
+        "remoteGoToActionCount" : 0,
+        "submitFormActionCount" : 0,
+        "uriActionCount" : 2
+      },
+      "security" : {
+        "encrypted" : false,
+        "locked" : false,
+        "permissionsObserved" : true
+      },
+      "summary" : {
+        "activeContentCount" : 0,
+        "blockedCount" : 0,
+        "embeddedDataCount" : 0,
+        "findingCount" : 18,
+        "metadataFieldCount" : 7,
+        "networkBoundaryCount" : 3,
+        "unknownCount" : 0,
+        "unknownCoverageCount" : 1,
+        "warningCount" : 3
+      },
+      "unknownCoverage" : {
+        "categories" : {
+          "annotations" : {
+            "reasonCodes" : [
+              "pdfkitPageAnnotationEnumeration"
+            ],
+            "state" : "observed"
+          },
+          "attachments" : {
+            "reasonCodes" : [
+              "embeddedPayloadBytesNotRetained"
+            ],
+            "state" : "observed"
+          },
+          "metadata" : {
+            "reasonCodes" : [
+
+            ],
+            "state" : "observed"
+          },
+          "revisions" : {
+            "reasonCodes" : [
+              "incrementalRevisionParserNotRun"
+            ],
+            "state" : "unknown"
+          },
+          "scripts" : {
+            "reasonCodes" : [
+              "tokenScanDoesNotProveReachability"
+            ],
+            "state" : "partial"
+          }
+        },
+        "unknownCount" : 1
+      }
+    }
+  },
+  "sessionProvenance" : {
+    "header" : {
+      "contractName" : "pdf-editor.session-provenance",
+      "generatedAt" : "2026-08-29T17:01:29Z",
+      "provider" : {
+        "capabilities" : [
+          "render",
+          "text",
+          "forms",
+          "overlay",
+          "export",
+          "reopen-validation"
+        ],
+        "id" : "pdfkit",
+        "platform" : "macOS",
+        "version" : "Version 15.7.9 (Build 24G830)"
+      },
+      "sessionID" : "native-60e43a2c8dbe655b",
+      "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+      "version" : {
+        "major" : 1,
+        "minor" : 0
+      }
+    },
+    "payload" : {
+      "export" : {
+        "exporterID" : "pdfkit",
+        "operationCount" : 0,
+        "outputDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+        "outputReopenable" : true,
+        "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+        "state" : "succeeded",
+        "storage" : "local-file",
+        "validation" : "validated",
+        "validationProviderID" : "pdfkit"
+      },
+      "ocr" : {
+        "processedPageCount" : 0,
+        "providerIDs" : [
+
+        ],
+        "recognizedBoundsRetained" : false,
+        "recognizedTextRetained" : false,
+        "state" : "not-used"
+      },
+      "privacy" : {
+        "URLsIncluded" : false,
+        "documentTextIncluded" : false,
+        "fieldValuesIncluded" : false,
+        "filenamesIncluded" : false,
+        "ocrTextIncluded" : false,
+        "sourceBytesIncluded" : false
+      },
+      "processing" : {
+        "companionRequestCount" : 0,
+        "dataEgress" : "none",
+        "locality" : "local-device",
+        "networkRequestCount" : 0,
+        "sourceInput" : "local-file"
+      },
+      "sourceRetention" : {
+        "deletion" : "pending",
+        "retainedUntilSessionEnd" : true,
+        "sourceCopyCount" : 1,
+        "state" : "in-memory-session"
+      }
+    }
+  },
+  "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+  "sourcePath" : "benchmark\/results\/corpus-sweep-2026-08-25\/navigation.pdf",
+  "status" : "inspected",
+  "validation" : {
+    "checks" : [
+      {
+        "id" : "C3D32133-A1D5-431A-BF81-816D8641A057",
+        "kind" : "sourceDigest",
+        "message" : "Source bytes still match the inspected SHA-256.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "DDDC8700-E56E-4CF4-9C9C-EEFEC78C9C91",
+        "kind" : "outputReopen",
+        "message" : "Export reopened in PDFKit with 3 page(s).",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "385260DE-9AC7-4445-AFF4-618DB18B1BA6",
+        "kind" : "pageGeometry",
+        "message" : "Page count, page boxes, and rotations are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "76407E5F-83DB-4B6C-8DBB-EA5C5BA937A9",
+        "kind" : "nativeFields",
+        "message" : "Native field identity and geometry are unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "FDC1DBED-E913-4869-94CA-21E630CC68E8",
+        "kind" : "outsideRegionText",
+        "message" : "Extracted text outside the authorized operation regions is unchanged.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "6CF8A821-3D89-4B44-B6B8-145FC8522BE6",
+        "kind" : "visualDiff",
+        "message" : "Raster output is unchanged outside the authorized operation regions.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      },
+      {
+        "id" : "A50C347A-0F12-4A2A-9BE0-D54F171CCF33",
+        "kind" : "appliedOperations",
+        "message" : "Requested operations were represented in the reopened export.",
+        "operationIDs" : [
+
+        ],
+        "status" : "passed"
+      }
+    ],
+    "messages" : [
+
+    ],
+    "operationIDs" : [
+
+    ],
+    "outputDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+    "outputReopenable" : true,
+    "provider" : {
+      "capabilities" : [
+        "render",
+        "forms",
+        "overlay",
+        "reopen-validation"
+      ],
+      "id" : "pdfkit",
+      "platform" : "macOS",
+      "version" : "Version 15.7.9 (Build 24G830)"
+    },
+    "sourceDigest" : "60e43a2c8dbe655b94238c18e6a471fa1de69e5f9061305bd083e81c67ab4772",
+    "sourceUnchanged" : true,
+    "status" : "validated",
+    "validatedAt" : "2026-08-29T17:01:29Z"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

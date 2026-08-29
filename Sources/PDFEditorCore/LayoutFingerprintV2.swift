@@ -221,6 +221,21 @@ public struct LayoutSimilarityV2: Codable, Sendable, Equatable {
 }
 
 extension LayoutFingerprintV2 {
+    /// Family-match threshold on V2's structured similarity scale.
+    ///
+    /// Recalibrated 2026-08-28 (F-3): the legacy 0.76 was tuned for V1's
+    /// char-set Jaccard semantics. The ratified value is the midpoint of the
+    /// separation gap measured on a 30-fixture corpus with hard negatives
+    /// (211 positive pairs min 0.971 — layout-identical re-encodings;
+    /// 224 negative pairs max 0.813 — layout-distinct documents) — see
+    /// `LayoutFingerprintThresholdCalibrationTests` and
+    /// `benchmark/results/detector-calibration/layout-v2-family-threshold-
+    /// calibration-2026-08-28.json`. The 0.90 sits strictly inside the
+    /// measured gap (midpoint 0.892, rounded to 0.05). Precision-first:
+    /// every hard negative stays below; every layout-identical re-encoding
+    /// is recognized.
+    public static let familyThreshold: Double = 0.90
+
     /// Component weights — geometry is the strongest identity signal;
     /// annotation layout is the weakest (often absent).
     public static let geometryWeight: Double = 0.35
@@ -249,9 +264,15 @@ extension LayoutFingerprintV2 {
             / Double(max(pages.count, other.pages.count))
         let geometry = minPages > 0 ? (geometrySum / Double(minPages)) * (1 - countPenalty) : 0
 
-        let textLayout = jaccard(pooled(\.textCells), other.pooled(\.textCells))
-        let fieldLayout = jaccard(pooled(\.fieldCells), other.pooled(\.fieldCells))
-        let annotationLayout = jaccard(pooled(\.annotationCells), other.pooled(\.annotationCells))
+        // F-4 fix: per-page aligned comparison instead of pooled cells.
+        // Pooling merged all pages into one cell set, so two dense multi-page
+        // documents with similar letter-grid occupancy inflated the score
+        // (Observed: geometry↔navigation text=0.824). Aligning page-by-page
+        // over the shared prefix keeps the comparison structural — the same
+        // structure the geometry component already uses.
+        let textLayout = alignedJaccard(other, keyPath: \.textCells)
+        let fieldLayout = alignedJaccard(other, keyPath: \.fieldCells)
+        let annotationLayout = alignedJaccard(other, keyPath: \.annotationCells)
 
         let total = Self.geometryWeight * geometry
             + Self.textWeight * textLayout
@@ -266,9 +287,40 @@ extension LayoutFingerprintV2 {
         )
     }
 
-    /// Union of a component's cells across all pages.
-    private func pooled(_ keyPath: KeyPath<PageLayout, [Cell]>) -> Set<Cell> {
-        Set(pages.flatMap { $0[keyPath: keyPath] })
+    /// Per-page aligned Jaccard for a component (F-4 fix).
+    ///
+    /// Pairs the shared page prefix by index, averages the per-page Jaccard
+    /// over the pages where the feature actually exists, then applies the
+    /// page-count penalty (a 4-page doc can never match a 3-page doc at 1.0).
+    ///
+    /// Empty-empty page pairs are **skipped as uninformative**, not scored
+    /// 1.0 — scoring them pulled the mean up on sparse components (Observed
+    /// during the fix: plain-text↔navigation annotation went 0.000 → 0.667,
+    /// pushing the total above the family threshold). The component scores
+    /// 1.0 only when both documents lack the feature entirely (honest
+    /// agreement on absence, matching the pre-alignment semantics).
+    private func alignedJaccard(
+        _ other: LayoutFingerprintV2,
+        keyPath: KeyPath<PageLayout, [Cell]>
+    ) -> Double {
+        let minPages = min(pages.count, other.pages.count)
+        guard minPages > 0 else { return 0 }
+        var sum = 0.0
+        var compared = 0
+        for i in 0..<minPages {
+            let a = Set(pages[i][keyPath: keyPath])
+            let b = Set(other.pages[i][keyPath: keyPath])
+            if a.isEmpty && b.isEmpty { continue }
+            sum += jaccard(a, b)
+            compared += 1
+        }
+        if compared == 0 {
+            // Feature absent across both documents entirely.
+            return 1.0
+        }
+        let countPenalty = Double(abs(pages.count - other.pages.count))
+            / Double(max(pages.count, other.pages.count))
+        return (sum / Double(compared)) * (1 - countPenalty)
     }
 
     private func jaccard(_ a: Set<Cell>, _ b: Set<Cell>) -> Double {

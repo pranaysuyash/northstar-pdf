@@ -170,7 +170,9 @@ public enum PDFTemplateIndexQuery {
             reasons: top.reasons)
     }
 
-    private static func structuralScore(_ left: PDFTemplateFingerprint, _ right: PDFTemplateFingerprint) -> Double {
+    /// Internal for cross-lane and unification tests; the query is the only
+    /// production entry point.
+    static func structuralScore(_ left: PDFTemplateFingerprint, _ right: PDFTemplateFingerprint) -> Double {
         let leftPages = left.pageSignatures
         let rightPages = right.pageSignatures
         let count = max(max(leftPages.count, rightPages.count), 1)
@@ -189,7 +191,20 @@ public enum PDFTemplateIndexQuery {
                 a.regionSignatures.map { "\($0.kind.rawValue):\($0.suggestedFieldType?.rawValue ?? "unknown")" },
                 b.regionSignatures.map { "\($0.kind.rawValue):\($0.suggestedFieldType?.rawValue ?? "unknown")" })
             let anchors = histogramSimilarity(a.anchorTokens, b.anchorTokens)
-            total += geometry * 0.25 + rotation * 0.10 + fields * 0.25 + regions * 0.25 + anchors * 0.15
+            let legacy = geometry * 0.25 + rotation * 0.10 + fields * 0.25 + regions * 0.25 + anchors * 0.15
+            // V2-cell unification: when both signatures carry layout cells
+            // (LayoutFingerprintV2 components, HMAC-keyed), blend in the cell
+            // similarity. The legacy score stays dominant (0.85) so records
+            // without cells — and the browser lane, which has no cell
+            // channel — keep the exact legacy behavior and cross-lane parity.
+            if a.hasLayoutCells, b.hasLayoutCells {
+                let cellTokens = a.textCellTokens + a.fieldCellTokens + a.annotationCellTokens
+                let otherCellTokens = b.textCellTokens + b.fieldCellTokens + b.annotationCellTokens
+                let cells = histogramSimilarity(cellTokens, otherCellTokens)
+                total += legacy * 0.85 + cells * 0.15
+            } else {
+                total += legacy
+            }
         }
         return total / Double(count)
     }

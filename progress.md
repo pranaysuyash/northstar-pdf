@@ -3408,3 +3408,68 @@ Live-truth snapshot: `swift test` 279/279 pass; all 159 docs fresh; all assumpti
 - Artifact contents (Verified): 6 corpus entries (4 real PDFs + 2 hard negatives), accuracy 0.833, **0 false positives, FPR 0.000, passes 5% threshold**; the 1 failure is the similar-hard-negative landing in `.ambiguous` — honest V1 fingerprint limitation, consistent with the collision findings.
 - Added `persistedFalsePositiveReportArtifact()` test (round-trip + file existence); 14 calibration tests pass.
 - Docs completeness: verified all 8 original gaps + 5 newer work items have audit docs (12 total), INDEX.md current (27 mentions), progress.md current. Added §10 Addendum (renderer toggle wiring) to `rendering-pipeline-1st-principles-architecture-2026-08-28.md` — closes the last flagged open item.
+
+## 2026-08-28 — Human review pass: corpus-sweep ground truth corrected
+- **Finding (Observed, qpdf 12.4 structural inspection):** the 5 generator-manifest "no editable candidates" cases were **wrong**. All five corpus-sweep fixtures are base `public-sample-form.pdf` with pages added — page 0 of each retains the 6 AcroForm widgets (name/notes/subscribe/contact×2/country; rects identical across fixtures). The manifest's `expected` facts never recorded field presence; the abstain claim was an inference from fixture names, falsified by the review.
+- **Correction:** replaced the 5 document-level abstains with 30 native-field positives (6 widgets × 5 fixtures, page 0) + 5 page-level abstains for the genuinely widget-free added pages (plain-text p1/p2, multi-column p1, navigation p1 links-only/p2). All 35 sweep cases re-labeled `human-reviewed` with `GroundTruthReviewRecord` (reviewer, method, tool, per-fixture findings).
+- Corpus now 45 cases (10 calibration + 35 sweep), 35 positives, 10 hard negatives. Perfect-lane candidates extended with the 6 field candidates; S3 mutations retargeted where field overlap would mask them.
+- Evidence: 20 targeted tests; full suite 1303/1303.
+- Audit: `docs/audits/reviewed-candidate-ground-truth-measurement-2026-08-28.md` §7 addendum
+
+## 2026-08-28 — Ground truth positives extended to all 15 form-bearing fixtures
+- **Finding (Observed, qpdf 12.4):** every corpus-sweep fixture derives from `public-sample-form.pdf` — **all 15** carry the 6 base-form widgets on page 0, not just the 5 covered by the first review pass. Verified per-fixture /Annots + widget objects; xfa-dynamic included (AcroForm tree empty but 6 widget annotations present on page).
+- **Extension:** corpus-sweep positives 30 → 90 (6 widgets × 15 fixtures); abstains 5 → 8 (geometry p1 200×2000, p2 612×792 r90, p3 crop [36 36 400 700], all annot-free verified). Corpus total 45 → 108 (95 positives, 13 hard negatives). reviewRecord.fixtureFindings extended to all 15.
+- Evidence: 21 targeted tests (new formFixturesPositive asserts 6 per fixture); full suite 1304/1304.
+- Audit: `docs/audits/reviewed-candidate-ground-truth-measurement-2026-08-28.md` §8 addendum
+
+## 2026-08-28 — Live native-vs-browser corpus report (browser detector lane against real corpus)
+- **Ran both detector lanes on the real 15-fixture corpus-sweep set**: native via `PDFContractHarness` (manifest `docs/fixtures/corpus-sweep-detector-manifest.md`), browser via new Playwright runner `Tests/browser_detector_corpus_report.mjs` loading the real app per fixture.
+- **Finding (Observed):** detectors abstain on confirmed fields — 0 candidates on all 15 fixtures; the 6 widgets surface via the fields channel. Runner maps fields → `nativeField` candidates (policy block in the artifact) — honest contract, not re-detection.
+- **Artifact (deterministic, 3 runs diff-clean):** `benchmark/results/detector-calibration/corpus-native-browser-semantic-parity-2026-08-28.json` — 98 cases, 15/15 fixtures pass, native & browser precision/recall/abstention all 1.0, zero parity mismatches, per-fixture source digests bound.
+- **Fixes:** mjs gate bug (FPR null on no-hard-negative fixtures failed `null === 0` gate); field name → labelText mapping (not synthetic evidence item).
+- **Pre-existing findings:** egress test FIXED (17-char value into 12-cell grid → app correctly rejected; now prefers singleText); parity test 10 unexpected mismatches confirmed pre-existing (committed artifact identical) + assert-message TypeError fixed; port 4173 hijacked by unrelated "Rigs Unbound" dev server — tests must set PDF_EDITOR_BASE_URL (e2e runner does).
+- Evidence: Swift 1305/1305 (incl. GroundTruthExportTests), corpus report 15/15, detector semantic comparison + native/browser parity + fingerprint parity pass.
+- Audit: `docs/audits/reviewed-candidate-ground-truth-measurement-2026-08-28.md` §9 addendum
+
+## 2026-08-28 — Automated detector gate wired into the native candidate pipeline
+- **`NativeDetectorGate`** (Sources/PDFEditorCore/DetectorGate.swift): runs the live native pipeline (candidates + fields channel via `PDFProvider.inspect`) over the real corpus, measures each fixture against its own reviewed ground truth (per-fixture scoping — resolves the §9 pooled over-count open question), fail-closed on unreviewed fixtures, inspection failure recorded per fixture, report content-free (privacy §12).
+- **Harness wiring:** `PDFContractHarness --detector-gate` runs the gate after the parity bundles, persists `detector-gate-report.json` (schema `pdf-editor.detector-gate` v1.0, self-describing) next to `summary.json`, exits 1 with per-fixture failure summary on regression (explicit exit, not trap).
+- **Fields-channel mapping:** `DetectorCandidate.native(from: NativeField)` mirrors the mjs `fieldCandidates` contract exactly (kind nativeField, entryMode native, families [nativeField], label associated via field name — no synthetic evidence item).
+- **Tests (7 new, all pass):** live corpus 15/15 (98 reviewed cases, all metrics 1.0, severity burden 0); dropped-field regression fails gate attributed to fixture (recall 5/6, other 14 green); unreviewed public-sample-form fails closed; missing file fails gate with recorded error; mapping mirrors contract; report round-trips + no labelText/value in serialized artifact.
+- **Evidence:** full suite 1312/1312; live harness pass `15/15 fixtures passed` exit 0; negative path exit 1 with persisted report. Artifact: `benchmark/results/detector-calibration/native-corpus/detector-gate-report.json`.
+- Audit: `docs/audits/reviewed-candidate-ground-truth-measurement-2026-08-28.md` §10 addendum; manifest `docs/fixtures/corpus-sweep-detector-manifest.md` documents the gate step.
+
+## 2026-08-28 — F-4 resolved: per-page aligned layout similarity
+- **Finding F-4 (Observed):** pooled-cell Jaccard in `LayoutSimilarityV2` merged all pages into one cell set — dense multi-page docs with similar letter-grid occupancy scored text=0.824 (geometry↔navigation).
+- **Fix:** `alignedJaccard` pairs the shared page prefix by index, averages per-page Jaccard over pages where the feature exists (empty-empty pairs skipped as uninformative — the first aligned draft's 1.0 absence-scoring pushed plain-text↔navigation annotation 0.000→0.667 and total to 0.780, then skip-empty restored honesty), applies the page-count penalty; 1.0 only when both docs lack the feature entirely.
+- **Evidence (before→after, real corpus):** geometry↔navigation text 0.824→0.355 (−57%), total 0.715→0.512 (−28%); all 6 cross-PDF totals < 0.76, worst pair 0.713 (F-3 headroom, honest). 3 new F-4 regression tests; 9/9 LayoutFingerprintV2 pass; full suite 1312/1312.
+- Audit: `docs/audits/layout-fingerprint-collision-exploration-2026-08-28.md` addendum; INDEX.md updated.
+
+## 2026-08-28 — F-3 resolved: family threshold recalibrated (0.76 → 0.90)
+- **30-fixture corpus with hard negatives** collected from the full benchmark corpus (Verified: pikepdf rects/text identity, per-page probes, V2 measurements). Ground truth corrected twice by measurement: metadata/signed/XFA 1-page variants are layout-identical positives (21 docs → 210 pairs), hybrid↔rotated are the same 2-page layout (1 positive pair); 7 layout-distinct docs → 224 negative pairs. Excluded 2 with reason (encrypted, malformed).
+- **Measured separation:** positives min 0.971 / negatives max 0.813 → gap midpoint 0.892 → ratified **`LayoutFingerprintV2.familyThreshold = 0.90`** (was 0.76, V1-scale). Zero hard-negative promotions; layout-identical re-encodings all recognized.
+- **New Observed finding:** raster-page limitation — a raster page has zero extractable cells and is skipped, so text↔scan pairs sharing page 0 score up to 0.813 (hybrid↔multi-column); OCR/pixel features are the documented future work.
+- **Evidence:** `LayoutFingerprintThresholdCalibrationTests` (435 pairwise scores, deterministic artifact `benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json`); `LayoutFingerprintV2Tests` uses the calibrated constant + new positive-recognition test. Full suite 1316/1316.
+- Audit: `docs/audits/layout-fingerprint-collision-exploration-2026-08-28.md` F-3 addendum; INDEX.md updated.
+
+## 2026-08-28 — V2 components unified with the production template fingerprint
+- **`PDFTemplatePageSignature`** gains HMAC-keyed V2 cell channels (cellSizePoints 4pt + per-cell text/field/annotation tokens). **HMAC keying stays in production** — cells are workspace-keyed `hmac:` tokens (unlinkable across workspaces); the calibration lane keeps the raw V2 digest. Backward-compatible decode (old records → empty channels).
+- **`PDFTemplateFingerprint.make(layoutV2:)`**: when supplied, cells enter the signature + canonical descriptor (equality covers layout → same-layout re-encoding still `knownVariant`); featureVersion bumps to `layout-features-2`. Without it, output is byte-identical legacy (`layout-features-1`).
+- **`structuralScore`** blends cells (`legacy×0.85 + cells×0.15`) only when both sides carry cells — legacy records and the browser lane keep exact parity.
+- **Verified (real corpus, 6 new tests):** keyed channels populated (6 widget field cells, label text cells, all `hmac:`-prefixed, no raw coords); base↔producer different bytes → equal fingerprint → knownVariant; cross-workspace keys → no linkage; legacy byte-identical; old-JSON decode; **plain-text↔navigation legacy 1.0 → cell-aware 0.905** — the cells see text-layout differences the legacy signature cannot (residual gap above production 0.72 = documented F-3 headroom; calibration lane separates at 0.713 < 0.90).
+- **Evidence:** full suite 1322/1322; template index / profile migration / match benchmark node tests PASS; native↔browser template parity PASS (against the repo static server; its regenerated artifacts differ only in the transient baseURL).
+- Audit: `docs/audits/layout-fingerprint-collision-exploration-2026-08-28.md` unification addendum; INDEX.md updated.
+
+## 2026-08-28 — Calibration corpus migrated from V1 to V2 structured lane
+- **`CorpusEntry`** gains optional `layoutV2: LayoutFingerprintV2?` (backward-compatible Codable); `RecurringFormCalibrator` gains a V2-aware classify/calibrate path using structured `similarity(to:)` on the F-3-calibrated scale (0.90), falling back to the legacy string lane when V2 is absent.
+- **`CalibrationCorpusVerificationTests`** fully migrated: V1 `computeLayoutFingerprint` removed (0 references), 14 call sites on `LayoutFingerprintV2Extractor`. All 14 tests run on the V2 lane.
+- **Observed fix:** the V1 artifact mis-scored `navigation` at 0.900 `knownVariant` (digest-hex char-Jaccard false-similarity — the same class F-4 fixed); V2 measures the true layout at 0.713 → `noMatch`. The old `.exact` expectation for a non-template entry was corrected to `.noMatch` — the tier F-3 verified (0.378–0.713 vs every template).
+- **Evidence:** artifact now 6/6 passed, 0 FPs, 0 FNs, accuracy 1.0; full suite 1322/1322; `familyThreshold: 0.9` persisted.
+- Audit: `docs/audits/calibration-corpus-verification-2026-08-28.md` §8 addendum.
+
+## 2026-08-28 — Calibration artifact gate wired into CI
+- **CI gate**: added "Calibration artifact gate" step to `swift-gate` job in `.github/workflows/ci.yml`, running after `swift test` (which regenerates the persisted artifacts). The gate verifies two artifacts:
+  1. **False-positive report** (`recurring-form-calibration-report-2026-08-28.json`): schema correct, `familyThreshold: 0.90`, `falsePositives == 0`, `accuracy == 1.0`
+  2. **Threshold calibration** (`layout-v2-family-threshold-calibration-2026-08-28.json`): `familyThreshold: 0.90`, `minPositive > 0.90` (separation not collapsed), `maxHardNegative < 0.90` (no hard-negative promotions)
+- **Failure semantics**: exits non-zero with `::error::` annotations on any regression (schema drift, false-positive appearance, threshold violation, separation collapse, hard-negative promotion).
+- **Evidence**: local verification passed; full suite 1322/1322; YAML validated by `yaml.safe_load`.

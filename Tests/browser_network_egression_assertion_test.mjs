@@ -86,17 +86,28 @@ try {
     { timeout: 10_000 }
   );
 
-  // Exercise core operations: inspect candidates, apply overlay, undo
-  const candidateRow = page
+  // Exercise core operations: inspect candidates, apply overlay, undo.
+  // Prefer a singleText candidate (accepts any length); fall back to a
+  // character-grid candidate with a value short enough to fit its cells,
+  // since the app correctly rejects over-length values.
+  let candidateRow = page
     .locator("#candidateList .completion-item")
-    .filter({ hasText: /Text entry region|Character-entry region/ })
+    .filter({ hasText: "Text entry region" })
     .first();
+  let overlayValue = "Egress test value";
+  if ((await candidateRow.count()) === 0) {
+    candidateRow = page
+      .locator("#candidateList .completion-item")
+      .filter({ hasText: "Character-entry region" })
+      .first();
+    overlayValue = "Egress";
+  }
   if ((await candidateRow.count()) > 0) {
     await candidateRow.locator("button").click();
     await page.waitForFunction(
       () => !document.querySelector("#candidateAction")?.hidden
     );
-    await page.locator("#completionValue").fill("Egress test value");
+    await page.locator("#completionValue").fill(overlayValue);
     await page.locator("#applyOverlayButton").click();
     await page.waitForFunction(
       () => document.querySelectorAll(".overlay-preview").length > 0

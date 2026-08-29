@@ -249,7 +249,7 @@ function ContinuousScroll({
         >
           {visiblePages.has(index + 1) ? (
             <ContinuousPage
-              key={`${index + 1}-${snapshot.zoomPercent}-${snapshot.fitMode}-${snapshot.rotation}-${snapshot.renderedAt}`}
+              key={`page-${index + 1}@${snapshot.zoomPercent}-${snapshot.fitMode}-${snapshot.rotation}-${snapshot.renderedAt}`}
               pageNumber={index + 1}
               label={`PDF page ${index + 1} rendering`}
               regionRects={regionRects}

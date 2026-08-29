@@ -240,22 +240,22 @@ function ContinuousScroll({
 
   return (
     <div className="pdf-continuous" ref={scrollRef} onScroll={handleScroll}>
-      {snapshot.pageSizes.map((size, index) => (
+      {snapshot.pageSizes.map((size, pageIndex) => (
         <div
-          key={`page-${index + 1}`}
-          data-page-number={index + 1}
+          key={`page-${pageIndex + 1}`}
+          data-page-number={pageIndex + 1}
           className="pdf-page-wrap pdf-page-placeholder"
           style={{ aspectRatio: `${size.width} / ${size.height}` }}
         >
-          {visiblePages.has(index + 1) ? (
+          {visiblePages.has(pageIndex + 1) ? (
             <ContinuousPage
-              key={`page-${index + 1}@${snapshot.zoomPercent}-${snapshot.fitMode}-${snapshot.rotation}-${snapshot.renderedAt}`}
-              pageNumber={index + 1}
-              label={`PDF page ${index + 1} rendering`}
+              key={`page-${pageIndex + 1}@${snapshot.zoomPercent}-${snapshot.fitMode}-${snapshot.rotation}-${snapshot.renderedAt}`}
+              pageNumber={pageIndex + 1}
+              label={`PDF page ${pageIndex + 1} rendering`}
               regionRects={regionRects}
-              matches={snapshot.matches.filter((match) => match.page === index + 1)}
+              matches={snapshot.matches.filter((match) => match.page === pageIndex + 1)}
               activeGlobalIndex={
-                snapshot.matches.findIndex((match) => match.page === index + 1)
+                snapshot.matches.findIndex((match) => match.page === pageIndex + 1)
               }
               activeMatchIndex={snapshot.activeMatchIndex}
               renderedAt={snapshot.renderedAt}

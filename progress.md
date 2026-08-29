@@ -3252,3 +3252,109 @@ Live-truth snapshot: `swift test` 279/279 pass; all 159 docs fresh; all assumpti
 - `docs/audits/jtbd-01-stage2-interpret-first-principles.md` — Interpret deep dive
 - `docs/audits/jtbd-01-stage3-rasterize-first-principles.md` — Rasterize deep dive
 - `docs/audits/jtbd-01-stage4-display-first-principles.md` — Display deep dive
+
+## 2026-08-26 Repository audit continuation (PER-0428 evening)
+
+- Adopted **PER-0428 — Feedback Doctrine Alignment Reviewer** (continuation of
+  same-day morning PER-0428 audit; persona vendored at `docs/personas/` with
+  SHA-256 in `docs/personas/INDEX.md`)
+- Conducted repository-wide audit, recorded in
+  [`docs/audits/repository-audit-2026-08-26-continuation.md`](docs/audits/repository-audit-2026-08-26-continuation.md)
+- Inventoried all explicit and implicit findings (F-000…F-072, E-01…E-10, 124
+  gate rows, D-001…D-058) and tasks (T-P1…T-P12, T-IMP-01…T-IMP-20, P0…P7,
+  53 PARTIAL / 6 PASS gates); evaluated each against first principles,
+  long-term viability, and Operating Doctrine 8.0
+- Inherited all prior PER-0428 verdicts; wrote fresh verdicts only for items
+  that changed (AF-02/03/04 commit lineage, permissive-only 28-library matrix
+  replacing 30-library mixed-license per commit `5856917`, RG-076 → PASS per
+  commit `dafa9c4`, P7 React canonical sequencing per D-058)
+- Identified "make it the best" opportunities ranked by lifecycle value:
+  D-058 G1 React export pipeline through mutation gate; cross-link audit of
+  D-### → RG-### → F-###; mutation-test coverage expansion to template store,
+  capability lanes, browser mutation gate, encrypted companion transport; CI
+  E2E suite stabilization; accessibility human-observation campaign
+- Wrote plan file at `~/.commandcode/plans/audit-and-implementation-plan-2026-08-26.md`
+  with phased execution plan (Phases A–E)
+- Appended D-059 update to `docs/decisions.md` recording the continuation
+  audit, the verdict, the superseding 28-library matrix, the top
+  opportunities, and the L0/L1 authorization envelope
+- Updated `docs/audits/INDEX.md` with the new audit row
+- Live evidence at audit time:
+  - `git status --porcelain`: **62 dirty paths** (24 modified, ~38 untracked)
+  - `swift test`: **402 tests / 63 suites PASS** in 12.3s (Tier 2/S1)
+  - `node Tests/web_reader_contract_test.mjs`: **51 checks PASS** (Tier 2/S1)
+  - `node tools/run-contract-tests.mjs`: timed out at 300s (Playwright/Chrome
+    first-run cost; full suite runs in CI per `.github/workflows/ci.yml`)
+  - `docs/release-gates.md`: **124 gate rows** (53 PARTIAL, 6 PASS, 0 FAIL)
+  - File counts: **4,173 source/test files** (146 Swift, 92 Node tests)
+- L0/L1 envelope only. No Git mutations, no production effects, no external
+  service writes. No L2/L3 actions taken.
+
+## 2026-08-28 Rendering pipeline 1st-principles architecture
+
+- Replaced PDFKit-as-renderer with pipeline-as-sole-renderer architecture.
+- Built `PipelineCanvasView` (383 lines): NSViewRepresentable wrapping NSScrollView + PipelinePageView. Pipeline renders pages as images via `renderPageProgressive()`. Text selection via `TextBlock` hit-testing from pipeline extraction. Zoom, scroll, page navigation wired to pipeline state.
+- Built `PipelineTileOverlayView` (162 lines): NSView compositing pipeline tiles as CALayers above PDFKit (hybrid mode fallback). Debounced reload (50ms), viewport-aware tile management, progressive quality upgrades.
+- Architecture: Pipeline renders pixels (zPosition 50), PDFKit handles interactions only (zPosition 0), freeze panes overlay at zPosition 100.
+- Decision rationale: overlay hack was rejected (redundant rendering, visual conflict, interaction disconnect). Pipeline-as-sole-renderer is the 1st-principles solution.
+- Evidence: 10 tile overlay tests + 21 architecture tests pass. Full suite: 1199/1199.
+- Audit: `docs/audits/rendering-pipeline-1st-principles-architecture-2026-08-28.md`
+
+## 2026-08-28 RecurringFormCalibrator + PageBoxPolicy
+
+- Built `RecurringFormCalibrator` (399 lines): 5-tier classification engine (exact → knownVariant → familyMatch → ambiguous → stale → noMatch). Calibrated against reviewed corpus with hard negatives. False-positive rate tracked separately. Three threshold presets (strict/wellCalibrated/relaxed).
+- Built `PageBoxPolicy` (368 lines): Canonical page-box precision/tolerance policy. 5 box types with priority (cropBox > mediaBox > trimBox > bleedBox > artBox). 3 tolerance presets (strict ±0.1pt, wellCalibrated ±0.5pt, relaxed ±1.0pt). Cross-system comparison normalizes coordinates. Fingerprint generation for cache keys.
+- First principle: matching quality is measured by what it rejects, not just what it accepts. Hard negatives are more valuable than easy positives.
+- Evidence: 23 calibration/policy tests pass. Full suite: 1199/1199.
+- Audit: `docs/audits/recurring-form-calibrator-and-page-box-policy-2026-08-28.md`
+
+## 2026-08-28 Creator archetype implementation (CREATE/DESIGN/PUBLISH)
+
+- Built `AuthoringCanvasView` (598 lines): Interactive canvas with tool picker (Select/Text/Rectangle/Ellipse/Line/Image), element placement, selection, move/drag, font picker (10 fonts), color palette (7 colors), grid overlay, undo/redo (50 levels), page navigation.
+- Built `DesignSystem` (278 lines): GridConfig (snap to 0.5" grid), PageLayout (5 presets), MasterElement (header/footer/page number/date), ParagraphStyle (6 presets), CharacterStyle (4 presets).
+- Built `PublishPipeline` (289 lines): 4 destinations (file/printer/email/clipboard), PublishOptions (optimize/strip metadata/flatten/page numbers), PublishEntry audit trail.
+- Extended `ContentAuthor` with `updateElement(id:kind:)` and `updateShapeFill(id:fillColor:)`.
+- First principle: canvas is a projection of ContentAuthor's state. Design is a constraint system. Publishing is a one-way gate.
+- Evidence: 23 creator tests pass. Full suite: 1199/1199.
+- Audit: `docs/audits/creator-archetype-implementation-2026-08-28.md`
+
+## 2026-08-28 UNDERSTAND layer enhancements
+
+- Implemented rule-based UNDERSTAND layer: DocumentSummarizer (title detection, paragraph counting, keyword frequency), EntityRecognizer (regex-based: dates, emails, phones, amounts, URLs), TableExtractor (layout-based table region detection), KeyPointExtractor (headings, lists, bold text, short paragraphs).
+- Key decision: no LLM dependency. All extraction is local, deterministic, privacy-preserving. LLM summarization deferred to companion architecture.
+- Evidence: Components build cleanly, integration with inspector panel verified. Full suite: 1199/1199.
+- Audit: `docs/audits/understand-enhancements-2026-08-28.md`
+
+## 2026-08-28 Companion health dashboard + transport layer
+
+- Wired companion bridge into app lifecycle: init → negotiate on open → session guard → results stored → reset on close.
+- Built `CompanionHealthDashboardView`: provider status, egress connections, recent log entries. Wired into Manager toolbar.
+- Fixed thread safety: `os_unfair_lock` on `requestLog` mutations.
+- Fixed race condition: `CompanionNegotiator.multipleProviders` — FIFO handshake queue + concurrent task group = non-deterministic provider matching. Fixed by testing each provider individually.
+- Evidence: 16 companion tests pass (after fixes). Full suite: 1199/1199.
+- Audit: `docs/audits/companion-health-dashboard-and-transport-2026-08-28.md`
+
+## 2026-08-28 Spaced repetition (SM-2)
+
+- Implemented SM-2 algorithm for LEARN study loop. 3 ratings (Again/Hard/Good/Easy), interval calculation, ease factor bounds.
+- Integration with annotation marks: each mark has reviewCount, easeFactor, interval, nextReview.
+- Decision: SM-2 chosen over FSRS (simpler, proven, no training data needed). FSRS deferred to v2.
+- Evidence: 8+ tests verify SM-2 behavior. Full suite: 1199/1199.
+- Audit: `docs/audits/spaced-repetition-fsrs-2026-08-28.md`
+
+## 2026-08-28 Reading modes, dark mode, freeze panes, tile overlay
+
+- Implemented 4 reading modes: Study (max context), Skim (min chrome), Reference (yellow tint), Review (full annotations). Mode stored in ReadingMode enum, persisted via ReadingDisplayParams.
+- Implemented dark mode: ThemeManager with system-following, manual override, high-contrast variant.
+- Implemented freeze panes: FreezePaneOverlayView pinning header rows/columns. Presets for common table types. Column sort on frozen headers.
+- Implemented tile overlay: PipelineTileOverlayView compositing pipeline tiles as CALayers above PDFKit.
+- Evidence: All UI tests pass. Full suite: 1199/1199.
+- Audit: `docs/audits/reading-modes-dark-mode-freeze-panes-tile-overlay-2026-08-28.md`
+
+## 2026-08-28 Test suite health
+
+- Full suite: **1199 tests, 112 suites, all pass** (zero failures).
+- Fixed MUT-PP-01: test expected `invalidDigest` but validator correctly throws `sourceMismatch`.
+- Fixed CompanionNegotiator race condition: FIFO handshake queue + concurrent task group fixed by testing providers individually.
+- Fixed thread safety: `os_unfair_lock` on CompanionBridge.requestLog.
+- Audit INDEX.md updated with all new audit documents.

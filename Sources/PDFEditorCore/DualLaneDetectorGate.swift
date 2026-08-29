@@ -196,8 +196,9 @@ public struct DualLaneDetectorGate: Sendable {
         // Native lane
         let nativeLane = measurement.measure(
           lane: .native,
-          groundTruth: scopedTruth,
-          candidates: nativeCandidates(inspection)
+          groundTruth: groundTruth,
+          candidates: nativeCandidates(inspection),
+          fixtureID: fixtureID
         )
 
         // Browser lane (optional)
@@ -206,8 +207,9 @@ public struct DualLaneDetectorGate: Sendable {
           let browserCands = browserCandidates(url)
           browserLane = measurement.measure(
             lane: .browser,
-            groundTruth: scopedTruth,
-            candidates: browserCands
+            groundTruth: groundTruth,
+            candidates: browserCands,
+            fixtureID: fixtureID
           )
         } else {
           browserLane = nil

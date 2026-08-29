@@ -392,4 +392,67 @@ struct NativeCandidateAdapterTests {
     #expect(normalized.evidenceFamilies == ["geometry"])
     #expect(!normalized.labelAssociated)
   }
+
+  // MARK: - Per-Fixture Scoping
+
+  @Test("Per-fixture scoping prevents cross-matching identical base-form rects")
+  func perFixtureScopingPreventsCrossMatching() {
+    let measurement = DetectorSemanticMeasurement()
+
+    // Ground truth: fixture A has a detected region at (100, 200)
+    //               fixture B has an abstain region at (100, 200) — same rect!
+    let groundTruth = ReviewedCandidateGroundTruth(cases: [
+      ReviewedGroundTruthCase(
+        id: "a-detected", reviewedRegionID: "reviewed:a:detected",
+        fixtureID: "fixtureA.pdf", pageIndex: 0,
+        className: "vectorRectangle", expectedState: "detected", isHardNegative: false,
+        target: PDFRect(x: 100, y: 200, width: 50, height: 50),
+        requiredEvidence: ["vectorRectangle"],
+        expectedEvidenceFamilies: ["geometry"],
+        expectedLabelAssociation: "none", expectedGroupingState: "single",
+        rationale: "test"
+      ),
+      ReviewedGroundTruthCase(
+        id: "b-abstain", reviewedRegionID: "reviewed:b:abstain",
+        fixtureID: "fixtureB.pdf", pageIndex: 0,
+        className: "vectorRectangle", expectedState: "abstain", isHardNegative: true,
+        target: PDFRect(x: 100, y: 200, width: 50, height: 50),
+        requiredEvidence: ["vectorRectangle"],
+        expectedEvidenceFamilies: ["geometry"],
+        expectedLabelAssociation: "none", expectedGroupingState: "abstain",
+        falsePositiveSeverity: "medium",
+        rationale: "test"
+      )
+    ])
+
+    // Candidates: one detection at the same rect with matching evidence
+    // (would match both if pooled)
+    let candidates = [
+      candidate(x: 100, y: 200, width: 50, height: 50, kind: "vectorRectangle", evidence: ["geometry"])
+    ]
+
+    // Without fixtureID: pooled — both cases are evaluated against the
+    // same candidates. The candidate matches both rects, so both detect.
+    let pooled = measurement.measure(lane: .native, groundTruth: groundTruth, candidates: candidates)
+    #expect(pooled.cases.count == 2, "Pooled: both fixture A and B cases evaluated")
+    #expect(pooled.cases.first { $0.caseID == "a-detected" }?.detected == true)
+    #expect(pooled.cases.first { $0.caseID == "b-abstain" }?.detected == true,
+            "Pooled: B's abstain case also sees the candidate (cross-match artifact)")
+
+    // With fixtureID: scoped — only the named fixture's cases are evaluated.
+    // This prevents the pooled-lane artifact where identical base-form rects
+    // from different fixtures cross-match.
+    let scopedA = measurement.measure(lane: .native, groundTruth: groundTruth, candidates: candidates, fixtureID: "fixtureA.pdf")
+    #expect(scopedA.cases.count == 1, "Scoped to A: only A's case evaluated")
+    #expect(scopedA.cases.first?.caseID == "a-detected")
+    #expect(scopedA.cases.first?.detected == true)
+
+    let scopedB = measurement.measure(lane: .native, groundTruth: groundTruth, candidates: candidates, fixtureID: "fixtureB.pdf")
+    #expect(scopedB.cases.count == 1, "Scoped to B: only B's case evaluated")
+    #expect(scopedB.cases.first?.caseID == "b-abstain")
+    // B's case detects (same rect), but state is mismatch (expected abstain).
+    // The key assertion: B's case is the ONLY case evaluated — A's case is excluded.
+    #expect(scopedB.cases.first?.state == "mismatch",
+            "Scoped: B's abstain case detects but state is mismatch (expected abstain)")
+  }
 }

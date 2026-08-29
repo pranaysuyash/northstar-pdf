@@ -214,8 +214,9 @@ public struct NativeDetectorGate: Sendable {
         let scopedTruth = ReviewedCandidateGroundTruth(cases: scoped)
         let lane = measurement.measure(
           lane: .native,
-          groundTruth: scopedTruth,
-          candidates: candidates(inspection)
+          groundTruth: groundTruth,
+          candidates: candidates(inspection),
+          fixtureID: fixtureID
         )
         results.append(NativeDetectorGateFixtureResult(
           fixtureID: fixtureID,

@@ -563,28 +563,44 @@ public struct DetectorSemanticMeasurement: Sendable {
   // MARK: Report
 
   /// Measure a lane against ground truth.
+  ///
+  /// When `fixtureID` is provided, only ground truth cases matching that
+  /// fixture are evaluated — preventing the pooled-lane artifact where
+  /// identical base-form rects from different fixtures cross-match.
   public func measure(
     lane: DetectorLane,
     groundTruth: ReviewedCandidateGroundTruth,
-    candidates: [DetectorCandidate]
+    candidates: [DetectorCandidate],
+    fixtureID: String? = nil
   ) -> DetectorLaneResult {
-    let results = groundTruth.cases.map { evaluateCase($0, candidates: candidates) }
+    let scoped = fixtureID.map { id in
+      groundTruth.cases.filter { $0.fixtureID == id }
+    } ?? groundTruth.cases
+    let results = scoped.map { evaluateCase($0, candidates: candidates) }
     return DetectorLaneResult(lane: lane, cases: results, metrics: computeMetrics(cases: results))
   }
 
   /// Full native vs browser comparison.
+  ///
+  /// When `fixtureID` is provided, only ground truth cases matching that
+  /// fixture are compared — enforcing per-fixture scoping across both lanes.
   public func compare(
     groundTruth: ReviewedCandidateGroundTruth,
     nativeCandidates: [DetectorCandidate],
-    browserCandidates: [DetectorCandidate]
+    browserCandidates: [DetectorCandidate],
+    fixtureID: String? = nil
   ) -> DetectorSemanticReport {
-    let native = measure(lane: .native, groundTruth: groundTruth, candidates: nativeCandidates)
-    let browser = measure(lane: .browser, groundTruth: groundTruth, candidates: browserCandidates)
+    let native = measure(lane: .native, groundTruth: groundTruth, candidates: nativeCandidates, fixtureID: fixtureID)
+    let browser = measure(lane: .browser, groundTruth: groundTruth, candidates: browserCandidates, fixtureID: fixtureID)
+
+    let scopedTruth = fixtureID.map { id in
+      groundTruth.cases.filter { $0.fixtureID == id }
+    } ?? groundTruth.cases
 
     let nativeByCase = Dictionary(uniqueKeysWithValues: native.cases.map { ($0.caseID, $0) })
     let browserByCase = Dictionary(uniqueKeysWithValues: browser.cases.map { ($0.caseID, $0) })
 
-    let parity = groundTruth.cases.compactMap { caseLabel -> DetectorParityEntry? in
+    let parity = scopedTruth.compactMap { caseLabel -> DetectorParityEntry? in
       guard let nativeCase = nativeByCase[caseLabel.id],
             let browserCase = browserByCase[caseLabel.id]
       else { return nil }

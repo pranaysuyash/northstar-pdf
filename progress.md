@@ -3516,3 +3516,10 @@ alone does not help, because the restriction applies to the agent process.
 - **CI wiring**: `PDFContractHarness --dual-lane-gate` flag added; new "Dual-lane detector gate (native + browser)" step in `.github/workflows/ci.yml` swift-gate job, after the native-only detector gate.
 - **Test suite**: 6 new tests in `DualLaneDetectorGateTests.swift` — live corpus (15 fixtures, both lanes measured), dropped-field mutation, unreviewed fail-closed, browser-lane-absent, both-lanes-measured, JSON round-trip. Full suite 1329/1329.
 - **Ground truth**: 108 cases (10 calibration + 98 sweep) — the45-case reference in earlier progress.md entries was stale documentation; the actual canonical ground truth has been 108 cases since the2026-08-28 review pass.
+
+## 2026-08-28 — Per-fixture candidate scoping in DetectorSemanticMeasurement
+- **`DetectorSemanticMeasurement.measure(lane:groundTruth:candidates:fixtureID:)`** gains an optional `fixtureID` parameter. When provided, only ground truth cases matching that fixture are evaluated — preventing the pooled-lane artifact where identical base-form rects from different fixtures cross-match.
+- **`compare()`** gains the same `fixtureID` parameter for parity comparisons.
+- **`NativeDetectorGate` and `DualLaneDetectorGate`** pass `fixtureID` to `measure()`, adding measurement-level scoping on top of the existing gate-level `groundTruth.cases(forFixture:)` scoping.
+- **Test**: `perFixtureScopingPreventsCrossMatching` proves that with `fixtureID`, only the named fixture's ground truth cases are evaluated; without it, both fixtures' cases see the same candidates (pooled artifact).
+- **Suite**: 1330/1330 tests pass.

@@ -1,0 +1,122 @@
+{
+  "calibration" : {
+    "accuracy" : 0.8333333333333334,
+    "classBreakdown" : {
+      "geometry" : 1,
+      "hard-negative-different" : 1,
+      "hard-negative-similar" : 1,
+      "multi-column" : 1,
+      "navigation" : 1,
+      "plain-text" : 1
+    },
+    "failed" : 1,
+    "falseNegatives" : 0,
+    "falsePositiveRate" : 0,
+    "falsePositives" : 0,
+    "passed" : 5,
+    "recommendations" : [
+      "Accuracy 83.3% is below 95% target. Review ambiguous cases and adjust thresholds."
+    ],
+    "results" : [
+      {
+        "actualTier" : "exact",
+        "entryID" : "plain-text",
+        "expectedTier" : "exact",
+        "falsePositiveDetected" : false,
+        "isHardNegative" : false,
+        "passed" : true,
+        "reason" : "Correctly classified as exact",
+        "score" : 1
+      },
+      {
+        "actualTier" : "exact",
+        "entryID" : "multi-column",
+        "expectedTier" : "exact",
+        "falsePositiveDetected" : false,
+        "isHardNegative" : false,
+        "passed" : true,
+        "reason" : "Correctly classified as exact",
+        "score" : 1
+      },
+      {
+        "actualTier" : "exact",
+        "entryID" : "geometry",
+        "expectedTier" : "exact",
+        "falsePositiveDetected" : false,
+        "isHardNegative" : false,
+        "passed" : true,
+        "reason" : "Correctly classified as exact",
+        "score" : 1
+      },
+      {
+        "actualTier" : "knownVariant",
+        "entryID" : "navigation",
+        "expectedTier" : "exact",
+        "falsePositiveDetected" : false,
+        "isHardNegative" : false,
+        "passed" : false,
+        "reason" : "Mismatch: expected exact, got knownVariant",
+        "score" : 0.9
+      },
+      {
+        "actualTier" : "noMatch",
+        "entryID" : "hard-neg-similar",
+        "expectedTier" : "noMatch",
+        "falsePositiveDetected" : false,
+        "isHardNegative" : true,
+        "passed" : true,
+        "reason" : "Correctly classified as noMatch",
+        "score" : 0.08
+      },
+      {
+        "actualTier" : "noMatch",
+        "entryID" : "hard-neg-different",
+        "expectedTier" : "noMatch",
+        "falsePositiveDetected" : false,
+        "isHardNegative" : true,
+        "passed" : true,
+        "reason" : "Correctly classified as noMatch",
+        "score" : 0.08695652173913043
+      }
+    ],
+    "tierBreakdown" : [
+      "exact",
+      3,
+      "knownVariant",
+      1,
+      "noMatch",
+      2
+    ],
+    "totalEntries" : 6
+  },
+  "corpus" : "benchmark\/results\/corpus-sweep-2026-08-25",
+  "falsePositiveReport" : {
+    "classBreakdown" : {
+
+    },
+    "entries" : [
+
+    ],
+    "falsePositiveCount" : 0,
+    "falsePositiveRate" : 0,
+    "passesThreshold" : true,
+    "recommendations" : [
+      "No false positives detected. Calibration is within acceptable bounds."
+    ],
+    "tierBreakdown" : [
+
+    ],
+    "totalHardNegatives" : 2
+  },
+  "generatedAt" : "2026-08-28T00:00:00.000Z",
+  "schema" : "pdf-editor.recurring-form-calibration-report",
+  "thresholds" : {
+    "ambiguousMargin" : 0.05,
+    "familyEnabled" : true,
+    "familyThreshold" : 0.76
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

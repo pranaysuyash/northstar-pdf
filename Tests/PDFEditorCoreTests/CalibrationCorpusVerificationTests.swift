@@ -576,6 +576,52 @@ struct CalibrationCorpusVerificationTests {
         #expect(FileManager.default.fileExists(atPath: artifactURL.path), "Artifact must be persisted")
     }
 
+    // MARK: - Artifact Determinism
+
+    /// Falsifier for the tier-breakdown encoding regression.
+    ///
+    /// `[MatchingTier: Int]` used to encode as an unkeyed array of alternating
+    /// key/value pairs in Swift's dictionary hash order, so every `swift test`
+    /// run rewrote the committed artifact with a different key order. A
+    /// within-process double encode cannot catch that — hash order is stable
+    /// for the life of a process — so this test asserts the root cause instead:
+    /// the tier breakdown must be a JSON *object* whose keys are sorted, which
+    /// is what makes the bytes reproducible across processes.
+    @Test("Tier breakdown encodes as a sorted JSON object, not hash-ordered pairs")
+    func tierBreakdownEncodesAsSortedObject() {
+        let breakdown: [MatchingTier: Int] = [
+            .noMatch: 3,
+            .exact: 3,
+            .familyMatch: 2,
+            .ambiguous: 1,
+            .knownVariant: 1,
+            .stale: 1
+        ]
+
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        guard let data = try? encoder.encode(breakdown),
+              let json = String(data: data, encoding: .utf8) else {
+            #expect(Bool(false), "Tier breakdown must serialize")
+            return
+        }
+
+        // Root cause guard: an array here means CodingKeyRepresentable was lost.
+        #expect(json.hasPrefix("{"), "Tier breakdown must encode as a JSON object, got \(json)")
+
+        let expected = """
+        {"ambiguous":1,"exact":3,"familyMatch":2,"knownVariant":1,"noMatch":3,"stale":1}
+        """
+        #expect(json == expected, "Tier breakdown keys must be sorted deterministically, got \(json)")
+
+        // Round-trip must restore every entry.
+        guard let decoded = try? JSONDecoder().decode([MatchingTier: Int].self, from: data) else {
+            #expect(Bool(false), "Tier breakdown must round-trip")
+            return
+        }
+        #expect(decoded == breakdown)
+    }
+
     // MARK: - Tolerance Policy Verification
 
     @Test("Strict tolerance catches small deviations")

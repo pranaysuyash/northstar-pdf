@@ -4837,6 +4837,20 @@
         pages: pageCoordinates
       },
       candidates: cloneContractValue(documentContract.payload.candidates),
+      fieldCandidates: cloneContractValue(
+        (documentContract.payload.fields || []).map((field) => ({
+          pageIndex: field.pageIndex,
+          bounds: field.bounds,
+          kind: "nativeField",
+          suggestedFieldType: field.kind,
+          entryMode: "native",
+          groupMemberCount: 1,
+          evidenceItems: [
+            { kind: "nativeField", origin: "nativeFieldExtraction", summary: `Native field ${field.name}` }
+          ],
+          labelText: field.name
+        }))
+      ),
       textRuns: cloneContractValue(textRunProjections),
       preflight: cloneContractValue(preflightReport),
       sessionProvenance: cloneContractValue(buildSessionPrivacyProvenance() || sessionProvenance),

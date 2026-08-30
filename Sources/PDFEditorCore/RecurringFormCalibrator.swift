@@ -51,6 +51,34 @@ public enum MatchingTier: String, Codable, Sendable, CaseIterable {
     }
 }
 
+// MARK: - Deterministic Dictionary Encoding
+
+/// Coding key that carries an arbitrary string, used so `MatchingTier` can act
+/// as a JSON object key.
+///
+/// Without `CodingKeyRepresentable`, `[MatchingTier: Int]` encodes as an
+/// unkeyed array of alternating key/value pairs emitted in Swift's dictionary
+/// hash order. Any persisted artifact carrying it is then non-deterministic run
+/// to run, and `JSONEncoder.OutputFormatting.sortedKeys` cannot help because
+/// there is no keyed container to sort. Conforming turns the same value into a
+/// real JSON object (`{"exact": 3, "noMatch": 3}`) whose keys `.sortedKeys`
+/// then orders deterministically.
+struct MatchingTierCodingKey: CodingKey {
+    var stringValue: String
+    var intValue: Int? { nil }
+
+    init(stringValue: String) { self.stringValue = stringValue }
+    init?(intValue: Int) { return nil }
+}
+
+extension MatchingTier: CodingKeyRepresentable {
+    public var codingKey: CodingKey { MatchingTierCodingKey(stringValue: rawValue) }
+
+    public init?<T: CodingKey>(codingKey: T) {
+        self.init(rawValue: codingKey.stringValue)
+    }
+}
+
 // MARK: - Calibration Thresholds
 
 /// Thresholds for matching tier classification.

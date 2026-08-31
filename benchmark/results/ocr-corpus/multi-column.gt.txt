@@ -1,0 +1,10 @@
+Column One
+First paragraph of the left
+column discusses the importance
+of structured document layout
+for optical character recognition.
+Column Two
+Second paragraph covers the
+technical challenges of OCR
+including noise, rotation, and
+low contrast text regions.

@@ -1,0 +1,3 @@
+Small font text tests the limits of OCR recognition accuracy at reduced sizes.
+This line is also at 12pt to verify consistent OCR behavior.
+Third line for statistical confidence in the measurement.

@@ -1,0 +1,3 @@
+Email: user@example.com | Phone: 555-123-4567
+Fax: 1-800-555-0199
+Order 12345-ABC. Total: 42.50 EUR (VAT included)

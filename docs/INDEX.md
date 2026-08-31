@@ -38,6 +38,9 @@
 ## Audits — Capability Governance (2026-08-28)
 - `docs/audits/capability-maturity-model-and-matrix-2026-08-28.md` — 5-dimension maturity model, 42-capability canonical matrix with real providers/gates/owners, gate-maturity bridge (35 tests).
 
+## Audits — OCR Benchmark (2026-08-31)
+- `docs/audits/ocr-benchmark-expansion-2026-08-31.md` — 8 ground-truth fixtures (scans, noise, rotation, low-contrast, dense, small-font, punctuation, multi-column), Tesseract 5.5.0 baseline (1.2% avg WER), PDFKit baseline (no OCR on raster PDFs), cross-provider comparison, 14 tests.
+
 ## Audits — Creator Archetype (2026-08-28)
 - `docs/audits/creator-archetype-implementation-2026-08-28.md` — AuthoringCanvasView (CREATE), DesignSystem (DESIGN), PublishPipeline (PUBLISH), 23 tests.
 
@@ -82,6 +85,8 @@
 - `docs/audits/pdf-features-library-matrix-2026-08-26.md` — Feature × library matrix
 - `docs/audits/pdf-libraries-complete-evaluation-2026-08-26.md` — Complete library evaluation
 - `docs/audits/pdf-libraries-permissive-evaluation-2026-08-26.md` — Permissive-only evaluation (28 libs)
+- `docs/audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md` — PDFBox versus MuPDF preservation, licensing, packaging, and recovery bake-off
+- `docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md` — browser pre-export and staged-output privacy transition gate for metadata, attachments, actions, encryption, and privacy-sensitive content
 - `docs/audits/pdf-library-evaluation-2026-08-26.md` — Library evaluation
 - `docs/audits/pdfkit-adequacy-audit-2026-08-26.md` — PDFKit adequacy assessment
 - `docs/audits/pdfkit-known-bugs-2026-08-26.md` — PDFKit known bugs

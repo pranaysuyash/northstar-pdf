@@ -3551,3 +3551,76 @@ alone does not help, because the restriction applies to the agent process.
 - **5 approaches documented** to unlock higher weight (coarser grid, higher threshold, multi-scale, color quantization, morphological smoothing)
 - **Audit doc:** `docs/audits/raster-weight-analysis-2026-08-30.md`
 - **Tests:** `RasterWeightCalibrationTests` (8 tests, all pass)
+
+## 2026-08-31 — PDFBox versus MuPDF provider bake-off
+
+- Added the canonical normalized runner:
+  `benchmark/pdfbox-mupdf-bakeoff.mjs`.
+- Added focused provider, packaging, privacy and recovery checks:
+  `Tests/pdfbox_mupdf_bakeoff_test.mjs`.
+- Generated the value-minimized report:
+  `benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json`.
+- Exercised all 16 artifacts from the live governed corpus. The
+  report now records skipped manifest entries rather than silently changing
+  the denominator.
+- Verified both providers against a common Poppler text/raster oracle. Twelve
+  readable fixtures passed normalized no-op text and raster preservation for
+  both providers. PDFBox and MuPDF each passed 12 no-op rewrites; encrypted and
+  malformed cases remain explicit unsupported/unknown/recovered-warning
+  states.
+- Recovery evidence records staged invalid output separately from a qpdf-valid
+  publishable output. PDFBox staged invalid artifacts on 3 probes; MuPDF on 6;
+  neither produced a qpdf-valid malformed output.
+- Recorded package identity: PDFBox 3.0.8 fat jar SHA-512 matched its retained
+  distribution digest; MuPDF 1.28.2 binary SHA-256 was captured. License
+  evidence records Apache-2.0 for PDFBox and AGPL-3.0-or-commercial for MuPDF.
+- Added audit, finding, decision D-060 and release gate RG-128. The evidence
+  supports capability negotiation, not a universal provider winner.
+- Verification: `node --check benchmark/pdfbox-mupdf-bakeoff.mjs`,
+  `node --check Tests/pdfbox_mupdf_bakeoff_test.mjs`, focused test 23 checks
+  passed, and full bake-off exited 0. Report contains no raw document content
+  or metadata values, and no network or Git mutation occurred.
+## 2026-08-31 — Browser pre-export privacy transition gate
+
+- **Objective:** Extend the browser export boundary from operation and
+  coordinate validation to source/output privacy-surface transition validation.
+- **Implemented:** `web/pdf-preflight.mjs` now emits value-minimized encryption,
+  form-value presence, and aggregate privacy-sensitive observations and exposes
+  `comparePreflightTransitions()` for metadata, attachment inventory, embedded
+  actions, encryption, annotations, form values, revisions, and privacy content.
+  `web/pdf-contract-mutation-gate.mjs` validates the source report against the
+  freshly hashed digest, rejects unknown transition declarations and sensitive
+  operation kinds before the writer, and carries the same checks through both
+  writer seams. `web/app.js` creates an output preflight from the reopened
+  PDF.js document and adds a `privacyPreflight` check before download. The
+  privacy panel exposes the new structural counts and states.
+- **Evidence:** `node Tests/preflight_contract_test.mjs`; `node
+  Tests/web_preexport_privacy_gate_test.mjs`; `node Tests/run-web-e2e.mjs
+  web_pdf_contract_mutation`; `node Tests/run-web-e2e.mjs preflight`; and
+  `node Tests/run-web-e2e.mjs web_pdf_proof` all pass. The public form and
+  static overlay exports report `privacyPreflight: passed` alongside existing
+  source, reopen, geometry, outside-region text, and raster checks.
+- **Negative coverage:** Metadata, attachment, embedded-action, encryption,
+  privacy aggregate, sensitive-operation, and unknown-transition mutations are
+  rejected or fail publication. Reviewed form-value presence changes are the
+  only explicitly authorized current exception, and only with typed field
+  operations.
+- **Truth boundary:** This is Tier 2/S1 local browser and synthetic contract
+  evidence. It does not prove sanitization, hidden-revision absence,
+  byte-for-byte object preservation, signature validity, XFA, PDF/UA,
+  independent-viewer parity, or production corpus behavior. Those remain
+  separate lanes under the same gate.
+- **Durable records:** Decision D-061, finding F-074, and release gate RG-129;
+  audit `docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md`.
+- **Publication hardening:** An unknown `privacyPreflight` result is now
+  promoted to overall `failed`, so `exportAndValidate()` cannot download an
+  artifact when any protected-surface comparison is unavailable. The focused
+  gate test also proves a missing output surface stops before the writer.
+
+## OCR Benchmark Expansion (2026-08-31)
+- Expanded OCR benchmark from 1 fixture to 9 fixtures with real ground truth
+- 8 new fixtures: clean-english, noisy-invoice, rotated-certificate, low-contrast, dense-paragraph, small-font, mixed-punctuation, multi-column
+- Wired Tesseract 5.5.0 as real OCR provider alongside PDFKit text extraction
+- Measured cross-provider WER: Tesseract 1.2% avg, pdftotext 100% (no text layer)
+- 14 tests, all passing
+- Audit: docs/audits/ocr-benchmark-expansion-2026-08-31.md

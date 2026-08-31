@@ -1,0 +1,101 @@
+{
+  "corpusSize" : 50,
+  "excluded" : [
+    {
+      "name" : "encrypted-hybrid.pdf",
+      "reason" : "password-encrypted (pikepdf PasswordError)"
+    },
+    {
+      "name" : "malformed-hybrid-truncated.pdf",
+      "reason" : "malformed (pikepdf PdfError)"
+    }
+  ],
+  "familyThreshold" : 0.9,
+  "generatedAt" : "2026-08-31",
+  "hardNegativePairs" : 990,
+  "maxHardNegative" : 1,
+  "maxPositive" : 1,
+  "minHardNegative" : 0.008085537567489587,
+  "minPositive" : 0.6321386264524819,
+  "positivePairs" : 235,
+  "schema" : "pdf-editor.layout-v2-family-threshold-calibration",
+  "separationGapMidpoint" : 0.8160693132262409,
+  "topHardNegatives" : [
+    {
+      "a" : "encrypted-reader.pdf",
+      "b" : "diverse-graphics-heavy.pdf",
+      "classes" : [
+        "N",
+        "H"
+      ],
+      "similarity" : 1
+    },
+    {
+      "a" : "encrypted-reader.pdf",
+      "b" : "diverse-scanned-sim.pdf",
+      "classes" : [
+        "N",
+        "K"
+      ],
+      "similarity" : 1
+    },
+    {
+      "a" : "encrypted-reader.pdf",
+      "b" : "diverse-dense-grid.pdf",
+      "classes" : [
+        "N",
+        "P"
+      ],
+      "similarity" : 1
+    },
+    {
+      "a" : "diverse-graphics-heavy.pdf",
+      "b" : "diverse-scanned-sim.pdf",
+      "classes" : [
+        "H",
+        "K"
+      ],
+      "similarity" : 0.995121095087253
+    },
+    {
+      "a" : "diverse-scanned-sim.pdf",
+      "b" : "diverse-dense-grid.pdf",
+      "classes" : [
+        "K",
+        "P"
+      ],
+      "similarity" : 0.9850265456759345
+    },
+    {
+      "a" : "diverse-graphics-heavy.pdf",
+      "b" : "diverse-dense-grid.pdf",
+      "classes" : [
+        "H",
+        "P"
+      ],
+      "similarity" : 0.9800756810207263
+    },
+    {
+      "a" : "scanned-noisy.pdf",
+      "b" : "handwritten-simulated-entries.pdf",
+      "classes" : [
+        "C",
+        "N"
+      ],
+      "similarity" : 0.8355218341261637
+    },
+    {
+      "a" : "printed-scan.pdf",
+      "b" : "handwritten-simulated-entries.pdf",
+      "classes" : [
+        "C",
+        "N"
+      ],
+      "similarity" : 0.8116460889532148
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

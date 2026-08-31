@@ -279,4 +279,64 @@ struct LayoutFingerprintV2Tests {
         #expect(variantFP.digest == originalFP.digest,
                 "Filled variant must keep the same layout fingerprint")
     }
+
+    // MARK: - Raster Channel
+
+    @Test("Raster cells are extracted from pages with image content")
+    func rasterCellsExtracted() throws {
+        // scanned-noisy.pdf is a raster-only page — should have raster cells
+        let scannedURL = URL(fileURLWithPath:
+            "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf")
+        guard FileManager.default.fileExists(atPath: scannedURL.path) else { return }
+        guard let doc = PDFDocument(url: scannedURL),
+              let fp = LayoutFingerprintV2Extractor.extract(from: doc) else {
+            Issue.record("Could not extract V2 from scanned-noisy.pdf")
+            return
+        }
+        let rasterCount = fp.pages.reduce(0) { $0 + $1.rasterCells.count }
+        #expect(rasterCount > 0,
+                "Scanned page must have raster cells (got \(rasterCount))")
+    }
+
+    @Test("Raster channel discriminates scanned from text pages")
+    func rasterDiscriminates() throws {
+        let scannedURL = URL(fileURLWithPath:
+            "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf")
+        let textURL = URL(fileURLWithPath:
+            "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25/plain-text.pdf")
+        guard FileManager.default.fileExists(atPath: scannedURL.path),
+              FileManager.default.fileExists(atPath: textURL.path) else { return }
+        guard let scannedDoc = PDFDocument(url: scannedURL),
+              let scannedFP = LayoutFingerprintV2Extractor.extract(from: scannedDoc),
+              let textDoc = PDFDocument(url: textURL),
+              let textFP = LayoutFingerprintV2Extractor.extract(from: textDoc) else {
+            Issue.record("Could not extract V2 fingerprints")
+            return
+        }
+        let sim = scannedFP.similarity(to: textFP)
+        // Raster page vs text page: rasterLayout should be low (different content)
+        #expect(sim.rasterLayout < 0.5,
+                "Scanned vs text raster similarity should be low (got \(sim.rasterLayout))")
+    }
+
+    @Test("Raster channel: backward-compatible decoding without rasterCells")
+    func rasterBackwardCompatible() throws {
+        // Decode a JSON without rasterCells — should default to empty
+        let json = """
+        {
+            "algorithm": "layout-v2-cell-quantized",
+            "featureVersion": "layout-features-2",
+            "cellSizePoints": 4.0,
+            "pages": [{
+                "pageIndex": 0, "widthPoints": 612, "heightPoints": 792,
+                "rotationDegrees": 0,
+                "textCells": [], "fieldCells": [], "annotationCells": []
+            }],
+            "digest": "test"
+        }
+        """
+        let data = json.data(using: .utf8)!
+        let fp = try JSONDecoder().decode(LayoutFingerprintV2.self, from: data)
+        #expect(fp.pages.first?.rasterCells.isEmpty == true)
+    }
 }

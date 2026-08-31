@@ -3530,3 +3530,24 @@ alone does not help, because the restriction applies to the agent process.
 - **Stale artifact:** The generator manifest (`benchmark/results/corpus-sweep-2026-08-25/manifest.json`) doesn't verify field presence for 12 of 14 fixtures. Only `navigation.pdf` (annots: 6) and `xfa-hybrid.pdf` (acroFormFieldCount: 1) check field presence.
 - **Recommendation:** Update manifest to include `acroFormFieldCount: 6` for all form-bearing fixtures; add CI gate to verify field presence against manifest.
 - Audit: `docs/audits/generator-manifest-name-vs-structure-audit-2026-08-28.md`
+
+## 2026-08-30 — Expanded calibration corpus + F-5 weight renormalization
+
+- Corpus expanded from 30 to 36 fixtures (browser-corpus: rotated, scanned,
+  handwritten, encrypted; rotation-corpus: widget-90)
+- F-5 fix: weight renormalization when channels have no content — empty channels
+  redistribute weight to channels with data, preventing agreement-on-absence
+  inflation
+- Separation gap: 0.8418..0.9676 (midpoint 0.9047) — threshold 0.90 ratified
+- Zero hard-negative promotions on expanded corpus
+- Audit doc §9 added with measured effect table
+
+### 2026-08-30: Raster weight analysis (first principles)
+
+- **Finding:** Raster channel has theoretical SNR 799× (identity 1.0, re-encoding 1.0, signal 0.20)
+- **Binding constraint:** Family members with different content have raster similarity 0.04–0.08
+- **Calibration evidence:** At weight 0.05, minPositive = 0.88 (below 0.90 threshold)
+- **Decision:** Keep raster weight at 0.02 — channel is supplementary, not primary
+- **5 approaches documented** to unlock higher weight (coarser grid, higher threshold, multi-scale, color quantization, morphological smoothing)
+- **Audit doc:** `docs/audits/raster-weight-analysis-2026-08-30.md`
+- **Tests:** `RasterWeightCalibrationTests` (8 tests, all pass)

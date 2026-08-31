@@ -269,7 +269,7 @@ struct LayoutFingerprintThresholdCalibrationTests {
     let artifact = CalibrationArtifact(
       schema: "pdf-editor.layout-v2-family-threshold-calibration",
       version: CalibrationArtifact.Version(major: 1, minor: 0),
-      generatedAt: "2026-08-28",
+      generatedAt: "2026-08-31",
       corpusSize: Self.corpus.count,
       positivePairs: positives.count,
       hardNegativePairs: hardNegatives.count,

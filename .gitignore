@@ -97,3 +97,20 @@ web/app/.vibe/
 web/app/.windsurf/
 web/app/.zencoder/
 web/app/skills/
+.venv
+
+# External evaluation datasets (large, not for push)
+benchmark/datasets/*/data/
+benchmark/datasets/*/images/
+benchmark/datasets/*/*.parquet
+benchmark/datasets/*/*.arrow
+benchmark/datasets/*/*.jsonl
+benchmark/datasets/.venv/
+
+# Keep eval reports and results (for CI)
+!benchmark/datasets/*/eval/
+!benchmark/datasets/*/results/
+!benchmark/datasets/*/README.md
+
+# HTML sketches and design artifacts
+EMPTY-STATE-SKETCHES*.html

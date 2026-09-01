@@ -1,0 +1,4190 @@
+{
+  "contract": "pdf-editor.provider-bakeoff",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "run": {
+    "startedAt": "2026-08-31T08:48:51.765Z",
+    "completedAt": "2026-08-31T08:49:09.765Z",
+    "workspace": "/Users/pranay/Projects/pdf_editor",
+    "corpusManifest": "Tests/fixtures/pdf_corpus_governance_manifest.json",
+    "corpusManifestFixtureCount": 16,
+    "corpusFixtureCount": 16,
+    "skippedManifestFixtures": [],
+    "rawDocumentContentInReport": false,
+    "sourceMetadataValuesInReport": false,
+    "networkUsed": false,
+    "outputDigestsAreIdentityOnly": true
+  },
+  "providers": {
+    "pdfbox": {
+      "providerID": "companion-pdfbox",
+      "engineFamily": "apache-pdfbox",
+      "version": "3.0.8",
+      "runtimeKind": "installed-companion-java",
+      "license": {
+        "identifier": "Apache-2.0",
+        "status": "observed-in-local-artifact-and-official-release"
+      },
+      "artifact": {
+        "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+        "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+        "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+        "publishedSha512Matches": true,
+        "sizeBytes": 13602031
+      },
+      "packaging": {
+        "shape": "fat-jar-plus-jvm",
+        "offline": true,
+        "nativeLibraries": false,
+        "runtimeObserved": {
+          "state": "observed",
+          "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+        },
+        "dependencyNoticeReview": "required"
+      }
+    },
+    "mupdf": {
+      "providerID": "companion-mupdf",
+      "engineFamily": "mupdf",
+      "version": "1.28.2",
+      "runtimeKind": "installed-companion-native-cli",
+      "license": {
+        "identifier": "AGPL-3.0-or-commercial",
+        "status": "observed-in-local-binary-and-official-license"
+      },
+      "artifact": {
+        "path": "mutool",
+        "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+        "sizeBytes": 41818584
+      },
+      "packaging": {
+        "shape": "native-cli-plus-runtime-libraries",
+        "offline": true,
+        "nativeLibraries": true,
+        "runtimeObserved": {
+          "state": "observed",
+          "text": "mutool version 1.28.2"
+        },
+        "commercialLicenseDecision": "open"
+      }
+    }
+  },
+  "cases": [
+    {
+      "fixture": "public-sample-form",
+      "pdfbox": {
+        "fixtureID": "public-sample-form",
+        "source": {
+          "relativePath": "benchmark/results/public-sample-form.pdf",
+          "sha256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+          "byteCount": 10768,
+          "classes": [
+            "native-form",
+            "static-form"
+          ],
+          "privacyClass": "external-sample-license-unresolved",
+          "sourceKind": "external-sample-license-unresolved"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 1,
+            "fieldCount": 6,
+            "fieldTypes": [
+              "PDCheckBox",
+              "PDChoice",
+              "PDNonTerminalField",
+              "PDRadioButton",
+              "PDTextField"
+            ],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "semanticFieldState": "passed",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "47ceebcc883034ad11365e4fa0b9e1925470066e89a851957d6d9242e8330e94",
+            "outputByteCount": 6759
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "public-sample-form",
+        "source": {
+          "relativePath": "benchmark/results/public-sample-form.pdf",
+          "sha256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+          "byteCount": 10768,
+          "classes": [
+            "native-form",
+            "static-form"
+          ],
+          "privacyClass": "external-sample-license-unresolved",
+          "sourceKind": "external-sample-license-unresolved"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "73f0cc98f6e1f77320004fe7ff24b781f0ed034396ae160076cb4c2c131cc63b"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "19573673ad5ebec73767a9231594898113e49e88959b3786e8146e39537d1016",
+            "outputByteCount": 9594,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "navigation-metadata",
+      "pdfbox": {
+        "fixtureID": "navigation-metadata",
+        "source": {
+          "relativePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+          "sha256": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+          "byteCount": 15466,
+          "classes": [
+            "mixed-content",
+            "static-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/navigation-corpus/navigation-metadata.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 3,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "3",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 3,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "72b98c86682c6d758f328bfaaacca967a3c1c785d68b4c78905274aaa951e3d8",
+            "outputByteCount": 10847
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "navigation-metadata",
+        "source": {
+          "relativePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+          "sha256": "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+          "byteCount": 15466,
+          "classes": [
+            "mixed-content",
+            "static-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/navigation-corpus/navigation-metadata.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 3,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "3",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "74123f46931e1d4f0d7a586430fb9bb64bbaf304a4cd56ac6c919d0943e141bd"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "661285ad66139848b95505cb7d230eadc6b97d414c9e2361630cd3309432cd52",
+            "outputByteCount": 14747,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "pdfkit-widget-fixture",
+      "pdfbox": {
+        "fixtureID": "pdfkit-widget-fixture",
+        "source": {
+          "relativePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+          "sha256": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
+          "byteCount": 15299,
+          "classes": [
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 1,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "ee73ac756dbf47ea959d01837973d799a4850af40e2529dba80bc92dbdfbfec1",
+            "outputByteCount": 12653
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "pdfkit-widget-fixture",
+        "source": {
+          "relativePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+          "sha256": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
+          "byteCount": 15299,
+          "classes": [
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "b234cbc99f688e69f3a2d98e0e0e3b34614caabf9c37b1f44d3d0692c0651b58"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "53ee724c6c49f55c83275a0fa960f0577cb5b0145f10815bb15633eb2eac40a7",
+            "outputByteCount": 14931,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "encrypted-reader",
+      "pdfbox": {
+        "fixtureID": "encrypted-reader",
+        "source": {
+          "relativePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+          "sha256": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
+          "byteCount": 17733,
+          "classes": [
+            "encrypted",
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "qpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/encrypted-reader.pdf: invalid password\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "unsupported",
+            "pageCount": null,
+            "fieldCount": null,
+            "fieldTypes": [],
+            "failureMode": "encrypted-no-password"
+          },
+          "rewrite": {
+            "status": "unsupported",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "unknown",
+            "independentRaster": "unknown",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": null,
+            "outputByteCount": null
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "encrypted-reader",
+        "source": {
+          "relativePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+          "sha256": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
+          "byteCount": 17733,
+          "classes": [
+            "encrypted",
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "qpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/encrypted-reader.pdf: invalid password\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "unknown",
+            "infoExit": "failed",
+            "text": {
+              "status": "unknown",
+              "reasonCode": "mupdfTextExtractionFailed"
+            }
+          },
+          "rewrite": {
+            "status": "unknown",
+            "reasonCode": "mupdfCleanFailed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "unknown"
+            },
+            "reader.textExtraction": {
+              "status": "unknown"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "truncated-128-bytes",
+      "pdfbox": {
+        "fixtureID": "truncated-128-bytes",
+        "source": {
+          "relativePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+          "sha256": "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
+          "byteCount": 128,
+          "classes": [
+            "malformed"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "WARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: file is damaged\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: can't find startxref\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: Attempting to reconstruct cross-reference table\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 124): expected endstream\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 75): attempting to recover stream length\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 75): unable to recover stream data; treating stream as empty\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 128): expected endobj\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 128): EOF after endobj\nqpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: unable to find trailer dictionary while recovering damaged file\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": true
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "unknown",
+            "reasonCode": "pdfboxProbeFailed"
+          },
+          "rewrite": {
+            "status": "unknown",
+            "reasonCode": "providerProcessFailed"
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "truncated-128-bytes",
+        "source": {
+          "relativePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+          "sha256": "3b70218c05a4f4bbb38248af32153802e8b99e955d2161f856dc8cb29d624ea1",
+          "byteCount": 128,
+          "classes": [
+            "malformed"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "WARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: file is damaged\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: can't find startxref\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: Attempting to reconstruct cross-reference table\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 124): expected endstream\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 75): attempting to recover stream length\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 75): unable to recover stream data; treating stream as empty\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 128): expected endobj\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf (object 3 0, offset 128): EOF after endobj\nqpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/truncated-128-bytes.pdf: unable to find trailer dictionary while recovering damaged file\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": true
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "unknown",
+            "infoExit": "failed",
+            "text": {
+              "status": "unknown",
+              "reasonCode": "mupdfTextExtractionFailed"
+            }
+          },
+          "rewrite": {
+            "status": "failed",
+            "reopen": "failed",
+            "outputDigest": "2dd510d363be86d70259db03a29f57593c8efc83ff2ae6b9389c471cfd896ac1",
+            "outputByteCount": 91,
+            "semanticText": "unknown",
+            "independentRaster": "unknown"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "unknown"
+            },
+            "reader.textExtraction": {
+              "status": "unknown"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "repeated-20-pages",
+      "pdfbox": {
+        "fixtureID": "repeated-20-pages",
+        "source": {
+          "relativePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+          "sha256": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
+          "byteCount": 39839,
+          "classes": [
+            "large",
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/repeated-20-pages.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 20,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "20",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 20,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "e1fb11a645620fdc6cbea91e27cd563e0f8f0af6b0696d3e1d418cb55a7e1e0f",
+            "outputByteCount": 13620
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "repeated-20-pages",
+        "source": {
+          "relativePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+          "sha256": "d195dd6e80efe3b12edfcf1c80607e60846a541386d423e52f5856ce352107c6",
+          "byteCount": 39839,
+          "classes": [
+            "large",
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/security-corpus/repeated-20-pages.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 20,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "20",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "b8952f385d57f615873d7e35fcc60b6b5ef1679150c2a8218dcd1fe4b3f11002"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "844f2551a7da38e68defac1e5efb0797a243470f7decc6bffb4083ef4748d32d",
+            "outputByteCount": 36728,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "printed-scan",
+      "pdfbox": {
+        "fixtureID": "printed-scan",
+        "source": {
+          "relativePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
+          "sha256": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
+          "byteCount": 14506,
+          "classes": [
+            "scanned"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/ocr-corpus/printed-scan.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 1,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "437964e00aacedb93ee9733601984b6df5f87cbb8f45eb3538e7225ba089aa8e",
+            "outputByteCount": 13137
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "printed-scan",
+        "source": {
+          "relativePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
+          "sha256": "f0a105c36837749ebbd6a0c0ddf46c86ac6d47407be9e26308bd403ebd60fba3",
+          "byteCount": 14506,
+          "classes": [
+            "scanned"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/ocr-corpus/printed-scan.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "01380cc3646d7b365db6fe0530f07184c25b9a0cf21d0c255ca003cacba029ae"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "a9a8bc50b27352ef8ae69d049c3993c1929451d1964fd9bd9087d3616646988e",
+            "outputByteCount": 13332,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "rotated-widget-90",
+      "pdfbox": {
+        "fixtureID": "rotated-widget-90",
+        "source": {
+          "relativePath": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+          "sha256": "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+          "byteCount": 15303,
+          "classes": [
+            "rotated",
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/rotation-corpus/rotated-widget-90.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "90",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 1,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "0714ba32e1fcf93904f87f367319606e7c1421bef87917054b514a830c52b786",
+            "outputByteCount": 12631
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "rotated-widget-90",
+        "source": {
+          "relativePath": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+          "sha256": "bc7c40a80dc662258b99680c3d73dea05a1b9f297576410e21a0690b2e2711b2",
+          "byteCount": 15303,
+          "classes": [
+            "rotated",
+            "native-form"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/rotation-corpus/rotated-widget-90.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "90",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "b653bca1b9987cedcf691934a78cdcc21e4e637189629bd822e5a95d066eec8b"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "2803663a76fe417c9e139904adb73116b7c1b819d964cd17f41ca2ea75efc186",
+            "outputByteCount": 14938,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "rotated-form6-mixed",
+      "pdfbox": {
+        "fixtureID": "rotated-form6-mixed",
+        "source": {
+          "relativePath": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+          "sha256": "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+          "byteCount": 254106,
+          "classes": [
+            "rotated",
+            "static-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/rotation-corpus/rotated-form6-mixed.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 2,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "yes",
+              "form": "none",
+              "pages": "2",
+              "encrypted": "no",
+              "page_rot": "90",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 2,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "5e9b7cde2041628a6ac695292ff236c9d8cf8b5a2786cd152de6566516a2409d",
+            "outputByteCount": 151586
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "rotated-form6-mixed",
+        "source": {
+          "relativePath": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+          "sha256": "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+          "byteCount": 254106,
+          "classes": [
+            "rotated",
+            "static-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/rotation-corpus/rotated-form6-mixed.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 2,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "yes",
+              "form": "none",
+              "pages": "2",
+              "encrypted": "no",
+              "page_rot": "90",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "a1294c92a7642650a2419c3736bee6a6616b9c5649976e9acb640aa12fde34c5"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "7ad96d4284978ab62e575b887e2411fa0d654511de2d85a4880f2e7383ee9c49",
+            "outputByteCount": 244789,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "hybrid-text-raster-form",
+      "pdfbox": {
+        "fixtureID": "hybrid-text-raster-form",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+          "sha256": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+          "byteCount": 22238,
+          "classes": [
+            "mixed-content",
+            "native-form",
+            "scanned"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/hybrid-text-raster-form.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 2,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "2",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 2,
+            "fieldCount": 6,
+            "fieldTypes": [
+              "PDCheckBox",
+              "PDChoice",
+              "PDNonTerminalField",
+              "PDRadioButton",
+              "PDTextField"
+            ],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "semanticFieldState": "passed",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "830b76942634e6b9acab49dd67df00b22fd8dddd6002840dcc5eaa65ddd4c2ad",
+            "outputByteCount": 18946
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "hybrid-text-raster-form",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+          "sha256": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+          "byteCount": 22238,
+          "classes": [
+            "mixed-content",
+            "native-form",
+            "scanned"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/hybrid-text-raster-form.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 2,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "2",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "a7c98e3ba63df2e469707dca3a502fa668c0a300a9569a96691c23ef1233c43d"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "732fc83382c6885ee58a5bb8ba827b37fb44e1fb43851d155e5066158cd2e372",
+            "outputByteCount": 21598,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "scanned-noisy",
+      "pdfbox": {
+        "fixtureID": "scanned-noisy",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+          "sha256": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+          "byteCount": 723400,
+          "classes": [
+            "scanned",
+            "malformed-layout-negative"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 1,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "0dee857bf8d5a451b00b0e7afbef4a945195449b87b047e7ae64be7b2e4b4419",
+            "outputByteCount": 722031
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "scanned-noisy",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+          "sha256": "f0c1a8d988db267d177079c7530fab7670969b64ed153f891e4997ec725fd4f1",
+          "byteCount": 723400,
+          "classes": [
+            "scanned",
+            "malformed-layout-negative"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf\nPDF Version: 1.3\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.3",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.3"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "eab7b94d16e7bbf962e491ac77e621c8580e20a96754f4455ba14b1c52d30c82"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "f3635b93cb9ff24fe686098199e7fcc6cc6a14b0b8c168087081b19389015a7a",
+            "outputByteCount": 722226,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "rotated-hybrid-90",
+      "pdfbox": {
+        "fixtureID": "rotated-hybrid-90",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+          "sha256": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+          "byteCount": 22260,
+          "classes": [
+            "rotated",
+            "mixed-content",
+            "scanned",
+            "native-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/rotated-hybrid-90.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 2,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "2",
+              "encrypted": "no",
+              "page_rot": "90",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 2,
+            "fieldCount": 6,
+            "fieldTypes": [
+              "PDCheckBox",
+              "PDChoice",
+              "PDNonTerminalField",
+              "PDRadioButton",
+              "PDTextField"
+            ],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "semanticFieldState": "passed",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "c06be9db368936540725e8786707942402c4445bc4ee475c1d97aa0394818d8c",
+            "outputByteCount": 18956
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "rotated-hybrid-90",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+          "sha256": "cb8e3bd42a1b9d3731fc85d71cda88970b2c0ec1c87892a9adaf338e08c55ed3",
+          "byteCount": 22260,
+          "classes": [
+            "rotated",
+            "mixed-content",
+            "scanned",
+            "native-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/rotated-hybrid-90.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 2,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "2",
+              "encrypted": "no",
+              "page_rot": "90",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "5131128bae5f6b3762bf41c7c6f8decfe6c275fcbccaf67f5249e83a23748220"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "451f266ed413841a9ea4a03eeb910c2fa7dfc9ded7306e4bc4610d41235143c7",
+            "outputByteCount": 21618,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "encrypted-hybrid",
+      "pdfbox": {
+        "fixtureID": "encrypted-hybrid",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+          "sha256": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+          "byteCount": 24618,
+          "classes": [
+            "encrypted",
+            "mixed-content",
+            "scanned",
+            "native-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "qpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/encrypted-hybrid.pdf: invalid password\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "unsupported",
+            "pageCount": null,
+            "fieldCount": null,
+            "fieldTypes": [],
+            "failureMode": "encrypted-no-password"
+          },
+          "rewrite": {
+            "status": "unsupported",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "unknown",
+            "independentRaster": "unknown",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": null,
+            "outputByteCount": null
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "encrypted-hybrid",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+          "sha256": "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+          "byteCount": 24618,
+          "classes": [
+            "encrypted",
+            "mixed-content",
+            "scanned",
+            "native-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "qpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/encrypted-hybrid.pdf: invalid password\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "unknown",
+            "infoExit": "failed",
+            "text": {
+              "status": "unknown",
+              "reasonCode": "mupdfTextExtractionFailed"
+            }
+          },
+          "rewrite": {
+            "status": "unknown",
+            "reasonCode": "mupdfCleanFailed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "unknown"
+            },
+            "reader.textExtraction": {
+              "status": "unknown"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "malformed-hybrid-truncated",
+      "pdfbox": {
+        "fixtureID": "malformed-hybrid-truncated",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+          "sha256": "98f9a51e4cbdef0e146f52f2658b1f2d4d3a1d5b057f85791aae7cf2d8b99bfe",
+          "byteCount": 512,
+          "classes": [
+            "malformed",
+            "mixed-content"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "WARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: file is damaged\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: can't find startxref\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: Attempting to reconstruct cross-reference table\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf (object 6 0, offset 512): parse error while reading object\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf (object 6 0, offset 512): unexpected EOF\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: unable to find trailer dictionary while recovering damaged file\nWARNING: object 6 0: Pages tree includes non-dictionary object; ignoring\nWARNING: object 7 0: Pages tree includes non-dictionary object; ignoring\nqpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: unable to find any pages while recovering damaged file\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": true
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "recovered-with-warning",
+            "pageCount": 0,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "recovered-with-warning",
+            "reopen": "passed",
+            "semanticFieldState": "passed",
+            "independentText": "unknown",
+            "independentRaster": "unknown",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "3b19fcd28ad841592854db8f5626f2a29ddaa843eea8c67e6cc7023e9722de24",
+            "outputByteCount": 638
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "malformed-hybrid-truncated",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+          "sha256": "98f9a51e4cbdef0e146f52f2658b1f2d4d3a1d5b057f85791aae7cf2d8b99bfe",
+          "byteCount": 512,
+          "classes": [
+            "malformed",
+            "mixed-content"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "failed",
+            "detail": "WARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: file is damaged\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: can't find startxref\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: Attempting to reconstruct cross-reference table\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf (object 6 0, offset 512): parse error while reading object\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf (object 6 0, offset 512): unexpected EOF\nWARNING: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: unable to find trailer dictionary while recovering damaged file\nWARNING: object 6 0: Pages tree includes non-dictionary object; ignoring\nWARNING: object 7 0: Pages tree includes non-dictionary object; ignoring\nqpdf: /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf: unable to find any pages while recovering damaged file\n"
+          },
+          "pdfInfo": {
+            "status": "unknown",
+            "errorCode": "pdfinfoFailed"
+          },
+          "malformedExpected": true
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "unknown",
+            "infoExit": "failed",
+            "text": {
+              "status": "unknown",
+              "reasonCode": "mupdfTextExtractionFailed"
+            }
+          },
+          "rewrite": {
+            "status": "unknown",
+            "reasonCode": "mupdfCleanFailed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "unknown"
+            },
+            "reader.textExtraction": {
+              "status": "unknown"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "large-hybrid-40-pages",
+      "pdfbox": {
+        "fixtureID": "large-hybrid-40-pages",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+          "sha256": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+          "byteCount": 183549,
+          "classes": [
+            "large",
+            "mixed-content",
+            "scanned",
+            "native-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/large-hybrid-40-pages.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 40,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "40",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 40,
+            "fieldCount": 120,
+            "fieldTypes": [
+              "PDCheckBox",
+              "PDChoice",
+              "PDNonTerminalField",
+              "PDRadioButton",
+              "PDTextField"
+            ],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "semanticFieldState": "passed",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "44926b70ec637a00e4fc68b4d636e5e17add21f2b71d32e1a966b49b3927db7d",
+            "outputByteCount": 111471
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "large-hybrid-40-pages",
+        "source": {
+          "relativePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+          "sha256": "8f035f4c742116710f17d2d2470e1b1931df4983faa8382847374e5853b02049",
+          "byteCount": 183549,
+          "classes": [
+            "large",
+            "mixed-content",
+            "scanned",
+            "native-form"
+          ],
+          "privacyClass": "local-derived-no-personal-content",
+          "sourceKind": "local-derived-no-personal-content"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/large-hybrid-40-pages.pdf\nPDF Version: 1.7\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 40,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.7",
+            "normalized": {
+              "tagged": "no",
+              "form": "AcroForm",
+              "pages": "40",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.7"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "79ca705d75fd84dc3a35e43353771c35770d4dab78ec1ac986aa2bda6b32bd43"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "fd0e15d89a1d132673b7fc122c533e50c8d1f158b2c7afbd7bb573de852a7ca4",
+            "outputByteCount": 171528,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    },
+    {
+      "fixture": "handwritten-simulated-entries",
+      "pdfbox": {
+        "fixtureID": "handwritten-simulated-entries",
+        "source": {
+          "relativePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+          "sha256": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+          "byteCount": 68213,
+          "classes": [
+            "handwritten",
+            "scanned",
+            "static-form",
+            "mixed-content"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/governed-corpus/handwritten-simulated-entries.pdf\nPDF Version: 1.4\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.4",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.4"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-pdfbox",
+            "engineFamily": "apache-pdfbox",
+            "version": "3.0.8",
+            "runtimeKind": "installed-companion-java",
+            "license": {
+              "identifier": "Apache-2.0",
+              "status": "observed-in-local-artifact-and-official-release"
+            },
+            "artifact": {
+              "path": "benchmark/pdfbox-lane/pdfbox-app-3.0.8.jar",
+              "sha256": "f6b3a80c39747ff0ef5d06708bc03882152403de58dbef4a1fbffbee568eceb1",
+              "sha512": "768847238f683568507bf73570a2b6fedcbe58b25c7b4f97fba536ba110b290fe96ba065aed58629d41fb94857d76bc1978c2f31d294b553c69f287f71ee9600",
+              "publishedSha512Matches": true,
+              "sizeBytes": 13602031
+            },
+            "packaging": {
+              "shape": "fat-jar-plus-jvm",
+              "offline": true,
+              "nativeLibraries": false,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "openjdk version \"17.0.15\" 2025-04-15\nOpenJDK Runtime Environment Homebrew (build 17.0.15+0)\nOpenJDK 64-Bit Server VM Homebrew (build 17.0.15+0, mixed mode, sharing)"
+              },
+              "dependencyNoticeReview": "required"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "pageCount": 1,
+            "fieldCount": 0,
+            "fieldTypes": [],
+            "failureMode": null
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "notProven",
+            "semanticFieldState": "notApplicable",
+            "independentText": "passed",
+            "independentRaster": "passed",
+            "providerRasterAE": "not-run-java2d-phase",
+            "outputDigest": "9cf17257dd44c21b3d9b6c0ddb90ed8c7f0adfbb7e19cee806e943a6cfc37dea",
+            "outputByteCount": 67645
+          },
+          "recovery": {
+            "status": "passed-with-invalid-staged-artifact",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "passed",
+            "providerProducedArtifact": true,
+            "publishedValidOutput": false
+          }
+        }
+      },
+      "mupdf": {
+        "fixtureID": "handwritten-simulated-entries",
+        "source": {
+          "relativePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+          "sha256": "793ce1da8da8934d07aacd86aeda2bd624147e97dba586999dfecc1e7893f897",
+          "byteCount": 68213,
+          "classes": [
+            "handwritten",
+            "scanned",
+            "static-form",
+            "mixed-content"
+          ],
+          "privacyClass": "synthetic-local",
+          "sourceKind": "synthetic-local"
+        },
+        "input": {
+          "qpdfCheck": {
+            "status": "passed",
+            "detail": "checking /Users/pranay/Projects/pdf_editor/benchmark/results/governed-corpus/handwritten-simulated-entries.pdf\nPDF Version: 1.4\nFile is not encrypted\nFile is not linearized\nNo syntax or stream encoding errors found; the file may still contain\nerrors that qpdf cannot detect\n"
+          },
+          "pdfInfo": {
+            "status": "passed",
+            "pageCount": 1,
+            "pageSize": null,
+            "encrypted": false,
+            "pdfVersion": "1.4",
+            "normalized": {
+              "tagged": "no",
+              "form": "none",
+              "pages": "1",
+              "encrypted": "no",
+              "page_rot": "0",
+              "optimized": "no",
+              "pdf_version": "1.4"
+            }
+          },
+          "malformedExpected": false
+        },
+        "normalization": {
+          "ignoredProviderFields": [
+            "objectIDs",
+            "xrefOffsets",
+            "creationDate",
+            "modDate",
+            "outputDigest",
+            "runtimeTimestamps"
+          ],
+          "textComparison": "normalized-whitespace-sha256",
+          "rasterComparison": "independent-Poppler-page-1-sha256",
+          "statusVocabulary": [
+            "passed",
+            "failed",
+            "unsupported",
+            "unknown",
+            "diverged"
+          ]
+        },
+        "providerResult": {
+          "provider": {
+            "providerID": "companion-mupdf",
+            "engineFamily": "mupdf",
+            "version": "1.28.2",
+            "runtimeKind": "installed-companion-native-cli",
+            "license": {
+              "identifier": "AGPL-3.0-or-commercial",
+              "status": "observed-in-local-binary-and-official-license"
+            },
+            "artifact": {
+              "path": "mutool",
+              "sha256": "8a1023714e8076a8ffa75e5ed1cf59b54e089e9990b9a9df52682a5c5616d7cd",
+              "sizeBytes": 41818584
+            },
+            "packaging": {
+              "shape": "native-cli-plus-runtime-libraries",
+              "offline": true,
+              "nativeLibraries": true,
+              "runtimeObserved": {
+                "state": "observed",
+                "text": "mutool version 1.28.2"
+              },
+              "commercialLicenseDecision": "open"
+            }
+          },
+          "inspection": {
+            "status": "passed",
+            "infoExit": "passed",
+            "text": {
+              "status": "passed",
+              "normalizedDigest": "3e47ad7720f4444504b71b53f39168dc82b537282817ca3d6fb7e10ff6a85744"
+            }
+          },
+          "rewrite": {
+            "status": "passed",
+            "reopen": "passed",
+            "outputDigest": "3526623880dc309fe5cf366f9ffe48a406e66305a306ed36fbd10fbf528a54ea",
+            "outputByteCount": 67863,
+            "semanticText": "passed",
+            "independentRaster": "passed"
+          },
+          "supportedOperations": {
+            "reader.render": {
+              "status": "passed"
+            },
+            "reader.textExtraction": {
+              "status": "passed"
+            },
+            "edit.nativeFormBake": {
+              "status": "available-command-not-equivalent-to-field-fill",
+              "command": "mutool bake"
+            },
+            "edit.existingText": {
+              "status": "unsupported-by-cli-lane",
+              "reasonCode": "no-typed-text-replacement-operation"
+            },
+            "edit.redaction": {
+              "status": "available-command-not-yet-admitted",
+              "command": "mutool clean -s",
+              "requires": "separate-redaction-completeness-gate"
+            }
+          },
+          "recovery": {
+            "status": "passed",
+            "expectation": "malformed-input-does-not-publish-a-valid-output",
+            "providerExit": "failed",
+            "providerProducedArtifact": false,
+            "publishedValidOutput": false
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "pdfbox": {
+      "inspection.passed": 12,
+      "rewrite.passed": 12,
+      "recovery.passed": 13,
+      "inspection.unsupported": 2,
+      "rewrite.unsupported": 2,
+      "inspection.unknown": 1,
+      "rewrite.unknown": 1,
+      "recovery.passed-with-invalid-staged-artifact": 3,
+      "inspection.recovered-with-warning": 1,
+      "rewrite.recovered-with-warning": 1
+    },
+    "mupdf": {
+      "inspection.passed": 12,
+      "rewrite.passed": 12,
+      "recovery.passed": 10,
+      "recovery.passed-with-invalid-staged-artifact": 6,
+      "inspection.unknown": 4,
+      "rewrite.unknown": 3,
+      "rewrite.failed": 1
+    },
+    "comparison": [
+      {
+        "fixture": "public-sample-form",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "navigation-metadata",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "pdfkit-widget-fixture",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed",
+          "right": "passed-with-invalid-staged-artifact"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "encrypted-reader",
+        "inspection": {
+          "status": "unknown",
+          "left": "unsupported",
+          "right": "unknown"
+        },
+        "rewrite": {
+          "status": "unknown",
+          "left": "unsupported",
+          "right": "unknown"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed",
+          "right": "passed-with-invalid-staged-artifact"
+        },
+        "semantic": {
+          "pdfbox": "unknown",
+          "mupdf": "notMeasured",
+          "independentRaster": "notMeasured"
+        }
+      },
+      {
+        "fixture": "truncated-128-bytes",
+        "inspection": {
+          "status": "aligned",
+          "state": "unknown"
+        },
+        "rewrite": {
+          "status": "unknown",
+          "left": "unknown",
+          "right": "failed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed",
+          "right": "passed-with-invalid-staged-artifact"
+        },
+        "semantic": {
+          "pdfbox": "notMeasured",
+          "mupdf": "unknown",
+          "independentRaster": "unknown"
+        }
+      },
+      {
+        "fixture": "repeated-20-pages",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "printed-scan",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed-with-invalid-staged-artifact",
+          "right": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "rotated-widget-90",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "rotated-form6-mixed",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "hybrid-text-raster-form",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed",
+          "right": "passed-with-invalid-staged-artifact"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "scanned-noisy",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed-with-invalid-staged-artifact",
+          "right": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "rotated-hybrid-90",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed",
+          "right": "passed-with-invalid-staged-artifact"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "encrypted-hybrid",
+        "inspection": {
+          "status": "unknown",
+          "left": "unsupported",
+          "right": "unknown"
+        },
+        "rewrite": {
+          "status": "unknown",
+          "left": "unsupported",
+          "right": "unknown"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "unknown",
+          "mupdf": "notMeasured",
+          "independentRaster": "notMeasured"
+        }
+      },
+      {
+        "fixture": "malformed-hybrid-truncated",
+        "inspection": {
+          "status": "unknown",
+          "left": "recovered-with-warning",
+          "right": "unknown"
+        },
+        "rewrite": {
+          "status": "unknown",
+          "left": "recovered-with-warning",
+          "right": "unknown"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed",
+          "right": "passed-with-invalid-staged-artifact"
+        },
+        "semantic": {
+          "pdfbox": "unknown",
+          "mupdf": "notMeasured",
+          "independentRaster": "notMeasured"
+        }
+      },
+      {
+        "fixture": "large-hybrid-40-pages",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      },
+      {
+        "fixture": "handwritten-simulated-entries",
+        "inspection": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "rewrite": {
+          "status": "aligned",
+          "state": "passed"
+        },
+        "recovery": {
+          "status": "diverged",
+          "left": "passed-with-invalid-staged-artifact",
+          "right": "passed"
+        },
+        "semantic": {
+          "pdfbox": "passed",
+          "mupdf": "passed",
+          "independentRaster": "passed"
+        }
+      }
+    ]
+  },
+  "evidence": {
+    "tier": "Tier 3 local integration",
+    "sensitivity": "S1 with recovery and mutation-sensitive checks delegated to bakeoff test",
+    "claims": [
+      "Provider capability and preservation are reported independently.",
+      "Output digests, timestamps, object IDs, and xref details are not semantic parity fields.",
+      "A successful provider process is not sufficient: independent qpdf, Poppler, reopen, and recovery observations are recorded.",
+      "License observations are provenance evidence and not legal approval to ship."
+    ]
+  }
+}

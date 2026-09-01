@@ -208,12 +208,11 @@ public enum ContentInvariantRasterExtractor {
                 let offset = (y * width + x) * 4
                 guard offset + 3 < byteCount else { continue }
                 // Luminance: 0.299R + 0.587G + 0.114B
-                grayscale[y * width + x] = UInt8(
-                    min(255, Int(
-                        Double(bytes[offset]) * 0.299
-                        + Double(bytes[offset + 1]) * 0.587
-                        + Double(bytes[offset + 2]) * 0.114))
-                )
+                let r = Double(bytes[offset])
+                let g = Double(bytes[offset + 1])
+                let b = Double(bytes[offset + 2])
+                let luminance = r * 0.299 + g * 0.587 + b * 0.114
+                grayscale[y * width + x] = UInt8(min(255, Int(luminance)))
             }
         }
 

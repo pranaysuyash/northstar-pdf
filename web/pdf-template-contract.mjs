@@ -167,6 +167,160 @@ function compareReadingOrder(left, right) {
     : left.bounds.x - right.bounds.x;
 }
 
+const V2_CELL_SIZE = 4; // Must match LayoutFingerprintV2.cellSizePoints
+const V2_RASTER_CELL_SIZE = 32; // 8× coarser than text cells, matches native
+const V2_RASTER_SCALE = 0.15; // Render at 15% for speed (~2ms per page)
+const V2_RASTER_THRESHOLD = 0.05; // 2×2 cluster must be ≥5% non-blank
+
+/**
+ * Map a rect to a set of grid cell keys ("col,row") matching the native
+ * LayoutFingerprintV2 cell computation. A rect populates every cell it
+ * touches (its bounding box intersected with the grid).
+ */
+function cellsForRect(bounds, cellSize) {
+  if (!bounds || bounds.width <= 0 || bounds.height <= 0) return new Set();
+  const minCol = Math.floor(bounds.x / cellSize);
+  const maxCol = Math.floor((bounds.x + bounds.width) / cellSize);
+  const minRow = Math.floor(bounds.y / cellSize);
+  const maxRow = Math.floor((bounds.y + bounds.height) / cellSize);
+  const cells = new Set();
+  for (let row = minRow; row <= maxRow; row++) {
+    for (let col = minCol; col <= maxCol; col++) {
+      cells.add(`${col},${row}`);
+    }
+  }
+  return cells;
+}
+
+/**
+ * Extract raster cells from a PDF.js page by rendering at low resolution
+ * and sampling grid cell centers for non-blank pixels. Matches the native
+ * LayoutFingerprintV2Extractor.extractRasterCells algorithm.
+ *
+ * @param {Object} page - PDF.js page object
+ * @param {Object} bounds - Page bounds {x, y, width, height}
+ * @returns {Set<string>} Set of "col,row" cell keys
+ */
+/**
+ * Extract text cells from PDF.js text content items.
+ * Maps each character position to a grid cell, matching the native
+ * LayoutFingerprintV2 text cell extraction (characterBounds → cell).
+ * Excludes characters that overlap with field widgets.
+ *
+ * @param {Array} textItems - PDF.js getTextContent().items
+ * @param {Object} bounds - Page bounds {x, y, width, height}
+ * @param {Array} fieldBounds - Field widget bounds to exclude
+ * @returns {Set<string>} Set of "col,row" cell keys
+ */
+export function extractTextCells(textItems, bounds, fieldBounds = []) {
+  if (!textItems?.length || !bounds) return new Set();
+  const cells = new Set();
+  for (const item of textItems) {
+    const str = item.str || "";
+    if (!str.trim()) continue;
+    // PDF.js transform: [scaleX, skewY, skewX, scaleY, tx, ty]
+    const transform = item.transform;
+    if (!transform) continue;
+    const tx = transform[4];
+    const ty = transform[5];
+    const itemWidth = item.width || 0;
+    const itemHeight = item.height || 0;
+    // Skip if outside page bounds
+    if (tx < bounds.x || ty < bounds.y) continue;
+    // Skip if inside a field widget (field cells cover these)
+    const charBounds = { x: tx, y: ty, width: itemWidth, height: itemHeight };
+    const inField = fieldBounds.some(fb =>
+      charBounds.x >= fb.x && charBounds.x <= fb.x + fb.width &&
+      charBounds.y >= fb.y && charBounds.y <= fb.y + fb.height
+    );
+    if (inField) continue;
+    // Map to grid cell
+    const col = Math.floor(tx / V2_CELL_SIZE);
+    const row = Math.floor(ty / V2_CELL_SIZE);
+    cells.add(`${col},${row}`);
+  }
+  return cells;
+}
+
+export async function extractRasterCells(page, bounds) {
+  if (!bounds || bounds.width <= 0 || bounds.height <= 0) return new Set();
+  try {
+    const scale = V2_RASTER_SCALE;
+    const viewport = page.getViewport({ scale });
+    const canvas = new OffscreenCanvas(viewport.width, viewport.height);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return new Set();
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    const width = canvas.width;
+    const height = canvas.height;
+    const cols = Math.ceil(bounds.width / V2_RASTER_CELL_SIZE);
+    const rows = Math.ceil(bounds.height / V2_RASTER_CELL_SIZE);
+    const cells = new Set();
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const cellMidX = (col + 0.5) * V2_RASTER_CELL_SIZE;
+        const cellMidY = (row + 0.5) * V2_RASTER_CELL_SIZE;
+        const px = Math.floor((cellMidX / bounds.width) * width);
+        const py = Math.floor((cellMidY / bounds.height) * height);
+        let nonBlankCount = 0;
+        let sampleCount = 0;
+        for (let dx = 0; dx < 2; dx++) {
+          for (let dy = 0; dy < 2; dy++) {
+            const sx = Math.min(Math.max(px + dx, 0), width - 1);
+            const sy = Math.min(Math.max(py + dy, 0), height - 1);
+            const offset = (sy * width + sx) * 4;
+            const r = pixels[offset];
+            const g = pixels[offset + 1];
+            const b = pixels[offset + 2];
+            sampleCount += 1;
+            if (r < 245 || g < 245 || b < 245) nonBlankCount += 1;
+          }
+        }
+        if (sampleCount > 0 && nonBlankCount / sampleCount >= V2_RASTER_THRESHOLD) {
+          cells.add(`${col},${row}`);
+        }
+      }
+    }
+    return cells;
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * Compute V2 cell tokens for a page from bounds arrays.
+ * Each cell position is HMAC-keyed to match the native side.
+ */
+async function computeWebCellTokens(boundsArrays, workspaceKey) {
+  const cellSet = new Set();
+  for (const bounds of boundsArrays) {
+    for (const cell of cellsForRect(bounds, V2_CELL_SIZE)) {
+      cellSet.add(cell);
+    }
+  }
+  const tokens = [];
+  for (const cell of cellSet) {
+    tokens.push(await hmacToken(cell, workspaceKey));
+  }
+  return tokens.sort();
+}
+
+/**
+ * HMAC-key a set of raster cell keys into tokens.
+ * @param {Set<string>} cellSet - Set of "col,row" keys from extractRasterCells
+ * @param {string} workspaceKey - HMAC key
+ * @returns {Promise<string[]>} Sorted array of HMAC-tokenized cell strings
+ */
+async function tokenizeRasterCells(cellSet, workspaceKey) {
+  const tokens = [];
+  for (const cell of cellSet) {
+    tokens.push(await hmacToken(cell, workspaceKey));
+  }
+  return tokens.sort();
+}
+
 function canonicalDescriptor(pageSignatures) {
   return pageSignatures.map((page) => {
     const fields = page.nativeFieldKinds.join(",");
@@ -180,6 +334,12 @@ function canonicalDescriptor(pageSignatures) {
       region.anchorToken || "none",
       String(region.groupMemberCount)
     ].join("~")).join("|");
+    const cells = [
+      (page.textCellTokens || []).join(","),
+      (page.fieldCellTokens || []).join(","),
+      (page.annotationCellTokens || []).join(","),
+      (page.rasterCellTokens || []).join(",")
+    ].join(";");
     return [
       String(page.pageIndex),
       `${Number(page.widthPoints).toFixed(3)},${Number(page.heightPoints).toFixed(3)}`,
@@ -187,7 +347,8 @@ function canonicalDescriptor(pageSignatures) {
       fields,
       names,
       anchors,
-      regions
+      regions,
+      cells
     ].join("#");
   }).join("\n");
 }
@@ -223,6 +384,19 @@ export async function createTemplateFingerprint({ document, workspaceKey, includ
     for (const field of fields) {
       nativeFieldNameTokens.push(await hmacToken(normalizeStructuralText(field.name), workspaceKey));
     }
+    // V2 cell channels: compute grid cells from field and candidate bounds,
+    // and from raster cell extraction (if provided in page data).
+    const fieldBounds = fields.map((field) => field.bounds).filter(Boolean);
+    const annotationBounds = candidates.map((candidate) => candidate.bounds).filter(Boolean);
+    const fieldCellTokens = await computeWebCellTokens(fieldBounds, workspaceKey);
+    const annotationCellTokens = await computeWebCellTokens(annotationBounds, workspaceKey);
+    // Raster cells: pre-extracted by the app during page rendering.
+    // The app calls extractRasterCells() per page and stores the result
+    // in page.rasterCellKeys before calling createTemplateFingerprint.
+    const rasterCellKeys = page.rasterCellKeys || [];
+    const rasterCellTokens = rasterCellKeys.length > 0
+      ? await tokenizeRasterCells(new Set(rasterCellKeys), workspaceKey)
+      : [];
     pageSignatures.push({
       pageIndex: page.pageIndex,
       widthPoints: page.bounds.width,
@@ -231,14 +405,18 @@ export async function createTemplateFingerprint({ document, workspaceKey, includ
       nativeFieldKinds: fields.map((field) => field.kind),
       nativeFieldNameTokens,
       anchorTokens: pageAnchors,
-      regionSignatures
+      regionSignatures,
+      textCellTokens: await tokenizeRasterCells(new Set(page.textCellKeys || []), workspaceKey),
+      fieldCellTokens,
+      annotationCellTokens,
+      rasterCellTokens
     });
   }
   const layoutFingerprint = await hmacToken(canonicalDescriptor(pageSignatures), workspaceKey);
   return {
     algorithm: "layout-v1+hmac-sha256",
     keyScope: "workspace",
-    featureVersion: "layout-features-1",
+    featureVersion: pageSignatures.some((p) => p.textCellTokens?.length > 0 || p.fieldCellTokens?.length > 0 || p.annotationCellTokens?.length > 0 || p.rasterCellTokens?.length > 0) ? "layout-features-2" : "layout-features-1",
     layoutFingerprint,
     exactSourceDigests: includeExactSourceDigest && payload.source?.sha256 ? [payload.source.sha256] : [],
     pageSignatures

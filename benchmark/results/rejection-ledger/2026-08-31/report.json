@@ -1,0 +1,116 @@
+{
+  "contract": "pdf-editor.rejection-comparison-report",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "sourceDigests": [
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  ],
+  "providerSummaries": {
+    "pdfkit": {
+      "providerKind": "native",
+      "attemptCount": 2,
+      "rejectedCount": 2,
+      "codes": [
+        "staleSourceDigest",
+        "unsupportedOperation"
+      ]
+    },
+    "pdfjs-pdflib": {
+      "providerKind": "browser",
+      "attemptCount": 2,
+      "rejectedCount": 2,
+      "codes": [
+        "staleSourceDigest",
+        "unsupportedOperation"
+      ]
+    },
+    "companion-pdfbox": {
+      "providerKind": "companion",
+      "attemptCount": 2,
+      "rejectedCount": 2,
+      "codes": [
+        "providerUnavailable",
+        "staleSourceDigest"
+      ]
+    }
+  },
+  "comparisons": [
+    {
+      "caseID": "stale-source",
+      "leftProviderID": "pdfkit",
+      "rightProviderID": "pdfjs-pdflib",
+      "sameLineage": true,
+      "sameOutcome": true,
+      "sameCode": true,
+      "sameRecovery": true,
+      "comparable": true,
+      "equivalent": true
+    },
+    {
+      "caseID": "stale-source",
+      "leftProviderID": "pdfkit",
+      "rightProviderID": "companion-pdfbox",
+      "sameLineage": true,
+      "sameOutcome": true,
+      "sameCode": true,
+      "sameRecovery": true,
+      "comparable": true,
+      "equivalent": true
+    },
+    {
+      "caseID": "stale-source",
+      "leftProviderID": "pdfjs-pdflib",
+      "rightProviderID": "companion-pdfbox",
+      "sameLineage": true,
+      "sameOutcome": true,
+      "sameCode": true,
+      "sameRecovery": true,
+      "comparable": true,
+      "equivalent": true
+    },
+    {
+      "caseID": "unsupported-capability",
+      "leftProviderID": "pdfkit",
+      "rightProviderID": "pdfjs-pdflib",
+      "sameLineage": true,
+      "sameOutcome": true,
+      "sameCode": true,
+      "sameRecovery": true,
+      "comparable": true,
+      "equivalent": true
+    },
+    {
+      "caseID": "unsupported-capability",
+      "leftProviderID": "pdfkit",
+      "rightProviderID": "companion-pdfbox",
+      "sameLineage": true,
+      "sameOutcome": true,
+      "sameCode": false,
+      "sameRecovery": false,
+      "comparable": true,
+      "equivalent": false
+    },
+    {
+      "caseID": "unsupported-capability",
+      "leftProviderID": "pdfjs-pdflib",
+      "rightProviderID": "companion-pdfbox",
+      "sameLineage": true,
+      "sameOutcome": true,
+      "sameCode": false,
+      "sameRecovery": false,
+      "comparable": true,
+      "equivalent": false
+    }
+  ],
+  "summary": {
+    "providerCount": 3,
+    "caseCount": 2,
+    "comparisonCount": 6,
+    "comparableCount": 6,
+    "equivalentCount": 4,
+    "disagreementCount": 2,
+    "unknownCount": 0
+  }
+}

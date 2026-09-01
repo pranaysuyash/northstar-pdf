@@ -2,7 +2,7 @@
 
 **Status:** Observed + Verified  
 **Doctrine ref:** §5 Evidence-based, §2 Truth taxonomy  
-**Finding:** Cell-level content-invariant approaches (structural occupancy, edge detection) don't improve family matching because the binding constraint is corpus composition. However, **projection profiles** (region-level approach) DO improve matching: they replace cell-level Jaccard for the raster channel, widening the separation gap from 0.8081..0.9477 to 0.7875..0.9507. The raster weight remains at 0.04.
+**Finding:** Projection profiles (region-level, content-invariant) replace cell-level Jaccard for the raster channel, unlocking the weight from 0.02 to 0.24 (12× increase). Maximum viable weight is 0.24 — at 0.26, minPositive drops below the 0.90 threshold. Cell-level approaches (structural occupancy, edge detection) were insufficient because they operate too fine-grained to be content-invariant.
 
 ## Updated evidence (2026-08-31)
 
@@ -10,12 +10,14 @@
 
 Projection profiles project content density onto x/y axes, producing horizontal and vertical histograms. These capture macro-level layout structure (where columns are, where headers end, where sidebars begin) and are inherently content-invariant.
 
-| Measurement | Cell-level Jaccard | Projection profiles |
+| Measurement | Cell-level Jaccard (old) | Projection profiles (new) |
 |---|---|---|
 | Re-encoding raster similarity | 1.000 | 1.000 |
-| minPositive | 0.9477 | 0.9507 |
-| maxHardNegative | 0.8081 | 0.7875 |
-| Separation gap | 0.8081..0.9477 | 0.7875..0.9507 |
+| minPositive (at weight 0.04) | 0.9477 | 0.9507 |
+| maxHardNegative (at weight 0.04) | 0.8081 | 0.7875 |
+| Separation gap (at weight 0.04) | 0.8081..0.9477 | 0.7875..0.9507 |
+| **Maximum viable weight** | **0.02** | **0.24** (12× increase) |
+| **Separation gap at max weight** | **0.8081..0.9467** | **0.7479..0.9012** |
 
 The projection approach works because it operates at a higher structural level than individual cells. Two documents with the same column structure but different text content have similar projection profiles because text occupies the same structural regions.
 
@@ -84,7 +86,7 @@ edge:        0.0622 (4630↔58973 cells)
 combined:    0.0685 (4795↔70000 cells)
 ```
 
-### 3.4 Full corpus calibration (36 fixtures, 233 positive / 397 negative)
+### 3.4 Full corpus calibration (44 fixtures (30 original + 14 diverse-layout), 211 positive / 735 negative)
 ```
 binary:      minPos=0.0582  maxNeg=1.0000  gap=-0.9418
 structural:  minPos=0.0000  maxNeg=1.0000  gap=-1.0000
@@ -119,11 +121,13 @@ To improve family matching, we need:
 | **Connected component analysis** | Group nearby cells into regions, compare region shapes | Moderate — more robust than cell-level |
 | **Layout template matching** | Match against a template of expected structural regions | High — explicit content-invariance |
 
-## 5. Decision
+## 5. Decision (Updated 2026-09-01)
 
-**Keep binary occupancy at 0.02 weight.** The content-invariant approaches explored here don't improve family matching because the corpus composition is the binding constraint, not the extraction method.
+**Projection profiles unlocked 12× weight increase (0.02 → 0.24).** The x/y histogram approach proved superior to cell-level Jaccard because it operates at a higher structural level — measuring WHERE content exists, not WHAT content exists.
 
-**To unlock higher raster weight**, the next step is region-based extraction or projection profiles — approaches that operate at a higher structural level than individual cells.
+**Edge detection and structural occupancy are wired but at minimal weight (5% combined).** The weight sweep showed that cell-level operations add noise that inflates hard-negative scores. At 3% edge + 2% occupancy, the noise stays below the discrimination threshold while adding marginal layout-structure signal.
+
+**The binding constraint is corpus composition, not extraction method.** Graphics-heavy N-family pairs (diverse-graphics-heavy ↔ diverse-scanned-sim) score 0.9723 because they share similar geometry + empty text channels. Further improvement requires either a more diverse corpus or extraction that distinguishes graphics-heavy pages by visual structure rather than cell positions.
 
 ## Files
 

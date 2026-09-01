@@ -1,5 +1,5 @@
 {
-  "corpusSize" : 30,
+  "corpusSize" : 56,
   "excluded" : [
     {
       "name" : "encrypted-hybrid.pdf",
@@ -8,90 +8,98 @@
     {
       "name" : "malformed-hybrid-truncated.pdf",
       "reason" : "malformed (pikepdf PdfError)"
+    },
+    {
+      "name" : "encrypted-reader.pdf",
+      "reason" : "password-encrypted (security-corpus)"
+    },
+    {
+      "name" : "truncated-128-bytes.pdf",
+      "reason" : "truncated (security-corpus)"
     }
   ],
   "familyThreshold" : 0.9,
-  "generatedAt" : "2026-08-28",
-  "hardNegativePairs" : 224,
-  "maxHardNegative" : 0.8132083333333333,
-  "maxPositive" : 0.9999999999999999,
-  "minHardNegative" : 0.04073093636783509,
-  "minPositive" : 0.9708333333333333,
+  "generatedAt" : "2026-08-31",
+  "hardNegativePairs" : 1329,
+  "maxHardNegative" : 0.9885809543936768,
+  "maxPositive" : 1,
+  "minHardNegative" : 0.009177388660830118,
+  "minPositive" : 0.9016969255376681,
   "positivePairs" : 211,
   "schema" : "pdf-editor.layout-v2-family-threshold-calibration",
-  "separationGapMidpoint" : 0.8920208333333333,
+  "separationGapMidpoint" : 0.9451389399656724,
   "topHardNegatives" : [
     {
-      "a" : "hybrid-text-raster-form.pdf",
-      "b" : "multi-column.pdf",
-      "classes" : [
-        "B",
-        "N"
-      ],
-      "similarity" : 0.8132083333333333
-    },
-    {
-      "a" : "rotated-hybrid-90.pdf",
-      "b" : "multi-column.pdf",
-      "classes" : [
-        "B",
-        "N"
-      ],
-      "similarity" : 0.7840416666666666
-    },
-    {
-      "a" : "plain-text.pdf",
-      "b" : "navigation.pdf",
+      "a" : "scanned-noisy.pdf",
+      "b" : "ocr-low-contrast.pdf",
       "classes" : [
         "N",
         "N"
       ],
-      "similarity" : 0.7133156871218669
+      "similarity" : 0.9885809543936768
     },
     {
-      "a" : "plain-text.pdf",
-      "b" : "geometry.pdf",
+      "a" : "diverse-graphics-heavy.pdf",
+      "b" : "diverse-scanned-sim.pdf",
       "classes" : [
         "N",
         "N"
       ],
-      "similarity" : 0.5860416967969221
+      "similarity" : 0.9722599364884414
     },
     {
-      "a" : "plain-text.pdf",
-      "b" : "multi-column.pdf",
+      "a" : "ocr-clean-english.pdf",
+      "b" : "ocr-noisy-invoice.pdf",
       "classes" : [
         "N",
         "N"
       ],
-      "similarity" : 0.5823232323232324
+      "similarity" : 0.9646277698061831
     },
     {
-      "a" : "hybrid-text-raster-form.pdf",
-      "b" : "plain-text.pdf",
+      "a" : "diverse-dense-grid.pdf",
+      "b" : "diverse-scanned-sim.pdf",
       "classes" : [
-        "B",
+        "N",
         "N"
       ],
-      "similarity" : 0.5714687149270483
+      "similarity" : 0.9309183913531187
     },
     {
-      "a" : "rotated-hybrid-90.pdf",
-      "b" : "plain-text.pdf",
+      "a" : "diverse-graphics-heavy.pdf",
+      "b" : "diverse-dense-grid.pdf",
       "classes" : [
-        "B",
+        "N",
         "N"
       ],
-      "similarity" : 0.5520242704826038
+      "similarity" : 0.9125641279012549
     },
     {
-      "a" : "public-sample-form.pdf",
-      "b" : "hybrid-text-raster-form.pdf",
+      "a" : "ocr-clean-english.pdf",
+      "b" : "ocr-dense-paragraph.pdf",
       "classes" : [
-        "A",
-        "B"
+        "N",
+        "N"
       ],
-      "similarity" : 0.5499999999999999
+      "similarity" : 0.9021270886460984
+    },
+    {
+      "a" : "ocr-dense-paragraph.pdf",
+      "b" : "ocr-noisy-invoice.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.8790899021985912
+    },
+    {
+      "a" : "diverse-single-column.pdf",
+      "b" : "diverse-single-column-variant.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.8498491486407229
     }
   ],
   "version" : {

@@ -13,7 +13,7 @@ import { REVIEWED_TEMPLATE_FIXTURES } from "./fixtures/template_matching_reviewe
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 const outputDirectory = path.join(projectRoot, "benchmark/results/template-matching");
 const corpusPath = path.join(outputDirectory, "2026-08-24-reviewed-corpus.json");
 const nativeRunPath = path.join(outputDirectory, "2026-08-24-native-run.json");

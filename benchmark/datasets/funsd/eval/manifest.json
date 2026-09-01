@@ -1,0 +1,34 @@
+{
+  "dataset": "funsd",
+  "license": "CC BY 4.0",
+  "source": "https://guillaumejaume.github.io/FUNSD/",
+  "huggingface": "nielsr/funsd",
+  "description": "163 annotated forms with word-level bounding boxes, text, answers, headers",
+  "downloadedAt": "2026-09-01T20:09:49.272271",
+  "splits": {
+    "test": {
+      "count": 50,
+      "file": "funsd/data/test.json"
+    },
+    "train": {
+      "count": 149,
+      "file": "funsd/data/train.json"
+    }
+  },
+  "groundTruthFields": [
+    "id",
+    "text",
+    "entities",
+    "entityCount"
+  ],
+  "entityTypes": [
+    "header",
+    "question",
+    "answer"
+  ],
+  "evalMetrics": [
+    "entity_extraction_f1",
+    "header_detection_precision",
+    "qa_pairing_accuracy"
+  ]
+}

@@ -10,6 +10,30 @@
 export const PDF_PREFLIGHT_CONTRACT_NAME = "pdf-editor.preflight";
 export const PDF_PREFLIGHT_CONTRACT_VERSION = Object.freeze({ major: 1, minor: 1 });
 
+// These are the structural surfaces that must be compared before an export is
+// published. They are intentionally separate from PDF writer operation kinds:
+// a text overlay may be an allowed operation while a metadata or action
+// transition caused by the same writer is still an export failure.
+export const PREFLIGHT_PROTECTED_SURFACES = Object.freeze([
+  "metadata",
+  "attachments",
+  "embeddedActions",
+  "encryption",
+  "annotations",
+  "formValues",
+  "revisions",
+  "privacySensitiveContent"
+]);
+
+export const PREFLIGHT_TRANSITION_STATES = Object.freeze([
+  "unchanged",
+  "changed",
+  "added",
+  "removed",
+  "unknown",
+  "unsupported"
+]);
+
 const FORBIDDEN_REPORT_KEYS = new Set([
   "pageText", "ocrText", "sourceBytes", "sourceData", "password", "profileValue",
   "imagePixels", "rawURL", "rawUrl", "attachmentName", "sourceBytesBase64"
@@ -115,6 +139,38 @@ function annotationSummary(payload = {}) {
   };
 }
 
+function formValuePresence(payload = {}) {
+  const fields = Array.isArray(payload.fields) ? payload.fields : null;
+  if (!fields) {
+    return {
+      state: "unknown",
+      fieldCount: 0,
+      populatedFieldCount: 0,
+      byKind: {},
+      reasonCodes: ["fieldInspectionNotProvided"]
+    };
+  }
+  const byKind = {};
+  let populatedFieldCount = 0;
+  for (const field of fields) {
+    const kind = String(field?.kind || "unknown");
+    byKind[kind] = byKind[kind] || { fieldCount: 0, populatedFieldCount: 0 };
+    byKind[kind].fieldCount += 1;
+    const value = field?.value;
+    if (value !== null && value !== undefined && String(value).trim().length > 0) {
+      populatedFieldCount += 1;
+      byKind[kind].populatedFieldCount += 1;
+    }
+  }
+  return {
+    state: "observed",
+    fieldCount: fields.length,
+    populatedFieldCount,
+    byKind,
+    reasonCodes: ["fieldValuePresenceOnly"]
+  };
+}
+
 function coverageSummary(scan, annotationCoverage) {
   const coverage = {
     metadata: {
@@ -168,6 +224,8 @@ export function buildPreflightReport({
   const links = externalLinkSummary(payload.links || []);
   const attachmentsCount = Array.isArray(payload.attachments) ? payload.attachments.length : 0;
   const annotations = annotationSummary(payload);
+  const formValues = formValuePresence(payload);
+  const encrypted = Boolean(payload.security?.isEncrypted || scan.counts.encryption > 0);
   const coverage = coverageSummary(scan, annotations.coverage);
   const unknownCoverage = {
     categories: coverage,
@@ -191,7 +249,7 @@ export function buildPreflightReport({
     tokenFinding(scan, "openAction", "activeContent", "active-open-action-token", "warning", ["documentOpenActionNotExecuted"]),
     tokenFinding(scan, "additionalAction", "activeContent", "active-additional-action-token", "warning", ["additionalActionsNotExecuted"]),
     tokenFinding(scan, "signature", "security", "signature-token", "warning", ["signatureValidityRequiresCryptographicValidator"]),
-    finding({ id: "security-encryption", category: "security", code: "security.encryption", severity: payload.security?.isEncrypted ? "warning" : "info", state: payload.security?.isEncrypted ? "observed" : "not-observed", count: payload.security?.isEncrypted ? 1 : 0, reasonCodes: payload.security?.isEncrypted ? ["passwordAndPermissionsBoundary"] : [] }),
+    finding({ id: "security-encryption", category: "security", code: "security.encryption", severity: encrypted ? "warning" : "info", state: encrypted ? "observed" : "not-observed", count: encrypted ? 1 : 0, reasonCodes: encrypted ? ["passwordAndPermissionsBoundary"] : [] }),
     finding({ id: "byte-scan-state", category: "preflight", code: "preflight.byte-scan", severity: scan.state === "unknown" ? "unknown" : scan.truncated ? "warning" : "info", state: scan.state, count: scan.scannedByteCount, reasonCodes: scan.truncated ? ["boundedScanTruncated"] : [], evidence: scan.method })
   ];
   const sanitization = {
@@ -252,11 +310,38 @@ export function buildPreflightReport({
         hiddenContentState: "unknown",
         coverage: coverage.revisions
       },
+      encryption: {
+        state: scan.state,
+        encrypted,
+        encryptionMarkerCount: scan.counts.encryption || 0,
+        permissionsObserved: Boolean(payload.permissions),
+        permissionChangeState: payload.permissions ? "observed" : "unknown"
+      },
+      formValues,
+      // This aggregate is deliberately value-free. It gives the transition
+      // gate a stable privacy surface without serializing names, values, text,
+      // URLs, attachment names, or active-content payloads.
+      privacySensitiveContent: {
+        metadataFieldCount: metadataCount,
+        attachmentCount: attachmentsCount,
+        annotationCount: annotations.totalCount,
+        formFieldCount: formValues.fieldCount,
+        populatedFormFieldCount: formValues.populatedFieldCount,
+        embeddedActionCount: (scan.counts.javascriptAction || 0)
+          + (scan.counts.openAction || 0)
+          + (scan.counts.additionalAction || 0)
+          + (scan.counts.launchAction || 0)
+          + (scan.counts.submitFormAction || 0)
+          + (scan.counts.remoteGoToAction || 0)
+          + (scan.counts.uriAction || 0),
+        signatureCount: scan.counts.signature || 0,
+        encryptionState: encrypted ? "encrypted" : "plain"
+      },
       coverage,
       unknownCoverage,
       networkBoundaries: { ...links, possibleActionTokenCounts: { uri: scan.counts.uriAction || 0, remoteGoTo: scan.counts.remoteGoToAction || 0, submitForm: scan.counts.submitFormAction || 0 } },
       activeContent: { possibleActionTokenCounts: { javascript: scan.counts.javascriptAction || 0, openAction: scan.counts.openAction || 0, additionalAction: scan.counts.additionalAction || 0, launch: scan.counts.launchAction || 0 }, executionAttempted: false },
-      security: { encrypted: Boolean(payload.security?.isEncrypted), locked: Boolean(payload.security?.isLocked), permissionsObserved: Boolean(payload.permissions) },
+      security: { encrypted, locked: Boolean(payload.security?.isLocked), permissionsObserved: Boolean(payload.permissions) },
       sanitization,
       findings
     }
@@ -286,6 +371,21 @@ export function validatePreflightReport(report, { expectedSourceDigest = null } 
   for (const item of report.payload.findings || []) {
     if (!["info", "warning", "blocked", "unknown"].includes(item.severity)) throw new Error("preflight finding severity is unknown");
     if (!["observed", "possible", "not-observed", "unknown"].includes(item.state)) throw new Error("preflight finding state is unknown");
+  }
+  if (report.payload.encryption) {
+    if (!["observed", "unknown"].includes(report.payload.encryption.state)) throw new Error("preflight encryption state is unknown");
+    if (typeof report.payload.encryption.encrypted !== "boolean") throw new Error("preflight encryption flag is invalid");
+  }
+  if (report.payload.formValues) {
+    if (!["observed", "unknown"].includes(report.payload.formValues.state)) throw new Error("preflight form-value state is unknown");
+    for (const key of ["fieldCount", "populatedFieldCount"]) {
+      if (!Number.isInteger(report.payload.formValues[key]) || report.payload.formValues[key] < 0) throw new Error("preflight form-value count is invalid");
+    }
+  }
+  if (report.payload.privacySensitiveContent) {
+    for (const value of Object.values(report.payload.privacySensitiveContent)) {
+      if (typeof value !== "number" && typeof value !== "string") throw new Error("preflight privacy surface is not value-minimized");
+    }
   }
   const findings = report.payload.findings || [];
   const summary = report.payload.summary || {};
@@ -351,6 +451,9 @@ export function normalizePreflightReport(report) {
       annotations: payload.annotations ? { ...payload.annotations, coverage: normalizeCoverage(payload.annotations.coverage) } : payload.annotations,
       scripts: payload.scripts ? { ...payload.scripts, coverage: normalizeCoverage(payload.scripts.coverage) } : payload.scripts,
       revisions: payload.revisions ? { ...payload.revisions, coverage: normalizeCoverage(payload.revisions.coverage) } : payload.revisions,
+      encryption: payload.encryption,
+      formValues: payload.formValues,
+      privacySensitiveContent: payload.privacySensitiveContent,
       coverage: payload.coverage && Object.fromEntries(Object.entries(payload.coverage).map(([key, value]) => [key, normalizeCoverage(value)])),
       unknownCoverage: payload.unknownCoverage ? {
         ...payload.unknownCoverage,
@@ -363,6 +466,106 @@ export function normalizePreflightReport(report) {
       findings: [...(payload.findings || [])].map(normalizeFinding).sort((a, b) => `${a.category}.${a.code}`.localeCompare(`${b.category}.${b.code}`))
     }
   });
+}
+
+function transitionSnapshot(report, surface) {
+  const payload = report?.payload;
+  if (!payload) return null;
+  switch (surface) {
+    case "metadata":
+      return payload.metadata?.fields || null;
+    case "attachments":
+      return payload.attachments ? {
+        attachmentCount: payload.attachments.attachmentCount,
+        fileAttachmentCount: payload.attachments.fileAttachmentCount,
+        embeddedFileNameTreeCount: payload.attachments.embeddedFileNameTreeCount
+      } : null;
+    case "embeddedActions":
+      return payload.scripts ? {
+        javaScriptActionCount: payload.scripts.javaScriptActionCount,
+        openActionCount: payload.scripts.openActionCount,
+        additionalActionCount: payload.scripts.additionalActionCount,
+        launchActionCount: payload.scripts.launchActionCount,
+        submitFormActionCount: payload.scripts.submitFormActionCount,
+        remoteGoToActionCount: payload.scripts.remoteGoToActionCount,
+        uriActionCount: payload.scripts.uriActionCount
+      } : null;
+    case "encryption":
+      return payload.encryption || (payload.security ? { encrypted: payload.security.encrypted } : null);
+    case "annotations":
+      return payload.annotations ? {
+        totalCount: payload.annotations.totalCount,
+        byKind: payload.annotations.byKind
+      } : null;
+    case "formValues":
+      return payload.formValues ? {
+        state: payload.formValues.state,
+        fieldCount: payload.formValues.fieldCount,
+        populatedFieldCount: payload.formValues.populatedFieldCount,
+        byKind: payload.formValues.byKind
+      } : null;
+    case "revisions":
+      return payload.revisions ? {
+        eofMarkerCount: payload.revisions.eofMarkerCount,
+        startxrefCount: payload.revisions.startxrefCount,
+        previousRevisionReferenceCount: payload.revisions.previousRevisionReferenceCount,
+        incrementalUpdateCountEstimate: payload.revisions.incrementalUpdateCountEstimate
+      } : null;
+    case "privacySensitiveContent":
+      return payload.privacySensitiveContent || null;
+    default:
+      return null;
+  }
+}
+
+function transitionState(sourceValue, outputValue) {
+  if (sourceValue === null || outputValue === null) return "unknown";
+  if (JSON.stringify(canonicalize(sourceValue)) === JSON.stringify(canonicalize(outputValue))) return "unchanged";
+  return "changed";
+}
+
+/**
+ * Compare value-minimized preflight observations at the source/output
+ * boundary. This is intentionally not a sanitization claim. A changed
+ * surface is publishable only when the caller explicitly authorizes that
+ * surface and separately proves the operation is supported.
+ */
+export function comparePreflightTransitions(
+  sourceReport,
+  outputReport,
+  { allowedChangedSurfaces = [] } = {}
+) {
+  const allowed = new Set(Array.isArray(allowedChangedSurfaces) ? allowedChangedSurfaces : []);
+  const transitions = {};
+  for (const surface of PREFLIGHT_PROTECTED_SURFACES) {
+    const sourceValue = transitionSnapshot(sourceReport, surface);
+    const outputValue = transitionSnapshot(outputReport, surface);
+    const status = transitionState(sourceValue, outputValue);
+    transitions[surface] = {
+      status,
+      authorized: status === "unchanged" || allowed.has(surface),
+      source: sourceValue,
+      output: outputValue
+    };
+  }
+  const changedSurfaces = PREFLIGHT_PROTECTED_SURFACES.filter((surface) => transitions[surface].status === "changed");
+  const unknownSurfaces = PREFLIGHT_PROTECTED_SURFACES.filter((surface) => transitions[surface].status === "unknown");
+  const unauthorizedSurfaces = changedSurfaces.filter((surface) => !transitions[surface].authorized);
+  const status = unauthorizedSurfaces.length ? "failed" : unknownSurfaces.length ? "unknown" : "passed";
+  return {
+    status,
+    sourceDigest: sourceReport?.header?.sourceDigest || null,
+    outputDigest: outputReport?.header?.sourceDigest || null,
+    changedSurfaces,
+    unknownSurfaces,
+    unauthorizedSurfaces,
+    transitions,
+    message: unauthorizedSurfaces.length
+      ? `Unapproved privacy-sensitive transition(s): ${unauthorizedSurfaces.join(", ")}.`
+      : unknownSurfaces.length
+        ? `Privacy transition coverage is unknown for: ${unknownSurfaces.join(", ")}.`
+        : "Protected preflight surfaces are unchanged or explicitly authorized."
+  };
 }
 
 function collectDifferences(nativeValue, webValue, pathName, differences) {

@@ -3,7 +3,7 @@
   "fixtures" : [
     {
       "expectedFailure" : false,
-      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
       "sourcePath" : "benchmark\/results\/public-sample-form.pdf",
       "status" : "inspected"
     },
@@ -122,7 +122,7 @@
     ],
     "id" : "pdfkit",
     "platform" : "macOS",
-    "version" : "Version 15.7.9 (Build 24G830)"
+    "version" : "Version 26.6.2 (Build 25G83)"
   },
   "version" : {
     "major" : 1,

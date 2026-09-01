@@ -6,6 +6,13 @@
  * Node and in the browser before PDFDocument.load/save is reached.
  */
 
+import {
+  PREFLIGHT_PROTECTED_SURFACES,
+  PREFLIGHT_TRANSITION_STATES,
+  comparePreflightTransitions,
+  validatePreflightReport
+} from "./pdf-preflight.mjs";
+
 export const BROWSER_EXPORT_OPERATION_KINDS = Object.freeze([
   "nativeFieldValue",
   "synthesizeNativeField",
@@ -27,6 +34,22 @@ const VALIDATION_REPORT_STATUSES = new Set([
 ]);
 
 const EPSILON = 0.01;
+
+const SENSITIVE_OPERATION_KINDS = new Set([
+  "setMetadata",
+  "addAttachment",
+  "removeAttachment",
+  "replaceAttachment",
+  "setEmbeddedAction",
+  "removeEmbeddedAction",
+  "setEncryption",
+  "removeEncryption",
+  "changePermissions",
+  "sanitize",
+  "redact",
+  "flatten",
+  "repair"
+]);
 
 export class ContractMutationError extends Error {
   constructor(issues) {
@@ -134,6 +157,16 @@ function validateOperation(operation, currentSourceDigest, pages) {
       operationIDs
     ));
   }
+  const declaredPrivacySurfaces = operation.privacyImpact?.surfaces;
+  if (operation.privacySensitive === true
+      || (Array.isArray(declaredPrivacySurfaces) && declaredPrivacySurfaces.length > 0)
+      || SENSITIVE_OPERATION_KINDS.has(operation.kind)) {
+    issues.push(issue(
+      "privacySensitiveChange",
+      `Operation ${operationID} declares a privacy-sensitive PDF surface change; the browser writer has no admitted lane for it.`,
+      operationIDs
+    ));
+  }
 
   const page = pages.get(operation.pageIndex);
   if (!Number.isInteger(operation.pageIndex) || !page) {
@@ -192,11 +225,80 @@ function validateOperation(operation, currentSourceDigest, pages) {
   return issues;
 }
 
+function validatePreExportPrivacyBoundary({
+  currentSourceDigest,
+  operations = [],
+  sourcePreflight = null,
+  expectedPreflightTransitions = null,
+  outputPreflight = null,
+  allowedChangedSurfaces = []
+} = {}) {
+  const issues = [];
+  if (sourcePreflight) {
+    try {
+      validatePreflightReport(sourcePreflight, { expectedSourceDigest: currentSourceDigest });
+    } catch (error) {
+      issues.push(issue(
+        error.message.includes("stale") ? "staleSourceDigest" : "unknownPreflightState",
+        `Source privacy preflight is not admissible: ${error.message}`
+      ));
+    }
+  }
+  if (expectedPreflightTransitions && typeof expectedPreflightTransitions === "object") {
+    for (const [surface, state] of Object.entries(expectedPreflightTransitions)) {
+      if (!PREFLIGHT_PROTECTED_SURFACES.includes(surface)
+          || !PREFLIGHT_TRANSITION_STATES.includes(state)) {
+        issues.push(issue(
+          "unknownPreflightState",
+          `Pre-export privacy transition ${surface}=${String(state)} is unknown.`
+        ));
+        continue;
+      }
+      if (state === "unchanged") continue;
+      // Supported native field writes are the sole browser mutation that may
+      // legitimately change the value-presence summary. The output comparison
+      // still proves that no other protected surface moved.
+      const hasFormOperation = operations.some((operation) =>
+        ["nativeFieldValue", "synthesizeNativeField"].includes(operation?.kind)
+      );
+      const hasSynthesizedFieldOperation = operations.some((operation) =>
+        operation?.kind === "synthesizeNativeField"
+      );
+      if (hasFormOperation
+          && ["formValues", "privacySensitiveContent"].includes(surface)
+          && state === "changed") continue;
+      if (hasSynthesizedFieldOperation && surface === "annotations" && state === "changed") continue;
+      issues.push(issue(
+        state === "unknown" || state === "unsupported" ? "unknownPreflightState" : "privacySensitiveChange",
+        `Pre-export privacy transition ${surface}=${state} is not admitted by the browser writer.`
+      ));
+    }
+  }
+  if (outputPreflight) {
+    const comparison = comparePreflightTransitions(
+      sourcePreflight,
+      outputPreflight,
+      { allowedChangedSurfaces }
+    );
+    if (comparison.status !== "passed") {
+      issues.push(issue(
+        comparison.status === "unknown" ? "unknownPreflightState" : "privacySensitiveChange",
+        `Output privacy transition failed the publication gate: ${comparison.message}`
+      ));
+    }
+  }
+  return issues;
+}
+
 export function collectExportContractViolations({
   currentSourceDigest,
   operations = [],
   pageCoordinates = [],
-  validation = null
+  validation = null,
+  sourcePreflight = null,
+  expectedPreflightTransitions = null,
+  outputPreflight = null,
+  allowedChangedSurfaces = []
 } = {}) {
   const issues = [];
   if (typeof currentSourceDigest !== "string" || currentSourceDigest.length !== 64) {
@@ -211,6 +313,14 @@ export function collectExportContractViolations({
     }
   }
   issues.push(...validateValidationState(validation));
+  issues.push(...validatePreExportPrivacyBoundary({
+    currentSourceDigest,
+    operations,
+    sourcePreflight,
+    expectedPreflightTransitions,
+    outputPreflight,
+    allowedChangedSurfaces
+  }));
   return issues;
 }
 
@@ -232,9 +342,22 @@ export async function guardedPdfLibExport({
   operations = [],
   pageCoordinates = [],
   validation = null,
+  sourcePreflight = null,
+  expectedPreflightTransitions = null,
+  outputPreflight = null,
+  allowedChangedSurfaces = [],
   writer
 } = {}) {
-  assertExportableContract({ currentSourceDigest, operations, pageCoordinates, validation });
+  assertExportableContract({
+    currentSourceDigest,
+    operations,
+    pageCoordinates,
+    validation,
+    sourcePreflight,
+    expectedPreflightTransitions,
+    outputPreflight,
+    allowedChangedSurfaces
+  });
   if (typeof writer !== "function") {
     throw new TypeError("A PDF writer callback is required after contract preflight.");
   }
@@ -284,10 +407,23 @@ export async function guardedSourcePreservingExport({
   operations = [],
   pageCoordinates = [],
   validation = null,
+  sourcePreflight = null,
+  expectedPreflightTransitions = null,
+  outputPreflight = null,
+  allowedChangedSurfaces = [],
   sourceBytes,
   writeIncremental
 } = {}) {
-  assertExportableContract({ currentSourceDigest, operations, pageCoordinates, validation });
+  assertExportableContract({
+    currentSourceDigest,
+    operations,
+    pageCoordinates,
+    validation,
+    sourcePreflight,
+    expectedPreflightTransitions,
+    outputPreflight,
+    allowedChangedSurfaces
+  });
   if (!(sourceBytes instanceof Uint8Array) || sourceBytes.length === 0) {
     throw new ContractMutationError(issue(
       "invalidOperation",

@@ -61,7 +61,7 @@ function discover() {
 
 function isBrowserTest(file) {
   const source = fs.readFileSync(file, "utf8");
-  return /playwright|chromium\.launch|PDF_PROOF_BASE_URL/.test(source);
+  return /playwright|chromium\.launch|PDF_EDITOR_BASE_URL|PDF_PROOF_BASE_URL/.test(source);
 }
 
 async function startServer() {
@@ -111,12 +111,18 @@ function runTest(file) {
       stderr += chunk;
       if (stderr.length > 200_000) stderr = stderr.slice(-100_000);
     });
-    child.on("close", (code) => {
+    child.on("exit", (code, signal) => {
       clearTimeout(timer);
+      // Resolve on exit, not close: a killed test can leave an orphan holding
+      // the stdout pipe, which stalls "close" forever (observed 2026-09-01 —
+      // the runner wedged for 10+ minutes with no live children after a
+      // timeout kill). Destroying the local stream ends is deterministic.
+      child.stdout?.destroy();
+      child.stderr?.destroy();
       resolve({
         file: path.relative(repoRoot, file),
         passed: code === 0 && !timedOut,
-        code,
+        code: code ?? (signal ? -1 : 0),
         timedOut,
         durationMs: 0,
         tail: (timedOut ? "[TIMEOUT]\n" : "") + (stderr || stdout).split("\n").slice(-15).join("\n").trim(),

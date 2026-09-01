@@ -5,7 +5,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-29T06:13:13Z",
+    "generatedAt" : "2026-09-01T17:40:46Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -37,9 +37,9 @@
       ],
       "id" : "pdfkit",
       "platform" : "macOS",
-      "version" : "Version 15.7.9 (Build 24G830)"
+      "version" : "Version 26.6.2 (Build 25G83)"
     },
-    "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
     "version" : {
       "major" : 1,
       "minor" : 0
@@ -48,7 +48,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-29T06:13:13Z",
+      "generatedAt" : "2026-09-01T17:40:46Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -60,9 +60,9 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
-      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -131,7 +131,8 @@
           "id" : "applicant.subscribe#0",
           "kind" : "button",
           "name" : "applicant.subscribe",
-          "pageIndex" : 0
+          "pageIndex" : 0,
+          "value" : "Yes"
         },
         {
           "bounds" : {
@@ -141,8 +142,7 @@
             "y" : 523.39
           },
           "choices" : [
-            "email",
-            "phone"
+
           ],
           "id" : "applicant.contact#0",
           "kind" : "button",
@@ -157,13 +157,13 @@
             "y" : 523.39
           },
           "choices" : [
-            "email",
-            "phone"
+
           ],
           "id" : "applicant.contact#0#1",
           "kind" : "button",
           "name" : "applicant.contact",
-          "pageIndex" : 0
+          "pageIndex" : 0,
+          "value" : "1"
         },
         {
           "bounds" : {
@@ -182,7 +182,8 @@
           "id" : "applicant.country#0",
           "kind" : "choice",
           "name" : "applicant.country",
-          "pageIndex" : 0
+          "pageIndex" : 0,
+          "value" : "Germany"
         }
       ],
       "links" : [
@@ -190,11 +191,11 @@
       ],
       "metadata" : {
         "author" : "tinytoolkit sample files",
-        "creationDate" : "19\/7\/2026, 5:30 AM",
+        "creationDate" : "1\/9\/2026, 10:31 PM",
         "creator" : "https:\/\/pdftoolskit.org\/sample-pdfs",
         "keywords" : "",
-        "modificationDate" : "19\/7\/2026, 5:30 AM",
-        "producer" : "pdf-sample-files generator (pdf-lib)",
+        "modificationDate" : "1\/9\/2026, 10:31 PM",
+        "producer" : "macOS Version 26.6.2 (Build 25G83) Quartz PDFContext",
         "subject" : "AcroForm test file",
         "title" : "Sample form (empty)"
       },
@@ -260,9 +261,9 @@
         "requiresPassword" : false
       },
       "source" : {
-        "byteCount" : 10768,
+        "byteCount" : 37415,
         "fileName" : "public-sample-form.pdf",
-        "sha256" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+        "sha256" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b"
       },
       "warnings" : [
 
@@ -272,7 +273,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-29T06:13:13Z",
+      "generatedAt" : "2026-09-01T17:40:46Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -284,9 +285,9 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
-      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -299,16 +300,16 @@
 
     ],
     "source" : {
-      "byteCount" : 10768,
+      "byteCount" : 37415,
       "fileName" : "public-sample-form.pdf",
-      "sha256" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8"
+      "sha256" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b"
     }
   },
   "expectedFailure" : false,
   "preflight" : {
     "header" : {
       "contractName" : "pdf-editor.preflight",
-      "generatedAt" : "2026-08-29T06:13:13Z",
+      "generatedAt" : "2026-09-01T17:40:46Z",
       "provider" : {
         "capabilities" : [
           "metadata-presence",
@@ -319,9 +320,9 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
-      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
       "version" : {
         "major" : 1,
         "minor" : 1
@@ -611,7 +612,7 @@
         {
           "category" : "preflight",
           "code" : "preflight.byte-scan",
-          "count" : 10768,
+          "count" : 37415,
           "evidence" : "boundedTokenScan",
           "id" : "byte-scan-state",
           "reasonCodes" : [
@@ -764,7 +765,7 @@
   "sessionProvenance" : {
     "header" : {
       "contractName" : "pdf-editor.session-provenance",
-      "generatedAt" : "2026-08-29T06:13:13Z",
+      "generatedAt" : "2026-09-01T17:40:48Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -776,10 +777,10 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
-      "sessionID" : "native-5a681d44622f2ee5",
-      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sessionID" : "native-bb54019130ef9b49",
+      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
       "version" : {
         "major" : 1,
         "minor" : 0
@@ -789,9 +790,9 @@
       "export" : {
         "exporterID" : "pdfkit",
         "operationCount" : 0,
-        "outputDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "outputDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
         "outputReopenable" : true,
-        "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
         "state" : "succeeded",
         "storage" : "local-file",
         "validation" : "validated",
@@ -829,13 +830,13 @@
       }
     }
   },
-  "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+  "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
   "sourcePath" : "benchmark\/results\/public-sample-form.pdf",
   "status" : "inspected",
   "validation" : {
     "checks" : [
       {
-        "id" : "F28211A0-8F75-4974-BC9B-1485AA1F3051",
+        "id" : "D72AF1F0-3241-4693-9F1E-947297C1562A",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -844,7 +845,7 @@
         "status" : "passed"
       },
       {
-        "id" : "43A80394-3BD4-484A-B0DA-6C13306AB8B1",
+        "id" : "34C2DA39-93AF-44E2-A96B-F32E4D67AD3F",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 1 page(s).",
         "operationIDs" : [
@@ -853,7 +854,7 @@
         "status" : "passed"
       },
       {
-        "id" : "025DFCB0-4A7A-49C5-A883-DAC1CD3EA090",
+        "id" : "7DED960A-BCCB-4B08-88FC-BAE1E3EEE3C3",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -862,7 +863,7 @@
         "status" : "passed"
       },
       {
-        "id" : "1A616CA6-7E56-4A18-A352-3BC1FC19A183",
+        "id" : "9C23CE10-3E00-49C5-8D56-01267655B543",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -871,7 +872,7 @@
         "status" : "passed"
       },
       {
-        "id" : "20B26D6F-7267-48A8-ACA0-8EAF28820EB8",
+        "id" : "8623E312-0ED4-417D-BD95-A2542A1613A2",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -880,7 +881,7 @@
         "status" : "passed"
       },
       {
-        "id" : "C81A03F6-6DE8-4ADE-8CF8-D6FE1F317BF2",
+        "id" : "8A1F0A7D-6336-4951-9A89-C47E433B3C07",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -889,7 +890,7 @@
         "status" : "passed"
       },
       {
-        "id" : "C1B175E3-8C81-4550-9C7B-232CF0E21B07",
+        "id" : "C9793963-F269-47AE-B854-DAFCD113ABFA",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -904,7 +905,7 @@
     "operationIDs" : [
 
     ],
-    "outputDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "outputDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
     "outputReopenable" : true,
     "provider" : {
       "capabilities" : [
@@ -915,12 +916,12 @@
       ],
       "id" : "pdfkit",
       "platform" : "macOS",
-      "version" : "Version 15.7.9 (Build 24G830)"
+      "version" : "Version 26.6.2 (Build 25G83)"
     },
-    "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+    "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-29T06:13:13Z"
+    "validatedAt" : "2026-09-01T17:40:48Z"
   },
   "version" : {
     "major" : 1,

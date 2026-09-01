@@ -147,7 +147,7 @@ contract suite 73/79 with remaining failures classified in
 | A-12 | **P7.G2a–c**: port vault/session/recovery UI, template domain UI, profiles/completion to React (zero React implementation today; React autofill/OCR are demo stubs) | Open |
 | A-13 | **P7.G2d–G5**: reader completeness features; interaction parity dispositions (port or owner-signed revocation for rubber-band scroll, drag-pan, copy-page-text) | Open |
 | A-14 | **P7.G3**: retarget ~35 legacy-coupled browser tests to React bundle; accessibility gate on React markup | Open |
-| A-15 | **P7.G4**: `deploy-web.mjs` prebuilt-dist mode (Vite hashed assets break current closure walker); repoint RT-004 test + run-web-e2e | Open |
+| A-15 | **P7.G4**: `deploy-web.mjs` prebuilt-dist mode (Vite hashed assets break current closure walker); repoint RT-004 test + run-web-e2e | Deployer half **completed 2026-09-01** (`--prebuilt` mode + `tools/smoke-dist.mjs` boot smoke; manifest covers runtime-loaded worker/pdf-lib; evidence: `docs/audits/prebuilt-dist-deploy-evidence-2026-09-01.md`). Test repointing deliberately left to G3 sequencing (A-14) |
 | A-16 | **P7.G6**: actual sunset deletion of app.js + legacy DOM — only after G1–G5 evidence green | Blocked on A-11..A-15 |
 
 Full parity table and risk ranking in the D-058 exploration record

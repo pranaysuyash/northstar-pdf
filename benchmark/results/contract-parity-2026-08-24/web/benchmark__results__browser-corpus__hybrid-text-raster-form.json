@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
-      "generatedAt": "2026-08-29T06:14:14.717Z",
+      "generatedAt": "2026-09-01T17:43:04.420Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -70,7 +70,61 @@
           "rotation": 0,
           "characterCount": 157,
           "annotationCount": 6,
-          "hasSelectableText": true
+          "hasSelectableText": true,
+          "rasterCellKeys": [
+            "1,1",
+            "2,1",
+            "3,1",
+            "4,1",
+            "5,1",
+            "6,1",
+            "7,1",
+            "8,1",
+            "1,2",
+            "2,2",
+            "3,2",
+            "4,2",
+            "5,2",
+            "6,2",
+            "7,2",
+            "8,2",
+            "9,2",
+            "10,2",
+            "6,3",
+            "7,3",
+            "8,3",
+            "9,3",
+            "10,3",
+            "11,3",
+            "12,3",
+            "13,3",
+            "13,5",
+            "13,6",
+            "1,9",
+            "2,9",
+            "6,9",
+            "8,9",
+            "9,9",
+            "6,10",
+            "7,10",
+            "8,10",
+            "9,10",
+            "10,10",
+            "11,10",
+            "12,10",
+            "13,10"
+          ],
+          "textCellKeys": [
+            "14,194",
+            "14,189",
+            "14,178",
+            "14,167",
+            "14,143",
+            "14,132",
+            "52,132",
+            "69,132",
+            "14,121"
+          ]
         },
         {
           "pageIndex": 1,
@@ -108,7 +162,67 @@
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 0,
-          "hasSelectableText": false
+          "hasSelectableText": false,
+          "rasterCellKeys": [
+            "18,8",
+            "19,8",
+            "20,8",
+            "21,8",
+            "22,8",
+            "24,8",
+            "25,8",
+            "27,8",
+            "29,8",
+            "30,8",
+            "31,8",
+            "32,8",
+            "17,9",
+            "20,9",
+            "21,9",
+            "22,9",
+            "23,9",
+            "24,9",
+            "26,9",
+            "27,9",
+            "29,9",
+            "31,9",
+            "32,9",
+            "17,10",
+            "19,10",
+            "22,10",
+            "24,10",
+            "25,10",
+            "30,10",
+            "17,11",
+            "18,11",
+            "19,11",
+            "20,11",
+            "21,11",
+            "22,11",
+            "23,11",
+            "24,11",
+            "25,11",
+            "26,11",
+            "27,11",
+            "28,11",
+            "29,11",
+            "30,11",
+            "31,11",
+            "32,11",
+            "19,13",
+            "20,13",
+            "21,13",
+            "22,13",
+            "23,13",
+            "24,13",
+            "25,13",
+            "26,13",
+            "27,13",
+            "28,13",
+            "29,13",
+            "30,13"
+          ],
+          "textCellKeys": []
         }
       ],
       "fields": [
@@ -359,7 +473,7 @@
       "minor": 0
     },
     "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
-    "generatedAt": "2026-08-29T06:14:14.717Z",
+    "generatedAt": "2026-09-01T17:43:04.420Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -413,6 +527,134 @@
     ]
   },
   "candidates": [],
+  "fieldCandidates": [
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 185.5,
+        "y": 705.39,
+        "width": 251,
+        "height": 23
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "text",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field applicant.name"
+        }
+      ],
+      "labelText": "applicant.name"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 185.5,
+        "y": 617.39,
+        "width": 251,
+        "height": 67
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "text",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field applicant.notes"
+        }
+      ],
+      "labelText": "applicant.notes"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 185.5,
+        "y": 567.39,
+        "width": 19,
+        "height": 19
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "button",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field applicant.subscribe"
+        }
+      ],
+      "labelText": "applicant.subscribe"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 185.5,
+        "y": 523.39,
+        "width": 19,
+        "height": 19
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "button",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field applicant.contact"
+        }
+      ],
+      "labelText": "applicant.contact"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 255.5,
+        "y": 523.39,
+        "width": 19,
+        "height": 19
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "button",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field applicant.contact"
+        }
+      ],
+      "labelText": "applicant.contact"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 185.5,
+        "y": 477.39,
+        "width": 251,
+        "height": 23
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "choice",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field applicant.country"
+        }
+      ],
+      "labelText": "applicant.country"
+    }
+  ],
   "textRuns": [
     {
       "runID": "0:0:e8f17feece6ddb1d",
@@ -774,7 +1016,7 @@
         "minor": 1
       },
       "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
-      "generatedAt": "2026-08-29T06:14:14.717Z",
+      "generatedAt": "2026-09-01T17:43:04.420Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -892,6 +1134,45 @@
             "incrementalRevisionParserNotRun"
           ]
         }
+      },
+      "encryption": {
+        "state": "observed",
+        "encrypted": false,
+        "encryptionMarkerCount": 0,
+        "permissionsObserved": true,
+        "permissionChangeState": "observed"
+      },
+      "formValues": {
+        "state": "observed",
+        "fieldCount": 6,
+        "populatedFieldCount": 0,
+        "byKind": {
+          "text": {
+            "fieldCount": 2,
+            "populatedFieldCount": 0
+          },
+          "button": {
+            "fieldCount": 3,
+            "populatedFieldCount": 0
+          },
+          "choice": {
+            "fieldCount": 1,
+            "populatedFieldCount": 0
+          }
+        },
+        "reasonCodes": [
+          "fieldValuePresenceOnly"
+        ]
+      },
+      "privacySensitiveContent": {
+        "metadataFieldCount": 0,
+        "attachmentCount": 0,
+        "annotationCount": 6,
+        "formFieldCount": 6,
+        "populatedFormFieldCount": 0,
+        "embeddedActionCount": 0,
+        "signatureCount": 0,
+        "encryptionState": "plain"
       },
       "coverage": {
         "metadata": {
@@ -1190,9 +1471,9 @@
         "major": 1,
         "minor": 0
       },
-      "sessionID": "8692fb48-d0a4-4cd4-8058-0eec027d65ba",
+      "sessionID": "409f80d4-f20a-42ab-b824-ba8c124605a1",
       "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
-      "generatedAt": "2026-08-29T06:14:14.763Z",
+      "generatedAt": "2026-09-01T17:43:04.484Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -1256,7 +1537,7 @@
         "major": 1,
         "minor": 0
       },
-      "generatedAt": "2026-08-29T06:14:14.718Z",
+      "generatedAt": "2026-09-01T17:43:04.421Z",
       "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
       "provider": {
         "id": "pdfjs-pdflib",
@@ -1287,7 +1568,7 @@
         },
         "memory": {
           "state": "available",
-          "usedJSHeapSize": 15285838,
+          "usedJSHeapSize": 26574517,
           "jsHeapSizeLimit": 4395630592
         },
         "storage": {
@@ -1432,7 +1713,7 @@
         "minor": 0
       },
       "sourceDigest": "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
-      "generatedAt": "2026-08-29T06:14:14.717Z",
+      "generatedAt": "2026-09-01T17:43:04.420Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -1465,13 +1746,14 @@
       "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
       "No page content changed because the protected source was copied byte-for-byte.",
       "No raster content changed because the protected source was copied byte-for-byte.",
+      "No protected privacy surface can change because the output digest equals the source digest.",
       "No-op export used byte-preserving source download; no PDF writer was invoked."
     ],
     "sourceUnchanged": true,
     "outputReopenable": true,
     "checks": [
       {
-        "id": "323874da-3f59-40bb-88a7-3531fda42d36",
+        "id": "35ab2a1b-c54e-4f4d-a4bd-ea9893388bdc",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -1479,7 +1761,7 @@
         "operationIDs": []
       },
       {
-        "id": "062592ed-4fa1-4dcd-bd86-7461b7402352",
+        "id": "21aff41d-b339-419b-b161-d02e658177ae",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 2 page(s).",
@@ -1487,7 +1769,7 @@
         "operationIDs": []
       },
       {
-        "id": "7fb21480-5924-460f-9dd0-4abfaf585cab",
+        "id": "3bdc3605-dcd1-4c3f-9107-51f0f78b6e04",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -1495,7 +1777,7 @@
         "operationIDs": []
       },
       {
-        "id": "cfee5f51-f5a7-4902-b36b-95728cce1035",
+        "id": "0a84641e-03ed-4528-be0a-962893bcc651",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -1503,7 +1785,7 @@
         "operationIDs": []
       },
       {
-        "id": "5071f124-31ea-45bf-947e-f703c4a2ec3d",
+        "id": "4a22a276-a96f-40ad-bb09-25c75051e036",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -1511,7 +1793,7 @@
         "operationIDs": []
       },
       {
-        "id": "2ea7e74d-7fa8-4c98-a77e-88d1a10301a5",
+        "id": "cfa1cb63-f7d6-4319-9691-40e945ed3fd9",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -1527,7 +1809,7 @@
         }
       },
       {
-        "id": "adc7a147-f189-46e1-81e6-dcff3e680b2d",
+        "id": "db370881-5c31-461b-a8ad-ecb53f9b85fb",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -1551,7 +1833,21 @@
         }
       },
       {
-        "id": "74500574-ecbd-4308-a608-8b2232a596ac",
+        "id": "a4ed1141-bf18-4cc2-8904-f4e24113cd35",
+        "kind": "privacyPreflight",
+        "status": "passed",
+        "message": "No protected privacy surface can change because the output digest equals the source digest.",
+        "region": null,
+        "operationIDs": [],
+        "metrics": {
+          "changedSurfaces": [],
+          "unknownSurfaces": [],
+          "unauthorizedSurfaces": [],
+          "basis": "source-digest-equality"
+        }
+      },
+      {
+        "id": "3b5b9e70-1ef9-43a7-bde7-048ccbfa4020",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -1574,7 +1870,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-29T06:14:14.757Z",
+    "validatedAt": "2026-09-01T17:43:04.474Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",

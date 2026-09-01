@@ -160,6 +160,32 @@ Capture separate evidence for:
 - Tagged-content preservation.
 - PDF/UA validator result.
 
-## 7. Release disposition
+## 7. Control-viewer observation gate (RG-131)
+
+Run the control-viewer observation workflow against the governed corpus before any version bump. This gate verifies that every fixture opens, renders, displays forms, and extracts text correctly through PDFKit — the primary native viewer.
+
+```swift
+let report = ControlViewerObservation.observeGovernedCorpus()
+// report.gatePassed must be true for a release GO
+// Any fixture failure = hard NO-GO
+```
+
+Or from the test suite:
+
+```sh
+swift test --filter "ControlViewerObservationGateTests"
+```
+
+The gate:
+- Observes all 5 dimensions per fixture: reopen, rotation, visual fidelity, form visibility, text readability.
+- Fails closed: zero fixtures, unreadable directory, or any single observation failure = gate FAIL.
+- Writes `benchmark/results/control-viewer-gate-report.json` as the CI artifact.
+- Is deterministic across runs (same corpus → same verdict).
+
+**Current scope:** 16 governed fixtures (native-form, static-form). Scanned, rotated, encrypted, malformed, handwritten, mixed-content, and large classes are under-represented. A second independent viewer (Poppler, MuPDF) is not yet wired.
+
+**Release rule:** The release disposition in §8 must not produce a `GO` if `report.gatePassed` is `false`.
+
+## 8. Release disposition
 
 The release report must contain a gate table, failed gates, blocked gates, evidence links, supported subset, known limitations, rollback/recovery path, and a final `GO`, `NO-GO`, or scoped `GO` decision.

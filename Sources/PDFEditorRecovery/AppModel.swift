@@ -137,30 +137,110 @@ public final class AppModel {
   public var selectedPageIndex = 0
   public var selectedFieldID: String?
   public var selectedCandidateID: UUID?
+  /// Sidecar annotation selected on the document canvas. This is view/session
+  /// state only; the annotation store remains the source of truth for the mark.
+  public var selectedAnnotationID: UUID?
   public var isManualPlacementMode = false
   public var manualTextPlacement: ManualTextPlacement?
   public var isManualTextSheetPresented = false
   public var manualTextDraft = ""
   public var isImporterPresented = false
+  /// Opens the native pre-export receipt before the save panel.
+  public var isExportReviewPresented = false
+  /// The explicit copy profile currently being reviewed.
+  public var exportReviewProfile: ExportReviewProfile = .editedCopy
+  /// Value-minimized receipt used by the review sheet and durable recovery.
+  /// Persisting this does not persist the derived output path or grant a
+  /// post-restart disposition action.
+  public var exportReviewReceipt: ExportReviewReceipt {
+    ExportReviewReceipt.make(
+      source: inspection,
+      operations: operations,
+      canExport: canPrepareExportReviewProfile,
+      profile: exportReviewProfile,
+      outputValidation: exportReport
+    )
+  }
   public var statusMessage: String?
   /// RG-043: last assistive-technology announcement (search counts, current
   /// match, page changes, no-match states). Recorded for verification and
   /// posted to the system accessibility channel.
   public private(set) var lastAccessibilityAnnouncement: String?
   public var alertMessage: String?
-  /// Up to 4 recently opened PDF file URLs, persisted across launches via UserDefaults.
+  private struct RecentDocumentRecord: Codable {
+    let urlString: String
+    let bookmarkData: Data?
+  }
+
+  private static let recentDocumentRecordsKey = "recentDocumentRecords"
+
+  private func loadRecentDocumentRecords() -> [RecentDocumentRecord] {
+    if let data = UserDefaults.standard.data(forKey: Self.recentDocumentRecordsKey),
+       let records = try? JSONDecoder().decode([RecentDocumentRecord].self, from: data) {
+      return records
+    }
+
+    // Keep existing installs readable while the bookmark-backed format rolls
+    // forward. The next successful open upgrades an individual record.
+    let legacy = UserDefaults.standard.array(forKey: "recentDocuments") as? [String] ?? []
+    return legacy.map { RecentDocumentRecord(urlString: $0, bookmarkData: nil) }
+  }
+
+  private func resolveRecentDocument(_ record: RecentDocumentRecord) -> URL? {
+    if let bookmarkData = record.bookmarkData {
+      var isStale = false
+      if let resolved = try? URL(
+        resolvingBookmarkData: bookmarkData,
+        options: [.withSecurityScope, .withoutUI],
+        relativeTo: nil,
+        bookmarkDataIsStale: &isStale
+      ) {
+        return resolved
+      }
+    }
+    return URL(string: record.urlString)
+  }
+
+  private func makeRecentDocumentBookmark(for url: URL) -> Data? {
+    guard url.isFileURL else { return nil }
+    return (try? url.bookmarkData(
+      options: [.withSecurityScope],
+      includingResourceValuesForKeys: nil,
+      relativeTo: nil
+    )) ?? (try? url.bookmarkData(
+      options: [],
+      includingResourceValuesForKeys: nil,
+      relativeTo: nil
+    ))
+  }
+
+  private func persistRecentDocumentRecords(_ records: [RecentDocumentRecord]) {
+    guard let data = try? JSONEncoder().encode(Array(records.prefix(4))) else { return }
+    UserDefaults.standard.set(data, forKey: Self.recentDocumentRecordsKey)
+    // Preserve the old projection for older builds and existing diagnostics.
+    UserDefaults.standard.set(
+      Array(records.prefix(4)).compactMap { URL(string: $0.urlString)?.absoluteString },
+      forKey: "recentDocuments"
+    )
+  }
+
+  /// Up to 4 recently opened PDF file URLs, persisted across launches with a
+  /// security-scoped bookmark when the source is user-owned.
   public var recentDocuments: [URL] {
     get {
-      let saved = UserDefaults.standard.array(forKey: "recentDocuments") as? [String] ?? []
-      return saved.compactMap { URL(string: $0) }
+      loadRecentDocumentRecords().compactMap(resolveRecentDocument(_:))
     }
     set {
-      let strings = newValue.map { $0.absoluteString }
-      UserDefaults.standard.set(strings, forKey: "recentDocuments")
-      // Keep only the last 4
-      if strings.count > 4 {
-        // trimmed on set
+      var uniqueURLs: [URL] = []
+      for url in newValue.map(\.standardizedFileURL) where !uniqueURLs.contains(url) {
+        uniqueURLs.append(url)
       }
+      let existing = loadRecentDocumentRecords()
+      let records = uniqueURLs.prefix(4).map { url in
+        existing.first(where: { URL(string: $0.urlString)?.standardizedFileURL == url })
+          ?? RecentDocumentRecord(urlString: url.absoluteString, bookmarkData: nil)
+      }
+      persistRecentDocumentRecords(Array(records))
     }
   }
   /// Up to 4 recently opened PDF file URLs, persisted across launches via UserDefaults.
@@ -197,7 +277,135 @@ public final class AppModel {
   private var lastAppliedTemplateCompletion: PDFTemplateCompletionProposal?
   private var templateCompletionOperationIDs: [UUID] = []
   public var exportReport: ValidationReport?
+  /// The exact derived output retained by the latest export attempt. This is
+  /// in-memory session state used only to govern rework/variance/discard.
+  public private(set) var lastExportURL: URL?
+  public private(set) var lastExportDisposition: ExportReviewDisposition?
   public private(set) var lastActionDenial: ActionDenial?
+
+  public var exportDispositionOptions: ExportReviewDispositionOptions {
+    ExportReviewDispositionOptions.make(
+      report: exportReport,
+      outputIsPresent: lastExportURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
+    )
+  }
+
+  /// Return to the live document after discarding the latest derived output.
+  /// Existing document operations remain untouched for another review pass.
+  public func reworkLastExport() {
+    guard exportDispositionOptions.canRework else { return }
+    guard removeLastExportFile() else { return }
+    lastExportURL = nil
+    lastExportDisposition = .rework
+    exportReport = nil
+    statusMessage = "Export discarded for rework. The live document operations remain available."
+  }
+
+  /// A warning may be accepted as a user-owned variance, but it never becomes
+  /// a validated report and is available only when a copy still exists.
+  @discardableResult
+  public func acceptLastExportAsVariance() -> Bool {
+    guard exportDispositionOptions.canAcceptAsVariance else { return false }
+    lastExportDisposition = .acceptAsVariance
+    statusMessage = "Export retained with an accepted validation variance."
+    return true
+  }
+
+  /// Remove only the exact output URL produced by this session. This does not
+  /// touch the source file or the live operation ledger.
+  @discardableResult
+  public func discardLastExport() -> Bool {
+    guard exportDispositionOptions.canDiscard else { return false }
+    guard removeLastExportFile() else { return false }
+    lastExportURL = nil
+    lastExportDisposition = .discard
+    exportReport = nil
+    statusMessage = "The derived export copy was discarded. The source file was not changed."
+    return true
+  }
+
+  @discardableResult
+  private func removeLastExportFile() -> Bool {
+    guard let lastExportURL else { return true }
+    do {
+      if FileManager.default.fileExists(atPath: lastExportURL.path) {
+        try FileManager.default.removeItem(at: lastExportURL)
+      }
+      return true
+    } catch {
+      alertMessage = "The derived export copy could not be discarded: \(error.localizedDescription)"
+      return false
+    }
+  }
+
+  /// Presents the read-only export review moment. The export implementation
+  /// remains behind the receipt and still performs its own final permission
+  /// and validation checks.
+  public func presentExportReview(profile: ExportReviewProfile = .editedCopy) {
+    exportReviewProfile = profile
+    isExportReviewPresented = true
+  }
+
+  /// Computes profile-specific admission before a review receipt is shown.
+  /// Alternate copies are not document mutations, so they do not inherit the
+  /// edited-operation permission predicate blindly.
+  public var canPrepareExportReviewProfile: Bool {
+    guard inspection != nil, liveDocument != nil else { return false }
+    switch exportReviewProfile {
+    case .editedCopy:
+      return canExportCurrentOperations
+    case .sanitizedCopy, .pageExtraction:
+      return true
+    case .flattenedCopy:
+      return false
+    }
+  }
+
+  /// Leaves the receipt before presenting the profile-specific save or utility
+  /// flow. The actual writer remains responsible for final validation.
+  public func continueExportReview() {
+    let profile = exportReviewProfile
+    isExportReviewPresented = false
+    switch profile {
+    case .editedCopy:
+      export()
+    case .sanitizedCopy:
+      presentSanitizedExportPanel()
+    case .pageExtraction:
+      presentPageExtractionPanel()
+    case .flattenedCopy:
+      statusMessage = "Flattened export is unavailable in the current provider lane."
+    }
+  }
+
+  private func presentSanitizedExportPanel() {
+    guard canPrepareExportReviewProfile else { return }
+    let panel = NSSavePanel()
+    panel.allowedContentTypes = [.pdf]
+    panel.canCreateDirectories = true
+    panel.nameFieldStringValue = "Sanitized-\(inspection?.source.fileName ?? "document.pdf")"
+    panel.begin { [weak self] response in
+      guard response == .OK, let destination = panel.url else { return }
+      _ = self?.sanitizeAndExportCopy(destination: destination)
+    }
+  }
+
+  private func presentPageExtractionPanel() {
+    guard canPrepareExportReviewProfile else { return }
+    let panel = NSSavePanel()
+    panel.allowedContentTypes = [.pdf]
+    panel.canCreateDirectories = true
+    panel.nameFieldStringValue = "Extracted-Page\(selectedPageIndex + 1).pdf"
+    panel.begin { [weak self] response in
+      guard response == .OK, let destination = panel.url else { return }
+      guard let self else { return }
+      _ = self.splitPageRange(
+        from: self.selectedPageIndex,
+        to: self.selectedPageIndex,
+        destination: destination
+      )
+    }
+  }
 
   public var readerViewMode: ReaderViewMode = .continuous
   public var readerScaleMode: ReaderScaleMode = .fitWidth
@@ -478,6 +686,12 @@ public final class AppModel {
       self.message = message
       self.id = "denied:\(action):\(requirement?.rawValue ?? "document")"
     }
+
+    /// Read-only projections for native surfaces. The stored requirement and
+    /// message remain owned by the recovery/model module.
+    public var actionName: String { action }
+    public var requirementName: String? { requirement?.rawValue }
+    public var explanation: String { message }
   }
 
   public struct InMemoryRecoverySnapshot: Equatable, Sendable {
@@ -1327,6 +1541,7 @@ public final class AppModel {
       sourceURL = url
       isScratchDocument = false
       cachedSourceData = data
+      rememberRecentDocument(url)
       // Stage 1 learning loop: load value-free priors so remaining
       // suggestions rank by what the user historically accepted here.
       let events = candidateReviewEventStore.events(
@@ -1399,6 +1614,7 @@ public final class AppModel {
       selectedPageIndex = 0
       selectedFieldID = nil
       selectedCandidateID = nil
+      selectedAnnotationID = nil
       isManualPlacementMode = false
       manualTextPlacement = nil
       isManualTextSheetPresented = false
@@ -1467,6 +1683,22 @@ public final class AppModel {
     }
   }
 
+  /// Records only successfully admitted user-owned PDFs. Failed opens and
+  /// password prompts must not create misleading recent-file entries.
+  public func rememberRecentDocument(_ url: URL) {
+    let normalizedURL = url.standardizedFileURL
+    var records = loadRecentDocumentRecords()
+    records.removeAll { URL(string: $0.urlString)?.standardizedFileURL == normalizedURL }
+    records.insert(
+      RecentDocumentRecord(
+        urlString: normalizedURL.absoluteString,
+        bookmarkData: makeRecentDocumentBookmark(for: normalizedURL)
+      ),
+      at: 0
+    )
+    persistRecentDocumentRecords(records)
+  }
+
   public func submitPassword() {
     guard let url = passwordPendingURL else { return }
     let attempted = passwordAttempt
@@ -1507,6 +1739,7 @@ public func resetDocument() {
     selectedPageIndex = 0
     selectedFieldID = nil
     selectedCandidateID = nil
+    selectedAnnotationID = nil
     selectedSearchMatchIndex = nil
     // D-057: no document, no view memory.
     activePinnedLayout = nil
@@ -3284,7 +3517,8 @@ public func resetDocument() {
     guard let snapshot = inspection?.pages[safe: pageIndex],
       snapshot.hasSelectableText == false || snapshot.characterCount == 0
     else { return }
-    guard let page = liveDocument?.page(at: pageIndex) else { return }
+    guard let livePage = liveDocument?.page(at: pageIndex) else { return }
+    nonisolated(unsafe) let page = livePage
 
     autoOCRPendingPages.insert(pageIndex)
     statusMessage = "Scanning page \(pageIndex + 1) for fillable areas…"
@@ -3476,6 +3710,8 @@ public func resetDocument() {
       outputDigest: outputDigest,
       validatedAt: Date(),
       operationIDs: operations.map(\.id))
+    lastExportURL = destination
+    lastExportDisposition = nil
     statusMessage =
       "Exported a copy of the new document (\(document.pageCount) page\(document.pageCount == 1 ? "" : "s"))."
     saveSession()
@@ -4061,8 +4297,10 @@ public func resetDocument() {
   }
 
   private func performExport(sourceURL: URL, destination: URL) {
+    lastExportDisposition = nil
     do {
       let result = try provider.export(url: sourceURL, operations: operations, to: destination)
+      lastExportURL = FileManager.default.fileExists(atPath: destination.path) ? destination : nil
       exportReport = result.report
       prepareValidatedTemplateRevision(from: result.report)
       switch result.report.status {
@@ -4139,7 +4377,11 @@ public func resetDocument() {
 
   /// Extract a selected range of pages and export them into a new standalone PDF.
   public func splitPageRange(from startIndex: Int, to endIndex: Int, destination: URL) -> Bool {
-    guard let doc = liveDocument else { return false }
+    guard let doc = liveDocument, doc.pageCount > 0 else {
+      alertMessage = "Open a non-empty document before extracting pages."
+      return false
+    }
+    guard destinationDoesNotOverwriteSource(destination) else { return false }
     let start = min(max(0, startIndex), doc.pageCount - 1)
     let end = min(max(start, endIndex), doc.pageCount - 1)
 
@@ -4158,21 +4400,28 @@ public func resetDocument() {
       return false
     }
 
-    do {
-      try data.write(to: destination, options: .atomic)
-      statusMessage = "Extracted pages \(start + 1)–\(end + 1) to \(destination.lastPathComponent)."
-      return true
-    } catch {
-      alertMessage = "Failed to write extracted PDF: \(error.localizedDescription)"
-      return false
-    }
+    return publishDerivedCopy(
+      data: data,
+      destination: destination,
+      expectedPageCount: targetIndex,
+      successMessage: "Extracted pages \(start + 1)–\(end + 1) to \(destination.lastPathComponent)."
+    )
   }
 
   // MARK: - Sanitization & Metadata Scrubbing (B4 Lane)
 
-  /// Cleanly export a copy of the PDF with all metadata, EXIF properties, author tags, and hidden streams stripped.
+  /// Export a copy with document-authored metadata removed.
+  ///
+  /// PDFKit may regenerate serializer provenance (`Producer`, `CreationDate`,
+  /// and `ModDate`) while writing. Those implementation fields are not treated
+  /// as retained author metadata; the validation below checks the fields the
+  /// user can control through the document metadata contract.
   public func sanitizeAndExportCopy(destination: URL) -> Bool {
-    guard let doc = liveDocument else { return false }
+    guard let doc = liveDocument else {
+      alertMessage = "Open a document before preparing a sanitized copy."
+      return false
+    }
+    guard destinationDoesNotOverwriteSource(destination) else { return false }
     guard let copiedDoc = doc.copy() as? PDFDocument else {
       alertMessage = "Failed to duplicate document for sanitization."
       return false
@@ -4186,22 +4435,104 @@ public func resetDocument() {
       return false
     }
 
-    do {
-      try data.write(to: destination, options: .atomic)
-      let op = EditOperation(
-        pageIndex: 0,
-        kind: .sanitize,
-        value: "metadata-scrubbed",
-        sessionID: currentSessionID,
-        sourceDigest: inspection?.source.sha256
-      )
-      recordAppliedOperation(op)
-      statusMessage = "Exported metadata-sanitized copy to \(destination.lastPathComponent)."
-      return true
-    } catch {
-      alertMessage = "Failed to save sanitized copy: \(error.localizedDescription)"
+    return publishDerivedCopy(
+      data: data,
+      destination: destination,
+      expectedPageCount: doc.pageCount,
+      requiresScrubbedDocumentAttributes: true,
+      successMessage: "Exported metadata-sanitized copy to \(destination.lastPathComponent)."
+    )
+  }
+
+  /// Derived-copy workflows are output transformations, not edits to the live
+  /// document. They share publication, reopen, page-count, digest, and source
+  /// preservation checks instead of appending a synthetic ledger operation.
+  private func publishDerivedCopy(
+    data: Data,
+    destination: URL,
+    expectedPageCount: Int,
+    requiresScrubbedDocumentAttributes: Bool = false,
+    successMessage: String
+  ) -> Bool {
+    guard !data.isEmpty else {
+      alertMessage = "The derived PDF could not be serialized."
       return false
     }
+
+    do {
+      try data.write(to: destination, options: [.atomic])
+    } catch {
+      alertMessage = "Could not write the derived PDF: \(error.localizedDescription)"
+      return false
+    }
+
+    let reopened = PDFDocument(data: data)
+    let outputReopenable = reopened?.pageCount == expectedPageCount
+    let metadataValid = !requiresScrubbedDocumentAttributes
+      || scrubbedDocumentAttributes(reopened?.documentAttributes)
+    let sourceUnchanged = sourceStillMatchesInspection()
+
+    guard outputReopenable, metadataValid, sourceUnchanged else {
+      try? FileManager.default.removeItem(at: destination)
+      let outputDigest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+      exportReport = ValidationReport(
+        status: .failed,
+        messages: ["The derived copy failed reopen, metadata, page-count, or source-preservation validation."],
+        sourceUnchanged: sourceUnchanged,
+        outputReopenable: outputReopenable,
+        sourceDigest: inspection?.source.sha256,
+        outputDigest: outputDigest,
+        validatedAt: Date()
+      )
+      alertMessage = "The derived copy failed validation and was not retained."
+      return false
+    }
+
+    let outputDigest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    exportReport = ValidationReport(
+      status: .validated,
+      messages: [],
+      sourceUnchanged: true,
+      outputReopenable: true,
+      sourceDigest: inspection?.source.sha256,
+      outputDigest: outputDigest,
+      validatedAt: Date(),
+      operationIDs: operations.map(\.id)
+    )
+    lastExportURL = destination
+    lastExportDisposition = nil
+    statusMessage = successMessage
+    saveSession()
+    return true
+  }
+
+  private func scrubbedDocumentAttributes(_ attributes: [AnyHashable: Any]?) -> Bool {
+    let authoredKeys: [AnyHashable] = [
+      PDFDocumentAttribute.titleAttribute,
+      PDFDocumentAttribute.authorAttribute,
+      PDFDocumentAttribute.subjectAttribute,
+      PDFDocumentAttribute.creatorAttribute
+    ]
+    return authoredKeys.allSatisfy { key in
+      guard let value = attributes?[key] else { return true }
+      if let string = value as? String { return string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+      return false
+    }
+  }
+
+  private func destinationDoesNotOverwriteSource(_ destination: URL) -> Bool {
+    guard let sourceURL,
+          destination.standardizedFileURL == sourceURL.standardizedFileURL
+    else { return true }
+    alertMessage = "Choose a new output location; the source file cannot be overwritten."
+    return false
+  }
+
+  private func sourceStillMatchesInspection() -> Bool {
+    guard let sourceURL, let expectedDigest = inspection?.source.sha256 else { return true }
+    guard let sourceData = try? Data(contentsOf: sourceURL) else { return false }
+    let actualDigest = SHA256.hash(data: sourceData).map { String(format: "%02x", $0) }.joined()
+    return actualDigest == expectedDigest
   }
 
   // MARK: - Session Persistence
@@ -4496,6 +4827,7 @@ public func resetDocument() {
         sessionID: sessionID,
         sourceDigest: sourceDigest,
         operationCount: operations.count),
+      exportReviewReceipt: exportReviewReceipt,
       operationLedger: metadata,
       viewState: recoveryViewState(),
       recovery: DocumentSessionRecoveryMetadata(
@@ -5023,13 +5355,21 @@ public func resetDocument() {
       return
     }
     do {
+      // Extract V2 layout fingerprint at capture time so production captures
+      // automatically carry the cell channel (text/field/annotation/raster cells).
+      var layoutV2: LayoutFingerprintV2?
+      if let sourceURL,
+         let document = PDFDocument(url: sourceURL) {
+        layoutV2 = LayoutFingerprintV2Extractor.extract(from: document)
+      }
       let draft = try PDFTemplateCapture.captureDraft(
         from: inspection,
         workspaceKey: Data("pdf-editor-native-template-workspace".utf8),
         displayName: displayName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
           ? "Reviewed local layout"
           : displayName.trimmingCharacters(in: .whitespacesAndNewlines),
-        sessionID: currentSessionID)
+        sessionID: currentSessionID,
+        layoutV2: layoutV2)
       templateContract = draft
       templateRevisionHistory = try PDFTemplateRevisionSet(
         templateID: draft.payload.templateID,

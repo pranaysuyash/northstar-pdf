@@ -49,8 +49,98 @@ public struct AgentCommandHUD: View {
     self._isSecurityVaultPresented = isSecurityVaultPresented
   }
 
+  private var adaptiveContextCommands: [AgentCommandItem] {
+    let history = AdaptiveCommandHistory.shared
+    let input = AdaptiveCommandContext.input(
+      model: model,
+      intent: adaptiveIntent,
+      target: model.selectedField == nil ? .documentScrolling : .formField
+    )
+
+    return AdaptiveCommandPolicy.standard.resolve(input).allValidCommands.compactMap { command in
+      switch command.id {
+      case .search:
+        return AgentCommandItem(
+          id: "adaptive-search",
+          title: command.title,
+          subtitle: "Search the current document",
+          icon: "magnifyingglass",
+          category: "Current Context"
+        ) {
+          history.record(.search)
+          model.routeSearchCommand()
+        }
+      case .continueReading:
+        return AgentCommandItem(
+          id: "adaptive-continue-reading",
+          title: command.title,
+          subtitle: "Return to the document reading posture",
+          icon: "book",
+          category: "Current Context"
+        ) {
+          history.record(.continueReading)
+          model.readingMode = .study
+        }
+      case .understandDocument:
+        return AgentCommandItem(
+          id: "adaptive-understand-document",
+          title: command.title,
+          subtitle: "Open the document understanding workspace",
+          icon: "text.magnifyingglass",
+          category: "Current Context"
+        ) {
+          history.record(.understandDocument)
+          model.readingMode = .study
+        }
+      case .fillForm:
+        return AgentCommandItem(
+          id: "adaptive-fill-form",
+          title: command.title,
+          subtitle: "Continue completing the selected native field",
+          icon: "character.cursor.ibeam",
+          category: "Current Context"
+        ) {
+          history.record(.fillForm)
+          model.setEditorMode(.fill)
+        }
+      case .undo:
+        return AgentCommandItem(
+          id: "adaptive-undo",
+          title: command.title,
+          subtitle: "Reverse the latest accepted document operation",
+          icon: "arrow.uturn.backward",
+          category: "Current Context"
+        ) {
+          history.record(.undo)
+          model.undo()
+        }
+      case .redo:
+        return AgentCommandItem(
+          id: "adaptive-redo",
+          title: command.title,
+          subtitle: "Reapply the latest undone document operation",
+          icon: "arrow.uturn.forward",
+          category: "Current Context"
+        ) {
+          history.record(.redo)
+          model.redo()
+        }
+      default:
+        return nil
+      }
+    }
+  }
+
+  private var adaptiveIntent: AdaptiveIntentLens {
+    switch model.editorMode {
+    case .read: return .read
+    case .fill, .sign: return .complete
+    case .edit: return .review
+    }
+  }
+
   private var allCommands: [AgentCommandItem] {
-    var items: [AgentCommandItem] = []
+    var items: [AgentCommandItem] = adaptiveContextCommands
 
     // 1. Intelligent Fill & Auto-Completion
     if let profile = model.currentProfile {
@@ -297,7 +387,7 @@ public struct AgentCommandHUD: View {
         category: "Export",
         isAvailable: model.canExportCurrentOperations
       ) {
-        model.export()
+        model.presentExportReview()
       }
     )
 

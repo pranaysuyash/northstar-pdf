@@ -1,0 +1,286 @@
+{
+  "schema": "pdf-editor.native-audit-snapshot",
+  "schemaVersion": 1,
+  "capturedAt": "2026-09-01T10:00:37.723Z",
+  "host": {
+    "platform": "darwin",
+    "architecture": "arm64",
+    "release": "25.6.0"
+  },
+  "repository": {
+    "branch": {
+      "status": "observed",
+      "value": "main"
+    },
+    "head": {
+      "status": "observed",
+      "value": "bbca0a10703f1e6dc2644d434ad437e22512d7fc"
+    },
+    "status": {
+      "status": "observed",
+      "value": "## main...origin/main [ahead 7]\n M .github/workflows/ci.yml\nMM .gitignore\n M README.md\n M Sources/PDFContractHarness/main.swift\n M Sources/PDFEditorApp/AgentCommandHUD.swift\n M Sources/PDFEditorApp/AnnotationCreationToolbar.swift\n M Sources/PDFEditorApp/AppCommands.swift\n M Sources/PDFEditorApp/ContentView.swift\n M Sources/PDFEditorApp/ContextualInspectorView.swift\n M Sources/PDFEditorApp/DocumentCanvasView.swift\n M Sources/PDFEditorApp/PDFEditorApp.swift\n M Sources/PDFEditorApp/PageThumbnailRailView.swift\nM  Sources/PDFEditorCore/ContentInvariantRasterExtractor.swift\n M Sources/PDFEditorCore/DocumentSessionContracts.swift\n M Sources/PDFEditorCore/FalsePositiveReport.swift\n M Sources/PDFEditorCore/LayoutFingerprintV2.swift\nMM Sources/PDFEditorCore/OCRCompanionBenchmark.swift\n M Sources/PDFEditorCore/RecurringFormCalibrator.swift\n M Sources/PDFEditorCore/TemplateCaptureContracts.swift\nMM Sources/PDFEditorRecovery/AppModel.swift\nA  Sources/PDFVisionOCRCLI/main.swift\n M Tests/PDFEditorCoreTests/CalibrationCorpusVerificationTests.swift\n M Tests/PDFEditorCoreTests/CalibrationPolicyTests.swift\n M Tests/PDFEditorCoreTests/CapabilityMaturityTests.swift\n M Tests/PDFEditorCoreTests/LayoutFingerprintThresholdCalibrationTests.swift\n M Tests/PDFEditorCoreTests/LayoutFingerprintV2Tests.swift\nMM Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift\n M Tests/PDFEditorCoreTests/RenderingPipelineFixTests.swift\n M Tests/PDFEditorCoreTests/SessionPrivacyProvenanceTests.swift\n M Tests/browser_acroform_semantic_matrix_test.mjs\n M Tests/detector_calibration_parity_test.mjs\n M Tests/detector_semantic_comparison_test.mjs\n M Tests/encrypted_companion_export_test.mjs\n M Tests/ihatepdf_experiment_parity_test.mjs\n M Tests/pdf_contract_parity_test.mjs\n M Tests/pdf_independent_preservation_test.mjs\n M Tests/preflight_contract_test.mjs\n M Tests/rotated_operation_replay_test.mjs\n M Tests/static_region_reviewed_benchmark_browser_test.mjs\n M Tests/template_match_native_browser_parity_test.mjs\n M Tests/text_run_ocr_alignment_browser_test.mjs\n M Tests/web_accessibility_gate_test.mjs\n M Tests/web_browser_resource_policy_test.mjs\n M Tests/web_character_grid_workflow_test.mjs\n M Tests/web_coordinate_fidelity_browser_test.mjs\n M Tests/web_editor_e2e_workflow_test.mjs\n M Tests/web_native_choice_workflow_test.mjs\n M Tests/web_pdf_contract_fixture_test.mjs\n M Tests/web_pdf_contract_mutation_test.mjs\n M Tests/web_pdf_impact_validator_test.mjs\n M Tests/web_pdf_proof_playwright_test.mjs\n M Tests/web_preflight_browser_test.mjs\n M Tests/web_preservation_metrics_browser_test.mjs\n M Tests/web_static_choice_and_synthesis_workflow_test.mjs\n M Tests/web_template_browser_test.mjs\n M Tests/web_template_contract_test.mjs\n M Tests/web_template_correction_benchmark_browser_test.mjs\n M Tests/web_template_match_benchmark_browser_test.mjs\n M Tests/web_template_security_browser_test.mjs\nA  benchmark/compare_ocr_wer.py\n M benchmark/independent-preservation-validator.mjs\nA  benchmark/paddleocr_wrapper.py\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__2026-08-23-pdfkit-widgets__fixture.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__2026-08-23-public-acroform__noop.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__browser-corpus__encrypted-hybrid.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__browser-corpus__hybrid-text-raster-form.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__browser-corpus__large-hybrid-40-pages.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__browser-corpus__rotated-hybrid-90.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__browser-corpus__scanned-noisy.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__governed-corpus__handwritten-simulated-entries.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__navigation-corpus__navigation-metadata.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__ocr-corpus__printed-scan.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__public-sample-form.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__rotation-corpus__rotated-form6-mixed.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__rotation-corpus__rotated-widget-90.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__security-corpus__encrypted-reader.json\n M benchmark/results/contract-parity-2026-08-24/native/benchmark__results__security-corpus__repeated-20-pages.json\n M benchmark/results/contract-parity-2026-08-24/native/docs__benchmarks__pdfkit-form6-run-2026-08-23__noop.json\n D benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__browser-corpus__large-hybrid-40-pages-native-noop.pdf\n M benchmark/results/contract-parity-2026-08-24/native/summary.json\n M benchmark/results/contract-parity-2026-08-24/parity-report.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__2026-08-23-pdfkit-widgets__fixture.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__2026-08-23-public-acroform__noop.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__browser-corpus__encrypted-hybrid.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__browser-corpus__hybrid-text-raster-form.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__browser-corpus__large-hybrid-40-pages.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__browser-corpus__rotated-hybrid-90.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__browser-corpus__scanned-noisy.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__governed-corpus__handwritten-simulated-entries.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__navigation-corpus__navigation-metadata.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__ocr-corpus__printed-scan.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__public-sample-form.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__rotation-corpus__rotated-form6-mixed.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__rotation-corpus__rotated-widget-90.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__security-corpus__encrypted-reader.json\n M benchmark/results/contract-parity-2026-08-24/web/benchmark__results__security-corpus__repeated-20-pages.json\n M benchmark/results/contract-parity-2026-08-24/web/docs__benchmarks__pdfkit-form6-run-2026-08-23__noop.json\n M benchmark/results/corpus-sweep-2026-08-25/manifest.json\n M benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__geometry.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__metadata-absent.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__metadata-complete.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__metadata-custom.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__metadata-malformed.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__metadata-unicode.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__multi-column.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__navigation.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__plain-text.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__signed-invalid-structure.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__signed-multiple.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__signed-valid-structure.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__xfa-dynamic.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__xfa-hybrid.json\n M benchmark/results/detector-calibration/native-corpus/benchmark__results__corpus-sweep-2026-08-25__xfa-static.json\n M benchmark/results/detector-calibration/native-corpus/summary.json\nM  benchmark/results/ocr-corpus/clean-english.png\nM  benchmark/results/ocr-corpus/dense-paragraph.png\nM  benchmark/results/ocr-corpus/low-contrast.png\nM  benchmark/results/ocr-corpus/mixed-punctuation.png\nM  benchmark/results/ocr-corpus/multi-column.png\nM  benchmark/results/ocr-corpus/noisy-invoice.png\nM  benchmark/results/ocr-corpus/printed-scan.png\nM  benchmark/results/ocr-corpus/rotated-certificate.png\nM  benchmark/results/ocr-corpus/small-font.png\n M benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json\nMM docs/INDEX.md\n M docs/audits/INDEX.md\n M docs/audits/calibration-corpus-verification-2026-08-28.md\n M docs/audits/content-invariant-raster-extraction-2026-08-31.md\nA  docs/audits/ocr-cross-provider-benchmark-2026-08-31.md\n M docs/audits/raster-weight-analysis-2026-08-30.md\n M docs/context/agent-start/SESSION_CONTEXT.md\n M docs/decisions.md\n M docs/error-taxonomy.md\n M docs/implementation-status.md\n M docs/release-gates.md\n M docs/reviews/motto_review.md\n M docs/runbooks/release-gates.md\n M docs/shared-contracts.md\n M findings.md\n M progress.md\n M task_plan.md\n M tools/README.md\n M web/app.js\n M web/pdf-contract-mutation-gate.mjs\n M web/pdf-contract-parity.mjs\n M web/pdf-preflight.mjs\n M web/pdf-template-contract.mjs\n?? EMPTY-STATE-SKETCHES-2.html\n?? EMPTY-STATE-SKETCHES-3.html\n?? EMPTY-STATE-SKETCHES-4.html\n?? EMPTY-STATE-SKETCHES.html\n?? Sources/PDFEditorApp/AdaptiveCommandContext.swift\n?? Sources/PDFEditorApp/AdaptiveDocumentContextMenu.swift\n?? Sources/PDFEditorApp/ExportReviewReceiptView.swift\n?? Sources/PDFEditorCore/AcroFormParityExperiment.swift\n?? Sources/PDFEditorCore/AdaptiveCommandHistory.swift\n?? Sources/PDFEditorCore/AdaptiveCommandPolicy.swift\n?? Sources/PDFEditorCore/ControlViewerObservation.swift\n?? Sources/PDFEditorCore/DocumentCapabilityPassport.swift\n?? Sources/PDFEditorCore/ExportReviewDisposition.swift\n?? Sources/PDFEditorCore/ExportReviewReceipt.swift\n?? Sources/PDFEditorCore/ProviderRejectionLedger.swift\n?? Sources/PDFEditorCore/RotatedReplayFixture.swift\n?? Tests/PDFEditorAppRecoveryTests/DocumentWindowIsolationTests.swift\n?? Tests/PDFEditorAppRecoveryTests/ExportProfileValidationTests.swift\n?? Tests/PDFEditorAppRecoveryTests/RecentDocumentHistoryTests.swift\n?? Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift\n?? Tests/PDFEditorCoreTests/AdaptiveCommandHistoryTests.swift\n?? Tests/PDFEditorCoreTests/AdaptiveCommandPolicyTests.swift\n?? Tests/PDFEditorCoreTests/BatchReadProcessorTests.swift\n?? Tests/PDFEditorCoreTests/CaptureDraftV2Tests.swift\n?? Tests/PDFEditorCoreTests/CitationToolsTests.swift\n?? Tests/PDFEditorCoreTests/ControlViewerObservationGateTests.swift\n?? Tests/PDFEditorCoreTests/ControlViewerObservationTests.swift\n?? Tests/PDFEditorCoreTests/DocumentCacheManagerTests.swift\n?? Tests/PDFEditorCoreTests/DocumentCapabilityPassportTests.swift\n?? Tests/PDFEditorCoreTests/ExportReviewDispositionTests.swift\n?? Tests/PDFEditorCoreTests/ExportReviewReceiptTests.swift\n?? Tests/PDFEditorCoreTests/ExternalDatasetEvalTests.swift\n?? Tests/PDFEditorCoreTests/ManifestFieldPresenceGateTests.swift\n?? Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift\n?? Tests/PDFEditorCoreTests/ReadingAnalyticsTests.swift\n?? Tests/PDFEditorCoreTests/RegionSimilarityDebug.swift\n?? Tests/PDFEditorCoreTests/RotatedReplayFixtureTests.swift\n?? Tests/PDFEditorCoreTests/ValueFreeLoggerTests.swift\n?? Tests/fixtures/provider_rejection_ledger_fixture.json\n?? Tests/pdfbox_mupdf_bakeoff_test.mjs\n?? Tests/provider_rejection_ledger_oracle_test.mjs\n?? Tests/web_preexport_privacy_gate_test.mjs\n?? benchmark/datasets/\n?? benchmark/marker_wrapper.py\n?? benchmark/pdfbox-mupdf-bakeoff.mjs\n?? benchmark/results/acroform-parity/\n?? benchmark/results/control-viewer-gate-report.json\n?? benchmark/results/detector-calibration/native-corpus/calibration-gate-report.json\n?? benchmark/results/governed-corpus-manifest.json\n?? benchmark/results/ocr-corpus/cross-provider-wer-report.json\n?? benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/\n?? benchmark/results/rejection-ledger/\n?? docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md\n?? docs/audits/comprehensive-adhd-audit-round2-2026-08-30.md\n?? docs/audits/external-evaluation-datasets-2026-09-01.md\n?? docs/audits/native-macos-product-audit-per-0926-2026-08-31.md\n?? docs/audits/native-macos-snapshot-2026-09-01.json\n?? docs/audits/native-preview-home-2026-09-01.png\n?? docs/audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md\n?? docs/audits/provider-rejection-ledger-evidence-2026-08-31.md\n?? docs/audits/rg-131-dual-engine-verification-2026-09-01.md\n?? docs/audits/rotated-reviewed-operation-replay-evidence-2026-08-31.md\n?? docs/decisions/\n?? docs/explorations/adhd-exploration-pool-ledger.md\n?? docs/explorations/native-macos-visual-grammar-2026-09-01.md\n?? docs/roadmaps/native-macos-modernization-plan-2026-08-31.md\n?? docs/runbooks/add-corpus-fixture.md\n?? docs/task-inventory.md\n?? ref-chatdoc.jpeg\n?? ref-craft.jpeg\n?? ref-cursor.jpeg\n?? ref-dia.jpeg\n?? ref-granola.jpeg\n?? ref-pdfexpert-2.jpeg\n?? ref-pdfexpert.jpeg\n?? ref-raycast.jpeg\n?? ref-smallpdf.jpeg\n?? tools/build-native-preview-app.sh\n?? tools/native-audit-snapshot.mjs\n?? tools/native-preview-Info.plist\n?? web/provider-rejection-ledger.mjs"
+    },
+    "untrackedPaths": [
+      "EMPTY-STATE-SKETCHES-2.html",
+      "EMPTY-STATE-SKETCHES-3.html",
+      "EMPTY-STATE-SKETCHES-4.html",
+      "EMPTY-STATE-SKETCHES.html",
+      "Sources/PDFEditorApp/AdaptiveCommandContext.swift",
+      "Sources/PDFEditorApp/AdaptiveDocumentContextMenu.swift",
+      "Sources/PDFEditorApp/ExportReviewReceiptView.swift",
+      "Sources/PDFEditorCore/AcroFormParityExperiment.swift",
+      "Sources/PDFEditorCore/AdaptiveCommandHistory.swift",
+      "Sources/PDFEditorCore/AdaptiveCommandPolicy.swift",
+      "Sources/PDFEditorCore/ControlViewerObservation.swift",
+      "Sources/PDFEditorCore/DocumentCapabilityPassport.swift",
+      "Sources/PDFEditorCore/ExportReviewDisposition.swift",
+      "Sources/PDFEditorCore/ExportReviewReceipt.swift",
+      "Sources/PDFEditorCore/ProviderRejectionLedger.swift",
+      "Sources/PDFEditorCore/RotatedReplayFixture.swift",
+      "Tests/PDFEditorAppRecoveryTests/DocumentWindowIsolationTests.swift",
+      "Tests/PDFEditorAppRecoveryTests/ExportProfileValidationTests.swift",
+      "Tests/PDFEditorAppRecoveryTests/RecentDocumentHistoryTests.swift",
+      "Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift",
+      "Tests/PDFEditorCoreTests/AdaptiveCommandHistoryTests.swift",
+      "Tests/PDFEditorCoreTests/AdaptiveCommandPolicyTests.swift",
+      "Tests/PDFEditorCoreTests/BatchReadProcessorTests.swift",
+      "Tests/PDFEditorCoreTests/CaptureDraftV2Tests.swift",
+      "Tests/PDFEditorCoreTests/CitationToolsTests.swift",
+      "Tests/PDFEditorCoreTests/ControlViewerObservationGateTests.swift",
+      "Tests/PDFEditorCoreTests/ControlViewerObservationTests.swift",
+      "Tests/PDFEditorCoreTests/DocumentCacheManagerTests.swift",
+      "Tests/PDFEditorCoreTests/DocumentCapabilityPassportTests.swift",
+      "Tests/PDFEditorCoreTests/ExportReviewDispositionTests.swift",
+      "Tests/PDFEditorCoreTests/ExportReviewReceiptTests.swift",
+      "Tests/PDFEditorCoreTests/ExternalDatasetEvalTests.swift",
+      "Tests/PDFEditorCoreTests/ManifestFieldPresenceGateTests.swift",
+      "Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift",
+      "Tests/PDFEditorCoreTests/ReadingAnalyticsTests.swift",
+      "Tests/PDFEditorCoreTests/RegionSimilarityDebug.swift",
+      "Tests/PDFEditorCoreTests/RotatedReplayFixtureTests.swift",
+      "Tests/PDFEditorCoreTests/ValueFreeLoggerTests.swift",
+      "Tests/fixtures/provider_rejection_ledger_fixture.json",
+      "Tests/pdfbox_mupdf_bakeoff_test.mjs",
+      "Tests/provider_rejection_ledger_oracle_test.mjs",
+      "Tests/web_preexport_privacy_gate_test.mjs",
+      "benchmark/datasets/doclaynet/eval/README.md",
+      "benchmark/datasets/doclaynet/eval/manifest.json",
+      "benchmark/datasets/download_doclaynet.py",
+      "benchmark/datasets/download_funsd.py",
+      "benchmark/datasets/funsd/eval/README.md",
+      "benchmark/datasets/funsd/eval/manifest.json",
+      "benchmark/marker_wrapper.py",
+      "benchmark/pdfbox-mupdf-bakeoff.mjs",
+      "benchmark/results/acroform-parity/acroform-parity-gate-report.json",
+      "benchmark/results/control-viewer-gate-report.json",
+      "benchmark/results/detector-calibration/native-corpus/calibration-gate-report.json",
+      "benchmark/results/governed-corpus-manifest.json",
+      "benchmark/results/ocr-corpus/cross-provider-wer-report.json",
+      "benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json",
+      "benchmark/results/rejection-ledger/2026-08-31/report.json",
+      "docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md",
+      "docs/audits/comprehensive-adhd-audit-round2-2026-08-30.md",
+      "docs/audits/external-evaluation-datasets-2026-09-01.md",
+      "docs/audits/native-macos-product-audit-per-0926-2026-08-31.md",
+      "docs/audits/native-macos-snapshot-2026-09-01.json",
+      "docs/audits/native-preview-home-2026-09-01.png",
+      "docs/audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md",
+      "docs/audits/provider-rejection-ledger-evidence-2026-08-31.md",
+      "docs/audits/rg-131-dual-engine-verification-2026-09-01.md",
+      "docs/audits/rotated-reviewed-operation-replay-evidence-2026-08-31.md",
+      "docs/decisions/adaptive-contextual-command-doctrine-2026-08-31.md",
+      "docs/decisions/document-session-ownership-matrix-2026-09-01.md",
+      "docs/decisions/export-output-disposition-recovery-2026-09-01.md",
+      "docs/decisions/native-beta-contract-2026-09-01.md",
+      "docs/explorations/adhd-exploration-pool-ledger.md",
+      "docs/explorations/native-macos-visual-grammar-2026-09-01.md",
+      "docs/roadmaps/native-macos-modernization-plan-2026-08-31.md",
+      "docs/runbooks/add-corpus-fixture.md",
+      "docs/task-inventory.md",
+      "ref-chatdoc.jpeg",
+      "ref-craft.jpeg",
+      "ref-cursor.jpeg",
+      "ref-dia.jpeg",
+      "ref-granola.jpeg",
+      "ref-pdfexpert-2.jpeg",
+      "ref-pdfexpert.jpeg",
+      "ref-raycast.jpeg",
+      "ref-smallpdf.jpeg",
+      "tools/build-native-preview-app.sh",
+      "tools/native-audit-snapshot.mjs",
+      "tools/native-preview-Info.plist",
+      "web/provider-rejection-ledger.mjs"
+    ]
+  },
+  "reliedOnFiles": [
+    {
+      "path": "Package.swift",
+      "status": "present",
+      "bytes": 3173,
+      "modifiedAt": "2026-08-26T12:14:11.110Z",
+      "sha256": "eca546498a4a8db1fb1218a5c4e58e32bf5862efb8b299fc5bf76a2e6fb4212b"
+    },
+    {
+      "path": "Sources/PDFEditorApp/ContentView.swift",
+      "status": "present",
+      "bytes": 66967,
+      "modifiedAt": "2026-09-01T09:14:04.034Z",
+      "sha256": "82fa02e418f85451a36dae5092b39a5e15a9c99ed06dad163d4abffc5f0f306d"
+    },
+    {
+      "path": "Sources/PDFEditorApp/AdaptiveDocumentContextMenu.swift",
+      "status": "present",
+      "bytes": 5247,
+      "modifiedAt": "2026-09-01T08:45:35.356Z",
+      "sha256": "2d1bd56d0dde5cf573e73347d02ad28459d072f2d97541aec1dd3f327a323ae9"
+    },
+    {
+      "path": "Sources/PDFEditorApp/AdaptiveCommandContext.swift",
+      "status": "present",
+      "bytes": 1643,
+      "modifiedAt": "2026-08-31T11:08:05.651Z",
+      "sha256": "7ce023f54f76ca04b84d0f064403dfd239dc34d839443f7402da64e45d8935de"
+    },
+    {
+      "path": "Sources/PDFEditorApp/AppCommands.swift",
+      "status": "present",
+      "bytes": 19913,
+      "modifiedAt": "2026-08-31T11:40:32.058Z",
+      "sha256": "1734a3a4156155538c74b7d2cb81a0c5cfd67cca71b4b51489d26cfbeb73cc72"
+    },
+    {
+      "path": "Sources/PDFEditorApp/PDFEditorApp.swift",
+      "status": "present",
+      "bytes": 10553,
+      "modifiedAt": "2026-08-31T14:26:12.330Z",
+      "sha256": "b23b70e82979a30b19186b2e542b9550fe3e1b8ad1ce7ad6c1db71d299d12e2c"
+    },
+    {
+      "path": "Sources/PDFEditorApp/DocumentCanvasView.swift",
+      "status": "present",
+      "bytes": 59073,
+      "modifiedAt": "2026-08-31T16:20:19.135Z",
+      "sha256": "d5831887d6460372764e9b5a5a683d72751b27d0461e9e0d21a0ca77ffca1cfe"
+    },
+    {
+      "path": "Sources/PDFEditorApp/PageThumbnailRailView.swift",
+      "status": "present",
+      "bytes": 10535,
+      "modifiedAt": "2026-08-31T16:20:18.598Z",
+      "sha256": "5b791e2b6d13fe12b2981e2da346024adc182c82d45ee45d2ef08bc21754e8d0"
+    },
+    {
+      "path": "Sources/PDFEditorApp/ContextualInspectorView.swift",
+      "status": "present",
+      "bytes": 56686,
+      "modifiedAt": "2026-09-01T07:58:59.361Z",
+      "sha256": "a0920ed99aeb245529ae16ad38722102b0e2a058ee0be3f917da8dbb5071d3f3"
+    },
+    {
+      "path": "Sources/PDFEditorRecovery/AppModel.swift",
+      "status": "present",
+      "bytes": 238648,
+      "modifiedAt": "2026-09-01T09:33:11.320Z",
+      "sha256": "e632a305aa4068b80036af7d7135344c42cdf0cbe0f6d308f09f2ef5d30972c9"
+    },
+    {
+      "path": "Sources/PDFEditorCore/AdaptiveCommandPolicy.swift",
+      "status": "present",
+      "bytes": 24033,
+      "modifiedAt": "2026-08-31T15:53:14.537Z",
+      "sha256": "cf4895055e9050c35599919b16b3c67e81ee5831a31dae4109117d1046199862"
+    },
+    {
+      "path": "Sources/PDFEditorCore/AdaptiveCommandHistory.swift",
+      "status": "present",
+      "bytes": 3640,
+      "modifiedAt": "2026-08-31T16:16:38.504Z",
+      "sha256": "2b5931fbd2d073a16abac068c890832d0a6c71086189367cd9cb4ce459ee75f6"
+    },
+    {
+      "path": "Sources/PDFEditorCore/DocumentSessionContracts.swift",
+      "status": "present",
+      "bytes": 17212,
+      "modifiedAt": "2026-08-31T16:23:39.265Z",
+      "sha256": "cc16394f2947fbbbe76b224323f7dfb02770ad02e58e24e084661124b5d99d7d"
+    },
+    {
+      "path": "docs/audits/native-macos-product-audit-per-0926-2026-08-31.md",
+      "status": "present",
+      "bytes": 71743,
+      "modifiedAt": "2026-09-01T09:59:18.223Z",
+      "sha256": "488cb2b55d42db896247c50b55539bb0ac35a99319184c25d16e6ba4c73c15e1"
+    },
+    {
+      "path": "docs/explorations/native-macos-visual-grammar-2026-09-01.md",
+      "status": "present",
+      "bytes": 13246,
+      "modifiedAt": "2026-09-01T09:36:34.481Z",
+      "sha256": "e2075e0203db2df42111404844ff0e8a855e489b1f5823e4568b239cb6c7e97b"
+    },
+    {
+      "path": "docs/decisions/adaptive-contextual-command-doctrine-2026-08-31.md",
+      "status": "present",
+      "bytes": 12084,
+      "modifiedAt": "2026-09-01T08:11:15.815Z",
+      "sha256": "91de60c08d7afdb1b565a15cba46eb1826a799c26033d7d03df16a1eca604aaa"
+    },
+    {
+      "path": "docs/roadmaps/native-macos-modernization-plan-2026-08-31.md",
+      "status": "present",
+      "bytes": 26405,
+      "modifiedAt": "2026-09-01T09:59:18.934Z",
+      "sha256": "f51ec13f95f02b73a2334f445318f10f8e8a4ae8e7c7c8abfbe4130bc12f8d54"
+    }
+  ],
+  "commandVersions": {
+    "git": {
+      "status": "observed",
+      "value": "git version 2.46.2"
+    },
+    "swift": {
+      "status": "observed",
+      "value": "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101)\nTarget: arm64-apple-macosx26.0"
+    },
+    "node": {
+      "status": "observed",
+      "value": "v24.13.0"
+    },
+    "xcodebuild": {
+      "status": "observed",
+      "value": "Xcode 26.6\nBuild version 17F113"
+    }
+  },
+  "runtime": {
+    "processInspection": {
+      "status": "unavailable",
+      "reason": "spawnSync ps EPERM"
+    },
+    "lockCandidates": [
+      {
+        "path": ".git/index.lock",
+        "present": false
+      },
+      {
+        "path": ".git/shallow.lock",
+        "present": false
+      },
+      {
+        "path": ".build/.lock",
+        "present": true
+      },
+      {
+        "path": ".build/arm64-apple-macosx/debug/.build-lock",
+        "present": false
+      }
+    ]
+  },
+  "provenance": {
+    "tool": "tools/native-audit-snapshot.mjs",
+    "invocation": [
+      "--output",
+      "docs/audits/native-macos-snapshot-2026-09-01.json"
+    ],
+    "note": "Hashes cover only explicitly named relied-on files; no document content is collected."
+  }
+}

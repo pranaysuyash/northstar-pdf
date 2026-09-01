@@ -219,7 +219,12 @@ struct LayoutFingerprintV2Tests {
             algorithm: "test", featureVersion: "test", cellSizePoints: 4.0,
             pages: shared + [extraPage], digest: "c")
         let alignment = a.similarity(to: c).textLayout
-        #expect(abs(alignment - (1.0 * (1.0 - 1.0 / 3.0))) < 1e-9,
+        // Text channel blends 30% projection + 70% cell Jaccard.
+        // Projection: skips extra page, returns 1.0 for shared prefix.
+        // Cell Jaccard: 2 shared pages at 1.0, 1 empty page at 0 → avg 2/3.
+        // Blend: 0.3 * 1.0 + 0.7 * (2/3) = 0.3 + 0.4667 = 0.7667.
+        let expectedAlignment = 0.3 * 1.0 + 0.7 * (1.0 * (1.0 - 1.0 / 3.0))
+        #expect(abs(alignment - expectedAlignment) < 1e-9,
                 "Count penalty must apply to aligned components (2v3 pages → \(alignment))")
     }
 

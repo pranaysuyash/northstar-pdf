@@ -12,7 +12,7 @@
       "expectedFailure": false,
       "sourceViewer": {
         "filePath": "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf",
-        "digest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "digest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
         "toolVersions": {
           "pdfinfo": "pdfinfo version 26.08.0",
           "pdftotext": "pdftotext version 26.08.0",
@@ -42,16 +42,16 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "passed"
+            "status": "failed"
           },
-          "diagnostic": null
+          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
         }
       },
       "native": {
         "outputPath": "benchmark/results/contract-parity-2026-08-24/native/exports/benchmark__results__public-sample-form-native-noop.pdf",
         "status": "passed",
-        "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-        "outputDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "sourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+        "outputDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
         "sourceReopen": {
           "status": "passed",
           "pageFacts": {
@@ -75,9 +75,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "passed"
+            "status": "failed"
           },
-          "diagnostic": null
+          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
         },
         "outputReopen": {
           "status": "passed",
@@ -102,9 +102,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "passed"
+            "status": "failed"
           },
-          "diagnostic": null
+          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
         },
         "text": {
           "status": "passed",
@@ -114,12 +114,12 @@
               "pageIndex": 0,
               "operationIDs": [],
               "source": {
-                "wordCount": 23,
-                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+                "wordCount": 25,
+                "textHash": "ef0c9ab762b1c2fa215af29d7217a31fd1d348cd5ea57ffa75e9fbd78ebdefa3"
               },
               "output": {
-                "wordCount": 23,
-                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+                "wordCount": 25,
+                "textHash": "ef0c9ab762b1c2fa215af29d7217a31fd1d348cd5ea57ffa75e9fbd78ebdefa3"
               },
               "equal": true
             }
@@ -146,8 +146,8 @@
       "browser": {
         "outputPath": "benchmark/results/contract-parity-2026-08-24/web-exports/benchmark__results__public-sample-form-browser-noop.pdf",
         "status": "passed",
-        "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-        "outputDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "sourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+        "outputDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
         "sourceReopen": {
           "status": "passed",
           "pageFacts": {
@@ -171,9 +171,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "passed"
+            "status": "failed"
           },
-          "diagnostic": null
+          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
         },
         "outputReopen": {
           "status": "passed",
@@ -198,9 +198,9 @@
             "status": "passed"
           },
           "structuralCheck": {
-            "status": "passed"
+            "status": "failed"
           },
-          "diagnostic": null
+          "diagnostic": "qpdf reported a structural warning or failure; Poppler reopen evidence is separate."
         },
         "text": {
           "status": "passed",
@@ -210,12 +210,12 @@
               "pageIndex": 0,
               "operationIDs": [],
               "source": {
-                "wordCount": 23,
-                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+                "wordCount": 25,
+                "textHash": "ef0c9ab762b1c2fa215af29d7217a31fd1d348cd5ea57ffa75e9fbd78ebdefa3"
               },
               "output": {
-                "wordCount": 23,
-                "textHash": "105a9fd80a9f6b13d0ce7d2c28698c050766b330022265093816521ddd13a817"
+                "wordCount": 25,
+                "textHash": "ef0c9ab762b1c2fa215af29d7217a31fd1d348cd5ea57ffa75e9fbd78ebdefa3"
               },
               "equal": true
             }

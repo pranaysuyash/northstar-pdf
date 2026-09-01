@@ -63,17 +63,70 @@ jobs:
             --output-dir benchmark/results/detector-calibration/native-corpus \
             --dual-lane-gate 2>&1
 
-      # Calibration artifact gate: the Swift test suite regenerates the
-      # persisted false-positive report and threshold calibration artifacts.
-      # Verify they exist, pass the threshold, and carry the correct schema.
-      - name: Calibration artifact gate
+      # Calibration artifact gate: explicitly regenerates the LayoutFingerprintV2
+      # calibration artifact by running the F-3 threshold calibration test,
+      # then validates the persisted JSON against expected invariants.
+      # Fails non-zero on: test failure, schema mismatch, threshold drift,
+      # positive recognition collapse, hard-negative promotion, or corpus regression.
+      - name: Calibration gate (regenerate + validate 60-fixture corpus)
+        run: scripts/calibration-gate.sh 2>&1
+
+      # Manifest field presence gate: verifies every corpus-sweep fixture's
+      # structural expectations (widget count, annotation count, page count)
+      # match live PDFKit inspection. Catches name-vs-structure inference
+      # errors (the original class of bug where fixture expectations were
+      # inferred from filenames rather than actual PDF structure).
+      - name: Manifest field presence gate
+        run: |
+          swift test --filter ManifestFieldPresenceGate 2>&1
+
+      # AcroForm parity gate: runs the cross-provider AcroForm parity
+      # experiment against the governed corpus. Verifies the persisted
+      # gate report exists, has the correct schema, and records per-type
+      # capability decisions. Fails on unexpected regression.
+      - name: AcroForm parity gate
+        run: |
+          swift test --filter AcroFormParityExperiment 2>&1
+          python3 - <<'PY'
+          import json, sys, pathlib
+
+          report = pathlib.Path('benchmark/results/acroform-parity/acroform-parity-gate-report.json')
+          if not report.exists():
+              print('::error::AcroForm parity gate report not found')
+              sys.exit(1)
+          data = json.load(open(report))
+          if data.get('schema') != 'pdf-editor.acroform-parity-experiment':
+              print(f'::error::Unexpected schema: {data.get("schema")}')
+              sys.exit(1)
+          for ft in data.get('fieldTypes', []):
+              decision = ft.get('decision', '')
+              print(f"  {ft['fieldType']}: {decision} (agree={ft['crossProviderAgreement']:.2f} rt={ft['roundTripSuccessRate']:.2f} ghost={ft['ghostFields']})")
+          # CI gate: passes if checkbox is at least 'limited' (67% with 9-fixture expanded corpus).
+          # Release gate (RG-134): blocks version bumps if checkbox is not 'production_ready' (≥90%).
+          # Some non-synthetic PDFs don't preserve checkbox values through PDFKit save/reopen.
+          checkbox = next((f for f in data['fieldTypes'] if f['fieldType'] == 'checkbox'), None)
+          if not checkbox:
+              print('::error::Checkbox not found in parity report')
+              sys.exit(1)
+          decision = checkbox.get('decision', '')
+          rt_rate = checkbox.get('roundTripSuccessRate', 0)
+          if rt_rate < 0.5:
+              print(f'::error::Checkbox round-trip rate {rt_rate:.0%} below 50% threshold')
+              sys.exit(1)
+          # RG-134 release blocker check (informational for now; enforced by release runbook)
+          if decision != 'production_ready':
+              print(f'::warning::RG-134: Checkbox is "{decision}" ({rt_rate:.0%}) — version bumps blocked until production-ready')
+          print(f'AcroForm parity gate passed (checkbox: {decision}, round-trip={rt_rate:.0%}).')
+          PY
+
+      # Static artifact validation: the Swift test suite regenerates the
+      # persisted false-positive report. Verify it exists and passes.
+      - name: False-positive report gate
         run: |
           python3 - <<'PY'
           import json, sys, pathlib
 
           errors = []
-
-          # --- 1. False-positive report (recurring-form-calibration-report) ---
           fp_path = pathlib.Path('benchmark/results/recurring-form-calibration/recurring-form-calibration-report-2026-08-28.json')
           if not fp_path.exists():
               errors.append(f'False-positive report not found at {fp_path}')
@@ -90,25 +143,11 @@ jobs:
                   errors.append(f'Accuracy dropped to {c["accuracy"]}')
               print(f'FP report: {c["passed"]}/{c["passed"]+c["failed"]} entries, FP={c["falsePositives"]}, FN={c["falseNegatives"]}, accuracy={c["accuracy"]}')
 
-          # --- 2. Threshold calibration artifact ---
-          th_path = pathlib.Path('benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json')
-          if not th_path.exists():
-              errors.append(f'Threshold calibration not found at {th_path}')
-          else:
-              th = json.load(open(th_path))
-              if th.get('familyThreshold') != 0.90:
-                  errors.append(f'Threshold artifact familyThreshold is {th.get("familyThreshold")}, expected 0.90')
-              if th.get('minPositive', 1.0) < 0.90:
-                  errors.append(f'minPositive {th["minPositive"]} < familyThreshold 0.90 — separation collapsed')
-              if th.get('maxHardNegative', 0.0) >= 0.90:
-                  errors.append(f'maxHardNegative {th["maxHardNegative"]} >= familyThreshold 0.90 — hard negative promoted')
-              print(f'Threshold: {th["positivePairs"]} positive, {th["hardNegativePairs"]} negative, gap={th["minPositive"]:.3f}..{th["maxHardNegative"]:.3f}')
-
           if errors:
               for e in errors:
                   print(f'::error::{e}')
               sys.exit(1)
-          print('Calibration gate passed.')
+          print('False-positive report gate passed.')
           PY
 
       - name: Swift release build

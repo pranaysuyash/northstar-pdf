@@ -74,7 +74,7 @@
     ],
     "id": "pdfkit",
     "platform": "macOS",
-    "version": "Version 15.7.9 (Build 24G830)"
+    "version": "Version 26.6.2 (Build 25G83)"
   },
   "webProvider": {
     "id": "pdfjs-pdflib",
@@ -90,23 +90,21 @@
     ]
   },
   "fixtureCount": 18,
-  "mismatchCount": 16,
+  "mismatchCount": 39,
   "mismatchCounts": {
-    "native-fields": 4,
+    "native-fields": 1,
+    "validation.check-kinds": 16,
+    "validation.check-status": 16,
     "candidate-semantic-set": 2,
     "candidate.count": 2,
-    "validation.check-kinds": 2,
-    "validation.check-status": 2,
-    "document.accessibility": 2,
     "page.geometry-or-text": 1,
     "coordinates": 1
   },
-  "unexpectedMismatchCount": 10,
+  "unexpectedMismatchCount": 33,
   "unexpectedMismatchCounts": {
-    "native-fields": 4,
-    "validation.check-kinds": 2,
-    "validation.check-status": 2,
-    "document.accessibility": 2
+    "native-fields": 1,
+    "validation.check-kinds": 16,
+    "validation.check-status": 16
   },
   "independentPreservationReport": "benchmark/results/contract-parity-2026-08-24/independent-preservation-report.json",
   "independentBrowserViewerReport": "benchmark/results/contract-parity-2026-08-24/independent-browser-viewer-report.json",
@@ -130,10 +128,13 @@
   "privacyPreflightReport": "benchmark/results/contract-parity-2026-08-24/privacy-preflight-parity-report.json",
   "privacyPreflight": {
     "fixtureCount": 18,
-    "mismatchCount": 3,
+    "mismatchCount": 51,
     "mismatchCounts": {
+      "preflight.payload.encryption": 16,
       "preflight.payload.findings[9].count": 1,
+      "preflight.payload.formValues": 16,
       "preflight.payload.metadata.fields.keywords.present": 1,
+      "preflight.payload.privacySensitiveContent": 16,
       "preflight.payload.summary.metadataFieldCount": 1
     }
   },
@@ -143,8 +144,8 @@
       "sourceViewerStatus": "passed",
       "nativeStatus": "passed",
       "browserStatus": "passed",
-      "nativeStructuralStatus": "passed",
-      "browserStructuralStatus": "passed"
+      "nativeStructuralStatus": "failed",
+      "browserStructuralStatus": "failed"
     },
     {
       "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
@@ -289,11 +290,11 @@
     {
       "parityCaseID": "PARITY-001",
       "sourcePath": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+      "sourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
       "sourceBinding": {
-        "liveSourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-        "nativeSourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
-        "browserSourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "liveSourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+        "nativeSourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+        "browserSourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
         "nativeMatchesLive": true,
         "browserMatchesLive": true,
         "expectedFailure": false
@@ -317,19 +318,169 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "0889ffa62ecd1117f2bb739f17554dd781e6d94b02dd0f88542aa82deedc7c9f",
-          "browser": "227aac157e9d4ad7a2a8eec5e7b8eb91eaab637cf5e0ca0efc3fdc5c39cc0ce6",
+          "native": "315adbcb16b2a1cdba4f686c1d8b6557af202216b814d9f90f45c32dc43a5792",
+          "browser": "88c88327d8e22c9ae60b1e298fbfbe0bb6672c69d8c4360ba3181e62d9cdee98",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 3,
+      "unexpectedMismatches": [
+        {
+          "kind": "native-fields",
+          "path": "document.payload.fields",
+          "native": [
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
+            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
+          ],
+          "web": [
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
+            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
+          ]
+        },
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 3,
+      "mismatches": [
+        {
+          "kind": "native-fields",
+          "path": "document.payload.fields",
+          "native": [
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
+            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
+          ],
+          "web": [
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
+            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
+          ]
+        },
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "native-fields",
+          "path": "document.payload.fields",
+          "native": [
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
+            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
+          ],
+          "web": [
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
+            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
+            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
+          ]
+        },
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-002",
@@ -362,19 +513,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "32245a45cc0f2b666e1fe52c3c623b3474ac9322445513232a6f274284a8aaee",
-          "browser": "f91415b2695855a740f33794f06b8c041fea99555378ae72c7de815b523b556d",
+          "native": "9b39f4cbd3a4a9abc85f73c0c053f212e14b3823c9b9b056068e3663786bb78b",
+          "browser": "b70ab1d7f794d6ce6a36d5c723ba0091aa054010df8b4af68e69751ad251b5ec",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-003",
@@ -407,68 +648,107 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "86e340dbdee5ee2efc327713cd75529fec44804a6abd83147d4142a3bff1bf27",
-          "browser": "beed49979c3d8c42b0ccf1a63ddc410cc21cf45ea97ee98691e9aeb88281720e",
+          "native": "1db1333ba8a5e9d2284b8624fa9177b4d5a61b848dc8e9003379b66c7f517dae",
+          "browser": "bbd89b0e287967a54d7210ab27a70e435f92fdf41512c591a59eb3d709abc999",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 1,
+      "unexpectedMismatchCount": 2,
       "unexpectedMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
-      "mismatchCount": 1,
+      "mismatchCount": 2,
       "mismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -503,19 +783,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "bb2dbe8e8e18275c7d11f3d545d7592b87a843f6156b8b8a042b5e05282695f4",
-          "browser": "597ceaad6c7dbc2874ca2211333eb439a8fda8b04254cf110eacac56f01c84ac",
+          "native": "d21f03a92f928d2c4092df48582bafbbce981cedbd62c817b2297d53d262192b",
+          "browser": "5920173215077a73b2d90191fa424e0e5fb3f9b83fb15fba7a4c3b9eab29e988",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-005",
@@ -548,8 +918,8 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "5b82c9e5d1e542365e5a26d2c387f8ec192a20b3a8fdbb1e4d168047d7ed7077",
-          "browser": "c732143bcf0a76d86901fde3d7ec0e869a160f43abe354420ca1c337e66bb88d",
+          "native": "38cdfd7a553add055a27caafe93cb3533dc012d95bc3a80a008abf8da5074979",
+          "browser": "fd9b9201a3ac30a77604ddcfba84772ce6ef0c74c405e5b27a23a843042a6b31",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
@@ -559,13 +929,12 @@
         "candidate.count"
       ],
       "allowedMismatchCount": 2,
-      "unexpectedMismatchCount": 3,
+      "unexpectedMismatchCount": 2,
       "unexpectedMismatches": [
         {
           "kind": "validation.check-kinds",
           "path": "validation.checks",
           "native": [
-            "accessibility",
             "appliedOperations",
             "nativeFields",
             "outputReopen",
@@ -580,30 +949,19 @@
             "outputReopen",
             "outsideRegionText",
             "pageGeometry",
+            "privacyPreflight",
             "sourceDigest",
             "visualDiff"
           ]
         },
         {
           "kind": "validation.check-status",
-          "path": "validation.checks.accessibility.status",
-          "native": "passed",
-          "web": null
-        },
-        {
-          "kind": "document.accessibility",
-          "path": "document.payload.accessibility",
-          "native": {
-            "hasTaggedContent": true,
-            "hasReadingOrder": true
-          },
-          "web": {
-            "hasTaggedContent": false,
-            "hasReadingOrder": true
-          }
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
-      "mismatchCount": 5,
+      "mismatchCount": 4,
       "mismatches": [
         {
           "kind": "candidate-semantic-set",
@@ -751,7 +1109,6 @@
           "kind": "validation.check-kinds",
           "path": "validation.checks",
           "native": [
-            "accessibility",
             "appliedOperations",
             "nativeFields",
             "outputReopen",
@@ -766,27 +1123,16 @@
             "outputReopen",
             "outsideRegionText",
             "pageGeometry",
+            "privacyPreflight",
             "sourceDigest",
             "visualDiff"
           ]
         },
         {
           "kind": "validation.check-status",
-          "path": "validation.checks.accessibility.status",
-          "native": "passed",
-          "web": null
-        },
-        {
-          "kind": "document.accessibility",
-          "path": "document.payload.accessibility",
-          "native": {
-            "hasTaggedContent": true,
-            "hasReadingOrder": true
-          },
-          "web": {
-            "hasTaggedContent": false,
-            "hasReadingOrder": true
-          }
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
@@ -936,7 +1282,6 @@
           "kind": "validation.check-kinds",
           "path": "validation.checks",
           "native": [
-            "accessibility",
             "appliedOperations",
             "nativeFields",
             "outputReopen",
@@ -951,27 +1296,16 @@
             "outputReopen",
             "outsideRegionText",
             "pageGeometry",
+            "privacyPreflight",
             "sourceDigest",
             "visualDiff"
           ]
         },
         {
           "kind": "validation.check-status",
-          "path": "validation.checks.accessibility.status",
-          "native": "passed",
-          "web": null
-        },
-        {
-          "kind": "document.accessibility",
-          "path": "document.payload.accessibility",
-          "native": {
-            "hasTaggedContent": true,
-            "hasReadingOrder": true
-          },
-          "web": {
-            "hasTaggedContent": false,
-            "hasReadingOrder": true
-          }
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -1006,68 +1340,107 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "b6215371a4b6a7fec2cc8291e6f9356e0c7e852ff6b293a81dd37a642a441555",
-          "browser": "0116263225fcabab048296fc483e79998decb479f4b0658950feb62ebc2c14cd",
+          "native": "8d86ddd31d473133413c86906ab73e2fc2aebe0e14a47e5f722f7cca7c956777",
+          "browser": "13638c2d74fa0b27cd450e179fc99d265ce947bf980bdd1e3a13e844f7ed94f1",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 1,
+      "unexpectedMismatchCount": 2,
       "unexpectedMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
-      "mismatchCount": 1,
+      "mismatchCount": 2,
       "mismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -1147,524 +1520,107 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "aceb5b8e7852ed496c2f140bd89ee3d55012ba4cfcdd42eba1881afedca44d1a",
-          "browser": "6ecba498f633e1ecb80e30e30caf5ee7fb8b37b87865686b3b27852dd0e2cebd",
+          "native": "badfd0708dbbf0ecadaf532cf9b369cf4eaa9db98e5bafe430213532e456850f",
+          "browser": "45a8933fe85f4ecc89013a4f8310d96de6e1dcb522034692c45b0987bd43caf1",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 1,
+      "unexpectedMismatchCount": 2,
       "unexpectedMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":1,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":10,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":11,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":12,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":13,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":14,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":15,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":16,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":17,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":18,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":19,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":2,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":3,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":4,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":5,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":6,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":7,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":8,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":9,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":1,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":10,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":11,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":12,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":13,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":14,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":15,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":16,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":17,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":18,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":19,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":2,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":3,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":4,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":5,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":6,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":7,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":8,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":9,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
-      "mismatchCount": 1,
+      "mismatchCount": 2,
       "mismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":1,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":10,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":11,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":12,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":13,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":14,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":15,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":16,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":17,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":18,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":19,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":2,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":3,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":4,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":5,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":6,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":7,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":8,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":9,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":1,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":10,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":11,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":12,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":13,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":14,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":15,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":16,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":17,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":18,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":19,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":2,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":3,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":4,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":5,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":6,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":7,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":8,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":9,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":1,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":10,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":11,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":12,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":13,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":14,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":15,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":16,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":17,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":18,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":19,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":2,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":3,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":4,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":5,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":6,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":7,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":8,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":9,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":1,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":1,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":10,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":10,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":11,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":11,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":12,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":12,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":13,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":13,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":14,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":14,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":15,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":15,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":16,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":16,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":17,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":17,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":18,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":18,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":19,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":19,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":2,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":2,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":3,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":3,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":4,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":4,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":5,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":5,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":6,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":6,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":7,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":7,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":8,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":8,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":9,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":9,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -1699,19 +1655,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "5fb664e0fc6145000d7a6bfa1d11bdc7f55057aa5bc661a3b8e6c4878de6ee0f",
-          "browser": "3b340cb7652ba0d3de8a4f1e74039b427d5ce79b5e36af46017133cbef029cb1",
+          "native": "9b5f4da09dfb7a737a284c414c3490c95e92d074aa59e79d6418fe0dc69f9470",
+          "browser": "a3d55d9dc74a987d03d2e4e7571cd63b560349f3efc29ff0750c6eabac1f89b4",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-010",
@@ -1744,68 +1790,107 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "1e0ef885ad723b7282716a87b2f712cbd1a113f2953b2ac432cea84005a0534f",
-          "browser": "5ae8df36e64babae08c0256d8f233d50272384d3471bdad03adcde044be2c681",
+          "native": "d2206c1d75f6e0e1cdce83a5f8fa69154498564a5e2b92b658d2e84d41cee72a",
+          "browser": "ce938358c65bead949506c32deaec81086a7a0015480c5419bb2a1670a1ff937",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 1,
+      "unexpectedMismatchCount": 2,
       "unexpectedMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
-      "mismatchCount": 1,
+      "mismatchCount": 2,
       "mismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
         {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
           "native": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"India\",\"Ireland\",\"United States\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
           ],
           "web": [
-            "{\"pageIndex\":0,\"name\":\"consent\",\"kind\":\"button\",\"bounds\":{\"x\":72,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"country\",\"kind\":\"choice\",\"bounds\":{\"x\":72,\"y\":540,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[\"IE\",\"IN\",\"US\"]}",
-            "{\"pageIndex\":0,\"name\":\"fullName\",\"kind\":\"text\",\"bounds\":{\"x\":72,\"y\":640,\"width\":220,\"height\":24},\"valuePresent\":true,\"choices\":[]}",
-            "{\"pageIndex\":0,\"name\":\"preferredContact\",\"kind\":\"button\",\"bounds\":{\"x\":120,\"y\":590,\"width\":20,\"height\":20},\"valuePresent\":true,\"choices\":[]}"
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
           ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -1840,8 +1925,8 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "93cb2d28e23378c3d25794bc457fbb59759b5e443fa7ba30c9b23bcdb223f217",
-          "browser": "dce131b83c84997391aeb3c4775dcd5b292ad3d513e8a037ed2fa72cb38a05fc",
+          "native": "c73e9685db5485332bac24b9995529d86f626cf32c6605d881d13e0497d3e884",
+          "browser": "7d027b059cecaf468ec7e35435d4e047a6d01fef7859f1eeb66a63982994125b",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
@@ -1851,13 +1936,12 @@
         "candidate.count"
       ],
       "allowedMismatchCount": 2,
-      "unexpectedMismatchCount": 3,
+      "unexpectedMismatchCount": 2,
       "unexpectedMismatches": [
         {
           "kind": "validation.check-kinds",
           "path": "validation.checks",
           "native": [
-            "accessibility",
             "appliedOperations",
             "nativeFields",
             "outputReopen",
@@ -1872,30 +1956,19 @@
             "outputReopen",
             "outsideRegionText",
             "pageGeometry",
+            "privacyPreflight",
             "sourceDigest",
             "visualDiff"
           ]
         },
         {
           "kind": "validation.check-status",
-          "path": "validation.checks.accessibility.status",
-          "native": "passed",
-          "web": null
-        },
-        {
-          "kind": "document.accessibility",
-          "path": "document.payload.accessibility",
-          "native": {
-            "hasTaggedContent": true,
-            "hasReadingOrder": true
-          },
-          "web": {
-            "hasTaggedContent": false,
-            "hasReadingOrder": true
-          }
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
-      "mismatchCount": 5,
+      "mismatchCount": 4,
       "mismatches": [
         {
           "kind": "candidate-semantic-set",
@@ -2043,7 +2116,6 @@
           "kind": "validation.check-kinds",
           "path": "validation.checks",
           "native": [
-            "accessibility",
             "appliedOperations",
             "nativeFields",
             "outputReopen",
@@ -2058,27 +2130,16 @@
             "outputReopen",
             "outsideRegionText",
             "pageGeometry",
+            "privacyPreflight",
             "sourceDigest",
             "visualDiff"
           ]
         },
         {
           "kind": "validation.check-status",
-          "path": "validation.checks.accessibility.status",
-          "native": "passed",
-          "web": null
-        },
-        {
-          "kind": "document.accessibility",
-          "path": "document.payload.accessibility",
-          "native": {
-            "hasTaggedContent": true,
-            "hasReadingOrder": true
-          },
-          "web": {
-            "hasTaggedContent": false,
-            "hasReadingOrder": true
-          }
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
@@ -2228,7 +2289,6 @@
           "kind": "validation.check-kinds",
           "path": "validation.checks",
           "native": [
-            "accessibility",
             "appliedOperations",
             "nativeFields",
             "outputReopen",
@@ -2243,27 +2303,16 @@
             "outputReopen",
             "outsideRegionText",
             "pageGeometry",
+            "privacyPreflight",
             "sourceDigest",
             "visualDiff"
           ]
         },
         {
           "kind": "validation.check-status",
-          "path": "validation.checks.accessibility.status",
-          "native": "passed",
-          "web": null
-        },
-        {
-          "kind": "document.accessibility",
-          "path": "document.payload.accessibility",
-          "native": {
-            "hasTaggedContent": true,
-            "hasReadingOrder": true
-          },
-          "web": {
-            "hasTaggedContent": false,
-            "hasReadingOrder": true
-          }
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -2298,19 +2347,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "e3623b0f3455045669c0a6f6a6e63387481614f96ab2b02d2fdd7a293e8e2bae",
-          "browser": "5bd1b4eb80b129f9964003c06d3487194fddc1ad3079ba800a0045850935ba24",
+          "native": "83b0fa53cd17262d595bde7d45f867a92cd09db7c5b77659b7419658b452e6aa",
+          "browser": "f46985ff79e97d1cb556b968423eb826e2e5847743ab3cbbea60b241a1939d84",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-013",
@@ -2343,19 +2482,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "9dc6718e55cbb0fae5b29a2caf1e90b411dbecd552076e7513e17b1d576fa46c",
-          "browser": "eb6739d13127ea3ad6b2b6a6709aae18295f092afd39fb8e847a1e8a05f42616",
+          "native": "7bb3385edc5b3a3e1f4d3ec37e2c0f8d42310253fd1c46bafef278a624ece4d0",
+          "browser": "d31035e154343ad3cb6a1f98857e8b71ad3b91c3b9553ca5692ce8373c7a8ba7",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-014",
@@ -2388,19 +2617,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "b8f2838932c1220dfc756ba0847d4ec97cbd93bcc5ecbb5bdeb6e01b5117a116",
-          "browser": "970b974d7ccb2d380fdeb4b066bd7af6464375b68be7f9282b7c6cca995524a8",
+          "native": "3cb3cf0da551c997c65ea002fa5b0fe84b81763523234c5a0c859f933195f797",
+          "browser": "a57df981f00a472eda2e61926a1475020f882d1c3f9e7bc8084c7444b65e6156",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-015",
@@ -2433,8 +2752,8 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "6cfb6e3e30a7408b0b26c4e042a49f431d4b5e465ec94fc993018c793e789ba5",
-          "browser": "2f6ff4f390816f79977c7d26454adb8eb1416ef48e605d756ba0e83b25860b6e",
+          "native": "33a67541da02109adb539c5c1c6bdfbf282df1b7dcb49a355fb0337cae83ed80",
+          "browser": "eebfa4aceeb99b402a8a3bc49b30643b7dbc0d74d433bd578c56d52adc2196ab",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
@@ -2444,9 +2763,39 @@
         "coordinates"
       ],
       "allowedMismatchCount": 2,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 2,
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 4,
       "mismatches": [
         {
           "kind": "page.geometry-or-text",
@@ -2543,6 +2892,35 @@
               }
             }
           ]
+        },
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ],
       "firstMismatches": [
@@ -2641,6 +3019,35 @@
               }
             }
           ]
+        },
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
         }
       ]
     },
@@ -2720,19 +3127,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "da53db1de4161b64f8b70fac3be6c8f0b9d40f489cb437a9eaea832df2f1ef1d",
-          "browser": "78a5a72a35eb06817a95094e828fd54c36d94ff65d1160fffdcbdf016fca9b64",
+          "native": "d3dbfed054f21523d8fada63ef2a251af1243ca399f7e6f9186ef70e1f3f3062",
+          "browser": "34623f00d6605473265080b4f37bc89f751d52400402438ed2f67be4bfbbe054",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     },
     {
       "parityCaseID": "PARITY-018",
@@ -2765,19 +3262,109 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "c0e10aada4171ee0c1bf076a8b2d1541137757a101834bdf634e2acfdfa5a97d",
-          "browser": "2bb3dc7ac610e2b73642cdb891e35c1c55fdb67be10ce765050422546c361d6a",
+          "native": "e1e90219b081bb7dea3bc79d306dfff4aefbe4382da7494dcd363c974af2e0b7",
+          "browser": "0e8881a39dedab5000c4d05cb879b12b35807b8e16bc53e548de9d5085505327",
           "exactDigestEquality": false,
-          "comparatorEquivalent": true
+          "comparatorEquivalent": false
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 0,
-      "unexpectedMismatches": [],
-      "mismatchCount": 0,
-      "mismatches": [],
-      "firstMismatches": []
+      "unexpectedMismatchCount": 2,
+      "unexpectedMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "mismatchCount": 2,
+      "mismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ],
+      "firstMismatches": [
+        {
+          "kind": "validation.check-kinds",
+          "path": "validation.checks",
+          "native": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "sourceDigest",
+            "visualDiff"
+          ],
+          "web": [
+            "appliedOperations",
+            "nativeFields",
+            "outputReopen",
+            "outsideRegionText",
+            "pageGeometry",
+            "privacyPreflight",
+            "sourceDigest",
+            "visualDiff"
+          ]
+        },
+        {
+          "kind": "validation.check-status",
+          "path": "validation.checks.privacyPreflight.status",
+          "native": null,
+          "web": "passed"
+        }
+      ]
     }
   ]
 }

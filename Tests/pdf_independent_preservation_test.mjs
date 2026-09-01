@@ -7,7 +7,7 @@ import { chromium } from "playwright";
 import { compareIndependentPreservation, independentViewerReopen } from "../benchmark/independent-preservation-validator.mjs";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 const sourceRelativePath = "benchmark/results/public-sample-form.pdf";
 const sourcePath = path.join(projectRoot, sourceRelativePath);
 const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "pdf-editor-independent-test-"));

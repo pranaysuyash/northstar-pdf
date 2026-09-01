@@ -385,8 +385,9 @@ not a provider selection or proof of the site's claims.
 
 ### Phase 12: Full native/web capability build program
 
-**Status:** impact validation and browser geometry detection built; remaining
-capability lanes explicitly mapped and evidence-gated
+**Status:** impact validation, browser geometry detection, and rotated reviewed
+operation replay built; remaining capability lanes explicitly mapped and
+evidence-gated
 
 The living [full capability build program](docs/full-capability-build-program.md)
 now records every reader, form, geometry, OCR, editing, page-operation,
@@ -399,6 +400,11 @@ for both native and web surfaces.
   mutation-sensitive authorization tests.
 - Added deterministic 90-degree and mixed 90/180-degree rotation fixtures and
   independent reopen evidence for both native and browser no-op outputs.
+- Added a reviewed browser overlay replay matrix for 90-degree and 180-degree
+  crop-offset pages plus a 270-degree page. The matrix proves crop-relative
+  page-space coordinates through PDF.js preview, pdf-lib export, PDF.js reopen,
+  browser outside-region text/raster checks, and independent Poppler
+  text/raster/reopen checks.
 - Built browser operator-list geometry evidence for vector rectangles, checkbox
   shapes, repeated cells, underlines, whitespace, and label associations.
 - Added the browser pre-export contract mutation gate and browser integration
@@ -407,11 +413,11 @@ for both native and web surfaces.
 - Keep OCR web, text-run replacement, redaction, sanitization, signatures, XFA,
   PDF/UA, independent-viewer parity, and broad page/conversion operations behind
   their named corpus and provider gates.
-- The next implementation unit is rotated reviewed-operation replay, accepted
-  qpdf-variance classification, browser geometry false-positive reduction,
-  privacy preflight reporting, and the first capability execution slice from
-  the ihatepdf ledger, beginning with E-006 compare impact maps or E-002 OCR
-  alignment only after its provider and independent-validator gates are named.
+- Continue accepted qpdf-variance classification, browser geometry
+  false-positive reduction, privacy preflight reporting, and the capability
+  execution slices from the ihatepdf ledger. Rotation replay is now a measured
+  implementation lane, while multi-page mixed rotations, native PDFKit replay,
+  and other operation kinds remain separate gates.
 
 ### Phase 13: Capability-negotiated local provider plane
 
@@ -1071,3 +1077,91 @@ Implementation and evidence:
 - [`web/pdf-cross-device-recovery.mjs`](web/pdf-cross-device-recovery.mjs)
 - [`Tests/web_template_security_browser_test.mjs`](Tests/web_template_security_browser_test.mjs)
 - [`docs/audits/local-persistence-product-surface-evidence-2026-08-25.md`](docs/audits/local-persistence-product-surface-evidence-2026-08-25.md)
+
+### Phase 36: PDFBox and MuPDF high-fidelity provider bake-off
+
+**Status:** Implemented as a repeatable local evidence lane; provider adoption,
+licensing, signed packaging, typed operation coverage, and release promotion
+remain governed long-term gates
+
+- Run PDFBox and MuPDF over the same privacy-governed corpus.
+- Normalize provider IDs, timestamps, object IDs and output digests out of
+  semantic comparison.
+- Compare no-op rewrite, reopen, normalized text, independent raster, form
+  inspection, capability states and malformed-input recovery.
+- Record artifact identity, license status, notices, runtime/package shape,
+  native/JVM dependencies, and revocation requirements.
+- Keep staged invalid artifacts distinct from publishable validated exports.
+- Extend the same lane to typed text-run, page-operation, annotation,
+  redaction, signature, XFA, PDF/UA, encrypted-password and GUI-viewer cases.
+
+Implementation and evidence:
+
+- [`benchmark/pdfbox-mupdf-bakeoff.mjs`](benchmark/pdfbox-mupdf-bakeoff.mjs)
+- [`Tests/pdfbox_mupdf_bakeoff_test.mjs`](Tests/pdfbox_mupdf_bakeoff_test.mjs)
+- [`benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json`](benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json)
+- [`docs/audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md`](docs/audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md)
+
+### Phase 37: Browser pre-export privacy transition gate
+
+**Status:** Implemented in the browser writer and publication path; structural
+provider coverage, hidden-revision parsing, and independent-viewer privacy
+evidence remain long-term hardening lanes
+
+- Extend the source-bound browser mutation gate to validate declared metadata,
+  attachment, embedded-action, encryption, annotation, form-value, revision,
+  and privacy-sensitive transitions before the writer.
+- Build a value-minimized output preflight after PDF.js reopen and compare it
+  with the source preflight before download.
+- Reject unsupported sensitive operation kinds and unknown transition states;
+  preserve the form-value exception only for typed native-field operations with
+  explicit output authorization.
+- Render the new structural states in the browser privacy panel and retain
+  failed/unknown results in the validation ledger.
+- Add contract and browser mutation tests for every protected surface and raw
+  content leakage.
+- Continue the same gate into native, PDFBox, MuPDF, OCR, redaction,
+  signatures, XFA, PDF/UA, and independent-viewer lanes as their providers are
+  implemented. Sequencing is dependency order, not a scope reduction.
+
+Implementation and evidence:
+
+- [`web/pdf-preflight.mjs`](web/pdf-preflight.mjs)
+- [`web/pdf-contract-mutation-gate.mjs`](web/pdf-contract-mutation-gate.mjs)
+- [`web/app.js`](web/app.js)
+- [`Tests/preflight_contract_test.mjs`](Tests/preflight_contract_test.mjs)
+- [`Tests/web_preexport_privacy_gate_test.mjs`](Tests/web_preexport_privacy_gate_test.mjs)
+- [`docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md`](docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md)
+
+### Phase 38: Native/browser/companion rejection-ledger oracle
+
+**Status:** Shared normalization, lineage comparison, native mirror, companion
+integration, and value-minimized report implemented; broader live-provider
+coverage remains an active long-term evidence lane
+
+- Normalize native PDFKit, browser PDF.js/pdf-lib, and local companion rejection
+  attempts into one closed shared error vocabulary with category, retryability,
+  recovery action, and explicit unknown state.
+- Bind each attempt to a source digest and logical operation lineage so provider
+  errors can be compared without treating provider IDs, timestamps, output
+  digests, or raw diagnostics as product semantics.
+- Compare convergence, divergence, and non-comparability separately. A
+  companion-unavailable result must remain distinct from a stale-source safety
+  rejection.
+- Keep logs and reports value-minimized. Provider reason-code counts are
+  retained, while raw messages, PDF bytes, text, values, passwords, and output
+  identities are excluded from semantic reports.
+- Exercise the canonical fixture through the browser oracle, native Swift
+  oracle, and actual companion-host unavailable-capability path. Extend the
+  same ledger to every OCR, text replacement, page operation, redaction,
+  signature, XFA, PDF/UA, and recovery provider as those lanes execute.
+
+Implementation and evidence:
+
+- [`web/provider-rejection-ledger.mjs`](web/provider-rejection-ledger.mjs)
+- [`Sources/PDFEditorCore/ProviderRejectionLedger.swift`](Sources/PDFEditorCore/ProviderRejectionLedger.swift)
+- [`Tests/fixtures/provider_rejection_ledger_fixture.json`](Tests/fixtures/provider_rejection_ledger_fixture.json)
+- [`Tests/provider_rejection_ledger_oracle_test.mjs`](Tests/provider_rejection_ledger_oracle_test.mjs)
+- [`Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift`](Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift)
+- [`benchmark/results/rejection-ledger/2026-08-31/report.json`](benchmark/results/rejection-ledger/2026-08-31/report.json)
+- [`docs/audits/provider-rejection-ledger-evidence-2026-08-31.md`](docs/audits/provider-rejection-ledger-evidence-2026-08-31.md)

@@ -12,6 +12,12 @@
 - `docs/implementation-status.md` — feature implementation status (must link a claim ID).
 - `docs/audits/native-macos-product-audit-per-0926-2026-08-31.md` — current native macOS product audit, findings, evidence register, first-principles/long-term/doctrine alignment, and new-age interaction agenda.
 - `docs/roadmaps/native-macos-modernization-plan-2026-08-31.md` — proposed native shell, session ownership, evidence surface, accessibility, spatial prototype, provider, and release sequence.
+- `docs/decisions/adaptive-contextual-command-doctrine-2026-08-31.md` — focused decision record for direct-context contextual menus, bounded local ranking, stable recovery, and behavior-history research.
+- `docs/audits/native-macos-snapshot-2026-09-01.json` — value-minimized native audit boundary with branch/status, relied-on file hashes and mtimes, tool versions, and process/lock observation.
+- `docs/decisions/export-output-disposition-recovery-2026-09-01.md` — proposed split between durable pre-export review receipts and post-export output identity/disposition recovery.
+- `docs/decisions/native-beta-contract-2026-09-01.md` — proposed versioned native beta user jobs, non-goals, evidence thresholds, and promotion rules.
+- `docs/decisions/document-session-ownership-matrix-2026-09-01.md` — proposed one-owner-per-fact matrix and safe extraction order for native document and view state.
+- `docs/explorations/native-macos-visual-grammar-2026-09-01.md` — source-backed visual grammar, motion/illustration/infographic rules, explicit and implicit design task inventory, and home-surface implementation plan.
 
 ## Audits — Rendering Pipeline (2026-08-28)
 - `docs/audits/rendering-pipeline-1st-principles-architecture-2026-08-28.md` — Pipeline-as-sole-renderer decision, PipelineCanvasView, PipelineTileOverlayView, architecture options and evidence.
@@ -30,16 +36,17 @@
 - **CI calibration artifact gate** (`.github/workflows/ci.yml`): after `swift test` regenerates the persisted artifacts, a Python gate verifies both `recurring-form-calibration-report-2026-08-28.json` (schema, familyThreshold 0.90, 0 false positives, accuracy 1.0) and `layout-v2-family-threshold-calibration-2026-08-28.json` (familyThreshold 0.90, minPositive > 0.90, maxHardNegative < 0.90). Fails the job on regression; local verification confirmed pass.
 
 ## Audits — Raster Weight Analysis (2026-08-30)
-- `docs/audits/raster-weight-analysis-2026-08-30.md` — raster weight analysis: SNR 799×, re-encoding noise caps practical weight. Updated 2026-08-31: projection profiles replace cell-level Jaccard, improving separation from 0.8081..0.9477 to 0.7875..0.9507. Raster weight = 0.04. Multi-scale extraction (4pt+16pt+64pt) eliminates re-encoding noise.
+- `docs/audits/raster-weight-analysis-2026-08-30.md` — raster weight analysis: SNR 799×, re-encoding noise caps practical weight. Updated 2026-09-01: raster weight = 0.24 (12× increase from 0.02). Projection profiles (95%) + edge detection (3%) + structural occupancy (2%). Calibration gap 0.9723..0.9017. Weight sweep tested 5 blends from 50/25/25 to 95/3/2.
 
 ## Audits — Content-Invariant Raster Extraction (2026-08-31)
-- `docs/audits/content-invariant-raster-extraction-2026-08-31.md` — explored cell-level (structural occupancy, edge detection) and region-level (connected components, projection profiles) approaches. Cell-level methods don't help because corpus composition is the binding constraint. Projection profiles DO help: they capture WHERE content exists along x/y axes. Region-based extraction (flood-fill) also implemented. 14 diverse-layout fixtures generated.
+- `docs/audits/content-invariant-raster-extraction-2026-08-31.md` — projection profiles unlocked 12× weight increase (0.02→0.24). Edge detection and structural occupancy wired at minimal weight (5% combined) because cell-level operations add rendering noise. Region-based extraction (flood-fill) also implemented. 44-fixture calibration corpus.
 
 ## Audits — Capability Governance (2026-08-28)
 - `docs/audits/capability-maturity-model-and-matrix-2026-08-28.md` — 5-dimension maturity model, 42-capability canonical matrix with real providers/gates/owners, gate-maturity bridge (35 tests).
 
 ## Audits — OCR Benchmark (2026-08-31)
 - `docs/audits/ocr-benchmark-expansion-2026-08-31.md` — 8 ground-truth fixtures (scans, noise, rotation, low-contrast, dense, small-font, punctuation, multi-column), Tesseract 5.5.0 baseline (1.2% avg WER), PDFKit baseline (no OCR on raster PDFs), cross-provider comparison, 14 tests.
+- `docs/audits/ocr-cross-provider-benchmark-2026-08-31.md` — Cross-provider WER benchmark: Apple Vision (0.0% WER, 2.2s), Tesseract (0.2% WER, 2.0s), PaddleOCR PP-OCRv6 (9.1% WER, 19.2s). 9 fixtures × 3 providers, 22 Swift tests, Python benchmark script, Vision CLI tool.
 
 ## Audits — Creator Archetype (2026-08-28)
 - `docs/audits/creator-archetype-implementation-2026-08-28.md` — AuthoringCanvasView (CREATE), DesignSystem (DESIGN), PublishPipeline (PUBLISH), 23 tests.
@@ -91,6 +98,12 @@
 - `docs/audits/pdfkit-adequacy-audit-2026-08-26.md` — PDFKit adequacy assessment
 - `docs/audits/pdfkit-known-bugs-2026-08-26.md` — PDFKit known bugs
 
+## Validation Gates
+- **RG-131: Control-viewer observation pre-release gate** (`Sources/PDFEditorCore/ControlViewerObservation.swift`, `Tests/PDFEditorCoreTests/ControlViewerObservationGateTests.swift`). Batch observation of governed corpus (192+ PDFs across 9 document classes) via PDFKit: reopen, rotation, visual fidelity, form visibility, text readability. Fails closed on any fixture failure. Writes `benchmark/results/control-viewer-gate-report.json` as CI artifact. Wired into `docs/runbooks/release-gates.md` §7 as a mandatory pre-release step — version bumps require `gatePassed == true`. Gate is PARTIAL: single viewer (PDFKit), under-represents scanned/rotated/encrypted/malformed/handwritten classes, no human visual confirmation.
+- **RG-132: LayoutV2 family-threshold calibration artifact** (`Tests/PDFEditorCoreTests/LayoutFingerprintThresholdCalibrationTests.swift`). Persisted JSON artifact at `benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json`. Corpus: 44 fixtures, 211 positive, 735 hard-negative pairs. Threshold: 0.90. CI regenerates and validates on every push via `scripts/calibration-gate.sh`.
+- **RG-133: AcroForm cross-provider parity experiment** (`Sources/PDFEditorCore/AcroFormParityExperiment.swift`, `Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift`). Write-reopen-read round-trip on 9 fixtures across 3 providers. Results: checkbox limited (67%), choice production-ready (100%), text production-ready (100%), radio unsupported. Gate report at `benchmark/results/acroform-parity/acroform-parity-gate-report.json`.
+- **RG-134: AcroForm parity release blocker** (`docs/release-gates.md` RG-134). Version bumps blocked while checkbox confidence is below production-ready (≥90%). Current state: PARTIAL (67% checkbox). Resolution: fix PDFKit save/reopen, expand corpus, or classify as known-excluded.
+
 ## Audits — Quality & Security
 - `docs/audits/pda-audit-2026-08-28.md` — Master findings register (127 explicit + 8 implicit)
 - `docs/audits/pda-runtime-ledger-2026-08-28.md` — Chat/process evidence trail
@@ -129,3 +142,24 @@
 ## Status
 
 - [What's Left / What's Next (2026-08-30)](status-whats-next-2026-08-30.md) — gate census, capability depth, and ranked next units
+
+## RG-131 & Observation Gates
+
+- `docs/audits/rg-131-dual-engine-verification-2026-09-01.md` — Poppler dual-engine verification: 5 dimensions × 2 viewers, 25-fixture governed corpus, manifest-driven, gate logic. PASS.
+
+## External Evaluation Datasets
+
+- `docs/audits/external-evaluation-datasets-2026-09-01.md` — FUNSD (199 forms, CC BY 4.0) + DocLayNet v1.1 (5,199 pages, CDLA-Permissive). Download scripts, eval manifests, integration tests.
+
+## AI Engineering Toolkit Exploration
+
+- `docs/audits/ai-engineering-toolkit-exploration-2026-09-01.md` — All 6 skills explored: Prompt Evaluator, Context Budget, RAG Pipeline, Agent Safety, Eval Harness, Product Sense. Top 3: OCR eval harness, agent safety audit, RAG for FIND job.
+
+- `docs/audits/agent-safety-guard-65point-audit-2026-09-01.md` — 65-point red-team audit on companion bridge, transport, protocol, CLIRunner, and egress controls. 56 PASS, 1 FAIL (path traversal — fixed), 8 WARN.
+
+- `Sources/PDFEditorCore/OCREvalHarness.swift` — Multi-dimensional OCR quality scoring with structured rubrics (text accuracy, layout, structure, calibration, robustness). Bias mitigation: provider anonymization, length normalization, position randomization.
+- `Tests/PDFEditorCoreTests/OCREvalHarnessTests.swift` — 29 tests covering rubric scoring, bias mitigation, edge cases, cross-provider reports.
+
+- `docs/audits/product-sense-coach-creator-archetype-2026-09-01.md` — 5-phase Product Sense Coach on CREATE/DESIGN/PUBLISH. Market: $5.5B, 18% CAGR. Moat: privacy + evidence + free. Path: 3 phases, first milestone is 5-minute test.
+
+- `docs/audits/prompt-evaluator-8dimension-2026-09-01.md` — 8-dimension evaluation of 7 system prompts (doctrines, protocols, HUD, reading modes, adaptive policy). Average score: 77.6/100. Strongest: Safety (8.4). Weakest: Conciseness (6.9).

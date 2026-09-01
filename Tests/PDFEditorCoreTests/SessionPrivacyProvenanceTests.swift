@@ -135,13 +135,26 @@ struct SessionPrivacyProvenanceTests {
 
   @Test func documentSessionCarriesThePrivacyProvenance() throws {
     let source = DocumentSource(fileName: "private.pdf", byteCount: 1, sha256: digest)
+    let receipt = ExportReviewReceipt.make(
+      source: DocumentInspection(
+        source: source,
+        pages: [],
+        fields: [],
+        candidates: [],
+        warnings: []
+      ),
+      operations: [],
+      canExport: true
+    )
     let session = DocumentSession(
       sourceArtifact: DocumentSessionSourceArtifact(source: source),
-      privacyProvenance: record())
+      privacyProvenance: record(),
+      exportReviewReceipt: receipt)
     let envelope = DocumentSessionRecoveryEnvelope(session: session)
     let decoded = try JSONDecoder().decode(
       DocumentSessionRecoveryEnvelope.self,
       from: JSONEncoder().encode(envelope))
     #expect(decoded.session.privacyProvenance == session.privacyProvenance)
+    #expect(decoded.session.exportReviewReceipt == receipt)
   }
 }

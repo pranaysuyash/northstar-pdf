@@ -1,4 +1,6 @@
+import AppKit
 import PDFEditorCore
+import PDFEditorRecovery
 import SwiftUI
 
 /// Toolbar that appears when text is selected, allowing the user to create
@@ -156,21 +158,30 @@ public struct AnnotationCreationToolbar: View {
 
 /// Renders annotation marks as colored overlays on the PDF page.
 public struct AnnotationMarksOverlay: View {
+  let model: AppModel?
+  let store: AnnotationStore?
   let marks: [AnnotationMark]
   let pageIndex: Int
   let pageBounds: CGRect
   let zoomScale: CGFloat
+  let onMarkSelected: ((UUID) -> Void)?
 
   public init(
+    model: AppModel? = nil,
+    store: AnnotationStore? = nil,
     marks: [AnnotationMark],
     pageIndex: Int,
     pageBounds: CGRect,
-    zoomScale: CGFloat
+    zoomScale: CGFloat,
+    onMarkSelected: ((UUID) -> Void)? = nil
   ) {
+    self.model = model
+    self.store = store
     self.marks = marks
     self.pageIndex = pageIndex
     self.pageBounds = pageBounds
     self.zoomScale = zoomScale
+    self.onMarkSelected = onMarkSelected
   }
 
   public var body: some View {
@@ -203,9 +214,24 @@ public struct AnnotationMarksOverlay: View {
               .position(x: viewRect.maxX - 10, y: viewRect.minY + 10)
           }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+          onMarkSelected?(mark.id)
+        }
+        .contextMenu {
+          AnnotationMarkContextMenu(
+            model: model,
+            store: store,
+            mark: mark,
+            onSelect: { onMarkSelected?(mark.id) }
+          )
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(mark.type.displayName) annotation on page \(mark.pageIndex + 1)")
+        .accessibilityValue(mark.selectedText.isEmpty ? "No marked text" : mark.selectedText)
+        .accessibilityHint("Selects this annotation so its contextual actions become available.")
       }
     }
-    .allowsHitTesting(false)
   }
 
   private func pdfToView(_ rect: PDFRect, pageBounds: CGRect, viewSize: CGSize) -> CGRect {
@@ -220,6 +246,51 @@ public struct AnnotationMarksOverlay: View {
     let height = CGFloat(rect.height) * scale
 
     return CGRect(x: x, y: y, width: width, height: height)
+  }
+}
+
+/// The direct context menu for an already-authored sidecar mark. It keeps
+/// annotation inspection behind the same Core target policy while presentation
+/// actions such as hide/copy operate only on the sidecar.
+private struct AnnotationMarkContextMenu: View {
+  let model: AppModel?
+  let store: AnnotationStore?
+  let mark: AnnotationMark
+  let onSelect: () -> Void
+
+  var body: some View {
+    let input = AdaptiveCommandContext.input(
+      model: model,
+      intent: .review,
+      target: .annotation
+    )
+    let commands = AdaptiveCommandPolicy.standard.resolve(input).allValidCommands
+
+    if commands.contains(where: { $0.id == .inspectAnnotation }) {
+      Button("Inspect Annotation", systemImage: "text.bubble") {
+        onSelect()
+        model?.selectedAnnotationID = mark.id
+        model?.statusMessage = "Selected \(mark.type.displayName.lowercased()) on page \(mark.pageIndex + 1)."
+        AdaptiveCommandHistory.shared.record(.inspectAnnotation)
+      }
+    }
+
+    Divider()
+
+    Button("Copy Marked Text", systemImage: "doc.on.clipboard") {
+      onSelect()
+      NSPasteboard.general.clearContents()
+      NSPasteboard.general.setString(mark.selectedText, forType: .string)
+      model?.statusMessage = "Copied the selected annotation text."
+      AdaptiveCommandHistory.shared.record(.extractText)
+    }
+    .disabled(mark.selectedText.isEmpty)
+
+    Button("Hide Annotation", systemImage: "eye.slash") {
+      onSelect()
+      store?.toggleVisibility(id: mark.id)
+      model?.selectedAnnotationID = nil
+    }
   }
 }
 

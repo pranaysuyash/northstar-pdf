@@ -30,6 +30,7 @@ public struct PageThumbnailRailView: View {
         Spacer()
         Menu {
           Button("Insert Blank Page", systemImage: "plus.rectangle") {
+            AdaptiveCommandHistory.shared.record(.organizePages)
             model.insertBlankPage()
           }
         } label: {
@@ -38,6 +39,7 @@ public struct PageThumbnailRailView: View {
             .foregroundStyle(.secondary)
         }
         .menuStyle(.borderlessButton)
+        .disabled(!canOrganizePages)
         .frame(width: 16)
         .accessibilityLabel("Insert page")
         .help("Insert page")
@@ -69,6 +71,9 @@ public struct PageThumbnailRailView: View {
     }
     /* Apple Design §12: heavier material for structural sidebar */
     .background(.thinMaterial)
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("Page navigation")
+    .accessibilityIdentifier("pdfEditor.pageNavigation")
   }
 
   /// Per-page badge counts, built in one pass. Computing these inside each
@@ -180,32 +185,44 @@ public struct PageThumbnailRailView: View {
       )
       .clipShape(RoundedRectangle(cornerRadius: 8))
       .contextMenu {
-        Button("Rotate Clockwise 90°", systemImage: "rotate.right") {
-          model.rotatePage(at: page.pageIndex, by: 90)
-        }
-        Button("Rotate Counter-Clockwise 90°", systemImage: "rotate.left") {
-          model.rotatePage(at: page.pageIndex, by: 270)
-        }
-        Divider()
-        if page.pageIndex > 0 {
-          Button("Move Page Up", systemImage: "arrow.up") {
-            model.movePage(from: page.pageIndex, to: page.pageIndex - 1)
+        if canOrganizePages {
+          Menu("Organize Page", systemImage: "rectangle.split.3x1") {
+            Button("Rotate Clockwise 90°", systemImage: "rotate.right") {
+              recordPageOrganization()
+              model.rotatePage(at: page.pageIndex, by: 90)
+            }
+            Button("Rotate Counter-Clockwise 90°", systemImage: "rotate.left") {
+              recordPageOrganization()
+              model.rotatePage(at: page.pageIndex, by: 270)
+            }
+            Divider()
+            if page.pageIndex > 0 {
+              Button("Move Page Up", systemImage: "arrow.up") {
+                recordPageOrganization()
+                model.movePage(from: page.pageIndex, to: page.pageIndex - 1)
+              }
+            }
+            if page.pageIndex < inspection.pages.count - 1 {
+              Button("Move Page Down", systemImage: "arrow.down") {
+                recordPageOrganization()
+                model.movePage(from: page.pageIndex, to: page.pageIndex + 1)
+              }
+            }
+            Divider()
+            Button("Insert Blank Page After", systemImage: "plus.rectangle") {
+              recordPageOrganization()
+              model.insertBlankPage(at: page.pageIndex + 1)
+            }
+            Divider()
+            Button("Delete Page", systemImage: "trash", role: .destructive) {
+              recordPageOrganization()
+              model.deletePage(at: page.pageIndex)
+            }
+            .disabled(inspection.pages.count <= 1)
           }
+        } else {
+          Label("Page editing unavailable", systemImage: "lock")
         }
-        if page.pageIndex < inspection.pages.count - 1 {
-          Button("Move Page Down", systemImage: "arrow.down") {
-            model.movePage(from: page.pageIndex, to: page.pageIndex + 1)
-          }
-        }
-        Divider()
-        Button("Insert Blank Page After", systemImage: "plus.rectangle") {
-          model.insertBlankPage(at: page.pageIndex + 1)
-        }
-        Divider()
-        Button("Delete Page", systemImage: "trash", role: .destructive) {
-          model.deletePage(at: page.pageIndex)
-        }
-        .disabled(inspection.pages.count <= 1)
       }
     }
     .buttonStyle(.plain)
@@ -213,6 +230,20 @@ public struct PageThumbnailRailView: View {
     .accessibilityLabel("Page \(page.pageLabel), \(page.characterCount) characters, \(fieldCount) fields, \(candidateCount) suggestions")
     .accessibilityHint("Selects page \(page.pageLabel)")
     .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : [.isButton])
+  }
+
+  private var canOrganizePages: Bool {
+    let input = AdaptiveCommandContext.input(
+      model: model,
+      intent: .organize,
+      target: .pageThumbnail
+    )
+    return AdaptiveCommandPolicy.standard.assess(input)
+      .first { $0.command.id == .organizePages }?.state.isActionable ?? false
+  }
+
+  private func recordPageOrganization() {
+    AdaptiveCommandHistory.shared.record(.organizePages)
   }
 }
 

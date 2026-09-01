@@ -24,7 +24,7 @@ const fixture =
   process.env.PDF_EDITOR_FORM6_INPUT ||
   path.join(projectRoot, "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf");
 const baseURL =
-  process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+  (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });

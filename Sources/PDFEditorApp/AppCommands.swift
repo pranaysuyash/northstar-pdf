@@ -1,4 +1,5 @@
 import AppKit
+import PDFEditorCore
 import PDFEditorRecovery
 import SwiftUI
 
@@ -57,7 +58,20 @@ private struct PDFEditorCommandRouter {
     let windowController: PDFEditorWindowController?
     let openWindow: OpenWindowAction
 
+    private var adaptivePolicyInput: AdaptiveCommandPolicyInput {
+        AdaptiveCommandContext.input(
+            model: model,
+            intent: model.map { adaptiveIntent(for: $0.editorMode) } ?? .read,
+            target: .documentScrolling
+        )
+    }
+
     func isEnabled(_ command: PDFEditorCommand) -> Bool {
+        if let adaptiveID = adaptiveCommandID(for: command) {
+            return AdaptiveCommandPolicy.standard.assess(adaptivePolicyInput)
+                .first(where: { $0.command.id == adaptiveID })?.state.isActionable ?? false
+        }
+
         switch command {
         case .newDocument, .newWindow:
             return true
@@ -69,21 +83,12 @@ private struct PDFEditorCommandRouter {
             return model != nil
         case .closeWindow:
             return model != nil && windowController?.window != nil
-        case .exportCopy:
-            guard let model else { return false }
-            guard model.canExportCurrentOperations,
-                  let permissions = model.inspection?.permissions
-            else { return false }
-            return permissions.canModify || permissions.canAddAnnotations
         case .savePinnedLayout, .clearPinnedLayout:
             return model?.liveDocument != nil
-        case .undo:
-            return model?.canUndo ?? false
-        case .redo:
-            return model?.canRedo ?? false
-        case .find:
-            guard let model else { return false }
-            return model.liveDocument != nil && (model.inspection?.permissions.canCopy ?? false)
+        case .exportCopy, .undo, .redo, .find:
+            // These commands are handled by the shared adaptive policy above.
+            // Keep the fallback explicit for Swift's exhaustive enum checking.
+            return false
         case .nextSearch, .previousSearch:
             guard let model else { return false }
             return !model.searchMatches.isEmpty
@@ -96,7 +101,29 @@ private struct PDFEditorCommandRouter {
         }
     }
 
+    private func adaptiveCommandID(for command: PDFEditorCommand) -> AdaptiveCommandID? {
+        switch command {
+        case .exportCopy: return .export
+        case .undo: return .undo
+        case .redo: return .redo
+        case .find: return .search
+        default: return nil
+        }
+    }
+
+    private func adaptiveIntent(for mode: EditorMode) -> AdaptiveIntentLens {
+        switch mode {
+        case .read: return .read
+        case .fill, .sign: return .complete
+        case .edit: return .review
+        }
+    }
+
     func perform(_ command: PDFEditorCommand) {
+        if let adaptiveID = adaptiveCommandID(for: command), isEnabled(command) {
+            AdaptiveCommandHistory.shared.record(adaptiveID)
+        }
+
         switch command {
         case .newDocument:
             guard let model else {
@@ -144,7 +171,7 @@ private struct PDFEditorCommandRouter {
             guard let windowController else { return }
             withCloseConfirmation(model: model, windowController: windowController)
         case .exportCopy:
-            model?.export()
+            model?.presentExportReview()
         case .savePinnedLayout:
             model?.savePinnedLayout()
         case .clearPinnedLayout:

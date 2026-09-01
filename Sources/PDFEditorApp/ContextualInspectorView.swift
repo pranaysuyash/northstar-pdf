@@ -20,6 +20,7 @@ public enum InspectorTab: String, CaseIterable, Identifiable {
     case .trust: return "lock.shield"
     }
   }
+
 }
 
 public struct ContextualInspectorView: View {
@@ -39,6 +40,7 @@ public struct ContextualInspectorView: View {
   @State private var isRenamingCandidate = false
   @State private var renameDraft = ""
   @State private var templateDisplayName = "Reviewed local layout"
+  @State private var isDiscardingExportPresented = false
 
   public init(
     model: AppModel,
@@ -90,6 +92,9 @@ public struct ContextualInspectorView: View {
     }
     /* Apple Design §12: light material for content panel */
     .background(.regularMaterial)
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("Document inspector")
+    .accessibilityIdentifier("pdfEditor.documentInspector")
     .onChange(of: model.selectedFieldID, initial: true) { _, _ in
       fieldDraft = model.selectedField.map { model.currentValue(for: $0) } ?? ""
       if model.selectedFieldID != nil {
@@ -103,34 +108,303 @@ public struct ContextualInspectorView: View {
         selectedTab = .focus
       }
     }
+    .confirmationDialog(
+      "Discard the derived export copy?",
+      isPresented: $isDiscardingExportPresented,
+      titleVisibility: .visible
+    ) {
+      Button("Discard Copy", role: .destructive) {
+        _ = model.discardLastExport()
+      }
+      Button("Cancel", role: .cancel) {}
+    } message: {
+      Text("The source file and live document operations will remain unchanged.")
+    }
   }
 
   // MARK: - Focus & Edit Tab
   private var focusTabContent: some View {
     VStack(alignment: .leading, spacing: 16) {
-      // 1. Authoring Toolbar
+      // 1. Evidence Rail
+      contextEvidenceRail
+
+      // 1a. Explain quiet contextual projections without turning the canvas
+      // menu into a disabled command inventory.
+      adaptiveCommandStatusSection
+
+      if let mark = selectedAnnotation {
+        selectedAnnotationCard(mark)
+      }
+
+      // 2. Authoring Toolbar
       authoringToolsPalette
 
-      // 2. Selected Candidate Card
+      // 3. Selected Candidate Card
       if let candidate = model.selectedCandidate {
         selectedCandidateCard(candidate)
       }
 
-      // 3. Selected Native Field Card
+      // 4. Selected Native Field Card
       if let field = model.selectedField {
         selectedNativeFieldCard(field)
       }
 
-      // 4. Quick Bulk Fill Card
+      // 5. Quick Bulk Fill Card
       profileBulkFillCard
 
-      // 5. Active Suggested Areas List
+      // 6. Active Suggested Areas List
       candidateSuggestionsList
 
-      // 6. Search Matches (if any)
+      // 7. Search Matches (if any)
       if !model.searchMatches.isEmpty {
         searchMatchesSection
       }
+    }
+  }
+
+  @ViewBuilder
+  private var contextEvidenceRail: some View {
+    if let mark = selectedAnnotation {
+      evidenceRail(
+        title: "Selected annotation",
+        symbol: mark.type.symbolName,
+        source: "Page \(mark.pageIndex + 1)",
+        provider: "Local annotation sidecar",
+        confidence: "User-authored",
+        limitation: mark.note.isEmpty
+          ? "This mark is stored separately from the source PDF."
+          : "The note is commentary and does not change source PDF bytes.",
+        nextAction: "Use the contextual menu to inspect this annotation."
+      )
+    } else if let candidate = model.selectedCandidate {
+      let explanation = SuggestionExplainer.explain(candidate)
+      evidenceRail(
+        title: "Detected suggestion",
+        symbol: "scope",
+        source: "Page \(candidate.pageIndex + 1)",
+        provider: explanation.providerID,
+        confidence: confidenceLabel(candidate.score),
+        limitation: candidate.fusion?.state == "supported"
+          ? "Independent signals agree, but the region still needs your confirmation."
+          : "Evidence is mixed or limited; confirm the region before applying it.",
+        nextAction: candidate.isDirectlyEditable
+          ? "Review the value and place it when ready."
+          : "Review the suggested region before marking it."
+      )
+    } else if let field = model.selectedField {
+      evidenceRail(
+        title: "Native PDF field",
+        symbol: "checkmark.square",
+        source: "Page \(field.pageIndex + 1)",
+        provider: inspection.provenance.fieldInspector,
+        confidence: "Source structure",
+        limitation: "Confirm the field value and export behavior before delivery.",
+        nextAction: "Use the field editor or Fill mode to complete it."
+      )
+    } else {
+      evidenceRail(
+        title: "Document context",
+        symbol: "doc.text.magnifyingglass",
+        source: inspection.source.fileName,
+        provider: inspection.provenance.textExtractor,
+        confidence: "Source inspection",
+        limitation: inspection.warnings.first ?? "No selected object is being interpreted.",
+        nextAction: "Select text, a field, or a suggestion to reveal its evidence."
+      )
+    }
+  }
+
+  private func evidenceRail(
+    title: String,
+    symbol: String,
+    source: String,
+    provider: String,
+    confidence: String,
+    limitation: String,
+    nextAction: String
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Image(systemName: symbol)
+          .foregroundStyle(.tint)
+        Text(title)
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text("EVIDENCE")
+          .font(.caption2.weight(.bold).monospaced())
+          .foregroundStyle(.secondary)
+      }
+
+      HStack(alignment: .top, spacing: 12) {
+        evidenceRailMetric("Source", source)
+        evidenceRailMetric("Provider", provider)
+        evidenceRailMetric("Confidence", confidence)
+      }
+
+      Label(limitation, systemImage: "exclamationmark.triangle")
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
+
+      Label(nextAction, systemImage: "arrow.right.circle")
+        .font(.caption.weight(.medium))
+        .foregroundStyle(.tint)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .padding(10)
+    .background(.thinMaterial)
+    .overlay(
+      RoundedRectangle(cornerRadius: 8)
+        .stroke(Color.accentColor.opacity(0.25), lineWidth: 1)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 8))
+  }
+
+  private func evidenceRailMetric(_ label: String, _ value: String) -> some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(label.uppercased())
+        .font(.caption2.weight(.bold))
+        .foregroundStyle(.tertiary)
+      Text(value)
+        .font(.caption)
+        .lineLimit(2)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private var selectedAnnotation: AnnotationMark? {
+    guard let id = model.selectedAnnotationID else { return nil }
+    return annotationStore.marks.first { $0.id == id }
+  }
+
+  private func selectedAnnotationCard(_ mark: AnnotationMark) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Label(mark.type.displayName, systemImage: mark.type.symbolName)
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text("SIDECAR")
+          .font(.caption2.weight(.bold).monospaced())
+          .foregroundStyle(.secondary)
+      }
+
+      Text(mark.selectedText.isEmpty ? "No marked text" : mark.selectedText)
+        .font(.caption)
+        .foregroundStyle(mark.selectedText.isEmpty ? .secondary : .primary)
+        .fixedSize(horizontal: false, vertical: true)
+
+      if !mark.note.isEmpty {
+        Label(mark.note, systemImage: "note.text")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+
+      HStack(spacing: 8) {
+        Button("Hide") {
+          annotationStore.toggleVisibility(id: mark.id)
+          model.selectedAnnotationID = nil
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+
+        Button("Copy Text") {
+          NSPasteboard.general.clearContents()
+          NSPasteboard.general.setString(mark.selectedText, forType: .string)
+          model.statusMessage = "Copied the selected annotation text."
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .disabled(mark.selectedText.isEmpty)
+      }
+    }
+    .padding(10)
+    .background(.thinMaterial)
+    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("Selected \(mark.type.displayName.lowercased()) annotation on page \(mark.pageIndex + 1)")
+  }
+
+  @ViewBuilder
+  private var adaptiveCommandStatusSection: some View {
+    let target: AdaptiveInteractionTarget = model.selectedField == nil
+      ? .documentScrolling
+      : .formField
+    let decisions = AdaptiveCommandPolicy.standard
+      .assess(AdaptiveCommandContext.input(model: model, intent: .review, target: target))
+      .filter { $0.state != .available && !$0.reasons.isEmpty }
+
+    if !decisions.isEmpty {
+      DisclosureGroup {
+        VStack(alignment: .leading, spacing: 7) {
+          ForEach(decisions.prefix(4), id: \.command.id) { decision in
+            VStack(alignment: .leading, spacing: 2) {
+              Text(decision.command.title)
+                .font(.caption.weight(.medium))
+              Text(decision.reasons.map(adaptiveReasonLabel).joined(separator: " · "))
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+          }
+
+          if decisions.count > 4 {
+            Text("More actions remain available from the menu bar and Command-K.")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
+        .padding(.top, 6)
+      } label: {
+        Label("Why actions are quiet", systemImage: "questionmark.circle")
+          .font(.caption.weight(.medium))
+      }
+      .accessibilityHint("Explains why some contextual commands are unavailable or need review.")
+    }
+
+    if let denial = model.lastActionDenial {
+      VStack(alignment: .leading, spacing: 5) {
+        Label("Action unavailable", systemImage: "hand.raised")
+          .font(.caption.weight(.medium))
+        Text(denial.explanation)
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+        if let requirement = denial.requirementName {
+          Text("Required: \(requirement)")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+        }
+      }
+      .padding(9)
+      .background(Color.orange.opacity(0.09))
+      .clipShape(RoundedRectangle(cornerRadius: 8))
+      .accessibilityElement(children: .combine)
+      .accessibilityLabel("Action unavailable for \(denial.actionName)")
+      .accessibilityValue(denial.explanation)
+    }
+  }
+
+  private func adaptiveReasonLabel(_ reason: AdaptiveCommandAvailabilityReason) -> String {
+    switch reason {
+    case .requiresSearchPermission: return "Text access is unavailable"
+    case .requiresAnnotationPermission: return "Annotation permission is unavailable"
+    case .requiresModifyPermission: return "Document modification is unavailable"
+    case .requiresFillCapability: return "This document has no fill capability"
+    case .requiresTextSelection: return "Select text first"
+    case .requiresFormFieldContext: return "Select a form field first"
+    case .requiresAnnotationContext: return "Select an annotation first"
+    case .requiresImageContext: return "Select an image or object first"
+    case .requiresPageContext: return "Choose a page first"
+    case .requiresUndoHistory: return "There is no accepted operation to undo"
+    case .requiresRedoHistory: return "There is no operation to redo"
+    case .requiresExportableOperation: return "No exportable operation is ready"
+    case .capabilityUnsupported: return "The current provider does not support this"
+    case .capabilityRevoked: return "This capability was revoked"
+    case .capabilityNeedsReview: return "Provider evidence needs review"
+    case .capabilityBlocked: return "Provider evidence is blocked"
+    case .targetNeedsConfirmation: return "Confirm the detected target first"
     }
   }
 
@@ -413,6 +687,61 @@ public struct ContextualInspectorView: View {
     .padding(12)
     .background(Color.blue.opacity(0.08))
     .clipShape(RoundedRectangle(cornerRadius: 8))
+    .contextMenu {
+      fieldContextMenu(field)
+    }
+  }
+
+  @ViewBuilder
+  private func fieldContextMenu(_ field: NativeField) -> some View {
+    let decisions = AdaptiveCommandPolicy.standard.assess(fieldPolicyInput)
+    let supportedCommands = decisions
+      .filter { decision in
+        switch decision.command.id {
+        case .fillForm, .export, .undo, .redo:
+          return decision.state.isActionable
+        default:
+          return false
+        }
+      }
+
+    ForEach(supportedCommands, id: \.command.id) { decision in
+      Button {
+        AdaptiveCommandHistory.shared.record(decision.command.id)
+        performFieldCommand(decision.command.id)
+      } label: {
+        Label(decision.command.title, systemImage: fieldCommandSymbol(decision.command.id))
+      }
+    }
+  }
+
+  private var fieldPolicyInput: AdaptiveCommandPolicyInput {
+    AdaptiveCommandContext.input(model: model, intent: .complete, target: .formField)
+  }
+
+  private func performFieldCommand(_ command: AdaptiveCommandID) {
+    switch command {
+    case .fillForm:
+      model.setEditorMode(.fill)
+    case .export:
+      model.presentExportReview()
+    case .undo:
+      model.undo()
+    case .redo:
+      model.redo()
+    default:
+      break
+    }
+  }
+
+  private func fieldCommandSymbol(_ command: AdaptiveCommandID) -> String {
+    switch command {
+    case .fillForm: return "character.cursor.ibeam"
+    case .export: return "square.and.arrow.up"
+    case .undo: return "arrow.uturn.backward"
+    case .redo: return "arrow.uturn.forward"
+    default: return "circle"
+    }
   }
 
   private var profileBulkFillCard: some View {
@@ -993,6 +1322,10 @@ public struct ContextualInspectorView: View {
   // MARK: - Document Tab
   private var documentTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
+      capabilityPassportSection
+
+      Divider()
+
       // Metadata
       VStack(alignment: .leading, spacing: 6) {
         Text("Document Metadata")
@@ -1047,6 +1380,77 @@ public struct ContextualInspectorView: View {
           }
         }
       }
+    }
+  }
+
+  private var capabilityPassportSection: some View {
+    let input = AdaptiveCommandContext.input(
+      model: model,
+      intent: .review,
+      target: .documentScrolling
+    )
+    let canExport = AdaptiveCommandPolicy.standard
+      .resolve(input)
+      .allValidCommands
+      .contains { $0.id == .export }
+    let passport = DocumentCapabilityPassport.make(
+      inspection: inspection,
+      canExport: canExport,
+      hasPreflightReport: model.preflightReport != nil
+    )
+
+    return VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Label("Capability Passport", systemImage: "checkmark.seal")
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text("LOCAL")
+          .font(.caption2.weight(.bold).monospaced())
+          .foregroundStyle(.secondary)
+      }
+
+      Text("What this source can support in the current session")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      ForEach(passport.entries) { entry in
+        HStack(alignment: .top, spacing: 8) {
+          Image(systemName: passportSymbol(for: entry.state))
+            .foregroundStyle(passportColor(for: entry.state))
+            .frame(width: 16)
+          VStack(alignment: .leading, spacing: 2) {
+            Text(entry.title)
+              .font(.caption.weight(.medium))
+            Text(entry.detail)
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+              .fixedSize(horizontal: false, vertical: true)
+          }
+        }
+      }
+    }
+    .padding(10)
+    .background(.thinMaterial)
+    .clipShape(RoundedRectangle(cornerRadius: 8))
+  }
+
+  private func passportSymbol(for state: DocumentCapabilityState) -> String {
+    switch state {
+    case .available: return "checkmark.circle.fill"
+    case .pending: return "clock"
+    case .needsReview: return "exclamationmark.triangle.fill"
+    case .blocked: return "nosign"
+    case .notApplicable: return "minus.circle"
+    }
+  }
+
+  private func passportColor(for state: DocumentCapabilityState) -> Color {
+    switch state {
+    case .available: return .green
+    case .pending: return .secondary
+    case .needsReview: return .orange
+    case .blocked: return .red
+    case .notApplicable: return .secondary
     }
   }
 
@@ -1125,6 +1529,8 @@ public struct ContextualInspectorView: View {
               .font(.caption2)
               .foregroundStyle(.secondary)
           }
+
+          exportDispositionControls
         }
         .padding(10)
         .background(Color.secondary.opacity(0.05))
@@ -1180,6 +1586,38 @@ public struct ContextualInspectorView: View {
     return candidate.memberBounds.indices.map { index in
       let name = index < named.count ? named[index] : ""
       return name.isEmpty ? "Option \(index + 1)" : name
+      }
+    }
+
+  @ViewBuilder
+  private var exportDispositionControls: some View {
+    let options = model.exportDispositionOptions
+    if options.canRework || options.canAcceptAsVariance || options.canDiscard {
+      HStack(spacing: 8) {
+        if options.canRework {
+          Button("Rework") {
+            model.reworkLastExport()
+          }
+          .buttonStyle(.bordered)
+          .help("Discard this derived copy and return to the live document operations.")
+        }
+
+        if options.canAcceptAsVariance {
+          Button("Accept Variance") {
+            _ = model.acceptLastExportAsVariance()
+          }
+          .buttonStyle(.bordered)
+          .help("Retain the copy while keeping its validation warnings visible.")
+        }
+
+        if options.canDiscard {
+          Button("Discard Copy", role: .destructive) {
+            isDiscardingExportPresented = true
+          }
+          .buttonStyle(.bordered)
+        }
+      }
+      .font(.caption)
     }
   }
 }

@@ -1,0 +1,157 @@
+{
+  "version": "1.1",
+  "description": "Curated governance manifest for RG-131 control-viewer observation gate. One representative per document class, covering scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, form, geometry, and text-only classes.",
+  "createdAt": "2026-09-01",
+  "fixtures": [
+    {
+      "id": "public-sample-form",
+      "relativePath": "public-sample-form.pdf",
+      "documentClass": "form",
+      "description": "Standard AcroForm with 6 widgets (text, checkbox, radio, choice, signature, date)"
+    },
+    {
+      "id": "scanned-noisy",
+      "relativePath": "browser-corpus/scanned-noisy.pdf",
+      "documentClass": "scanned",
+      "description": "Scanned document with noise artifacts — tests OCR-only content"
+    },
+    {
+      "id": "scanned-clean",
+      "relativePath": "ocr-corpus/clean-english.pdf",
+      "documentClass": "scanned",
+      "description": "Clean scanned English text — baseline OCR quality"
+    },
+    {
+      "id": "scanned-rotated",
+      "relativePath": "ocr-corpus/rotated-certificate.pdf",
+      "documentClass": "scanned",
+      "description": "Scanned certificate with rotation — tests rotated scanned content"
+    },
+    {
+      "id": "rotated-90",
+      "relativePath": "rotation-corpus/rotated-widget-90.pdf",
+      "documentClass": "rotated",
+      "description": "Widget form rotated 90° — tests rotation coordinate integrity"
+    },
+    {
+      "id": "rotated-mixed",
+      "relativePath": "rotation-corpus/rotated-form6-mixed.pdf",
+      "documentClass": "rotated",
+      "description": "Mixed rotation across pages — tests multi-page rotation"
+    },
+    {
+      "id": "rotated-hybrid",
+      "relativePath": "browser-corpus/rotated-hybrid-90.pdf",
+      "documentClass": "rotated",
+      "description": "Hybrid text+raster rotated 90° — tests cross-type rotation"
+    },
+    {
+      "id": "encrypted-aes256",
+      "relativePath": "security-corpus/encrypted-reader.pdf",
+      "documentClass": "encrypted",
+      "description": "AES-256 encrypted with user password — tests password handling"
+    },
+    {
+      "id": "encrypted-hybrid",
+      "relativePath": "browser-corpus/encrypted-hybrid.pdf",
+      "documentClass": "encrypted",
+      "description": "Encrypted hybrid text+raster — tests encrypted cross-type content"
+    },
+    {
+      "id": "malformed-truncated-128",
+      "relativePath": "security-corpus/truncated-128-bytes.pdf",
+      "documentClass": "malformed",
+      "description": "Truncated to 128 bytes — tests catastrophic malformation"
+    },
+    {
+      "id": "malformed-hybrid-truncated",
+      "relativePath": "browser-corpus/malformed-hybrid-truncated.pdf",
+      "documentClass": "malformed",
+      "description": "Hybrid document truncated mid-stream — tests partial malformation"
+    },
+    {
+      "id": "handwritten-simulated",
+      "relativePath": "governed-corpus/handwritten-simulated-entries.pdf",
+      "documentClass": "handwritten",
+      "description": "Simulated handwritten entries on a form — tests handwriting-like content"
+    },
+    {
+      "id": "mixed-text-raster-form",
+      "relativePath": "browser-corpus/hybrid-text-raster-form.pdf",
+      "documentClass": "mixed_content",
+      "description": "Text + raster + form fields — tests cross-type mixed content"
+    },
+    {
+      "id": "mixed-3page",
+      "relativePath": "diverse-layout-corpus/diverse-mixed-3page.pdf",
+      "documentClass": "mixed_content",
+      "description": "3-page mixed layout document — tests multi-page mixed content"
+    },
+    {
+      "id": "large-hybrid-40",
+      "relativePath": "browser-corpus/large-hybrid-40-pages.pdf",
+      "documentClass": "large",
+      "description": "40-page hybrid document — tests large document handling"
+    },
+    {
+      "id": "form-layout",
+      "relativePath": "diverse-layout-corpus/diverse-form-layout.pdf",
+      "documentClass": "form",
+      "description": "Complex form layout — tests non-standard form structure"
+    },
+    {
+      "id": "geometry-rotation",
+      "relativePath": "corpus-sweep-2026-08-25/geometry.pdf",
+      "documentClass": "geometry",
+      "description": "Geometry PDF with tall-narrow page, rotation, and crop box — tests unusual page geometry"
+    },
+    {
+      "id": "navigation",
+      "relativePath": "corpus-sweep-2026-08-25/navigation.pdf",
+      "documentClass": "navigation",
+      "description": "Navigation PDF with outlines, links, and missing destinations — tests link handling"
+    },
+    {
+      "id": "plain-text",
+      "relativePath": "corpus-sweep-2026-08-25/plain-text.pdf",
+      "documentClass": "text_only",
+      "description": "Plain text with headings, paragraphs, and accented characters — tests text extraction"
+    },
+    {
+      "id": "multi-column",
+      "relativePath": "corpus-sweep-2026-08-25/multi-column.pdf",
+      "documentClass": "layout",
+      "description": "Two-column landscape with sidebar — tests column layout detection"
+    },
+    {
+      "id": "dense-grid",
+      "relativePath": "diverse-layout-corpus/diverse-dense-grid.pdf",
+      "documentClass": "layout",
+      "description": "Dense grid layout — tests high-density content"
+    },
+    {
+      "id": "sparse-text",
+      "relativePath": "diverse-layout-corpus/diverse-sparse-text.pdf",
+      "documentClass": "layout",
+      "description": "Sparse text layout — tests low-density content"
+    },
+    {
+      "id": "header-footer",
+      "relativePath": "diverse-layout-corpus/diverse-header-footer.pdf",
+      "documentClass": "layout",
+      "description": "Document with headers and footers — tests header/footer detection"
+    },
+    {
+      "id": "landscape-chart",
+      "relativePath": "diverse-layout-corpus/diverse-landscape-chart.pdf",
+      "documentClass": "layout",
+      "description": "Landscape page with chart — tests landscape orientation"
+    },
+    {
+      "id": "graphics-heavy",
+      "relativePath": "diverse-layout-corpus/diverse-graphics-heavy.pdf",
+      "documentClass": "graphics",
+      "description": "Graphics-heavy document — tests visual content dominance"
+    }
+  ]
+}

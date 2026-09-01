@@ -22,6 +22,48 @@ and provide a recovery action appropriate to the failure class.
 | Runtime unavailable | provider runtime status | `runtime-unavailable` | Disable editing/export, keep reading/retry after runtime recovery |
 | Unsupported feature | capability warning | `unsupported` | Explain the provider boundary; do not imply preservation |
 
+## Rejection-ledger contract
+
+The provider adapters also emit a value-minimized rejection ledger through
+[`web/provider-rejection-ledger.mjs`](../web/provider-rejection-ledger.mjs) and
+the native mirror in
+[`Sources/PDFEditorCore/ProviderRejectionLedger.swift`](../Sources/PDFEditorCore/ProviderRejectionLedger.swift).
+The ledger is an explanation and comparison surface, not a second PDF
+operation contract.
+
+Every attempt records the logical case, provider kind and ID, capability,
+phase, state, source digest, and operation lineage. Normalization retains the
+canonical rejection code, category, retryability, recovery action, and counts
+of provider reason codes, while excluding timestamps, output digests, raw
+diagnostics, passwords, values, text, and bytes from semantic reports.
+
+The canonical code vocabulary includes:
+
+```text
+staleSourceDigest          unsupportedOperation       destructiveOperation
+unknownValidationState     coordinateMismatch         providerUnavailable
+runtimeUnavailable         providerFailure            providerRevoked
+licenseUnapproved          sourceOutsideProviderLimits outputLimit
+timeout                    cancelled                  validationFailed
+```
+
+Provider aliases such as `sourceDigestMismatch`, `capabilityNotSupported`,
+`noHandler`, and `providerUnavailable` are mapped into the shared vocabulary.
+Unknown provider codes produce `unknownRejection` and remain non-comparable;
+they must not be treated as a successful or equivalent outcome.
+
+Pairwise comparison is keyed by `caseID` and the operation-lineage signature.
+It reports `sameLineage`, `sameOutcome`, `sameCode`, `sameRecovery`,
+`comparable`, and `equivalent` separately. This makes a native/browser safety
+invariant distinguishable from a provider capability divergence, and preserves
+the recovery action that the UI should expose.
+
+The shared fixture and report are:
+
+- [`Tests/fixtures/provider_rejection_ledger_fixture.json`](../Tests/fixtures/provider_rejection_ledger_fixture.json)
+- [`Tests/provider_rejection_ledger_oracle_test.mjs`](../Tests/provider_rejection_ledger_oracle_test.mjs)
+- [`benchmark/results/rejection-ledger/2026-08-31/report.json`](../benchmark/results/rejection-ledger/2026-08-31/report.json)
+
 ## Export transaction invariant
 
 Native export follows this order:

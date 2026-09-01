@@ -140,8 +140,6 @@ public struct CorpusEntry: Codable, Sendable, Identifiable {
     public let id: String
     /// Source digest of the document.
     public let sourceDigest: String
-    /// Layout fingerprint.
-    public let layoutFingerprint: String
     /// Expected matching tier.
     public let expectedTier: MatchingTier
     /// Template ID this document should match (nil if no match expected).
@@ -153,15 +151,13 @@ public struct CorpusEntry: Codable, Sendable, Identifiable {
     /// Optional notes about why this entry exists.
     public let notes: String?
     /// Optional V2 structured fingerprint (unification with
-    /// `LayoutFingerprintV2`). When present, classification uses the
-    /// structured similarity on the calibrated scale; when absent, the
-    /// legacy string fingerprint lane applies (backward compatible).
+    /// `LayoutFingerprintV2`). Classification uses the structured similarity
+    /// on the calibrated scale (0.90, F-3 ratified).
     public let layoutV2: LayoutFingerprintV2?
 
     public init(
         id: String = UUID().uuidString,
         sourceDigest: String,
-        layoutFingerprint: String,
         expectedTier: MatchingTier,
         expectedTemplateID: String? = nil,
         isHardNegative: Bool = false,
@@ -171,7 +167,6 @@ public struct CorpusEntry: Codable, Sendable, Identifiable {
     ) {
         self.id = id
         self.sourceDigest = sourceDigest
-        self.layoutFingerprint = layoutFingerprint
         self.expectedTier = expectedTier
         self.expectedTemplateID = expectedTemplateID
         self.isHardNegative = isHardNegative
@@ -281,51 +276,6 @@ public struct RecurringFormCalibrator: Sendable {
     }
 
     /// Classify a document against a set of templates.
-    public func classify(
-        sourceDigest: String,
-        layoutFingerprint: String,
-        templates: [String: String], // templateID -> layoutFingerprint
-        exactSourceDigests: [String: String] // templateID -> sourceDigest
-    ) -> (tier: MatchingTier, score: Double, templateID: String?) {
-        // Check exact match
-        for (templateID, digest) in exactSourceDigests {
-            if digest == sourceDigest {
-                return (.exact, 1.0, templateID)
-            }
-        }
-
-        // Check known variant (same layout fingerprint)
-        for (templateID, fingerprint) in templates {
-            if fingerprint == layoutFingerprint {
-                return (.knownVariant, 0.9, templateID)
-            }
-        }
-
-        // Check family match (structural similarity)
-        guard thresholds.familyEnabled else {
-            return (.noMatch, 0, nil)
-        }
-
-        // Simple structural similarity: count common layout features
-        var bestScore: Double = 0
-        var bestTemplate: String?
-        for (templateID, fingerprint) in templates {
-            let similarity = layoutSimilarity(layoutFingerprint, fingerprint)
-            if similarity > bestScore {
-                bestScore = similarity
-                bestTemplate = templateID
-            }
-        }
-
-        if bestScore >= thresholds.familyThreshold {
-            return (.familyMatch, bestScore, bestTemplate)
-        } else if bestScore >= thresholds.familyThreshold - thresholds.ambiguousMargin {
-            return (.ambiguous, bestScore, bestTemplate)
-        } else {
-            return (.noMatch, bestScore, nil)
-        }
-    }
-
     /// Classify a document against templates using the V2 structured
     /// fingerprint (unification with `LayoutFingerprintV2`).
     ///
@@ -368,19 +318,12 @@ public struct RecurringFormCalibrator: Sendable {
 
     /// Run calibration against a corpus using V2 structured fingerprints.
     ///
-    /// Entries carrying `layoutV2` are classified on the V2 scale (structured
-    /// similarity); entries without it fall back to the legacy string lane
-    /// (their `layoutFingerprint` vs the template digests), preserving the
-    /// hard-negative machinery for synthetic entries.
+    /// Every corpus entry must carry a `layoutV2` fingerprint. Entries without
+    /// one are skipped (the legacy string lane has been retired).
     public func calibrate(
         corpus: [CorpusEntry],
         templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)]
     ) -> CalibrationReport {
-        // Legacy fallback fingerprints derived from the V2 digests (equality
-        // keys) for entries without a V2 layout (e.g., synthetic hard
-        // negatives): the string lane stays consistent with the V2 lane on
-        // exact/knownVariant while family falls back to its legacy semantics.
-        let legacyFingerprints = templatesV2.mapValues { $0.fingerprint.digest }
         let exactDigests = Dictionary(
             templatesV2.map { ($0.key, $0.value.sourceDigest) },
             uniquingKeysWith: { first, _ in first }
@@ -391,22 +334,33 @@ public struct RecurringFormCalibrator: Sendable {
         var falseNegatives = 0
 
         for entry in corpus {
-            let actual: (tier: MatchingTier, score: Double, templateID: String?)
-            if let entryV2 = entry.layoutV2 {
-                actual = classify(
-                    sourceDigest: entry.sourceDigest,
-                    layoutV2: entryV2,
-                    templatesV2: templatesV2.mapValues(\.fingerprint),
-                    exactSourceDigests: exactDigests
-                )
-            } else {
-                actual = classify(
-                    sourceDigest: entry.sourceDigest,
-                    layoutFingerprint: entry.layoutFingerprint,
-                    templates: legacyFingerprints,
-                    exactSourceDigests: exactDigests
-                )
+            guard let entryV2 = entry.layoutV2 else {
+                // Entry without V2 layout — classify as noMatch (cannot
+                // compare on the structured scale without a V2 fingerprint).
+                let passed = entry.expectedTier == .noMatch
+                if !passed && entry.isHardNegative { falsePositives += 1 }
+                if entry.expectedTier.isMatch && !passed { falseNegatives += 1 }
+                results.append(CalibrationResult(
+                    entryID: entry.id,
+                    expectedTier: entry.expectedTier,
+                    actualTier: .noMatch,
+                    score: 0,
+                    passed: passed,
+                    isHardNegative: entry.isHardNegative,
+                    falsePositiveDetected: entry.isHardNegative && !passed,
+                    reason: passed
+                        ? "Correctly classified as noMatch (no V2 layout)"
+                        : "Mismatch: expected \(entry.expectedTier.rawValue), got noMatch (no V2 layout)"
+                ))
+                continue
             }
+
+            let actual = classify(
+                sourceDigest: entry.sourceDigest,
+                layoutV2: entryV2,
+                templatesV2: templatesV2.mapValues(\.fingerprint),
+                exactSourceDigests: exactDigests
+            )
 
             let passed = actual.tier == entry.expectedTier
             let falsePositive = entry.isHardNegative && actual.tier.isMatch
@@ -441,66 +395,7 @@ public struct RecurringFormCalibrator: Sendable {
         return buildReport(results: results, corpus: corpus, falsePositives: falsePositives, falseNegatives: falseNegatives)
     }
 
-    /// Run calibration against a corpus.
-    public func calibrate(
-        corpus: [CorpusEntry],
-        templates: [String: (fingerprint: String, sourceDigest: String)] // templateID -> (fingerprint, sourceDigest)
-    ) -> CalibrationReport {
-        var results: [CalibrationResult] = []
-        var falsePositives = 0
-        var falseNegatives = 0
-
-        for entry in corpus {
-            let exactDigests = Dictionary(
-                templates.map { ($0.key, $0.value.sourceDigest) },
-                uniquingKeysWith: { first, _ in first }
-            )
-            let fingerprints = Dictionary(
-                templates.map { ($0.key, $0.value.fingerprint) },
-                uniquingKeysWith: { first, _ in first }
-            )
-
-            let (actualTier, score, matchedTemplate) = classify(
-                sourceDigest: entry.sourceDigest,
-                layoutFingerprint: entry.layoutFingerprint,
-                templates: fingerprints,
-                exactSourceDigests: exactDigests
-            )
-
-            let passed = actualTier == entry.expectedTier
-            let falsePositive = entry.isHardNegative && actualTier.isMatch
-            let falseNegative = entry.expectedTier.isMatch && !actualTier.isMatch
-
-            if falsePositive { falsePositives += 1 }
-            if falseNegative { falseNegatives += 1 }
-
-            let reason: String
-            if passed {
-                reason = "Correctly classified as \(actualTier.rawValue)"
-            } else if falsePositive {
-                reason = "FALSE POSITIVE: Hard negative classified as \(actualTier.rawValue) (expected \(entry.expectedTier.rawValue))"
-            } else if falseNegative {
-                reason = "FALSE NEGATIVE: Expected \(entry.expectedTier.rawValue) but got \(actualTier.rawValue)"
-            } else {
-                reason = "Mismatch: expected \(entry.expectedTier.rawValue), got \(actualTier.rawValue)"
-            }
-
-            results.append(CalibrationResult(
-                entryID: entry.id,
-                expectedTier: entry.expectedTier,
-                actualTier: actualTier,
-                score: score,
-                passed: passed,
-                isHardNegative: entry.isHardNegative,
-                falsePositiveDetected: falsePositive,
-                reason: reason
-            ))
-        }
-
-        return buildReport(results: results, corpus: corpus, falsePositives: falsePositives, falseNegatives: falseNegatives)
-    }
-
-    /// Shared report assembly for both calibration lanes (string + V2).
+    /// Shared report assembly.
     private func buildReport(
         results: [CalibrationResult],
         corpus: [CorpusEntry],
@@ -555,16 +450,4 @@ public struct RecurringFormCalibrator: Sendable {
         )
     }
 
-    // MARK: - Helpers
-
-    /// Simple layout similarity between two fingerprint strings.
-    /// Compares character-level overlap as a proxy for structural similarity.
-    private func layoutSimilarity(_ a: String, _ b: String) -> Double {
-        guard !a.isEmpty && !b.isEmpty else { return 0 }
-        let setA = Set(a)
-        let setB = Set(b)
-        let intersection = setA.intersection(setB)
-        let union = setA.union(setB)
-        return Double(intersection.count) / Double(union.count) // Jaccard similarity
-    }
 }

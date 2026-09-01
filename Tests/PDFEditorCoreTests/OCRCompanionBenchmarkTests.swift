@@ -150,6 +150,124 @@ struct OCRCompanionBenchmarkTests {
         #expect(wer < 0.25, "Mixed punctuation WER should be < 25%, got \(wer * 100)%")
     }
 
+    // MARK: - Vision Framework Provider
+
+    @Test("Vision: clean English produces zero WER")
+    func visionCleanEnglish() throws {
+        let provider = VisionFrameworkOCRProvider()
+        let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
+        guard FileManager.default.fileExists(atPath: pngPath) else {
+            Issue.record("Fixture not found: \(pngPath)")
+            return
+        }
+        let (text, confidence) = provider.ocrPNG(pngPath)
+        #expect(!text.isEmpty, "Vision must produce output")
+        #expect(confidence > 0.90, "Clean English should have very high confidence")
+
+        let gt = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump."
+        let wer = OCRCompanionBenchmark.computeWER(hypothesis: text, reference: gt)
+        print("[ocr-benchmark] Vision clean-english WER=\(String(format: "%.2f", wer * 100))%")
+        #expect(wer < 0.25, "Vision clean English WER should be < 25%, got \(wer * 100)%")
+    }
+
+    @Test("Vision: noisy invoice handles noise")
+    func visionNoisyInvoice() throws {
+        let provider = VisionFrameworkOCRProvider()
+        let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
+        guard FileManager.default.fileExists(atPath: pngPath) else {
+            Issue.record("Fixture not found: \(pngPath)")
+            return
+        }
+        let (text, confidence) = provider.ocrPNG(pngPath)
+        #expect(!text.isEmpty, "Vision must handle noisy images")
+
+        let gt = "Invoice Number: 2024-0831\nAmount Due: 1,234.56 dollars\nDate: August 31, 2026"
+        let wer = OCRCompanionBenchmark.computeWER(hypothesis: text, reference: gt)
+        print("[ocr-benchmark] Vision noisy-invoice WER=\(String(format: "%.2f", wer * 100))%")
+        #expect(wer < 0.20, "Vision noisy invoice WER should be < 20%, got \(wer * 100)%")
+    }
+
+    @Test("Vision: multi-column layout reads all columns")
+    func visionMultiColumn() throws {
+        let provider = VisionFrameworkOCRProvider()
+        let pngPath = "benchmark/results/ocr-corpus/multi-column.png"
+        guard FileManager.default.fileExists(atPath: pngPath) else {
+            Issue.record("Fixture not found: \(pngPath)")
+            return
+        }
+        let (text, confidence) = provider.ocrPNG(pngPath)
+        #expect(!text.isEmpty, "Vision must handle multi-column")
+
+        // Vision should read both columns
+        let hasColumn1 = text.lowercased().contains("column one")
+        let hasColumn2 = text.lowercased().contains("column two")
+        #expect(hasColumn1, "Vision should read column one")
+        #expect(hasColumn2, "Vision should read column two")
+        print("[ocr-benchmark] Vision multi-column: \(text.prefix(100))")
+    }
+
+    // MARK: - PaddleOCR Provider
+
+    @Test("PaddleOCR: clean English produces zero WER")
+    func paddleCleanEnglish() throws {
+        let provider = PaddleOCRProvider()
+        let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
+        guard FileManager.default.fileExists(atPath: pngPath) else {
+            Issue.record("Fixture not found: \(pngPath)")
+            return
+        }
+        let (text, confidence) = provider.ocrPNG(pngPath)
+        #expect(!text.isEmpty, "PaddleOCR must produce output")
+        #expect(confidence >= 0.90, "Clean English should have very high confidence")
+
+        let gt = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump."
+        let wer = OCRCompanionBenchmark.computeWER(hypothesis: text, reference: gt)
+        print("[ocr-benchmark] PaddleOCR clean-english WER=\(String(format: "%.2f", wer * 100))%")
+        #expect(wer < 0.25, "PaddleOCR clean English WER should be < 25%, got \(wer * 100)%")
+    }
+
+    @Test("PaddleOCR: noisy invoice handles noise")
+    func paddleNoisyInvoice() throws {
+        let provider = PaddleOCRProvider()
+        let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
+        guard FileManager.default.fileExists(atPath: pngPath) else {
+            Issue.record("Fixture not found: \(pngPath)")
+            return
+        }
+        let (text, confidence) = provider.ocrPNG(pngPath)
+        #expect(!text.isEmpty, "PaddleOCR must handle noisy images")
+
+        let gt = "Invoice Number: 2024-0831\nAmount Due: 1,234.56 dollars\nDate: August 31, 2026"
+        let wer = OCRCompanionBenchmark.computeWER(hypothesis: text, reference: gt)
+        print("[ocr-benchmark] PaddleOCR noisy-invoice WER=\(String(format: "%.2f", wer * 100))%")
+        #expect(wer < 0.20, "PaddleOCR noisy invoice WER should be < 20%, got \(wer * 100)%")
+    }
+
+    // MARK: - Cross-Provider Comparison
+
+    @Test("Cross-provider: Vision and Tesseract both achieve < 5% WER on clean English")
+    func crossProviderCleanEnglish() throws {
+        let gt = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump."
+        let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
+        guard FileManager.default.fileExists(atPath: pngPath) else {
+            Issue.record("Fixture not found: \(pngPath)")
+            return
+        }
+
+        let providers: [(String, BenchmarkOCRProvider)] = [
+            ("Tesseract", TesseractProvider()),
+            ("Vision", VisionFrameworkOCRProvider()),
+            ("PaddleOCR", PaddleOCRProvider()),
+        ]
+
+        for (name, provider) in providers {
+            let (text, confidence) = provider.ocrPNG(pngPath)
+            let wer = OCRCompanionBenchmark.computeWER(hypothesis: text, reference: gt)
+            print("[ocr-benchmark] \(name) clean-english: WER=\(String(format: "%.1f", wer * 100))% conf=\(String(format: "%.1f", confidence * 100))%")
+            #expect(wer < 0.25, "\(name) WER should be < 25%, got \(wer * 100)%")
+        }
+    }
+
     // MARK: - Full Benchmark Run
 
     @Test("Full benchmark: PDFKit produces baseline (no OCR)")
@@ -172,6 +290,43 @@ struct OCRCompanionBenchmarkTests {
             let fixture = OCRCompanionBenchmark.standardFixtures.first { $0.id == result.fixtureID }
             let werStr = result.wordErrorRate.map { String(format: "%.1f", $0 * 100) + "%" } ?? "N/A"
             print("[ocr-benchmark] \(result.fixtureID): WER=\(werStr) conf=\(String(format: "%.2f", result.confidence)) time=\(String(format: "%.0f", result.processingTimeMs))ms")
+        }
+    }
+
+    @Test("Full benchmark: Vision produces WER")
+    func fullBenchmarkVision() {
+        let report = OCRCompanionBenchmark.runBenchmark(provider: VisionFrameworkOCRProvider())
+        print(report.summary)
+        #expect(report.fixtureCount == 9)
+    }
+
+    @Test("Full benchmark: PaddleOCR produces WER")
+    func fullBenchmarkPaddleOCR() {
+        let report = OCRCompanionBenchmark.runBenchmark(provider: PaddleOCRProvider())
+        print(report.summary)
+        #expect(report.fixtureCount == 9)
+    }
+
+    @Test("Full benchmark: Marker produces Markdown output")
+    func fullBenchmarkMarker() {
+        let report = OCRCompanionBenchmark.runBenchmark(provider: MarkerProvider())
+        print(report.summary)
+        #expect(report.fixtureCount == 9)
+    }
+
+    @Test("Cross-provider: all 5 providers produce results on clean English")
+    func crossProviderAllProducers() {
+        let providers: [any BenchmarkOCRProvider] = [
+            PDFKitOCRProvider(),
+            TesseractProvider(),
+            VisionFrameworkOCRProvider(),
+            PaddleOCRProvider(),
+            MarkerProvider(),
+        ]
+        for provider in providers {
+            let report = OCRCompanionBenchmark.runBenchmark(provider: provider)
+            print("[\(provider.name)] fixtures=\(report.fixtureCount) summary=\(report.summary)")
+            #expect(report.fixtureCount >= 1, "\(provider.name) should process at least 1 fixture")
         }
     }
 }

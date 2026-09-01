@@ -1,0 +1,155 @@
+{
+  "contract": "pdf-editor.rejection-ledger-fixture",
+  "version": { "major": 1, "minor": 0 },
+  "ledgerID": "rejection-ledger-fixture-2026-08-31",
+  "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "operationLineage": [
+    {
+      "operationID": "logical-op-001",
+      "kind": "text.runReplacement",
+      "pageIndex": 0,
+      "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "ledgers": {
+    "native": {
+      "providerKind": "native",
+      "providerID": "pdfkit",
+      "attempts": [
+        {
+          "attemptID": "native-stale-001",
+          "caseID": "stale-source",
+          "providerID": "pdfkit",
+          "providerKind": "native",
+          "capability": "text.runReplacement",
+          "phase": "admission",
+          "state": "rejected",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operationLineage": [
+            {
+              "operationID": "logical-op-001",
+              "kind": "text.runReplacement",
+              "pageIndex": 0,
+              "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "reasonCodes": ["sourceDigestMismatch"],
+          "outputDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "observedAt": "2026-08-31T10:00:00Z"
+        },
+        {
+          "attemptID": "native-unsupported-001",
+          "caseID": "unsupported-capability",
+          "providerID": "pdfkit",
+          "providerKind": "native",
+          "capability": "text.runReplacement",
+          "phase": "admission",
+          "state": "rejected",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operationLineage": [
+            {
+              "operationID": "logical-op-001",
+              "kind": "text.runReplacement",
+              "pageIndex": 0,
+              "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "reasonCodes": ["capabilityNotSupported"],
+          "observedAt": "2026-08-31T10:01:00Z"
+        }
+      ]
+    },
+    "browser": {
+      "providerKind": "browser",
+      "providerID": "pdfjs-pdflib",
+      "attempts": [
+        {
+          "attemptID": "browser-stale-001",
+          "caseID": "stale-source",
+          "providerID": "pdfjs-pdflib",
+          "providerKind": "browser",
+          "capability": "text.runReplacement",
+          "phase": "admission",
+          "state": "rejected",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operationLineage": [
+            {
+              "operationID": "logical-op-001",
+              "kind": "text.runReplacement",
+              "pageIndex": 0,
+              "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "code": "staleSourceDigest",
+          "observedAt": "2026-08-31T10:02:00Z"
+        },
+        {
+          "attemptID": "browser-unsupported-001",
+          "caseID": "unsupported-capability",
+          "providerID": "pdfjs-pdflib",
+          "providerKind": "browser",
+          "capability": "text.runReplacement",
+          "phase": "admission",
+          "state": "rejected",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operationLineage": [
+            {
+              "operationID": "logical-op-001",
+              "kind": "text.runReplacement",
+              "pageIndex": 0,
+              "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "code": "unsupportedOperation",
+          "observedAt": "2026-08-31T10:03:00Z"
+        }
+      ]
+    },
+    "companion": {
+      "providerKind": "companion",
+      "providerID": "companion-pdfbox",
+      "attempts": [
+        {
+          "attemptID": "companion-stale-001",
+          "caseID": "stale-source",
+          "providerID": "companion-pdfbox",
+          "providerKind": "companion",
+          "capability": "text.runReplacement",
+          "phase": "admission",
+          "state": "failed",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operationLineage": [
+            {
+              "operationID": "logical-op-001",
+              "kind": "text.runReplacement",
+              "pageIndex": 0,
+              "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "reasonCodes": ["sourceDigestMismatch"],
+          "observedAt": "2026-08-31T10:04:00Z"
+        },
+        {
+          "attemptID": "companion-unsupported-001",
+          "caseID": "unsupported-capability",
+          "providerID": "companion-pdfbox",
+          "providerKind": "companion",
+          "capability": "text.runReplacement",
+          "phase": "admission",
+          "state": "abstained",
+          "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operationLineage": [
+            {
+              "operationID": "logical-op-001",
+              "kind": "text.runReplacement",
+              "pageIndex": 0,
+              "sourceDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "reasonCodes": ["noHandler", "providerUnavailable"],
+          "observedAt": "2026-08-31T10:05:00Z"
+        }
+      ]
+    }
+  }
+}

@@ -1778,3 +1778,156 @@ block claiming a final engine, cross-platform fidelity, or licensing clearance.
   `Tests/PDFEditorCoreTests/ReviewFixVerificationTests.swift`,
   `benchmark/pdfbox-lane/`,
   `benchmark/results/2026-08-25-pdfbox-public-acroform/result.json`.
+
+### F-073: PDFBox and MuPDF have aligned readable no-op preservation but divergent recovery and adoption boundaries
+
+- **Date:** 2026-08-31
+- **Status:** Verified at Tier 3/S1 through the local provider bake-off over 16
+  available governed fixtures; focused report checks pass.
+- **Observed:** PDFBox 3.0.8 and MuPDF 1.28.2 both passed normalized text and
+  independent Poppler raster preservation on 12 readable fixtures. PDFBox
+  exposed the stronger typed AcroForm inspection/control path. MuPDF exposed a
+  broader native rewrite/render command surface. MuPDF’s CLI did not provide a
+  typed existing-text replacement operation, and form baking was not treated
+  as equivalent to native-field filling.
+- **Recovery evidence:** PDFBox produced invalid staged artifacts on 3
+  truncation probes; MuPDF did so on 6. Neither provider produced a
+  qpdf-valid malformed output. The result is safe only when the caller owns
+  staged-output validation and publication. A zero exit code is not an export
+  authorization.
+- **Licensing and packaging:** The PDFBox fat jar’s SHA-512 matched its
+  retained digest, and Apache-2.0 plus bundled-notice review was recorded.
+  MuPDF’s local binary identity and AGPL-3.0-or-commercial boundary were
+  recorded; commercial licensing remains open. PDFBox adds a Java runtime
+  packaging/signing/update surface. MuPDF adds native-library packaging,
+  architecture, signing, and copyleft/commercial-license obligations.
+- **Implication:** Keep both behind the shared provider capability contract.
+  PDFBox is the permissive form/control lane; MuPDF is the high-fidelity
+  candidate. Neither should be silently selected for every PDF, and neither
+  should bypass the common source binding, independent validation, capability
+  revocation, or recovery protocol.
+- **Limits:** This is local synthetic/derived corpus evidence, not production,
+  real-user, legal, notarization, all-viewer, XFA, PDF/UA, signature-validity,
+  redaction-completeness, arbitrary-editing, or commercial-license proof.
+- **Sources:** `benchmark/pdfbox-mupdf-bakeoff.mjs`,
+  `benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json`,
+  `Tests/pdfbox_mupdf_bakeoff_test.mjs`,
+  `docs/audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md`, and
+  `docs/release-gates.md` RG-128.
+
+### F-074: Browser export needed a protected-surface transition gate beyond reopenability
+
+- **Date:** 2026-08-31
+- **Status:** Verified at Tier 2/S1 through pure contract mutation tests and
+  isolated Chrome export proof on the public form and static overlay fixtures.
+- **Observed:** The browser already compared source and output page geometry,
+  outside-region text, raster impact, and native field values, but its privacy
+  preflight was source-only. A provider could therefore reopen an output while
+  changing metadata presence, attachment inventory, embedded action indicators,
+  encryption state, annotations, form-value presence, revision markers, or an
+  aggregate privacy surface without a typed transition result.
+- **Implementation:** `pdf-preflight.mjs` now emits value-minimized encryption,
+  form-value, and privacy-surface observations and compares protected surfaces
+  through `comparePreflightTransitions()`. `pdf-contract-mutation-gate.mjs`
+  validates source preflight and declared transitions before the writer and
+  rejects sensitive operation declarations. `app.js` builds an output report
+  after PDF.js reopen and adds a `privacyPreflight` validation check before
+  download.
+- **Evidence:** Metadata, attachment, embedded-action, encryption, and privacy
+  aggregate mutations fail the transition comparator. Sensitive operation and
+  unknown transition declarations stop before the writer. Reviewed form-value
+  changes are allowed only with typed native-field operations and explicit
+  output allowance. `node Tests/preflight_contract_test.mjs`,
+  `node Tests/web_preexport_privacy_gate_test.mjs`,
+  `node Tests/run-web-e2e.mjs web_pdf_contract_mutation`,
+  `node Tests/run-web-e2e.mjs preflight`, and
+  `node Tests/run-web-e2e.mjs web_pdf_proof` pass.
+- **Implication:** PDF.js reopenability is a parseability signal, not a privacy
+  preservation proof. Export publication must require unchanged or explicitly
+  authorized protected surfaces, while raw content remains excluded from the
+  evidence artifact.
+- **Limits:** The browser transition comparison is structural and
+  value-minimized. Bounded token scans do not prove action reachability or
+  hidden-revision absence. It is not a sanitization certificate, independent
+  viewer proof, byte-for-byte object proof, signature-validity proof, XFA proof,
+  PDF/UA proof, or production corpus result.
+- **Sources:** `web/pdf-preflight.mjs`,
+  `web/pdf-contract-mutation-gate.mjs`, `web/app.js`,
+  `Tests/web_preexport_privacy_gate_test.mjs`,
+  `Tests/preflight_contract_test.mjs`, and
+  `docs/audits/browser-preexport-privacy-transition-evidence-2026-08-31.md`.
+
+### F-075: Rotated raster authorization requires a renderer-specific origin
+
+- **Date:** 2026-08-31
+- **Status:** Verified at Tier 3/S1 through a three-case browser replay matrix
+  and independent Poppler text/raster/reopen validation.
+- **Observed:** A reviewed overlay recorded in crop-relative lower-left page
+  space survived PDF.js preview, pdf-lib materialization, PDF.js reopen, and
+  browser impact validation for 90°, 180°, and 270° pages. The first
+  independent run also exposed that Poppler's 180° text bbox coordinates and
+  `pdftoppm -cropbox` raster coordinates do not share one origin. Using one
+  implicit transform produced a false outside-raster failure even though text
+  authorization was correct.
+- **Correction:** The independent validator now passes actual bbox page
+  dimensions to the text transform and uses a distinct raster projection. For
+  180° raster output, the rotation axis uses media width while the clipped
+  raster origin is crop-relative. The operation region remains unchanged and
+  the pixel tolerance is not widened.
+- **Related correction:** The same matrix found pdf-lib adding a `Creator`
+  metadata presence entry to a normalized pikepdf-derived source. The browser
+  writer reapplies inspected metadata presence before save, and the browser
+  privacy transition gate continues to reject unapproved protected-surface
+  changes.
+- **Evidence:** `node Tests/run-web-e2e.mjs rotated_operation_replay` passes
+  all three cases. Each case reports browser reopen, privacy, outside-region
+  text/raster, independent Poppler text/raster, and independent reopen as
+  passed. The earlier failed 180° raster run is retained in the progress log
+  as the falsifying probe that drove the correction.
+- **Implication:** Page-space coordinates can be shared across adapters, but
+  each independent renderer must declare its coordinate origin and crop/rotation
+  projection. A single generic display transform is unsafe for preservation
+  authorization.
+- **Limits:** This remains overlay-only browser evidence on derived fixtures.
+  Native PDFKit replay, widget preservation, multi-page mixed rotations,
+  non-zero offsets for every rotation, all operation kinds, object identity,
+  GUI viewers, and arbitrary-PDF preservation remain open.
+- **Sources:** `Tests/rotated_operation_replay_test.mjs`,
+  `benchmark/independent-preservation-validator.mjs`,
+  `docs/audits/rotated-reviewed-operation-replay-evidence-2026-08-31.md`, and
+  `docs/release-gates.md` RG-113.
+
+### F-076: Rejection-ledger normalization separates safety convergence from provider divergence
+
+- **Date:** 2026-08-31
+- **Status:** Verified at Tier 2 focused contract level, with Tier 3 local
+  companion-host unavailable-capability execution.
+- **Observed:** The native Swift mirror and browser JavaScript oracle decode the
+  same source-bound fixture and normalize provider-specific reasons into one
+  shared error vocabulary. The actual companion host contributes an
+  `abstained` unavailable-capability response rather than a fabricated engine
+  result.
+- **Measured:** Three provider kinds, two logical cases, six pairwise
+  comparisons, six comparable comparisons, four equivalent comparisons, two
+  explicit capability divergences, and zero unknown comparisons. The
+  divergences are the companion's `providerUnavailable` outcome versus the
+  native/browser `unsupportedOperation` outcome for one capability.
+- **Safety property:** Equality requires the same operation-lineage signature,
+  normalized outcome, canonical code, and recovery action. Timestamps,
+  provider IDs, output digests, raw diagnostics, text, values, passwords,
+  screenshots, and bytes are excluded from semantic reports. Unknown provider
+  reasons become `unknownRejection` and cannot be treated as success.
+- **Implication:** Native PDFKit, browser PDF.js/pdf-lib, and companion
+  providers can evolve independently while sharing a durable failure oracle.
+  A provider can be revoked or unavailable without changing the document,
+  coordinate, candidate, operation, or validation contracts.
+- **Limits:** The current fixture is controlled and value-free. Universal live
+  error-site emission, pre-source failures without a digest or operation
+  lineage, and OCR, text-run, page, redaction, signature, XFA, PDF/UA, repair,
+  and high-fidelity provider cases remain to be wired and measured.
+- **Sources:** `web/provider-rejection-ledger.mjs`,
+  `Sources/PDFEditorCore/ProviderRejectionLedger.swift`,
+  `Tests/provider_rejection_ledger_oracle_test.mjs`,
+  `Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift`,
+  `benchmark/results/rejection-ledger/2026-08-31/report.json`, and
+  `docs/audits/provider-rejection-ledger-evidence-2026-08-31.md`.

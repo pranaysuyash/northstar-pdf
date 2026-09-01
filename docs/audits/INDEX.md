@@ -7,6 +7,12 @@
 (decision D-055). Audits marked `superseded-in-part` contain stale status tables;
 read them for method and findings history only.
 
+| 2026-08-31 | [native-macos-product-audit-per-0926-2026-08-31.md](native-macos-product-audit-per-0926-2026-08-31.md) | Native macOS Product Audit and Evolution Map (PER-0926) | current |
+| 2026-08-31 | [pdfbox-mupdf-bakeoff-evidence-2026-08-31.md](pdfbox-mupdf-bakeoff-evidence-2026-08-31.md) | PDFBox versus MuPDF Provider Bake-off Evidence | current |
+| 2026-08-31 | [browser-preexport-privacy-transition-evidence-2026-08-31.md](browser-preexport-privacy-transition-evidence-2026-08-31.md) | Browser Pre-export Privacy Transition Evidence | current |
+| 2026-08-31 | [rotated-reviewed-operation-replay-evidence-2026-08-31.md](rotated-reviewed-operation-replay-evidence-2026-08-31.md) | Rotated Reviewed-Operation Replay Evidence | current |
+| 2026-08-31 | [provider-rejection-ledger-evidence-2026-08-31.md](provider-rejection-ledger-evidence-2026-08-31.md) | Native, Browser, and Companion Rejection-Ledger Evidence | current |
+
 | Date | Audit | Title | Status |
 |---|---|---|---|
 | 2026-08-24 | [application-security-audit-per-pdev-0167.md](application-security-audit-per-pdev-0167.md) | Application Security & Threat Model Audit | current |
@@ -19,6 +25,7 @@ read them for method and findings history only.
 | 2026-08-26 | [chaos-engineering-and-fault-injection-audit-per-pl2-0035.md](chaos-engineering-and-fault-injection-audit-per-pl2-0035.md) | Chaos Engineering & Fault-Injection Architecture Audit (PER-PL2-0035) | current |
 | 2026-08-25 | [character-grid-merge-and-highlight-evidence-2026-08-25.md](character-grid-merge-and-highlight-evidence-2026-08-25.md) | Character-Grid Merge and Highlight Evidence | current |
 | 2026-08-24 | [comprehensive-adhd-audit-2026-08-24.md](comprehensive-adhd-audit-2026-08-24.md) | Comprehensive ADHD Audit: PDF Editor | current |
+| 2026-08-30 | [comprehensive-adhd-audit-round2-2026-08-30.md](comprehensive-adhd-audit-round2-2026-08-30.md) | Comprehensive ADHD Audit Round 2 (extends 2026-08-24 with disjoint frames) | current |
 | 2026-08-25 | [comprehensive-findings-tasks-and-first-principles-audit.md](comprehensive-findings-tasks-and-first-principles-audit.md) | Comprehensive Findings, Tasks, and First-Principles Alignment Audit | current |
 | 2026-08-25 | [comprehensive-repository-audit-and-first-principles-evaluation-2026-08-25.md](comprehensive-repository-audit-and-first-principles-evaluation-2026-08-25.md) | Comprehensive Repository Audit, Multi-Persona First-Principles Evaluation, and Technical M | superseded-in-part |
 | 2026-08-26 | [computational-geometry-robustness-and-visual-encoding-audit-per-0060-0068-0072.md](computational-geometry-robustness-and-visual-encoding-audit-per-0060-0068-0072.md) | Computational Geometry Robustness & Visual Encoding Audit | current |

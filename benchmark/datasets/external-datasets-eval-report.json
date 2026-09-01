@@ -1,0 +1,140 @@
+{
+  "generated_at": "2026-09-01T17:07:12.413341Z",
+  "datasets": {
+    "funsd": {
+      "dataset": "FUNSD",
+      "license": "CC BY 4.0",
+      "source": "https://guillaumejaume.github.io/FUNSD/",
+      "splits": {
+        "train": {
+          "count": 149
+        },
+        "test": {
+          "count": 50
+        }
+      },
+      "test_stats": {
+        "total_forms": 50,
+        "total_words": 8707,
+        "total_entities": 1998,
+        "avg_words_per_form": 174.14,
+        "avg_entities_per_form": 39.96,
+        "avg_entity_length_words": 3.1721721721721723,
+        "entity_type_distribution": {
+          "QUESTION": 1070,
+          "ANSWER": 809,
+          "HEADER": 119
+        }
+      },
+      "ground_truth_format": {
+        "fields": [
+          "id",
+          "text",
+          "wordCount",
+          "entityCount",
+          "entities"
+        ],
+        "entity_fields": [
+          "text",
+          "box",
+          "type"
+        ],
+        "entity_types": [
+          "HEADER",
+          "QUESTION",
+          "ANSWER"
+        ]
+      },
+      "eval_metrics": [
+        "entity_extraction_f1",
+        "header_detection_precision",
+        "qa_pairing_accuracy",
+        "entity_type_classification_accuracy"
+      ],
+      "usage": {
+        "ocr_eval": "Compare OCR output against form.text for WER/CER",
+        "entity_eval": "Extract entities from OCR output, compare against form.entities for precision/recall/F1",
+        "layout_eval": "Use entity.box for bounding box IoU evaluation"
+      }
+    },
+    "doclaynet": {
+      "dataset": "DocLayNet v1.1",
+      "license": "CDLA-Permissive",
+      "source": "https://github.com/DS4SD/DocLayNet",
+      "splits": {
+        "train_sample": {
+          "count": 200
+        },
+        "test": {
+          "count": 4999
+        }
+      },
+      "test_stats": {
+        "total_pages": 4999,
+        "total_regions": 66276,
+        "avg_regions_per_page": 13.257851570314063,
+        "class_distribution": {
+          "Caption": 1543,
+          "Picture": 3515,
+          "Section-header": 8519,
+          "Text": 29820,
+          "Page-footer": 3984,
+          "Page-header": 3364,
+          "Table": 2391,
+          "Footnote": 387,
+          "List-item": 10452,
+          "Title": 335,
+          "Formula": 1966
+        },
+        "document_categories": {
+          "financial_reports": 1755,
+          "scientific_articles": 943,
+          "government_tenders": 273,
+          "laws_and_regulations": 784,
+          "manuals": 802,
+          "patents": 442
+        },
+        "avg_region_area_px": 34213.521753450295
+      },
+      "classes": [
+        "Caption",
+        "Footnote",
+        "Formula",
+        "List-item",
+        "Page-footer",
+        "Page-header",
+        "Picture",
+        "Section-header",
+        "Table",
+        "Text",
+        "Title"
+      ],
+      "ground_truth_format": {
+        "fields": [
+          "id",
+          "documentCategory",
+          "pageIndex",
+          "width",
+          "height",
+          "regions"
+        ],
+        "region_fields": [
+          "box",
+          "category"
+        ],
+        "box_format": "[x, y, width, height]"
+      },
+      "eval_metrics": [
+        "region_classification_accuracy",
+        "region_detection_precision_recall",
+        "bounding_box_iou",
+        "reading_order_accuracy"
+      ],
+      "usage": {
+        "layout_eval": "Classify detected regions against DocLayNet ground truth",
+        "freeze_panes": "Use Text/Table/Figure regions for freeze-pane boundary detection",
+        "rendering_pipeline": "Validate page segmentation against 11-class ground truth"
+      }
+    }
+  }
+}

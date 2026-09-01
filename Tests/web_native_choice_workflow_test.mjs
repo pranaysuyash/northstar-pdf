@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
 
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 page.setDefaultTimeout(10_000);

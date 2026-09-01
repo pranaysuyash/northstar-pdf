@@ -60,12 +60,56 @@ builtin.
 
 ```bash
 node tools/deploy-web.mjs                 # stage closure + MANIFEST.sha256 to dist/web
+node tools/deploy-web.mjs --prebuilt      # stage built React app (web/app/dist) to dist/web-app
 node tools/deploy-web.mjs --list          # print the closure without staging
 node tools/deploy-web.mjs /srv/pdfeditor  # stage, then rsync into an existing target dir
 ```
 
 `dist/` is gitignored. The manifest lists `sha256  relative-path  bytes` per
 staged file so any static host can verify deployment integrity.
+
+The `--prebuilt` mode (decision G4 / task A-15) serves the React migration in
+`web/app/`: it requires `npm run build` to have produced `web/app/dist`, then
+walks the built `index.html` so Vite's hashed chunk edges are followed and
+runtime-loaded assets — the PDF.js worker and pdf-lib — land in the manifest
+instead of being blind-copied. Unresolvable edges fail staging, except a tiny
+documented list of vendor-internal default strings (PDF.js's `./pdf.worker.mjs`
+fallback, always overridden via `GlobalWorkerOptions.workerSrc`). Build both
+surfaces while the legacy app remains live:
+
+```bash
+(cd web/app && npm run build) && node tools/deploy-web.mjs --prebuilt
+node tools/deploy-web.mjs                 # legacy surface, unchanged
+```
+
+## `smoke-dist.mjs` — staged deployment boot smoke
+
+Serves a staged dist directory on a free port and loads the entry page in
+headless Chrome, failing on any non-200 entry, uncaught page error, failed
+subresource request (catches missing hashed chunks/workers that file-level
+checks cannot see), or an empty body (app never mounted). Complements
+`deploy-web.mjs`: the deployer proves the closure is complete at the file
+level; this proves it actually boots.
+
+```bash
+node tools/smoke-dist.mjs                 # defaults: dist/web, entry /index.html
+node tools/smoke-dist.mjs dist/web-app    # prebuilt React app
+node tools/smoke-dist.mjs dist/web "#app" # optional required CSS selector
+```
+
+## `native-audit-snapshot.mjs` — native evidence boundary
+
+Captures a value-minimized JSON snapshot for the native macOS audit. It records
+branch/status, hashes and mtimes for explicitly named relied-on files, tool
+versions, and bounded process/lock observations. It does not read PDF contents.
+
+```bash
+node tools/native-audit-snapshot.mjs \
+  --output docs/audits/native-macos-snapshot-YYYY-MM-DD.json
+```
+
+Process inspection may be recorded as unavailable when macOS privacy prevents
+`ps`; that state must remain explicit in the evidence ledger.
 
 ## Maintenance notes
 

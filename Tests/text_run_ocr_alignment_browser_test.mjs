@@ -7,7 +7,7 @@ import { chromium } from "playwright";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 const nativePath = path.join(projectRoot, "benchmark/results/text-run-ocr-alignment/native.json");
 const outputPath = path.join(projectRoot, "benchmark/results/text-run-ocr-alignment/browser-and-native.json");
 const manifestPath = path.join(projectRoot, "docs/fixtures/manifest.md");

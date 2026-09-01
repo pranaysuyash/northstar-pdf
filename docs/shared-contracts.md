@@ -79,10 +79,42 @@ silently ignored by a provider that only implements a subset of the contract.
 
 Stable browser rejection codes are `staleSourceDigest`,
 `unsupportedOperation`, `destructiveOperation`, `unknownValidationState`, and
-`coordinateMismatch`. `ContractMutationError` retains all issue codes and
+`coordinateMismatch`. The privacy extension adds `privacySensitiveChange` and
+`unknownPreflightState`. `ContractMutationError` retains all issue codes and
 operation IDs for user-visible recovery and test assertions. The exported
 `guardedPdfLibExport()` seam runs the same preflight before a writer callback,
 which lets browser tests prove that rejected mutations do not call the writer.
+
+### Browser export privacy transition gate
+
+The browser gate also carries the value-minimized `pdf-editor.preflight` report
+from document inspection and compares it with a freshly built report after the
+writer has produced a staged output. The protected transition surfaces are:
+
+- metadata presence;
+- attachment inventory counts;
+- embedded action counts, including JavaScript, open, additional, launch,
+  submit-form, remote-go-to, and URI action indicators;
+- encryption and permission state;
+- annotation counts;
+- form-value presence counts;
+- incremental-revision markers; and
+- the aggregate privacy-sensitive content surface.
+
+Before `PDFDocument.load()` the gate validates the source report against the
+fresh source digest, rejects unknown transition declarations, and refuses
+metadata, attachment, action, encryption, sanitization, redaction, repair, or
+other privacy-sensitive operation kinds. A supported native-field operation
+may declare a form-value transition, but only its form-value surfaces may be
+authorized and the output still must pass the source/output comparison.
+
+After writing, `comparePreflightTransitions()` classifies each surface as
+`unchanged`, `changed`, or `unknown`. Changed surfaces fail publication unless
+the caller explicitly authorizes that exact surface. Unknown output coverage
+remains unknown and blocks publication. A PDF.js reopen alone is therefore not
+enough to authorize an export. The report contains counts and booleans only,
+never raw metadata, attachment names or bytes, URLs, scripts, form values,
+text, screenshots, or source bytes.
 
 ## Document contract
 

@@ -1,5 +1,6 @@
 import Foundation
 import PDFKit
+import Vision
 
 /// OCR companion benchmark.
 ///
@@ -197,6 +198,217 @@ public struct PDFKitOCRProvider: BenchmarkOCRProvider {
         let result = allText.joined(separator: "\n")
         let confidence = result.isEmpty ? 0.0 : 0.85
         return (result, confidence)
+    }
+}
+
+// MARK: - Apple Vision Provider
+
+/// Real OCR provider using Apple's Vision framework (VNRecognizeTextRequest).
+/// Native macOS, no external dependencies, works on both PNG and PDF.
+public struct VisionFrameworkOCRProvider: BenchmarkOCRProvider {
+    public let name = "Vision"
+    private let recognitionLevel: VNRequestTextRecognitionLevel
+    private let usesLanguageCorrection: Bool
+
+    public init(
+        recognitionLevel: VNRequestTextRecognitionLevel = .accurate,
+
+        usesLanguageCorrection: Bool = true
+    ) {
+        self.recognitionLevel = recognitionLevel
+        self.usesLanguageCorrection = usesLanguageCorrection
+    }
+
+    public func ocrPNG(_ pngPath: String) -> (text: String, confidence: Double) {
+        guard let image = loadImage(at: pngPath) else { return ("", 0.0) }
+        return recognizeImage(image)
+    }
+
+    public func ocrPDF(_ pdfPath: String) -> (text: String, confidence: Double) {
+        guard let doc = PDFDocument(url: URL(fileURLWithPath: pdfPath)) else {
+            return ("", 0.0)
+        }
+        var allText: [String] = []
+        var totalConfidence = 0.0
+        var count = 0
+        for i in 0..<doc.pageCount {
+            guard let page = doc.page(at: i) else { continue }
+            let bounds = page.bounds(for: .cropBox)
+            let scale: CGFloat = 2.0
+            let renderSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
+            guard let thumbnail = page.thumbnail(of: renderSize, for: .cropBox)
+                  .cgImage(forProposedRect: nil, context: nil, hints: nil) else { continue }
+            let (text, conf) = recognizeImage(thumbnail)
+            if !text.isEmpty {
+                allText.append(text)
+                totalConfidence += conf
+                count += 1
+            }
+        }
+        let result = allText.joined(separator: "\n")
+        let avgConf = count > 0 ? totalConfidence / Double(count) : 0.0
+        return (result, avgConf)
+    }
+
+    private func recognizeImage(_ image: CGImage) -> (text: String, confidence: Double) {
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = recognitionLevel
+        request.usesLanguageCorrection = usesLanguageCorrection
+
+        let handler = VNImageRequestHandler(cgImage: image, options: [:])
+        do {
+            try handler.perform([request])
+        } catch {
+            return ("", 0.0)
+        }
+
+        guard let results = request.results as? [VNRecognizedTextObservation] else {
+            return ("", 0.0)
+        }
+
+        let observations = results.compactMap { obs -> (text: String, confidence: Double)? in
+            guard let candidate = obs.topCandidates(1).first else { return nil }
+            return (candidate.string, Double(candidate.confidence))
+        }
+
+        let text = observations.map(\.text).joined(separator: "\n")
+        let avgConf = observations.isEmpty ? 0.0 :
+            observations.map(\.confidence).reduce(0, +) / Double(observations.count)
+        return (text, avgConf)
+    }
+
+    private func loadImage(at path: String) -> CGImage? {
+        guard let source = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil) else {
+            return nil
+        }
+        return CGImageSourceCreateImageAtIndex(source, 0, nil)
+    }
+}
+
+// MARK: - PaddleOCR Provider
+
+/// OCR provider using PaddleOCR via Python wrapper script.
+/// PaddleOCR is the #1 recommended open-source OCR engine per 2026 research
+/// (Reducto, Modal, Unstract). Apache-2.0 licensed, 100+ languages.
+public struct PaddleOCRProvider: BenchmarkOCRProvider {
+    public let name = "PaddleOCR"
+    private let pythonPath: String
+    private let wrapperPath: String
+
+    public init(
+        pythonPath: String? = nil,
+        wrapperPath: String = "benchmark/paddleocr_wrapper.py"
+    ) {
+        if let pythonPath {
+            self.pythonPath = pythonPath
+        } else {
+            let venvPython = ".venv/bin/python3"
+            let homebrewPython = "/opt/homebrew/bin/python3"
+            self.pythonPath = FileManager.default.fileExists(atPath: venvPython) ? venvPython : homebrewPython
+        }
+        self.wrapperPath = wrapperPath
+    }
+
+    public func ocrPNG(_ pngPath: String) -> (text: String, confidence: Double) {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: pythonPath)
+        process.arguments = [wrapperPath, pngPath]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            return ("", 0.0)
+        }
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let text = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        // PaddleOCR doesn't expose per-word confidence in CLI mode
+        let confidence = process.terminationStatus == 0 && !text.isEmpty ? 0.90 : 0.0
+        return (text, confidence)
+    }
+
+    public func ocrPDF(_ pdfPath: String) -> (text: String, confidence: Double) {
+        // Convert PDF to PNG first, then OCR
+        let tmpPng = NSTemporaryDirectory() + "ocr_paddle_\(UUID().uuidString).png"
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/pdftoppm")
+        process.arguments = ["-png", "-r", "300", "-singlefile", pdfPath, tmpPng.replacingOccurrences(of: ".png", with: "")]
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            return ("", 0.0)
+        }
+        let result = ocrPNG(tmpPng)
+        try? FileManager.default.removeItem(atPath: tmpPng)
+        return result
+    }
+}
+
+// MARK: - Marker Provider
+
+/// OCR provider using Marker (PDF→Markdown) via Python wrapper.
+/// Marker uses Surya as its OCR backbone and produces structured Markdown
+/// output with layout preservation. OpenRAIL licensed.
+public struct MarkerProvider: BenchmarkOCRProvider {
+    public let name = "Marker"
+    private let pythonPath: String
+    private let wrapperPath: String
+
+    public init(
+        pythonPath: String? = nil,
+        wrapperPath: String = "benchmark/marker_wrapper.py"
+    ) {
+        if let pythonPath {
+            self.pythonPath = pythonPath
+        } else {
+            let venvPython = ".venv/bin/python3"
+            let homebrewPython = "/opt/homebrew/bin/python3"
+            self.pythonPath = FileManager.default.fileExists(atPath: venvPython) ? venvPython : homebrewPython
+        }
+        self.wrapperPath = wrapperPath
+    }
+
+    public func ocrPNG(_ pngPath: String) -> (text: String, confidence: Double) {
+        // Marker works on PDFs, not raw PNGs — convert to temp PDF first
+        let tmpPdf = NSTemporaryDirectory() + "marker_\(UUID().uuidString).pdf"
+        // Use sips to create a simple PDF from the PNG
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/sips")
+        process.arguments = ["-s", "format", "pdf", pngPath, "--out", tmpPdf]
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            return ("", 0.0)
+        }
+        let result = ocrPDF(tmpPdf)
+        try? FileManager.default.removeItem(atPath: tmpPdf)
+        return result
+    }
+
+    public func ocrPDF(_ pdfPath: String) -> (text: String, confidence: Double) {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: pythonPath)
+        process.arguments = [wrapperPath, pdfPath]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            return ("", 0.0)
+        }
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let text = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        // Marker doesn't expose per-word confidence
+        let confidence = process.terminationStatus == 0 && !text.isEmpty ? 0.85 : 0.0
+        return (text, confidence)
     }
 }
 

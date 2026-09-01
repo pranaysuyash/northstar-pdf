@@ -63,13 +63,15 @@ public enum PDFTemplateCapture {
         workspaceKey: Data,
         displayName: String = "Reviewed local layout",
         templateID: UUID = UUID(),
-        sessionID: UUID? = nil
+        sessionID: UUID? = nil,
+        layoutV2: LayoutFingerprintV2? = nil
     ) throws -> PDFTemplateContract {
         guard !inspection.source.sha256.isEmpty else { throw PDFTemplateCaptureError.sourceDigestMissing }
         let fingerprint = PDFTemplateFingerprint.make(
             from: inspection,
             workspaceKey: workspaceKey,
-            includeExactSourceDigest: true
+            includeExactSourceDigest: true,
+            layoutV2: layoutV2
         )
         let mappings = draftMappings(from: inspection, fingerprint: fingerprint, sessionID: sessionID)
         let payload = PDFTemplatePayload(

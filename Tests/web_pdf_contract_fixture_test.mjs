@@ -7,7 +7,7 @@ import { chromium } from "playwright";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 const manifestPath = path.join(projectRoot, "docs/fixtures/manifest.md");
 const outputDirectory = process.env.PDF_CONTRACT_FIXTURE_OUTPUT_DIR || null;
 
@@ -133,7 +133,7 @@ function assertContractBundle(bundle, relativePath) {
     assert.equal(validation.checks.some((check) => check.status === "failed"), true, "failed validation should explain the failure");
   } else {
     assert.equal(validation.outputReopenable, true);
-    for (const requiredKind of ["sourceDigest", "outputReopen", "pageGeometry", "appliedOperations", "outsideRegionText", "visualDiff", "providerCapability"]) {
+    for (const requiredKind of ["sourceDigest", "outputReopen", "pageGeometry", "appliedOperations", "privacyPreflight", "outsideRegionText", "visualDiff", "providerCapability"]) {
       assert.equal(checkKinds.has(requiredKind), true, `validation should emit ${requiredKind}`);
     }
   }

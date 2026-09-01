@@ -7,17 +7,34 @@ import Testing
 @Suite("Calibration — False Positive Report")
 struct FalsePositiveReportTests {
 
+    // MARK: - V2 fixture helpers
+
+    private func v2FP(digest: String, pages: Int = 1, w: Int = 612, h: Int = 792) -> LayoutFingerprintV2 {
+        LayoutFingerprintV2(
+            algorithm: "layout-v2-cell-quantized",
+            featureVersion: "layout-features-2",
+            cellSizePoints: 4.0,
+            pages: (0..<pages).map { i in
+                LayoutFingerprintV2.PageLayout(
+                    pageIndex: i, widthPoints: w, heightPoints: h,
+                    rotationDegrees: 0, textCells: [], fieldCells: [], annotationCells: [])
+            },
+            digest: digest
+        )
+    }
+
     @Test("No hard negatives produces empty report")
     func emptyReport() {
         let generator = FalsePositiveReportGenerator()
+        let tpl = v2FP(digest: "fp1")
         let corpus: [CorpusEntry] = [
-            CorpusEntry(sourceDigest: "d1", layoutFingerprint: "fp1", expectedTier: .exact, documentClass: "form")
+            CorpusEntry(sourceDigest: "d1", expectedTier: .exact, documentClass: "form", layoutV2: tpl)
         ]
-        let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-            "tpl-1": (fingerprint: "fp1", sourceDigest: "d1")
+        let templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [
+            "tpl-1": (fingerprint: tpl, sourceDigest: "d1")
         ]
         let calibrator = RecurringFormCalibrator()
-        let report = calibrator.calibrate(corpus: corpus, templates: templates)
+        let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
 
         let fpReport = generator.generate(from: report, corpus: corpus)
         #expect(fpReport.totalHardNegatives == 0)
@@ -29,20 +46,21 @@ struct FalsePositiveReportTests {
     @Test("Hard negative that doesn't match passes threshold")
     func hardNegativeRejected() {
         let generator = FalsePositiveReportGenerator()
+        let tpl = v2FP(digest: "fp-aaa")
         let corpus: [CorpusEntry] = [
             CorpusEntry(
                 sourceDigest: "hard-neg-1",
-                layoutFingerprint: "fp-completely-different",
                 expectedTier: .noMatch,
                 isHardNegative: true,
-                documentClass: "invoice"
+                documentClass: "invoice",
+                layoutV2: v2FP(digest: "fp-completely-different", w: 200, h: 300)
             )
         ]
-        let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-            "tpl-1": (fingerprint: "fp-aaa", sourceDigest: "digest-111")
+        let templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [
+            "tpl-1": (fingerprint: tpl, sourceDigest: "digest-111")
         ]
         let calibrator = RecurringFormCalibrator()
-        let report = calibrator.calibrate(corpus: corpus, templates: templates)
+        let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
 
         let fpReport = generator.generate(from: report, corpus: corpus)
         #expect(fpReport.totalHardNegatives == 1)
@@ -53,14 +71,15 @@ struct FalsePositiveReportTests {
     @Test("Calibration report has recommendations")
     func hasRecommendations() {
         let generator = FalsePositiveReportGenerator()
+        let tpl = v2FP(digest: "fp1")
         let corpus: [CorpusEntry] = [
-            CorpusEntry(sourceDigest: "d1", layoutFingerprint: "fp1", expectedTier: .exact, documentClass: "form")
+            CorpusEntry(sourceDigest: "d1", expectedTier: .exact, documentClass: "form", layoutV2: tpl)
         ]
-        let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-            "tpl-1": (fingerprint: "fp1", sourceDigest: "d1")
+        let templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [
+            "tpl-1": (fingerprint: tpl, sourceDigest: "d1")
         ]
         let calibrator = RecurringFormCalibrator()
-        let report = calibrator.calibrate(corpus: corpus, templates: templates)
+        let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
 
         let fpReport = generator.generate(from: report, corpus: corpus)
         #expect(!fpReport.recommendations.isEmpty)

@@ -382,7 +382,6 @@ struct CalibrationCorpusVerificationTests {
             let isTemplateEntry = name == "plain-text.pdf" || name == "multi-column.pdf" || name == "geometry.pdf"
             corpus.append(CorpusEntry(
                 sourceDigest: data.sha256Hex,
-                layoutFingerprint: fp.digest,
                 expectedTier: isTemplateEntry ? .exact : .noMatch,
                 documentClass: name.replacingOccurrences(of: ".pdf", with: ""),
                 layoutV2: fp
@@ -390,12 +389,19 @@ struct CalibrationCorpusVerificationTests {
         }
 
         // Add a hard negative (completely different fingerprint)
+        let hardNegV2 = LayoutFingerprintV2(
+            algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+            cellSizePoints: 4.0,
+            pages: [LayoutFingerprintV2.PageLayout(
+                pageIndex: 0, widthPoints: 999, heightPoints: 999, rotationDegrees: 45,
+                textCells: [], fieldCells: [], annotationCells: [])],
+            digest: "fake-fp-hard-negative-xyz")
         corpus.append(CorpusEntry(
             sourceDigest: "fake-digest-hard-negative",
-            layoutFingerprint: "fake-fp-hard-negative-xyz",
             expectedTier: .noMatch,
             isHardNegative: true,
-            documentClass: "hard-negative"
+            documentClass: "hard-negative",
+            layoutV2: hardNegV2
         ))
 
         #expect(corpus.count >= 5, "Corpus should have at least 5 entries")
@@ -439,27 +445,38 @@ struct CalibrationCorpusVerificationTests {
 
             corpus.append(CorpusEntry(
                 sourceDigest: data.sha256Hex,
-                layoutFingerprint: fp.digest,
                 expectedTier: .exact,
                 documentClass: name.replacingOccurrences(of: ".pdf", with: ""),
                 layoutV2: fp
             ))
         }
 
-        // Hard negatives: similar but not matching (no V2 → legacy fallback lane)
+        // Hard negatives: similar but not matching (different layout)
         corpus.append(CorpusEntry(
             sourceDigest: "hard-neg-similar",
-            layoutFingerprint: "similar-but-not-matching-fp",
             expectedTier: .noMatch,
             isHardNegative: true,
-            documentClass: "hard-negative-similar"
+            documentClass: "hard-negative-similar",
+            layoutV2: LayoutFingerprintV2(
+                algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+                cellSizePoints: 4.0,
+                pages: [LayoutFingerprintV2.PageLayout(
+                    pageIndex: 0, widthPoints: 500, heightPoints: 700, rotationDegrees: 0,
+                    textCells: [], fieldCells: [], annotationCells: [])],
+                digest: "similar-but-not-matching-fp")
         ))
         corpus.append(CorpusEntry(
             sourceDigest: "hard-neg-different",
-            layoutFingerprint: "completely-different-fingerprint",
             expectedTier: .noMatch,
             isHardNegative: true,
-            documentClass: "hard-negative-different"
+            documentClass: "hard-negative-different",
+            layoutV2: LayoutFingerprintV2(
+                algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+                cellSizePoints: 4.0,
+                pages: [LayoutFingerprintV2.PageLayout(
+                    pageIndex: 0, widthPoints: 200, heightPoints: 300, rotationDegrees: 90,
+                    textCells: [], fieldCells: [], annotationCells: [])],
+                digest: "completely-different-fingerprint")
         ))
 
         // Build templates (V2 fingerprints)
@@ -498,36 +515,44 @@ struct CalibrationCorpusVerificationTests {
             corpus.append(CorpusEntry(
                 id: name.replacingOccurrences(of: ".pdf", with: ""),
                 sourceDigest: data.sha256Hex,
-                layoutFingerprint: fp.digest,
                 // navigation is NOT in the template set (first 3), so exact is
                 // unattainable; F-3 (Verified 2026-08-28) measured it below the
                 // 0.90 family threshold against every template — a distinct
-                // document (.noMatch). Under V1 its hex-digest char-Jaccard
-                // inflated the score to 0.9 (knownVariant) — precisely the
-                // false-similarity the V2 lane fixes.
+                // document (.noMatch).
                 expectedTier: name == "navigation.pdf" ? .noMatch : .exact,
                 documentClass: name.replacingOccurrences(of: ".pdf", with: ""),
                 layoutV2: fp
             ))
         }
 
-        // Hard negatives: similar-but-not-matching fingerprints (no V2 →
-        // legacy fallback lane, keeping the string hard-negative machinery).
+        // Hard negatives: similar-but-not-matching fingerprints (different layout)
         corpus.append(CorpusEntry(
             id: "hard-neg-similar",
             sourceDigest: "hard-neg-similar-digest",
-            layoutFingerprint: "similar-but-not-matching-fp",
             expectedTier: .noMatch,
             isHardNegative: true,
-            documentClass: "hard-negative-similar"
+            documentClass: "hard-negative-similar",
+            layoutV2: LayoutFingerprintV2(
+                algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+                cellSizePoints: 4.0,
+                pages: [LayoutFingerprintV2.PageLayout(
+                    pageIndex: 0, widthPoints: 500, heightPoints: 700, rotationDegrees: 0,
+                    textCells: [], fieldCells: [], annotationCells: [])],
+                digest: "similar-but-not-matching-fp")
         ))
         corpus.append(CorpusEntry(
             id: "hard-neg-different",
             sourceDigest: "hard-neg-different-digest",
-            layoutFingerprint: "completely-different-fingerprint",
             expectedTier: .noMatch,
             isHardNegative: true,
-            documentClass: "hard-negative-different"
+            documentClass: "hard-negative-different",
+            layoutV2: LayoutFingerprintV2(
+                algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+                cellSizePoints: 4.0,
+                pages: [LayoutFingerprintV2.PageLayout(
+                    pageIndex: 0, widthPoints: 200, heightPoints: 300, rotationDegrees: 90,
+                    textCells: [], fieldCells: [], annotationCells: [])],
+                digest: "completely-different-fingerprint")
         ))
 
         var templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [:]

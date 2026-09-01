@@ -1,0 +1,101 @@
+{
+  "corpusSize" : 36,
+  "excluded" : [
+    {
+      "name" : "encrypted-hybrid.pdf",
+      "reason" : "password-encrypted (pikepdf PasswordError)"
+    },
+    {
+      "name" : "malformed-hybrid-truncated.pdf",
+      "reason" : "malformed (pikepdf PdfError)"
+    }
+  ],
+  "familyThreshold" : 0.90000000000000002,
+  "generatedAt" : "2026-08-28",
+  "hardNegativePairs" : 397,
+  "maxHardNegative" : 0.80709806848086774,
+  "maxPositive" : 1,
+  "minHardNegative" : 0.007490464924898578,
+  "minPositive" : 0.94667079692187284,
+  "positivePairs" : 233,
+  "schema" : "pdf-editor.layout-v2-family-threshold-calibration",
+  "separationGapMidpoint" : 0.87688443270137029,
+  "topHardNegatives" : [
+    {
+      "a" : "scanned-noisy.pdf",
+      "b" : "handwritten-simulated-entries.pdf",
+      "classes" : [
+        "C",
+        "N"
+      ],
+      "similarity" : 0.80709806848086774
+    },
+    {
+      "a" : "printed-scan.pdf",
+      "b" : "handwritten-simulated-entries.pdf",
+      "classes" : [
+        "C",
+        "N"
+      ],
+      "similarity" : 0.79922079922079914
+    },
+    {
+      "a" : "hybrid-text-raster-form.pdf",
+      "b" : "multi-column.pdf",
+      "classes" : [
+        "B",
+        "N"
+      ],
+      "similarity" : 0.79049796747967471
+    },
+    {
+      "a" : "rotated-hybrid-90.pdf",
+      "b" : "multi-column.pdf",
+      "classes" : [
+        "B",
+        "N"
+      ],
+      "similarity" : 0.74345109995217595
+    },
+    {
+      "a" : "scanned-noisy.pdf",
+      "b" : "encrypted-reader.pdf",
+      "classes" : [
+        "C",
+        "N"
+      ],
+      "similarity" : 0.7146112021112021
+    },
+    {
+      "a" : "printed-scan.pdf",
+      "b" : "encrypted-reader.pdf",
+      "classes" : [
+        "C",
+        "N"
+      ],
+      "similarity" : 0.7146112021112021
+    },
+    {
+      "a" : "plain-text.pdf",
+      "b" : "navigation.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.70928353302101466
+    },
+    {
+      "a" : "handwritten-simulated-entries.pdf",
+      "b" : "encrypted-reader.pdf",
+      "classes" : [
+        "N",
+        "N"
+      ],
+      "similarity" : 0.64954954954954958
+    }
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

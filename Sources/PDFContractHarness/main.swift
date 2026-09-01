@@ -75,6 +75,7 @@ private struct Arguments {
     let rootURL: URL
     let runDetectorGate: Bool
     let runDualLaneGate: Bool
+    let runCalibrationGate: Bool
 }
 
 private let providerDescriptor = PDFProviderDescriptor(
@@ -93,6 +94,7 @@ private func parseArguments() throws -> Arguments {
     var outputDirectory = defaultOutput
     var runDetectorGate = false
     var runDualLaneGate = false
+    var runCalibrationGate = false
     var index = 1
     let arguments = CommandLine.arguments
     while index < arguments.count {
@@ -111,6 +113,9 @@ private func parseArguments() throws -> Arguments {
         case "--dual-lane-gate":
             runDualLaneGate = true
             index += 1
+        case "--calibration-gate":
+            runCalibrationGate = true
+            index += 1
         default:
             throw HarnessError.invalidArgument("Unknown argument: \(arguments[index])")
         }
@@ -121,7 +126,7 @@ private func parseArguments() throws -> Arguments {
     try fileManager.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
     let exportDirectory = outputDirectory.appendingPathComponent("exports", isDirectory: true)
     try fileManager.createDirectory(at: exportDirectory, withIntermediateDirectories: true)
-    return Arguments(manifestURL: manifestURL, outputDirectory: outputDirectory, exportDirectory: exportDirectory, rootURL: rootURL, runDetectorGate: runDetectorGate, runDualLaneGate: runDualLaneGate)
+    return Arguments(manifestURL: manifestURL, outputDirectory: outputDirectory, exportDirectory: exportDirectory, rootURL: rootURL, runDetectorGate: runDetectorGate, runDualLaneGate: runDualLaneGate, runCalibrationGate: runCalibrationGate)
 }
 
 private func manifestPaths(from url: URL) throws -> [String] {
@@ -404,6 +409,71 @@ struct PDFContractHarness {
                     "Dual-lane detector gate FAILED: \(gateResult.summary)\nReport: \(reportURL.path)\n".utf8))
                 exit(1)
             }
+        }
+
+        // Calibration gate: validates the V2 threshold calibration artifact
+        // against the 36-fixture expanded corpus. Fails non-zero when:
+        // - The artifact is missing or has wrong schema
+        // - The familyThreshold has drifted from 0.90
+        // - A hard negative was promoted (maxHardNegative >= 0.90)
+        // - A layout-identical positive was demoted (minPositive < 0.90)
+        if arguments.runCalibrationGate {
+            let artifactPath = arguments.rootURL
+                .appendingPathComponent("benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json")
+            guard FileManager.default.fileExists(atPath: artifactPath.path) else {
+                FileHandle.standardError.write(Data(
+                    "Calibration gate FAILED: artifact not found at \(artifactPath.path)\n".utf8))
+                exit(1)
+            }
+            let data = try Data(contentsOf: artifactPath)
+            guard let artifact = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                FileHandle.standardError.write(Data("Calibration gate FAILED: artifact is not valid JSON\n".utf8))
+                exit(1)
+            }
+            var errors: [String] = []
+            // Schema check
+            if let schema = artifact["schema"] as? String {
+                if !schema.contains("layout-v2-family-threshold-calibration") {
+                    errors.append("schema is \(schema)")
+                }
+            } else {
+                errors.append("missing schema field")
+            }
+            // Threshold check
+            if let threshold = artifact["familyThreshold"] as? Double, threshold != 0.90 {
+                errors.append("familyThreshold is \(threshold), expected 0.90")
+            }
+            // Separation gap check
+            if let minPos = artifact["minPositive"] as? Double, minPos < 0.90 {
+                errors.append("minPositive \(minPos) < 0.90 — positive recognition collapsed")
+            }
+            if let maxNeg = artifact["maxHardNegative"] as? Double, maxNeg >= 0.90 {
+                errors.append("maxHardNegative \(maxNeg) >= 0.90 — hard negative promoted")
+            }
+            // Corpus size check (expanded to 36)
+            if let size = artifact["corpusSize"] as? Int, size < 36 {
+                errors.append("corpusSize \(size) < 36 — corpus regression")
+            }
+            if let pp = artifact["positivePairs"] as? Int, pp < 230 {
+                errors.append("positivePairs \(pp) < 230 — positive pair regression")
+            }
+            // Persist the validated artifact
+            let gateArtifact = artifact
+            let gateData = try JSONSerialization.data(withJSONObject: gateArtifact, options: [.prettyPrinted, .sortedKeys])
+            try gateData.write(to: arguments.outputDirectory.appendingPathComponent("calibration-gate-report.json"))
+            if !errors.isEmpty {
+                for e in errors {
+                    FileHandle.standardError.write(Data("::error::\(e)\n".utf8))
+                }
+                FileHandle.standardError.write(Data(
+                    "Calibration gate FAILED: \(errors.joined(separator: "; "))\n".utf8))
+                exit(1)
+            }
+            let pos = artifact["positivePairs"] as? Int ?? 0
+            let neg = artifact["hardNegativePairs"] as? Int ?? 0
+            let minP = artifact["minPositive"] as? Double ?? 0
+            let maxN = artifact["maxHardNegative"] as? Double ?? 0
+            print("Calibration gate passed: \(pos) positive, \(neg) negative, gap=\(String(format: "%.4f", minP))..\(String(format: "%.4f", maxN))")
         }
 
         let output = try JSONEncoder().encode(summary)

@@ -132,14 +132,11 @@ public struct FalsePositiveReportGenerator: Sendable {
 
             // Calculate fingerprint similarity for the entry
             let fingerprintSimilarity: Double
-            if let entry = entry {
-                // Find a non-hard-negative entry in the same class to compare fingerprints
+            if let entry = entry, let entryV2 = entry.layoutV2 {
+                // V2 structured similarity against a same-class template
                 let sameClass = corpus.first { $0.documentClass == entry.documentClass && !$0.isHardNegative && $0.id != entry.id }
-                if let templateEntry = sameClass {
-                    fingerprintSimilarity = jaccardSimilarity(
-                        entry.layoutFingerprint,
-                        templateEntry.layoutFingerprint
-                    )
+                if let templateEntry = sameClass, let templateV2 = templateEntry.layoutV2 {
+                    fingerprintSimilarity = entryV2.similarity(to: templateV2).total
                 } else {
                     fingerprintSimilarity = result.score
                 }
@@ -219,15 +216,4 @@ public struct FalsePositiveReportGenerator: Sendable {
         )
     }
 
-    // MARK: - Helpers
-
-    /// Jaccard similarity between two strings (character-level).
-    private func jaccardSimilarity(_ a: String, _ b: String) -> Double {
-        guard !a.isEmpty && !b.isEmpty else { return 0 }
-        let setA = Set(a)
-        let setB = Set(b)
-        let intersection = setA.intersection(setB)
-        let union = setA.union(setB)
-        return Double(intersection.count) / Double(union.count)
-    }
 }

@@ -6,7 +6,11 @@ import { chromium } from "playwright";
 const root = path.resolve(new URL("..", import.meta.url).pathname);
 const fixture = path.join(root, "benchmark/results/public-sample-form.pdf");
 const reportDirectory = path.join(root, "benchmark/results/acroform-matrix-2026-08-25");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4184/web/index.html";
+const baseURL = (() => {
+  const u = process.env.PDF_EDITOR_BASE_URL;
+  if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); }
+  return u;
+})();
 
 function valueForField(field) {
   if (field.kind === "choice") return field.choices[0] || "Other";

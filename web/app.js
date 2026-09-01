@@ -2,6 +2,7 @@
   import { compareOutsideRegions } from "./pdf-impact-validator.mjs";
   import {
     assertExportableContract,
+    collectExportContractViolations,
     guardedPdfLibExport,
     ContractMutationError
   } from "./pdf-contract-mutation-gate.mjs";
@@ -26,6 +27,8 @@
     createCompletionProposal,
     createLearningEvent,
     createTemplateFingerprint,
+    extractRasterCells,
+    extractTextCells,
     diffTemplateRevisions,
     exportTemplateHistory,
     importTemplateHistory,
@@ -53,7 +56,11 @@
     TemplateStoreError
   } from "./pdf-template-store.mjs";
   import { runIhatepdfExperimentParity } from "./ihatepdf-experiment-contract.mjs";
-  import { buildPreflightReport, validatePreflightReport } from "./pdf-preflight.mjs";
+  import {
+    buildPreflightReport,
+    comparePreflightTransitions,
+    validatePreflightReport
+  } from "./pdf-preflight.mjs";
   import {
     createSessionPrivacyProvenance,
     validateSessionPrivacyProvenance
@@ -1637,6 +1644,14 @@
         providerID: "pdfjs",
         sourceDigest
       }));
+      // Extract raster cells by rendering at low resolution and sampling
+      // grid cell centers for non-blank pixels. Matches the native
+      // LayoutFingerprintV2Extractor.extractRasterCells algorithm.
+      const rasterCellKeys = [...await extractRasterCells(page, bounds)];
+      // Extract text cells from text content positions, excluding
+      // characters inside field widgets (field cells cover those).
+      const fieldBoundsList = fields.filter((f) => f.pageIndex === pageNum - 1).map((f) => f.bounds).filter(Boolean);
+      const textCellKeys = [...extractTextCells(content.items, bounds, fieldBoundsList)];
       pages.push({
         pageIndex: pageNum - 1,
         pageLabel: fact?.label || String(pageNum),
@@ -1648,7 +1663,9 @@
         rotation: page.rotate || 0,
         characterCount: content.items.reduce((total, item) => total + (item.str || "").length, 0),
         annotationCount: annotations.length,
-        hasSelectableText: content.items.some((item) => Boolean((item.str || "").trim()))
+        hasSelectableText: content.items.some((item) => Boolean((item.str || "").trim())),
+        rasterCellKeys,
+        textCellKeys
       });
     }
     modeStage.analysisStageDone("fields");
@@ -4159,7 +4176,17 @@
       ["Metadata fields present", payload.summary.metadataFieldCount],
       ["Embedded-data observations", payload.summary.embeddedDataCount],
       ["Network-boundary observations", payload.summary.networkBoundaryCount],
-      ["Possible active-content tokens", payload.summary.activeContentCount]
+      ["Possible active-content tokens", payload.summary.activeContentCount],
+      ["Attachment inventory", payload.attachments?.attachmentCount ?? "unknown"],
+      ["Embedded action tokens", payload.scripts
+        ? Object.entries(payload.scripts)
+          .filter(([key]) => key.endsWith("ActionCount"))
+          .reduce((total, [, count]) => total + (Number(count) || 0), 0)
+        : "unknown"],
+      ["Encryption state", payload.encryption?.encrypted ? "encrypted" : "plain or not observed"],
+      ["Privacy-sensitive form values", payload.formValues?.state === "observed"
+        ? `${payload.formValues.populatedFieldCount} populated / ${payload.formValues.fieldCount} fields`
+        : "unknown"]
     ];
     for (const [label, count] of categories) {
       const row = document.createElement("div");
@@ -4209,13 +4236,54 @@
       throw new Error("pdf-lib did not load in this browser.");
     }
     const currentSourceDigest = await sha256Hex(pdfData);
+    const formOperationCount = operations.filter((operation) =>
+      ["nativeFieldValue", "synthesizeNativeField"].includes(operation.kind)
+    ).length;
+    const synthesizedFieldOperationCount = operations.filter((operation) =>
+      operation.kind === "synthesizeNativeField"
+    ).length;
     assertExportableContract({
       currentSourceDigest,
       operations,
       pageCoordinates: documentContract?.payload?.pages || [],
-      validation: lastValidation
+      validation: lastValidation,
+      sourcePreflight: preflightReport,
+      expectedPreflightTransitions: {
+        metadata: "unchanged",
+        attachments: "unchanged",
+        embeddedActions: "unchanged",
+        encryption: "unchanged",
+        annotations: synthesizedFieldOperationCount > 0 ? "changed" : "unchanged",
+        revisions: "unchanged",
+        ...(formOperationCount > 0 ? {
+          formValues: "changed",
+          privacySensitiveContent: "changed"
+        } : {
+          formValues: "unchanged",
+          privacySensitiveContent: "unchanged"
+        })
+      }
     });
     const outputDocument = await pdfLib.PDFDocument.load(pdfData);
+    // pdf-lib may synthesize document-info entries (notably Creator) while
+    // saving a document that did not contain them. Reapply the inspected
+    // metadata presence before writing so a bounded page operation cannot
+    // acquire an unrelated privacy-surface transition.
+    const sourceMetadata = documentContract?.payload?.metadata || {};
+    const preserveTextMetadata = (setter, value) => {
+      if (typeof outputDocument[setter] === "function") outputDocument[setter](typeof value === "string" ? value : "");
+    };
+    preserveTextMetadata("setTitle", sourceMetadata.title);
+    preserveTextMetadata("setAuthor", sourceMetadata.author);
+    preserveTextMetadata("setSubject", sourceMetadata.subject);
+    preserveTextMetadata("setCreator", sourceMetadata.creator);
+    preserveTextMetadata("setProducer", sourceMetadata.producer);
+    if (typeof outputDocument.setKeywords === "function") {
+      const keywords = typeof sourceMetadata.keywords === "string"
+        ? sourceMetadata.keywords.split(/[;,]/).map((keyword) => keyword.trim()).filter(Boolean)
+        : [];
+      outputDocument.setKeywords(keywords);
+    }
     // pdf-lib can normalize non-default page boxes while loading/saving. The
     // shared operation contract is crop-box-relative, so replay every
     // inspected page box and rotation before applying any edit. Otherwise a
@@ -4406,6 +4474,59 @@
     return fields;
   }
 
+  async function buildOutputPreflightReport(outputDocument, outputBytes, outputDigest) {
+    if (!documentContract || !outputDocument) return null;
+    let outputMetadata = {};
+    try {
+      outputMetadata = (await outputDocument.getMetadata())?.info || {};
+    } catch {
+      outputMetadata = {};
+    }
+    let outputAttachments = [];
+    try {
+      const allAttachments = await outputDocument.getAttachments();
+      outputAttachments = allAttachments ? Object.keys(allAttachments) : [];
+    } catch {
+      outputAttachments = [];
+    }
+    const outputAnnotationTypeCounts = {};
+    for (let pageNum = 1; pageNum <= outputDocument.numPages; pageNum += 1) {
+      try {
+        const page = await outputDocument.getPage(pageNum);
+        const annotations = await page.getAnnotations({ intent: "display" });
+        for (const annotation of annotations) {
+          const kind = normalizedAnnotationKind(annotation);
+          outputAnnotationTypeCounts[kind] = (outputAnnotationTypeCounts[kind] || 0) + 1;
+        }
+      } catch {
+        outputAnnotationTypeCounts.unknown = (outputAnnotationTypeCounts.unknown || 0) + 1;
+      }
+    }
+    const outputFields = await inspectFieldsInDocument(outputDocument);
+    const outputContract = cloneContractValue(documentContract);
+    outputContract.header.sourceDigest = outputDigest;
+    outputContract.payload.source.sha256 = outputDigest;
+    outputContract.payload.source.byteCount = outputBytes.byteLength;
+    outputContract.payload.metadata = {
+      title: outputMetadata.Title || "",
+      author: outputMetadata.Author || "",
+      subject: outputMetadata.Subject || "",
+      creator: outputMetadata.Creator || "",
+      producer: outputMetadata.Producer || "",
+      creationDate: outputMetadata.CreationDate || "",
+      modificationDate: outputMetadata.ModDate || "",
+      keywords: outputMetadata.Keywords || ""
+    };
+    outputContract.payload.attachments = outputAttachments;
+    outputContract.payload.fields = outputFields;
+    outputContract.payload.annotationTypeCounts = outputAnnotationTypeCounts;
+    return buildPreflightReport({
+      document: outputContract,
+      sourceBytes: outputBytes,
+      provider: providerDescriptor()
+    });
+  }
+
   function operationMetricIDs(operationIDs = []) {
     return [...new Set((Array.isArray(operationIDs) ? operationIDs : []).filter(Boolean))];
   }
@@ -4591,6 +4712,14 @@
           }
         ),
         validationCheck(
+          "privacyPreflight",
+          "passed",
+          "No protected privacy surface can change because the output digest equals the source digest.",
+          operationIDs,
+          null,
+          { changedSurfaces: [], unknownSurfaces: [], unauthorizedSurfaces: [], basis: "source-digest-equality" }
+        ),
+        validationCheck(
           "providerCapability",
           "passed",
           isEncryptedDocument
@@ -4655,6 +4784,7 @@
       const outputFields = await inspectFieldsInDocument(outputDocument);
       const fieldOperations = operations.filter((operation) => operation.kind === "nativeFieldValue");
       const synthesizedFieldOperations = operations.filter((operation) => operation.kind === "synthesizeNativeField");
+      const synthesizedFieldOperationCount = synthesizedFieldOperations.length;
       let nativeFieldsPassed = true;
       for (const operation of fieldOperations) {
         const outputField = outputFields.find((field) => field.name === operation.targetID);
@@ -4694,6 +4824,40 @@
         missingOverlays.length ? `${missingOverlays.length} overlay value(s) were not found in PDF.js text extraction.` : `${operations.length} queued operation(s) are represented in the exported artifact.`,
         operations.map((operation) => operation.id)
       ));
+      try {
+        const outputPreflight = await buildOutputPreflightReport(outputDocument, outputBytes, outputDigest);
+        const formOperationCount = fieldOperations.length + synthesizedFieldOperations.length;
+        const privacyTransition = comparePreflightTransitions(
+          preflightReport,
+          outputPreflight,
+          {
+            allowedChangedSurfaces: [
+              ...(formOperationCount > 0 ? ["formValues", "privacySensitiveContent"] : []),
+              ...(synthesizedFieldOperationCount > 0 ? ["annotations"] : [])
+            ]
+          }
+        );
+        checks.push(validationCheck(
+          "privacyPreflight",
+          privacyTransition.status,
+          privacyTransition.message,
+          operations.map((operation) => operation.id),
+          null,
+          {
+            changedSurfaces: privacyTransition.changedSurfaces,
+            unknownSurfaces: privacyTransition.unknownSurfaces,
+            unauthorizedSurfaces: privacyTransition.unauthorizedSurfaces,
+            transitionStates: Object.fromEntries(Object.entries(privacyTransition.transitions).map(([surface, transition]) => [surface, transition.status]))
+          }
+        ));
+      } catch (error) {
+        checks.push(validationCheck(
+          "privacyPreflight",
+          "unknown",
+          `Output privacy preflight could not run: ${error.message}`,
+          operations.map((operation) => operation.id)
+        ));
+      }
       try {
         const impact = await compareOutsideRegions({
           pdfjsLib,
@@ -4738,7 +4902,12 @@
       checks.push(validationCheck("providerCapability", "passed", "PDF.js reopened the export and pdf-lib produced the bytes."));
     }
 
-    const failed = checks.some((check) => check.status === "failed");
+    // Privacy preflight is a publication gate, not an advisory diagnostic.
+    // An unknown protected-surface transition must stop download because the
+    // writer has not established that the output is safe to release.
+    const privacyGateBlocked = checks.some((check) => check.kind === "privacyPreflight"
+      && ["failed", "unknown"].includes(check.status));
+    const failed = checks.some((check) => check.status === "failed") || privacyGateBlocked;
     const warning = checks.some((check) => ["warning", "unknown"].includes(check.status));
     return {
       status: failed ? "failed" : warning ? "validatedWithWarnings" : "validated",
@@ -4959,6 +5128,8 @@
     createEphemeralTemplateStore,
     createZeroContentLogger,
     assertExportableContract,
+    collectExportContractViolations,
+    comparePreflightTransitions,
     guardedPdfLibExport,
     ContractMutationError,
     runMaterializationProbe,

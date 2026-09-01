@@ -189,3 +189,54 @@ assertions.
 - Full suite: **1329/1329 pass** on 2026-08-29T18:40Z. The count is 1322 (pre-fix
   baseline) + 1 determinism test + 6 tests from the concurrently landing
   dual-lane detector gate (`DualLaneDetectorGateTests`), not from this change.
+
+## §9 Expanded Corpus (2026-08-30, Observed → Verified)
+
+### What changed
+The calibration corpus expanded from 30 to 36 fixtures by adding browser-corpus
+and rotation-corpus PDFs. This also triggered the F-5 fix (weight renormalization
+for empty channels).
+
+### New fixtures
+
+| Fixture | Family | Layout | Source |
+|---|---|---|---|
+| pdfbox-pub-acroform.pdf | A | 595×842, 6 widgets, 163 chars | PDFBox re-encoding of base form |
+| scanned-noisy.pdf | C | 1600×700 raster, 0 content | raster-only layout |
+| printed-scan.pdf | C | 1600×700 raster, 0 content | OCR corpus raster |
+| rotated-widget-90.pdf | D | 612×792 rot90, 4 widgets | rotated widget layout |
+| handwritten-simulated-entries.pdf | N | 1800×1100, 0 content | hard negative |
+| encrypted-reader.pdf | N | 612×792, 0 content | hard negative |
+| repeated-20-pages.pdf | N | 20-page form | hard negative |
+
+### F-5 fix: weight renormalization (Observed → Verified)
+
+**Problem**: Zero-content documents (raster-only, encrypted, handwritten) had
+all cell channels empty. The "agreement on absence" (score 1.0 per empty channel)
+combined with fixed weights inflated the total. `scanned-noisy` ↔ `printed-scan`
+scored 1.0 (both 1600×700 empty pages — genuinely identical). But
+`scanned-noisy` ↔ `handwritten-simulated-entries` scored 0.9446 — too close to
+the 0.90 threshold, and would promote hard negatives.
+
+**Fix**: When a channel has zero content in both documents, its weight is
+redistributed to channels that have data. This keeps the comparison grounded in
+observable structure rather than absence.
+
+**Measured effect**:
+
+| Pair | Before F-5 | After F-5 | Change |
+|---|---|---|---|
+| scanned-noisy ↔ printed-scan | 1.0000 | 1.0000 | unchanged (genuinely identical) |
+| scanned-noisy ↔ handwritten-sim | 0.9446 | 0.8418 | −0.103 (correctly discriminated) |
+| printed-scan ↔ encrypted-reader | 0.9144 | 0.7554 | −0.159 (correctly discriminated) |
+| hybrid-text-raster ↔ multi-column | 0.8132 | 0.7925 | −0.021 (content-bearing, minor) |
+
+### Verified separation gap (36 fixtures)
+
+- Positive pairs: 233 (22 A + 2 B + 2 C + 1 D within-family)
+- Hard-negative pairs: 397
+- Min positive: 0.9676
+- Max hard negative: 0.8418
+- Separation gap: 0.8418..0.9676 (midpoint 0.9047)
+- **Threshold 0.90 sits strictly inside the gap**
+- **Zero hard-negative promotions**

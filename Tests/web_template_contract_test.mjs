@@ -265,4 +265,34 @@ assert.equal(profile.payload.revisionNumber, 2);
 assert.throws(() => validateTemplateContract({ ...template, header: { ...template.header, version: { major: 2, minor: 0 } } }));
 assert.throws(() => validateProfileContract({ ...profile, payload: { ...profile.payload, revisionID: "wrong" } }));
 
+// --- textCellTokens verification ---
+const textFp = await createTemplateFingerprint({
+  document: {
+    ...documentContract,
+    payload: {
+      ...documentContract.payload,
+      pages: [{
+        pageIndex: 0,
+        pageLabel: "1",
+        bounds: { x: 0, y: 0, width: 595, height: 842 },
+        rotation: 0,
+        textCellKeys: ["25,50", "25,51", "50,100", "75,150"],
+        rasterCellKeys: ["10,20", "30,40"],
+        characterCount: 100,
+        annotationCount: 0,
+        hasSelectableText: true
+      }],
+      fields: [],
+      candidates: []
+    }
+  },
+  workspaceKey: "text-test-key"
+});
+const textPs = textFp.pageSignatures[0];
+assert.ok(textPs.textCellTokens.length > 0, `textCellTokens must be non-empty, got ${textPs.textCellTokens.length}`);
+assert.ok(textPs.rasterCellTokens.length > 0, `rasterCellTokens must be non-empty, got ${textPs.rasterCellTokens.length}`);
+assert.ok(textPs.textCellTokens.every(t => t.startsWith("hmac:")), "all textCellTokens must be HMAC-keyed");
+assert.equal(textFp.featureVersion, "layout-features-2", "featureVersion must be layout-features-2 when cell tokens present");
+
+console.log(`web template contract: textCellTokens=${textPs.textCellTokens.length} rasterCellTokens=${textPs.rasterCellTokens.length} featureVersion=${textFp.featureVersion}`);
 console.log("web template contract: fingerprint, mapping, profile, matcher, and negative checks passed");

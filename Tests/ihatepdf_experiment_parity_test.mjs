@@ -20,7 +20,7 @@ const outputDirectory = path.join(projectRoot, "benchmark/results/ihatepdf-exper
 const nativePath = path.join(outputDirectory, "2026-08-24-native-parity.json");
 const browserPath = path.join(outputDirectory, "2026-08-24-browser-parity.json");
 const reportPath = path.join(outputDirectory, "2026-08-24-semantic-parity-report.json");
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4173/web/index.html";
+const baseURL = (() => { const u = process.env.PDF_EDITOR_BASE_URL; if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); } return u; })();
 
 const ledger = JSON.parse(fs.readFileSync(ledgerPath, "utf8"));
 const sourceDigests = {};

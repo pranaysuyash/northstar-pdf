@@ -55,6 +55,7 @@ public struct DocumentCanvasView: View {
   @Environment(\.colorSchemeContrast) private var colorSchemeContrast
   /// RG-057: incremented by the ⌘F command; consuming it focuses the field.
   @Binding var searchFocusEvent: Int
+  @Binding var isCommandPalettePresented: Bool
   @FocusState private var isSearchFieldFocused: Bool
 
   // MARK: - Annotation Text Selection State
@@ -74,6 +75,7 @@ public struct DocumentCanvasView: View {
     readingParams: ReadingDisplayParams = ReadingDisplayParams.params(for: .study),
     searchProjectionState: Binding<SearchProjectionState>,
     searchFocusEvent: Binding<Int> = .constant(0),
+    isCommandPalettePresented: Binding<Bool> = .constant(false),
     annotationStore: AnnotationStore? = nil
   ) {
     self.model = model
@@ -82,6 +84,7 @@ public struct DocumentCanvasView: View {
     self.readingParams = readingParams
     self._searchProjectionState = searchProjectionState
     self._searchFocusEvent = searchFocusEvent
+    self._isCommandPalettePresented = isCommandPalettePresented
     self.annotationStore = annotationStore
   }
 
@@ -118,6 +121,22 @@ public struct DocumentCanvasView: View {
       isSearchExpanded = true
       isSearchFieldFocused = true
     }
+    .contextMenu {
+      AdaptiveDocumentContextMenu(
+        model: model,
+        annotationStore: annotationStore,
+        selectedAnnotation: annotationStore?.marks.first { $0.id == model.selectedAnnotationID },
+        selectedText: selectedAnnotationText,
+        selectedBounds: selectedAnnotationBounds,
+        selectedPageIndex: selectedAnnotationPageIndex,
+        isCommandPalettePresented: $isCommandPalettePresented,
+        isSearchExpanded: $isSearchExpanded,
+        isSearchFieldFocused: $isSearchFieldFocused
+      )
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("Document canvas")
+    .accessibilityIdentifier("pdfEditor.documentCanvas")
   }
 
   private var pdfCanvas: some View {
@@ -159,12 +178,14 @@ public struct DocumentCanvasView: View {
             model.dismissInlineEditor()
           },
           onTextSelectionChanged: { text, bounds, pageIndex in
+            model.selectedAnnotationID = nil
             selectedAnnotationText = text
             selectedAnnotationBounds = bounds
             selectedAnnotationPageIndex = pageIndex
             isAnnotationToolbarVisible = true
           },
           onSelectionCleared: {
+            model.selectedAnnotationID = nil
             isAnnotationToolbarVisible = false
             selectedAnnotationText = ""
           }
@@ -206,12 +227,14 @@ public struct DocumentCanvasView: View {
             model.dismissInlineEditor()
           },
           onTextSelectionChanged: { text, bounds, pageIndex in
+            model.selectedAnnotationID = nil
             selectedAnnotationText = text
             selectedAnnotationBounds = bounds
             selectedAnnotationPageIndex = pageIndex
             isAnnotationToolbarVisible = true
           },
           onSelectionCleared: {
+            model.selectedAnnotationID = nil
             isAnnotationToolbarVisible = false
             selectedAnnotationText = ""
           }
@@ -242,10 +265,13 @@ public struct DocumentCanvasView: View {
       if readingParams.showAnnotations, let store = annotationStore {
         let snapshot = model.inspection?.pages.first { $0.pageIndex == model.selectedPageIndex }
         AnnotationMarksOverlay(
+          model: model,
+          store: store,
           marks: store.marks,
           pageIndex: model.selectedPageIndex,
           pageBounds: snapshot.map { CGRect(x: $0.bounds.x, y: $0.bounds.y, width: $0.bounds.width, height: $0.bounds.height) } ?? .zero,
-          zoomScale: 1.0
+          zoomScale: 1.0,
+          onMarkSelected: { model.selectedAnnotationID = $0 }
         )
       }
     }

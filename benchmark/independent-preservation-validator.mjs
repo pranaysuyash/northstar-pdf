@@ -232,10 +232,15 @@ function operationRegions(operations, pages) {
   return { regions, issues };
 }
 
-function displayRectForPageRect(rect, page, pageWidth = page.cropBox.width, pageHeight = page.cropBox.height) {
+function displayRectForPageRect(rect, page, pageWidth = page.cropBox.width, pageHeight = page.cropBox.height, coordinateOrigin = "text") {
+  // Poppler's text bbox coordinates for a 180-degree page are expressed
+  // against the media-space origin. Its cropbox raster is clipped first, so
+  // raster coordinates use the crop-relative origin. Keep that distinction
+  // explicit instead of widening an authorization region to mask the drift.
+  const usesMediaOrigin = page.rotation === 180 && coordinateOrigin === "text";
   const local = {
-    x: rect.x - page.cropBox.x,
-    y: rect.y - page.cropBox.y,
+    x: usesMediaOrigin ? rect.x : rect.x - page.cropBox.x,
+    y: usesMediaOrigin ? rect.y : rect.y - page.cropBox.y,
     width: rect.width,
     height: rect.height
   };
@@ -259,7 +264,7 @@ function displayRectForPageRect(rect, page, pageWidth = page.cropBox.width, page
 
 function outsideTextWords(bboxPage, page, regions) {
   const pageRegions = regions.filter((region) => region.pageIndex === page.pageIndex)
-    .map((region) => displayRectForPageRect(region.rect, page));
+    .map((region) => displayRectForPageRect(region.rect, page, bboxPage.width, bboxPage.height));
   return bboxPage.words.filter((word) => !pageRegions.some((region) => rectIntersects(word.rect, region, 0.5)));
 }
 
@@ -330,8 +335,10 @@ function rasterComparison(sourcePath, outputPath, pages, regions, password) {
       if (source.width !== output.width || source.height !== output.height) {
         return { pageIndex: page.pageIndex, status: "failed", message: "Rendered page dimensions changed." };
       }
+      const rasterPageWidth = page.rotation === 180 ? page.width : page.cropBox.width;
+      const rasterPageHeight = page.rotation === 180 ? page.height : page.cropBox.height;
       const pageRegions = regions.filter((region) => region.pageIndex === page.pageIndex)
-        .map((region) => displayRectForPageRect(region.rect, page));
+        .map((region) => displayRectForPageRect(region.rect, page, rasterPageWidth, rasterPageHeight, "raster"));
       let comparedPixelCount = 0;
       let changedPixelCount = 0;
       let maximumChannelDelta = 0;

@@ -16,12 +16,17 @@
 //     surfacing the contamination instead of shipping a broken page.
 //
 // Usage:
-//   node tools/deploy-web.mjs                    # stage browser closure to dist/web
+//   node tools/deploy-web.mjs                    # stage legacy browser closure to dist/web
+//   node tools/deploy-web.mjs --prebuilt         # stage built React app (web/app/dist) to dist/web-app
 //   node tools/deploy-web.mjs /path/to/target    # stage, then rsync into target dir
 //   node tools/deploy-web.mjs --list             # print closure without staging
 //
-// Output: dist/web/<files> plus dist/web/MANIFEST.sha256. Exit 0 on success,
-// 1 on verification failure, 2 on usage/IO error.
+// Output: dist/web/<files> (legacy) or dist/web-app/<files> (prebuilt), each
+// plus MANIFEST.sha256. Exit 0 on success, 1 on verification failure, 2 on
+// usage/IO error. The prebuilt mode requires `npm run build` in web/app/ to
+// have produced web/app/dist; it walks the built index.html so hashed chunk
+// edges and runtime-loaded assets (pdf.js worker) are verified and manifest-
+// covered rather than blind-copied (decision G4 / task A-15).
 
 import { spawnSync } from "node:child_process";
 import crypto from "node:crypto";
@@ -35,6 +40,7 @@ const distDir = path.join(repoRoot, "dist", "web");
 
 const args = process.argv.slice(2);
 const listOnly = args.includes("--list");
+const prebuilt = args.includes("--prebuilt");
 const targetArg = args.find((argument) => !argument.startsWith("--"));
 
 function fail(message, code = 2) {
@@ -44,7 +50,9 @@ function fail(message, code = 2) {
 
 function readLocalRefsFromHtml(html) {
   const refs = new Set();
-  const pattern = /(?:src|href)="(\.\/[^"]+)"/g;
+  // Both "./..." (legacy source refs) and "/..." (Vite built root-relative
+  // refs like /assets/index-HASH.js) are entry edges.
+  const pattern = /(?:src|href)="((?:\.\/|\/)[^"]+)"/g;
   let match;
   while ((match = pattern.exec(html)) !== null) refs.add(match[1]);
   return [...refs];
@@ -57,17 +65,18 @@ function moduleRefs(source) {
   let match;
   while ((match = importPattern.exec(source)) !== null) refs.add(match[1]);
   // Asset-like string literals (e.g. the PDF.js worker URL) are staged only if
-  // they exist on disk, so prose strings can never break the build.
-  const literalPattern = /["'](\.\/[A-Za-z0-9_\-./]+\.(?:mjs|js|css|woff2?))["']/g;
+  // they exist on disk, so prose strings can never break the build. Covers
+  // relative refs and Vite hashed root-relative asset paths.
+  const literalPattern = /["']((?:\.\/|\/)[A-Za-z0-9_\-./]+\.(?:mjs|js|css|woff2?|wasm))["']/g;
   while ((match = literalPattern.exec(source)) !== null) refs.add(match[1]);
   return [...refs];
 }
 
-function resolveRef(fromFile, ref) {
-  const base = path.dirname(fromFile);
+function resolveRef(fromFile, ref, rootDir) {
+  const base = ref.startsWith("/") ? rootDir : path.dirname(fromFile);
   const candidates = [ref, `${ref}.mjs`, `${ref}.js`, path.join(ref, "index.mjs")];
   for (const candidate of candidates) {
-    const resolved = path.resolve(base, candidate);
+    const resolved = path.resolve(base, `.${path.sep}${candidate.replace(/^\//, "")}`);
     if (fs.existsSync(resolved) && fs.statSync(resolved).isFile()) return resolved;
   }
   return null;
@@ -77,12 +86,19 @@ function isScript(file) {
   return /\.(mjs|js)$/.test(file);
 }
 
-function walkClosure() {
-  const htmlPath = path.join(webDir, "index.html");
-  if (!fs.existsSync(htmlPath)) fail("web/index.html not found");
+// Unreachable-by-design default strings inside third-party runtimes. PDF.js
+// hardcodes "./pdf.worker.mjs" as its fallback worker path; both the vendored
+// build and any bundler chunk that inlines it carry the string, while the app
+// always overrides GlobalWorkerOptions.workerSrc to the real (vendored or
+// hashed) worker. Everything else that fails to resolve is a real break.
+const VENDOR_INTERNAL_DEFAULTS = new Set(["./pdf.worker.mjs"]);
+
+function walkClosure(rootDir) {
+  const htmlPath = path.join(rootDir, "index.html");
+  if (!fs.existsSync(htmlPath)) fail(`index.html not found under ${path.relative(repoRoot, rootDir)}`);
   const html = fs.readFileSync(htmlPath, "utf8");
 
-  const queue = readLocalRefsFromHtml(html).map((ref) => path.resolve(webDir, ref));
+  const queue = readLocalRefsFromHtml(html).map((ref) => path.resolve(rootDir, `.${path.sep}${ref.replace(/^\//, "")}`));
   const closure = new Set([htmlPath]);
   const missing = [];
 
@@ -98,12 +114,12 @@ function walkClosure() {
     // present; only first-party files owe us resolvable import edges.
     const fromVendor = file.includes(`${path.sep}vendor${path.sep}`);
     for (const ref of moduleRefs(source)) {
-      const resolved = resolveRef(file, ref);
+      const resolved = resolveRef(file, ref, rootDir);
       if (resolved) {
         if (!closure.has(resolved)) queue.push(resolved);
-      } else if (/\.mjs?$/.test(ref) && !fromVendor) {
+      } else if (/\.mjs?$/.test(ref) && !fromVendor && !VENDOR_INTERNAL_DEFAULTS.has(ref)) {
         // A declared import edge that does not resolve is a real break.
-        missing.push(`${path.relative(webDir, file)} -> ${ref}`);
+        missing.push(`${path.relative(rootDir, file)} -> ${ref}`);
       }
     }
   }
@@ -132,33 +148,38 @@ function verifyNoNodeBuiltins(closure) {
   return offenders;
 }
 
-function stage(closure) {
-  fs.rmSync(distDir, { recursive: true, force: true });
+function stage(closure, sourceRoot, outDir) {
+  fs.rmSync(outDir, { recursive: true, force: true });
   const manifest = [];
   for (const file of closure) {
-    const relative = path.relative(webDir, file);
-    const destination = path.join(distDir, relative);
+    const relative = path.relative(sourceRoot, file);
+    const destination = path.join(outDir, relative);
     fs.mkdirSync(path.dirname(destination), { recursive: true });
     fs.copyFileSync(file, destination);
     const bytes = fs.readFileSync(destination);
     manifest.push(`${crypto.createHash("sha256").update(bytes).digest("hex")}  ${relative}  ${bytes.length}`);
   }
   manifest.sort();
-  const manifestPath = path.join(distDir, "MANIFEST.sha256");
+  const manifestPath = path.join(outDir, "MANIFEST.sha256");
   fs.writeFileSync(manifestPath, `${manifest.join("\n")}\n`);
   return { count: closure.length, manifestPath };
 }
 
-function rsyncTo(target) {
+function rsyncTo(target, outDir) {
   const absolute = path.resolve(target);
   if (!fs.existsSync(absolute)) fail(`target directory does not exist: ${absolute}`);
-  const result = spawnSync("rsync", ["-a", "--delete", `${distDir}/`, `${absolute}/`], { stdio: "inherit" });
+  const result = spawnSync("rsync", ["-a", "--delete", `${outDir}/`, `${absolute}/`], { stdio: "inherit" });
   if (result.status !== 0) fail(`rsync exited ${result.status}`, 1);
-  console.log(`Deployed dist/web/ -> ${absolute}`);
+  console.log(`Deployed ${path.relative(repoRoot, outDir)}/ -> ${absolute}`);
 }
 
 function main() {
-  const { closure, missing } = walkClosure();
+  const sourceRoot = prebuilt ? path.join(webDir, "app", "dist") : webDir;
+  const outDir = prebuilt ? path.join(repoRoot, "dist", "web-app") : distDir;
+  if (prebuilt && !fs.existsSync(sourceRoot)) {
+    fail(`prebuilt source ${path.relative(repoRoot, sourceRoot)} does not exist — run \`npm run build\` in web/app/ first`);
+  }
+  const { closure, missing } = walkClosure(sourceRoot);
   if (missing.length > 0) {
     console.error("deploy-web: unresolved import edges in browser graph:");
     for (const edge of missing) console.error(`  ${edge}`);
@@ -173,22 +194,24 @@ function main() {
 
   const totalBytes = closure.reduce((sum, file) => sum + fs.statSync(file).size, 0);
   if (listOnly) {
-    for (const file of closure) console.log(path.relative(webDir, file));
+    for (const file of closure) console.log(path.relative(sourceRoot, file));
     console.log(`\n${closure.length} file(s), ${(totalBytes / 1024).toFixed(1)} KiB`);
     return;
   }
 
-  const { count, manifestPath } = stage(closure);
-  console.log(`Staged ${count} file(s), ${(totalBytes / 1024).toFixed(1)} KiB -> dist/web`);
+  const { count, manifestPath } = stage(closure, sourceRoot, outDir);
+  console.log(`Staged ${count} file(s), ${(totalBytes / 1024).toFixed(1)} KiB -> ${path.relative(repoRoot, outDir)} (${prebuilt ? "prebuilt React app" : "legacy module app"})`);
   console.log(`Manifest: ${path.relative(repoRoot, manifestPath)}`);
-  const excluded = fs.readdirSync(webDir).filter((entry) => {
-    const full = path.join(webDir, entry);
-    return fs.statSync(full).isFile() && isScript(full) && !closure.includes(full);
-  });
-  if (excluded.length > 0) {
-    console.log(`Server-plane modules excluded from static deploy (${excluded.length}): ${excluded.join(", ")}`);
+  if (!prebuilt) {
+    const excluded = fs.readdirSync(webDir).filter((entry) => {
+      const full = path.join(webDir, entry);
+      return fs.statSync(full).isFile() && isScript(full) && !closure.includes(full);
+    });
+    if (excluded.length > 0) {
+      console.log(`Server-plane modules excluded from static deploy (${excluded.length}): ${excluded.join(", ")}`);
+    }
   }
-  if (targetArg) rsyncTo(targetArg);
+  if (targetArg) rsyncTo(targetArg, outDir);
 }
 
 main();

@@ -7,20 +7,32 @@ import Testing
 @Suite("Calibration — Recurring Form Matching")
 struct RecurringFormCalibratorTests {
 
+  // MARK: - V2 fixture helpers
+
+  private func v2(digest: String, pageW: Int = 612, pageH: Int = 792) -> LayoutFingerprintV2 {
+    LayoutFingerprintV2(
+      algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+      cellSizePoints: 4.0,
+      pages: [LayoutFingerprintV2.PageLayout(
+        pageIndex: 0, widthPoints: pageW, heightPoints: pageH, rotationDegrees: 0,
+        textCells: [], fieldCells: [], annotationCells: [])],
+      digest: digest)
+  }
+
+  /// V2 fingerprint with different geometry (for hard negatives that must not match).
+  private func v2Diff(digest: String) -> LayoutFingerprintV2 {
+    v2(digest: digest, pageW: 200, pageH: 300)
+  }
+
   @Test("Exact match classification")
   func exactMatch() {
     let calibrator = RecurringFormCalibrator()
-    let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-      "tpl-1": (fingerprint: "fp-aaa", sourceDigest: "digest-111")
-    ]
-
+    let tplV2 = v2(digest: "fp-aaa")
     let (tier, score, templateID) = calibrator.classify(
       sourceDigest: "digest-111",
-      layoutFingerprint: "fp-bbb",
-      templates: ["tpl-1": "fp-aaa"],
-      exactSourceDigests: ["tpl-1": "digest-111"]
-    )
-
+      layoutV2: v2(digest: "fp-bbb"),
+      templatesV2: ["tpl-1": tplV2],
+      exactSourceDigests: ["tpl-1": "digest-111"])
     #expect(tier == .exact)
     #expect(score == 1.0)
     #expect(templateID == "tpl-1")
@@ -29,14 +41,12 @@ struct RecurringFormCalibratorTests {
   @Test("Known variant classification")
   func knownVariant() {
     let calibrator = RecurringFormCalibrator()
-
+    let tplV2 = v2(digest: "fp-aaa")
     let (tier, score, templateID) = calibrator.classify(
       sourceDigest: "digest-222",
-      layoutFingerprint: "fp-aaa",
-      templates: ["tpl-1": "fp-aaa"],
-      exactSourceDigests: ["tpl-1": "digest-111"]
-    )
-
+      layoutV2: v2(digest: "fp-aaa"),
+      templatesV2: ["tpl-1": tplV2],
+      exactSourceDigests: ["tpl-1": "digest-111"])
     #expect(tier == .knownVariant)
     #expect(score == 0.9)
     #expect(templateID == "tpl-1")
@@ -44,36 +54,18 @@ struct RecurringFormCalibratorTests {
 
   @Test("Family match classification")
   func familyMatch() {
-    let calibrator = RecurringFormCalibrator(thresholds: .wellCalibrated)
-
-    // Create templates with similar fingerprints
-    let templates: [String: String] = [
-      "tpl-1": "abc123def456",
-        "tpl-2": "abc123xyz789"
-    ]
-    let exactDigests: [String: String] = [
-        "tpl-1": "digest-old",
-        "tpl-2": "digest-other"
-    ]
-
+    let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
     let (tier, score, _) = calibrator.classify(
       sourceDigest: "digest-new",
-      layoutFingerprint: "abc123ghi012", // Similar to both
-      templates: templates,
-      exactSourceDigests: exactDigests
-    )
-
-    // Should be family match or ambiguous depending on similarity
+      layoutV2: v2(digest: "fp-new"),
+      templatesV2: ["tpl-1": v2(digest: "fp-aaa"), "tpl-2": v2(digest: "fp-bbb")],
+      exactSourceDigests: ["tpl-1": "digest-old", "tpl-2": "digest-other"])
     #expect(tier == .familyMatch || tier == .ambiguous || tier == .noMatch)
     #expect(score >= 0)
   }
 
   @Test("Stale classification when source digest mismatch")
   func staleClassification() {
-    let calibrator = RecurringFormCalibrator()
-
-    // This would be caught by the corpus entry's expectedSourceDigest check
-    // In practice, stale is detected before classification
     let tier: MatchingTier = .stale
     #expect(tier == .stale)
     #expect(!tier.isMatch)
@@ -82,14 +74,11 @@ struct RecurringFormCalibratorTests {
   @Test("No match classification")
   func noMatch() {
     let calibrator = RecurringFormCalibrator()
-
     let (tier, score, templateID) = calibrator.classify(
       sourceDigest: "digest-completely-different",
-      layoutFingerprint: "fp-completely-different",
-      templates: ["tpl-1": "fp-aaa"],
-      exactSourceDigests: ["tpl-1": "digest-111"]
-    )
-
+      layoutV2: v2Diff(digest: "fp-completely-different"),
+      templatesV2: ["tpl-1": v2(digest: "fp-aaa")],
+      exactSourceDigests: ["tpl-1": "digest-111"])
     #expect(tier == .noMatch || tier == .ambiguous)
     #expect(templateID == nil || tier == .ambiguous)
   }
@@ -97,38 +86,26 @@ struct RecurringFormCalibratorTests {
   @Test("Family matching disabled returns noMatch")
   func familyDisabled() {
     let calibrator = RecurringFormCalibrator(thresholds: .familyDisabled)
-
     let (tier, _, _) = calibrator.classify(
       sourceDigest: "digest-new",
-      layoutFingerprint: "fp-aaa",
-      templates: ["tpl-1": "fp-aaa"],
-      exactSourceDigests: ["tpl-1": "digest-old"]
-    )
-
-    // With family disabled, knownVariant still works (exact layout match)
+      layoutV2: v2(digest: "fp-aaa"),
+      templatesV2: ["tpl-1": v2(digest: "fp-aaa")],
+      exactSourceDigests: ["tpl-1": "digest-old"])
     #expect(tier == .knownVariant || tier == .noMatch)
   }
 
   @Test("Hard negative is not classified as match")
   func hardNegativeReject() {
     let calibrator = RecurringFormCalibrator()
-
     let corpus = [
-      CorpusEntry(
-        sourceDigest: "hard-neg-1",
-        layoutFingerprint: "fp-similar-but-not-match",
-        expectedTier: .noMatch,
-        isHardNegative: true,
-        documentClass: "invoice"
-      )
+      CorpusEntry(sourceDigest: "hard-neg-1", expectedTier: .noMatch,
+                  isHardNegative: true, documentClass: "invoice",
+                  layoutV2: v2Diff(digest: "fp-similar-but-not-match"))
     ]
-
-    let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-      "tpl-1": (fingerprint: "fp-aaa", sourceDigest: "digest-111")
+    let templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [
+      "tpl-1": (fingerprint: v2(digest: "fp-aaa"), sourceDigest: "digest-111")
     ]
-
-    let report = calibrator.calibrate(corpus: corpus, templates: templates)
-
+    let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
     #expect(report.falsePositives == 0)
     #expect(report.passed == 1)
   }
@@ -136,19 +113,15 @@ struct RecurringFormCalibratorTests {
   @Test("Calibration report accuracy calculation")
   func calibrationAccuracy() {
     let calibrator = RecurringFormCalibrator()
-
     let corpus = [
-      CorpusEntry(sourceDigest: "d1", layoutFingerprint: "fp1", expectedTier: .exact, documentClass: "form"),
-      CorpusEntry(sourceDigest: "d2", layoutFingerprint: "fp2", expectedTier: .noMatch, documentClass: "form"),
-      CorpusEntry(sourceDigest: "d3", layoutFingerprint: "fp3", expectedTier: .noMatch, isHardNegative: true, documentClass: "form"),
+      CorpusEntry(sourceDigest: "d1", expectedTier: .exact, documentClass: "form", layoutV2: v2(digest: "fp1")),
+      CorpusEntry(sourceDigest: "d2", expectedTier: .noMatch, documentClass: "form", layoutV2: v2(digest: "fp2")),
+      CorpusEntry(sourceDigest: "d3", expectedTier: .noMatch, isHardNegative: true, documentClass: "form", layoutV2: v2(digest: "fp3")),
     ]
-
-    let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-      "tpl-1": (fingerprint: "fp1", sourceDigest: "d1")
+    let templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [
+      "tpl-1": (fingerprint: v2(digest: "fp1"), sourceDigest: "d1")
     ]
-
-    let report = calibrator.calibrate(corpus: corpus, templates: templates)
-
+    let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
     #expect(report.totalEntries == 3)
     #expect(report.accuracy >= 0)
     #expect(report.accuracy <= 1)
@@ -159,19 +132,15 @@ struct RecurringFormCalibratorTests {
   @Test("Tier breakdown counts correctly")
   func tierBreakdown() {
     let calibrator = RecurringFormCalibrator()
-
     let corpus = [
-      CorpusEntry(sourceDigest: "d1", layoutFingerprint: "fp1", expectedTier: .exact, documentClass: "A"),
-      CorpusEntry(sourceDigest: "d2", layoutFingerprint: "fp1", expectedTier: .knownVariant, documentClass: "A"),
-      CorpusEntry(sourceDigest: "d3", layoutFingerprint: "fp-other", expectedTier: .noMatch, documentClass: "B"),
+      CorpusEntry(sourceDigest: "d1", expectedTier: .exact, documentClass: "A", layoutV2: v2(digest: "fp1")),
+      CorpusEntry(sourceDigest: "d2", expectedTier: .knownVariant, documentClass: "A", layoutV2: v2(digest: "fp1")),
+      CorpusEntry(sourceDigest: "d3", expectedTier: .noMatch, documentClass: "B", layoutV2: v2(digest: "fp-other")),
     ]
-
-    let templates: [String: (fingerprint: String, sourceDigest: String)] = [
-      "tpl-1": (fingerprint: "fp1", sourceDigest: "d1")
+    let templatesV2: [String: (fingerprint: LayoutFingerprintV2, sourceDigest: String)] = [
+      "tpl-1": (fingerprint: v2(digest: "fp1"), sourceDigest: "d1")
     ]
-
-    let report = calibrator.calibrate(corpus: corpus, templates: templates)
-
+    let report = calibrator.calibrate(corpus: corpus, templatesV2: templatesV2)
     #expect(report.tierBreakdown[.exact] ?? 0 >= 0)
     #expect(report.tierBreakdown[.knownVariant] ?? 0 >= 0)
     #expect(report.tierBreakdown[.noMatch] ?? 0 >= 0)

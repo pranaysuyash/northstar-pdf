@@ -2806,7 +2806,7 @@ findings/tasks, evaluate each against first principles / long-term / doctrine
 alignment, identify "make it the best" opportunities, document chat + evidence,
 and produce an implementation plan.
 
-- Audit artifact: [`docs/audits/repository-audit-2026-08-26-continuation.md`](../audits/repository-audit-2026-08-26-continuation.md)
+ - Audit artifact: [`docs/audits/repository-audit-2026-08-26-continuation.md`](audits/repository-audit-2026-08-26-continuation.md)
 - Plan: `~/.commandcode/plans/audit-and-implementation-plan-2026-08-26.md`
 - Live evidence at audit time: 62 dirty paths, 402/63 suites Swift PASS,
   51/51 Node web-reader PASS, 124 gate rows (53 PARTIAL / 6 PASS / 0 FAIL)
@@ -2866,3 +2866,170 @@ and produce an implementation plan.
   before close): macOS run confirming pipeline pixels render and interaction works.
 - **Revisit trigger:** when `DocumentCanvasView` is refactored, integrate then.
 - **Owner:** macOS app lane; enforcement by all agent lanes (doctrine §6 salvage).
+
+## D-060: Keep PDFBox and MuPDF as capability-negotiated provider lanes, not a universal winner
+
+- **Date:** 2026-08-31
+- **Context:** The long-term PDF program needs both a permissive provider path
+  and a high-fidelity provider path. PDFBox and MuPDF were run against the same
+  governed corpus to compare preservation, operation surface, licensing,
+  packaging, and recovery rather than selecting by feature count.
+- **Decision:** Preserve both provider adapters behind the shared PDF contracts.
+  Use PDFBox as the Apache-2.0 form-aware/control lane. Retain MuPDF as a
+  measured high-fidelity candidate behind an explicit AGPL/commercial licensing
+  decision, typed operations, capability revocation, and signed companion
+  packaging. Require one staged-output protocol for both providers.
+- **Options considered:** (a) choose PDFBox for every operation, rejected
+  because its Java runtime and form/control strengths do not prove broad
+  high-fidelity editing; (b) choose MuPDF for every operation, rejected because
+  CLI form baking is not typed field filling, existing-text replacement remains
+  unmeasured, and the AGPL/commercial boundary is unresolved; (c) keep the
+  browser/native providers only, rejected as incomplete for the long-term
+  companion and high-fidelity capability program; (d) negotiated provider
+  lanes, selected because it preserves optionality while exposing divergence.
+- **Evidence:** All 16 live manifest fixtures were exercised. Both providers
+  passed normalized independent text and Poppler raster no-op preservation on
+  12 readable fixtures. PDFBox and MuPDF each passed 12 no-op rewrites.
+  Recovery staged invalid artifacts on 3 PDFBox and 6 MuPDF probes, with zero
+  qpdf-valid malformed outputs. The PDFBox SHA-512 matched the retained
+  distribution digest. The report contains no raw document content or metadata
+  values.
+- **Trade-offs:** The design keeps the common contract stable but pays for
+  provider adapters, separate licensing/notice review, companion lifecycle,
+  and provider-specific capability matrices. MuPDF may offer stronger fidelity
+  on some classes, but it has a materially different licensing and native
+  packaging posture. PDFBox is easier to redistribute permissively but adds a
+  JVM helper surface.
+- **Safety and recovery:** Provider output is always staged. qpdf structural
+  validation, provider reopen, semantic text, independent raster, and relevant
+  operation validators must pass before publication. A successful process exit
+  is insufficient. Source bytes remain immutable; failed output is discarded
+  or retained only as value-minimized diagnostic evidence.
+- **Migration/rollback:** Capability negotiation can revoke either provider
+  without changing shared document, coordinate, candidate, operation, or
+  validation contracts. Disable the provider in the registry and route to the
+  browser/native lane or an explicit unsupported state. Existing exports remain
+  source-bound and independent of provider identity.
+- **Revisit trigger:** Completion of typed MuPDF field/text/page/redaction/
+  signature adapters, a completed commercial or compliant AGPL path, signed
+  package and update evidence, and a repeated corpus bake-off with cold-start,
+  memory, cancellation, all-page raster, GUI-viewer, PDFium, XFA, PDF/UA and
+  real encrypted-input cases.
+- **Owner:** PDF provider/platform lane; release and legal owners retain their
+  separate gates.
+- **Sources:** [`audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md`](audits/pdfbox-mupdf-bakeoff-evidence-2026-08-31.md),
+  [`../benchmark/pdfbox-mupdf-bakeoff.mjs`](../benchmark/pdfbox-mupdf-bakeoff.mjs),
+  [`../benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json`](../benchmark/results/pdfbox-mupdf-bakeoff-2026-08-31/report.json),
+  [`https://pdfbox.apache.org/download.cgi`](https://pdfbox.apache.org/download.cgi),
+  [`https://mupdf.com/releases`](https://mupdf.com/releases).
+
+## D-061: Treat privacy preflight as an export transition gate, not an observation-only panel
+
+- **Date:** 2026-08-31
+- **Context:** The browser already emitted a value-minimized source preflight
+  for metadata, embedded data, actions, encryption, annotations, revisions,
+  and unknown coverage. The writer gate separately checked source digests,
+  operation kinds, coordinates, destructive flags, and validation states. A
+  PDF could therefore reopen successfully while a writer-normalization change
+  to metadata, attachments, active actions, encryption, or another sensitive
+  structure was not compared at the publication boundary.
+- **Decision:** Keep one canonical browser gate. Before the writer runs, it
+  validates the source preflight against the fresh source digest, validates
+  declared protected-surface transitions, and rejects sensitive or unknown
+  transitions not admitted by the browser writer. After a staged output
+  reopens, build a second value-minimized preflight and compare metadata,
+  attachment inventory, embedded-action indicators, encryption, annotations,
+  form-value presence, revisions, and the privacy-sensitive aggregate. A
+  changed surface fails unless that exact surface is explicitly authorized;
+  unknown comparison coverage remains unknown and blocks publication. The only
+  current exception is a typed native-field operation changing the form-value
+  presence summary, which still requires output comparison.
+- **Options considered:** (a) rely on PDF.js reopen, rejected because reopen
+  proves parseability, not privacy-surface preservation; (b) compare raw PDF
+  bytes, rejected because legitimate providers rewrite bytes and raw content
+  must not enter diagnostics; (c) inspect only metadata, rejected because
+  attachments, actions, encryption, annotations, revisions, and form values
+  are independent surfaces; (d) one structural transition comparator behind
+  the existing gate, selected because it is provider-neutral and preserves
+  the long-term native/web contract boundary.
+- **Invariants:** source bytes remain immutable; output is staged; no action is
+  executed; no destination is fetched; no raw metadata, filename, URL, script,
+  form value, text, screenshot, or byte payload is serialized; sensitive and
+  unknown states cannot become a successful download; form-value authorization
+  never authorizes metadata, attachment, action, encryption, annotation, or
+  revision changes.
+- **Evidence:** `web/pdf-preflight.mjs` emits the added value-minimized
+  surfaces and `comparePreflightTransitions()`; `web/pdf-contract-mutation-gate.mjs`
+  adds `privacySensitiveChange` and `unknownPreflightState` rejection; the
+  browser app emits a `privacyPreflight` validation check from the reopened
+  output. Focused contract tests and the public-form/static-overlay browser
+  proof pass.
+- **Trade-offs:** Some provider rewrites will now be held for explicit
+  remediation rather than silently downloaded. The structural token scan is
+  evidence of possible structures, not reachability or a sanitization proof.
+  Revision parsing, cryptographic signature validity, XFA, PDF/UA, and
+  independent-viewer fidelity remain separate provider gates.
+- **Falsifiers:** A writer callback runs after a rejected sensitive or unknown
+  transition; a changed protected surface is hidden by normalization; a raw
+  privacy value enters a report; a reviewed form write authorizes an unrelated
+  surface; or a failed/unknown transition is downloaded.
+- **Rollback:** Disable the output transition check only by reverting the
+  browser gate and its evidence together; retain source preflight and all
+  mutation fixtures. Do not restore a permissive download path without a new
+  documented gate decision.
+- **Owner:** Browser PDF, shared contract, privacy/security, provider, and
+  independent validation lanes.
+- **Evidence:** [`audits/browser-preexport-privacy-transition-evidence-2026-08-31.md`](audits/browser-preexport-privacy-transition-evidence-2026-08-31.md),
+  [`../web/pdf-preflight.mjs`](../web/pdf-preflight.mjs),
+  [`../web/pdf-contract-mutation-gate.mjs`](../web/pdf-contract-mutation-gate.mjs),
+  and [`../Tests/web_preexport_privacy_gate_test.mjs`](../Tests/web_preexport_privacy_gate_test.mjs).
+
+## D-062: Use one rejection-ledger oracle across native, browser, and companion providers
+
+- **Date:** 2026-08-31
+- **Status:** Accepted working decision for the long-term provider program.
+- **Context:** Native PDFKit, browser PDF.js/pdf-lib, PDFBox, MuPDF, OCR,
+  repair, and future provider lanes expose different IDs, reason strings,
+  runtime states, and output identities. Comparing those raw values would
+  either hide safety failures or manufacture false incompatibilities.
+- **Decision:** Keep a shared `pdf-editor.rejection-ledger` contract with
+  source-digest-bound typed operation lineage, canonical error codes, explicit
+  rejection/abstention/failure/cancellation states, retryability, recovery
+  actions, and unknown-state handling. Implement independent native Swift and
+  browser JavaScript oracles over one fixture, and compare provider attempts
+  through normalized semantic predicates. Use the ledger for every future
+  capability lane without changing the document, coordinate, candidate,
+  operation, or validation contracts.
+- **Options considered:** (a) compare provider error strings, rejected because
+  strings are unstable and content-bearing; (b) compare only success/failure,
+  rejected because it collapses safety rejection, capability absence, and
+  provider outage; (c) use one provider as the authority, rejected because it
+  would hide adapter divergence; (d) shared normalized ledger with provider
+  evidence counts, selected because it preserves semantics and diagnostics
+  separately.
+- **Evidence:** The controlled fixture yields 3 provider kinds, 2 cases, 6
+  pairwise comparisons, 4 equivalent results, 2 explicit capability
+  divergences, and 0 unknown comparisons. The companion count is based on the
+  actual host's unavailable-capability response, while native and browser
+  results are decoded by their independent mirrors.
+- **Safety and privacy:** Unknown provider reasons become `unknownRejection`.
+  Raw diagnostics, document text, field values, passwords, screenshots, PDF
+  bytes, timestamps, and output digests are excluded from semantic reports.
+  Rejected or abstained attempts cannot publish output. Provider revocation
+  routes to an explicit unsupported state without rewriting operation history.
+- **Trade-offs:** The oracle requires adapter work at every error boundary and
+  currently cannot represent pre-source failures that have no source digest or
+  operation lineage. Those failures need a separate admission envelope,
+  rather than weakening the operation-bound schema.
+- **Revisit trigger:** Add the admission envelope when source-open failures
+  must be compared, or when a provider reports a semantically distinct state
+  that cannot be represented without losing safety meaning. Extend the fixture
+  whenever a new OCR, text, page, redaction, signature, XFA, PDF/UA, repair,
+  or high-fidelity provider is admitted.
+- **Owner:** Shared contract, native, browser, companion, provider, privacy,
+  and release-readiness lanes.
+- **Evidence:** [`audits/provider-rejection-ledger-evidence-2026-08-31.md`](audits/provider-rejection-ledger-evidence-2026-08-31.md),
+  [`../web/provider-rejection-ledger.mjs`](../web/provider-rejection-ledger.mjs),
+  [`../Sources/PDFEditorCore/ProviderRejectionLedger.swift`](../Sources/PDFEditorCore/ProviderRejectionLedger.swift),
+  [`../Tests/provider_rejection_ledger_oracle_test.mjs`](../Tests/provider_rejection_ledger_oracle_test.mjs),
+  and [`../Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift`](../Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift).

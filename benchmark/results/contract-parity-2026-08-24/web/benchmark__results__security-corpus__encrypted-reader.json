@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
-      "generatedAt": "2026-08-29T06:14:13.812Z",
+      "generatedAt": "2026-09-01T17:43:02.470Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -55,7 +55,21 @@
           "rotation": 0,
           "characterCount": 0,
           "annotationCount": 4,
-          "hasSelectableText": false
+          "hasSelectableText": false,
+          "rasterCellKeys": [
+            "2,4",
+            "3,4",
+            "4,4",
+            "2,5",
+            "2,7",
+            "3,7",
+            "4,7",
+            "5,7",
+            "6,7",
+            "7,7",
+            "8,7"
+          ],
+          "textCellKeys": []
         }
       ],
       "fields": [
@@ -236,7 +250,7 @@
       "minor": 0
     },
     "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
-    "generatedAt": "2026-08-29T06:14:13.812Z",
+    "generatedAt": "2026-09-01T17:43:02.470Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -272,6 +286,92 @@
     ]
   },
   "candidates": [],
+  "fieldCandidates": [
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 72,
+        "y": 640,
+        "width": 220,
+        "height": 24
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "text",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field fullName"
+        }
+      ],
+      "labelText": "fullName"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 72,
+        "y": 590,
+        "width": 20,
+        "height": 20
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "button",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field consent"
+        }
+      ],
+      "labelText": "consent"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 120,
+        "y": 590,
+        "width": 20,
+        "height": 20
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "button",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field preferredContact"
+        }
+      ],
+      "labelText": "preferredContact"
+    },
+    {
+      "pageIndex": 0,
+      "bounds": {
+        "x": 72,
+        "y": 540,
+        "width": 220,
+        "height": 24
+      },
+      "kind": "nativeField",
+      "suggestedFieldType": "choice",
+      "entryMode": "native",
+      "groupMemberCount": 1,
+      "evidenceItems": [
+        {
+          "kind": "nativeField",
+          "origin": "nativeFieldExtraction",
+          "summary": "Native field country"
+        }
+      ],
+      "labelText": "country"
+    }
+  ],
   "textRuns": [],
   "preflight": {
     "header": {
@@ -281,7 +381,7 @@
         "minor": 1
       },
       "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
-      "generatedAt": "2026-08-29T06:14:13.812Z",
+      "generatedAt": "2026-09-01T17:43:02.470Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -399,6 +499,45 @@
             "incrementalRevisionParserNotRun"
           ]
         }
+      },
+      "encryption": {
+        "state": "observed",
+        "encrypted": true,
+        "encryptionMarkerCount": 1,
+        "permissionsObserved": true,
+        "permissionChangeState": "observed"
+      },
+      "formValues": {
+        "state": "observed",
+        "fieldCount": 4,
+        "populatedFieldCount": 4,
+        "byKind": {
+          "text": {
+            "fieldCount": 1,
+            "populatedFieldCount": 1
+          },
+          "button": {
+            "fieldCount": 2,
+            "populatedFieldCount": 2
+          },
+          "choice": {
+            "fieldCount": 1,
+            "populatedFieldCount": 1
+          }
+        },
+        "reasonCodes": [
+          "fieldValuePresenceOnly"
+        ]
+      },
+      "privacySensitiveContent": {
+        "metadataFieldCount": 3,
+        "attachmentCount": 0,
+        "annotationCount": 4,
+        "formFieldCount": 4,
+        "populatedFormFieldCount": 4,
+        "embeddedActionCount": 0,
+        "signatureCount": 0,
+        "encryptionState": "encrypted"
       },
       "coverage": {
         "metadata": {
@@ -701,9 +840,9 @@
         "major": 1,
         "minor": 0
       },
-      "sessionID": "0bcf5b9a-bdef-428f-88d6-4ae110d621c5",
+      "sessionID": "993346e8-cbf0-4fc1-84f9-2f4ca7b5e281",
       "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
-      "generatedAt": "2026-08-29T06:14:13.859Z",
+      "generatedAt": "2026-09-01T17:43:02.542Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -767,7 +906,7 @@
         "major": 1,
         "minor": 0
       },
-      "generatedAt": "2026-08-29T06:14:13.813Z",
+      "generatedAt": "2026-09-01T17:43:02.471Z",
       "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
       "provider": {
         "id": "pdfjs-pdflib",
@@ -798,7 +937,7 @@
         },
         "memory": {
           "state": "available",
-          "usedJSHeapSize": 19229612,
+          "usedJSHeapSize": 11517098,
           "jsHeapSizeLimit": 4395630592
         },
         "storage": {
@@ -943,7 +1082,7 @@
         "minor": 0
       },
       "sourceDigest": "4543b3d2fb3a68eb7ac8c8c7f446df034e10e9aa5e2ffc16dc022dda8ff54491",
-      "generatedAt": "2026-08-29T06:14:13.812Z",
+      "generatedAt": "2026-09-01T17:43:02.470Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -976,13 +1115,14 @@
       "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
       "No page content changed because the protected source was copied byte-for-byte.",
       "No raster content changed because the protected source was copied byte-for-byte.",
+      "No protected privacy surface can change because the output digest equals the source digest.",
       "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported."
     ],
     "sourceUnchanged": true,
     "outputReopenable": true,
     "checks": [
       {
-        "id": "7ac6fda0-43b4-423f-b20e-d9390e7ce733",
+        "id": "d58fe433-db96-4cce-a9f8-55dc6165c100",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -990,7 +1130,7 @@
         "operationIDs": []
       },
       {
-        "id": "660d671b-dfc3-4030-9151-a8526eb750fc",
+        "id": "14be48a2-c137-4ddb-9788-8a6af6e83f98",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -998,7 +1138,7 @@
         "operationIDs": []
       },
       {
-        "id": "4d875761-ee7d-460d-97be-aeb66f3b2b51",
+        "id": "07464692-fc64-49c1-af9f-15feb5a19c6a",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -1006,7 +1146,7 @@
         "operationIDs": []
       },
       {
-        "id": "1286efd5-1ef6-4e86-8221-60830c4c5a78",
+        "id": "3b17eabd-1a47-475f-bf96-729a82ebfe0b",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -1014,7 +1154,7 @@
         "operationIDs": []
       },
       {
-        "id": "59b877d5-b608-4e0a-adf7-f58caa12d914",
+        "id": "b873f3b2-2aee-4c29-b3bb-b27ea4ab2a1e",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -1022,7 +1162,7 @@
         "operationIDs": []
       },
       {
-        "id": "15df41bf-0e36-462a-80e7-7c125935ddc5",
+        "id": "7ba32ce9-a505-416f-acdd-b80a43b82e28",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -1038,7 +1178,7 @@
         }
       },
       {
-        "id": "66752476-afbc-4be1-a721-c6fe5fdbbec1",
+        "id": "48de3161-720b-4f51-be2a-03efe1d42737",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -1062,7 +1202,21 @@
         }
       },
       {
-        "id": "d7bd9153-6b63-4909-9523-7c34652b8b72",
+        "id": "3d0af338-f399-4b42-a957-f7186f28da6f",
+        "kind": "privacyPreflight",
+        "status": "passed",
+        "message": "No protected privacy surface can change because the output digest equals the source digest.",
+        "region": null,
+        "operationIDs": [],
+        "metrics": {
+          "changedSurfaces": [],
+          "unknownSurfaces": [],
+          "unauthorizedSurfaces": [],
+          "basis": "source-digest-equality"
+        }
+      },
+      {
+        "id": "eb9900ed-6cd7-4397-94f7-89363a043a81",
         "kind": "providerCapability",
         "status": "passed",
         "message": "Encrypted no-op export used byte-preserving source download; browser editing remains unsupported.",
@@ -1085,7 +1239,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-08-29T06:14:13.855Z",
+    "validatedAt": "2026-09-01T17:43:02.524Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",

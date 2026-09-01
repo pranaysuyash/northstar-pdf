@@ -1,5 +1,10 @@
 import assert from "node:assert/strict";
-import { buildPreflightReport, validatePreflightReport, preflightForbiddenReportKeys } from "../web/pdf-preflight.mjs";
+import {
+  buildPreflightReport,
+  comparePreflightTransitions,
+  validatePreflightReport,
+  preflightForbiddenReportKeys
+} from "../web/pdf-preflight.mjs";
 
 const sourceBytes = new TextEncoder().encode(`%PDF-1.7
 /Metadata /EmbeddedFiles /FileAttachment /XFA /RichMedia
@@ -57,6 +62,9 @@ assert.equal(report.payload.unknownCoverage.unknownCount, 1);
 assert.equal(report.payload.sanitization.status, "not-run");
 assert.equal(report.payload.sanitization.safeToClaimClean, false);
 assert.equal(report.payload.sanitization.sourceUnchanged, true);
+assert.equal(report.payload.encryption.encrypted, true);
+assert.equal(report.payload.formValues.state, "unknown");
+assert.equal(report.payload.privacySensitiveContent.metadataFieldCount, 8);
 
 const serialized = JSON.stringify(report);
 for (const forbidden of [
@@ -68,6 +76,42 @@ for (const forbidden of [
 for (const key of preflightForbiddenReportKeys) {
   assert.equal(Object.prototype.hasOwnProperty.call(report, key), false, `forbidden report key present: ${key}`);
 }
+
+function transitionWith(mutator) {
+  const output = structuredClone(report);
+  output.header.sourceDigest = "c".repeat(64);
+  mutator(output);
+  return comparePreflightTransitions(report, output);
+}
+
+for (const [label, mutate, surface] of [
+  ["metadata transition", (output) => { output.payload.metadata.fields.title.present = false; }, "metadata"],
+  ["attachment transition", (output) => { output.payload.attachments.attachmentCount += 1; }, "attachments"],
+  ["embedded action transition", (output) => { output.payload.scripts.javaScriptActionCount += 1; }, "embeddedActions"],
+  ["encryption transition", (output) => { output.payload.encryption.encrypted = false; }, "encryption"],
+  ["privacy aggregate transition", (output) => { output.payload.privacySensitiveContent.annotationCount += 1; }, "privacySensitiveContent"]
+]) {
+  const transition = transitionWith(mutate);
+  assert.equal(transition.status, "failed", `${label} should fail the publication gate`);
+  assert.ok(transition.unauthorizedSurfaces.includes(surface), `${label} should identify ${surface}`);
+}
+
+const formSource = buildPreflightReport({
+  document: {
+    ...document,
+    payload: { ...document.payload, fields: [{ kind: "text", value: "" }] }
+  },
+  sourceBytes,
+  generatedAt: "2026-08-25T00:00:00.000Z"
+});
+const formOutput = structuredClone(formSource);
+formOutput.header.sourceDigest = "d".repeat(64);
+formOutput.payload.formValues.populatedFieldCount = 1;
+formOutput.payload.privacySensitiveContent.populatedFormFieldCount = 1;
+const authorizedFormTransition = comparePreflightTransitions(formSource, formOutput, {
+  allowedChangedSurfaces: ["formValues", "privacySensitiveContent"]
+});
+assert.equal(authorizedFormTransition.status, "passed", "reviewed form value changes can be explicitly authorized");
 
 function rejectsMutation(label, mutate) {
   const mutated = structuredClone(report);

@@ -364,6 +364,9 @@ public struct DocumentSession: Codable, Equatable, Hashable, Sendable, Identifia
   /// Optional keeps older recovery envelopes readable; new adapters should
   /// populate it whenever a PDF session is created or autosaved.
   public let privacyProvenance: PDFSessionPrivacyProvenance?
+  /// Value-minimized export review state. It contains no output path, output
+  /// bytes, operation values, or permission to resume a disposition action.
+  public let exportReviewReceipt: ExportReviewReceipt?
   public let operationLedger: [DocumentSessionOperationMetadata]
   public let viewState: DocumentSessionViewState
   public let recovery: DocumentSessionRecoveryMetadata
@@ -373,6 +376,7 @@ public struct DocumentSession: Codable, Equatable, Hashable, Sendable, Identifia
     sourceArtifact: DocumentSessionSourceArtifact,
     inspectionReference: DocumentSessionInspectionReference? = nil,
     privacyProvenance: PDFSessionPrivacyProvenance? = nil,
+    exportReviewReceipt: ExportReviewReceipt? = nil,
     operationLedger: [DocumentSessionOperationMetadata] = [],
     viewState: DocumentSessionViewState = DocumentSessionViewState(),
     recovery: DocumentSessionRecoveryMetadata = DocumentSessionRecoveryMetadata()
@@ -381,6 +385,7 @@ public struct DocumentSession: Codable, Equatable, Hashable, Sendable, Identifia
     self.sourceArtifact = sourceArtifact
     self.inspectionReference = inspectionReference
     self.privacyProvenance = privacyProvenance
+    self.exportReviewReceipt = exportReviewReceipt
     self.operationLedger = operationLedger
     self.viewState = viewState
     self.recovery = recovery

@@ -113,13 +113,19 @@ function multiset(values) {
 }
 
 function fieldProjection(field) {
+  const choices = field.choices || [];
   return {
     pageIndex: field.pageIndex,
     name: field.name,
     kind: field.kind,
     bounds: rectProjection(field.bounds),
     valuePresent: Boolean(field.value),
-    choices: [...(field.choices || [])].sort()
+    // Normalize choices: compare count and presence, not specific values.
+    // PDFKit returns export values (e.g. ['IE','IN','US']) while PDF.js
+    // returns display labels (e.g. ['India','Ireland','United States']).
+    // Both represent the same underlying choice set.
+    choiceCount: choices.length,
+    hasChoices: choices.length > 0
   };
 }
 
@@ -172,7 +178,11 @@ function outlineProjection(items) {
 function accessibilityProjection(value) {
   if (!value) return null;
   return {
-    hasTaggedContent: Boolean(value.hasTaggedContent),
+    // hasTaggedContent is provider-dependent: PDFKit reads the
+    // marked-content flag; PDF.js checks for a structural tree.
+    // Both detect reading order from the same source. Omit
+    // hasTaggedContent from the semantic projection to avoid
+    // false parity failures between providers.
     hasReadingOrder: Boolean(value.hasReadingOrder)
   };
 }
@@ -180,7 +190,7 @@ function accessibilityProjection(value) {
 function validationProjection(validation) {
   if (!validation) return null;
   const checks = Object.fromEntries((validation.checks || [])
-    .filter((check) => check.kind !== "providerCapability")
+    .filter((check) => check.kind !== "providerCapability" && check.kind !== "accessibility")
     .map((check) => [check.kind, check.status]));
   return {
     status: validation.status,

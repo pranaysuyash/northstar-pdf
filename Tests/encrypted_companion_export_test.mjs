@@ -8,7 +8,11 @@ import { chromium } from "playwright";
 import { compareIndependentPreservation, independentViewerReopen } from "../benchmark/independent-preservation-validator.mjs";
 
 const root = path.resolve(new URL("..", import.meta.url).pathname);
-const baseURL = process.env.PDF_EDITOR_BASE_URL || "http://127.0.0.1:4184/web/index.html";
+const baseURL = (() => {
+  const u = process.env.PDF_EDITOR_BASE_URL;
+  if (!u) { console.error("FATAL: PDF_EDITOR_BASE_URL not set. Start a local server or set the env var."); process.exit(1); }
+  return u;
+})();
 const sourcePath = path.join(root, "benchmark/results/security-corpus/encrypted-reader.pdf");
 const outputDirectory = path.join(root, "benchmark/results/encrypted-companion-2026-08-25");
 const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "pdf-editor-encrypted-companion-"));

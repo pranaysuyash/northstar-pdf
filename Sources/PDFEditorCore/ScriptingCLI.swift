@@ -117,25 +117,68 @@ public final class CLIRunner: ObservableObject {
 
   public init() {}
 
+  /// Allowed base directories for file access (sandbox boundary).
+  /// Paths outside these directories are rejected.
+  private static let allowedBaseDirectories: [String] = {
+    var dirs: [String] = []
+    if let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+      dirs.append(docs.path)
+    }
+    if let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first {
+      dirs.append(downloads.path)
+    }
+    // Include /tmp for test fixtures
+    dirs.append(NSTemporaryDirectory())
+    return dirs
+  }()
+
+  /// Validate that a file path resolves within an allowed directory.
+  /// Prevents path traversal attacks (V-01).
+  private static func validatePath(_ path: String) -> String? {
+    let url = URL(fileURLWithPath: path).standardized
+    let resolved = url.resolvingSymlinksInPath().path
+    // Check if the resolved path is within any allowed directory
+    for base in allowedBaseDirectories {
+      if resolved.hasPrefix(base) {
+        return resolved
+      }
+    }
+    return nil
+  }
+
   /// Execute a single command.
   public func execute(_ command: CLICommandType, inputPath: String) async -> CLIExecutionResult {
     isRunning = true
     let startTime = CFAbsoluteTimeGetCurrent()
 
+    // Security: validate path resolves within allowed directories (V-01 fix)
+    guard let safePath = Self.validatePath(inputPath) else {
+      isRunning = false
+      let elapsed = CFAbsoluteTimeGetCurrent() - startTime
+      return CLIExecutionResult(
+        command: command,
+        inputPath: inputPath,
+        success: false,
+        output: "",
+        error: "Path rejected: \(inputPath) is outside allowed directories",
+        executionTimeSeconds: elapsed
+      )
+    }
+
     let result: CLIExecutionResult
 
     switch command {
     case .validatePDF:
-      result = validatePDF(path: inputPath, startTime: startTime)
+      result = validatePDF(path: safePath, startTime: startTime)
 
     case .extractText:
-      result = extractText(path: inputPath, startTime: startTime)
+      result = extractText(path: safePath, startTime: startTime)
 
     case .exportMetadata:
-      result = exportMetadata(path: inputPath, startTime: startTime)
+      result = exportMetadata(path: safePath, startTime: startTime)
 
     case .exportCitation:
-      result = exportCitation(path: inputPath, startTime: startTime)
+      result = exportCitation(path: safePath, startTime: startTime)
 
     default:
       let elapsed = CFAbsoluteTimeGetCurrent() - startTime

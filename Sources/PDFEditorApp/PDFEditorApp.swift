@@ -62,6 +62,58 @@ private enum PDFEditorNativeTerminationProbe {
     }
 }
 
+@MainActor
+private enum PDFEditorNativeWindowProbe {
+    private static var scheduled = false
+
+    private static var environment: [String: String] {
+        ProcessInfo.processInfo.environment
+    }
+
+    static var isEnabled: Bool {
+        environment["PDF_EDITOR_NATIVE_WINDOW_PROBE"] == "1"
+    }
+
+    static func recordProcessStarted() {
+        guard isEnabled else { return }
+        write("process-started")
+    }
+
+    /// Observes the AppKit window after SwiftUI has had a chance to attach the
+    /// WindowGroup scene. This is diagnostic evidence, not a product behavior.
+    static func schedule() {
+      guard isEnabled, !scheduled else { return }
+      scheduled = true
+
+        let delays: [TimeInterval] = [0, 0.1, 0.5, 1.0, 2.0, 4.0]
+        for (index, delay) in delays.enumerated() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                let window = NSApplication.shared.windows.first(where: { $0.isVisible })
+                guard let window else {
+                    if index == delays.count - 1 {
+                        write("window-not-observed")
+                    }
+                    return
+                }
+
+                guard window.isVisible else {
+                    if index == delays.count - 1 {
+                        write("window-attached-not-visible")
+                    }
+                    return
+                }
+
+                write("window-visible:\(Int(window.frame.width))x\(Int(window.frame.height))")
+            }
+        }
+    }
+
+    private static func write(_ value: String) {
+        guard let path = environment["PDF_EDITOR_NATIVE_WINDOW_RESULT"] else { return }
+        try? Data(value.utf8).write(to: URL(fileURLWithPath: path), options: [.atomic])
+    }
+}
+
 private struct PDFEditorModelFocusedValueKey: FocusedValueKey {
     typealias Value = AppModel
 }
@@ -200,6 +252,7 @@ private struct PDFEditorWindow: View {
                 windowController.model = model
                 windowController.register()
                 PDFEditorNativeTerminationProbe.prepare(model: model)
+                PDFEditorNativeWindowProbe.schedule()
             }
     }
 }
@@ -231,6 +284,7 @@ struct PDFEditorApp: App {
     init() {
         // A raw executable launched from a terminal still needs normal app
         // activation so the native preview is immediately testable.
+        PDFEditorNativeWindowProbe.recordProcessStarted()
         NSApplication.shared.setActivationPolicy(.regular)
         DispatchQueue.main.async {
             NSApplication.shared.activate(ignoringOtherApps: true)

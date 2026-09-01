@@ -30,7 +30,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "46EDDAD0-251B-4094-ADE5-4C846FE013A5",
+          "id" : "9A97E6F1-C166-490B-9CCA-D14E99B4D3FA",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "region" : {
@@ -52,7 +52,7 @@
           "summary" : "Vector square path at (72, 600)"
         },
         {
-          "id" : "E1212277-E583-4196-A433-55E72FE2B284",
+          "id" : "21D8AE54-7E44-463D-808F-01F0F56B8176",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -75,7 +75,7 @@
           "text" : "Agree to terms:"
         },
         {
-          "id" : "30EC61DC-76C6-43F0-943E-D036D325FDC3",
+          "id" : "2DDFC875-EBEF-44E3-B77D-383AFC7107E8",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -103,9 +103,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "30EC61DC-76C6-43F0-943E-D036D325FDC3",
-          "46EDDAD0-251B-4094-ADE5-4C846FE013A5",
-          "E1212277-E583-4196-A433-55E72FE2B284"
+          "21D8AE54-7E44-463D-808F-01F0F56B8176",
+          "2DDFC875-EBEF-44E3-B77D-383AFC7107E8",
+          "9A97E6F1-C166-490B-9CCA-D14E99B4D3FA"
         ],
         "independentGroups" : [
           "geometry",
@@ -120,7 +120,7 @@
         "supportScore" : 0.771316
       },
       "groupMemberCount" : 1,
-      "id" : "1209E146-01BB-43F3-BB63-F5444AA2E96A",
+      "id" : "C87C9E6A-FF2F-4F35-A5B5-A18776CA53B6",
       "kind" : "vectorRegion",
       "labelText" : "Agree to terms:",
       "memberBounds" : [
@@ -169,7 +169,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "0DD1CC76-D4CF-4E9B-B991-779AD5139289",
+          "id" : "F9765AC3-1CB4-4214-BFCA-0033C6907997",
           "kind" : "vectorRectangle",
           "origin" : "geometryExtraction",
           "region" : {
@@ -191,7 +191,7 @@
           "summary" : "Vector rectangle at (180, 700)"
         },
         {
-          "id" : "82BCDFE9-0B22-4E01-B806-B72C4CFFE236",
+          "id" : "ECF2D480-5DAC-4D93-B633-DBFAA41A2735",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -214,7 +214,7 @@
           "text" : "Applicant Name:"
         },
         {
-          "id" : "24A9C4A8-FCBF-4BF6-ADE2-D4DBCA6C76FE",
+          "id" : "71D18AFC-853E-4C4E-8C8C-1F7C85AE0D57",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -242,9 +242,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "0DD1CC76-D4CF-4E9B-B991-779AD5139289",
-          "24A9C4A8-FCBF-4BF6-ADE2-D4DBCA6C76FE",
-          "82BCDFE9-0B22-4E01-B806-B72C4CFFE236"
+          "71D18AFC-853E-4C4E-8C8C-1F7C85AE0D57",
+          "ECF2D480-5DAC-4D93-B633-DBFAA41A2735",
+          "F9765AC3-1CB4-4214-BFCA-0033C6907997"
         ],
         "independentGroups" : [
           "geometry",
@@ -259,7 +259,7 @@
         "supportScore" : 0.751579
       },
       "groupMemberCount" : 1,
-      "id" : "99DA13CD-D1A6-4233-B00D-5E48EA24A6FE",
+      "id" : "E61EF4CD-3575-44A2-8371-D104691F6AA6",
       "kind" : "vectorRegion",
       "labelText" : "Applicant Name:",
       "memberBounds" : [
@@ -303,7 +303,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "B6530C9A-A9C8-4B10-B076-7106EFF50467",
+          "id" : "35FF15FB-947D-4246-89E7-53751F960A33",
           "kind" : "underline",
           "origin" : "geometryExtraction",
           "region" : {
@@ -325,7 +325,7 @@
           "summary" : "Vector line stroke at y=520"
         },
         {
-          "id" : "14824CC6-336D-46FF-BFC3-EADE2A61912B",
+          "id" : "8DA0736B-4811-47D1-9B22-4CD3BC118FE3",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -348,7 +348,7 @@
           "text" : "Date:"
         },
         {
-          "id" : "F900FEDF-E247-43D7-A694-86A97567B678",
+          "id" : "F71725C3-6231-498D-9213-27B36E06515B",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -376,9 +376,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "14824CC6-336D-46FF-BFC3-EADE2A61912B",
-          "B6530C9A-A9C8-4B10-B076-7106EFF50467",
-          "F900FEDF-E247-43D7-A694-86A97567B678"
+          "35FF15FB-947D-4246-89E7-53751F960A33",
+          "8DA0736B-4811-47D1-9B22-4CD3BC118FE3",
+          "F71725C3-6231-498D-9213-27B36E06515B"
         ],
         "independentGroups" : [
           "geometry",
@@ -393,7 +393,7 @@
         "supportScore" : 0.730833
       },
       "groupMemberCount" : 1,
-      "id" : "6092893E-2C4B-443F-AA14-EFEE1E0E19D6",
+      "id" : "9B86B30D-8C68-4BDA-BA2E-E273DEE7BED6",
       "kind" : "vectorRegion",
       "labelText" : "Date:",
       "memberBounds" : [
@@ -437,7 +437,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "51674F78-A9B4-4A5E-98A3-DD10B945F72C",
+          "id" : "FC1B5309-37F3-44DF-A4A4-D052B6E1B399",
           "kind" : "whitespace",
           "origin" : "textExtraction",
           "region" : {
@@ -460,7 +460,7 @@
           "text" : "Applicant Name:"
         },
         {
-          "id" : "465D145C-31A1-4046-8772-C58E98203A9D",
+          "id" : "6FB90B01-A973-4167-8BC8-CFCC3B4B9CF1",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -483,7 +483,7 @@
           "text" : "Applicant Name:"
         },
         {
-          "id" : "AA7600F5-0724-49CF-925F-CBC6F975772D",
+          "id" : "75B8D946-2E45-4609-A279-932570A5B36E",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -511,9 +511,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "465D145C-31A1-4046-8772-C58E98203A9D",
-          "51674F78-A9B4-4A5E-98A3-DD10B945F72C",
-          "AA7600F5-0724-49CF-925F-CBC6F975772D"
+          "6FB90B01-A973-4167-8BC8-CFCC3B4B9CF1",
+          "75B8D946-2E45-4609-A279-932570A5B36E",
+          "FC1B5309-37F3-44DF-A4A4-D052B6E1B399"
         ],
         "independentGroups" : [
           "geometry",
@@ -528,7 +528,7 @@
         "supportScore" : 0.63871
       },
       "groupMemberCount" : 1,
-      "id" : "8A3A450C-A339-41BF-9791-0CF97A60B18E",
+      "id" : "AAC980EC-19D2-4D41-B26F-A48988895EB1",
       "kind" : "textAnchored",
       "labelText" : "Applicant Name:",
       "memberBounds" : [
@@ -572,7 +572,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "F4AB653E-4BAC-49E5-A9A4-7A11F8957BE6",
+          "id" : "66D5C50F-02D8-4441-9AD8-1CFD7ED0E676",
           "kind" : "whitespace",
           "origin" : "textExtraction",
           "region" : {
@@ -595,7 +595,7 @@
           "text" : "Agree to terms:"
         },
         {
-          "id" : "4F67582C-A913-4F91-A10E-3D783773E466",
+          "id" : "A41E9CD8-969E-467F-8E9C-B64CE94F171E",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -618,7 +618,7 @@
           "text" : "Agree to terms:"
         },
         {
-          "id" : "5A74B6D0-2D26-4818-960E-E609593E8F28",
+          "id" : "EDD0754C-6FF6-4F56-87F6-2880E92D7C80",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -646,9 +646,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "4F67582C-A913-4F91-A10E-3D783773E466",
-          "5A74B6D0-2D26-4818-960E-E609593E8F28",
-          "F4AB653E-4BAC-49E5-A9A4-7A11F8957BE6"
+          "66D5C50F-02D8-4441-9AD8-1CFD7ED0E676",
+          "A41E9CD8-969E-467F-8E9C-B64CE94F171E",
+          "EDD0754C-6FF6-4F56-87F6-2880E92D7C80"
         ],
         "independentGroups" : [
           "geometry",
@@ -663,7 +663,7 @@
         "supportScore" : 0.63871
       },
       "groupMemberCount" : 1,
-      "id" : "A621CD2E-B111-4A1C-9A68-551083F4FA4B",
+      "id" : "C3F97391-9B52-49A2-BCD6-BAE2E123CCEC",
       "kind" : "textAnchored",
       "labelText" : "Agree to terms:",
       "memberBounds" : [
@@ -706,7 +706,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "2490BC59-5209-483A-9765-A707DB97C1F9",
+          "id" : "D85583C5-A7BF-4C82-9BBF-3D461DDC40D7",
           "kind" : "whitespace",
           "origin" : "textExtraction",
           "region" : {
@@ -729,7 +729,7 @@
           "text" : "Date:"
         },
         {
-          "id" : "08528C8D-4471-4583-99F7-6F32907D9E5D",
+          "id" : "DF4AD72E-5B32-43F8-8FC4-E05D50C0903E",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -752,7 +752,7 @@
           "text" : "Date:"
         },
         {
-          "id" : "0712AC33-3B21-45B0-AC42-4AC59083CF2A",
+          "id" : "6669C15E-26EC-42B3-AF0A-4B8360D906BE",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -780,9 +780,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "0712AC33-3B21-45B0-AC42-4AC59083CF2A",
-          "08528C8D-4471-4583-99F7-6F32907D9E5D",
-          "2490BC59-5209-483A-9765-A707DB97C1F9"
+          "6669C15E-26EC-42B3-AF0A-4B8360D906BE",
+          "D85583C5-A7BF-4C82-9BBF-3D461DDC40D7",
+          "DF4AD72E-5B32-43F8-8FC4-E05D50C0903E"
         ],
         "independentGroups" : [
           "geometry",
@@ -797,7 +797,7 @@
         "supportScore" : 0.63871
       },
       "groupMemberCount" : 1,
-      "id" : "9F459E1C-E996-4090-B24E-CCD16B52F759",
+      "id" : "AD2F6A01-4540-40D7-8538-CEF064E1671C",
       "kind" : "textAnchored",
       "labelText" : "Date:",
       "memberBounds" : [
@@ -841,7 +841,7 @@
       ],
       "evidenceItems" : [
         {
-          "id" : "2FCCB72D-51BB-455A-ABE9-70C890D9946B",
+          "id" : "27EEA57D-2262-48F0-BB70-93966971B6B1",
           "kind" : "whitespace",
           "origin" : "textExtraction",
           "region" : {
@@ -864,7 +864,7 @@
           "text" : "Address:"
         },
         {
-          "id" : "7449291A-FC56-4429-9FB8-823B735B6D90",
+          "id" : "376D1757-ABD2-4047-A8E9-5287BD285286",
           "kind" : "textLabel",
           "origin" : "textExtraction",
           "region" : {
@@ -887,7 +887,7 @@
           "text" : "Address:"
         },
         {
-          "id" : "F02D29C3-DF20-4737-B70F-4945FE5DA036",
+          "id" : "1BC170AE-DB77-4E4F-9AD9-519AB1890126",
           "kind" : "spatialRelationship",
           "origin" : "textExtraction",
           "region" : {
@@ -915,9 +915,9 @@
         "conflict" : false,
         "coverageScore" : 0.75,
         "evidenceIDs" : [
-          "2FCCB72D-51BB-455A-ABE9-70C890D9946B",
-          "7449291A-FC56-4429-9FB8-823B735B6D90",
-          "F02D29C3-DF20-4737-B70F-4945FE5DA036"
+          "1BC170AE-DB77-4E4F-9AD9-519AB1890126",
+          "27EEA57D-2262-48F0-BB70-93966971B6B1",
+          "376D1757-ABD2-4047-A8E9-5287BD285286"
         ],
         "independentGroups" : [
           "geometry",
@@ -932,7 +932,7 @@
         "supportScore" : 0.63871
       },
       "groupMemberCount" : 1,
-      "id" : "110BF2ED-10BE-42FB-A11B-5C389431C842",
+      "id" : "2E344040-A05B-435A-9E72-5C1FE594C8A5",
       "kind" : "textAnchored",
       "labelText" : "Address:",
       "memberBounds" : [
@@ -950,7 +950,7 @@
   "contractName" : "pdf-editor.browser-fixture",
   "coordinates" : {
     "contractName" : "pdf-editor.coordinates",
-    "generatedAt" : "2026-08-29T17:06:37Z",
+    "generatedAt" : "2026-09-01T17:40:33Z",
     "pages" : [
       {
         "pageIndex" : 0,
@@ -1000,7 +1000,7 @@
       ],
       "id" : "pdfkit",
       "platform" : "macOS",
-      "version" : "Version 15.7.9 (Build 24G830)"
+      "version" : "Version 26.6.2 (Build 25G83)"
     },
     "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
     "version" : {
@@ -1011,7 +1011,7 @@
   "document" : {
     "header" : {
       "contractName" : "pdf-editor.document",
-      "generatedAt" : "2026-08-29T17:06:37Z",
+      "generatedAt" : "2026-09-01T17:40:33Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -1023,7 +1023,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
       "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
       "version" : {
@@ -1078,7 +1078,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "46EDDAD0-251B-4094-ADE5-4C846FE013A5",
+              "id" : "9A97E6F1-C166-490B-9CCA-D14E99B4D3FA",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "region" : {
@@ -1100,7 +1100,7 @@
               "summary" : "Vector square path at (72, 600)"
             },
             {
-              "id" : "E1212277-E583-4196-A433-55E72FE2B284",
+              "id" : "21D8AE54-7E44-463D-808F-01F0F56B8176",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1123,7 +1123,7 @@
               "text" : "Agree to terms:"
             },
             {
-              "id" : "30EC61DC-76C6-43F0-943E-D036D325FDC3",
+              "id" : "2DDFC875-EBEF-44E3-B77D-383AFC7107E8",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1151,9 +1151,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "30EC61DC-76C6-43F0-943E-D036D325FDC3",
-              "46EDDAD0-251B-4094-ADE5-4C846FE013A5",
-              "E1212277-E583-4196-A433-55E72FE2B284"
+              "21D8AE54-7E44-463D-808F-01F0F56B8176",
+              "2DDFC875-EBEF-44E3-B77D-383AFC7107E8",
+              "9A97E6F1-C166-490B-9CCA-D14E99B4D3FA"
             ],
             "independentGroups" : [
               "geometry",
@@ -1168,7 +1168,7 @@
             "supportScore" : 0.771316
           },
           "groupMemberCount" : 1,
-          "id" : "1209E146-01BB-43F3-BB63-F5444AA2E96A",
+          "id" : "C87C9E6A-FF2F-4F35-A5B5-A18776CA53B6",
           "kind" : "vectorRegion",
           "labelText" : "Agree to terms:",
           "memberBounds" : [
@@ -1217,7 +1217,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "0DD1CC76-D4CF-4E9B-B991-779AD5139289",
+              "id" : "F9765AC3-1CB4-4214-BFCA-0033C6907997",
               "kind" : "vectorRectangle",
               "origin" : "geometryExtraction",
               "region" : {
@@ -1239,7 +1239,7 @@
               "summary" : "Vector rectangle at (180, 700)"
             },
             {
-              "id" : "82BCDFE9-0B22-4E01-B806-B72C4CFFE236",
+              "id" : "ECF2D480-5DAC-4D93-B633-DBFAA41A2735",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1262,7 +1262,7 @@
               "text" : "Applicant Name:"
             },
             {
-              "id" : "24A9C4A8-FCBF-4BF6-ADE2-D4DBCA6C76FE",
+              "id" : "71D18AFC-853E-4C4E-8C8C-1F7C85AE0D57",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1290,9 +1290,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "0DD1CC76-D4CF-4E9B-B991-779AD5139289",
-              "24A9C4A8-FCBF-4BF6-ADE2-D4DBCA6C76FE",
-              "82BCDFE9-0B22-4E01-B806-B72C4CFFE236"
+              "71D18AFC-853E-4C4E-8C8C-1F7C85AE0D57",
+              "ECF2D480-5DAC-4D93-B633-DBFAA41A2735",
+              "F9765AC3-1CB4-4214-BFCA-0033C6907997"
             ],
             "independentGroups" : [
               "geometry",
@@ -1307,7 +1307,7 @@
             "supportScore" : 0.751579
           },
           "groupMemberCount" : 1,
-          "id" : "99DA13CD-D1A6-4233-B00D-5E48EA24A6FE",
+          "id" : "E61EF4CD-3575-44A2-8371-D104691F6AA6",
           "kind" : "vectorRegion",
           "labelText" : "Applicant Name:",
           "memberBounds" : [
@@ -1351,7 +1351,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "B6530C9A-A9C8-4B10-B076-7106EFF50467",
+              "id" : "35FF15FB-947D-4246-89E7-53751F960A33",
               "kind" : "underline",
               "origin" : "geometryExtraction",
               "region" : {
@@ -1373,7 +1373,7 @@
               "summary" : "Vector line stroke at y=520"
             },
             {
-              "id" : "14824CC6-336D-46FF-BFC3-EADE2A61912B",
+              "id" : "8DA0736B-4811-47D1-9B22-4CD3BC118FE3",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1396,7 +1396,7 @@
               "text" : "Date:"
             },
             {
-              "id" : "F900FEDF-E247-43D7-A694-86A97567B678",
+              "id" : "F71725C3-6231-498D-9213-27B36E06515B",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1424,9 +1424,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "14824CC6-336D-46FF-BFC3-EADE2A61912B",
-              "B6530C9A-A9C8-4B10-B076-7106EFF50467",
-              "F900FEDF-E247-43D7-A694-86A97567B678"
+              "35FF15FB-947D-4246-89E7-53751F960A33",
+              "8DA0736B-4811-47D1-9B22-4CD3BC118FE3",
+              "F71725C3-6231-498D-9213-27B36E06515B"
             ],
             "independentGroups" : [
               "geometry",
@@ -1441,7 +1441,7 @@
             "supportScore" : 0.730833
           },
           "groupMemberCount" : 1,
-          "id" : "6092893E-2C4B-443F-AA14-EFEE1E0E19D6",
+          "id" : "9B86B30D-8C68-4BDA-BA2E-E273DEE7BED6",
           "kind" : "vectorRegion",
           "labelText" : "Date:",
           "memberBounds" : [
@@ -1485,7 +1485,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "51674F78-A9B4-4A5E-98A3-DD10B945F72C",
+              "id" : "FC1B5309-37F3-44DF-A4A4-D052B6E1B399",
               "kind" : "whitespace",
               "origin" : "textExtraction",
               "region" : {
@@ -1508,7 +1508,7 @@
               "text" : "Applicant Name:"
             },
             {
-              "id" : "465D145C-31A1-4046-8772-C58E98203A9D",
+              "id" : "6FB90B01-A973-4167-8BC8-CFCC3B4B9CF1",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1531,7 +1531,7 @@
               "text" : "Applicant Name:"
             },
             {
-              "id" : "AA7600F5-0724-49CF-925F-CBC6F975772D",
+              "id" : "75B8D946-2E45-4609-A279-932570A5B36E",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1559,9 +1559,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "465D145C-31A1-4046-8772-C58E98203A9D",
-              "51674F78-A9B4-4A5E-98A3-DD10B945F72C",
-              "AA7600F5-0724-49CF-925F-CBC6F975772D"
+              "6FB90B01-A973-4167-8BC8-CFCC3B4B9CF1",
+              "75B8D946-2E45-4609-A279-932570A5B36E",
+              "FC1B5309-37F3-44DF-A4A4-D052B6E1B399"
             ],
             "independentGroups" : [
               "geometry",
@@ -1576,7 +1576,7 @@
             "supportScore" : 0.63871
           },
           "groupMemberCount" : 1,
-          "id" : "8A3A450C-A339-41BF-9791-0CF97A60B18E",
+          "id" : "AAC980EC-19D2-4D41-B26F-A48988895EB1",
           "kind" : "textAnchored",
           "labelText" : "Applicant Name:",
           "memberBounds" : [
@@ -1620,7 +1620,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "F4AB653E-4BAC-49E5-A9A4-7A11F8957BE6",
+              "id" : "66D5C50F-02D8-4441-9AD8-1CFD7ED0E676",
               "kind" : "whitespace",
               "origin" : "textExtraction",
               "region" : {
@@ -1643,7 +1643,7 @@
               "text" : "Agree to terms:"
             },
             {
-              "id" : "4F67582C-A913-4F91-A10E-3D783773E466",
+              "id" : "A41E9CD8-969E-467F-8E9C-B64CE94F171E",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1666,7 +1666,7 @@
               "text" : "Agree to terms:"
             },
             {
-              "id" : "5A74B6D0-2D26-4818-960E-E609593E8F28",
+              "id" : "EDD0754C-6FF6-4F56-87F6-2880E92D7C80",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1694,9 +1694,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "4F67582C-A913-4F91-A10E-3D783773E466",
-              "5A74B6D0-2D26-4818-960E-E609593E8F28",
-              "F4AB653E-4BAC-49E5-A9A4-7A11F8957BE6"
+              "66D5C50F-02D8-4441-9AD8-1CFD7ED0E676",
+              "A41E9CD8-969E-467F-8E9C-B64CE94F171E",
+              "EDD0754C-6FF6-4F56-87F6-2880E92D7C80"
             ],
             "independentGroups" : [
               "geometry",
@@ -1711,7 +1711,7 @@
             "supportScore" : 0.63871
           },
           "groupMemberCount" : 1,
-          "id" : "A621CD2E-B111-4A1C-9A68-551083F4FA4B",
+          "id" : "C3F97391-9B52-49A2-BCD6-BAE2E123CCEC",
           "kind" : "textAnchored",
           "labelText" : "Agree to terms:",
           "memberBounds" : [
@@ -1754,7 +1754,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "2490BC59-5209-483A-9765-A707DB97C1F9",
+              "id" : "D85583C5-A7BF-4C82-9BBF-3D461DDC40D7",
               "kind" : "whitespace",
               "origin" : "textExtraction",
               "region" : {
@@ -1777,7 +1777,7 @@
               "text" : "Date:"
             },
             {
-              "id" : "08528C8D-4471-4583-99F7-6F32907D9E5D",
+              "id" : "DF4AD72E-5B32-43F8-8FC4-E05D50C0903E",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1800,7 +1800,7 @@
               "text" : "Date:"
             },
             {
-              "id" : "0712AC33-3B21-45B0-AC42-4AC59083CF2A",
+              "id" : "6669C15E-26EC-42B3-AF0A-4B8360D906BE",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1828,9 +1828,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "0712AC33-3B21-45B0-AC42-4AC59083CF2A",
-              "08528C8D-4471-4583-99F7-6F32907D9E5D",
-              "2490BC59-5209-483A-9765-A707DB97C1F9"
+              "6669C15E-26EC-42B3-AF0A-4B8360D906BE",
+              "D85583C5-A7BF-4C82-9BBF-3D461DDC40D7",
+              "DF4AD72E-5B32-43F8-8FC4-E05D50C0903E"
             ],
             "independentGroups" : [
               "geometry",
@@ -1845,7 +1845,7 @@
             "supportScore" : 0.63871
           },
           "groupMemberCount" : 1,
-          "id" : "9F459E1C-E996-4090-B24E-CCD16B52F759",
+          "id" : "AD2F6A01-4540-40D7-8538-CEF064E1671C",
           "kind" : "textAnchored",
           "labelText" : "Date:",
           "memberBounds" : [
@@ -1889,7 +1889,7 @@
           ],
           "evidenceItems" : [
             {
-              "id" : "2FCCB72D-51BB-455A-ABE9-70C890D9946B",
+              "id" : "27EEA57D-2262-48F0-BB70-93966971B6B1",
               "kind" : "whitespace",
               "origin" : "textExtraction",
               "region" : {
@@ -1912,7 +1912,7 @@
               "text" : "Address:"
             },
             {
-              "id" : "7449291A-FC56-4429-9FB8-823B735B6D90",
+              "id" : "376D1757-ABD2-4047-A8E9-5287BD285286",
               "kind" : "textLabel",
               "origin" : "textExtraction",
               "region" : {
@@ -1935,7 +1935,7 @@
               "text" : "Address:"
             },
             {
-              "id" : "F02D29C3-DF20-4737-B70F-4945FE5DA036",
+              "id" : "1BC170AE-DB77-4E4F-9AD9-519AB1890126",
               "kind" : "spatialRelationship",
               "origin" : "textExtraction",
               "region" : {
@@ -1963,9 +1963,9 @@
             "conflict" : false,
             "coverageScore" : 0.75,
             "evidenceIDs" : [
-              "2FCCB72D-51BB-455A-ABE9-70C890D9946B",
-              "7449291A-FC56-4429-9FB8-823B735B6D90",
-              "F02D29C3-DF20-4737-B70F-4945FE5DA036"
+              "1BC170AE-DB77-4E4F-9AD9-519AB1890126",
+              "27EEA57D-2262-48F0-BB70-93966971B6B1",
+              "376D1757-ABD2-4047-A8E9-5287BD285286"
             ],
             "independentGroups" : [
               "geometry",
@@ -1980,7 +1980,7 @@
             "supportScore" : 0.63871
           },
           "groupMemberCount" : 1,
-          "id" : "110BF2ED-10BE-42FB-A11B-5C389431C842",
+          "id" : "2E344040-A05B-435A-9E72-5C1FE594C8A5",
           "kind" : "textAnchored",
           "labelText" : "Address:",
           "memberBounds" : [
@@ -2123,7 +2123,7 @@
   "editSession" : {
     "header" : {
       "contractName" : "pdf-editor.edit-session",
-      "generatedAt" : "2026-08-29T17:06:37Z",
+      "generatedAt" : "2026-09-01T17:40:33Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -2135,7 +2135,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
       "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
       "version" : {
@@ -2159,7 +2159,7 @@
   "preflight" : {
     "header" : {
       "contractName" : "pdf-editor.preflight",
-      "generatedAt" : "2026-08-29T17:06:37Z",
+      "generatedAt" : "2026-09-01T17:40:33Z",
       "provider" : {
         "capabilities" : [
           "metadata-presence",
@@ -2170,7 +2170,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
       "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
       "version" : {
@@ -2615,7 +2615,7 @@
   "sessionProvenance" : {
     "header" : {
       "contractName" : "pdf-editor.session-provenance",
-      "generatedAt" : "2026-08-29T17:06:40Z",
+      "generatedAt" : "2026-09-01T17:40:35Z",
       "provider" : {
         "capabilities" : [
           "render",
@@ -2627,7 +2627,7 @@
         ],
         "id" : "pdfkit",
         "platform" : "macOS",
-        "version" : "Version 15.7.9 (Build 24G830)"
+        "version" : "Version 26.6.2 (Build 25G83)"
       },
       "sessionID" : "native-5d50d759273ea20f",
       "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
@@ -2686,7 +2686,7 @@
   "validation" : {
     "checks" : [
       {
-        "id" : "6338EB86-589D-4D94-984B-5D7D6124EFC6",
+        "id" : "3B88B95E-B393-4F61-B3E6-5142E09A4AFE",
         "kind" : "sourceDigest",
         "message" : "Source bytes still match the inspected SHA-256.",
         "operationIDs" : [
@@ -2695,7 +2695,7 @@
         "status" : "passed"
       },
       {
-        "id" : "CC5D20DC-7B55-4F1E-A5A6-616A6BB7252A",
+        "id" : "FE961FE3-4F3C-4181-B6C5-3B31F020A8A2",
         "kind" : "outputReopen",
         "message" : "Export reopened in PDFKit with 2 page(s).",
         "operationIDs" : [
@@ -2704,7 +2704,7 @@
         "status" : "passed"
       },
       {
-        "id" : "7D6BF204-9918-4B53-A1C1-6220E682BDA7",
+        "id" : "E0271BEC-C17E-44D5-BCC2-D2653B330FC9",
         "kind" : "pageGeometry",
         "message" : "Page count, page boxes, and rotations are unchanged.",
         "operationIDs" : [
@@ -2713,7 +2713,7 @@
         "status" : "passed"
       },
       {
-        "id" : "4132328E-D27D-44F4-8767-6C9F67F30A06",
+        "id" : "6F0C8575-8162-4961-80ED-D2018716EB1B",
         "kind" : "nativeFields",
         "message" : "Native field identity and geometry are unchanged.",
         "operationIDs" : [
@@ -2722,7 +2722,7 @@
         "status" : "passed"
       },
       {
-        "id" : "AB31878F-4BA9-4437-AC58-31A0C9790E75",
+        "id" : "BD51D2CC-3B8D-4684-B44E-C9544B44635D",
         "kind" : "outsideRegionText",
         "message" : "Extracted text outside the authorized operation regions is unchanged.",
         "operationIDs" : [
@@ -2731,7 +2731,7 @@
         "status" : "passed"
       },
       {
-        "id" : "2D8B5711-EFAF-42B4-89BE-64F41AB3AAD3",
+        "id" : "B52C2692-12CE-431C-B45F-41BB55342177",
         "kind" : "visualDiff",
         "message" : "Raster output is unchanged outside the authorized operation regions.",
         "operationIDs" : [
@@ -2740,7 +2740,7 @@
         "status" : "passed"
       },
       {
-        "id" : "92D0354A-CB1B-4C78-903B-D3B59C43CD7E",
+        "id" : "8DED4CE4-656D-44C8-B04B-67FDA79247FF",
         "kind" : "appliedOperations",
         "message" : "Requested operations were represented in the reopened export.",
         "operationIDs" : [
@@ -2766,12 +2766,12 @@
       ],
       "id" : "pdfkit",
       "platform" : "macOS",
-      "version" : "Version 15.7.9 (Build 24G830)"
+      "version" : "Version 26.6.2 (Build 25G83)"
     },
     "sourceDigest" : "5d50d759273ea20f43beecbc97737cf7053e0cf61ce643bb802e3b9b29b83d6f",
     "sourceUnchanged" : true,
     "status" : "validated",
-    "validatedAt" : "2026-08-29T17:06:40Z"
+    "validatedAt" : "2026-09-01T17:40:35Z"
   },
   "version" : {
     "major" : 1,

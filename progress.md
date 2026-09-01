@@ -3889,3 +3889,15 @@ alone does not help, because the restriction applies to the agent process.
 - 46 tests pass across OCREvalHarness, ControlViewerObservation, AcroFormParity, and RG-131 gate suites.
 - Swift build clean (0.57s).
 - 261 files modified/new — ready for commit.
+
+### 2026-09-01 — Governed corpus expanded: 25→38 fixtures across 14 classes
+
+- Added 13 new fixtures from under-represented classes:
+  - Scanned: +6 (dense-paragraph, low-contrast, noisy-invoice, printed-scan, small-font, diverse-scanned-sim) → 9 total
+  - Malformed: +2 (signed-invalid-structure, metadata-malformed) → 4 total
+  - Layout: +2 (three-column, ocr-multi-column) → 7 total
+  - XFA: +2 (xfa-hybrid, xfa-dynamic) — new class
+  - Navigation: +1 (navigation-metadata) → 2 total
+- All 38 fixtures pass RG-131 dual-engine observation gate (0 failed)
+- Manifest updated: governed-corpus-manifest.json (38 fixtures, 14 classes)
+- RG-131 audit doc updated with expanded corpus stats

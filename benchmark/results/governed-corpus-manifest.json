@@ -1,7 +1,8 @@
 {
   "version": "1.1",
-  "description": "Curated governance manifest for RG-131 control-viewer observation gate. One representative per document class, covering scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, form, geometry, and text-only classes.",
+  "description": "Curated governance manifest for RG-131 control-viewer observation gate. 38 fixtures across 15 document classes: scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, form, geometry, text-only, layout, graphics, navigation, xfa.",
   "createdAt": "2026-09-01",
+  "updatedAt": "2026-09-01",
   "fixtures": [
     {
       "id": "public-sample-form",
@@ -152,6 +153,84 @@
       "relativePath": "diverse-layout-corpus/diverse-graphics-heavy.pdf",
       "documentClass": "graphics",
       "description": "Graphics-heavy document — tests visual content dominance"
+    },
+    {
+      "id": "scanned-dense-paragraph",
+      "relativePath": "ocr-corpus/dense-paragraph.pdf",
+      "documentClass": "scanned",
+      "description": "Dense paragraph scanned text — tests high-density OCR content"
+    },
+    {
+      "id": "scanned-low-contrast",
+      "relativePath": "ocr-corpus/low-contrast.pdf",
+      "documentClass": "scanned",
+      "description": "Low-contrast scanned text — tests degraded scan quality"
+    },
+    {
+      "id": "scanned-noisy-invoice",
+      "relativePath": "ocr-corpus/noisy-invoice.pdf",
+      "documentClass": "scanned",
+      "description": "Noisy scanned invoice — tests real-world scan noise"
+    },
+    {
+      "id": "scanned-printed-scan",
+      "relativePath": "ocr-corpus/printed-scan.pdf",
+      "documentClass": "scanned",
+      "description": "Printed scan with mixed content — tests scan fidelity"
+    },
+    {
+      "id": "scanned-small-font",
+      "relativePath": "ocr-corpus/small-font.pdf",
+      "documentClass": "scanned",
+      "description": "Small font scanned text — tests fine-detail OCR"
+    },
+    {
+      "id": "scanned-simulated",
+      "relativePath": "diverse-layout-corpus/diverse-scanned-sim.pdf",
+      "documentClass": "scanned",
+      "description": "Simulated scanned document — tests synthetic scan artifacts"
+    },
+    {
+      "id": "layout-three-column",
+      "relativePath": "diverse-layout-corpus/diverse-three-column.pdf",
+      "documentClass": "layout",
+      "description": "Three-column layout — tests complex multi-column detection"
+    },
+    {
+      "id": "ocr-multi-column",
+      "relativePath": "ocr-corpus/multi-column.pdf",
+      "documentClass": "layout",
+      "description": "OCR multi-column text — tests reading order across columns"
+    },
+    {
+      "id": "malformed-signed-invalid",
+      "relativePath": "corpus-sweep-2026-08-25/signed-invalid-structure.pdf",
+      "documentClass": "malformed",
+      "description": "Signed PDF with invalid structure — tests signature validation failure"
+    },
+    {
+      "id": "malformed-metadata",
+      "relativePath": "corpus-sweep-2026-08-25/metadata-malformed.pdf",
+      "documentClass": "malformed",
+      "description": "PDF with malformed metadata — tests metadata parsing resilience"
+    },
+    {
+      "id": "xfa-hybrid",
+      "relativePath": "corpus-sweep-2026-08-25/xfa-hybrid.pdf",
+      "documentClass": "xfa",
+      "description": "XFA hybrid form — tests XFA/static form coexistence"
+    },
+    {
+      "id": "xfa-dynamic",
+      "relativePath": "corpus-sweep-2026-08-25/xfa-dynamic.pdf",
+      "documentClass": "xfa",
+      "description": "XFA dynamic form — tests dynamic XFA rendering"
+    },
+    {
+      "id": "navigation-metadata",
+      "relativePath": "navigation-corpus/navigation-metadata.pdf",
+      "documentClass": "navigation",
+      "description": "Navigation with rich metadata — tests metadata extraction"
     }
   ]
 }

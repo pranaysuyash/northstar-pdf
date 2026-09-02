@@ -47,6 +47,7 @@
 ## Audits — OCR Benchmark (2026-08-31)
 - `docs/audits/ocr-benchmark-expansion-2026-08-31.md` — 8 ground-truth fixtures (scans, noise, rotation, low-contrast, dense, small-font, punctuation, multi-column), Tesseract 5.5.0 baseline (1.2% avg WER), PDFKit baseline (no OCR on raster PDFs), cross-provider comparison, 14 tests.
 - `docs/audits/ocr-cross-provider-benchmark-2026-08-31.md` — Cross-provider WER benchmark: Apple Vision (0.0% WER, 2.2s), Tesseract (0.2% WER, 2.0s), PaddleOCR PP-OCRv6 (9.1% WER, 19.2s). 9 fixtures × 3 providers, 22 Swift tests, Python benchmark script, Vision CLI tool.
+- `Sources/PDFVisionOCRCLI/main.swift` — Apple Vision OCR CLI (registered SwiftPM executable target `PDFVisionOCRCLI`). Outputs JSON lines per text region; used by `VisionProvider` in `compare_ocr_wer.py`. Built via `swift build --product PDFVisionOCRCLI`.
 
 ## Audits — Creator Archetype (2026-08-28)
 - `docs/audits/creator-archetype-implementation-2026-08-28.md` — AuthoringCanvasView (CREATE), DesignSystem (DESIGN), PublishPipeline (PUBLISH), 23 tests.
@@ -152,6 +153,7 @@
 ## External Evaluation Datasets
 
 - `docs/audits/external-evaluation-datasets-2026-09-01.md` — FUNSD (199 forms, CC BY 4.0) + DocLayNet v1.1 (5,199 pages, CDLA-Permissive). Download scripts, eval manifests, integration tests.
+- `docs/audits/external-dataset-eval-harness-2026-09-02.md` — RG-137 eval harness audit. FUNSD: bbox-guided upper bound perfect F1 (1.000), QA pairing limited (0.228 F1). DocLayNet: text-only heuristics detect boundaries (1.000 IoU) but cannot classify (0% F1). Honest findings about what text-only extraction CAN and CANNOT do.
 - `benchmark/datasets/eval_funsd_entities.py` — FUNSD entity extraction eval harness. Bbox-guided upper bound: perfect precision/recall/F1 (1.000) on 50 test forms; QA pairing limited (0.228 F1). Honest finding: text-only extraction CAN achieve perfect entity detection with position guidance.
 - `benchmark/datasets/eval_doclaynet_layout.py` — DocLayNet layout eval harness. Text-only heuristics detect region boundaries (1.000 F1 by IoU) but cannot classify correctly (most classes 0% F1). Honest finding: layout classification requires visual features.
 - `benchmark/results/external-dataset-eval/funsd-entity-eval-report.json` — Persisted FUNSD eval report (schema pdf-editor.funsd-entity-eval v1.0, 50 docs, 1,998 entities).

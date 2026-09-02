@@ -173,6 +173,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-127 | S3 mutation-sweep coverage | `PASS` | Deliberate-mutation tests delivered for: PDFIncrementalFormWriter (12 Swift mutations), redaction completeness validator (7 Node mutations), signature guard (12 Node mutations + 6 ByteRange corruption tests), privacy provenance validator (7 Swift mutations), preflight validator (6 Swift mutations). Total: 50 mutation tests proving guards kill specific tampering patterns. AF-04: real ByteRange corruption tests added (6 tests). |
 | RG-131 | Control-viewer observation pre-release gate | `PASS` | **Expanded corpus delivered 2026-09-01:** 25 fixtures across 10 document classes (form, scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, geometry, navigation, text-only, layout, graphics). Manifest-driven (`governed-corpus-manifest.json`) with per-class representative fixtures. `ControlViewerObservation.observeCorpus()` produces a `CorpusObservationReport` with 16 observations per fixture (5 PDFKit + 5 Poppler + 5 DualEngine + 1 human visual confirmation). **Full dual-engine verification:** PDFKit and Poppler both observe all 5 dimensions; DualEngine records agreement; capability gaps (Poppler can't open encrypted/malformed) are classified as advisory, not failures. **Gate logic:** PDFKit opens and passes → PASS; neither viewer opens a known fixture → PASS (expected rejection); Poppler-only path → PASS; otherwise → FAIL. All 25 fixtures pass. Artifact persisted at `control-viewer-gate-report.json`. Remaining: human visual confirmation workflow, broader real-world corpus |
 | RG-134 | AcroForm parity release blocker | `PARTIAL` | Version bumps are blocked while checkbox confidence is below production-ready (≥90% round-trip). Current state: checkbox is 67% (limited) on 9 fixtures — 3 PDFKit-specific failures. The release disposition is updated to reflect this blocker. Checkbox must reach production-ready confidence (at least 9/9 fixtures passing) before any version bump is permitted. Alternatively, the 3 failing fixtures must be classified as known-excluded (with explicit documented rationale) and the exclusion ratified by a reviewer. Wire: `docs/release-gates.md` RG-134 blocks `Current disposition > Feature A bounded reader/navigation > GO`. | `PARTIAL` | `AcroFormParityExperiment` runs against 9 corpus fixtures (public-sample-form, contract-parity, semantic-parity, diverse-layout-corpus, pdfkit-widgets, compressed-acroform, hybrid-text-raster-form) and produces a persisted JSON gate report at `benchmark/results/acroform-parity/acroform-parity-gate-report.json`. Schema `pdf-editor.acroform-parity-experiment` v1.0. **Write-reopen-read round-trip implemented** for all field types across PDFKit (native), PDF.js (browser), and qpdf (CLI) providers. Results: **checkbox** limited (67% confidence — 6/9 fixtures round-trip; 3 non-synthetic PDFs fail due to PDFKit save/reopen limitation for specific widget encodings); **choice** production-ready (100% confidence, 9/9 round-trip); **text** production-ready (100% confidence, 9/9 round-trip); **radio** unsupported (no radio fields exist in the corpus). Cross-provider agreement: 1.0 for all tested types. Ghost fields: 0. CI gate accepts checkbox at limited confidence (≥50%). Known limitation: 3 PDFKit-specific checkbox round-trip failures are a **Verified** PDFKit limitation, not a code defect — synthetic/producer-reencode variants all pass. Radio round-trip is untested due to corpus absence; functional verification (read+write works) was validated manually |
+| RG-135 | Human visual confirmation pre-release gate | `PENDING` | Automated dual-engine observations (RG-131) prove what tools see; they cannot prove what a human sees. RG-135 requires a reviewer to visually inspect every governed fixture and record per-dimension confirmations (reopen, rotation, visual fidelity, form visibility, text readability) in the SwiftUI Human Review Panel (Workspace ▸ Human Review Panel…). Confirmations bind to the fixture's current SHA-256 — changed bytes invalidate prior confirmations as stale. Gate statuses: `fail` (reviewer recorded a failure on current bytes — blocks CI), `pending` (coverage incomplete — fails closed; advisory in CI, blocking at release), `pass` (all fixtures confirmed against current bytes — required before any version bump). CI step `Human review gate (RG-135)` validates the artifact pair and uploads it as a workflow artifact; the ledger persists at `benchmark/results/human-visual-confirmation/human-review-ledger.json` and the report at `human-review-gate-report.json`. Current state: 0/38 confirmed — every fixture requires a reviewer pass before release. | `PENDING` | `HumanVisualConfirmationStore` (Sources/PDFEditorCore/HumanVisualConfirmation.swift) evaluates the gate from the persisted ledger bound to `governed-corpus-manifest.json` digests; SwiftUI panel at Sources/PDFEditorApp/HumanReviewPanelView.swift records entries; 13 tests in `HumanVisualConfirmationTests` cover fail-closed semantics, stale-digest invalidation, latest-wins, and artifact persistence |
 | RG-132 | LayoutV2 family-threshold calibration artifact | `PASS` | Persisted JSON artifact at `benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json` generated by `LayoutFingerprintThresholdCalibrationTests`. Schema `pdf-editor.layout-v2-family-threshold-calibration` v1.0. Corpus: 44 fixtures, 211 positive pairs, 735 hard-negative pairs. Ratified threshold: 0.90. Evidence: minPositive=0.9057, maxHardNegative=0.9806 (graphics-heavy cluster, documented as known limitation), top non-graphics negative=0.8529. Weights: geometry 0.35, text (30% projection + 70% cell Jaccard) 0.24, field 0.12, annotation 0.05, raster (projection profiles) 0.24, region 0.05. The test regenerates and persists the artifact on every run; CI must fail if the artifact is stale or the gap inverts. Known limitation: 3 graphics-heavy N-family pairs score above 0.90 due to similar raster projection profiles on raster-only pages |
 | RG-130 | Native/browser/companion rejection-ledger oracle | `PARTIAL` | Shared JavaScript and Swift normalizers, source-bound operation lineage, canonical error codes, recovery semantics, unknown-reason abstention, actual companion-host unavailable-capability evidence, and value-minimized comparison report are implemented. The fixture produces 4/6 equivalent comparisons, 2 explicit capability divergences, and 0 unknown comparisons. Universal live-provider emission, pre-source admission failures, and all long-term OCR, text replacement, page, redaction, signature, XFA, PDF/UA, repair, and high-fidelity lanes remain to be wired and measured |
 
@@ -229,6 +230,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | Native and web smoke paths | `PASS` on current evidence |
 | General lossless PDF editing | `NO-GO` |
 | General AcroForm fidelity | `NO-GO` — RG-134 blocks: checkbox 67% (limited) |
+| Human visual confirmation | `NO-GO` — RG-135: 0/38 fixtures human-confirmed (pending) |
 | PDF/UA conformance | `NO-GO` |
 | Unrestricted production release | `NO-GO` |
 
@@ -623,5 +625,39 @@ Documentation is part of completion. A gate is not complete until its implementa
      represent PDFKit limitations, not our code defects, and ratify the
      exclusion with reviewer approval.
 - **Evidence:** Derived from RG-133 evidence; no additional files.
+
+### RG-135: Human visual confirmation pre-release gate
+
+- **Scope:** No version bump is permitted while any governed fixture lacks a
+  human visual confirmation bound to its current bytes, or while any fixture
+  carries a reviewer-recorded failure. This gate closes the gap RG-131 names
+  explicitly: automated dual-engine observations are tool evidence, not
+  human-visible proof.
+- **Workflow:** A reviewer opens Workspace ▸ Human Review Panel… in the app,
+  selects each governed fixture, inspects the rendered document in the
+  embedded PDFKit view, records per-dimension verdicts (reopen, rotation,
+  visual fidelity, form visibility, text readability) plus reviewer identity
+  and notes, and records the confirmation. Entries persist to
+  `benchmark/results/human-visual-confirmation/human-review-ledger.json`.
+- **Required evidence:** Gate report at
+  `benchmark/results/human-visual-confirmation/human-review-gate-report.json`
+  (schema `pdf-editor.human-review-gate` v1.0) with status `pass`:
+  every manifest fixture confirmed with complete per-dimension verdicts
+  against its current SHA-256. Both artifacts are uploaded as CI workflow
+  artifacts by the `Human review gate (RG-135)` step.
+- **Current evidence:** `PENDING` — 0/38 fixtures confirmed. The ledger is
+  empty; all 38 governed fixtures require a reviewer pass. CI treats pending
+  as advisory (no human on runners) but a reviewer-recorded failure bound to
+  current bytes blocks CI immediately.
+- **Truth taxonomy (§2):** A confirmation is `Verified` only when its stored
+  digest equals the fixture's current digest; changed bytes demote the entry
+  to `stale`, and stale coverage holds the gate at `pending` (fail-closed).
+- **Disposition:** `NO-GO` for release until status reaches `pass`.
+- **Falsifier:** A version bump is tagged while the RG-135 gate report shows
+  anything other than `pass`, or a confirmed fixture's bytes change without a
+  re-review before the bump.
+- **Evidence files:** `benchmark/results/human-visual-confirmation/human-review-ledger.json`,
+  `benchmark/results/human-visual-confirmation/human-review-gate-report.json`,
+  `Tests/PDFEditorCoreTests/HumanVisualConfirmationTests.swift` (13 tests).
 
 [read_files: showing lines 590-620 of 620]

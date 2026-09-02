@@ -87,6 +87,7 @@ public struct ContentView: View {
   @State private var isVersionComparePresented = false
   @State private var isGovernanceDashboardPresented = false
   @State private var isCompanionHealthPresented = false
+  @State private var isHumanReviewPresented = false
   // Apple Design §13: haptic trigger tokens
   @State private var hapticNew = UUID()
   @State private var hapticOpen = UUID()
@@ -185,6 +186,10 @@ public struct ContentView: View {
       }
       .sheet(isPresented: $isGovernanceDashboardPresented) {
         GovernanceDashboardView(engine: governanceEngine)
+          .transition(.scale(scale: 0.96).combined(with: .opacity))
+      }
+      .sheet(isPresented: $isHumanReviewPresented) {
+        HumanReviewPanelView()
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $isCompanionHealthPresented) {
@@ -488,11 +493,18 @@ public struct ContentView: View {
           isCompanionHealthPresented = true
         }
         .help("Provider status, egress connections, and bridge log")
+
+        Divider()
+
+        Button("Human Review Panel…", systemImage: "eye") {
+          isHumanReviewPresented = true
+        }
+        .help("Record human visual confirmations for governed fixtures (RG-135)")
       } label: {
         Label("Workspace", systemImage: "rectangle.3.group")
       }
       .accessibilityLabel("Workspace tools")
-      .help("Document browser, version history, governance, and companion health")
+      .help("Document browser, version history, governance, companion health, and human review")
     }
 
     ToolbarItemGroup(placement: .secondaryAction) {

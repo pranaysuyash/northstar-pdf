@@ -119,6 +119,67 @@ jobs:
           print(f'AcroForm parity gate passed (checkbox: {decision}, round-trip={rt_rate:.0%}).')
           PY
 
+      # RG-135: human visual confirmation gate. CI has no human reviewer, so
+      # this step validates the ledger/gate-report artifacts produced by the
+      # reviewer panel and enforces what can be automated:
+      #   - schema integrity of both artifacts
+      #   - status 'fail' (a reviewer recorded a failure on current bytes) blocks
+      #   - status 'pending' (coverage incomplete) is advisory in CI; the
+      #     release disposition (docs/release-gates.md RG-135) requires 'pass'
+      #     before version bumps
+      - name: Human review gate (RG-135)
+        run: |
+          swift test --filter HumanVisualConfirmation 2>&1
+          python3 - <<'PY'
+          import json, sys, pathlib
+
+          report_path = pathlib.Path('benchmark/results/human-visual-confirmation/human-review-gate-report.json')
+          ledger_path = pathlib.Path('benchmark/results/human-visual-confirmation/human-review-ledger.json')
+
+          # Both artifacts must exist (the test suite writes them via writeGateReport).
+          if not report_path.exists():
+              print('::error::RG-135 human-review gate report not found')
+              sys.exit(1)
+          if not ledger_path.exists():
+              print('::error::RG-135 human-review ledger not found')
+              sys.exit(1)
+
+          report = json.load(open(report_path))
+          if report.get('schema') != 'pdf-editor.human-review-gate':
+              print(f"::error::RG-135 unexpected gate-report schema: {report.get('schema')}")
+              sys.exit(1)
+
+          ledger = json.load(open(ledger_path))
+          if ledger.get('schema') != 'pdf-editor.human-visual-confirmation':
+              print(f"::error::RG-135 unexpected ledger schema: {ledger.get('schema')}")
+              sys.exit(1)
+
+          total = report.get('totalFixtures', 0)
+          confirmed = report.get('confirmedCount', 0)
+          status = report.get('status', '')
+          print(f"RG-135 gate: {status} ({confirmed}/{total} human-confirmed)")
+
+          if status == 'fail':
+              failed = report.get('failedFixtures', [])
+              print(f"::error::RG-135: reviewer recorded failures on current bytes: {', '.join(failed)}")
+              sys.exit(1)
+          if status == 'pending':
+              pending = report.get('pendingFixtures', [])
+              stale = report.get('staleFixtures', [])
+              print(f"::warning::RG-135 pending: {len(pending)} fixture(s) unreviewed, {len(stale)} stale (release requires pass per docs/release-gates.md RG-135)")
+          print('Human review gate (RG-135) satisfied for CI.')
+          PY
+
+      - name: Upload human-review artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: human-visual-confirmation
+          path: |
+            benchmark/results/human-visual-confirmation/human-review-ledger.json
+            benchmark/results/human-visual-confirmation/human-review-gate-report.json
+          if-no-files-found: error
+
       # Static artifact validation: the Swift test suite regenerates the
       # persisted false-positive report. Verify it exists and passes.
       - name: False-positive report gate

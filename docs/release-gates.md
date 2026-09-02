@@ -174,6 +174,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-131 | Control-viewer observation pre-release gate | `PASS` | **Expanded corpus delivered 2026-09-01:** 25 fixtures across 10 document classes (form, scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, geometry, navigation, text-only, layout, graphics). Manifest-driven (`governed-corpus-manifest.json`) with per-class representative fixtures. `ControlViewerObservation.observeCorpus()` produces a `CorpusObservationReport` with 16 observations per fixture (5 PDFKit + 5 Poppler + 5 DualEngine + 1 human visual confirmation). **Full dual-engine verification:** PDFKit and Poppler both observe all 5 dimensions; DualEngine records agreement; capability gaps (Poppler can't open encrypted/malformed) are classified as advisory, not failures. **Gate logic:** PDFKit opens and passes → PASS; neither viewer opens a known fixture → PASS (expected rejection); Poppler-only path → PASS; otherwise → FAIL. All 25 fixtures pass. Artifact persisted at `control-viewer-gate-report.json`. Remaining: human visual confirmation workflow, broader real-world corpus |
 | RG-134 | AcroForm parity release blocker | `PARTIAL` | Version bumps are blocked while checkbox confidence is below production-ready (≥90% round-trip). Current state: checkbox is 67% (limited) on 9 fixtures — 3 PDFKit-specific failures. The release disposition is updated to reflect this blocker. Checkbox must reach production-ready confidence (at least 9/9 fixtures passing) before any version bump is permitted. Alternatively, the 3 failing fixtures must be classified as known-excluded (with explicit documented rationale) and the exclusion ratified by a reviewer. Wire: `docs/release-gates.md` RG-134 blocks `Current disposition > Feature A bounded reader/navigation > GO`. | `PARTIAL` | `AcroFormParityExperiment` runs against 9 corpus fixtures (public-sample-form, contract-parity, semantic-parity, diverse-layout-corpus, pdfkit-widgets, compressed-acroform, hybrid-text-raster-form) and produces a persisted JSON gate report at `benchmark/results/acroform-parity/acroform-parity-gate-report.json`. Schema `pdf-editor.acroform-parity-experiment` v1.0. **Write-reopen-read round-trip implemented** for all field types across PDFKit (native), PDF.js (browser), and qpdf (CLI) providers. Results: **checkbox** limited (67% confidence — 6/9 fixtures round-trip; 3 non-synthetic PDFs fail due to PDFKit save/reopen limitation for specific widget encodings); **choice** production-ready (100% confidence, 9/9 round-trip); **text** production-ready (100% confidence, 9/9 round-trip); **radio** unsupported (no radio fields exist in the corpus). Cross-provider agreement: 1.0 for all tested types. Ghost fields: 0. CI gate accepts checkbox at limited confidence (≥50%). Known limitation: 3 PDFKit-specific checkbox round-trip failures are a **Verified** PDFKit limitation, not a code defect — synthetic/producer-reencode variants all pass. Radio round-trip is untested due to corpus absence; functional verification (read+write works) was validated manually |
 | RG-135 | Human visual confirmation pre-release gate | `PENDING` | Automated dual-engine observations (RG-131) prove what tools see; they cannot prove what a human sees. RG-135 requires a reviewer to visually inspect every governed fixture and record per-dimension confirmations (reopen, rotation, visual fidelity, form visibility, text readability) in the SwiftUI Human Review Panel (Workspace ▸ Human Review Panel…). Confirmations bind to the fixture's current SHA-256 — changed bytes invalidate prior confirmations as stale. Gate statuses: `fail` (reviewer recorded a failure on current bytes — blocks CI), `pending` (coverage incomplete — fails closed; advisory in CI, blocking at release), `pass` (all fixtures confirmed against current bytes — required before any version bump). CI step `Human review gate (RG-135)` validates the artifact pair and uploads it as a workflow artifact; the ledger persists at `benchmark/results/human-visual-confirmation/human-review-ledger.json` and the report at `human-review-gate-report.json`. Current state: 0/38 confirmed — every fixture requires a reviewer pass before release. | `PENDING` | `HumanVisualConfirmationStore` (Sources/PDFEditorCore/HumanVisualConfirmation.swift) evaluates the gate from the persisted ledger bound to `governed-corpus-manifest.json` digests; SwiftUI panel at Sources/PDFEditorApp/HumanReviewPanelView.swift records entries; 13 tests in `HumanVisualConfirmationTests` cover fail-closed semantics, stale-digest invalidation, latest-wins, and artifact persistence |
+| RG-136 | Cross-provider OCR WER regression gate | `PASS` | Every push runs `benchmark/compare_ocr_wer.py --gate` (Tesseract + Apple Vision) against the persisted baseline; fails on WER regression beyond baseline+0.05 tolerance or above the 0.10 absolute per-provider threshold. Baseline (Observed 2026-09-02, 8 fixtures): Tesseract avg WER 0.002, Vision 0.000. PaddleOCR/Marker absence is recorded as `not_ran` provenance, never a false pass; a gated provider returning only engine errors fails the gate; zero gated providers yields `skipped` (warning). Swift parity layer `OCRWerGateTests` (11 tests) mirrors the decision logic and validates the baseline against real corpus fixtures. Artifacts: `benchmark/results/ocr-corpus/ocr-wer-baseline.json` (schema pdf-editor.ocr-wer-baseline v1.0), `ocr-wer-gate-report.json` (schema pdf-editor.ocr-wer-gate v1.0), uploaded as CI workflow artifacts. Re-baselining is explicit via `--update-baseline` and auditable in git history. | `PASS` | Gate runner `benchmark/compare_ocr_wer.py` (`--gate`, `--update-baseline`, `--providers`); thresholds derived from measured evidence in `docs/audits/ocr-cross-provider-benchmark-2026-09-01.md`; CI step `OCR WER regression gate (RG-136)` builds PDFVisionOCRCLI and uploads artifacts |
 | RG-132 | LayoutV2 family-threshold calibration artifact | `PASS` | Persisted JSON artifact at `benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json` generated by `LayoutFingerprintThresholdCalibrationTests`. Schema `pdf-editor.layout-v2-family-threshold-calibration` v1.0. Corpus: 44 fixtures, 211 positive pairs, 735 hard-negative pairs. Ratified threshold: 0.90. Evidence: minPositive=0.9057, maxHardNegative=0.9806 (graphics-heavy cluster, documented as known limitation), top non-graphics negative=0.8529. Weights: geometry 0.35, text (30% projection + 70% cell Jaccard) 0.24, field 0.12, annotation 0.05, raster (projection profiles) 0.24, region 0.05. The test regenerates and persists the artifact on every run; CI must fail if the artifact is stale or the gap inverts. Known limitation: 3 graphics-heavy N-family pairs score above 0.90 due to similar raster projection profiles on raster-only pages |
 | RG-130 | Native/browser/companion rejection-ledger oracle | `PARTIAL` | Shared JavaScript and Swift normalizers, source-bound operation lineage, canonical error codes, recovery semantics, unknown-reason abstention, actual companion-host unavailable-capability evidence, and value-minimized comparison report are implemented. The fixture produces 4/6 equivalent comparisons, 2 explicit capability divergences, and 0 unknown comparisons. Universal live-provider emission, pre-source admission failures, and all long-term OCR, text replacement, page, redaction, signature, XFA, PDF/UA, repair, and high-fidelity lanes remain to be wired and measured |
 
@@ -231,6 +232,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | General lossless PDF editing | `NO-GO` |
 | General AcroForm fidelity | `NO-GO` — RG-134 blocks: checkbox 67% (limited) |
 | Human visual confirmation | `NO-GO` — RG-135: 0/38 fixtures human-confirmed (pending) |
+| Cross-provider OCR quality | `PASS` — RG-136: Tesseract avg WER 0.002, Vision 0.000 vs baseline (tolerance ±0.05, threshold 0.10) |
 | PDF/UA conformance | `NO-GO` |
 | Unrestricted production release | `NO-GO` |
 
@@ -659,5 +661,40 @@ Documentation is part of completion. A gate is not complete until its implementa
 - **Evidence files:** `benchmark/results/human-visual-confirmation/human-review-ledger.json`,
   `benchmark/results/human-visual-confirmation/human-review-gate-report.json`,
   `Tests/PDFEditorCoreTests/HumanVisualConfirmationTests.swift` (13 tests).
+
+### RG-136: Cross-provider OCR WER regression gate
+
+- **Scope:** Every push runs the cross-provider OCR benchmark
+  (`benchmark/compare_ocr_wer.py --gate`) against the persisted baseline and
+  fails when a gated provider's average WER regresses beyond the baseline by
+  more than 0.05 (absorbing renderer nondeterminism) or exceeds its absolute
+  threshold (0.10 for Tesseract 5.5.0 and Apple Vision, derived from
+  measured 0.0–0.019 and 0.0 respectively — see
+  `docs/audits/ocr-cross-provider-benchmark-2026-09-01.md`).
+- **Baseline (Observed 2026-09-02, 8 fixtures):** Tesseract 5.5.0 avg WER
+  0.002; Apple Vision avg WER 0.000. Schema `pdf-editor.ocr-wer-baseline`
+  v1.0 at `benchmark/results/ocr-corpus/ocr-wer-baseline.json`; gate report
+  at `ocr-wer-gate-report.json` (schema `pdf-editor.ocr-wer-gate` v1.0).
+  Re-baselining is explicit (`--update-baseline`) and auditable in git.
+- **Provider provenance, never false passes:** PaddleOCR and Marker are
+  heavy optional dependencies; when absent from a session they are recorded
+  as `not_ran` provenance in the gate report. A gated provider that ran and
+  produced only engine errors fails the gate. A session where no gated
+  provider ran yields `skipped` (warning), never a silent pass.
+- **Swift parity layer:** `OCRWerGateTests` (11 tests) mirrors the
+  regression-decision logic in Swift (thresholds, tolerance, outcomes) and
+  validates the baseline artifact against the real corpus — a baseline
+  referencing missing fixtures or ERROR rows cannot gate CI.
+- **Disposition:** `PASS` for CI. This gate is advisory for release
+  disposition on its own but its artifacts feed RG-133/134-adjacent OCR
+  capability claims.
+- **Falsifier:** A push where Tesseract or Vision WER exceeds baseline +
+  tolerance or the 0.10 threshold while the gate reports pass; or the
+  baseline artifact drifting from the corpus it claims to measure.
+- **Evidence files:** `benchmark/compare_ocr_wer.py` (gate runner),
+  `benchmark/results/ocr-corpus/ocr-wer-baseline.json`,
+  `benchmark/results/ocr-corpus/ocr-wer-gate-report.json`,
+  `Tests/PDFEditorCoreTests/OCRWerGateTests.swift`,
+  CI step `OCR WER regression gate (RG-136)`.
 
 [read_files: showing lines 590-620 of 620]

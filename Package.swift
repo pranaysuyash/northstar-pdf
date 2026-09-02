@@ -45,6 +45,10 @@ let package = Package(
             targets: ["PDFOCRBenchmark"]
         ),
         .executable(
+            name: "PDFVisionOCRCLI",
+            targets: ["PDFVisionOCRCLI"]
+        ),
+        .executable(
             name: "PDFTextRunOCRBenchmark",
             targets: ["PDFTextRunOCRBenchmark"]
         ),
@@ -88,6 +92,9 @@ let package = Package(
         .executableTarget(
             name: "PDFOCRBenchmark",
             dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFVisionOCRCLI"
         ),
         .executableTarget(
             name: "PDFTextRunOCRBenchmark",

@@ -180,6 +180,31 @@ jobs:
             benchmark/results/human-visual-confirmation/human-review-gate-report.json
           if-no-files-found: error
 
+      # RG-136: cross-provider OCR WER regression gate. Runs the benchmark
+      # (Tesseract + Apple Vision; PaddleOCR/Marker are heavy optional deps —
+      # their absence is recorded as provenance, never a false pass) against
+      # the persisted baseline and fails on WER regression beyond tolerance
+      # or above the absolute per-provider threshold.
+      - name: OCR WER regression gate (RG-136)
+        run: |
+          swift build --product PDFVisionOCRCLI
+          swift test --filter OCRWerGate 2>&1
+          # tesseract is preinstalled on macos-15 images; .venv is gitignored.
+          if [ ! -x .venv/bin/python ]; then python3 -m venv .venv; fi
+          .venv/bin/pip install --quiet pytesseract pillow || true
+          .venv/bin/python benchmark/compare_ocr_wer.py --gate --providers "Tesseract,Vision"
+
+      - name: Upload OCR WER gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ocr-wer-gate
+          path: |
+            benchmark/results/ocr-corpus/ocr-wer-baseline.json
+            benchmark/results/ocr-corpus/ocr-wer-gate-report.json
+            benchmark/results/ocr-corpus/cross-provider-wer-report.json
+          if-no-files-found: warn
+
       # Static artifact validation: the Swift test suite regenerates the
       # persisted false-positive report. Verify it exists and passes.
       - name: False-positive report gate

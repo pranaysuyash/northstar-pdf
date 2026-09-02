@@ -5,10 +5,12 @@ Cross-provider OCR Word Error Rate (WER) benchmark.
 Providers:
   1. Tesseract 5.5.0 (via pytesseract)
   2. PaddleOCR PP-OCRv6 (via paddleocr)
-  3. Apple Vision framework (via PDFOCRBenchmark Swift CLI)
+  3. Marker / Surya (via marker_wrapper.py)
+  4. Apple Vision framework (via pdf-vision-ocr Swift CLI)
 
 Usage:
-  .venv/bin/python benchmark/compare_ocr_wer.py
+  .venv/bin/python benchmark/compare_ocr_wer.py            # benchmark run
+  .venv/bin/python benchmark/compare_ocr_wer.py --gate     # CI gate vs baseline
 
 Ground truth fixtures live in benchmark/results/ocr-corpus/*.pdf
 with matching *.gt.txt files.
@@ -20,8 +22,50 @@ import sys
 import time
 import subprocess
 import json
+import argparse
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
+
+# ---------------------------------------------------------------------------
+# CI gate configuration (RG-136)
+# ---------------------------------------------------------------------------
+
+# Per-provider maximum tolerated average WER. A provider missing from this
+# map is not gated (provenance is still recorded in the artifact).
+GATE_WER_THRESHOLDS = {
+    "Tesseract 5.5.0": 0.10,     # clean-print baseline: measured 0.0-0.019
+    "Apple Vision": 0.10,        # measured 0.0 on all ground-truth fixtures
+}
+
+# PaddleOCR's multi-column reading-order confusion (WER 0.73 measured on
+# multi-column) makes its corpus average dominated by layout, not engine
+# quality. These per-fixture targets are recorded in the gate report as
+# ADVISORY provenance (not enforced); enforcement lands together with
+# reading-order post-processing, otherwise the gate would block on a known,
+# documented layout limitation rather than a regression.
+GATE_WER_THRESHOLDS_PER_FIXTURE = {
+    "PaddleOCR PP-OCRv6": {
+        "clean-english": 0.10,
+        "printed-scan": 0.20,
+    }
+}
+
+# Absolute WER regression (in points) vs baseline tolerated before failing,
+# to absorb renderer/anti-aliasing nondeterminism between runs.
+GATE_REGRESSION_TOLERANCE = 0.05
+
+# Minimum number of gate-thresholded providers that must actually run in a
+# session for the gate verdict to count. Below this, the gate is 'skipped'.
+GATE_MIN_PROVIDERS = 1
+
+BASELINE_ARTIFACT = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "results", "ocr-corpus", "ocr-wer-baseline.json",
+)
+GATE_REPORT = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "results", "ocr-corpus", "ocr-wer-gate-report.json",
+)
 
 # ---------------------------------------------------------------------------
 # Levenshtein distance for WER/CER
@@ -250,9 +294,11 @@ class VisionProvider:
     name = "Apple Vision"
     
     def _find_cli(self) -> Optional[str]:
-        """Find the pdf-vision-ocr binary."""
+        """Find the pdf-vision-ocr binary (SwiftPM product/target names)."""
         candidates = [
             "/tmp/pdf-vision-ocr",
+            ".build/debug/PDFVisionOCRCLI",
+            ".build/release/PDFVisionOCRCLI",
             ".build/debug/pdf-vision-ocr",
             ".build/release/pdf-vision-ocr",
         ]
@@ -330,7 +376,13 @@ def find_fixtures(corpus_dir: str) -> List[Tuple[str, str, str]]:
     return fixtures
 
 
-def run_benchmark(corpus_dir: str):
+def run_benchmark(corpus_dir: str, provider_filter: Optional[str] = None):
+    """Run the full cross-provider OCR benchmark.
+
+    provider_filter: optional substring match on provider names (e.g.
+    'Tesseract,Vision') to limit the run — used for fast baseline updates
+    when heavy providers are not needed.
+    """
     """Run the full cross-provider OCR benchmark."""
     fixtures = find_fixtures(corpus_dir)
     if not fixtures:
@@ -377,7 +429,14 @@ def run_benchmark(corpus_dir: str):
     if not providers:
         print("No providers available!")
         sys.exit(1)
-    
+
+    if provider_filter:
+        needles = [n.strip().lower() for n in provider_filter.split(",") if n.strip()]
+        providers = [p for p in providers if any(n in p.name.lower() for n in needles)]
+        if not providers:
+            print(f"No providers match filter: {provider_filter}")
+            sys.exit(1)
+
     print(f"\nRunning {len(providers)} providers × {len(fixtures)} fixtures...\n")
     
     # Run benchmark
@@ -503,6 +562,169 @@ def run_benchmark(corpus_dir: str):
     return results
 
 
+# ---------------------------------------------------------------------------
+# RG-136 CI gate: fail on WER regression vs persisted baseline
+# ---------------------------------------------------------------------------
+
+def write_baseline(results: List[dict], fixture_count: int, corpus_dir: str) -> None:
+    """Persist the current run as the gate baseline (explicit, auditable act)."""
+    baseline = {
+        "schema": "pdf-editor.ocr-wer-baseline",
+        "version": "1.0",
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "fixture_count": fixture_count,
+        "results": results,
+        "summary": _summary_for(results),
+    }
+    with open(BASELINE_ARTIFACT, "w") as f:
+        json.dump(baseline, f, indent=2, sort_keys=True)
+    print(f"Baseline written to {BASELINE_ARTIFACT}")
+
+
+def _summary_for(results: List[dict]) -> dict:
+    stats = {}
+    for r in results:
+        stats.setdefault(r["provider"], []).append(r["wer"])
+    return {
+        pname: {"avg_wer": sum(w) / len(w)}
+        for pname, w in stats.items()
+    }
+
+
+def evaluate_gate(
+    current: List[dict],
+    baseline: Optional[dict],
+    ran_providers: List[str],
+) -> dict:
+    """Compare the current run against the baseline and per-provider thresholds.
+
+    Gate outcomes per provider:
+      - 'regression' — avg WER worse than baseline by more than tolerance, or
+        worse than its absolute threshold
+      - 'error' — a gated provider produced only ERROR rows (engine broken)
+      - 'pass' — within baseline tolerance and absolute threshold
+      - 'not_ran' — provider configured but absent from this session (skipped)
+
+    Overall verdict: 'fail' if any gated provider regressed or errored and at
+    least one gated provider ran; 'skipped' if no gated provider ran; else
+    'pass'. Missing (skipped) providers never fail the gate — they'd make CI
+    hostage to optional heavy deps — but they are recorded as provenance.
+    """
+    gated = sorted(GATE_WER_THRESHOLDS.keys())
+    checks = []
+    for pname in gated:
+        threshold = GATE_WER_THRESHOLDS[pname]
+        cur_rows = [r for r in current if r["provider"] == pname]
+        if not cur_rows:
+            checks.append({"provider": pname, "outcome": "not_ran", "threshold": threshold})
+            continue
+        if all(r["status"].startswith("ERROR") for r in cur_rows):
+            checks.append({
+                "provider": pname, "outcome": "error", "threshold": threshold,
+                "detail": cur_rows[0]["status"][:120],
+            })
+            continue
+        cur_avg = sum(r["wer"] for r in cur_rows) / len(cur_rows)
+        base_avg = None
+        if baseline:
+            base_rows = [r for r in baseline.get("results", []) if r["provider"] == pname]
+            if base_rows:
+                base_avg = sum(r["wer"] for r in base_rows) / len(base_rows)
+        regressed_vs_baseline = (
+            base_avg is not None
+            and cur_avg > base_avg + GATE_REGRESSION_TOLERANCE
+        )
+        over_threshold = cur_avg > threshold
+        checks.append({
+            "provider": pname,
+            "outcome": "regression" if (regressed_vs_baseline or over_threshold) else "pass",
+            "threshold": threshold,
+            "avg_wer": cur_avg,
+            "baseline_avg_wer": base_avg,
+            "regression_tolerance": GATE_REGRESSION_TOLERANCE,
+            "regressed_vs_baseline": regressed_vs_baseline,
+            "over_absolute_threshold": over_threshold,
+            "fixture_count": len(cur_rows),
+        })
+
+    gated_ran = [c for c in checks if c["outcome"] not in ("not_ran",)]
+    if not gated_ran:
+        verdict = "skipped"
+    elif any(c["outcome"] in ("regression", "error") for c in gated_ran):
+        verdict = "fail"
+    else:
+        verdict = "pass"
+
+    return {
+        "schema": "pdf-editor.ocr-wer-gate",
+        "version": "1.0",
+        "verdict": verdict,
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "baseline_present": baseline is not None,
+        "ran_providers": ran_providers,
+        "gated_providers": gated,
+        "checks": checks,
+        "regression_tolerance": GATE_REGRESSION_TOLERANCE,
+        "per_fixture_thresholds": GATE_WER_THRESHOLDS_PER_FIXTURE,
+    }
+
+
+def run_gate(corpus_dir: str, update_baseline: bool = False, provider_filter: Optional[str] = None) -> int:
+    """Run the benchmark, evaluate the gate, persist the report, return exit code."""
+    baseline = None
+    if os.path.exists(BASELINE_ARTIFACT):
+        with open(BASELINE_ARTIFACT) as f:
+            baseline = json.load(f)
+
+    results = run_benchmark(corpus_dir, provider_filter=provider_filter)
+    ran_providers = sorted(set(r["provider"] for r in results))
+
+    if update_baseline:
+        write_baseline(results, len(find_fixtures(corpus_dir)), corpus_dir)
+        baseline = json.load(open(BASELINE_ARTIFACT))
+
+    report = evaluate_gate(results, baseline, ran_providers)
+    with open(GATE_REPORT, "w") as f:
+        json.dump(report, f, indent=2, sort_keys=True)
+
+    print(f"\n{'=' * 80}")
+    print(f"RG-136 OCR WER GATE: {report['verdict'].upper()}")
+    for c in report["checks"]:
+        if c["outcome"] == "pass":
+            print(f"  ✅ {c['provider']}: avg WER {c['avg_wer']:.3f} (threshold {c['threshold']:.2f})")
+        elif c["outcome"] == "regression":
+            print(f"  ❌ {c['provider']}: avg WER {c['avg_wer']:.3f} vs baseline "
+                  f"{c['baseline_avg_wer'] if c['baseline_avg_wer'] is not None else 'n/a'} "
+                  f"(threshold {c['threshold']:.2f})")
+        elif c["outcome"] == "error":
+            print(f"  ❌ {c['provider']}: engine error — {c.get('detail', '')}")
+        else:
+            print(f"  ⏭️  {c['provider']}: not ran (skipped) — provenance recorded")
+    print(f"Gate report: {GATE_REPORT}")
+
+    if report["verdict"] == "fail":
+        print("::error::RG-136 OCR WER gate failed — WER regression detected")
+        return 1
+    if report["verdict"] == "skipped":
+        print("::warning::RG-136 gate skipped — no gated provider ran")
+        return 0
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Cross-provider OCR WER benchmark + CI gate")
+    parser.add_argument("--gate", action="store_true", help="evaluate against baseline and exit nonzero on regression")
+    parser.add_argument("--update-baseline", action="store_true", help="(with --gate) persist current run as the new baseline")
+    parser.add_argument("--corpus-dir", default=os.path.join(os.path.dirname(__file__), "results", "ocr-corpus"))
+    parser.add_argument("--providers", default="", help="comma-separated provider name filter (substring match)")
+    args = parser.parse_args()
+
+    corpus_dir = args.corpus_dir
+    if args.gate:
+        return run_gate(corpus_dir, update_baseline=args.update_baseline, provider_filter=args.providers or None)
+    run_benchmark(corpus_dir, provider_filter=args.providers or None)
+    return 0
+
+
 if __name__ == "__main__":
-    corpus_dir = os.path.join(os.path.dirname(__file__), "results", "ocr-corpus")
-    run_benchmark(corpus_dir)
+    sys.exit(main())

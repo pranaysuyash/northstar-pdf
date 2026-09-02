@@ -1,0 +1,6350 @@
+{
+  "dataset": "DocLayNet v1.1",
+  "document_category_distribution": {
+    "financial_reports": 100
+  },
+  "generated_at": "2026-09-02T10:16:54Z",
+  "ground_truth_class_distribution": {
+    "Caption": 50,
+    "Footnote": 2,
+    "List-item": 61,
+    "Page-footer": 96,
+    "Page-header": 56,
+    "Picture": 131,
+    "Section-header": 189,
+    "Table": 78,
+    "Text": 642,
+    "Title": 2
+  },
+  "ground_truth_region_count": 1307,
+  "overall_metrics": {
+    "f1": 1.0,
+    "precision": 1.0,
+    "recall": 1.0
+  },
+  "overall_totals": {
+    "false_negatives": 0,
+    "false_positives": 0,
+    "true_positives": 1307
+  },
+  "pages_evaluated": 100,
+  "per_class_metrics": {
+    "Caption": {
+      "f1": 0.04813182256340151,
+      "precision": 0.028874718934870737,
+      "recall": 0.1775
+    },
+    "Footnote": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "List-item": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "Page-footer": {
+      "f1": 0.6804920634920635,
+      "precision": 0.6156904761904761,
+      "recall": 0.845
+    },
+    "Page-header": {
+      "f1": 0.032,
+      "precision": 0.04,
+      "recall": 0.03111111111111111
+    },
+    "Picture": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "Section-header": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "Table": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "Text": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    },
+    "Title": {
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0
+    }
+  },
+  "per_page_results": [
+    {
+      "gt_region_count": 8,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 8
+      },
+      "page_id": "doclaynet-test-00000",
+      "pred_region_count": 8
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00001",
+      "pred_region_count": 10
+    },
+    {
+      "gt_region_count": 16,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.5,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 12,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 16
+      },
+      "page_id": "doclaynet-test-00002",
+      "pred_region_count": 16
+    },
+    {
+      "gt_region_count": 16,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Footnote": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 10,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 16
+      },
+      "page_id": "doclaynet-test-00003",
+      "pred_region_count": 16
+    },
+    {
+      "gt_region_count": 17,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 15,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 17
+      },
+      "page_id": "doclaynet-test-00004",
+      "pred_region_count": 17
+    },
+    {
+      "gt_region_count": 12,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 11,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 12
+      },
+      "page_id": "doclaynet-test-00005",
+      "pred_region_count": 12
+    },
+    {
+      "gt_region_count": 18,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 15,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 18
+      },
+      "page_id": "doclaynet-test-00006",
+      "pred_region_count": 18
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 6,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00007",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 21,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 19,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 21
+      },
+      "page_id": "doclaynet-test-00008",
+      "pred_region_count": 21
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 10,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00009",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 12,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 12
+      },
+      "page_id": "doclaynet-test-00010",
+      "pred_region_count": 12
+    },
+    {
+      "gt_region_count": 12,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 10,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 12
+      },
+      "page_id": "doclaynet-test-00011",
+      "pred_region_count": 12
+    },
+    {
+      "gt_region_count": 2,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 2
+      },
+      "page_id": "doclaynet-test-00012",
+      "pred_region_count": 2
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00013",
+      "pred_region_count": 10
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00014",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 14,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 11,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 14
+      },
+      "page_id": "doclaynet-test-00015",
+      "pred_region_count": 14
+    },
+    {
+      "gt_region_count": 26,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 21,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.19999999999999998,
+            "fn": 8,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 0.1111111111111111,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 26
+      },
+      "page_id": "doclaynet-test-00016",
+      "pred_region_count": 26
+    },
+    {
+      "gt_region_count": 5,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 5
+      },
+      "page_id": "doclaynet-test-00017",
+      "pred_region_count": 5
+    },
+    {
+      "gt_region_count": 8,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 5,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 8
+      },
+      "page_id": "doclaynet-test-00018",
+      "pred_region_count": 8
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 7,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00019",
+      "pred_region_count": 10
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.33333333333333337,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.2,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00020",
+      "pred_region_count": 10
+    },
+    {
+      "gt_region_count": 12,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 12
+      },
+      "page_id": "doclaynet-test-00021",
+      "pred_region_count": 12
+    },
+    {
+      "gt_region_count": 22,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 18,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.4,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.25,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 22
+      },
+      "page_id": "doclaynet-test-00022",
+      "pred_region_count": 22
+    },
+    {
+      "gt_region_count": 8,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 6,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 8
+      },
+      "page_id": "doclaynet-test-00023",
+      "pred_region_count": 8
+    },
+    {
+      "gt_region_count": 5,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 5
+      },
+      "page_id": "doclaynet-test-00024",
+      "pred_region_count": 5
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00025",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00026",
+      "pred_region_count": 10
+    },
+    {
+      "gt_region_count": 6,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 6
+      },
+      "page_id": "doclaynet-test-00027",
+      "pred_region_count": 6
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00028",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 7,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 7
+      },
+      "page_id": "doclaynet-test-00029",
+      "pred_region_count": 7
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00030",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 7,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00031",
+      "pred_region_count": 10
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00032",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 15,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.5,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 15
+      },
+      "page_id": "doclaynet-test-00033",
+      "pred_region_count": 15
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 7,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00034",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 20,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 15,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 20
+      },
+      "page_id": "doclaynet-test-00035",
+      "pred_region_count": 20
+    },
+    {
+      "gt_region_count": 5,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 5
+      },
+      "page_id": "doclaynet-test-00036",
+      "pred_region_count": 5
+    },
+    {
+      "gt_region_count": 15,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 10,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 15
+      },
+      "page_id": "doclaynet-test-00037",
+      "pred_region_count": 15
+    },
+    {
+      "gt_region_count": 15,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 15
+      },
+      "page_id": "doclaynet-test-00038",
+      "pred_region_count": 15
+    },
+    {
+      "gt_region_count": 17,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Footnote": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 17
+      },
+      "page_id": "doclaynet-test-00039",
+      "pred_region_count": 17
+    },
+    {
+      "gt_region_count": 17,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.5,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 12,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 17
+      },
+      "page_id": "doclaynet-test-00040",
+      "pred_region_count": 17
+    },
+    {
+      "gt_region_count": 14,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 14,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 14
+      },
+      "page_id": "doclaynet-test-00041",
+      "pred_region_count": 14
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00042",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00043",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 12,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 11,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 12
+      },
+      "page_id": "doclaynet-test-00044",
+      "pred_region_count": 12
+    },
+    {
+      "gt_region_count": 5,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.4,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.25,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 5
+      },
+      "page_id": "doclaynet-test-00045",
+      "pred_region_count": 5
+    },
+    {
+      "gt_region_count": 28,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 24,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 13,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 28
+      },
+      "page_id": "doclaynet-test-00046",
+      "pred_region_count": 28
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00047",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 22,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.21052631578947367,
+            "fn": 0,
+            "fp": 15,
+            "precision": 0.11764705882352941,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-footer": {
+            "f1": 0.33333333333333337,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.2,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 22
+      },
+      "page_id": "doclaynet-test-00048",
+      "pred_region_count": 22
+    },
+    {
+      "gt_region_count": 23,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 19,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.5,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 23
+      },
+      "page_id": "doclaynet-test-00049",
+      "pred_region_count": 23
+    },
+    {
+      "gt_region_count": 33,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.5238095238095238,
+            "fn": 0,
+            "fp": 20,
+            "precision": 0.3548387096774194,
+            "recall": 1.0,
+            "tp": 11
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 33
+      },
+      "page_id": "doclaynet-test-00050",
+      "pred_region_count": 33
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00051",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.5,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00052",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 22,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.32,
+            "fn": 0,
+            "fp": 17,
+            "precision": 0.19047619047619047,
+            "recall": 1.0,
+            "tp": 4
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 22
+      },
+      "page_id": "doclaynet-test-00053",
+      "pred_region_count": 22
+    },
+    {
+      "gt_region_count": 17,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 11,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.33333333333333337,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.2,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 17
+      },
+      "page_id": "doclaynet-test-00054",
+      "pred_region_count": 17
+    },
+    {
+      "gt_region_count": 11,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 11
+      },
+      "page_id": "doclaynet-test-00055",
+      "pred_region_count": 11
+    },
+    {
+      "gt_region_count": 5,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.4,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.25,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 5
+      },
+      "page_id": "doclaynet-test-00056",
+      "pred_region_count": 5
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 10,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00057",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.4,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.25,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00058",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 3,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 3
+      },
+      "page_id": "doclaynet-test-00059",
+      "pred_region_count": 3
+    },
+    {
+      "gt_region_count": 3,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 3
+      },
+      "page_id": "doclaynet-test-00060",
+      "pred_region_count": 3
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 6,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00061",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 7,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.8,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 7
+      },
+      "page_id": "doclaynet-test-00062",
+      "pred_region_count": 7
+    },
+    {
+      "gt_region_count": 2,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Page-footer": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 2
+      },
+      "page_id": "doclaynet-test-00063",
+      "pred_region_count": 2
+    },
+    {
+      "gt_region_count": 18,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.33333333333333337,
+            "fn": 0,
+            "fp": 4,
+            "precision": 0.2,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 18
+      },
+      "page_id": "doclaynet-test-00064",
+      "pred_region_count": 18
+    },
+    {
+      "gt_region_count": 17,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 14,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 13,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 17
+      },
+      "page_id": "doclaynet-test-00065",
+      "pred_region_count": 17
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.16666666666666669,
+            "fn": 0,
+            "fp": 10,
+            "precision": 0.09090909090909091,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00066",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 24,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 22,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 21,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 24
+      },
+      "page_id": "doclaynet-test-00067",
+      "pred_region_count": 24
+    },
+    {
+      "gt_region_count": 7,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.8,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.6666666666666666,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 7
+      },
+      "page_id": "doclaynet-test-00068",
+      "pred_region_count": 7
+    },
+    {
+      "gt_region_count": 21,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 17,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 10,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 21
+      },
+      "page_id": "doclaynet-test-00069",
+      "pred_region_count": 21
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00070",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 24,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 19,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.4,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.25,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 24
+      },
+      "page_id": "doclaynet-test-00071",
+      "pred_region_count": 24
+    },
+    {
+      "gt_region_count": 1,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 1
+      },
+      "page_id": "doclaynet-test-00072",
+      "pred_region_count": 1
+    },
+    {
+      "gt_region_count": 8,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.2857142857142857,
+            "fn": 0,
+            "fp": 5,
+            "precision": 0.16666666666666666,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 8
+      },
+      "page_id": "doclaynet-test-00073",
+      "pred_region_count": 8
+    },
+    {
+      "gt_region_count": 16,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.13333333333333333,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.07142857142857142,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 16
+      },
+      "page_id": "doclaynet-test-00074",
+      "pred_region_count": 16
+    },
+    {
+      "gt_region_count": 18,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 14,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.4,
+            "fn": 1,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 0.5,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 18
+      },
+      "page_id": "doclaynet-test-00075",
+      "pred_region_count": 18
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00076",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 8,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 7,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 8
+      },
+      "page_id": "doclaynet-test-00077",
+      "pred_region_count": 8
+    },
+    {
+      "gt_region_count": 21,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.31578947368421056,
+            "fn": 1,
+            "fp": 12,
+            "precision": 0.2,
+            "recall": 0.75,
+            "tp": 3
+          },
+          "Page-footer": {
+            "f1": 0.4,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.25,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 21
+      },
+      "page_id": "doclaynet-test-00078",
+      "pred_region_count": 21
+    },
+    {
+      "gt_region_count": 21,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 18,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 14,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 21
+      },
+      "page_id": "doclaynet-test-00079",
+      "pred_region_count": 21
+    },
+    {
+      "gt_region_count": 4,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 4
+      },
+      "page_id": "doclaynet-test-00080",
+      "pred_region_count": 4
+    },
+    {
+      "gt_region_count": 37,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 30,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 10,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.4444444444444445,
+            "fn": 0,
+            "fp": 5,
+            "precision": 0.2857142857142857,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 19,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 37
+      },
+      "page_id": "doclaynet-test-00081",
+      "pred_region_count": 37
+    },
+    {
+      "gt_region_count": 11,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 10,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 11
+      },
+      "page_id": "doclaynet-test-00082",
+      "pred_region_count": 11
+    },
+    {
+      "gt_region_count": 14,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.3076923076923077,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.18181818181818182,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 14
+      },
+      "page_id": "doclaynet-test-00083",
+      "pred_region_count": 14
+    },
+    {
+      "gt_region_count": 17,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 16,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 17
+      },
+      "page_id": "doclaynet-test-00084",
+      "pred_region_count": 17
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.18181818181818182,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.1,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 7,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00085",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 26,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.07692307692307693,
+            "fn": 0,
+            "fp": 24,
+            "precision": 0.04,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 21,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 26
+      },
+      "page_id": "doclaynet-test-00086",
+      "pred_region_count": 26
+    },
+    {
+      "gt_region_count": 21,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.33333333333333337,
+            "fn": 0,
+            "fp": 16,
+            "precision": 0.2,
+            "recall": 1.0,
+            "tp": 4
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 21
+      },
+      "page_id": "doclaynet-test-00087",
+      "pred_region_count": 21
+    },
+    {
+      "gt_region_count": 9,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 9
+      },
+      "page_id": "doclaynet-test-00088",
+      "pred_region_count": 9
+    },
+    {
+      "gt_region_count": 16,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.5714285714285715,
+            "fn": 0,
+            "fp": 3,
+            "precision": 0.4,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 16
+      },
+      "page_id": "doclaynet-test-00089",
+      "pred_region_count": 16
+    },
+    {
+      "gt_region_count": 15,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 13,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "List-item": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 15
+      },
+      "page_id": "doclaynet-test-00090",
+      "pred_region_count": 15
+    },
+    {
+      "gt_region_count": 12,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.19999999999999998,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.1111111111111111,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 12
+      },
+      "page_id": "doclaynet-test-00091",
+      "pred_region_count": 12
+    },
+    {
+      "gt_region_count": 22,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0909090909090909,
+            "fn": 0,
+            "fp": 20,
+            "precision": 0.047619047619047616,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 13,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 22
+      },
+      "page_id": "doclaynet-test-00092",
+      "pred_region_count": 22
+    },
+    {
+      "gt_region_count": 14,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.2666666666666667,
+            "fn": 0,
+            "fp": 11,
+            "precision": 0.15384615384615385,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 5,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 14
+      },
+      "page_id": "doclaynet-test-00093",
+      "pred_region_count": 14
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 9,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 3,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00094",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 21,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 19,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 11,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 21
+      },
+      "page_id": "doclaynet-test-00095",
+      "pred_region_count": 21
+    },
+    {
+      "gt_region_count": 13,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 13
+      },
+      "page_id": "doclaynet-test-00096",
+      "pred_region_count": 13
+    },
+    {
+      "gt_region_count": 14,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 0.6666666666666666,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 2,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Table": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 9,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 14
+      },
+      "page_id": "doclaynet-test-00097",
+      "pred_region_count": 14
+    },
+    {
+      "gt_region_count": 14,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 12,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 4,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 8,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Title": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 14
+      },
+      "page_id": "doclaynet-test-00098",
+      "pred_region_count": 14
+    },
+    {
+      "gt_region_count": 10,
+      "metrics": {
+        "f1": 1.0,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "per_class": {
+          "Caption": {
+            "f1": 0.19999999999999998,
+            "fn": 0,
+            "fp": 8,
+            "precision": 0.1111111111111111,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Page-footer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "Picture": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Section-header": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "Text": {
+            "f1": 0.0,
+            "fn": 6,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "true_positives": 10
+      },
+      "page_id": "doclaynet-test-00099",
+      "pred_region_count": 10
+    }
+  ],
+  "sample_size": 100,
+  "schema": "pdf-editor.doclaynet-layout-eval",
+  "split": "test",
+  "total_pages_available": 4999,
+  "version": "1.0"
+}

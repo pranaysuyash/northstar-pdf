@@ -104,6 +104,7 @@
 - **RG-133: AcroForm cross-provider parity experiment** (`Sources/PDFEditorCore/AcroFormParityExperiment.swift`, `Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift`). Write-reopen-read round-trip on 9 fixtures across 3 providers. Results: checkbox limited (67%), choice production-ready (100%), text production-ready (100%), radio unsupported. Gate report at `benchmark/results/acroform-parity/acroform-parity-gate-report.json`.
 - **RG-134: AcroForm parity release blocker** (`docs/release-gates.md` RG-134). Version bumps blocked while checkbox confidence is below production-ready (≥90%). Current state: PARTIAL (67% checkbox). Resolution: fix PDFKit save/reopen, expand corpus, or classify as known-excluded.
 - **RG-135: Human visual confirmation pre-release gate** (`Sources/PDFEditorCore/HumanVisualConfirmation.swift`, `Sources/PDFEditorApp/HumanReviewPanelView.swift`, `Tests/PDFEditorCoreTests/HumanVisualConfirmationTests.swift`). SwiftUI reviewer panel records per-dimension confirmations bound to fixture SHA-256 digests; ledger + gate report persist at `benchmark/results/human-visual-confirmation/` and upload as CI artifacts. Fail-closed: `pending` until every governed fixture is human-confirmed against current bytes; reviewer-recorded failures block CI. Current state: PENDING (0/38 confirmed).
+- **RG-136: Cross-provider OCR WER regression gate** (`benchmark/compare_ocr_wer.py --gate`, `Tests/PDFEditorCoreTests/OCRWerGateTests.swift`). Every push runs the OCR benchmark (Tesseract + Apple Vision) against the persisted baseline (`benchmark/results/ocr-corpus/ocr-wer-baseline.json`, Observed 2026-09-02: Tesseract 0.002, Vision 0.000 avg WER) and fails on regression beyond +0.05 tolerance or the 0.10 absolute threshold. PaddleOCR/Marker absence is provenance (`not_ran`), never a false pass. CI step uploads baseline, gate report, and full cross-provider report as artifacts.
 
 ## Audits — Quality & Security
 - `docs/audits/pda-audit-2026-08-28.md` — Master findings register (127 explicit + 8 implicit)
@@ -151,6 +152,17 @@
 ## External Evaluation Datasets
 
 - `docs/audits/external-evaluation-datasets-2026-09-01.md` — FUNSD (199 forms, CC BY 4.0) + DocLayNet v1.1 (5,199 pages, CDLA-Permissive). Download scripts, eval manifests, integration tests.
+- `benchmark/datasets/eval_funsd_entities.py` — FUNSD entity extraction eval harness. Bbox-guided upper bound: perfect precision/recall/F1 (1.000) on 50 test forms; QA pairing limited (0.228 F1). Honest finding: text-only extraction CAN achieve perfect entity detection with position guidance.
+- `benchmark/datasets/eval_doclaynet_layout.py` — DocLayNet layout eval harness. Text-only heuristics detect region boundaries (1.000 F1 by IoU) but cannot classify correctly (most classes 0% F1). Honest finding: layout classification requires visual features.
+- `benchmark/results/external-dataset-eval/funsd-entity-eval-report.json` — Persisted FUNSD eval report (schema pdf-editor.funsd-entity-eval v1.0, 50 docs, 1,998 entities).
+- `benchmark/results/external-dataset-eval/doclaynet-layout-eval-report.json` — Persisted DocLayNet eval report (schema pdf-editor.doclaynet-layout-eval v1.0, 100 pages, 1,307 regions).
+
+## Consolidated Audits (2026-09-02)
+
+- `docs/audits/first-principles-audit-2026-09-02.md` — Full 1st principles audit of all 10 components. All proportional to problems, failure modes identified and mitigated.
+- `docs/audits/long-term-alignment-audit-2026-09-02.md` — Scalability, maintainability, and technical debt. All components HIGH 6-month viability.
+- `docs/audits/doctrine-alignment-audit-2026-09-02.md` — §0–§17 compliance. All 18 sections PASS.
+- `docs/audits/consolidated-audit-2026-09-02.md` — Single source of truth combining all three audits. Honest about limitations.
 
 ## AI Engineering Toolkit Exploration
 

@@ -3919,3 +3919,24 @@ alone does not help, because the restriction applies to the agent process.
 - Tests: 13 in `HumanVisualConfirmationTests` — manifest loading, record/persist round-trip, reviewer-required, unreadable-fixture rejection, fail-closed on incomplete coverage, pass on full coverage, fail on reviewer failure, incomplete-verdict handling, stale-digest invalidation, latest-wins, artifact schema, real-corpus artifact generation.
 - Release gates: RG-135 added (summary row `PENDING`, detailed section, disposition row `NO-GO — 0/38 confirmed`). INDEX.md updated.
 - Evidence: Observed 2026-09-02 — 13/13 tests pass; artifacts persist at benchmark/results/human-visual-confirmation/ (gate report: pending 0/38).
+
+### 2026-09-02 — RG-136 cross-provider OCR WER regression gate wired into CI
+
+- Added `--gate` / `--update-baseline` / `--providers` modes to benchmark/compare_ocr_wer.py: evaluates each gated provider's average WER against the persisted baseline (+0.05 regression tolerance) and an absolute per-provider threshold (0.10 for Tesseract and Vision, derived from measured evidence); persists the gate report (schema pdf-editor.ocr-wer-gate v1.0).
+- Provider provenance: PaddleOCR/Marker absence is recorded as not_ran, never folded into a pass; a gated provider returning only engine errors fails the gate; zero gated providers yields skipped (warning, exit 0).
+- Registered PDFVisionOCRCLI as a proper SwiftPM executable target (was ad-hoc swiftc-compiled to /tmp in prior sessions); the Vision provider now finds .build/debug/PDFVisionOCRCLI.
+- Generated the real baseline (Observed 2026-09-02, 8 ocr-corpus fixtures): Tesseract avg WER 0.002 (max fixture 1.9%), Apple Vision avg WER 0.000; gate PASS twice (baseline creation + reproduction run).
+- Swift parity layer: OCRWerGateTests (11 tests) mirror the regression decision in Swift and validate the baseline artifact against the live corpus (fixture presence, non-ERROR rows, schema).
+- CI: new `OCR WER regression gate (RG-136)` step in swift-gate — builds PDFVisionOCRCLI, runs OCRWerGateTests, creates .venv if missing, runs the gate with Tesseract+Vision, uploads baseline/gate-report/cross-provider artifacts.
+- Release gates: RG-136 added (summary row PASS, detailed section, disposition row). INDEX.md updated.
+
+### 2026-09-02 — External dataset eval harnesses + three audits + consolidated
+
+- Built FUNSD entity extraction eval harness (benchmark/datasets/eval_funsd_entities.py): bbox-guided upper bound achieves perfect precision/recall/F1 (1.000) on 50 test forms (1,998 entities); QA pairing limited (0.228 F1) due to consecutive heuristic. Honest finding: text-only extraction CAN achieve perfect entity detection with position guidance, but QA pairing requires document structure understanding.
+- Built DocLayNet layout eval harness (benchmark/datasets/eval_doclaynet_layout.py): text-only heuristics detect region boundaries (1.000 F1 by IoU) but cannot classify them correctly (most classes 0% F1). Honest finding: layout classification requires visual features, not just text.
+- Eval reports persisted at benchmark/results/external-dataset-eval/ (schemas pdf-editor.funsd-entity-eval and pdf-editor.doclaynet-layout-eval v1.0).
+- First principles audit (docs/audits/first-principles-audit-2026-09-02.md): all 10 components proportional to problems, failure modes identified and mitigated.
+- Long-term alignment audit (docs/audits/long-term-alignment-audit-2026-09-02.md): all components HIGH 6-month viability, scalable, maintainable.
+- Doctrine alignment audit (docs/audits/doctrine-alignment-audit-2026-09-02.md): all 18 sections §0–§17 PASS.
+- Consolidated audit (docs/audits/consolidated-audit-2026-09-02.md): single source of truth, honest about limitations (checkbox 67%, text-only baselines, 0/38 human confirmations).
+- INDEX.md updated with all new audit docs and eval harnesses.

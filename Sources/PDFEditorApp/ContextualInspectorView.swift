@@ -4,20 +4,22 @@ import PDFEditorRecovery
 import SwiftUI
 
 public enum InspectorTab: String, CaseIterable, Identifiable {
-  case focus = "Focus & Edit"
+  // Raw values are the canonical DESIGN.md modes: Reader, Understand,
+  // Complete, Organize, Review. Case names stay stable to limit churn.
+  case focus = "Complete"
   case understand = "Understand"
-  case learn = "Learn"
-  case document = "Document"
-  case trust = "Trust & Safety"
+  case learn = "Organize"
+  case document = "Reader"
+  case trust = "Review"
 
   public var id: String { rawValue }
   public var symbolName: String {
     switch self {
-    case .focus: return "scope"
+    case .focus: return "pencil.and.list.clipboard"
     case .understand: return "brain.head.profile"
-    case .learn: return "book"
-    case .document: return "doc.text"
-    case .trust: return "lock.shield"
+    case .learn: return "rectangle.stack"
+    case .document: return "book"
+    case .trust: return "checkmark.seal"
     }
   }
 
@@ -65,6 +67,7 @@ public struct ContextualInspectorView: View {
         }
       }
       .pickerStyle(.segmented)
+      .labelsHidden()
       .padding(.horizontal, 14)
       .padding(.top, 12)
       .padding(.bottom, 8)
@@ -122,7 +125,7 @@ public struct ContextualInspectorView: View {
     }
   }
 
-  // MARK: - Focus & Edit Tab
+  // MARK: - Complete Tab (case focus; raw value "Complete")
   private var focusTabContent: some View {
     VStack(alignment: .leading, spacing: 16) {
       // 1. Evidence Rail
@@ -223,16 +226,20 @@ public struct ContextualInspectorView: View {
     limitation: String,
     nextAction: String
   ) -> some View {
-    VStack(alignment: .leading, spacing: 8) {
+    VStack(alignment: .leading, spacing: 10) {
       HStack(spacing: 8) {
         Image(systemName: symbol)
-          .foregroundStyle(.tint)
+          .font(.system(size: 14, weight: .semibold))
+          .foregroundStyle(Color.accentColor)
         Text(title)
           .font(.subheadline.weight(.semibold))
         Spacer()
         Text("EVIDENCE")
-          .font(.caption2.weight(.bold).monospaced())
-          .foregroundStyle(.secondary)
+          .font(.system(size: 9, weight: .bold, design: .monospaced))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.accentColor.opacity(0.12), in: Capsule())
+          .foregroundStyle(Color.accentColor)
       }
 
       HStack(alignment: .top, spacing: 12) {
@@ -248,16 +255,17 @@ public struct ContextualInspectorView: View {
 
       Label(nextAction, systemImage: "arrow.right.circle")
         .font(.caption.weight(.medium))
-        .foregroundStyle(.tint)
+        .foregroundStyle(Color.accentColor)
         .fixedSize(horizontal: false, vertical: true)
     }
-    .padding(10)
+    .padding(12)
     .background(.thinMaterial)
     .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .stroke(Color.accentColor.opacity(0.25), lineWidth: 1)
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
     )
-    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .shadow(color: Color.black.opacity(0.04), radius: 4, y: 1)
   }
 
   private func evidenceRailMetric(_ label: String, _ value: String) -> some View {
@@ -409,41 +417,38 @@ public struct ContextualInspectorView: View {
   }
 
   private var authoringToolsPalette: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("Authoring Tools")
-        .font(.caption.weight(.bold))
-        .foregroundStyle(.secondary)
+    VStack(alignment: .leading, spacing: 10) {
+      HStack {
+        Text("Authoring Tools")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(.secondary)
+        Spacer()
+      }
 
       HStack(spacing: 8) {
-        Button {
-          model.beginManualTextPlacement()
-        } label: {
-          Label("Add Text", systemImage: "text.cursor")
-            .font(.caption.weight(.medium))
-        }
-        .buttonStyle(.borderedProminent)
-        .disabled(!(model.inspection?.permissions.canAddAnnotations ?? false))
-        .help("Click anywhere on the page to place new text overlay.")
+        authoringToolButton(
+          title: "Add Text",
+          systemImage: "text.cursor",
+          action: { model.beginManualTextPlacement() },
+          isEnabled: model.inspection?.permissions.canAddAnnotations ?? false,
+          help: "Click anywhere on the page to place new text overlay."
+        )
 
-        Button {
-          model.beginSign(for: nil)
-        } label: {
-          Label("Sign", systemImage: "signature")
-            .font(.caption.weight(.medium))
-        }
-        .buttonStyle(.bordered)
-        .disabled(!(model.inspection?.permissions.canAddAnnotations ?? false))
-        .help("Open signature pad to draw, type, or import your signature.")
+        authoringToolButton(
+          title: "Sign",
+          systemImage: "signature",
+          action: { model.beginSign(for: nil) },
+          isEnabled: model.inspection?.permissions.canAddAnnotations ?? false,
+          help: "Open signature pad to draw, type, or import your signature."
+        )
 
-        Button {
-          model.runOCROnSelectedPage()
-        } label: {
-          Label("OCR Page", systemImage: "text.viewfinder")
-            .font(.caption.weight(.medium))
-        }
-        .buttonStyle(.bordered)
-        .disabled(!(model.inspection?.permissions.canCopy ?? false))
-        .help("Run local Vision OCR on the selected page.")
+        authoringToolButton(
+          title: "OCR Page",
+          systemImage: "text.viewfinder",
+          action: { model.runOCROnSelectedPage() },
+          isEnabled: model.inspection?.permissions.canCopy ?? false,
+          help: "Run local Vision OCR on the selected page."
+        )
       }
 
       let markedRedactions = model.redactionMarkCount
@@ -464,10 +469,35 @@ public struct ContextualInspectorView: View {
         .background(Color.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 6))
       }
     }
-    .padding(10)
-    /* Warm-tinted section background */
-    .background(Color.orange.opacity(0.04))
-    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .padding(12)
+    .background(Color.primary.opacity(0.025))
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .stroke(Color.primary.opacity(0.07), lineWidth: 1)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+  }
+
+  private func authoringToolButton(
+    title: String,
+    systemImage: String,
+    action: @escaping () -> Void,
+    isEnabled: Bool,
+    help: String
+  ) -> some View {
+    Button(action: action) {
+      HStack(spacing: 6) {
+        Image(systemName: systemImage)
+          .font(.system(size: 13, weight: .semibold))
+        Text(title)
+          .font(.caption.weight(.medium))
+      }
+      .frame(maxWidth: .infinity, minHeight: 32)
+    }
+    .buttonStyle(.bordered)
+    .controlSize(.regular)
+    .disabled(!isEnabled)
+    .help(help)
   }
 
   private func selectedCandidateCard(_ candidate: RegionCandidate) -> some View {
@@ -816,19 +846,40 @@ public struct ContextualInspectorView: View {
       }
 
       if model.activeCandidates.isEmpty {
-        VStack(spacing: 4) {
+        VStack(spacing: 8) {
           Image(systemName: "doc.text.magnifyingglass")
-            .font(.title3)
+            .font(.system(size: 22))
             .foregroundStyle(.tertiary)
           Text("No suggestions detected")
-            .font(.caption.weight(.medium))
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.primary)
           Text("Switch to Fill mode to detect form fields, or run OCR to extract text regions.")
             .font(.caption2)
-            .foregroundStyle(.tertiary)
+            .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+
+          Button {
+            model.runOCROnSelectedPage()
+          } label: {
+            Label("Scan Page with OCR", systemImage: "text.viewfinder")
+              .font(.caption.weight(.medium))
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.small)
+          .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 12)
+        .background(
+          RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .fill(Color.primary.opacity(0.02))
+        )
+        .overlay(
+          RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.08), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+        )
       } else {
         ForEach(model.rankedActiveCandidates.prefix(6)) { candidate in
           Button {
@@ -893,39 +944,103 @@ public struct ContextualInspectorView: View {
   // MARK: - Understand Tab
   private var understandTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
-      // Run Analysis button
+      // ── Empty / Pre-analysis state ──────────────────────────────────────────
       if understandResult.summary == nil && !isLoadingUnderstand {
-        VStack(alignment: .leading, spacing: 8) {
-          Text("Document Analysis")
-            .font(.subheadline.weight(.semibold))
-          Text("Extract key points, entities, and structure from this document.")
-            .font(.caption)
-            .foregroundStyle(.secondary)
+        VStack(spacing: 20) {
+          // Illustrated icon cluster
+          ZStack {
+            Circle()
+              .fill(Color.accentColor.opacity(0.08))
+              .frame(width: 72, height: 72)
+            Image(systemName: "brain.head.profile")
+              .font(.system(size: 32, weight: .light))
+              .foregroundStyle(Color.accentColor.opacity(0.7))
+          }
+          .padding(.top, 16)
+
+          VStack(spacing: 6) {
+            Text("Document Analysis")
+              .font(.headline.weight(.semibold))
+            Text("Extract structure, key points, entities, and semantic meaning from this document.")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+              .multilineTextAlignment(.center)
+          }
+
+          // Feature bullets
+          VStack(alignment: .leading, spacing: 8) {
+            understandFeatureBullet("Summary & Structure", systemImage: "doc.text.magnifyingglass", color: .blue)
+            understandFeatureBullet("Named Entities & People", systemImage: "person.2", color: .purple)
+            understandFeatureBullet("Key Points by Type", systemImage: "lightbulb.max", color: .orange)
+            understandFeatureBullet("Tables & Data", systemImage: "tablecells", color: .green)
+          }
+          .padding(.horizontal, 8)
+
           Button {
             Task { await runUnderstandAnalysis() }
           } label: {
             Label("Analyze Document", systemImage: "brain.head.profile")
+              .font(.callout.weight(.semibold))
+              .frame(maxWidth: .infinity)
           }
           .buttonStyle(.borderedProminent)
+          .controlSize(.large)
+          .padding(.horizontal, 4)
+          .padding(.bottom, 16)
         }
+        .frame(maxWidth: .infinity)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+        )
       }
 
+      // ── Loading state ────────────────────────────────────────────────────────
       if isLoadingUnderstand {
-        HStack(spacing: 8) {
+        VStack(spacing: 12) {
           ProgressView()
-            .controlSize(.small)
-          Text("Analyzing...")
-            .font(.caption)
-            .foregroundStyle(.secondary)
+            .controlSize(.regular)
+            .scaleEffect(1.2)
+          VStack(spacing: 4) {
+            Text("Analyzing document…")
+              .font(.caption.weight(.medium))
+            Text("Extracting entities, key points, and structure")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 28)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
       }
 
+      // ── Error state ──────────────────────────────────────────────────────────
       if let error = understandError {
-        Label(error, systemImage: "exclamationmark.triangle")
-          .font(.caption)
-          .foregroundStyle(.red)
+        HStack(spacing: 10) {
+          Image(systemName: "exclamationmark.triangle.fill")
+            .foregroundStyle(.red)
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Analysis failed")
+              .font(.caption.weight(.semibold))
+            Text(error)
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+          Spacer()
+          Button("Retry") {
+            Task { await runUnderstandAnalysis() }
+          }
+          .font(.caption.weight(.medium))
+          .buttonStyle(.borderless)
+          .foregroundStyle(Color.accentColor)
+        }
+        .padding(10)
+        .background(Color.red.opacity(0.06), in: RoundedRectangle(cornerRadius: 8))
+        .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Color.red.opacity(0.15), lineWidth: 1))
       }
 
+      // ── Results ──────────────────────────────────────────────────────────────
       if let summary = understandResult.summary {
         understandSummarySection(summary)
       }
@@ -945,6 +1060,32 @@ public struct ContextualInspectorView: View {
       if let tables = understandResult.tables, tables.totalTables > 0 {
         understandTablesSection(tables)
       }
+
+      // Re-run button after results are shown
+      if understandResult.summary != nil && !isLoadingUnderstand {
+        Button {
+          Task { await runUnderstandAnalysis() }
+        } label: {
+          Label("Re-run Analysis", systemImage: "arrow.clockwise")
+            .font(.caption.weight(.medium))
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .frame(maxWidth: .infinity, alignment: .trailing)
+      }
+    }
+  }
+
+  private func understandFeatureBullet(_ label: String, systemImage: String, color: Color) -> some View {
+    HStack(spacing: 10) {
+      Image(systemName: systemImage)
+        .font(.caption.weight(.medium))
+        .foregroundStyle(color)
+        .frame(width: 20)
+      Text(label)
+        .font(.caption)
+        .foregroundStyle(.secondary)
+      Spacer()
     }
   }
 
@@ -1238,75 +1379,97 @@ public struct ContextualInspectorView: View {
   // MARK: - Learn Tab (Study Loop)
   private var learnTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
-      // Study Loop Header
-      HStack {
-        Image(systemName: "book")
-          .font(.title2)
-          .foregroundColor(.purple)
-        VStack(alignment: .leading) {
+      // ── Section header ───────────────────────────────────────────────────────
+      HStack(spacing: 10) {
+        ZStack {
+          Circle()
+            .fill(Color.purple.opacity(0.12))
+            .frame(width: 36, height: 36)
+          Image(systemName: "book.closed.fill")
+            .font(.system(size: 16, weight: .medium))
+            .foregroundStyle(Color.purple)
+        }
+        VStack(alignment: .leading, spacing: 2) {
           Text("Study Your Marks")
             .font(.subheadline.weight(.semibold))
           Text("Active recall from annotation marks")
-            .font(.caption)
-            .foregroundColor(.secondary)
+            .font(.caption2)
+            .foregroundStyle(.secondary)
         }
         Spacer()
       }
 
-      // Annotation marks count
+      // ── Annotation marks ─────────────────────────────────────────────────────
       let visibleMarks = annotationStore.marks.filter { $0.isVisible }
       if visibleMarks.isEmpty {
-        VStack(spacing: 12) {
-          Image(systemName: "highlighter")
-            .font(.title)
-            .foregroundColor(.secondary)
-          Text("No annotation marks yet")
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-          Text("Select text in the document to create highlights, underlines, or notes. These marks become your study material.")
-            .font(.caption)
-            .foregroundColor(.secondary)
-            .multilineTextAlignment(.center)
+        // Illustrated empty state
+        VStack(spacing: 16) {
+          ZStack {
+            Circle()
+              .fill(Color.purple.opacity(0.08))
+              .frame(width: 64, height: 64)
+            Image(systemName: "highlighter")
+              .font(.system(size: 28, weight: .light))
+              .foregroundStyle(Color.purple.opacity(0.6))
+          }
+          .padding(.top, 12)
+
+          VStack(spacing: 6) {
+            Text("No annotation marks yet")
+              .font(.subheadline.weight(.semibold))
+            Text("Create highlights, underlines, or notes in the document to build your study material.")
+              .font(.caption)
+              .foregroundStyle(.secondary)
+              .multilineTextAlignment(.center)
+          }
+
+          // How-to steps
+          VStack(alignment: .leading, spacing: 8) {
+            learnHowToStep(number: "1", text: "Select text on the canvas", color: .purple)
+            learnHowToStep(number: "2", text: "Choose Highlight, Underline, or Note", color: .purple)
+            learnHowToStep(number: "3", text: "Your marks appear here for review", color: .purple)
+          }
+          .padding(.horizontal, 8)
+          .padding(.bottom, 12)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .strokeBorder(Color.purple.opacity(0.12), lineWidth: 1)
+        )
       } else {
-        // Quick stats
-        VStack(alignment: .leading, spacing: 8) {
-          Text("\(visibleMarks.count) mark\(visibleMarks.count == 1 ? "" : "s") available for study")
-            .font(.subheadline)
+        // ── Stats row ──────────────────────────────────────────────────────────
+        let highlights = visibleMarks.filter { $0.type == .highlight }.count
+        let underlines = visibleMarks.filter { $0.type == .underline }.count
+        let notes = visibleMarks.filter { $0.type == .note }.count
+        let others = visibleMarks.count - highlights - underlines - notes
 
-          // Mark type breakdown
-          let highlights = visibleMarks.filter { $0.type == .highlight }.count
-          let underlines = visibleMarks.filter { $0.type == .underline }.count
-          let notes = visibleMarks.filter { $0.type == .note }.count
-          let others = visibleMarks.count - highlights - underlines - notes
+        VStack(alignment: .leading, spacing: 6) {
+          Text("\(visibleMarks.count) mark\(visibleMarks.count == 1 ? "" : "s") ready for study")
+            .font(.caption.weight(.semibold))
 
-          HStack(spacing: 12) {
+          HStack(spacing: 6) {
             if highlights > 0 {
-              Label("\(highlights) highlight\(highlights == 1 ? "" : "s")", systemImage: "highlighter")
-                .font(.caption)
-                .foregroundColor(.yellow)
+              learnMarkPill("\(highlights) highlight\(highlights == 1 ? "" : "s")", icon: "highlighter", color: .yellow)
             }
             if underlines > 0 {
-              Label("\(underlines) underline\(underlines == 1 ? "" : "s")", systemImage: "underline")
-                .font(.caption)
-                .foregroundColor(.blue)
+              learnMarkPill("\(underlines) underline\(underlines == 1 ? "" : "s")", icon: "underline", color: .blue)
             }
             if notes > 0 {
-              Label("\(notes) note\(notes == 1 ? "" : "s")", systemImage: "note.text")
-                .font(.caption)
-                .foregroundColor(.green)
+              learnMarkPill("\(notes) note\(notes == 1 ? "" : "s")", icon: "note.text", color: .green)
             }
             if others > 0 {
-              Label("\(others) other", systemImage: "pencil.line")
-                .font(.caption)
-                .foregroundColor(.gray)
+              learnMarkPill("\(others) other", icon: "pencil.line", color: .gray)
             }
           }
         }
         .padding(10)
-        .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 6))
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .strokeBorder(Color.purple.opacity(0.12), lineWidth: 1)
+        )
 
         // Study Loop View
         StudyLoopView(
@@ -1319,45 +1482,102 @@ public struct ContextualInspectorView: View {
     }
   }
 
+  private func learnHowToStep(number: String, text: String, color: Color) -> some View {
+    HStack(spacing: 10) {
+      ZStack {
+        Circle()
+          .fill(color.opacity(0.15))
+          .frame(width: 22, height: 22)
+        Text(number)
+          .font(.caption2.weight(.bold))
+          .foregroundStyle(color)
+      }
+      Text(text)
+        .font(.caption)
+        .foregroundStyle(.secondary)
+      Spacer()
+    }
+  }
+
+  private func learnMarkPill(_ label: String, icon: String, color: Color) -> some View {
+    Label(label, systemImage: icon)
+      .font(.caption2.weight(.medium))
+      .foregroundStyle(color)
+      .padding(.horizontal, 7)
+      .padding(.vertical, 3)
+      .background(color.opacity(0.1), in: Capsule())
+  }
+
   // MARK: - Document Tab
   private var documentTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
       capabilityPassportSection
 
-      Divider()
-
-      // Metadata
-      VStack(alignment: .leading, spacing: 6) {
-        Text("Document Metadata")
+      // Metadata Card
+      VStack(alignment: .leading, spacing: 8) {
+        Label("Document Metadata", systemImage: "info.circle")
           .font(.subheadline.weight(.semibold))
 
-        LabeledContent("Title", value: inspection.metadata.title.isEmpty ? "Not declared" : inspection.metadata.title)
-        LabeledContent("Author", value: inspection.metadata.author.isEmpty ? "Not declared" : inspection.metadata.author)
-        LabeledContent("Producer", value: inspection.metadata.producer.isEmpty ? "Not declared" : inspection.metadata.producer)
-        LabeledContent("Creator", value: inspection.metadata.creator.isEmpty ? "Not declared" : inspection.metadata.creator)
+        VStack(spacing: 6) {
+          LabeledContent("Title", value: inspection.metadata.title.isEmpty ? "Not declared" : inspection.metadata.title)
+          LabeledContent("Author", value: inspection.metadata.author.isEmpty ? "Not declared" : inspection.metadata.author)
+          LabeledContent("Producer", value: inspection.metadata.producer.isEmpty ? "Not declared" : inspection.metadata.producer)
+          LabeledContent("Creator", value: inspection.metadata.creator.isEmpty ? "Not declared" : inspection.metadata.creator)
+        }
+        .font(.caption)
       }
-      .font(.caption)
+      .padding(10)
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+          .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+      )
 
-      Divider()
-
-      // Permissions
-      VStack(alignment: .leading, spacing: 6) {
-        Text("Permissions & Security")
+      // Permissions Card
+      VStack(alignment: .leading, spacing: 8) {
+        Label("Permissions & Security", systemImage: "lock.shield")
           .font(.subheadline.weight(.semibold))
 
-        LabeledContent("Encrypted", value: inspection.security.isEncrypted ? "Yes" : "No")
-        LabeledContent("Can copy text", value: inspection.permissions.canCopy ? "Yes" : "No")
-        LabeledContent("Can modify", value: inspection.permissions.canModify ? "Yes" : "No")
-        LabeledContent("Can annotate", value: inspection.permissions.canAddAnnotations ? "Yes" : "No")
+        VStack(spacing: 6) {
+          HStack {
+            Text("Encrypted")
+            Spacer()
+            Text(inspection.security.isEncrypted ? "Yes" : "No")
+              .foregroundStyle(inspection.security.isEncrypted ? Color.orange : Color.secondary)
+              .fontWeight(inspection.security.isEncrypted ? .semibold : .regular)
+          }
+          HStack {
+            Text("Can copy text")
+            Spacer()
+            Text(inspection.permissions.canCopy ? "Allowed" : "Restricted")
+              .foregroundStyle(inspection.permissions.canCopy ? Color.green : Color.red)
+          }
+          HStack {
+            Text("Can modify")
+            Spacer()
+            Text(inspection.permissions.canModify ? "Allowed" : "Restricted")
+              .foregroundStyle(inspection.permissions.canModify ? Color.green : Color.red)
+          }
+          HStack {
+            Text("Can annotate")
+            Spacer()
+            Text(inspection.permissions.canAddAnnotations ? "Allowed" : "Restricted")
+              .foregroundStyle(inspection.permissions.canAddAnnotations ? Color.green : Color.red)
+          }
+        }
+        .font(.caption)
       }
-      .font(.caption)
-
-      Divider()
+      .padding(10)
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+          .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+      )
 
       // Outlines / Bookmarks
       if !inspection.outlines.isEmpty {
-        VStack(alignment: .leading, spacing: 6) {
-          Text("Bookmarks & Outline")
+        VStack(alignment: .leading, spacing: 8) {
+          Label("Bookmarks & Outline", systemImage: "bookmark")
             .font(.subheadline.weight(.semibold))
 
           ForEach(inspection.outlines) { item in
@@ -1370,15 +1590,24 @@ public struct ContextualInspectorView: View {
                 Text(item.title)
                 Spacer()
                 if let p = item.destinationPageIndex {
-                  Text("p.\(p + 1)").foregroundStyle(.secondary)
+                  Text("p.\(p + 1)")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.secondary)
                 }
               }
+              .padding(.vertical, 2)
               .padding(.leading, CGFloat(item.level) * 8)
               .font(.caption)
             }
             .buttonStyle(.plain)
           }
         }
+        .padding(10)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+        )
       }
     }
   }
@@ -1401,16 +1630,19 @@ public struct ContextualInspectorView: View {
 
     return VStack(alignment: .leading, spacing: 8) {
       HStack(spacing: 8) {
-        Label("Capability Passport", systemImage: "checkmark.seal")
+        Label("Capability Passport", systemImage: "checkmark.seal.fill")
           .font(.subheadline.weight(.semibold))
+          .foregroundStyle(Color.accentColor)
         Spacer()
         Text("LOCAL")
           .font(.caption2.weight(.bold).monospaced())
-          .foregroundStyle(.secondary)
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.secondary.opacity(0.12), in: Capsule())
       }
 
       Text("What this source can support in the current session")
-        .font(.caption)
+        .font(.caption2)
         .foregroundStyle(.secondary)
 
       ForEach(passport.entries) { entry in
@@ -1430,8 +1662,11 @@ public struct ContextualInspectorView: View {
       }
     }
     .padding(10)
-    .background(.thinMaterial)
-    .clipShape(RoundedRectangle(cornerRadius: 8))
+    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .strokeBorder(Color.accentColor.opacity(0.12), lineWidth: 1)
+    )
   }
 
   private func passportSymbol(for state: DocumentCapabilityState) -> String {
@@ -1454,14 +1689,19 @@ public struct ContextualInspectorView: View {
     }
   }
 
-  // MARK: - Trust & Safety Tab
+  // MARK: - Review Tab (case trust; raw value "Review")
   private var trustTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
       // Local Posture Card
-      HStack {
-        Image(systemName: "shield.lefthalf.filled.badge.checkmark")
-          .font(.title2)
-          .foregroundStyle(.green)
+      HStack(spacing: 12) {
+        ZStack {
+          Circle()
+            .fill(Color.green.opacity(0.15))
+            .frame(width: 40, height: 40)
+          Image(systemName: "shield.lefthalf.filled.badge.checkmark")
+            .font(.system(size: 18, weight: .semibold))
+            .foregroundStyle(Color.green)
+        }
         VStack(alignment: .leading, spacing: 2) {
           Text("Local Privacy & Provenance")
             .font(.subheadline.weight(.semibold))
@@ -1471,48 +1711,91 @@ public struct ContextualInspectorView: View {
         }
         Spacer()
       }
-      .padding(10)
-      .background(Color.green.opacity(0.08))
-      .clipShape(RoundedRectangle(cornerRadius: 8))
+      .padding(12)
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+          .strokeBorder(Color.green.opacity(0.2), lineWidth: 1)
+      )
 
       // Preflight Report Card
       if let report = model.preflightReport {
-        VStack(alignment: .leading, spacing: 6) {
-          Text("Source Preflight")
+        VStack(alignment: .leading, spacing: 8) {
+          Label("Source Preflight", systemImage: "doc.badge.gearshape")
             .font(.caption.weight(.bold))
             .foregroundStyle(.secondary)
 
-          Text("Digest: \(report.header.sourceDigest.prefix(16))...")
-            .font(.caption.monospaced())
-            .foregroundStyle(.secondary)
+          HStack {
+            Text("Digest")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+            Spacer()
+            Text("\(report.header.sourceDigest.prefix(16))…")
+              .font(.caption2.monospaced())
+              .padding(.horizontal, 6)
+              .padding(.vertical, 2)
+              .background(Color.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+          }
 
           HStack(spacing: 8) {
             Text("\(report.payload.summary.findingCount) Findings")
+              .font(.caption2.weight(.medium))
+              .padding(.horizontal, 6)
+              .padding(.vertical, 2)
+              .background(Color.blue.opacity(0.1), in: Capsule())
+              .foregroundStyle(Color.blue)
+
             Text("\(report.payload.summary.metadataFieldCount) Meta")
+              .font(.caption2.weight(.medium))
+              .padding(.horizontal, 6)
+              .padding(.vertical, 2)
+              .background(Color.purple.opacity(0.1), in: Capsule())
+              .foregroundStyle(Color.purple)
+
             Text("\(report.payload.summary.embeddedDataCount) Embeds")
+              .font(.caption2.weight(.medium))
+              .padding(.horizontal, 6)
+              .padding(.vertical, 2)
+              .background(Color.secondary.opacity(0.12), in: Capsule())
+              .foregroundStyle(.secondary)
+          }
+
+          Divider()
+
+          // Sanitization & Security details
+          VStack(spacing: 4) {
+            HStack {
+              Text("Sanitization")
+              Spacer()
+              Text("\(report.payload.sanitization.status)")
+                .foregroundStyle(.secondary)
+            }
+            HStack {
+              Text("External URLs")
+              Spacer()
+              Text("\(report.payload.networkBoundaries.externalURLCount)")
+                .foregroundStyle(report.payload.networkBoundaries.unsafeExternalURLCount > 0 ? Color.red : Color.secondary)
+            }
+            HStack {
+              Text("Encrypted")
+              Spacer()
+              Text(report.payload.security.encrypted ? "Yes" : "No")
+                .foregroundStyle(report.payload.security.encrypted ? Color.orange : Color.secondary)
+            }
           }
           .font(.caption2)
-          .foregroundStyle(.secondary)
-
-          // RG-097: Native preflight parity with web — show sanitization and security
-          Text("Sanitization: \(report.payload.sanitization.status)")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-          Text("External URLs: \(report.payload.networkBoundaries.externalURLCount) (\(report.payload.networkBoundaries.unsafeExternalURLCount) unsafe)")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-          Text("Encrypted: \(report.payload.security.encrypted ? "Yes" : "No")")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
         }
-        .padding(10)
-        .background(Color.secondary.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .padding(12)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+        )
       }
 
       // Export Validation Status
       if let exportReport = model.exportReport {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 6) {
           Text("Export Validation")
             .font(.caption.weight(.bold))
             .foregroundStyle(.secondary)
@@ -1532,35 +1815,40 @@ public struct ContextualInspectorView: View {
 
           exportDispositionControls
         }
-        .padding(10)
-        .background(Color.secondary.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .padding(12)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+        )
       }
 
-      Divider()
-
-      // Vault Drawer Launcher
+      // Vault Drawer Launcher Button
       Button {
         isSecurityVaultPresented = true
       } label: {
         HStack {
-          Image(systemName: "lock.shield")
-          Text("Open Security & Privacy Vault…")
+          Label("Open Security & Privacy Vault…", systemImage: "lock.shield.fill")
+            .font(.callout.weight(.medium))
           Spacer()
           Image(systemName: "arrow.up.forward.app")
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
-        .font(.caption.weight(.medium))
-        .padding(8)
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
       }
-      .buttonStyle(.bordered)
+      .buttonStyle(.borderedProminent)
+      .controlSize(.regular)
+      .tint(Color.accentColor)
     }
   }
 
   private func confidenceLabel(_ score: Double) -> String {
-    let percent = Int(score * 100)
-    if score >= 0.75 { return "High · \(percent)%" }
-    if score >= 0.5 { return "Med · \(percent)%" }
-    return "Low · \(percent)%"
+    // D-067: evidence strength, never calibrated probability.
+    if score >= 0.75 { return "Review required · Strong evidence" }
+    if score >= 0.5 { return "Review required · Medium evidence" }
+    return "Review required · Limited evidence"
   }
 
   private func candidateEntryLabel(_ candidate: RegionCandidate) -> String {

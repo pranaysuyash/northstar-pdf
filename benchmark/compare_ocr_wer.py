@@ -54,6 +54,19 @@ GATE_WER_THRESHOLDS_PER_FIXTURE = {
 # to absorb renderer/anti-aliasing nondeterminism between runs.
 GATE_REGRESSION_TOLERANCE = 0.05
 
+# Providers gated on WER regression vs the persisted baseline ONLY (no
+# absolute corpus-average threshold). Rationale: their corpus average is
+# dominated by a known, documented layout limitation (PaddleOCR multi-column
+# reading-order confusion measures ~0.73 WER) — an absolute threshold would
+# block on the limitation, not on regressions. Regression-vs-baseline still
+# fails the gate when the engine gets worse than its measured baseline, and
+# engine errors (all-ERROR rows) fail it outright. An absent provider is
+# recorded as not_ran and never folds into a pass.
+GATE_REGRESSION_ONLY_PROVIDERS = [
+    "PaddleOCR PP-OCRv6",
+    "Marker (Surya)",
+]
+
 # Minimum number of gate-thresholded providers that must actually run in a
 # session for the gate verdict to count. Below this, the gate is 'skipped'.
 GATE_MIN_PROVIDERS = 1
@@ -196,12 +209,14 @@ class PaddleOCRProvider:
         import subprocess
         import shutil
         
-        # Convert PDF to images first
+        # Convert PDF to images first. 150 DPI is the PaddleOCR sweet spot:
+        # measured WER identical to 300 DPI on the ocr-corpus while cutting
+        # inference time ~10x (26s vs >240s per page on CPU).
         tmp_dir = f"/tmp/ocr-bench-paddle-{os.getpid()}"
         os.makedirs(tmp_dir, exist_ok=True)
         prefix = os.path.join(tmp_dir, "page")
         subprocess.run(
-            ["pdftoppm", "-png", "-r", "300", pdf_path, prefix],
+            ["pdftoppm", "-png", "-r", "150", pdf_path, prefix],
             capture_output=True, timeout=30
         )
         
@@ -376,15 +391,24 @@ def find_fixtures(corpus_dir: str) -> List[Tuple[str, str, str]]:
     return fixtures
 
 
-def run_benchmark(corpus_dir: str, provider_filter: Optional[str] = None):
+def run_benchmark(corpus_dir: str, provider_filter: Optional[str] = None,
+                  fixture_filter: Optional[str] = None):
     """Run the full cross-provider OCR benchmark.
 
     provider_filter: optional substring match on provider names (e.g.
     'Tesseract,Vision') to limit the run — used for fast baseline updates
     when heavy providers are not needed.
+    fixture_filter: optional comma-separated substring match on fixture ids
+    (e.g. 'clean-english,printed-scan') to run a subset — used to split
+    slow providers (Marker, PaddleOCR) into batchable chunks.
     """
-    """Run the full cross-provider OCR benchmark."""
     fixtures = find_fixtures(corpus_dir)
+    if fixture_filter:
+        needles = [n.strip().lower() for n in fixture_filter.split(",") if n.strip()]
+        fixtures = [f for f in fixtures if any(n in f[0].lower() for n in needles)]
+        if not fixtures:
+            print(f"No fixtures match filter: {fixture_filter}")
+            sys.exit(1)
     if not fixtures:
         print(f"No fixtures found in {corpus_dir}")
         sys.exit(1)
@@ -610,17 +634,22 @@ def evaluate_gate(
     'pass'. Missing (skipped) providers never fail the gate — they'd make CI
     hostage to optional heavy deps — but they are recorded as provenance.
     """
-    gated = sorted(GATE_WER_THRESHOLDS.keys())
+    gated = sorted(GATE_WER_THRESHOLDS.keys()) + GATE_REGRESSION_ONLY_PROVIDERS
     checks = []
     for pname in gated:
-        threshold = GATE_WER_THRESHOLDS[pname]
+        threshold = GATE_WER_THRESHOLDS.get(pname)
+        regression_only = pname in GATE_REGRESSION_ONLY_PROVIDERS
         cur_rows = [r for r in current if r["provider"] == pname]
         if not cur_rows:
-            checks.append({"provider": pname, "outcome": "not_ran", "threshold": threshold})
+            checks.append({
+                "provider": pname, "outcome": "not_ran",
+                "threshold": threshold, "regression_only": regression_only,
+            })
             continue
         if all(r["status"].startswith("ERROR") for r in cur_rows):
             checks.append({
                 "provider": pname, "outcome": "error", "threshold": threshold,
+                "regression_only": regression_only,
                 "detail": cur_rows[0]["status"][:120],
             })
             continue
@@ -634,11 +663,12 @@ def evaluate_gate(
             base_avg is not None
             and cur_avg > base_avg + GATE_REGRESSION_TOLERANCE
         )
-        over_threshold = cur_avg > threshold
+        over_threshold = (threshold is not None) and (cur_avg > threshold)
         checks.append({
             "provider": pname,
             "outcome": "regression" if (regressed_vs_baseline or over_threshold) else "pass",
             "threshold": threshold,
+            "regression_only": regression_only,
             "avg_wer": cur_avg,
             "baseline_avg_wer": base_avg,
             "regression_tolerance": GATE_REGRESSION_TOLERANCE,
@@ -669,14 +699,15 @@ def evaluate_gate(
     }
 
 
-def run_gate(corpus_dir: str, update_baseline: bool = False, provider_filter: Optional[str] = None) -> int:
+def run_gate(corpus_dir: str, update_baseline: bool = False, provider_filter: Optional[str] = None,
+             fixture_filter: Optional[str] = None) -> int:
     """Run the benchmark, evaluate the gate, persist the report, return exit code."""
     baseline = None
     if os.path.exists(BASELINE_ARTIFACT):
         with open(BASELINE_ARTIFACT) as f:
             baseline = json.load(f)
 
-    results = run_benchmark(corpus_dir, provider_filter=provider_filter)
+    results = run_benchmark(corpus_dir, provider_filter=provider_filter, fixture_filter=fixture_filter)
     ran_providers = sorted(set(r["provider"] for r in results))
 
     if update_baseline:
@@ -690,12 +721,13 @@ def run_gate(corpus_dir: str, update_baseline: bool = False, provider_filter: Op
     print(f"\n{'=' * 80}")
     print(f"RG-136 OCR WER GATE: {report['verdict'].upper()}")
     for c in report["checks"]:
+        thr = f"{c['threshold']:.2f}" if c.get('threshold') is not None else "regression-only"
         if c["outcome"] == "pass":
-            print(f"  ✅ {c['provider']}: avg WER {c['avg_wer']:.3f} (threshold {c['threshold']:.2f})")
+            print(f"  ✅ {c['provider']}: avg WER {c['avg_wer']:.3f} (threshold {thr})")
         elif c["outcome"] == "regression":
             print(f"  ❌ {c['provider']}: avg WER {c['avg_wer']:.3f} vs baseline "
                   f"{c['baseline_avg_wer'] if c['baseline_avg_wer'] is not None else 'n/a'} "
-                  f"(threshold {c['threshold']:.2f})")
+                  f"(threshold {thr})")
         elif c["outcome"] == "error":
             print(f"  ❌ {c['provider']}: engine error — {c.get('detail', '')}")
         else:
@@ -717,12 +749,16 @@ def main() -> int:
     parser.add_argument("--update-baseline", action="store_true", help="(with --gate) persist current run as the new baseline")
     parser.add_argument("--corpus-dir", default=os.path.join(os.path.dirname(__file__), "results", "ocr-corpus"))
     parser.add_argument("--providers", default="", help="comma-separated provider name filter (substring match)")
+    parser.add_argument("--fixtures", default="", help="comma-separated fixture-id substring filter (e.g. clean-english,printed-scan)")
     args = parser.parse_args()
 
     corpus_dir = args.corpus_dir
     if args.gate:
-        return run_gate(corpus_dir, update_baseline=args.update_baseline, provider_filter=args.providers or None)
-    run_benchmark(corpus_dir, provider_filter=args.providers or None)
+        return run_gate(corpus_dir, update_baseline=args.update_baseline,
+                        provider_filter=args.providers or None,
+                        fixture_filter=args.fixtures or None)
+    run_benchmark(corpus_dir, provider_filter=args.providers or None,
+                  fixture_filter=args.fixtures or None)
     return 0
 
 

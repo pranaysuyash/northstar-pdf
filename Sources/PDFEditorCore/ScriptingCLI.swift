@@ -1,6 +1,11 @@
 import Foundation
 import PDFKit
 
+
+/// **Scope note (2026-09-06, epistemic audit EI-B1):** offline calibration/benchmark
+/// subsystem — implemented and test-covered, but **not currently wired into the app's
+/// runtime paths**. Consumers: tests and offline tooling only. Do not cite its behavior
+/// as a product claim until wired. See docs/audits/epistemic-integrity-audit-per-0922-2026-09-06.md.
 /// User-facing CLI entry point for batch operations and automation workflows.
 ///
 /// First principle: the app's core operations should be scriptable from
@@ -151,11 +156,13 @@ public final class CLIRunner: ObservableObject {
     isRunning = true
     let startTime = CFAbsoluteTimeGetCurrent()
 
-    // Security: validate path resolves within allowed directories (V-01 fix)
+    // Security: validate path resolves within allowed directories (V-01 fix).
+    // Rejections are recorded in history like any other attempt — a refused
+    // sandbox violation is itself audit evidence (§5 evidence-based).
     guard let safePath = Self.validatePath(inputPath) else {
       isRunning = false
       let elapsed = CFAbsoluteTimeGetCurrent() - startTime
-      return CLIExecutionResult(
+      let rejected = CLIExecutionResult(
         command: command,
         inputPath: inputPath,
         success: false,
@@ -163,6 +170,8 @@ public final class CLIRunner: ObservableObject {
         error: "Path rejected: \(inputPath) is outside allowed directories",
         executionTimeSeconds: elapsed
       )
+      history.append(rejected)
+      return rejected
     }
 
     let result: CLIExecutionResult

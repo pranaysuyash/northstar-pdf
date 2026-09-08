@@ -24,7 +24,7 @@ export function ModeRail({ activeMode, capabilities, onSelect }: ModeRailProps) 
   };
 
   return (
-    <nav className="product-mode-rail" aria-label="PDF Editor modes">
+    <nav className="product-mode-rail" aria-label="Northstar modes">
       <div className="product-mode-kicker">Document workbench</div>
       <div ref={navRef} className="product-mode-nav" role="tablist" aria-orientation="vertical">
         {PRODUCT_MODES.map((mode, i) => (

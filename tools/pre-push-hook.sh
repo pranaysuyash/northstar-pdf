@@ -14,8 +14,14 @@ if [ "$FIXTURE_COUNT" -lt 10 ]; then
 fi
 echo "Fixture check: $FIXTURE_COUNT PDFs present ✓"
 
+echo "=== Pre-push: AppModel integrity guard ==="
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+"$REPO_ROOT/tools/verify_appmodel.sh"
+
 echo "=== Pre-push: Swift test ==="
-swift test 2>&1 | tail -5
+# Full output is preserved for failure diagnosis (the summary alone cannot
+# name which test recorded an issue under suite-load contention).
+swift test 2>&1 | tee /tmp/pdf-editor-swift-test-last.log | tail -5
 
 echo ""
 echo "=== Pre-push: Core node contracts ==="

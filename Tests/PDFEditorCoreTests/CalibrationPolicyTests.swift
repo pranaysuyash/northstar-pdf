@@ -24,6 +24,19 @@ struct RecurringFormCalibratorTests {
     v2(digest: digest, pageW: 200, pageH: 300)
   }
 
+  /// V2 fingerprint carrying one text cell — content-bearing, so a family
+  /// claim on it rests on real structured evidence (RG-138 evidence floor).
+  private func v2Text(digest: String, pageW: Int = 612, pageH: Int = 792) -> LayoutFingerprintV2 {
+    LayoutFingerprintV2(
+      algorithm: "layout-v2-cell-quantized", featureVersion: "layout-features-2",
+      cellSizePoints: 4.0,
+      pages: [LayoutFingerprintV2.PageLayout(
+        pageIndex: 0, widthPoints: pageW, heightPoints: pageH, rotationDegrees: 0,
+        textCells: [LayoutFingerprintV2.Cell(col: 2, row: 2)],
+        fieldCells: [], annotationCells: [])],
+      digest: digest)
+  }
+
   @Test("Exact match classification")
   func exactMatch() {
     let calibrator = RecurringFormCalibrator()
@@ -38,13 +51,13 @@ struct RecurringFormCalibratorTests {
     #expect(templateID == "tpl-1")
   }
 
-  @Test("Known variant classification")
+  @Test("Known variant classification (content-bearing layouts)")
   func knownVariant() {
     let calibrator = RecurringFormCalibrator()
-    let tplV2 = v2(digest: "fp-aaa")
+    let tplV2 = v2Text(digest: "fp-aaa")
     let (tier, score, templateID) = calibrator.classify(
       sourceDigest: "digest-222",
-      layoutV2: v2(digest: "fp-aaa"),
+      layoutV2: v2Text(digest: "fp-aaa"),
       templatesV2: ["tpl-1": tplV2],
       exactSourceDigests: ["tpl-1": "digest-111"])
     #expect(tier == .knownVariant)
@@ -52,16 +65,53 @@ struct RecurringFormCalibratorTests {
     #expect(templateID == "tpl-1")
   }
 
-  @Test("Family match classification")
+  @Test("Content-less canonical equality is vacuous — abstains (RG-138)")
+  func knownVariantContentlessAbstains() {
+    // Two same-size documents with no structured content share the canonical
+    // digest (canonical encodes only geometry + empty text/field/annotation
+    // occupancy). Claiming a known layout variant on that vacuous equality is
+    // a false family claim — Observed 2026-09-03: scanned-noisy ↔
+    // ocr-low-contrast both collapsed to one canonical key.
+    let calibrator = RecurringFormCalibrator()
+    let (tier, _, templateID) = calibrator.classify(
+      sourceDigest: "digest-222",
+      layoutV2: v2(digest: "fp-aaa"),
+      templatesV2: ["tpl-1": v2(digest: "fp-aaa")],
+      exactSourceDigests: ["tpl-1": "digest-111"])
+    #expect(tier == .insufficientEvidence)
+    #expect(!tier.isMatch)
+    #expect(templateID == "tpl-1",
+            "The abstention still identifies the candidate so the confirm lane can act on it")
+  }
+
+  @Test("Family match classification (content-bearing pair)")
   func familyMatch() {
     let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
     let (tier, score, _) = calibrator.classify(
       sourceDigest: "digest-new",
-      layoutV2: v2(digest: "fp-new"),
-      templatesV2: ["tpl-1": v2(digest: "fp-aaa"), "tpl-2": v2(digest: "fp-bbb")],
+      layoutV2: v2Text(digest: "fp-new"),
+      templatesV2: ["tpl-1": v2Text(digest: "fp-aaa"), "tpl-2": v2Text(digest: "fp-bbb")],
       exactSourceDigests: ["tpl-1": "digest-old", "tpl-2": "digest-other"])
-    #expect(tier == .familyMatch || tier == .ambiguous || tier == .noMatch)
-    #expect(score >= 0)
+    #expect(tier == .familyMatch,
+            "Identical content-bearing layouts must promote, got \(tier)")
+    #expect(score >= LayoutFingerprintV2.familyThreshold)
+  }
+
+  @Test("Content-less above-threshold candidate abstains (evidence floor, RG-138)")
+  func evidenceFloorAbstains() {
+    let calibrator = RecurringFormCalibrator(thresholds: .layoutV2Calibrated)
+    // v2() carries no structured content: the pair is "same page size, same
+    // (empty) layout" — the raw score is 1.0, but a family claim on it would
+    // rest on geometry alone. It must abstain, never promote.
+    let (tier, score, _) = calibrator.classify(
+      sourceDigest: "digest-new",
+      layoutV2: v2(digest: "fp-new"),
+      templatesV2: ["tpl-1": v2(digest: "fp-aaa")],
+      exactSourceDigests: ["tpl-1": "digest-old"])
+    #expect(score >= LayoutFingerprintV2.familyThreshold,
+            "Precondition: raw score must clear the family threshold")
+    #expect(tier == .insufficientEvidence)
+    #expect(!tier.isMatch)
   }
 
   @Test("Stale classification when source digest mismatch")
@@ -86,12 +136,14 @@ struct RecurringFormCalibratorTests {
   @Test("Family matching disabled returns noMatch")
   func familyDisabled() {
     let calibrator = RecurringFormCalibrator(thresholds: .familyDisabled)
+    // Differing digest so the pair must go through the family lane (which is
+    // disabled) rather than the equality-key branch.
     let (tier, _, _) = calibrator.classify(
       sourceDigest: "digest-new",
-      layoutV2: v2(digest: "fp-aaa"),
+      layoutV2: v2(digest: "fp-bbb"),
       templatesV2: ["tpl-1": v2(digest: "fp-aaa")],
       exactSourceDigests: ["tpl-1": "digest-old"])
-    #expect(tier == .knownVariant || tier == .noMatch)
+    #expect(tier == .noMatch)
   }
 
   @Test("Hard negative is not classified as match")

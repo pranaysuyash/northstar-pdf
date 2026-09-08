@@ -1,0 +1,10 @@
+{
+  "name": "pdf-editor-repo-tools",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Root manifest for repo-level Node tooling dependencies (no build pipeline lives here — the web app has its own manifest at web/app/package.json).",
+  "type": "module",
+  "dependencies": {
+    "playwright": "1.58.2"
+  }
+}

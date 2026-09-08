@@ -14,6 +14,9 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Nightly heavy gate: full 4-provider OCR WER regression check.
+    - cron: '17 3 * * *'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -38,6 +41,13 @@ jobs:
           fi
           swift --version
           xcrun --show-sdk-path
+
+      # pdf-lib AcroForm lane: the parity experiment's independent provider
+      # engine (pure-JS). Without it the pdf-lib rows cannot be measured and
+      # the cross-provider gate fails closed. node is preinstalled on macOS
+      # runners; pdf-lib has no native deps.
+      - name: Install pdf-lib AcroForm lane
+        run: npm ci --prefix benchmark/acroform-lane 2>&1
 
       - name: Swift test
         run: swift test 2>&1
@@ -98,25 +108,50 @@ jobs:
           if data.get('schema') != 'pdf-editor.acroform-parity-experiment':
               print(f'::error::Unexpected schema: {data.get("schema")}')
               sys.exit(1)
+          # Corpus-size floor (2026-09-06, epistemic audit N14): the parity
+          # claim is corpus-dependent; a report from a silently shrunken
+          # corpus must not pass. 40 = current governed AcroForm corpus
+          # (RG-134 closure). Raise deliberately, never let it shrink.
+          corpus_size = data.get('corpusSize', 0)
+          if corpus_size < 40:
+              print(f'::error::Parity corpus too small: {corpus_size} fixtures (floor: 40)')
+              sys.exit(1)
           for ft in data.get('fieldTypes', []):
               decision = ft.get('decision', '')
               print(f"  {ft['fieldType']}: {decision} (agree={ft['crossProviderAgreement']:.2f} rt={ft['roundTripSuccessRate']:.2f} ghost={ft['ghostFields']})")
-          # CI gate: passes if checkbox is at least 'limited' (67% with 9-fixture expanded corpus).
-          # Release gate (RG-134): blocks version bumps if checkbox is not 'production_ready' (≥90%).
-          # Some non-synthetic PDFs don't preserve checkbox values through PDFKit save/reopen.
-          checkbox = next((f for f in data['fieldTypes'] if f['fieldType'] == 'checkbox'), None)
-          if not checkbox:
-              print('::error::Checkbox not found in parity report')
+          # CI gate (updated 2026-09-06, RG-134 closure): checkbox, choice, and
+          # text are production_ready on the 40-fixture corpus (all round-trip
+          # 1.000). The former 'some non-synthetic PDFs don't preserve checkbox
+          # values through PDFKit save/reopen' premise was FALSIFIED — those
+          # failures were measurement artifacts (see
+          # docs/audits/rg134-checkbox-closure-2026-09-06.md). CI therefore now
+          # fails on any of the three types regressing below production_ready,
+          # matching the RG-133 falsifier in docs/release-gates.md. Radio is
+          # reported but not gated (Mixed: pdf-lib production-ready, PDFKit/
+          # IncrementalWriter experimental with documented reasons).
+          PROD_READY_TYPES = ('checkbox', 'choice', 'text')
+          by_type = {f.get('fieldType'): f for f in data.get('fieldTypes', [])}
+          missing = [t for t in PROD_READY_TYPES if t not in by_type]
+          if missing:
+              print(f'::error::Parity report missing field types: {missing}')
               sys.exit(1)
-          decision = checkbox.get('decision', '')
-          rt_rate = checkbox.get('roundTripSuccessRate', 0)
-          if rt_rate < 0.5:
-              print(f'::error::Checkbox round-trip rate {rt_rate:.0%} below 50% threshold')
+          failed = []
+          for t in PROD_READY_TYPES:
+              ft = by_type[t]
+              rt_rate = ft.get('roundTripSuccessRate', 0)
+              if rt_rate < 0.5:
+                  failed.append(f'{t} round-trip rate {rt_rate:.0%} below 50% threshold')
+              if ft.get('decision') != 'All providers production-ready for ' + t:
+                  failed.append(f'{t} is "{ft.get("decision")}" (rt={rt_rate:.0%}) — regression vs production_ready')
+              print(f"  {t}: {ft.get('decision')} (rt={rt_rate:.0%})")
+          radio = by_type.get('radio')
+          if radio:
+              print(f"  radio: {radio.get('decision')} (rt={radio.get('roundTripSuccessRate', 0):.0%}) [not gated]")
+          if failed:
+              for f_ in failed:
+                  print(f'::error::{f_}')
               sys.exit(1)
-          # RG-134 release blocker check (informational for now; enforced by release runbook)
-          if decision != 'production_ready':
-              print(f'::warning::RG-134: Checkbox is "{decision}" ({rt_rate:.0%}) — version bumps blocked until production-ready')
-          print(f'AcroForm parity gate passed (checkbox: {decision}, round-trip={rt_rate:.0%}).')
+          print('AcroForm parity gate passed (checkbox/choice/text production-ready).')
           PY
 
       # RG-135: human visual confirmation gate. CI has no human reviewer, so
@@ -170,6 +205,14 @@ jobs:
           print('Human review gate (RG-135) satisfied for CI.')
           PY
 
+      - name: Upload acroform parity gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acroform-parity-gate
+          path: benchmark/results/acroform-parity/acroform-parity-gate-report.json
+          if-no-files-found: error
+
       - name: Upload human-review artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -180,12 +223,14 @@ jobs:
             benchmark/results/human-visual-confirmation/human-review-gate-report.json
           if-no-files-found: error
 
-      # RG-136: cross-provider OCR WER regression gate. Runs the benchmark
-      # (Tesseract + Apple Vision; PaddleOCR/Marker are heavy optional deps —
-      # their absence is recorded as provenance, never a false pass) against
-      # the persisted baseline and fails on WER regression beyond tolerance
-      # or above the absolute per-provider threshold.
-      - name: OCR WER regression gate (RG-136)
+      # RG-136: cross-provider OCR WER regression gate (fast lane). Runs the
+      # benchmark (Tesseract + Apple Vision — always available on the runner)
+      # against the persisted baseline and fails on WER regression beyond
+      # tolerance or above the absolute per-provider threshold. PaddleOCR and
+      # Marker are gated in the heavy lane below (they need the datasets venv
+      # with paddleocr + marker-pdf installed); when absent here they are
+      # recorded as not_ran provenance, never folded into a pass.
+      - name: OCR WER regression gate (RG-136 fast lane)
         run: |
           swift build --product PDFVisionOCRCLI
           swift test --filter OCRWerGate 2>&1
@@ -199,6 +244,62 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ocr-wer-gate
+          path: |
+            benchmark/results/ocr-corpus/ocr-wer-baseline.json
+            benchmark/results/ocr-corpus/ocr-wer-gate-report.json
+            benchmark/results/ocr-corpus/cross-provider-wer-report.json
+          if-no-files-found: warn
+
+  # ── Gate 6: OCR WER heavy lane (all four providers) ───────────────────
+  # RG-136 heavy lane: runs the full cross-provider benchmark (Tesseract,
+  # Apple Vision, PaddleOCR, Marker) against the same persisted baseline.
+  # PaddleOCR + Marker are gated on regression-vs-baseline ONLY (their corpus
+  # average is dominated by the documented multi-column reading-order
+  # limitation, so an absolute threshold would block on the limitation, not
+  # on regressions — see GATE_REGRESSION_ONLY_PROVIDERS in
+  # benchmark/compare_ocr_wer.py). Runs nightly and on manual dispatch
+  # because installing paddleocr + marker-pdf + torch on a fresh runner is
+  # heavy; a provider that fails to run is recorded as not_ran provenance and
+  # never fails the gate, so a broken install cannot cause a false pass.
+  ocr-wer-heavy:
+    name: OCR WER heavy gate (4 providers)
+    runs-on: macos-15
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_PATH=$(ls /Applications/Xcode_*.xcodeproj 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XCODE_PATH" ]; then
+            XCODE_NAME=$(basename "$XCODE_PATH" .xcodeproj)
+            sudo xcode-select -s "/Applications/$XCODE_NAME.app/Contents/Developer"
+            echo "Selected: $XCODE_NAME"
+          fi
+
+      - name: Build Vision CLI
+        run: swift build --product PDFVisionOCRCLI 2>&1
+
+      - name: Install heavy OCR providers (best-effort; absence = not_ran provenance)
+        run: |
+          if [ ! -x benchmark/datasets/.venv/bin/python ]; then
+            python3 -m venv benchmark/datasets/.venv
+          fi
+          benchmark/datasets/.venv/bin/pip install --quiet \
+            pytesseract pillow paddleocr marker-pdf || true
+          benchmark/datasets/.venv/bin/python -c "import paddleocr" 2>/dev/null && echo "paddleocr ok" || echo "paddleocr unavailable"
+          benchmark/datasets/.venv/bin/python -c "import marker" 2>/dev/null && echo "marker ok" || echo "marker unavailable"
+
+      - name: Run full 4-provider WER gate
+        run: |
+          swift test --filter OCRWerGate 2>&1
+          benchmark/datasets/.venv/bin/python benchmark/compare_ocr_wer.py --gate
+
+      - name: Upload heavy OCR gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ocr-wer-heavy
           path: |
             benchmark/results/ocr-corpus/ocr-wer-baseline.json
             benchmark/results/ocr-corpus/ocr-wer-gate-report.json
@@ -256,7 +357,15 @@ jobs:
           FAILED=0
           ERRORS=""
 
-          # Core contract/mutation tests (zero external tool dependencies)
+          # Core contract/mutation tests (zero external tool dependencies).
+          # Coverage note (2026-09-06 exploration): 54 of the 88 contract
+          # tests classify as pure-Node; this gate runs 35 of them. The rest
+          # are excluded deliberately: 34 browser-classified tests run in the
+          # web-e2e job; tool-dependent tests (qpdf/mutool/pikepdf: sanitize,
+          # guards, corpus sweeps, mupdf, OCR comparison) run in the
+          # tool-dependent job; Tests/browser_export_independent_viewer_validator_test.mjs
+          # and Tests/pdf-source-preserving-lane_test.mjs need built lanes and
+          # are tracked in docs/explorations/features-flows-loops-exploration-2026-09-06.md §8.
           CORE_TESTS=(
             Tests/web_reader_contract_test.mjs
             Tests/pdf_contract_parity_mutation_test.mjs
@@ -287,6 +396,12 @@ jobs:
             Tests/native_browser_fingerprint_parity_test.mjs
             Tests/native_browser_semantic_parity_report_test.mjs
             Tests/native_browser_candidate_parity_report_test.mjs
+            Tests/capability-matrix-parity_test.mjs
+            Tests/export_page_fact_replay_test.mjs
+            Tests/moat_asset_registry_test.mjs
+            Tests/multi_engine_conformance_test.mjs
+            Tests/provider_rejection_ledger_oracle_test.mjs
+            Tests/web_preexport_privacy_gate_test.mjs
           )
 
           for test in "${CORE_TESTS[@]}"; do
@@ -361,7 +476,7 @@ jobs:
   ci-evidence:
     name: CI evidence gate
     runs-on: ubuntu-latest
-    needs: [swift-gate, node-contract, web-e2e, tool-dependent, react-doctor]
+    needs: [swift-gate, node-contract, web-e2e, tool-dependent, react-doctor, ocr-wer-heavy]
     if: always()
     steps:
       - name: Evaluate gates
@@ -371,6 +486,7 @@ jobs:
           echo "Web E2E:           ${{ needs.web-e2e.result }}"
           echo "Tool-dependent:    ${{ needs.tool-dependent.result }}"
           echo "React Doctor:      ${{ needs.react-doctor.result }}"
+          echo "OCR WER heavy:     ${{ needs.ocr-wer-heavy.result }}"
 
           if [ "${{ needs.swift-gate.result }}" != "success" ]; then
             echo "::error::Swift gate failed"
@@ -390,5 +506,11 @@ jobs:
           fi
           if [ "${{ needs.tool-dependent.result }}" != "success" ]; then
             echo "::warning::Tool-dependent tests had failures (advisory — tools may be missing on runner)"
+          fi
+          # The heavy OCR lane only runs on schedule/manual dispatch (its job
+          # has an if: guard), so on push it is skipped and must not block.
+          if [ "${{ needs.ocr-wer-heavy.result }}" != "success" ] && [ "${{ needs.ocr-wer-heavy.result }}" != "skipped" ]; then
+            echo "::error::OCR WER heavy gate failed — provider regression detected"
+            exit 1
           fi
           echo "CI gates satisfied."

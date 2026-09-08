@@ -60,8 +60,8 @@ export const Toolbar = memo(function Toolbar({ snapshot, onDocumentOpened }: Too
 
   return (
     <div className="toolbar">
-      <div className="toolbar-title" aria-label="PDF Editor">
-        <strong>PDF Editor</strong>
+      <div className="toolbar-title" aria-label="Northstar">
+        <strong>Northstar</strong>
         <span>Local document workspace</span>
       </div>
 
@@ -224,4 +224,3 @@ export const Toolbar = memo(function Toolbar({ snapshot, onDocumentOpened }: Too
     </div>
   );
 });
-

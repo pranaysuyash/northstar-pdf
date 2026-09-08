@@ -1,0 +1,33 @@
+%PDF-1.3
+%¿÷¢þ
+1 0 obj
+<< /AcroForm 2 0 R /Pages 3 0 R /Type /Catalog >>
+endobj
+2 0 obj
+<< /Fields [ 4 0 R 5 0 R ] /NeedAppearances true /Type /AcroForm >>
+endobj
+3 0 obj
+<< /Count 1 /Kids [ 6 0 R ] /Type /Pages >>
+endobj
+4 0 obj
+<< /FT /Ch /Ff 2097152 /I [ 0 1 ] /Opt [ (core) (ui) (docs) (infra) ] /Rect [ 72 700 300 720 ] /Subtype /Widget /T (project.tags) /Type /Annot /V [ (core) (ui) ] >>
+endobj
+5 0 obj
+<< /FT /Ch /Ff 2097152 /I [ 2 ] /Opt [ (ada) (linus) (grace) ] /Rect [ 72 670 300 690 ] /Subtype /Widget /T (project.reviewers) /Type /Annot /V [ (grace) ] >>
+endobj
+6 0 obj
+<< /Annots [ 4 0 R 5 0 R ] /MediaBox [ 0 0 612 792 ] /Parent 3 0 R /Type /Page >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000080 00000 n 
+0000000163 00000 n 
+0000000222 00000 n 
+0000000402 00000 n 
+0000000576 00000 n 
+trailer << /Root 1 0 R /Size 7 /ID [<0faf8abbb180973cc18950cd1081dd3e><0faf8abbb180973cc18950cd1081dd3e>] >>
+startxref
+673
+%%EOF

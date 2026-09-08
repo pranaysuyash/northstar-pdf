@@ -397,9 +397,9 @@ evidence record is [`audits/template-lifecycle-evidence-2026-08-25.md`](audits/t
    typed capability handshake and run separate OCR and high-fidelity provider
    bake-offs with license, bridge, recovery, and independent-viewer evidence.
 
-## D-057 Decoupled View Memory + Save This Layout (2026-08-26, native lane)
+## D-077 (was mis-filed "D-057") Decoupled View Memory + Save This Layout (2026-08-26, native lane)
 
-Implemented per `Docs/explorations/ux-open-close-tabs-exploration-2026-08-26.md` Part I Branch 1 + Part IV Branch 15; decision record `Docs/decisions.md` D-057.
+Implemented per `Docs/explorations/ux-open-close-tabs-exploration-2026-08-26.md` Part I Branch 1 + Part IV Branch 15; decision record `Docs/decisions.md` D-077 (renumbered from the duplicate "D-057" ID on 2026-09-06).
 
 - **LayoutRestorePolicy** (`fixedDefault | lastUsedGlobally | perDocument`, UserDefaults-backed) with a radio-group picker in Settings ▸ Opening Documents.
 - **Resume/layout split:** page index, selections, view mode, and the new fractional scroll anchor always restore from the digest-keyed session; scale mode / zoom / rotation follow pin-over-policy. Fresh opens no longer inherit the previously open document's zoom (`applyLayoutForFreshOpen`).

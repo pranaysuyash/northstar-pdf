@@ -27,20 +27,27 @@ public enum PerformanceOutcome: String, Codable, Sendable {
   case failure
 }
 
-/// One bounded, value-free timing sample.
+/// One bounded, value-free timing sample with optional timestamp.
+///
+/// The timestamp is the absolute uptime at which the sample was recorded.
+/// It enables timeline reconstruction across stages without retaining
+/// document identifiers, paths, text, or error details.
 public struct PerformanceSample: Codable, Equatable, Sendable {
   public let stage: PerformanceStage
   public let durationMilliseconds: Double
   public let outcome: PerformanceOutcome
+  public let timestampNanoseconds: UInt64  /// Absolute uptime when recorded
 
   public init(
     stage: PerformanceStage,
     durationNanoseconds: UInt64,
-    outcome: PerformanceOutcome = .success
+    outcome: PerformanceOutcome = .success,
+    timestampNanoseconds: UInt64 = DispatchTime.now().uptimeNanoseconds
   ) {
     self.stage = stage
     self.durationMilliseconds = Double(durationNanoseconds) / 1_000_000
     self.outcome = outcome
+    self.timestampNanoseconds = timestampNanoseconds
   }
 }
 
@@ -192,10 +199,12 @@ public final class PerformanceTelemetry: @unchecked Sendable {
     outcome: PerformanceOutcome = .success
   ) {
     guard enabled else { return }
+    let timestamp = DispatchTime.now().uptimeNanoseconds
     let sample = PerformanceSample(
       stage: stage,
       durationNanoseconds: durationNanoseconds,
-      outcome: outcome
+      outcome: outcome,
+      timestampNanoseconds: timestamp
     )
     lock.lock()
     defer { lock.unlock() }

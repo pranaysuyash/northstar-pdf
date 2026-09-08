@@ -1,5 +1,10 @@
 import Foundation
 
+
+/// **Scope note (2026-09-06, epistemic audit EI-B1):** offline calibration/benchmark
+/// subsystem — implemented and test-covered, but **not currently wired into the app's
+/// runtime paths**. Consumers: tests and offline tooling only. Do not cite its behavior
+/// as a product claim until wired. See docs/audits/epistemic-integrity-audit-per-0922-2026-09-06.md.
 /// Privacy audit trail — logs document lifecycle events without recording content.
 ///
 /// First principle: prove what happened without storing what was seen.
@@ -14,7 +19,7 @@ import Foundation
 /// Events tracked:
 /// - document_opened: when a PDF is opened
 /// - document_read: page viewed (page index only, no text)
-/// - document_searched: search executed (query text recorded for user's own audit)
+/// - document_searched: search executed (query length only — never the query text)
 /// - document_exported: export performed (format, destination)
 /// - document_annotated: annotation created/modified/deleted
 /// - document_signed: signature applied
@@ -93,30 +98,49 @@ public enum AuditEventType: String, Codable, Sendable, CaseIterable {
 
 // MARK: - Audit Trail
 
-/// Manages the privacy audit trail — append-only log of document lifecycle events.
+/// Manages the privacy audit trail — bounded log of document lifecycle events.
 ///
-/// Events are persisted to UserDefaults as a JSON array. The trail is append-only:
-/// events cannot be modified or deleted after creation.
+/// Events are persisted to UserDefaults as a JSON array, newest first. The
+/// trail is immutable per event (recorded events are never edited), but it is
+/// a rolling window: once `maxEvents` is reached, the oldest events are
+/// evicted to stay bounded. Callers that need durable long-horizon audit
+/// history must export the trail (see `exportMarkdown`) before eviction.
 @MainActor
 public final class AuditTrail: ObservableObject {
   /// All audit events (newest first for display, oldest first for export).
   @Published public private(set) var events: [AuditEvent] = []
 
-  private let storageKey = "com.pdfeditor.audit.trail"
-  private let maxEvents = 1000
+  private let storageKey: String
+  private let defaults: UserDefaults
+  /// Rolling-window bound: oldest events are evicted beyond this count.
+  static let maxEvents = 1000
 
   public init() {
+    self.storageKey = "com.pdfeditor.audit.trail"
+    self.defaults = .standard
+    load()
+  }
+
+  /// Injectable storage for tests: isolates the trail from other suites and
+  /// keeps the production key free of test events.
+  public init(storageKey: String, defaults: UserDefaults = .standard) {
+    self.storageKey = storageKey
+    self.defaults = defaults
     load()
   }
 
   // MARK: - Recording
 
   /// Record an audit event.
+  ///
+  /// Insertion is append-only (recorded events are never mutated), but the
+  /// trail is a rolling window: beyond `maxEvents`, the oldest events are
+  /// evicted. This is a documented bound, not silent data loss — the class
+  /// doc explains the export-before-eviction expectation.
   public func record(_ event: AuditEvent) {
     events.insert(event, at: 0)
-    // Trim to max events
-    if events.count > maxEvents {
-      events = Array(events.prefix(maxEvents))
+    if events.count > Self.maxEvents {
+      events = Array(events.prefix(Self.maxEvents))
     }
     save()
   }
@@ -132,8 +156,11 @@ public final class AuditTrail: ObservableObject {
   }
 
   /// Convenience: record a search event.
+  ///
+  /// Value-free: stores the query length only. Search text is user content
+  /// and must not enter the audit trail.
   public func recordSearch(documentID: String, query: String) {
-    record(AuditEvent(type: .documentSearched, documentID: documentID, detail: query))
+    record(AuditEvent(type: .documentSearched, documentID: documentID, detail: "query_length:\(query.count)"))
   }
 
   /// Convenience: record an export event.
@@ -225,11 +252,11 @@ public final class AuditTrail: ObservableObject {
 
   private func save() {
     guard let data = try? JSONEncoder().encode(events) else { return }
-    UserDefaults.standard.set(data, forKey: storageKey)
+    defaults.set(data, forKey: storageKey)
   }
 
   private func load() {
-    guard let data = UserDefaults.standard.data(forKey: storageKey),
+    guard let data = defaults.data(forKey: storageKey),
           let loaded = try? JSONDecoder().decode([AuditEvent].self, from: data)
     else { return }
     events = loaded

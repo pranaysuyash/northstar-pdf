@@ -9,6 +9,7 @@
       "navigation" : 1,
       "plain-text" : 1
     },
+    "evidenceAbstentions" : 0,
     "failed" : 0,
     "falseNegatives" : 0,
     "falsePositiveRate" : 0,
@@ -56,7 +57,7 @@
         "isHardNegative" : false,
         "passed" : true,
         "reason" : "Correctly classified as noMatch",
-        "score" : 0.6990995419458628
+        "score" : 0.6996704310121816
       },
       {
         "actualTier" : "noMatch",
@@ -66,7 +67,7 @@
         "isHardNegative" : true,
         "passed" : true,
         "reason" : "Correctly classified as noMatch",
-        "score" : 0.1429803545554725
+        "score" : 0.14518218941785782
       },
       {
         "actualTier" : "noMatch",
@@ -76,7 +77,7 @@
         "isHardNegative" : true,
         "passed" : true,
         "reason" : "Correctly classified as noMatch",
-        "score" : 0.07719421203509405
+        "score" : 0.09277525179044571
       }
     ],
     "tierBreakdown" : {

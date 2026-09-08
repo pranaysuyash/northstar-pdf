@@ -1269,10 +1269,11 @@
   }
 
   function confidenceLabel(score) {
-    const percent = Math.round(score * 100);
-    if (score >= 0.75) { return `High · ${percent}%`; }
-    if (score >= 0.5) { return `Medium · ${percent}%`; }
-    return `Low · ${percent}%`;
+    // D-067: evidence strength, never calibrated probability. No pseudo-percent
+    // until per-class calibration on the governed corpus exists.
+    if (score >= 0.75) { return "Review required · Evidence strength: strong"; }
+    if (score >= 0.5) { return "Review required · Evidence strength: medium"; }
+    return "Review required · Evidence strength: limited";
   }
 
   function candidateEntryMode(candidate) {
@@ -1502,6 +1503,12 @@
         });
         const rawValue = stringValue(annotation.fieldValue);
         let value = annotation.fieldType === "Btn" && /^off$/i.test(rawValue) ? "" : rawValue;
+        // V-01 fix: for radio widgets, only report valuePresent when this
+        // widget's export value matches the group's selected value.
+        if (annotation.fieldType === "Btn" && (annotation.fieldFlags & 32768)) {
+          const buttonVal = annotation.buttonValue || "";
+          value = rawValue === buttonVal ? rawValue : "";
+        }
 
         // Resolve numeric widget state indices to export values.
         // PDFKit exposes export values (e.g., "email", "phone") while PDF.js
@@ -2855,9 +2862,9 @@
     if (selectedCandidate) {
       const evidenceText = selectedCandidate.evidenceItems?.[0]?.text || "document structure";
       const editability = candidateIsDirectlyEditable(selectedCandidate)
-        ? "Adding text creates a reversible overlay."
-        : "This pattern is reviewable. Choose a detected box to place a reversible mark, or dismiss it.";
-      ui.candidateActionDetail.textContent = `${selectedCandidate.displayName || candidateEntryLabel(selectedCandidate)} — page ${selectedCandidate.pageIndex + 1} · ${confidenceLabel(selectedCandidate.score)} · ${candidateEntryLabel(selectedCandidate)}. ${evidenceText} ${editability}`;
+        ? "Next: add a reversible overlay, or dismiss. Nothing writes to the source until export."
+        : "Next: choose a detected box to place a reversible mark, or dismiss. Review-only pattern.";
+      ui.candidateActionDetail.textContent = `Possible entry area · page ${selectedCandidate.pageIndex + 1}. Why suggested: ${evidenceText}. ${confidenceLabel(selectedCandidate.score)}. ${candidateEntryLabel(selectedCandidate)}. ${editability}`;
     } else if (manualPlacement) {
       ui.candidateActionDetail.textContent = `Manual text area on page ${manualPlacement.pageIndex + 1}. This is a reversible overlay placed by you.`;
     } else if (selectedOperation) {
@@ -2886,7 +2893,14 @@
       ui.validationBox.innerHTML = "";
       const heading = document.createElement("div");
       heading.className = lastValidation.status === "failed" ? "danger" : "success";
-      heading.textContent = `Last export: ${lastValidation.status}`;
+      // Keep the machine-stable "Last export: <status>" prefix: six Playwright
+      // harnesses key their wait/assert oracle on it. Plain language follows.
+      const hasWarning = (lastValidation.checks || []).some((c) => c.status === "warning" || c.status === "unknown");
+      heading.textContent = lastValidation.status === "failed"
+        ? "Last export: failed — nothing was downloaded because the output could not be trusted. Review the failed check below."
+        : hasWarning
+          ? `Last export: ${lastValidation.status} — your new copy is ready, with 1 item to review. The source file is unchanged.`
+          : `Last export: ${lastValidation.status} — your new copy is ready. Applied edits are in the copy; the source file is unchanged.`;
       ui.validationBox.appendChild(heading);
       for (const check of lastValidation.checks) {
         const row = document.createElement("div");
@@ -3121,9 +3135,10 @@
     candidates = candidates.map((candidate) => candidate.id === selectedCandidate.id ? { ...candidate, status: "rejected" } : candidate);
     selectedCandidate = null;
     ui.completionValue.value = "";
-    setStatus("Dismissed the suggested area. The source PDF was not changed.");
+    setStatus("Suggestion dismissed — no PDF change. Undo is available in the activity strip.");
     renderCompletionPanel();
     renderVisiblePages();
+    saveWebSession();
   }
 
   // --- Undo / Redo ---

@@ -1,7 +1,7 @@
 # Canonical Task Inventory
 
 **Canonical owner:** `/Users/pranay/Projects/pdf_editor/docs/task-inventory.md`
-**Reviewed:** 2026-09-01
+**Reviewed:** 2026-09-05
 **Primary product lens:** PER-0926, Product Evolution Architect
 **Review lens:** PER-0428, Feedback and Evidence Steward
 **Scope:** Native macOS product design, interaction model, document-session
@@ -47,7 +47,7 @@ tasks and release gates.
 | Reduced-motion runtime observation | Open; source modifiers exist | NM-T15, NM-T30 | T4 system setting plus before/after state evidence |
 | Narrow-window and split-view observation | Open; `ViewThatFits` source path exists | NM-T07, NM-T15, NM-T30, NM-T34 | T4 resize matrix with no occlusion, overflow recovery, and screenshots |
 | Multi-window isolation proof | Partial; model-level check passes | NM-T02, P3.1, RG multi-window requirements | T2 independent-session checks plus T4 two-window walkthrough |
-| Durable security-scoped bookmarks or deliberate reselection | Partial; bookmark-backed source path and explicit fallback exist | EOR-01/EOR-02, P1.5, recent-file identity follow-up | T2 bookmark persistence/moved-source fallback checks plus T4 saved, moved, revoked, inaccessible, and reselected file cases |
+| Durable security-scoped bookmarks or deliberate reselection | Partial; bookmark-backed source path and explicit Locate/Re-select flow exist. Replacement admission is transactional: rejected or password-gated replacements preserve the stale record, and only admitted replacements start downstream reading history | EOR-01/EOR-02, P1.5, recent-file identity follow-up | T2 bookmark persistence/moved-source/rejected-replacement checks plus T4 saved, moved, revoked, inaccessible, and reselected file cases |
 | Full unfiltered Swift Testing suite | Unresolved; focused 38-test lane green. **2026-09-01 full run (T1 evidence): 1522 tests / 160 suites / 448 issues, no hangs; 403 of 448 issues are the single `FUNSD ground truth has correct entity types` case-mismatch (`QUESTION`/`ANSWER`/`HEADER` vs expected lowercase) in `ExternalDatasetEvalTests.swift:44` from the OCR ground-truth lane — one mechanical normalization closes 90% of the red. Remainder: multi-scale raster similarity (9), moved-recent-file reselection (2), manifest field presence (2), payload interruption (1)** | P0.2, full-suite release verification | Current-source run with exact failure/hang classification and owner |
 | Profile-specific writer validation | Partial; extracted-page and sanitized-copy T2 proofs pass; flattening remains explicitly denied | NM-T17, NM-T18, NM-T29, export gates | T2/T3 edited, sanitized, flattened, split, and merge writer/reopen proof; sanitized validation covers authored metadata and documents PDFKit serializer provenance |
 | Provider capability and privacy gates | Partial across current lanes | NM-T29, NM-T31, `docs/release-gates.md` | T3 provider matrix with license, privacy, latency, fidelity, failure, and rollback evidence |
@@ -78,6 +78,8 @@ Detailed finding definitions and source rationale remain in
 | NMAC-019 | Dirty-worktree reproducibility | implemented-source | NM-T05; owner classification and drift reconciliation remain open |
 | NMAC-023 | Grounded agent command surface | partial | NM-T12, NM-R08 |
 | NMAC-025 | Build/test claims versus completeness | active control | P0.2, NM-T28, release registry |
+| NMAC-026 | Product identity drift between Northstar strategy and PDFEditor implementation surfaces | implemented-source | NM-T37; fresh packaged app-menu/window-title observation and distribution identity reconciliation remain open |
+| NMAC-027 | Empty home state shows a disabled document toolbar | implemented-source | NM-T38; source hides the window toolbar when no document is admitted; packaged home/document/home transition, resize, skim restoration, and menu recovery remain open |
 
 ## Implementation task ledger
 
@@ -99,7 +101,7 @@ required action.
 | NM-T10 | Implement | partial | Menu/command routing exists; complete sidebar/inspector/toolbar recovery inventory. |
 | NM-T11 | Implement | open | Replace or reorganize the generic Manager entry by outcome. |
 | NM-T12 | Implement | open | Define focus restoration and keyboard traversal contracts. |
-| NM-T13 | Implement | partial | Home recents/drop/create and in-place-drop source slices exist; T2 bookmark/history checks pass, while T4 drop/preflight and provider fallback proof remain. |
+| NM-T13 | Implement | partial | Home recents/drop/create and in-place-drop source slices exist; available recent entries are full-row actions with stable identifiers, while stale entries expose explicit Locate recovery. T2 bookmark/history, successful replacement, and rejected replacement checks pass, while T4 stale-row, drop/preflight, and provider fallback proof remain. |
 | NM-T14 | Implement | partial | Recovery Inspect/Discard source slice exists; T4 restore/source mismatch remains. |
 | NM-T15 | Research/implement | open | Build screenshot and interaction regression matrix. |
 | NM-T16 | Implement | partial | Evidence rail/passport source exists; contract-to-view and comprehension proof remain. |
@@ -123,6 +125,8 @@ required action.
 | NM-T34 | Implement/verify | partial | Unsigned arm64 preview package exists; visible-window and control-level T4/S3 proof remains. |
 | NM-T35 | Research/implement | partial | Direct-context projection and recovery path exist; comparative T4 study remains. |
 | NM-T36 | Research/implement | partial | Bounded aging, pins, and target abstention exist; stale-pin and quiet-menu comprehension remain. |
+| NM-T37 | Implement | implemented-source | Northstar is now the native user-facing name through `ProductIdentity` and preview bundle metadata; `PDFEditor` remains the technical target name. Fresh packaged app-menu/window-title and release identity verification remain open. |
+| NM-T38 | Implement/verify | implemented-source | The document toolbar is hidden when `model.inspection` is absent and restored for open-document reading modes; fresh packaged home/document/home, narrow-window, skim, and menu recovery observation remains open. |
 
 ## Research and exploration ledger
 
@@ -142,6 +146,29 @@ required action.
 | NM-R12 | partial | Aging and explicit-pin contract exists; reset/stale-pin comprehension remains. |
 | NM-R13 | open | Target-detection evidence matrix with annotation/image abstention cases. |
 | NM-R14 | open | Quiet-menu recovery and absence-versus-capability comprehension study. |
+
+## Carried-over open items (from the archived 2026-08-25 inventory)
+
+Migrated 2026-09-06 from [`task-inventory-2026-08-25.md`](task-inventory-2026-08-25.md)
+(now archived) so open work does not live only in a non-canonical file.
+Discovered by the 2026-08-25/26 audits; statuses re-verified 2026-09-06 in
+`docs/audits/epistemic-integrity-audit-per-0922-2026-09-06.md` (§7.1).
+
+| # | Task | Type | Status |
+|---|---|---|---|
+| A-4 | Owner Git-checkpoint authorization (commit working tree in described batches) | owner gate | Open — now release-relevant: CI depends on untracked `benchmark/acroform-lane/` |
+| A-5 | Regenerate semantic-parity bundles (fixes `browser_export_independent_viewer_validator_test`); blocked on removing machine-local Playwright path in the regen tool (now `tools/regenerate_browser_contract_bundles.mjs:20`) | implicit | Open |
+| A-6 | Reconcile contract-parity ledger after native lane goes quiet (fixes `cross_project_evidence_ledger_parity_test`) | implicit | Open |
+| A-7 | De-flake browser suite (condition-based waits); target two consecutive 79/79 runs | implicit | Open |
+| A-8 | Portability: remove machine-local paths (28 Swift test paths + 14 mjs; `#filePath`-derived `AcroFormExternalEngines.projectRoot`; `/opt/homebrew/bin` hardcodes); document `Tests/pdf-python.mjs` fallback; stamp pdf-lib version | implicit | Open |
+| A-9 | AppModel decomposition + module-rename evaluation (behavior-preserving, gated on green build) | implicit | Open — see epistemic audit §9 item 6 (X6) |
+| A-10 | Termination probe relocation out of production binary; dead-code disposition for XFAFormProcessor/PDFBatchProcessor (re-verify parallel-lane wiring before acting) | implicit | Open |
+| A-11 | **P7.G1**: route `PdfController.exportCopy` through `pdf-contract-mutation-gate.mjs` + preflight (currently bypasses the canonical gate) | implicit | **Open — highest priority gate** |
+| A-12 | **P7.G2a–c**: port vault/session/recovery UI, template domain UI, profiles/completion to React | implicit | Open |
+| A-13 | **P7.G2d–G5**: reader completeness features; interaction parity dispositions | implicit | Open |
+| A-14 | **P7.G3**: retarget ~35 legacy-coupled browser tests to React bundle; accessibility gate on React markup | implicit | Open |
+| A-15 | **P7.G4**: `deploy-web.mjs` prebuilt-dist mode | implicit | Deployer half **completed 2026-09-01** (`--prebuilt` + `tools/smoke-dist.mjs`; evidence: `audits/prebuilt-dist-deploy-evidence-2026-09-01.md`); test repointing left to A-14 |
+| A-16 | **P7.G6**: actual sunset deletion of app.js + legacy DOM — only after G1–G5 evidence green | implicit | Blocked on A-11…A-14 |
 
 ## Execution order
 

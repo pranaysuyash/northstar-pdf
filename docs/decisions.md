@@ -2657,7 +2657,11 @@ Supersedes the pricing hypotheses in
 - **Owner:** Project owner; enforcement by all agent lanes.
 
 
-## D-056: React surface replays canonical write/validate semantics through pure contracts
+## D-076: React surface replays canonical write/validate semantics through pure contracts
+
+> **ID note (2026-09-06):** this decision was originally mis-filed as "D-056" — a
+> duplicate of `D-056: Versioned Native/Web Contract Envelope` (:385). Renumbered
+> to D-076 during the D-ID deduplication pass; D-057's duplicate became D-077.
 
 - **Date:** 2026-08-26
 - **Context:** The `web/app/` React entry (D-052-era migration, map steps 2–8)
@@ -2710,7 +2714,10 @@ Supersedes the pricing hypotheses in
 - **Revisit trigger:** When the legacy entry retires, or when a non-zero
   crop-origin fixture enters the corpus.
 
-## D-057: Decoupled view memory — resume point always restores, magnification follows a user policy, plus an explicit per-document layout pin
+## D-077: Decoupled view memory — resume point always restores, magnification follows a user policy, plus an explicit per-document layout pin
+
+> **ID note (2026-09-06):** originally mis-filed as "D-057" (duplicate of
+> `D-057: Intent-Driven Editor Modes`, :901); renumbered to D-077.
 
 - **Date:** 2026-08-26
 - **Context:** User feedback: new documents should open centered or at the user's last choice, ideally with an explicit "save this layout"; view-state restore had page-level fidelity only; opening document B inherited document A's zoom because `open()` never reset reader layout when no durable session existed. Exploration (`Docs/explorations/ux-open-close-tabs-exploration-2026-08-26.md`, Part I Branch 1, Part IV Branch 15) established the design and competitor parity (Acrobat/Foxit opt-in restore; Preview toggle; D-010 reset+preference precedent).
@@ -3033,3 +3040,267 @@ and produce an implementation plan.
   [`../Sources/PDFEditorCore/ProviderRejectionLedger.swift`](../Sources/PDFEditorCore/ProviderRejectionLedger.swift),
   [`../Tests/provider_rejection_ledger_oracle_test.mjs`](../Tests/provider_rejection_ledger_oracle_test.mjs),
   and [`../Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift`](../Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift).
+
+## D-063: Use Northstar as the user-facing product identity
+
+- **Date:** 2026-09-05
+- **Status:** Accepted working decision; distribution identity remains a
+  separate release gate.
+- **Context:** Product-direction and commercial strategy records already use
+  Northstar as the canonical product name, while the native shell and preview
+  bundle still exposed the temporary implementation name PDF Editor.
+- **Decision:** Show **Northstar** in the native macOS app menu, window scene,
+  visible native identity, and preview bundle display/name metadata. Use
+  **Local-first PDF workbench** as the supporting descriptor. Retain `PDFEditor`
+  for Swift package, executable target, module, internal service, and preview
+  artifact-path compatibility until a separate technical migration is
+  justified.
+- **Rationale:** A user-facing brand change and a repository/distribution
+  identifier migration have different blast radii. Coupling them would create
+  unnecessary risk across preferences, keychain services, bookmarks, recovery
+  data, tests, scripts, and update continuity.
+- **Implementation:** `Sources/PDFEditorApp/ProductIdentity.swift` centralizes
+  the native visible name; `PDFEditorApp.swift` uses it for the scene;
+  `tools/native-preview-Info.plist` uses `Northstar` and `com.northstar.pdf`;
+  current web shell labels are aligned as well.
+- **Evidence:** Current-source native build, preview-package rebuild, static
+  arm64/package metadata inspection, and web typecheck pass. A fresh launch
+  succeeded, but System Events inspection was denied Assistive Access, so the
+  visible app-menu/window-title observation remains open.
+- **Falsifiers/revisit triggers:** Legal or App Store conflict; a required
+  migration for released preferences/keychain/bookmark/update identity; user
+  research showing Northstar is not discoverable; or an intentional future
+  split between native and browser product brands.
+- **Owner:** Native shell, product identity, documentation, and release
+  readiness lanes.
+
+## D-064: Hide the document toolbar in the empty home state
+
+- **Date:** 2026-09-05
+- **Status:** Accepted working decision; packaged runtime observation remains a
+  separate verification obligation.
+- **Context:** The shared `ContentView` shell mounted the full document toolbar
+  or skim toolbar even when the welcome surface had no admitted document. The
+  result was a row of disabled reader/editor controls above the first-run
+  actions, as shown in the user-provided 2026-09-01 screenshot.
+- **Decision:** Treat the document toolbar as an instrument for an admitted PDF.
+  Hide the window toolbar while `model.inspection` is absent. Keep the standard
+  macOS menu bar, titlebar, and welcome workspace actions available. Once a
+  document is admitted, restore the existing full toolbar or the minimal skim
+  toolbar according to `ReadingDisplayParams`.
+- **First-principles rationale:** A disabled control is useful when the user is
+  inside a workflow and needs to understand why an action is unavailable. On
+  the home state, disabled document controls are neither actionable nor
+  explanatory; they are a category inventory that competes with admission and
+  creation. The user needs a calm launch surface with clear next actions.
+- **Alternatives considered:** (a) leave the toolbar visible and disable every
+  item, rejected because it preserves noise and allocates empty-state space to
+  a document workflow; (b) show only Open/New in the toolbar, rejected because
+  those actions already belong to the welcome workspace and menu bar; (c) hide
+  only toolbar content, rejected because an empty window toolbar can still leave
+  unexplained chrome; (d) hide the window toolbar until document admission,
+  selected because it aligns chrome with state while preserving recovery paths.
+- **Implementation:** `Sources/PDFEditorApp/ContentView.swift` derives
+  `showsDocumentToolbar` from the existing `model.inspection` authority,
+  conditionally projects the document or skim toolbar, and applies SwiftUI
+  `toolbarVisibility` to `.windowToolbar`.
+- **Evidence and limits:** The source change is covered by the current-source
+  macOS 15 build path and the existing welcome/document state split. A fresh
+  packaged observation must still verify home, open, skim, close, resize, menu
+  recovery, reduced-motion, and accessibility behavior; source and build
+  evidence alone do not prove native window behavior.
+- **Owner:** Native shell, interaction design, accessibility, and release
+  readiness lanes.
+
+## D-065: Recovery payload threat model is local-trust + authenticated encryption
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** P1-R3 asked whether the pair manifest is authenticity. It is not: it prevents accidental generation mixing, not forgery.
+- **Decision:** Value-bearing payloads use AES-GCM with a stable Keychain-backed 256-bit key; session identity, generation, source digest, format and schema versions are associated data. Keychain/auth failure quarantines, no plaintext fallback, no re-key silently. Filesystem `0700`/`0600` remains access control only. Closed in `RecoveryPayloadKeyStore.swift` / `SessionPayloadStore.swift`; remaining gap is crash-interruption observation, not design.
+- **Falsifier:** a controlled kill/relaunch that replays a foreign generation, or Keychain-loss without quarantine.
+- **Owner:** Recovery + security lanes.
+
+## D-066: Product archetype is a bounded document-based completion editor
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** T-MAC-000A. Single viewer vs editor vs library ambiguity drove scene/menu/Settings drift.
+- **Decision:** Document-based editor with bounded overlay/form operations, multiple independent windows, export-only lifecycle. Scene owns `DocumentSession` (source digest + session UUID); app scope owns coordination, settings, provider capabilities only.
+- **Falsifier:** user research showing library-first (corpus management) as primary job; then revisit without changing export-only invariant.
+- **Owner:** Product + native shell lanes.
+
+## D-067: Confidence is evidence strength, never calibrated probability
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** Documented reviewed baseline (~21% recall proxy, ~12% precision proxy) cannot support `78%` probability language.
+- **Decision:** UI shows `Review required · Evidence strength: strong/medium/limited`, never bare percent. percents removed from `confidenceLabel` in web + native until per-class calibration on governed corpus + holdout exists.
+- **Falsifier:** per-class calibration with reviewer agreement justifies labeled probabilities.
+- **Owner:** Detection + UX lanes.
+
+## D-068: Reader rotation is view-only; rotation in export requires an explicit document op
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** Live-viewer rotation previously mutated the viewed `PDFDocument` while export rebuilt from source + ops (two truths).
+- **Decision:** Rotation/zoom/mode are `ViewSession` state on a presentation copy in source coordinates. Export changes orientation only via a typed, reviewable operation.
+- **Falsifier:** users demand rotate-and-export as one gesture; then add explicit op, keep default view-only.
+- **Owner:** Viewer + contracts lanes.
+
+## D-069: Warning severity contract
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** Warnings were collapsed into failures or silently passed.
+- **Decision:** `blocked` (no export, reason + recovery), `confirm-required` (explicit choice, audit note), `advisory` (export allowed, warning preserved in receipt). Unknown checks never collapse into pass. Renderer advisories stay advisory; outside-region violations stay blockers.
+- **Owner:** Validation + UX lanes.
+
+## D-070: PDFKit is the first adapter, not the default provider
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** Form 6 lane passes with raster delta 85; public AcroForm radio choices lost on no-op save. Synthetic widgets pass.
+- **Decision:** Keep PDFKit behind the provider adapter with both failures as admission constraints. Promotion requires named fixture + independent-viewer evidence per failure. No second provider until source-of-truth contracts are stable.
+- **Owner:** Provider + corpus lanes.
+
+## D-078: Agentic loop is goal → plan → preview → approve → execute → validate → retry/escalate
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision; implementation in this slice
+- **Numbering note (2026-09-07):** first recorded as D-071, renumbered to
+  D-078 on collision discovery — D-071…D-077 are owned by the parallel
+  wire-gap disposition lane and cited as such by `docs/INDEX.md`, the
+  exploration ledger §8.3, and the persona launch audit. This entry claims
+  no number in that range.
+- **Approval source:** Current user direction: implement a proper agentic flow
+  rather than renaming `AgentCommandHUD` down to a palette. This authorizes
+  the Core plan contracts, deterministic planner, gated executor, HUD plan
+  sheet, bulk-fill approval routing, and tests below; it does not authorize
+  provider changes, deployments, or Git mutations.
+- **Context:** `AgentCommandHUD` dispatches one action per input with no plan,
+  no preview, no retry, and no escalation. Its bulk-fill item calls
+  `previewBulkFill()` then `applyBulkFill()` back-to-back, composing around
+  the mapping/value dual-approval the template runtime contracts require.
+  The name promises an agent; the behavior is a menu.
+- **First principles:** an agent here is not a chatbot. It is a bounded loop
+  over the existing capability contracts: decompose a goal into typed steps
+  drawn from `AdaptiveCommandID`, project each step's fresh availability
+  decision, require human approval for every mutating step, re-check
+  availability at execution time, retry only transient failures within bound,
+  and escalate everything else with reason codes while leaving the ledger
+  unchanged. Deterministic planning first; model assistance only behind the
+  `LocalAssistLane` pattern (model proposes, deterministic validator
+  authorizes) when a future lane justifies it.
+- **Selected path:** `AgentLoopContracts.swift` in PDFEditorCore owns
+  `AgentGoal`, `AgentPlan`, `AgentPlanStep`, the deterministic planner, the
+  UI-agnostic executor policy, and a value-free run journal. The HUD gains a
+  plan sheet (preview → approve/cancel → progress → escalation). Bulk fill
+  routes through plan approval. `HumanReviewPanelView` is NOT reused for
+  escalation (fixture-governance surface; wrong layer).
+- **Gate invariants (load-bearing, tested S2):**
+  1. No mutating step runs unless the plan is approved AND a fresh `assess()`
+     returns `.available` at execution time (UI availability never authorizes).
+  2. `blocked`/permission-denied escalates immediately, never retries.
+  3. Transient failures retry at most `maxRetries`, then escalate.
+  4. Plans bind `sourceDigest`; a changed document invalidates the plan.
+  5. Destructive steps (e.g. redaction commit) need per-step approval, not
+     just plan approval.
+  6. Failed/escalated runs leave the operation ledger exactly unchanged.
+- **Options considered:**
+  - Rename to Command Palette: rejected by the user as claim-lowering instead
+    of capability-building.
+  - Model-first planning (LLM emits steps): rejected for this slice because
+    no planning-quality harness exists; the planner interface admits it later
+    behind the assist pattern with the deterministic validator authoritative.
+  - Agent writes directly to the ledger: rejected; all mutations flow through
+    existing AppModel/provider paths so permissions, validation, and recovery
+    keep exactly one owner each.
+- **Trade-offs:** supported goals start narrow (complete, OCR sweep, verify,
+  organize); open-ended prompts degrade to ranked command search, stated as
+  such. More code in Core, but the executor policy is UI-free and fully
+  unit-testable.
+- **Validation:** new `AgentLoopTests` red→green on this slice (gate
+  enforcement, retry bounds, escalation, ledger-unchanged, stale-digest
+  invalidation); existing suites stay green.
+- **Revisit trigger:** a measured model planner with its own quality harness,
+  or a new mutation class the step kinds cannot express.
+- **Owner:** Native shell + contracts lanes.
+
+## D-071: Orphaned native UI surfaces are deferred, not wired and not deleted
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision (owner directive "do all, follow the doctrines" for the exploration ledger, `docs/explorations/features-flows-loops-exploration-2026-09-06.md` §8)
+- **Context:** Exploration found complete UI verticals with zero construction sites: `DocumentSplitView`, `MetadataInspectorView`, `AuthoringCanvasView` (+`ComicPanelZoomView`/`ComicMode`), the collaboration view cluster (×4), and dead `SignatureSheet` code. No test or runtime path exercises any of them (grep-verified 2026-09-07). Modernization plan P4.3 already intends to "promote existing split/diff surfaces into a coherent compare job", and the inspector's Document tab already surfaces capability-passport and metadata facts.
+- **Decision:** Wire nothing now; delete only the superseded dead code (`SignatureSheet`, removed — superseded by `CommitFlowSheet`). `DocumentSplitView` defers to the P4.3 compare-job design (wiring the raw surface now would pre-empt that design). `MetadataInspectorView` defers until the Fonts/Statistics views are actually wanted (inspector Document tab covers the current need). CREATE/comic/collaboration defers to their archetype activations. All code retained under Lane Lifecycle tracking.
+- **Falsifier:** a user-visible demand for any of these surfaces before its revisit trigger reopens the decision.
+- **Owner:** Native app lane.
+- **Addendum 2026-09-07 (owner-authorized review):** the "retained under Lane
+  Lifecycle tracking" clause is now funded: all 19 surfaces from D-071/D-072/
+  D-073 are enrolled in `Sources/PDFEditorCore/DeferredSurfaceRegistry.swift`
+  (9,552 source lines total, pinned by test tripwire) with owner, decision ref, revisit trigger, and
+  measured cost; `Tests/PDFEditorCoreTests/DeferredSurfaceRegistryTests.swift`
+  pins the enrollment (S1). The 90-day L10 clock starts at the deferral date,
+  which counts as the lifecycle touch — 91 silent days flags every entry by
+  construction (tested). Rot-side priced: ~8.7k lines of compile burden plus
+  drift/confusion risk, carried explicitly until wire/retire. `SignatureSheet`
+  deletion re-verified (type gone; flag retained under `CommitFlowSheet`).
+  D-073's Agent-Desk trigger is pulled by the D-078 agent loop; the
+  coordinator contract is its first consumer candidate.
+
+## D-072: Browser lane keeps pdf-lib exports; guard modules stay companion/test lane until the export preflight grows a sanitize step
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** `pdf-incremental-form-writer.mjs` and the RG-097/024/049 guard modules (`pdf-sanitize`, `pdf-action-neutralize`, `pdf-attachment-scanner`, `pdf-hidden-revision-analyzer`) are imported only by tests, while the shipped browser export uses pdf-lib (`web/app.js materializeOperations`). The native lane already covers sanitization through the sanitized-copy export profile. Canonical claims are already correctly scoped (`docs/architecture.md`: browser = pdf-lib bounded write).
+- **Decision:** No overclaim to repair: browser export stays pdf-lib; the incremental writer remains the contract/parity lane. The guard modules wire into the browser export preflight only when that flow is rebuilt (D-058 React cutover), not retrofitted into `app.js`.
+- **Falsifier:** a browser-only user story requiring source-preserving export or in-browser sanitization before the cutover.
+- **Owner:** Web/companion lanes.
+
+## D-073: Library-only intelligence and evidence surfaces stay unwired, with named revisit triggers
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** Exploration found grep-verified zero app consumers for: the scripting trio (`ScriptingCLI`/`ScriptingSurface`/`UserScriptRunner`), `AcceptedVarianceRegistry` (orphan gate), `ShadowMode`/`MultiEngineValidator` (multi-engine agreement is CI evidence, not a runtime path), `AISummarizer`, `CitationTools`, `ContentRouter`, `ReadingAnalytics`, `BatchReadProcessor`, `PDFUATaggingEngine`, `TableExporter`/`TextExporter`, `PDFWorkCoordinatorContracts` (contract with no coordinator), and the `ProfileStore` protocol family.
+- **Decision:** Retain all as library and evidence infrastructure; none ship a UI entry point now. Revisit triggers: agentic scripting + `PDFWorkCoordinatorContracts` when the Agent-Desk spine work starts; variance registry when real review rounds produce accepted-variance data; shadow mode remains CI-evidence-only (its value is agreement measurement, not runtime routing).
+- **Falsifier:** any capability-matrix row claiming runtime availability for one of these surfaces.
+- **Owner:** Core + native lanes.
+
+## D-074: RG-135 human review panel is a DEBUG-surface, not an end-user feature
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision (implemented: `ContentView.swift` Workspace menu item now `#if DEBUG`)
+- **Context:** The reviewer panel reads `benchmark/results/governed-corpus-manifest.json` from the developer checkout and degenerates on end-user installs.
+- **Decision:** Ship the menu item only in DEBUG builds until fixture digests bundle with the app or the gate moves to an operator tool.
+- **Falsifier:** end-user review workflow ships with bundled fixtures.
+- **Owner:** Release/QA lane.
+
+## D-075: Repository-root hygiene classification
+
+- **Date:** 2026-09-07
+- **Status:** Accepted working decision
+- **Context:** Root clutter flagged by the exploration map (H7).
+- **Decision:** Deleted as untracked ephemera: `out.pdf` (stray export), `mcp-shell.log`. Retained: `Web-Prototype.zip` (tracked design source of truth), `findings.md`/`progress.md`/`task_plan.md` (tracked working scratch, referenced by `docs/INDEX.md`).
+- **Owner:** Repo owner.
+
+## D-076: AcroForm launch scope is text/checkbox/choice; radio stays experimental and review-gated
+
+- **Date:** 2026-09-07
+- **Status:** Proposed for owner ratification (evidence complete, product wording pending)
+- **Context:** RG-133 (2026-09-06, 40-fixture corpus, re-verified 2026-09-07: `AcroForm Parity Experiment` suite passed, 529s): choice/text/checkbox round-trip 1.000 production_ready on every provider (PDFKit, pdf-lib, IncrementalWriter, qpdf verifier). Radio is 0.9375 Mixed: pdf-lib production_ready; PDFKit experimental (annotation-API save writes kid `/AS` but omits group `/V` — `AcroFormParityExperiment.swift:76-77,111-114`); IncrementalWriter experimental-but-spec-complete (writes `/V`+`/AS` per §12.7.4.2.2/§12.7.5.4, refuses unknown states fail-closed). Evidence map: `Sources/PDFEditorCore/PDFIncrementalFormWriter.swift:968-1043,1770-1865`, `Sources/PDFEditorCore/PDFKitProvider.swift:769-830`, tests `GeneratedRadioFixtureTests:100-252`, `AcroFormParityExperimentTests:222-260,328-398`, `PDFIncrementalWriterTests:284-322,486-495,561-631`.
+- **Decision:** Launch AcroForm fill for text/checkbox/choice. Radio groups are completed only behind explicit review (never silent/template-applied) and surfaced as experimental fidelity until either PDFKit writes group `/V` or the IncrementalWriter refusal set narrows. No silent radio autofill in any lane.
+- **Trade-offs:** Narrows the day-one Priya bulk-fill promise for radio-heavy forms; preserves the trust wedge (a wrong radio selection is a high-consequence false positive).
+- **Validation:** RG-133 regeneration stays green for choice/text/checkbox; any radio promotion requires a regenerated report showing radio production_ready.
+- **Falsifier:** a regenerated acroform-parity gate report with radio production_ready (promote) or any of choice/text/checkbox below production_ready (halt).
+- **Rollback:** disable radio completion, keep text/checkbox/choice; no contract change required.
+- **Owner:** Project owner (Pranay) for ratification; native/provider lanes for evidence.
+
+## D-077: public-sample-form.pdf Quartz-rewrite incident — restore pristine bytes, harden fixture custody
+
+- **Date:** 2026-09-07
+- **Status:** Accepted and executed (fix verified, hardening recorded)
+- **Context:** 2026-09-07 persona sim found on-disk `benchmark/results/public-sample-form.pdf` hashing `bb540191…` (Producer macOS Quartz PDFContext, CreationDate 2026-09-01) against governed anchor `5a681d44…`. The rewrite dropped catalog AcroForm reachability for 6 widget annots → `qpdf --check` exit 3 → `Tests/pdf_corpus_governance_test.mjs` failed (Tier 2/S1 gate doing its job; first investigated as anchor drift, then correctly diagnosed as source mutation by re-downloading).
+- **Options considered:** (a) re-anchor to bb54 — rejected: would bless degraded bytes and weaken the qpdf gate; (b) restore pristine bytes — selected.
+- **Decision:** Re-acquired `https://pdftoolskit.org/samples/sample-form.pdf`, hash-verified `5a681d44…`, qpdf exit 0, restored in place. Anchors in `docs/fixtures/manifest.md` and `Tests/fixtures/pdf_corpus_governance_manifest.json` keep `5a681d44…` with a D-077 lineage note. Live gates re-verified green the same day: corpus governance (passed:true), provenance contract (14 assets), P3 native sim on pristine bytes (6 fields, inspected). Historical `benchmark/results/*` artifacts citing either digest are untouched dated evidence.
+- **Hardening:** overwrite vector is Unknown (read-side grep over benchmark/ found no writer targeting the source path; likely Sep-1 interactive/harness save). Next checks: (1) confirm `pdf_corpus_governance_test.mjs` runs in CI on fixture changes (RG-081); (2) audit harnesses for input-path outputs before release. Repeat-of-class falsifier: any future governance digest-drift failure reopens custody (read-only sources + digest-pinned restores).
+- **Owner:** Project owner; evidence lanes own CI wiring.

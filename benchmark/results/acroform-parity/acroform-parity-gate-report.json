@@ -1,52 +1,72 @@
 {
-  "corpusSize" : 9,
+  "corpusSize" : 40,
   "fieldTypes" : [
     {
       "capabilities" : [
         {
-          "canDetect" : false,
-          "canRead" : false,
-          "canRoundTrip" : false,
-          "canWrite" : false,
-          "confidence" : 0,
-          "decision" : "unsupported",
+          "canDetect" : true,
+          "canRead" : true,
+          "canRoundTrip" : true,
+          "canWrite" : true,
+          "confidence" : 1,
+          "decision" : "experimental",
           "failedFixtures" : 0,
           "fieldType" : "radio",
           "provider" : "PDFKit",
-          "verifiedFixtures" : 0
+          "role" : "provider",
+          "specComplete" : false,
+          "verifiedFixtures" : 16
         },
         {
-          "canDetect" : false,
-          "canRead" : false,
-          "canRoundTrip" : false,
-          "canWrite" : false,
-          "confidence" : 0,
-          "decision" : "unsupported",
+          "canDetect" : true,
+          "canRead" : true,
+          "canRoundTrip" : true,
+          "canWrite" : true,
+          "confidence" : 1,
+          "decision" : "production_ready",
           "failedFixtures" : 0,
           "fieldType" : "radio",
-          "provider" : "PDF.js",
-          "verifiedFixtures" : 0
+          "provider" : "pdf-lib",
+          "role" : "provider",
+          "specComplete" : true,
+          "verifiedFixtures" : 17
         },
         {
-          "canDetect" : false,
-          "canRead" : false,
+          "canDetect" : true,
+          "canRead" : true,
           "canRoundTrip" : false,
           "canWrite" : false,
-          "confidence" : 0,
-          "decision" : "unsupported",
+          "confidence" : 1,
+          "decision" : "experimental",
           "failedFixtures" : 0,
           "fieldType" : "radio",
           "provider" : "qpdf",
+          "role" : "verifier",
+          "specComplete" : true,
+          "verifiedFixtures" : 9
+        },
+        {
+          "canDetect" : true,
+          "canRead" : false,
+          "canRoundTrip" : false,
+          "canWrite" : false,
+          "confidence" : 0,
+          "decision" : "unsupported",
+          "failedFixtures" : 1,
+          "fieldType" : "radio",
+          "provider" : "IncrementalWriter",
+          "role" : "provider",
+          "specComplete" : true,
           "verifiedFixtures" : 0
         }
       ],
-      "crossProviderAgreement" : 1,
-      "decision" : "Mixed: unsupported, unsupported, unsupported",
+      "crossProviderAgreement" : 0.33333333333333331,
+      "decision" : "Mixed: experimental, production_ready, unsupported",
       "fieldType" : "radio",
-      "fixtureCount" : 9,
-      "ghostFields" : 0,
+      "fixtureCount" : 40,
+      "ghostFields" : 1,
       "isProductionReady" : false,
-      "roundTripSuccessRate" : 0
+      "roundTripSuccessRate" : 1
     },
     {
       "capabilities" : [
@@ -55,45 +75,51 @@
           "canRead" : true,
           "canRoundTrip" : true,
           "canWrite" : true,
-          "confidence" : 0.55555555555555558,
-          "decision" : "limited",
-          "failedFixtures" : 4,
+          "confidence" : 1,
+          "decision" : "production_ready",
+          "failedFixtures" : 0,
           "fieldType" : "checkbox",
           "provider" : "PDFKit",
-          "verifiedFixtures" : 5
+          "role" : "provider",
+          "specComplete" : true,
+          "verifiedFixtures" : 23
         },
         {
           "canDetect" : true,
           "canRead" : true,
           "canRoundTrip" : true,
           "canWrite" : true,
-          "confidence" : 0.55555555555555558,
-          "decision" : "limited",
-          "failedFixtures" : 4,
+          "confidence" : 1,
+          "decision" : "production_ready",
+          "failedFixtures" : 0,
           "fieldType" : "checkbox",
-          "provider" : "PDF.js",
-          "verifiedFixtures" : 5
+          "provider" : "pdf-lib",
+          "role" : "provider",
+          "specComplete" : true,
+          "verifiedFixtures" : 22
         },
         {
           "canDetect" : true,
           "canRead" : true,
-          "canRoundTrip" : true,
-          "canWrite" : true,
-          "confidence" : 0.55555555555555558,
-          "decision" : "limited",
-          "failedFixtures" : 4,
+          "canRoundTrip" : false,
+          "canWrite" : false,
+          "confidence" : 1,
+          "decision" : "experimental",
+          "failedFixtures" : 0,
           "fieldType" : "checkbox",
           "provider" : "qpdf",
-          "verifiedFixtures" : 5
+          "role" : "verifier",
+          "specComplete" : true,
+          "verifiedFixtures" : 9
         }
       ],
       "crossProviderAgreement" : 1,
-      "decision" : "Mixed: limited, limited, limited",
+      "decision" : "All providers production-ready for checkbox",
       "fieldType" : "checkbox",
-      "fixtureCount" : 9,
+      "fixtureCount" : 40,
       "ghostFields" : 0,
-      "isProductionReady" : false,
-      "roundTripSuccessRate" : 0.55555555555555558
+      "isProductionReady" : true,
+      "roundTripSuccessRate" : 1
     },
     {
       "capabilities" : [
@@ -102,45 +128,51 @@
           "canRead" : true,
           "canRoundTrip" : true,
           "canWrite" : true,
-          "confidence" : 0.88888888888888884,
-          "decision" : "experimental",
-          "failedFixtures" : 1,
+          "confidence" : 1,
+          "decision" : "production_ready",
+          "failedFixtures" : 0,
           "fieldType" : "choice",
           "provider" : "PDFKit",
-          "verifiedFixtures" : 8
+          "role" : "provider",
+          "specComplete" : true,
+          "verifiedFixtures" : 16
         },
         {
           "canDetect" : true,
           "canRead" : true,
           "canRoundTrip" : true,
           "canWrite" : true,
-          "confidence" : 0.88888888888888884,
-          "decision" : "experimental",
-          "failedFixtures" : 1,
+          "confidence" : 1,
+          "decision" : "production_ready",
+          "failedFixtures" : 0,
           "fieldType" : "choice",
-          "provider" : "PDF.js",
-          "verifiedFixtures" : 8
+          "provider" : "pdf-lib",
+          "role" : "provider",
+          "specComplete" : true,
+          "verifiedFixtures" : 16
         },
         {
           "canDetect" : true,
           "canRead" : true,
-          "canRoundTrip" : true,
-          "canWrite" : true,
-          "confidence" : 0.88888888888888884,
+          "canRoundTrip" : false,
+          "canWrite" : false,
+          "confidence" : 1,
           "decision" : "experimental",
-          "failedFixtures" : 1,
+          "failedFixtures" : 0,
           "fieldType" : "choice",
           "provider" : "qpdf",
-          "verifiedFixtures" : 8
+          "role" : "verifier",
+          "specComplete" : true,
+          "verifiedFixtures" : 9
         }
       ],
       "crossProviderAgreement" : 1,
-      "decision" : "Mixed: experimental, experimental, experimental",
+      "decision" : "All providers production-ready for choice",
       "fieldType" : "choice",
-      "fixtureCount" : 9,
+      "fixtureCount" : 40,
       "ghostFields" : 0,
-      "isProductionReady" : false,
-      "roundTripSuccessRate" : 0.88888888888888884
+      "isProductionReady" : true,
+      "roundTripSuccessRate" : 1
     },
     {
       "capabilities" : [
@@ -154,6 +186,8 @@
           "failedFixtures" : 0,
           "fieldType" : "text",
           "provider" : "PDFKit",
+          "role" : "provider",
+          "specComplete" : true,
           "verifiedFixtures" : 9
         },
         {
@@ -165,33 +199,52 @@
           "decision" : "production_ready",
           "failedFixtures" : 0,
           "fieldType" : "text",
-          "provider" : "PDF.js",
+          "provider" : "pdf-lib",
+          "role" : "provider",
+          "specComplete" : true,
           "verifiedFixtures" : 9
         },
         {
           "canDetect" : true,
           "canRead" : true,
-          "canRoundTrip" : true,
-          "canWrite" : true,
+          "canRoundTrip" : false,
+          "canWrite" : false,
           "confidence" : 1,
-          "decision" : "production_ready",
+          "decision" : "experimental",
           "failedFixtures" : 0,
           "fieldType" : "text",
           "provider" : "qpdf",
+          "role" : "verifier",
+          "specComplete" : true,
           "verifiedFixtures" : 9
         }
       ],
       "crossProviderAgreement" : 1,
       "decision" : "All providers production-ready for text",
       "fieldType" : "text",
-      "fixtureCount" : 9,
+      "fixtureCount" : 40,
       "ghostFields" : 0,
       "isProductionReady" : true,
       "roundTripSuccessRate" : 1
     }
   ],
   "gatePassed" : false,
-  "generatedAt" : "2026-09-02T08:48:31Z",
+  "generatedAt" : "2026-09-08T10:17:03Z",
+  "measurement" : {
+    "independentEngine" : "pdf-lib (pure-JS, benchmark\/acroform-lane)",
+    "independentVerifier" : "qpdf (qpdf --json structural read)",
+    "providers" : [
+      "PDFKit",
+      "pdf-lib",
+      "IncrementalWriter"
+    ],
+    "verificationChannels" : [
+      "structural-parser",
+      "pdf-lib-reopen",
+      "qpdf-json",
+      "pdfkit-reopen"
+    ]
+  },
   "schema" : "pdf-editor.acroform-parity-experiment",
   "version" : {
     "major" : 1,

@@ -1,0 +1,104 @@
+{
+  "persona": "P2-Marcus",
+  "values": [
+    "Marcus Chen",
+    "Marcus C.",
+    "Consent acknowledged"
+  ],
+  "durationMs": 20162,
+  "pageerrors": [],
+  "consoleErrors": [],
+  "checks": [
+    {
+      "name": "app loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "runtimes ready (pdfjs + pdflib)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fixture opens + contract snapshot",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "editable candidate listed",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "candidate review card opens",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "candidate highlighted on page",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "apply overlay",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "overlay preview visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "edit overlay value",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "undo removes overlay",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "dismiss updates restore count",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "restore candidate",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "manual placement prompts click",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "manual overlay applied",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "preflight panel renders",
+      "ok": true,
+      "detail": "privacy preflight visible"
+    },
+    {
+      "name": "validation panel present",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "permissions panel renders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "zero pageerrors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "pass": true
+}

@@ -1,5 +1,13 @@
 # Task Inventory — 2026-08-25
 
+> **ARCHIVED (2026-09-06):** the canonical task inventory is now
+> [`task-inventory.md`](task-inventory.md) (per D-055's status-authority rule
+> and its 2026-09-05 refresh). The open items below (A-4…A-10, A-11…A-14,
+> A-16) have been **migrated into the canonical inventory** — see its
+> "Carried-over open items (from this archived inventory)" section. This file
+> is retained as historical record per the documentation doctrine; do not add
+> new tasks here.
+
 **Purpose:** one durable, current queue of every explicit task (named in
 `task_plan.md`, `progress.md`, `docs/roadmaps/`, `docs/decisions.md`) and
 implicit task (gaps surfaced by audits) across the native and web planes.
@@ -9,7 +17,7 @@ those are recorded as completed rather than re-queued.
 
 **Maintenance rule:** when a task completes, move it to the completed section
 with its evidence pointer rather than deleting it. New implicit tasks get
-appended with a discovery date.
+appended with a discovery date. *(Superseded by the archive notice above.)*
 
 ---
 

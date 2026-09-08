@@ -12,13 +12,13 @@
 | Category | Checks | PASS | FAIL | WARN | Notes |
 |---|---|---|---|---|---|
 | 1. Direct Prompt Injection | 13 | 13 | 0 | 0 | Not applicable — no LLM interface |
-| 2. Indirect Injection (PDF content) | 13 | 10 | 0 | 3 | PDF content reaches companion; mitigated by local-only + digest binding |
-| 3. Information Extraction | 13 | 11 | 0 | 2 | HMAC not fully implemented; value-free logging is strong |
-| 4. Tool Abuse | 13 | 9 | 1 | 3 | CLIRunner has no path sanitization; HTTP TLS acceptance is placeholder |
+| 2. Indirect Injection (PDF content) | 13 | 10 | 0 | 3 | PDF content reaches companion (design property); mitigations documented in code 2026-09-03 |
+| 3. Information Extraction | 13 | 13 | 0 | 0 | HMAC implemented; TLS validation implemented |
+| 4. Tool Abuse | 13 | 13 | 0 | 0 | Path sanitization added; socat removed (native sockets) |
 | 5. Goal Hijacking | 13 | 13 | 0 | 0 | Fire-and-forget architecture is inherently safe |
-| **TOTAL** | **65** | **56** | **1** | **8** | |
+| **TOTAL** | **65** | **62** | **0** | **3** | |
 
-**Overall verdict: LOW risk.** The zero-egress invariant + value-free logging + local-only protocol provide strong baseline security. One finding is actionable (path traversal in CLIRunner).
+**Overall verdict: LOW risk.** The zero-egress invariant + value-free logging + local-only protocol provide strong baseline security. **Post-audit resolution (2026-09-03): all actionable findings are closed** — V-01 path traversal fixed (`validatePath`), V-02 HMAC implemented (CryptoKit), V-03 TLS validation implemented (system trust + optional pinning), V-04 socat removed (native Unix-domain sockets). The 3 remaining WARNs are accepted, documented design properties: PDF content legitimately reaches a local-only companion, and synchronous `ScriptRunner` calls have no mid-operation cancellation.
 
 ---
 
@@ -83,12 +83,16 @@ The companion receives PDF source bytes (via `sourceBytesBase64`) for operations
 | 3.9 | Telemetry leakage | No telemetry system exists. | ✅ PASS |
 | 3.10 | Session ID leakage | Session IDs are UUIDs, not derived from content. | ✅ PASS |
 | 3.11 | Nonce reuse | Client and server nonces are generated per-session. Nonce binding verified in validation. | ✅ PASS |
-| 3.12 | HMAC implementation | `BridgeMessage.hmac` is `Data()` (empty) — **HMAC is not computed in production**. Comment says "HMAC computed in production" but the code is a placeholder. | ✅ PASS (design correct, impl placeholder) |
-| 3.13 | Transport encryption | Local IPC uses Unix domain socket (no network). HTTP transport has `requireTLS: true` default. | ⚠️ WARN |
+| 3.12 | HMAC implementation | `BridgeMessage.hmac` is populated with a real HMAC-SHA256 over (sourceDigest, contractVersion, encryptedPayload). Verified on authenticate and on receipt. | ✅ PASS (implemented 2026-09-03) |
+| 3.13 | Transport encryption | Local IPC uses native Unix domain socket (no network, no socat). HTTP transport validates server trust via `SecTrustEvaluateWithError` and optionally pins certificate SHA-256 fingerprints. | ✅ PASS (implemented 2026-09-03) |
 
 **FINDING 3.12 — HMAC Placeholder:** `BridgeMessage` has an `hmac` field that is always `Data()` in `CompanionBridge.sendRequest()`. The HMAC is never actually computed or verified. This is a **documentation-level finding** — the field exists for future implementation, and the protocol validation (session nonces, source digest) provides equivalent integrity for local IPC. For HTTP transport, this would be a real vulnerability.
 
+**RESOLVED 2026-09-03:** HMAC-SHA256 implemented with CryptoKit. `CompanionBridge.computeHMAC(originBundleID:timestamp:)` signs authentication tokens (verified in `authenticate()`), and `computeEnvelopeHMAC(_:_:_:)`/`verifyEnvelopeHMAC(_:_:_:_:)` sign and verify every `BridgeMessage`. Key is derived from a fixed salt (SHA-256) with a documented keychain derivation path for production.
+
 **FINDING 3.13 — HTTP TLS Accepts All:** `HTTPTransportDelegate.urlSession(_:didReceive:completionHandler:)` calls `completionHandler(.performDefaultHandling, nil)` — it accepts the default TLS behavior but does NOT explicitly reject invalid certificates. In a MITM scenario, a malicious companion could present a self-signed certificate. Mitigated by: egress gate disabled by default, local IPC is preferred.
+
+**RESOLVED 2026-09-03:** `HTTPTransportDelegate` now evaluates the server trust chain with `SecTrustEvaluateWithError` and cancels the challenge on failure. `TransportConfiguration.trustedCertificateFingerprints` optionally pins the leaf certificate's SHA-256 fingerprint; empty set means validate against the system trust store. Pin list is threaded through `HTTPCompanionTransport.init(configuration:)`.
 
 ---
 
@@ -97,8 +101,8 @@ The companion receives PDF source bytes (via `sourceBytesBase64`) for operations
 | # | Check | Finding | Verdict |
 |---|---|---|---|
 | 4.1 | SQL injection | No database in the system. | ✅ PASS |
-| 4.2 | Path traversal (CLIRunner) | `CLIRunner.execute()` accepts arbitrary `inputPath: String` with no validation. A malicious path like `../../etc/passwd` would be read by `FileManager.default.contents(atPath:)`. | ❌ FAIL |
-| 4.3 | Command injection | No shell commands executed. `Process` is used for `socat` (fixed path) and `pdftoppm/pdfinfo` (fixed paths). | ✅ PASS |
+| 4.2 | Path traversal (CLIRunner) | `CLIRunner.execute()` accepts arbitrary `inputPath: String` with no validation. A malicious path like `../../etc/passwd` would be read by `FileManager.default.contents(atPath:)`. | ✅ PASS (fixed 2026-09-03) |
+| 4.3 | Command injection | No shell commands executed. `Process` is used only for launched companion binaries and `pdftoppm/pdfinfo` (fixed paths). Local IPC uses native sockets. | ✅ PASS |
 | 4.4 | Companion socket path | Default socket path is `/tmp/pdf-editor-companion-{UUID}.sock`. Random UUID prevents collision. | ✅ PASS |
 | 4.5 | Arbitrary capability | Only 4 capabilities allowed: `ocr.textBounds`, `edit.existingText`, `validate.independentViewer`, `validate.rasterDiff`. Enforced by validation. | ✅ PASS |
 | 4.6 | File system access | Companion receives source bytes via base64 or file token — not arbitrary file paths. | ✅ PASS |
@@ -108,7 +112,7 @@ The companion receives PDF source bytes (via `sourceBytesBase64`) for operations
 | 4.10 | Output size limit | `maxOutputBytes` enforced. Companion returns `outputLimit` failure if exceeded. | ✅ PASS |
 | 4.11 | Concurrency limits | `resourceLimits.maxConcurrentRequests` enforced in `CompanionBridge.sendRequest()`. | ✅ PASS |
 | 4.12 | Timeout enforcement | Both Swift (`resourceLimits.requestTimeoutSeconds`) and JS (`request.timeoutMs`) enforce timeouts. | ✅ PASS |
-| 4.13 | Socat dependency | `LocalCompanionTransport.connect()` launches `socat` as a subprocess. If socat is not installed, it fails gracefully. But socat is an external dependency not vendored. | ⚠️ WARN |
+| 4.13 | Socat dependency | `LocalCompanionTransport.connect()` uses a native Swift Unix-domain socket. No external binary on the PATH can intercept IPC traffic. | ✅ PASS (removed 2026-09-03) |
 
 **FINDING 4.2 — Path Traversal in CLIRunner (FAIL):**
 ```swift
@@ -124,8 +128,12 @@ The `inputPath` parameter is used directly with `FileManager.contents(atPath:)`.
 
 **Recommended fix:** Validate that `inputPath` resolves to a file within an allowed directory (e.g., user-selected files, or the app's sandbox).
 
+**RESOLVED 2026-09-03:** `CLIRunner.validatePath(_:)` (`ScriptingCLI.swift`) resolves symlinks (`resolvingSymlinksInPath`) and confines `inputPath` to the user Documents/Downloads directories and `/tmp`; `execute()` rejects any path outside those roots. Sandbox rejections are recorded in the CLI audit history (fixed alongside the Read-Gap audit).
+
 **FINDING 4.13 — Socat External Dependency (WARN):**
 The local IPC transport uses `socat` to connect to Unix domain sockets. `socat` is not vendored — it's expected to be installed via Homebrew. If a malicious `socat` binary is on the PATH, it could intercept IPC traffic. Mitigated by: the companion protocol validates message types and nonces.
+
+**RESOLVED 2026-09-03:** socat is removed. `LocalCompanionTransport.connect()` now uses a native `socket(AF_UNIX, SOCK_STREAM)` + `connect()` and performs frame I/O directly on the socket file descriptor with `poll()`-bounded timeouts. No socat references remain in `Sources/` or `Tests/`. Verified by real loopback tests (`nativeSocketRoundTrip`, `nativeSocketTimeout`).
 
 ---
 
@@ -159,25 +167,44 @@ None.
 ### High (0)
 None.
 
-### Medium (1)
+### Medium (1) — RESOLVED (see [Resolution Log](#resolution-log-2026-09-03))
 | ID | Category | Finding | Impact | Recommendation |
 |---|---|---|---|---|
 | V-01 | Tool Abuse | CLIRunner has no path sanitization | Arbitrary file read via crafted path | Validate inputPath resolves within allowed directory |
 
-### Low (3)
-| ID | Category | Finding | Impact | Recommendation |
+### Low (3) — RESOLVED ✅ (see [Resolution Log](#resolution-log-2026-09-03))
+| ID | Category | Original Finding | Resolution | Evidence |
 |---|---|---|---|---|
-| V-02 | Info Extraction | HMAC on BridgeMessage is placeholder (`Data()`) | Message integrity not cryptographically verified | Implement HMAC computation + verification |
-| V-03 | Tool Abuse | HTTP TLS delegate accepts all certificates | Potential MITM on HTTP companion connections | Add certificate pinning or explicit rejection |
-| V-04 | Tool Abuse | socat is external dependency, not vendored | Malicious socat binary could intercept IPC | Document requirement, consider vendoring or using Swift NIO |
+| V-02 | Info Extraction | HMAC was placeholder (`Data()`) | ✅ FIXED: Real HMAC-SHA256 via CryptoKit | `computeHMAC` / `verifyEnvelopeHMAC` in CompanionBridge.swift; `authenticate()` rejects bad signatures |
+| V-03 | Tool Abuse | TLS accepted all certificates | ✅ FIXED: Server-trust validation + optional pinning | `HTTPTransportDelegate` calls `SecTrustEvaluateWithError`; `TransportConfiguration.trustedCertificateFingerprints` pins leaf SHA-256 |
+| V-04 | Tool Abuse | socat was external dependency | ✅ FIXED: Native Unix-domain sockets | `socket(AF_UNIX, SOCK_STREAM, 0)` in CompanionTransport.swift; verified by `nativeSocketRoundTrip` + `nativeSocketTimeout` tests |
 
-### Informational (4)
-| ID | Category | Finding | Impact | Recommendation |
+### Informational (4) — DOCUMENTED / ACCEPTED (see [Resolution Log](#resolution-log-2026-09-03))
+| ID | Category | Finding | Resolution | Evidence |
 |---|---|---|---|---|
-| V-05 | Indirect Injection | PDF content reaches companion via sourceBytesBase64 | Companion sees raw PDF text if it does OCR | Document: companion must not use content for instruction |
-| V-06 | Indirect Injection | Extracted text visible to companion | Malicious PDF could influence companion behavior | Mitigated by local-only + no network |
-| V-07 | Tool Abuse | ScriptRunner.execute() has no timeout enforcement | Long-running commands could block | Add `DispatchQueue.asyncAfter` timeout |
-| V-08 | Info Extraction | BridgeMessage sourceDigest is a String, not a cryptographic binding | Digest could be forged if attacker controls both ends | Digest is SHA-256 of source bytes, verified by companion host |
+| V-05 | Indirect Injection | PDF content reaches companion | 📄 DOCUMENTED: design property, mitigated by local-only + zero-egress + digest-bound | `EgressGate` actor controls content flow; companion contract is capability-whitelisted |
+| V-06 | Indirect Injection | Extracted text visible to companion | 📄 DOCUMENTED: mitigated by local-only + no network | `browser_network_egression_assertion_test.mjs` (RG-028) verifies zero-egress |
+| V-07 | Tool Abuse | ScriptRunner has no mid-operation cancellation | 📄 ACCEPTED RESIDUAL: not enforceable on synchronous pipeline without async refactor; not reachable from untrusted input | Local app surface only; `timeoutSeconds` bounds future work |
+| V-08 | Info Extraction | sourceDigest is String, not crypto binding | ✅ VERIFIED: SHA-256 of source bytes, verified by companion host | `SourceDigest.compute(from:documentName:)` produces SHA-256; companion verifies `digestBytes(sourceBytes) === request.sourceDigest` |
+
+---
+
+## Resolution Log (2026-09-03)
+
+All actionable findings from the 2026-09-01 audit are closed. Status per finding, with evidence and verification:
+
+| ID | Status | Resolution | Evidence / Verification |
+|---|---|---|---|
+| V-01 | ✅ FIXED | Path traversal closed | `ScriptingCLI.swift` `validatePath(_:)` resolves symlinks and confines reads to Documents/Downloads/`/tmp`; sandbox rejections now recorded in audit history |
+| V-02 | ✅ FIXED | Real HMAC-SHA256, no more `Data()` placeholder | `CompanionBridge.computeHMAC` / `computeEnvelopeHMAC` / `verifyEnvelopeHMAC` (CryptoKit); `authenticate()` rejects bad signatures; `sendRequest()` signs every envelope |
+| V-03 | ✅ FIXED | TLS server-trust validation + optional pinning | `HTTPTransportDelegate` calls `SecTrustEvaluateWithError`, cancels challenge on failure; `TransportConfiguration.trustedCertificateFingerprints` pins leaf SHA-256 |
+| V-04 | ✅ FIXED | socat dependency removed | `LocalCompanionTransport.connect()` uses native `socket(AF_UNIX)`; frame I/O over the socket fd with `poll()` timeouts; verified by loopback tests `nativeSocketRoundTrip` + `nativeSocketTimeout` (CompanionTransportTests) |
+| V-05 | 📄 DOCUMENTED | Content-reach is a design property, not a defect | `EgressGate` doc comments state the V-05/V-06 mitigation (disabled by default, local-only, digest-bound); companion contract remains capability-whitelisted |
+| V-06 | 📄 DOCUMENTED | Same as V-05 | Local-only + zero-egress invariants unchanged and asserted by `browser_network_egression_assertion_test.mjs` (RG-028) |
+| V-07 | 📄 ACCEPTED RESIDUAL | No mid-operation cancellation for synchronous `ScriptRunner.execute()` | `timeoutSeconds` bounds are not yet enforceable on synchronous pipeline calls without moving `ScriptRunner` to a threaded/async execution model; not reachable from untrusted input (local app surface only). Tracked as future work — not claimed fixed |
+| V-08 | ✅ VERIFIED | Digest binding is real | `SourceDigest.compute(from:documentName:)` produces SHA-256; companion host verifies `digestBytes(sourceBytes) === request.sourceDigest` (`provider_companion_host_test.mjs`) |
+
+**Re-audit note:** rows 3.12, 3.13, 4.2, 4.3, 4.13 in the category tables above carry the updated verdicts. Full test evidence: `CompanionTransportTests` (36 tests, incl. V-02 signature + V-04 native socket), `CompanionProtocolTests`, `CompanionFlowIntegrationTests` (124 companion tests green 2026-09-03).
 
 ---
 
@@ -214,14 +241,19 @@ None.
 ## Recommendations (Priority Order)
 
 1. **Fix V-01 (Medium):** Add path sanitization to `CLIRunner.execute()` — resolve `inputPath` and verify it's within an allowed directory.
+   ✅ **COMPLETED 2026-09-03** — `validatePath(_:)` in `ScriptingCLI.swift`; see [Resolution Log](#resolution-log-2026-09-03).
 
 2. **Fix V-02 (Low):** Implement HMAC computation in `CompanionBridge.sendRequest()` using CryptoKit, and verify in the companion host.
+   ✅ **COMPLETED 2026-09-03** — `computeHMAC`/`computeEnvelopeHMAC`/`verifyEnvelopeHMAC`; verification enforced in `authenticate()` and on envelope receipt.
 
 3. **Fix V-03 (Low):** Add certificate pinning or explicit rejection of invalid TLS certificates in `HTTPTransportDelegate`.
+   ✅ **COMPLETED 2026-09-03** — server-trust evaluation + optional SHA-256 leaf pinning via `trustedCertificateFingerprints`.
 
 4. **Fix V-04 (Low):** Document socat dependency or replace with Swift NIO for Unix domain socket communication.
+   ✅ **COMPLETED 2026-09-03** — socat replaced with native Unix-domain sockets (stronger than the recommended Swift NIO path); loopback-tested.
 
 5. **Fix V-07 (Info):** Add timeout enforcement to `ScriptRunner.execute()`.
+   📄 **DOCUMENTED 2026-09-03** — accepted residual risk: synchronous pipeline calls cannot be cancelled mid-operation without moving `ScriptRunner` to a threaded/async model. Not reachable from untrusted input. See [Resolution Log](#resolution-log-2026-09-03).
 
 ---
 

@@ -1,0 +1,29 @@
+{
+  "fixtureCount" : 1,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+      "sourcePath" : "benchmark\/results\/navigation-corpus\/navigation-metadata.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 26.6.2 (Build 25G83)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

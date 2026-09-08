@@ -115,17 +115,23 @@ struct ControlViewerObservationGateTests {
     @Test("CorpusObservationReport is Codable for CI artifact")
     func reportCodable() {
         let report = ControlViewerObservation.observeGovernedCorpus()
-        
+
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        // ISO-8601 dates: a bare numeric Date encodes as reference-date seconds
+        // (2001 epoch), which every non-Swift reader misreads as Unix time —
+        // the artifact previously carried a "1995" generatedAt.
+        encoder.dateEncodingStrategy = .iso8601
         let data = try! encoder.encode(report)
-        let decoded = try! JSONDecoder().decode(ControlViewerObservation.CorpusObservationReport.self, from: data)
-        
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let decoded = try! decoder.decode(ControlViewerObservation.CorpusObservationReport.self, from: data)
+
         #expect(decoded.fixtureCount == report.fixtureCount)
         #expect(decoded.gatePassed == report.gatePassed)
         #expect(decoded.verdicts.count == report.verdicts.count)
         #expect(decoded.summary == report.summary)
-        
+
         // Write artifact for CI consumption
         let artifactPath = "\(Self.corpusDir)/control-viewer-gate-report.json"
         try? data.write(to: URL(fileURLWithPath: artifactPath))

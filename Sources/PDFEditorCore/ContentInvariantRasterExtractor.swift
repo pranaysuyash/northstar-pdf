@@ -66,6 +66,14 @@ public enum ContentInvariantRasterExtractor {
     /// Grid cell size in points (matches V2 defaultCellSizePoints).
     public static let cellSize: Double = 4.0
 
+    /// Grid scales (in points) for the multi-scale graded occupancy channel.
+    /// Coarse cells aggregate over larger regions, so their fractional
+    /// coverage is stable under re-encoding noise; the degenerate 4pt fine
+    /// scale (sub-pixel at the render scale) is deliberately excluded.
+    /// Rendered at 0.5 scale, a 16pt cell spans ~8px/side (~64 samples) and
+    /// a 64pt cell ~32px/side (~1024 samples) — genuinely fractional.
+    public static let gradedScales: [Double] = [16.0, 64.0]
+
     // MARK: - Structural Occupancy
 
     /// Extract raster cells using structural occupancy (density threshold).
@@ -151,13 +159,142 @@ public enum ContentInvariantRasterExtractor {
         return cells
     }
 
+    // MARK: - Graded Occupancy
+
+    /// Extract graded occupancy cells with fractional ink coverage at multiple scales.
+    ///
+    /// Unlike binary `extractStructuralOccupancy` (occupied/not), this
+    /// returns the actual fraction of non-blank pixels in each cell [0, 1].
+    /// Two cells with 80% and 75% coverage are structurally similar; binary
+    /// Jaccard treats them identically to cells with 100% coverage.
+    ///
+    /// Multi-scale aggregation (2026-09-07): coverage is measured on **16pt
+    /// and 64pt** grids from a **0.5-scale render**. Two fixes over the
+    /// 2026-09-03 version, both first-principles (blend-sweep calibration):
+    ///
+    /// 1. **Render scale.** At the previous 0.15 scale, a 4pt cell spans
+    ///    ~0.6 px, so a 4pt cell's "fractional coverage" was a single pixel
+    ///    sample — binary in disguise. At 0.5 scale a 16pt cell spans ~8 px
+    ///    per side (~64 samples) and a 64pt cell ~32 px (~1024 samples), so
+    ///    coverage is genuinely fractional.
+    /// 2. **Scale choice.** Coarser grids aggregate over larger regions, so
+    ///    their per-cell coverage is inherently more stable under re-encoding
+    ///    noise (anti-aliasing shifts boundary pixels by 1–2; at 16pt that
+    ///    perturbs a ~64-sample mean by ~3%, vs ~100% for a 1-sample cell).
+    ///    The fine 4pt scale — the threshold-fragile end — is deliberately
+    ///    dropped from the graded channel.
+    ///
+    /// Cosine similarity over the union of (scale, col, row)-keyed coverage
+    /// vectors is then scale-robust: fine-scale flips cannot change the
+    /// signal, and coarse cells anchor the comparison in structure.
+    ///
+    /// - Parameters:
+    ///   - page: The PDF page to extract from
+    ///   - bounds: The page bounds in points
+    ///   - cellSize: unused legacy parameter (the degenerate 4pt fine scale is dropped)
+    /// - Returns: Array of graded cells sorted by (scale, row, col)
+    public static func extractGradedOccupancy(
+        page: PDFPage,
+        bounds: CGRect,
+        cellSize: Double = cellSize
+    ) -> [LayoutFingerprintV2.GradedCell] {
+        // 0.5-scale render: 16pt cells span ~8px/side (64 samples/cell),
+        // 64pt cells ~32px/side (~1024 samples/cell) — genuinely fractional.
+        let scale: CGFloat = 0.5
+        let renderSize = CGSize(
+            width: bounds.width * scale,
+            height: bounds.height * scale)
+        guard renderSize.width > 0, renderSize.height > 0 else { return [] }
+
+        let image = page.thumbnail(of: renderSize, for: .cropBox)
+        guard let cgImage = image.cgImage(
+            forProposedRect: nil, context: nil, hints: nil) else { return [] }
+
+        let width = cgImage.width
+        let height = cgImage.height
+        guard width > 0, height > 0 else { return [] }
+
+        let byteCount = width * height * 4
+        let pixelData = NSMutableData(length: byteCount)!
+        guard let context = CGContext(
+            data: pixelData.mutableBytes,
+            width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: width * 4,
+            space: CGColorSpaceCreateDeviceRGB(),
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return [] }
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let bytes = pixelData.bytes.bindMemory(to: UInt8.self, capacity: byteCount)
+
+        var cells: [LayoutFingerprintV2.GradedCell] = []
+        for cellSize in Self.gradedScales {
+            let cols = Int(ceil(bounds.width / cellSize))
+            let rows = Int(ceil(bounds.height / cellSize))
+            for row in 0..<rows {
+                for col in 0..<cols {
+                    // Pixel bounds for this cell.
+                    let pxMin = Int((Double(col) * cellSize / bounds.width) * Double(width))
+                    let pxMax = Int(((Double(col) + 1.0) * cellSize / bounds.width) * Double(width))
+                    let pyMin = Int((Double(row) * cellSize / bounds.height) * Double(height))
+                    let pyMax = Int(((Double(row) + 1.0) * cellSize / bounds.height) * Double(height))
+
+                    var nonBlankCount = 0
+                    var sampleCount = 0
+                    for py in pyMin..<min(pyMax, height) {
+                        for px in pxMin..<min(pxMax, width) {
+                            let offset = (py * width + px) * 4
+                            guard offset + 3 < byteCount else { continue }
+                            let r = bytes[offset]
+                            let g = bytes[offset + 1]
+                            let b = bytes[offset + 2]
+                            sampleCount += 1
+                            if r < 245 || g < 245 || b < 245 {
+                                nonBlankCount += 1
+                            }
+                        }
+                    }
+
+                    if sampleCount > 0 {
+                        let coverage = Double(nonBlankCount) / Double(sampleCount)
+                        // Only include cells with measurable content (>1% coverage).
+                        // Cells with 0% coverage are omitted (same as binary: not occupied).
+                        if coverage > 0.01 {
+                            cells.append(LayoutFingerprintV2.GradedCell(
+                                col: col, row: row, coverage: coverage, scale: cellSize))
+                        }
+                    }
+                }
+            }
+        }
+        return cells.sorted { ($0.scale, $0.row, $0.col) < ($1.scale, $1.row, $1.col) }
+    }
+
     // MARK: - Edge Detection
 
-    /// Extract raster cells using edge detection.
+    /// Grid scales (in points) for the multi-scale edge channel: 4pt (fine),
+    /// 16pt (medium), 64pt (coarse). A 4pt cell is kept only when its 16pt
+    /// parent or 64pt grandparent is also edge-occupied — the same
+    /// confirm-by-coarser-scale pattern the main raster channel uses. This
+    /// absorbs re-encoding noise at the threshold-fragile fine scale while
+    /// preserving content-sensitive discrimination.
+    public static let edgeScales: [Double] = [4.0, 16.0, 64.0]
+
+    /// Extract raster cells using multi-scale edge detection.
     ///
-    /// Applies a Sobel-like edge detector to the rendered image, then counts
-    /// cells where edge magnitude exceeds a threshold. This captures layout
-    /// structure (lines, borders, regions) rather than content fill.
+    /// Applies a 3×3 Sobel operator over the rendered image **once** (full
+    /// edge mask), then classifies cells at three grid scales by edge-pixel
+    /// density. A fine (4pt) cell is retained only when confirmed by a
+    /// coarser scale — coarser cells aggregate over larger regions, so their
+    /// density measurement is stable under anti-aliasing/hinting differences
+    /// that flip individual fine cells.
+    ///
+    /// Two fixes over the 2026-09-01 version (blend-sweep calibration):
+    /// 1. **Render scale 0.15 → 0.5.** At 0.15, a 4pt cell spans ~0.6px, so
+    ///    the old center 5×5 sample window extended beyond the cell into its
+    ///    neighbors — adjacent cells shared overlapping evidence. At 0.5 a
+    ///    4pt cell spans ~2px/side and the mask is computed per-pixel.
+    /// 2. **Per-cell windows, not center clusters.** Cell classification now
+    ///    counts edge pixels strictly inside the cell region at each scale.
     ///
     /// Edge detection is inherently content-invariant: a text line and an
     /// image border both produce edges, but the edge *pattern* is determined
@@ -166,16 +303,18 @@ public enum ContentInvariantRasterExtractor {
     /// - Parameters:
     ///   - page: The PDF page to extract from
     ///   - bounds: The page bounds in points
-    ///   - cellSize: Grid cell size in points (default 32)
-    ///   - threshold: Edge magnitude threshold (default 30)
-    /// - Returns: Set of cells with significant edge activity
+    ///   - cellSize: unused legacy parameter (superseded by `edgeScales`)
+    ///   - threshold: Sobel magnitude threshold (default 30)
+    /// - Returns: Set of confirmed fine-scale cells with significant edge activity
     public static func extractEdgeDetection(
         page: PDFPage,
         bounds: CGRect,
         cellSize: Double = cellSize,
         threshold: Double = edgeThreshold
     ) -> Set<LayoutFingerprintV2.Cell> {
-        let scale: CGFloat = 0.15
+        // 0.5-scale render: a 4pt cell spans ~2px/side (multi-sample), vs
+        // the degenerate ~0.6px span at the previous 0.15 scale.
+        let scale: CGFloat = 0.5
         let renderSize = CGSize(
             width: bounds.width * scale,
             height: bounds.height * scale)
@@ -216,59 +355,74 @@ public enum ContentInvariantRasterExtractor {
             }
         }
 
-        // Apply 3×3 Sobel operator.
+        // Full-image Sobel pass → edge mask, computed once (cheaper than the
+        // previous per-cell 5×5 windows and strictly per-pixel).
         // Gx = [[-1,0,1],[-2,0,2],[-1,0,1]]
         // Gy = [[-1,-2,-1],[0,0,0],[1,2,1]]
-        let cols = Int(ceil(bounds.width / cellSize))
-        let rows = Int(ceil(bounds.height / cellSize))
-        var cells = Set<LayoutFingerprintV2.Cell>()
-
-        for row in 0..<rows {
-            for col in 0..<cols {
-                let cellMidX = (Double(col) + 0.5) * cellSize
-                let cellMidY = (Double(row) + 0.5) * cellSize
-                let px = Int((cellMidX / bounds.width) * Double(width))
-                let py = Int((cellMidY / bounds.height) * Double(height))
-
-                // Count edge pixels in the cell's region.
-                var edgeCount = 0
-                var sampleCount = 0
-                for dx in -2...2 {
-                    for dy in -2...2 {
-                        let sx = min(max(px + dx, 1), width - 2)
-                        let sy = min(max(py + dy, 1), height - 2)
-
-                        // Sobel Gx
-                        let gx = -Int(grayscale[(sy-1)*width + (sx-1)])
-                            + Int(grayscale[(sy-1)*width + (sx+1)])
-                            - 2*Int(grayscale[sy*width + (sx-1)])
-                            + 2*Int(grayscale[sy*width + (sx+1)])
-                            - Int(grayscale[(sy+1)*width + (sx-1)])
-                            + Int(grayscale[(sy+1)*width + (sx+1)])
-
-                        // Sobel Gy
-                        let gy = -Int(grayscale[(sy-1)*width + (sx-1)])
-                            - 2*Int(grayscale[(sy-1)*width + sx])
-                            - Int(grayscale[(sy-1)*width + (sx+1)])
-                            + Int(grayscale[(sy+1)*width + (sx-1)])
-                            + 2*Int(grayscale[(sy+1)*width + sx])
-                            + Int(grayscale[(sy+1)*width + (sx+1)])
-
-                        let magnitude = Double(gx * gx + gy * gy).squareRoot()
-                        sampleCount += 1
-                        if magnitude > threshold {
-                            edgeCount += 1
-                        }
-                    }
-                }
-                // Cell is "structurally occupied" if >30% of samples have edges.
-                if sampleCount > 0,
-                   Double(edgeCount) / Double(sampleCount) >= 0.30 {
-                    cells.insert(LayoutFingerprintV2.Cell(col: col, row: row))
-                }
+        var edgeMask = [Bool](repeating: false, count: width * height)
+        for y in 1..<(height - 1) {
+            for x in 1..<(width - 1) {
+                let gx = -Int(grayscale[(y-1)*width + (x-1)])
+                    + Int(grayscale[(y-1)*width + (x+1)])
+                    - 2*Int(grayscale[y*width + (x-1)])
+                    + 2*Int(grayscale[y*width + (x+1)])
+                    - Int(grayscale[(y+1)*width + (x-1)])
+                    + Int(grayscale[(y+1)*width + (x+1)])
+                let gy = -Int(grayscale[(y-1)*width + (x-1)])
+                    - 2*Int(grayscale[(y-1)*width + x])
+                    - Int(grayscale[(y-1)*width + (x+1)])
+                    + Int(grayscale[(y+1)*width + (x-1)])
+                    + 2*Int(grayscale[(y+1)*width + x])
+                    + Int(grayscale[(y+1)*width + (x+1)])
+                let magnitude = Double(gx * gx + gy * gy).squareRoot()
+                edgeMask[y * width + x] = magnitude > threshold
             }
         }
-        return cells
+
+        // Classify cells at each scale by edge-pixel density (≥30%).
+        var occupiedByScale: [Int: Set<LayoutFingerprintV2.Cell>] = [:]
+        for (idx, s) in edgeScales.enumerated() {
+            let cols = Int(ceil(bounds.width / s))
+            let rows = Int(ceil(bounds.height / s))
+            var cells = Set<LayoutFingerprintV2.Cell>()
+            for row in 0..<rows {
+                for col in 0..<cols {
+                    let pxMin = Int((Double(col) * s / bounds.width) * Double(width))
+                    let pxMax = Int(((Double(col) + 1.0) * s / bounds.width) * Double(width))
+                    let pyMin = Int((Double(row) * s / bounds.height) * Double(height))
+                    let pyMax = Int(((Double(row) + 1.0) * s / bounds.height) * Double(height))
+                    var edgeCount = 0
+                    var sampleCount = 0
+                    for py in pyMin..<min(pyMax, height) {
+                        for px in pxMin..<min(pxMax, width) {
+                            sampleCount += 1
+                            if edgeMask[py * width + px] { edgeCount += 1 }
+                        }
+                    }
+                    if sampleCount > 0,
+                       Double(edgeCount) / Double(sampleCount) >= 0.30 {
+                        cells.insert(LayoutFingerprintV2.Cell(col: col, row: row))
+                    }
+                }
+            }
+            occupiedByScale[idx] = cells
+        }
+
+        // Keep only fine (4pt) cells confirmed by at least one coarser scale.
+        // A 4pt cell at (c, r) has parent at (c/4, r/4) on the 16pt grid and
+        // grandparent at (c/16, r/16) on the 64pt grid.
+        guard let fineCells = occupiedByScale[0] else { return [] }
+        let mediumCells = occupiedByScale[1] ?? []
+        let coarseCells = occupiedByScale[2] ?? []
+        var result = Set<LayoutFingerprintV2.Cell>()
+        for cell in fineCells {
+            let confirmed = mediumCells.contains(LayoutFingerprintV2.Cell(col: cell.col / 4, row: cell.row / 4))
+                || coarseCells.contains(LayoutFingerprintV2.Cell(col: cell.col / 16, row: cell.row / 16))
+            if confirmed {
+                result.insert(cell)
+            }
+        }
+        return result
     }
 
     // MARK: - Combined (Edge + Structural)

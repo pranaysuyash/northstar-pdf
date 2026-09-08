@@ -1,0 +1,37 @@
+%PDF-1.3
+%¿÷¢þ
+1 0 obj
+<< /AcroForm 2 0 R /Pages 3 0 R /Type /Catalog >>
+endobj
+2 0 obj
+<< /Fields [ 4 0 R 5 0 R 6 0 R ] /NeedAppearances true /Type /AcroForm >>
+endobj
+3 0 obj
+<< /Count 1 /Kids [ 7 0 R ] /Type /Pages >>
+endobj
+4 0 obj
+<< /FT /Ch /Opt [ (US) (CA) (MX) ] /Rect [ 72 700 300 720 ] /Subtype /Widget /T (country) /Type /Annot /V (CA) >>
+endobj
+5 0 obj
+<< /FT /Ch /Opt [ (USD) (CAD) (EUR) (MXN) ] /Rect [ 72 670 300 690 ] /Subtype /Widget /T (currency) /Type /Annot /V (CAD) >>
+endobj
+6 0 obj
+<< /FT /Ch /Ff 262144 /Opt [ (A1) (A2) ] /Rect [ 72 640 300 660 ] /Subtype /Widget /T (custom_code) /Type /Annot /V (A2) >>
+endobj
+7 0 obj
+<< /Annots [ 4 0 R 5 0 R 6 0 R ] /MediaBox [ 0 0 612 792 ] /Parent 3 0 R /Type /Page >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000080 00000 n 
+0000000169 00000 n 
+0000000228 00000 n 
+0000000357 00000 n 
+0000000497 00000 n 
+0000000636 00000 n 
+trailer << /Root 1 0 R /Size 8 /ID [<0faf8abbb180973cc18950cd1081dd3e><0faf8abbb180973cc18950cd1081dd3e>] >>
+startxref
+739
+%%EOF

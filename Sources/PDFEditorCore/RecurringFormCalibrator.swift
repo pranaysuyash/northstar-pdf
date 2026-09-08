@@ -1,5 +1,10 @@
 import Foundation
 
+
+/// **Scope note (2026-09-06, epistemic audit EI-B1):** offline calibration/benchmark
+/// subsystem — implemented and test-covered, but **not currently wired into the app's
+/// runtime paths**. Consumers: tests and offline tooling only. Do not cite its behavior
+/// as a product claim until wired. See docs/audits/epistemic-integrity-audit-per-0922-2026-09-06.md.
 /// Recurring-form matching calibrator — validates exact, known-variant, family,
 /// ambiguous, and stale classification against a reviewed corpus with hard
 /// negatives and false-positive reports.
@@ -23,6 +28,15 @@ public enum MatchingTier: String, Codable, Sendable, CaseIterable {
     case knownVariant
     /// Family match — structural similarity above threshold.
     case familyMatch
+    /// Evidence-floor abstention — similarity is above threshold but the pair
+    /// carries no structured content signal (no text/field/annotation/region
+    /// on either side), so the "same recurring form" claim rests on geometry
+    /// + raster ink alone. Not promotable: routes to the confirmation lane
+    /// (OCR spot-check or human visual confirmation) instead.
+    /// Observed root cause: graphics-heavy hard negatives score >= 0.90
+    /// purely on "same page size, similar ink density" (see
+    /// `docs/audits/evidence-floor-abstention-rg138-2026-09-03.md`).
+    case insufficientEvidence
     /// Ambiguous — below family threshold but above noise.
     case ambiguous
     /// Stale — expected source digest doesn't match actual.
@@ -34,7 +48,7 @@ public enum MatchingTier: String, Codable, Sendable, CaseIterable {
     public var isMatch: Bool {
         switch self {
         case .exact, .knownVariant, .familyMatch: return true
-        case .ambiguous, .stale, .noMatch: return false
+        case .insufficientEvidence, .ambiguous, .stale, .noMatch: return false
         }
     }
 
@@ -44,6 +58,7 @@ public enum MatchingTier: String, Codable, Sendable, CaseIterable {
         case .exact: return "Exact match (same source digest)"
         case .knownVariant: return "Known variant (same layout, different source)"
         case .familyMatch: return "Family match (structural similarity)"
+        case .insufficientEvidence: return "Insufficient evidence — no structured content; routes to confirmation lane"
         case .ambiguous: return "Ambiguous (below family threshold)"
         case .stale: return "Stale (source digest mismatch)"
         case .noMatch: return "No match"
@@ -224,6 +239,11 @@ public struct CalibrationReport: Codable, Sendable {
     public let falsePositives: Int
     /// False negatives (true matches classified as noMatch).
     public let falseNegatives: Int
+    /// Evidence-floor abstentions — candidates scoring above the family
+    /// threshold on geometry + raster alone (no structured content on either
+    /// side) that were deliberately NOT promoted and routed to a
+    /// confirmation lane.
+    public let evidenceAbstentions: Int
     /// Per-tier breakdown.
     public let tierBreakdown: [MatchingTier: Int]
     /// Per-document-class breakdown.
@@ -243,6 +263,7 @@ public struct CalibrationReport: Codable, Sendable {
         failed: Int,
         falsePositives: Int,
         falseNegatives: Int,
+        evidenceAbstentions: Int = 0,
         tierBreakdown: [MatchingTier: Int],
         classBreakdown: [String: Int],
         results: [CalibrationResult],
@@ -255,6 +276,7 @@ public struct CalibrationReport: Codable, Sendable {
         self.failed = failed
         self.falsePositives = falsePositives
         self.falseNegatives = falseNegatives
+        self.evidenceAbstentions = evidenceAbstentions
         self.tierBreakdown = tierBreakdown
         self.classBreakdown = classBreakdown
         self.results = results
@@ -294,20 +316,44 @@ public struct RecurringFormCalibrator: Sendable {
         }
         // Known variant: the equality key (V2 digest) matches a different source.
         for (templateID, fingerprint) in templatesV2 where fingerprint.digest == layoutV2.digest {
+            // The equality key is only as strong as what it encodes. When BOTH
+            // documents are silent on every structured channel, canonical
+            // equality is vacuous ("same page size, same emptiness") — e.g.
+            // two unrelated scans of the same page size collapse to one
+            // canonical key (Observed 2026-09-03: scanned-noisy↔ocr-low-
+            // contrast). Claiming a known layout variant on vacuous equality
+            // is the same false family claim the evidence floor exists to
+            // stop: abstain and route to the confirmation lane instead.
+            if !fingerprint.contentCoverage.hasStructuredContent
+                && !layoutV2.contentCoverage.hasStructuredContent {
+                return (.insufficientEvidence, 0.9, templateID)
+            }
             return (.knownVariant, 0.9, templateID)
         }
         guard thresholds.familyEnabled else { return (.noMatch, 0, nil) }
 
         var bestScore = 0.0
         var bestTemplate: String?
+        var bestCoverage: SimilarityCoverage?
         for (templateID, fingerprint) in templatesV2 {
-            let similarity = layoutV2.similarity(to: fingerprint).total
-            if similarity > bestScore {
-                bestScore = similarity
+            let similarity = layoutV2.similarity(to: fingerprint)
+            if similarity.total > bestScore {
+                bestScore = similarity.total
                 bestTemplate = templateID
+                bestCoverage = similarity.coverage
             }
         }
         if bestScore >= thresholds.familyThreshold {
+            // Evidence floor (fail-closed, §0/§4.3): a family claim promoted on
+            // geometry + raster ink alone — both documents silent on every
+            // structured channel — is "same page size", not "same form".
+            // Abstain instead of promoting; the pair routes to the
+            // confirmation lane (OCR spot-check or human visual review).
+            // Cost asymmetry: a false promotion pollutes the template store
+            // and risks wrong prefill; a false abstention is recoverable.
+            if let coverage = bestCoverage, !coverage.hasStructuredContent {
+                return (.insufficientEvidence, bestScore, bestTemplate)
+            }
             return (.familyMatch, bestScore, bestTemplate)
         } else if bestScore >= thresholds.familyThreshold - thresholds.ambiguousMargin {
             return (.ambiguous, bestScore, bestTemplate)
@@ -332,6 +378,7 @@ public struct RecurringFormCalibrator: Sendable {
         var results: [CalibrationResult] = []
         var falsePositives = 0
         var falseNegatives = 0
+        var evidenceAbstentions = 0
 
         for entry in corpus {
             guard let entryV2 = entry.layoutV2 else {
@@ -362,15 +409,25 @@ public struct RecurringFormCalibrator: Sendable {
                 exactSourceDigests: exactDigests
             )
 
+            // Evidence-floor abstention is a PASSED outcome for an expected
+            // noMatch hard negative: the entry is not promoted, which is the
+            // requirement, and the abstention is recorded honestly (the
+            // raw score may exceed the family threshold — the pair LOOKS
+            // like a match but refuses the claim).
+            let abstained = actual.tier == .insufficientEvidence
             let passed = actual.tier == entry.expectedTier
+                || (entry.expectedTier == .noMatch && abstained)
             let falsePositive = entry.isHardNegative && actual.tier.isMatch
             let falseNegative = entry.expectedTier.isMatch && !actual.tier.isMatch
 
             if falsePositive { falsePositives += 1 }
             if falseNegative { falseNegatives += 1 }
+            if abstained { evidenceAbstentions += 1 }
 
             let reason: String
-            if passed {
+            if abstained && passed {
+                reason = "Evidence floor abstention (score \(String(format: "%.4f", actual.score)) >= threshold but no structured content on either side) — not promoted, routes to confirmation lane"
+            } else if passed {
                 reason = "Correctly classified as \(actual.tier.rawValue)"
             } else if falsePositive {
                 reason = "FALSE POSITIVE: Hard negative classified as \(actual.tier.rawValue) (expected \(entry.expectedTier.rawValue))"
@@ -392,7 +449,10 @@ public struct RecurringFormCalibrator: Sendable {
             ))
         }
 
-        return buildReport(results: results, corpus: corpus, falsePositives: falsePositives, falseNegatives: falseNegatives)
+        return buildReport(
+            results: results, corpus: corpus,
+            falsePositives: falsePositives, falseNegatives: falseNegatives,
+            evidenceAbstentions: evidenceAbstentions)
     }
 
     /// Shared report assembly.
@@ -400,7 +460,8 @@ public struct RecurringFormCalibrator: Sendable {
         results: [CalibrationResult],
         corpus: [CorpusEntry],
         falsePositives: Int,
-        falseNegatives: Int
+        falseNegatives: Int,
+        evidenceAbstentions: Int
     ) -> CalibrationReport {
         let passedCount = results.filter(\.passed).count
         let failedCount = results.count - passedCount
@@ -422,6 +483,9 @@ public struct RecurringFormCalibrator: Sendable {
 
         // Generate recommendations
         var recommendations: [String] = []
+        if evidenceAbstentions > 0 {
+            recommendations.append("\(evidenceAbstentions) evidence-floor abstention(s): above-threshold pairs with no structured content were not promoted. Route them to the OCR/visual confirmation lane — reading real text from the pixels is the missing evidence (extraction resolution is the binding constraint, not corpus composition).")
+        }
         if fpr > 0.05 {
             recommendations.append("False-positive rate \(String(format: "%.1f%%", fpr * 100)) exceeds 5% threshold. Consider raising familyThreshold from \(thresholds.familyThreshold) to \(String(format: "%.2f", thresholds.familyThreshold + 0.05)).")
         }
@@ -441,6 +505,7 @@ public struct RecurringFormCalibrator: Sendable {
             failed: failedCount,
             falsePositives: falsePositives,
             falseNegatives: falseNegatives,
+            evidenceAbstentions: evidenceAbstentions,
             tierBreakdown: tierBreakdown,
             classBreakdown: classBreakdown,
             results: results,

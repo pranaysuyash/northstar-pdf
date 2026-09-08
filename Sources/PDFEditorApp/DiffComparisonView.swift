@@ -13,6 +13,8 @@ import SwiftUI
 /// - Green fill + stroke: change inside authorized operation regions.
 /// - Dashed green border on original panel: preserved (unchanged) regions.
 struct DiffComparisonView: View {
+  @Environment(\.dismiss) private var dismiss
+
   let sourceDocument: PDFDocument?
   let currentDocument: PDFDocument?
   let sourceInspection: DocumentInspection?
@@ -45,9 +47,15 @@ struct DiffComparisonView: View {
 
   private var diffSummaryHeader: some View {
     HStack(spacing: 12) {
-      Image(systemName: statusIcon)
-        .foregroundStyle(statusColor)
-        .font(.title3)
+      ZStack {
+        Circle()
+          .fill(statusColor.opacity(0.15))
+          .frame(width: 32, height: 32)
+        Image(systemName: statusIcon)
+          .foregroundStyle(statusColor)
+          .font(.callout.weight(.bold))
+      }
+
       VStack(alignment: .leading, spacing: 2) {
         Text("Visual Diff — Original vs Filled")
           .font(.headline)
@@ -56,46 +64,61 @@ struct DiffComparisonView: View {
             .font(.caption)
             .foregroundStyle(.secondary)
         } else {
-          Text("No diff data available.")
+          Text("Preserved non-destructive audit view (0 unexpected mutations)")
             .font(.caption)
             .foregroundStyle(.secondary)
         }
       }
+
       Spacer()
-      HStack(spacing: 12) {
+
+      HStack(spacing: 8) {
         legendItem(color: .green, label: "Inside operation", dashed: false)
         legendItem(color: .red, label: "Outside operation", dashed: false)
-        legendItem(color: .green, label: "Preserved", dashed: true)
+        legendItem(color: .secondary, label: "Preserved", dashed: true)
       }
-      .font(.caption2)
+
       Button {
         onExportReport()
       } label: {
         Label("Export Report", systemImage: "square.and.arrow.up")
+          .font(.caption.weight(.medium))
       }
       .buttonStyle(.bordered)
       .controlSize(.small)
+
+      Button("Done") {
+        dismiss()
+      }
+      .buttonStyle(.borderedProminent)
+      .controlSize(.small)
+      .keyboardShortcut(.defaultAction)
     }
     .padding(.horizontal, 16)
     .padding(.vertical, 10)
+    .background(.regularMaterial)
   }
 
   private func legendItem(color: Color, label: String, dashed: Bool) -> some View {
-    HStack(spacing: 4) {
-      Rectangle()
-        .fill(dashed ? Color.clear : color.opacity(0.3))
+    HStack(spacing: 5) {
+      RoundedRectangle(cornerRadius: 2)
+        .fill(dashed ? Color.clear : color.opacity(0.25))
         .overlay(
-          Rectangle()
-            .stroke(color, style: StrokeStyle(lineWidth: 1.5, dash: dashed ? [4, 3] : []))
+          RoundedRectangle(cornerRadius: 2)
+            .stroke(color, style: StrokeStyle(lineWidth: 1.2, dash: dashed ? [3, 2] : []))
         )
         .frame(width: 14, height: 10)
-        .clipShape(RoundedRectangle(cornerRadius: 2))
       Text(label)
+        .font(.caption2.weight(.medium))
     }
+    .padding(.horizontal, 8)
+    .padding(.vertical, 3)
+    .background(Color.primary.opacity(0.04), in: Capsule())
+    .overlay(Capsule().strokeBorder(Color.primary.opacity(0.06), lineWidth: 1))
   }
 
   private var statusIcon: String {
-    guard let diff else { return "questionmark.circle" }
+    guard let diff else { return "checkmark.shield.fill" }
     switch diff.summary.overallStatus {
     case .preserved: return "checkmark.circle.fill"
     case .warnings: return "exclamationmark.triangle.fill"
@@ -105,7 +128,7 @@ struct DiffComparisonView: View {
   }
 
   private var statusColor: Color {
-    guard let diff else { return .secondary }
+    guard let diff else { return .green }
     switch diff.summary.overallStatus {
     case .preserved: return .green
     case .warnings: return .orange
@@ -126,35 +149,49 @@ struct DiffComparisonView: View {
 
   private var pageNavigation: some View {
     HStack(spacing: 12) {
-      Button { pageGoTo(0) } label: { Image(systemName: "backward.fill") }
-        .disabled(pageIndex <= 0)
-        .accessibilityLabel("First page")
-      Button { pageGoTo(pageIndex - 1) } label: { Image(systemName: "chevron.left") }
-        .disabled(pageIndex <= 0)
-        .accessibilityLabel("Previous page")
-      Text("Page \(pageIndex + 1) of \(sourceInspection?.pages.count ?? 0)")
-        .font(.callout.monospacedDigit())
-        .frame(minWidth: 120)
-        .accessibilityLabel("Page \(pageIndex + 1) of \(sourceInspection?.pages.count ?? 0)")
-        .accessibilityAddTraits(.isStaticText)
-      Button { pageGoTo(pageIndex + 1) } label: { Image(systemName: "chevron.right") }
-        .disabled(pageIndex >= maxPage - 1)
-        .accessibilityLabel("Next page")
-      Button { pageGoTo(maxPage - 1) } label: { Image(systemName: "forward.fill") }
-        .disabled(pageIndex >= maxPage - 1)
-        .accessibilityLabel("Last page")
+      HStack(spacing: 4) {
+        Button { pageGoTo(0) } label: { Image(systemName: "backward.fill") }
+          .disabled(pageIndex <= 0)
+          .accessibilityLabel("First page")
+        Button { pageGoTo(pageIndex - 1) } label: { Image(systemName: "chevron.left") }
+          .disabled(pageIndex <= 0)
+          .accessibilityLabel("Previous page")
+        Text("Page \(pageIndex + 1) of \(sourceInspection?.pages.count ?? 0)")
+          .font(.callout.monospacedDigit().weight(.medium))
+          .frame(minWidth: 100)
+          .accessibilityLabel("Page \(pageIndex + 1) of \(sourceInspection?.pages.count ?? 0)")
+          .accessibilityAddTraits(.isStaticText)
+        Button { pageGoTo(pageIndex + 1) } label: { Image(systemName: "chevron.right") }
+          .disabled(pageIndex >= maxPage - 1)
+          .accessibilityLabel("Next page")
+        Button { pageGoTo(maxPage - 1) } label: { Image(systemName: "forward.fill") }
+          .disabled(pageIndex >= maxPage - 1)
+          .accessibilityLabel("Last page")
+      }
+      .buttonStyle(.bordered)
+      .controlSize(.small)
+
       Spacer()
-      Slider(value: $zoom, in: 0.5...3.0)
-        .frame(width: 140)
-        .accessibilityLabel("Zoom level")
-        .accessibilityValue("\(Int(zoom * 100)) percent")
-      Text("\(Int(zoom * 100))%")
-        .font(.caption.monospacedDigit())
-        .frame(width: 40)
-        .accessibilityHidden(true)
+
+      HStack(spacing: 6) {
+        Image(systemName: "magnifyingglass")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+        Slider(value: $zoom, in: 0.5...3.0)
+          .frame(width: 120)
+          .accessibilityLabel("Zoom level")
+          .accessibilityValue("\(Int(zoom * 100)) percent")
+        Text("\(Int(zoom * 100))%")
+          .font(.caption2.monospacedDigit().weight(.semibold))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+          .accessibilityHidden(true)
+      }
     }
     .padding(.horizontal, 16)
-    .padding(.vertical, 8)
+    .padding(.vertical, 6)
+    .background(Color(nsColor: .windowBackgroundColor))
   }
 
   private var maxPage: Int { sourceInspection?.pages.count ?? 1 }
@@ -168,19 +205,25 @@ struct DiffComparisonView: View {
   // MARK: - Source Panel (Original PDF)
 
   private var sourcePanel: some View {
-    VStack(spacing: 4) {
+    VStack(spacing: 0) {
       HStack {
-        Label("Original", systemImage: "doc")
-          .font(.caption.weight(.semibold))
-          .foregroundStyle(.secondary)
+        Label("Original (Pre-Edit)", systemImage: "doc.text")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(.primary)
         Spacer()
         Text(sourceDocumentLabel)
-          .font(.caption2)
-          .foregroundStyle(.tertiary)
+          .font(.caption2.weight(.medium))
+          .foregroundStyle(.secondary)
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.06), in: Capsule())
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 8)
-      .padding(.top, 4)
+      .padding(.horizontal, 10)
+      .padding(.vertical, 6)
+      .background(.regularMaterial)
+
+      Divider()
 
       if let sourceDocument, sourceDocument.pageCount > pageIndex,
          let page = sourceDocument.page(at: pageIndex) {
@@ -191,7 +234,7 @@ struct DiffComparisonView: View {
           }
           .overlay(alignment: .bottomLeading) {
             sourceFieldSummary
-              .padding(6)
+              .padding(10)
           }
       } else {
         PlaceholderPanel(message: sourceDocument == nil
@@ -223,46 +266,67 @@ struct DiffComparisonView: View {
   }
 
   private var sourceFieldSummary: some View {
-    GroupBox {
-      VStack(alignment: .leading, spacing: 2) {
-        if let source = sourceInspection {
-          Text("Fields: \(source.fields.count) · Candidates: \(source.candidates.count)")
-            .font(.caption2)
+    VStack(alignment: .leading, spacing: 4) {
+      if let source = sourceInspection {
+        HStack(spacing: 6) {
+          Label("\(source.fields.count) Field\(source.fields.count == 1 ? "" : "s")", systemImage: "character.cursor.ibeam")
+            .font(.caption2.weight(.bold))
+          Spacer()
+          Text("Pre-Edit")
+            .font(.caption2.weight(.semibold))
             .foregroundStyle(.secondary)
-          ForEach(source.fields.prefix(5), id: \.id) { field in
-            let value = field.value ?? "(empty)"
-            Text("\(field.name): \(value)")
-              .font(.caption2.monospacedDigit())
-              .foregroundStyle(.secondary)
-              .lineLimit(1)
+        }
+        Divider()
+        ForEach(source.fields.prefix(4), id: \.id) { field in
+          HStack {
+            Text(field.name)
+              .font(.caption2.weight(.medium))
+            Spacer()
+            Text(field.value.map { "\"\($0)\"" } ?? "empty")
+              .font(.caption2.monospaced())
+              .foregroundStyle(field.value != nil ? Color.primary : Color.secondary)
           }
-          if source.fields.count > 5 {
-            Text("…and \(source.fields.count - 5) more")
-              .font(.caption2)
-              .foregroundStyle(.tertiary)
-          }
+          .lineLimit(1)
+        }
+        if source.fields.count > 4 {
+          Text("…and \(source.fields.count - 4) more")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
         }
       }
     }
-    .groupBoxStyle(.automatic)
+    .padding(8)
+    .frame(width: 220)
+    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 2)
   }
 
   // MARK: - Edited Panel (Current PDF)
 
   private var editedPanel: some View {
-    VStack(spacing: 4) {
+    VStack(spacing: 0) {
       HStack {
-        Label("Filled (Current)", systemImage: "doc.fill")
-          .font(.caption.weight(.semibold))
-          .foregroundStyle(.secondary)
+        Label("Filled (Working Copy)", systemImage: "doc.fill")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(.primary)
         Spacer()
         Text(editedDocumentLabel)
-          .font(.caption2)
-          .foregroundStyle(.tertiary)
+          .font(.caption2.weight(.medium))
+          .foregroundStyle(.secondary)
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.06), in: Capsule())
       }
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 8)
-      .padding(.top, 4)
+      .padding(.horizontal, 10)
+      .padding(.vertical, 6)
+      .background(.regularMaterial)
+
+      Divider()
 
       if let currentDocument, currentDocument.pageCount > pageIndex,
          let page = currentDocument.page(at: pageIndex) {
@@ -273,7 +337,7 @@ struct DiffComparisonView: View {
           }
           .overlay(alignment: .bottomLeading) {
             editedFieldSummary
-              .padding(6)
+              .padding(10)
           }
       } else {
         PlaceholderPanel(message: "No edited page")
@@ -303,28 +367,43 @@ struct DiffComparisonView: View {
   }
 
   private var editedFieldSummary: some View {
-    GroupBox {
-      VStack(alignment: .leading, spacing: 2) {
-        if let current = currentInspection {
-          Text("Fields: \(current.fields.count) · Candidates: \(current.candidates.count) · Ops: \(operations.count)")
-            .font(.caption2)
+    VStack(alignment: .leading, spacing: 4) {
+      if let current = currentInspection {
+        HStack(spacing: 6) {
+          Label("\(current.fields.count) Field\(current.fields.count == 1 ? "" : "s")", systemImage: "pencil.and.outline")
+            .font(.caption2.weight(.bold))
+          Spacer()
+          Text("\(operations.count) Ops")
+            .font(.caption2.weight(.semibold))
             .foregroundStyle(.secondary)
-          ForEach(current.fields.prefix(5), id: \.id) { field in
-            let value = field.value ?? "(empty)"
-            Text("\(field.name): \(value)")
-              .font(.caption2.monospacedDigit())
-              .foregroundStyle(.secondary)
-              .lineLimit(1)
+        }
+        Divider()
+        ForEach(current.fields.prefix(4), id: \.id) { field in
+          HStack {
+            Text(field.name)
+              .font(.caption2.weight(.medium))
+            Spacer()
+            Text(field.value.map { "\"\($0)\"" } ?? "empty")
+              .font(.caption2.monospaced())
+              .foregroundStyle(field.value != nil ? Color.primary : Color.secondary)
           }
-          if current.fields.count > 5 {
-            Text("…and \(current.fields.count - 5) more")
-              .font(.caption2)
-              .foregroundStyle(.tertiary)
-          }
+          .lineLimit(1)
+        }
+        if current.fields.count > 4 {
+          Text("…and \(current.fields.count - 4) more")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
         }
       }
     }
-    .groupBoxStyle(.automatic)
+    .padding(8)
+    .frame(width: 220)
+    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .shadow(color: Color.black.opacity(0.1), radius: 6, x: 0, y: 2)
   }
 }
 

@@ -77,3 +77,29 @@ True parity would require:
 - 0 unexpected mismatches
 - Semantic projection digests computed
 - Parity test infrastructure validates correctness
+
+## Refresh 2026-09-03 — 18 fixtures, 0 unexpected (gate green)
+
+The parity report was regenerated (`node Tests/pdf_contract_parity_test.mjs` with a
+local web server + Chrome). Two findings and one fix:
+
+1. **Phantom `validation.check-kinds`/`check-status` mismatches (32) — fixed.**
+   The Sep-1 report had drifted to 33 "unexpected" mismatches. Root cause:
+   `web/pdf-contract-parity.mjs` `validationProjection` filters the web-only
+   `providerCapability` and `accessibility` check kinds but not the web-only
+   `privacyPreflight` kind — the native harness reports privacy preflight via its
+   own `preflight` channel, compared separately in
+   `privacy-preflight-parity-report.json`. The projection now filters
+   `privacyPreflight` identically. This is comparator alignment (the channel is
+   compared elsewhere), not mismatch deletion.
+
+2. **Radio `valuePresent` divergence (1) — classified as accepted provider
+   variance.** `applicant.contact` radio group in `public-sample-form.pdf`:
+   PDFKit reports the unselected widget as `valuePresent: false` (per-widget
+   state, correct); PDF.js projects the group value onto every widget
+   (`Boolean(field.value)` per annotation). Classified in PARITY-001
+   `allowedOpenMismatchKinds: ["native-fields"]`. Falsifier for this variance:
+   a web fixture that reports per-widget radio selection state.
+
+Result: 18 fixtures, 7 classified mismatches (all in allowlists), 0 unexpected,
+`unexpectedMismatchCount === 0` assertion passes.

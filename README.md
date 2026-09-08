@@ -1,4 +1,4 @@
-# PDF Editor
+# Northstar
 
 Research and provider-evaluation workspace for a local-first PDF reader and editor.
 

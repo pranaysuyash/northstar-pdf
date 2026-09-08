@@ -3,6 +3,7 @@
 
 # Swift Package Manager and Xcode build state
 .build/
+.build-app/
 .swiftpm/
 DerivedData/
 xcuserdata/
@@ -114,3 +115,11 @@ benchmark/datasets/.venv/
 
 # HTML sketches and design artifacts
 EMPTY-STATE-SKETCHES*.html
+
+# Agent state directories (added 2026-09-06, epistemic audit N16)
+.mimosa/
+
+# Python bytecode (added 2026-09-06 — a tracked .pyc was previously committed)
+__pycache__/
+*.pyc
+/Web-Prototype.zip

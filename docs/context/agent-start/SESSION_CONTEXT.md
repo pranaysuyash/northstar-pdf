@@ -1,6 +1,6 @@
 # Session Context
 
-- Generated: 2026-09-02T08:37:58Z
+- Generated: 2026-09-08T09:47:59Z
 - Project: `pdf_editor`
 - Provider: `local`
 - Model: `BAAI/bge-m3`
@@ -13,7 +13,7 @@
 - Operating doctrine: `OPERATING_DOCTRINE.md` v8.0 (sha256 `ff848618a7431a3b…`) — always applies
 - Project: `pdf_editor`
 - Routing mechanism: agent-start doctrine-family router v1.1 (deterministic intent-signal model)
-- Generated at: 2026-09-02T08:37:59Z
+- Generated at: 2026-09-08T09:47:59Z
 - Generator: agent-start lib/doctrine_family.py
 
 Doctrine routing for this run (task intent not supplied; deferred):
@@ -21,7 +21,7 @@ Doctrine routing for this run (task intent not supplied; deferred):
 | Doctrine | Version | Status | Reason |
 |---|---:|---|---|
 | Operating | 8.0 | selected | always active: cross-cutting control plane |
-| Review | 1.1 | unknown | task intent not supplied at generation time; defer to Operating Doctrine section 16 routing |
+| Review | 1.2 | unknown | task intent not supplied at generation time; defer to Operating Doctrine section 16 routing |
 | Exploration | 1.1 | unknown | task intent not supplied at generation time; defer to Operating Doctrine section 16 routing |
 | Research | 1.0 | unknown | task intent not supplied at generation time; defer to Operating Doctrine section 16 routing |
 | Architecture | 1.1 | unknown | task intent not supplied at generation time; defer to Operating Doctrine section 16 routing |
@@ -41,7 +41,7 @@ No specialist doctrine was selected for this run. The Operating Doctrine routing
 
 ## Project-Focused Retrieval
 
-> NOTE: Project collection check timed out; using shared workspace context for this run.
+> NOTE: Project collection is temporarily locked by another index/search process; using shared workspace context for this run.
 
 ## Shared Cross-Project Retrieval
 

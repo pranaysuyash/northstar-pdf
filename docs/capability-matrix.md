@@ -1,6 +1,12 @@
 # PDF Editor Capability Matrix
 
-**Status:** Canonical full-capability implementation and evidence matrix
+**Status:** Historical (2026-08-25) — superseded as the canonical capability
+snapshot by the 42-capability maturity matrix in
+[`audits/capability-maturity-model-and-matrix-2026-08-28.md`](audits/capability-maturity-model-and-matrix-2026-08-28.md),
+which later audits (`status-whats-next-2026-08-30.md`, consolidated audits) use.
+This file remains the original full-capability *target* inventory; its per-row
+evidence states predate the RG-134 closure (2026-09-06) and the RG-136
+4-provider gate (2026-09-03) — read rows as targets, not current status.
 **Rule:** A capability is not advertised as supported unless its provider,
 fixture, validator, and failure behavior are all identified. This rule governs
 claims and activation, not whether the capability is built. Every row is a

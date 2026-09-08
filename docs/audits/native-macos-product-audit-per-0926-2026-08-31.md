@@ -118,7 +118,7 @@ The active native path is:
 
 ```text
 PDFEditorApp
-  -> WindowGroup("PDF Editor")
+  -> WindowGroup("Northstar")
   -> PDFEditorWindow
   -> ContentView
   -> RecoveryStatusBanner
@@ -205,6 +205,8 @@ The product should synthesize those patterns without copying their branding or l
 | NMAC-023 | “Agent” can be useful but requires a grounded interaction boundary | Implicit | T1/S0; `AgentCommandHUD.swift`, capability/evidence contracts | Make it a document-grounded command surface that previews sources, operations, permissions, and validation before execution. |
 | NMAC-024 | No native design evidence currently proves 200% zoom, narrow resize, or reduced-motion behavior in the full app | Explicit | T1/S0; source modifiers and test inventory | Add screenshot and interaction matrix on real macOS windows; static modifiers are not proof. |
 | NMAC-025 | Current build success and historical green counts can be confused with product completeness | Explicit | T2/S1/S2; current build/test results; `docs/status-whats-next-2026-08-30.md` | Every report must separate build, focused tests, live UX, capability claim, and release status. |
+| NMAC-026 | Canonical product identity and native implementation name diverge in user-facing surfaces | Explicit | T1/S0; `DESIGN.md`, Northstar product-direction records, `PDFEditorApp.swift`, `native-preview-Info.plist` | Show Northstar in the native app menu, window scene, and bundle display metadata; retain PDFEditor only for technical compatibility until a separate migration is justified. |
+| NMAC-027 | The document toolbar remains visible as a disabled control inventory when no document is open | Explicit | User screenshot `Screenshot 2026-09-01 at 3.29.19 PM.png`; T1/S0 `ContentView.swift:111-126`, `:249-256` | Hide the window toolbar in the home state. Keep the macOS menu bar and the welcome surface's Open, New blank, recent, and drop actions as the global/recovery paths. Restore the document or skim toolbar only after `model.inspection` exists. |
 
 ### Implemented slice: adaptive command surfaces and local behavior hints
 
@@ -412,11 +414,12 @@ The following is the complete task pool from this audit. Task IDs are intentiona
 | NM-T10 | Implement | Add native `SidebarCommands`, `InspectorCommands`, and `ToolbarCommands` where appropriate | Make hidden/closed UI recoverable through the menu bar | T2 command inventory plus T4 menu-tree observation |
 | NM-T11 | Implement | Replace generic “Manager” with outcome-based document/workspace utilities | Improve discoverability without adding top-level navigation | T4 first-use task completion observation |
 | NM-T12 | Implement | Add explicit focus restoration and keyboard traversal contracts for every sheet, rail, inspector, and command palette | Make the app viable for keyboard and assistive users | T2 focus tests plus T4 VoiceOver/keyboard walkthrough |
-| NM-T13 | Implement | Make the empty state a recent-work and drop-to-open surface with capability preflight preview | Turn first launch into product value | Source slice delivered in `ContentView.swift`; T4 empty/open/drop flow at 1280x820 and narrow window remains open |
+| NM-T13 | Implement | Make the empty state a recent-work and drop-to-open surface with capability preflight preview | Turn first launch into product value | Source slice delivered in `ContentView.swift`, including visible stale recent rows and Locate; T2 replacement test passes, while T4 empty/open/drop flow at 1280x820 and narrow window remains open |
 | NM-T14 | Implement | Surface recovery as Restore / Inspect / Discard actions, not only a banner | Protect user effort and explain consequences | T2 interruption tests plus T4 kill/reopen observation |
 | NM-T15 | Research/implement | Build a native screenshot and interaction regression matrix | Static source cannot prove visual quality | T2 image diff for stable surfaces; T4 human review for behavior |
 | NM-T35 | Research/implement | Define and evaluate a context-projection matrix where direct interaction state controls eligibility, bounded local history only ranks eligible actions, and fixed anchors preserve recovery | Make menus feel alive without turning behavior tracking into hidden authority | T2 projection matrix tests; T4 comparison of fixed, contextual, and user-pinned menus under NM-R11 |
 | NM-T36 | Research/implement | Define bounded local command-history aging, stale-pin behavior, target-confidence abstention, and quiet-menu discoverability | Keep behavior-aware presentation useful over time without creating an indefinite user profile or hiding capability | Core target-confidence abstention is implemented and covered by T2 policy tests; T1 aging/stale-pin contract and T4 comprehension observation remain under NM-R12/NM-R14 |
+| NM-T38 | Implement/verify | Hide the document toolbar while the home state has no admitted document, while preserving menu-bar and welcome-surface actions | Prevent disabled editor controls from competing with Northstar's first-run admission and creation flow | T2/source build plus T4 home-to-document-to-home observation at wide/narrow sizes, with skim-mode restoration and no loss of menu-bar recovery |
 
 ### Evidence-aware completion and review
 
@@ -683,6 +686,14 @@ platform and product research recorded in
   explicit re-selection rather than claiming automatic move tracking. This is
   T2/source evidence, not yet proof for moved, revoked, inaccessible, or
   reselected files in a packaged sandboxed run.
+- The home recent list now keeps stale identities visible with an explicit
+  Locate action. `AppModel.reselectRecentDocument` restores the original record
+  when replacement admission fails and adopts a replacement only after the
+  normal open pipeline succeeds. It returns an explicit admission result, so a
+  rejected or password-gated replacement cannot create a false reading-history
+  event. `RecentDocumentHistoryTests` passes the moved source, successful
+  replacement, and rejected replacement flows at T2; packaged sandbox and
+  revoked bookmark behavior remain open.
 - `RecoveryStatusBanner` now exposes a compact status title, bounded details,
   diagnostics, and explicit Discard confirmation. It calls the existing
   `AppModel.discardRecovery()` authority and does not alter the recovery store
@@ -701,6 +712,10 @@ platform and product research recorded in
   selected from the adjacent New blank menu. The outer welcome workspace owns
   the PDF `onDrop` handler, so the hero, creation surface, and open whitespace
   share one drop interaction contract.
+- The home surface exposes stable accessibility identifiers for the Open action,
+  New blank menu, start workspace, and recent-document region. These are
+  verification anchors only; a packaged control-level AX and VoiceOver
+  walkthrough is still required before treating the home as fully accessible.
 
 Evidence captured:
 
@@ -716,8 +731,24 @@ Evidence captured:
   recent-document continuity.
 - T2 native build passes and `tools/build-native-preview-app.sh` emits an
   arm64 unsigned preview at `.build/native-preview/PDFEditor.app`.
+- 2026-09-05 refresh: the current-source `swift build --disable-sandbox`
+  completed successfully after the home/recent interaction increment;
+  `tools/build-native-preview-app.sh` rebuilt the exact preview bundle, and
+  `RecentDocumentHistoryTests` passed 3 tests in 1 suite. The package remains
+  unsigned, and this evidence does not close packaged drag/drop, keyboard,
+  VoiceOver, resize, reduced-motion, multi-window, bookmark-lifecycle, or
+  signing/notarization gates.
+- The same refresh promotes Northstar to the native scene title, visible alert
+  and accessibility identity, and preview bundle display/name metadata;
+  `PDFEditor` remains the technical executable and artifact-path name. The
+  historical T4 row above intentionally retains the pre-rebrand “PDF Editor”
+  observation and must be re-run for runtime naming proof.
+- A fresh launch of the rebuilt preview succeeded, but the follow-up System
+  Events query was denied Assistive Access (`osascript ... System Events ...
+  error -1728`). Therefore the current evidence verifies the bundle metadata
+  and source path only; it does not verify the visible app-menu or window title.
 - T2 package inspection confirms an arm64 Mach-O executable, bundle identifier
-  `com.pdfeditor.native-preview`, PDF document registration, and minimum
+  `com.northstar.pdf`, PDF document registration, and minimum
   system version 15.0. Host process inspection was denied by macOS privacy,
   so the state of any separate full-suite process is unknown.
 - T4 visual, drag/drop, VoiceOver, reduced-motion, narrow-window, and

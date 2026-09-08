@@ -7,6 +7,15 @@ struct CompanionProtocolTests {
     
     // MARK: - Bridge Authentication
     
+    /// Build a valid origin-bound authentication (V-02: real HMAC signature).
+    private func validAuth(bundleID: String = "com.example.app", timestamp: Date = Date()) -> BridgeAuthentication {
+        BridgeAuthentication(
+            originBundleID: bundleID,
+            signature: CompanionBridge.computeHMAC(originBundleID: bundleID, timestamp: timestamp),
+            timestamp: timestamp
+        )
+    }
+    
     @Test("Bridge starts unauthenticated")
     func bridgeStartsUnauthenticated() async {
         let bridge = CompanionBridge()
@@ -16,23 +25,17 @@ struct CompanionProtocolTests {
     @Test("Bridge authenticates with valid auth")
     func bridgeAuthenticates() async throws {
         let bridge = CompanionBridge()
-        let auth = BridgeAuthentication(
-            originBundleID: "com.example.app",
-            signature: Data("valid-signature".utf8)
-        )
-        try await bridge.authenticate(auth)
+        try await bridge.authenticate(validAuth())
         #expect(await bridge.isAuthenticated)
     }
     
     @Test("Bridge rejects expired authentication")
     func bridgeRejectsExpiredAuth() async throws {
         let bridge = CompanionBridge()
-        let auth = BridgeAuthentication(
-            originBundleID: "com.example.app",
-            signature: Data("sig".utf8),
-            timestamp: Date().addingTimeInterval(-7200),
-            ttlSeconds: 3600
-        )
+        // Signature must still be valid for the (expired) timestamp so the
+        // failure is expiry, not signature mismatch.
+        let expired = Date().addingTimeInterval(-7200)
+        let auth = validAuth(timestamp: expired)
         do {
             try await bridge.authenticate(auth)
             Issue.record("Should have thrown")
@@ -44,8 +47,7 @@ struct CompanionProtocolTests {
     @Test("Bridge invalidates authentication")
     func bridgeInvalidates() async throws {
         let bridge = CompanionBridge()
-        let auth = BridgeAuthentication(originBundleID: "com.example.app", signature: Data("sig".utf8))
-        try await bridge.authenticate(auth)
+        try await bridge.authenticate(validAuth())
         #expect(await bridge.isAuthenticated)
         await bridge.invalidate()
         #expect(await !bridge.isAuthenticated)

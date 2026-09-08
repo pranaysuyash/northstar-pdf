@@ -121,30 +121,74 @@ public struct PipelineCanvasView: NSViewRepresentable {
         context.coordinator.scrollView = scrollView
         context.coordinator.renderingPipeline = renderingPipeline
 
-        // Set up the document
-        if let document, let data = document.dataRepresentation() {
-            let docID = document.documentURL?.lastPathComponent ?? "unknown"
-            Task {
-                _ = try? await renderingPipeline.loadDocument(data: data, documentID: docID)
-                // Warm cache for first pages
-                renderingPipeline.warmUpPages(
-                    pageIndexes: Array(0..<min(8, document.pageCount)),
-                    dpi: 72
-                )
-                // Restore reading position
-                if let position = renderingPipeline.getReadingPosition(documentID: docID) {
-                    if position.pageIndex < document.pageCount {
-                        context.coordinator.navigateToPage(position.pageIndex)
-                    }
-                }
-            }
-        }
+        // Set up the document via the shared sync path so first-open also
+        // redraws after the async load completes (previously the initial
+        // render could fire first and leave a blank canvas until the next
+        // interaction).
+        syncPipelineDocument(coordinator: context.coordinator, pageView: pageView)
 
         return scrollView
     }
 
+    /// Loads the document into the pipeline when the instance changed since
+    /// the last load, then redraws.
+    ///
+    /// Two defects fixed here:
+    /// 1. `updateNSView` never loaded (new) documents — switching or
+    ///    reopening a file left the pipeline holding stale/no data while the
+    ///    sidebars (driven by inspection) looked fine: blank canvas.
+    /// 2. The async load in `makeNSView` had no post-load redraw — if the
+    ///    first render attempt fired before the load finished, the canvas
+    ///    stayed blank until the next resize/zoom/page-turn.
+    ///
+    /// Gating is on document *instance identity*, not projection revision:
+    /// edits mutate the live document in place (same instance, no reload —
+    /// overlays re-render from the operations list), while opens and scratch
+    /// docs install a new instance (reload). Gating on revision would re-parse
+    /// the whole document on every keystroke.
+    private func syncPipelineDocument(
+        coordinator: Coordinator,
+        pageView: PipelinePageView?
+    ) {
+        guard let document else {
+            coordinator.loadedDocumentIdentity = nil
+            return
+        }
+        let identity = ObjectIdentifier(document)
+        guard coordinator.loadedDocumentIdentity != identity else { return }
+        guard let data = document.dataRepresentation() else { return }
+        coordinator.loadGeneration &+= 1
+        let generation = coordinator.loadGeneration
+        let pipeline = renderingPipeline
+        let pageCount = document.pageCount
+        let docID = document.documentURL?.lastPathComponent ?? "unknown"
+        Task {
+            _ = try? await pipeline.loadDocument(data: data, documentID: docID)
+            // Warm cache for first pages
+            pipeline.warmUpPages(
+                pageIndexes: Array(0..<min(8, pageCount)),
+                dpi: 72
+            )
+            await MainActor.run {
+                // A newer load superseded this one; its redraw owns the view.
+                guard coordinator.loadGeneration == generation else { return }
+                coordinator.loadedDocumentIdentity = identity
+                // Restore reading position
+                if let position = pipeline.getReadingPosition(documentID: docID),
+                   position.pageIndex < pageCount {
+                    coordinator.navigateToPage(position.pageIndex)
+                }
+                pageView?.reloadPage()
+            }
+        }
+    }
+
     public func updateNSView(_ scrollView: NSScrollView, context: Context) {
         guard let pageView = context.coordinator.pageView else { return }
+
+        // Reload the pipeline when the open document changed (switch/reopen).
+        // updateNSView previously never loaded documents at all.
+        syncPipelineDocument(coordinator: context.coordinator, pageView: pageView)
 
         // Update page if changed
         if pageView.pageIndex != pageIndex {
@@ -193,6 +237,12 @@ public struct PipelineCanvasView: NSViewRepresentable {
         weak var pageView: PipelinePageView?
         weak var scrollView: NSScrollView?
         var renderingPipeline: RenderingPipeline?
+        /// Identity of the PDFDocument instance currently loaded in the
+        /// pipeline. Nil when nothing (or a cleared document) is loaded.
+        /// See syncPipelineDocument for why identity, not revision, gates.
+        var loadedDocumentIdentity: ObjectIdentifier?
+        /// Monotonic token so overlapping async loads apply in order.
+        var loadGeneration: UInt64 = 0
 
         func navigateToPage(_ pageIndex: Int) {
             pageView?.pageIndex = pageIndex

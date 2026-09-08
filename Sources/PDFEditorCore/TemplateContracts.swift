@@ -419,6 +419,10 @@ public struct PDFTemplatePayload: Codable, Equatable, Hashable, Sendable {
     public let fingerprint: PDFTemplateFingerprint
     public let mappings: [PDFTemplateMapping]
     public let reviewPolicy: PDFTemplateReviewPolicySet
+    /// CAS (Check-Assert-Store) tracking for idempotent revision promotion.
+    /// Each entry records a sourceDigest + eventIDs combination that has been
+    /// promoted, so re-promoting the same combination is a no-op.
+    public let promotedRevisions: [PDFTemplatePromotedRevision]
 
     public init(
         templateID: UUID = UUID(),
@@ -429,7 +433,8 @@ public struct PDFTemplatePayload: Codable, Equatable, Hashable, Sendable {
         privacyMode: PDFTemplatePrivacyMode = .localMinimized,
         fingerprint: PDFTemplateFingerprint,
         mappings: [PDFTemplateMapping] = [],
-        reviewPolicy: PDFTemplateReviewPolicySet = PDFTemplateReviewPolicySet()
+        reviewPolicy: PDFTemplateReviewPolicySet = PDFTemplateReviewPolicySet(),
+        promotedRevisions: [PDFTemplatePromotedRevision] = []
     ) {
         self.templateID = templateID
         self.revisionID = revisionID
@@ -440,10 +445,27 @@ public struct PDFTemplatePayload: Codable, Equatable, Hashable, Sendable {
         self.fingerprint = fingerprint
         self.mappings = mappings
         self.reviewPolicy = reviewPolicy
+        self.promotedRevisions = promotedRevisions
     }
 
     public var approvedMappings: [PDFTemplateMapping] {
         mappings.filter(\.isApproved)
+    }
+}
+
+public struct PDFTemplatePromotedRevision: Codable, Equatable, Hashable, Sendable {
+    public let sourceDigest: String
+    public let eventIDs: [UUID]
+    public let promotedAt: Date
+
+    public init(
+        sourceDigest: String,
+        eventIDs: [UUID],
+        promotedAt: Date = Date()
+    ) {
+        self.sourceDigest = sourceDigest
+        self.eventIDs = eventIDs
+        self.promotedAt = promotedAt
     }
 }
 

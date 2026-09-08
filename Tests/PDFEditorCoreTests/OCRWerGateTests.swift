@@ -30,6 +30,12 @@ public enum OCRWerGateMirror {
         "Tesseract 5.5.0": 0.10,
         "Apple Vision": 0.10,
     ]
+    /// Providers gated on regression-vs-baseline ONLY (no absolute threshold).
+    /// Mirror of GATE_REGRESSION_ONLY_PROVIDERS in benchmark/compare_ocr_wer.py.
+    public static let regressionOnlyProviders: [String] = [
+        "PaddleOCR PP-OCRv6",
+        "Marker (Surya)",
+    ]
     public static let regressionTolerance: Double = 0.05
 
     public struct Row {
@@ -62,7 +68,8 @@ public enum OCRWerGateMirror {
         var gatedRan = 0
         var failed = false
 
-        for (pname, threshold) in thresholds.sorted(by: { $0.key < $1.key }) {
+        let gated = thresholds.keys.sorted() + regressionOnlyProviders
+        for pname in gated {
             let rows = current.filter { $0.provider == pname }
             guard !rows.isEmpty else {
                 checks.append(Check(provider: pname, outcome: .notRan, avgWer: nil))
@@ -80,7 +87,8 @@ public enum OCRWerGateMirror {
                 ? nil
                 : baseRows.map(\.wer).reduce(0, +) / Double(baseRows.count)
             let regressedVsBaseline = baseAvg.map { curAvg > $0 + regressionTolerance } ?? false
-            let overThreshold = curAvg > threshold
+            let threshold = thresholds[pname]
+            let overThreshold = threshold.map { curAvg > $0 } ?? false
             let outcome: Outcome = (regressedVsBaseline || overThreshold) ? .regression : .pass
             if outcome == .regression { failed = true }
             checks.append(Check(provider: pname, outcome: outcome, avgWer: curAvg))
@@ -153,12 +161,16 @@ struct OCRWerGateTests {
         let cur = [
             OCRWerGateMirror.Row(provider: "Tesseract 5.5.0", wer: 0.01, isError: false),
             OCRWerGateMirror.Row(provider: "Apple Vision", wer: 0.0, isError: false),
+            OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false),
+            OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 0.0157, isError: false),
         ]
         let base = [
             OCRWerGateMirror.Row(provider: "Tesseract 5.5.0", wer: 0.01, isError: false),
             OCRWerGateMirror.Row(provider: "Apple Vision", wer: 0.0, isError: false),
+            OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false),
+            OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 0.0157, isError: false),
         ]
-        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["Tesseract 5.5.0", "Apple Vision"])
+        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["Tesseract 5.5.0", "Apple Vision", "PaddleOCR PP-OCRv6", "Marker (Surya)"])
         #expect(verdict == "pass")
         #expect(checks.allSatisfy { $0.outcome == .pass })
     }
@@ -212,6 +224,35 @@ struct OCRWerGateTests {
         let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["Tesseract 5.5.0"])
         #expect(verdict == "pass")
         #expect(checks.first { $0.provider == "Tesseract 5.5.0" }?.outcome == .pass)
+    }
+
+    @Test("Mirror: regression-only provider (PaddleOCR) passes at baseline despite high absolute WER")
+    func regressionOnlyBaselinePassCase() {
+        // PaddleOCR's corpus average (0.109) is above a typical absolute
+        // threshold due to the documented multi-column limitation, but it is
+        // gated on regression-vs-baseline only: at baseline it must pass.
+        let cur = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false)]
+        let base = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false)]
+        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["PaddleOCR PP-OCRv6"])
+        #expect(verdict == "pass")
+        #expect(checks.first { $0.provider == "PaddleOCR PP-OCRv6" }?.outcome == .pass)
+    }
+
+    @Test("Mirror: regression-only provider fails when WER spikes vs its baseline")
+    func regressionOnlySpikeCase() {
+        let cur = [OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 0.30, isError: false)]
+        let base = [OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 0.0157, isError: false)]
+        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["Marker (Surya)"])
+        #expect(verdict == "fail")
+        #expect(checks.first { $0.provider == "Marker (Surya)" }?.outcome == .regression)
+    }
+
+    @Test("Mirror: regression-only provider engine error fails the gate")
+    func regressionOnlyEngineErrorCase() {
+        let cur = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 1.0, isError: true)]
+        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: [], ranProviders: ["PaddleOCR PP-OCRv6"])
+        #expect(verdict == "fail")
+        #expect(checks.first { $0.provider == "PaddleOCR PP-OCRv6" }?.outcome == .error)
     }
 
     // MARK: Baseline artifact integrity (real corpus)

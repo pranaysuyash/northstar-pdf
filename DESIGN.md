@@ -1,10 +1,10 @@
-# PDF Editor Design System
+# Northstar Design System
 
 **Status:** Active product design system
 **Version:** 1.0
 **Last reviewed:** 2026-08-25
-**Product:** Local-first PDF reader and editor for native macOS and browser surfaces
-**Working visual name:** Northstar
+**Product:** Northstar, a local-first PDF reader and editor for native macOS and browser surfaces
+**Technical target name:** PDFEditor
 
 This system is the visual contract for the current product and the long-term capability
 program. It is intentionally more durable than the current provider implementation: UI
@@ -13,7 +13,7 @@ when a companion provider is installed, or when a future operation is gated for 
 
 ## Product posture
 
-PDF Editor is a high-trust document workbench. The source PDF is the primary surface;
+Northstar is a high-trust document workbench. The source PDF is the primary surface;
 application chrome explains location, intent, evidence, and recovery without competing
 with the document. The product starts as a local-first reader and reviewed completion
 flow and grows into a complete native/web PDF platform.

@@ -74,7 +74,7 @@
       "relativePath": "benchmark/results/public-sample-form.pdf",
       "sha256": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "sourceKind": "external-sample-license-unresolved",
-      "lineage": "Existing local benchmark artifact; acquisition and license record remains open.",
+      "lineage": "Existing local benchmark artifact; acquisition and license record remains open. 2026-09-07 incident (D-054): on-disk bytes were found as a macOS Quartz rewrite (bb540191…, 2026-09-01) that failed qpdf with orphan-widget warnings; pristine pdftoolskit.org bytes re-acquired (hash-verified 5a681d44…, qpdf exit 0) and restored. Pre-2026-09 evidence continuity preserved.",
       "privacyClass": "external-sample-license-unresolved",
       "documentClasses": ["native-form", "static-form"],
       "expectedInspection": "inspected",

@@ -52,8 +52,23 @@ import PDFKit
 /// (max **0.9886** = scanned-noisy↔ocr-low-contrast — graphics-heavy cluster).
 /// Non-graphics negative max: **0.813** (multi-column↔hybrid-text-raster).
 /// Gap midpoint 0.945 → ratified threshold **0.90**
-/// (`LayoutFingerprintV2.familyThreshold`). 6 graphics-heavy pairs score
-/// above threshold (documented known limitation).
+/// (`LayoutFingerprintV2.familyThreshold`). The graphics-heavy high scorers
+/// are resolved by the **evidence-floor abstention** (RG-138, 2026-09-03): a
+/// pair with zero structured content on either side is never a promotion,
+/// however high the raw score — the family claim would rest on geometry +
+/// raster ink alone. Production matching (`RecurringFormCalibrator.classify`)
+/// returns `.insufficientEvidence` for these and routes them to the
+/// OCR/visual confirmation lane (see
+/// `docs/audits/evidence-floor-abstention-rg138-2026-09-03.md`).
+///
+/// ## Falsified hypothesis (recorded 2026-09-03)
+/// `raster-weight-analysis-2026-08-30.md` §8 predicted corpus-level
+/// diversification would resolve graphics-heavy false positives
+/// ("add more graphics-heavy fixtures to the calibration set"). The corpus
+/// WAS expanded (60 fixtures, incl. 11 graphics-heavy) and the false
+/// positives persisted — the binding constraint is extraction resolution
+/// (the real text inside the pixels is only reachable by OCR), not corpus
+/// composition.
 ///
 /// ## Raster-page limitation (documented, not fixed here)
 /// V2 records positions only, so a raster page has zero extractable cells and
@@ -62,11 +77,15 @@ import PDFKit
 /// F-3 headroom; OCR/pixel features are future work.
 ///
 /// ## Threshold rule (doctrine-aligned, precision-first)
-/// A family threshold must never promote a hard negative (false-positive rate
-/// 0) while recognizing every layout-identical re-encoding. The ratified
-/// value is the midpoint of the measured separation gap
-/// `(maxNegative + minPositive) / 2`, rounded to 0.05 for stability, encoded
-/// as `LayoutFingerprintV2.familyThreshold`.
+/// A family threshold must never promote an evidence-bearing hard negative
+/// (false-positive rate 0) while recognizing every layout-identical
+/// re-encoding. The ratified value is the midpoint of the measured
+/// separation gap `(maxNegative + minPositive) / 2`, rounded to 0.05 for
+/// stability, encoded as `LayoutFingerprintV2.familyThreshold`. Above-raw-
+/// threshold pairs with no structured content on either side are resolved by
+/// the evidence floor (RG-138): they abstain as `.insufficientEvidence` and
+/// route to the OCR/visual confirmation lane — the raw score alone can never
+/// promote them.
 ///
 /// Doctrine alignment:
 /// - §2 Truth taxonomy — labels are Verified facts (rects, text, bytes, and
@@ -213,6 +232,10 @@ struct LayoutFingerprintThresholdCalibrationTests {
     let b: String
     let classes: [String]
     let similarity: Double
+    /// True when either document carries structured content (text, field,
+    /// annotation, or text-region signal). False for graphics-heavy and
+    /// scanned pairs — the evidence-floor abstention case.
+    let structuredContent: Bool
   }
 
   private struct CalibrationArtifact: Codable {
@@ -244,11 +267,12 @@ struct LayoutFingerprintThresholdCalibrationTests {
       for j in (i + 1)..<fingerprints.count {
         let a = fingerprints[i]
         let b = fingerprints[j]
-        let total = a.fp.similarity(to: b.fp).total
+        let sim = a.fp.similarity(to: b.fp)
         pairs.append(PairScore(
           a: a.name, b: b.name,
           classes: [String(a.family), String(b.family)],
-          similarity: total
+          similarity: sim.total,
+          structuredContent: sim.coverage.hasStructuredContent
         ))
       }
     }
@@ -268,44 +292,46 @@ struct LayoutFingerprintThresholdCalibrationTests {
     let maxPositive = positives.map(\.similarity).max() ?? 0
     let minNegative = hardNegatives.map(\.similarity).min() ?? 0
 
-    // The measured separation gap.
-    // Known limitation: graphics-heavy N-family pairs (diverse-graphics-heavy,
-    // diverse-dense-grid, diverse-scanned-sim) score 0.92–0.98 due to similar
-    // geometry + empty text channels. These break the clean separation.
-    // Known false-positive clusters: graphics-heavy pages with similar geometry
-    // and empty text channels score 0.92–0.98. Text-only pages with similar
-    // paragraph structure also cluster (ocr-clean-english ↔ ocr-dense-paragraph = 0.902).
-    let graphicsHeavyNames: Set<String> = [
-        "diverse-graphics-heavy.pdf", "diverse-dense-grid.pdf",
-        "diverse-scanned-sim.pdf", "scanned-noisy.pdf",
-        "ocr-printed-scan.pdf", "ocr-noisy-invoice.pdf",
-        "ocr-low-contrast.pdf", "ocr-small-font.pdf",
-        "ocr-clean-english.pdf", "ocr-dense-paragraph.pdf",
-        "handwritten-simulated.pdf"
-    ]
-    let nonGraphicsNegatives = hardNegatives.filter {
-        !graphicsHeavyNames.contains($0.a) && !graphicsHeavyNames.contains($0.b)
-    }
-    let maxNonGraphicsNegative = nonGraphicsNegatives.map(\.similarity).max() ?? 0
-
     let threshold = LayoutFingerprintV2.familyThreshold
-    // Core corpus (excluding graphics-heavy pairs) must separate cleanly.
-    #expect(maxNonGraphicsNegative < minPositive,
-            "Non-graphics-hard-negative gap: got \(maxNonGraphicsNegative) vs \(minPositive)")
-    #expect(maxNonGraphicsNegative < threshold,
-            "Non-graphics hard negatives must stay below threshold: max \(maxNonGraphicsNegative) vs \(threshold)")
+
+    // Evidence-floor resolution (RG-138): every high-scoring pair must be
+    // either a true positive (A-A / B-B), or an evidence-floor abstention
+    // (no structured content on either side → routes to the confirmation
+    // lane). A high-scoring pair WITH structured content that is not a true
+    // positive is a promotion — the precision failure this gate exists to
+    // catch.
+    let highScorers = pairs.filter { $0.similarity >= threshold }
+    var evidencePromotions: [PairScore] = []
+    var abstentions: [PairScore] = []
+    for p in highScorers {
+        let isPositivePair = p.classes == ["A", "A"] || p.classes == ["B", "B"]
+        if isPositivePair { continue }
+        if p.structuredContent {
+            evidencePromotions.append(p)
+        } else {
+            abstentions.append(p)
+        }
+    }
+
+    // Precision-first: no hard negative WITH structured evidence may promote.
+    #expect(evidencePromotions.isEmpty,
+            "Evidence-bearing hard negative promoted: \(evidencePromotions.map { "\($0.a)↔\($0.b)=\(String(format: "%.4f", $0.similarity))" })")
     #expect(minPositive >= threshold,
             "Every layout-identical re-encoding must be recognized: min \(minPositive) vs \(threshold)")
 
-    // Precision-first: not a single non-graphics hard-negative promotion.
-    let promoted = nonGraphicsNegatives.filter { $0.similarity >= threshold }
-    #expect(promoted.isEmpty, "No non-graphics hard negative may be promoted: \(promoted.map { "\($0.a)↔\($0.b)=\($0.similarity)" })")
+    // Every true positive pair must itself carry structured content — if a
+    // family member were evidence-less it would (correctly) abstain, and the
+    // corpus label would need review rather than silent promotion.
+    let positivePairs = pairs.filter { $0.classes == ["A", "A"] || $0.classes == ["B", "B"] }
+    let evidenceFreePositives = positivePairs.filter { !$0.structuredContent }
+    #expect(evidenceFreePositives.isEmpty,
+            "Positive pairs must carry structured content to justify a family claim: \(evidenceFreePositives.map(\.a))")
 
-    // Graphics-heavy pairs: documented as a known false-positive cluster.
-    let graphicsPromoted = hardNegatives.filter { $0.similarity >= threshold }
-    if !graphicsPromoted.isEmpty {
-        print("[F-3 note] \(graphicsPromoted.count) graphics-heavy pairs score above threshold (known limitation)")
-        for p in graphicsPromoted.prefix(5) {
+    // Graphics-heavy high scorers: resolved as first-class abstentions
+    // (Observed evidence — printed, recorded in the artifact, never promoted).
+    if !abstentions.isEmpty {
+        print("[F-3 note] \(abstentions.count) evidence-floor abstentions above threshold (routed to confirm lane, not promoted)")
+        for p in abstentions.prefix(8) {
             print("[F-3 note]   \(p.a)↔\(p.b)=\(String(format: "%.4f", p.similarity))")
         }
     }

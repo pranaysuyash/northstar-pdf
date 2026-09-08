@@ -260,7 +260,7 @@
 |---|---|---|---|---|
 | 1 | P1 (Doctrine) | Conciseness | Extract §4 into specialist doctrine | MEDIUM |
 | 2 | P4 (HUD) | Conciseness + Structure | Table-driven command definitions | MEDIUM |
-| 3 | P3 (Bridge) | Completeness | Document HMAC placeholder + defaults | LOW |
+| 3 | P3 (Bridge) | Completeness | ~~Document HMAC placeholder + defaults~~ — **RESOLVED 2026-09-03:** HMAC-SHA256 signing implemented in `BridgeAuthentication` (timestamped envelopes, monotonic-clock replay rejection); default resource limits documented | LOW |
 | 4 | P6 (Policy) | Grounding | Document history influence on ranking | LOW |
 | 5 | P5 (Reading) | Completeness | Add scrollSpeed and defaultZoom | LOW |
 | 6 | P2 (Protocol) | Completeness | Add timeout/cancellation semantics | LOW |

@@ -27,6 +27,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | `OPEN` | Work or evidence has not been completed |
 | `BLOCKED` | Completion requires an unavailable external capability or decision |
 | `FAIL` | The current implementation violates the acceptance oracle |
+| `CONDITIONAL GO` | Release-area disposition: GO once the named condition closes (a typed form of "GO-pending"; used only in the Current-disposition table, never as gate status) |
 
 ## Release blockers
 
@@ -50,7 +51,7 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-016 | Independent-viewer reopen | Validation | `PARTIAL` | Poppler and MuPDF independently reopen 53 eligible source and derived corpus PDFs while qpdf provides separate structural validation; visual diff and semantic fidelity comparison remain open |
 | RG-017 | Source-integrity validation | Shared/provider | `PARTIAL` | Native and browser operation gates reject stale source digests before mutation; browser writer-call and pdf-lib-load probes pass, broader adapter and source-replacement coverage remains open |
 | RG-018 | Output-integrity validation | Shared/provider | `PARTIAL` | Output preserves all bounded invariants after reopen |
-| RG-019 | Native/web parity corpus | Shared | `PASS` | Native and web runners consume the same current eighteen-entry manifest with explicit scanned, synthetic handwriting-like, hybrid, password, malformed, large, OCR, and rotation expectations; 6 classified mismatches across 3 fixtures (all expected: Form 6 candidate projection differences between PDFKit and PDF.js, rotated Form 6 amplification, encrypted-hybrid coordinate precision); 0 unexpected mismatches; full analysis in `docs/audits/native-web-parity-analysis-2026-08-26.md`. |
+| RG-019 | Native/web parity corpus | Shared | `PASS` | Native and web runners consume the same current eighteen-entry manifest with explicit scanned, synthetic handwriting-like, hybrid, password, malformed, large, OCR, and rotation expectations. **Refreshed 2026-09-03**: 18 fixtures, 7 classified mismatches (all allowed kinds, 0 unexpected): `native-fields` (1 — radio `applicant.contact` per-widget value presence: PDFKit reports the unselected widget as no-value, PDF.js projects the group value onto every widget; accepted provider variance, classified in `Tests/fixtures/pdf_corpus_semantic_parity_fixture.json` PARITY-001), `candidate-semantic-set` (2 — Form 6 candidate projection differences between PDFKit and PDF.js), `candidate.count` (2 — rotated Form 6 amplification), `page.geometry-or-text` (1) + `coordinates` (1) — encrypted-hybrid coordinate precision. Fix landed: `web/pdf-contract-parity.mjs` validation projection now filters the web-only `privacyPreflight` check kind (same treatment as `providerCapability`/`accessibility`; privacy preflight is compared separately via `privacy-preflight-parity-report.json`) — this removed 32 phantom `validation.check-kinds`/`validation.check-status` mismatches that had drifted into the Sep-1 report. Full analysis in `docs/audits/native-web-parity-analysis-2026-08-26.md`. |
 | RG-020 | Browser export fidelity | Web/provider | `PARTIAL` | Byte-preserving no-op export and bounded overlay/form exports pass across the expanded valid corpus; web output still lacks unrestricted external-form, encrypted-edit, and universal provider fidelity |
 | RG-021 | Local dependency packaging | Web/release | `PASS` | PDF.js and pdf-lib are locally packaged with licenses and load successfully from the local server |
 | RG-022 | Runtime-unavailable behavior | Web/release | `PASS` | Missing runtime disables controls and announces recovery without startup crash |
@@ -171,11 +172,13 @@ Documentation is part of completion. A gate is not complete until its implementa
 | RG-125 | Native performance budget ratification | `PARTIAL` | `Tests/PDFEditorCoreTests/NativePerformanceBudgetTests.swift` establishes cold-inspection (<2s), field-tree walk (<0.5s), incremental write (<0.5s), and field-lookup (<10ms/100) budgets on the public AcroForm fixture; provisional baselines recorded. Formal ratification requires device-matrix measurement across M1/M2/Intel configurations |
 | RG-126 | Network-egression invariant (all lanes) | `PASS` | `Tests/browser_network_egression_assertion_test.mjs` proves zero external HTTP requests during the full browser workflow cycle (Tier 2/S1). `Tests/egression_assertion_all_lanes_test.mjs` provides comprehensive egress proofs for all 4 lanes: browser (zero external requests), companion (privacy contracts enforce zero egress), OCR-worker (provenance tracks egress state), hosted-mode (egress is tracked and auditable). Privacy provenance validator has complete validation chain. AF-05: CLOSED |
 | RG-127 | S3 mutation-sweep coverage | `PASS` | Deliberate-mutation tests delivered for: PDFIncrementalFormWriter (12 Swift mutations), redaction completeness validator (7 Node mutations), signature guard (12 Node mutations + 6 ByteRange corruption tests), privacy provenance validator (7 Swift mutations), preflight validator (6 Swift mutations). Total: 50 mutation tests proving guards kill specific tampering patterns. AF-04: real ByteRange corruption tests added (6 tests). |
-| RG-131 | Control-viewer observation pre-release gate | `PASS` | **Expanded corpus delivered 2026-09-01:** 25 fixtures across 10 document classes (form, scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, geometry, navigation, text-only, layout, graphics). Manifest-driven (`governed-corpus-manifest.json`) with per-class representative fixtures. `ControlViewerObservation.observeCorpus()` produces a `CorpusObservationReport` with 16 observations per fixture (5 PDFKit + 5 Poppler + 5 DualEngine + 1 human visual confirmation). **Full dual-engine verification:** PDFKit and Poppler both observe all 5 dimensions; DualEngine records agreement; capability gaps (Poppler can't open encrypted/malformed) are classified as advisory, not failures. **Gate logic:** PDFKit opens and passes → PASS; neither viewer opens a known fixture → PASS (expected rejection); Poppler-only path → PASS; otherwise → FAIL. All 25 fixtures pass. Artifact persisted at `control-viewer-gate-report.json`. Remaining: human visual confirmation workflow, broader real-world corpus |
-| RG-134 | AcroForm parity release blocker | `PARTIAL` | Version bumps are blocked while checkbox confidence is below production-ready (≥90% round-trip). Current state: checkbox is 67% (limited) on 9 fixtures — 3 PDFKit-specific failures. The release disposition is updated to reflect this blocker. Checkbox must reach production-ready confidence (at least 9/9 fixtures passing) before any version bump is permitted. Alternatively, the 3 failing fixtures must be classified as known-excluded (with explicit documented rationale) and the exclusion ratified by a reviewer. Wire: `docs/release-gates.md` RG-134 blocks `Current disposition > Feature A bounded reader/navigation > GO`. | `PARTIAL` | `AcroFormParityExperiment` runs against 9 corpus fixtures (public-sample-form, contract-parity, semantic-parity, diverse-layout-corpus, pdfkit-widgets, compressed-acroform, hybrid-text-raster-form) and produces a persisted JSON gate report at `benchmark/results/acroform-parity/acroform-parity-gate-report.json`. Schema `pdf-editor.acroform-parity-experiment` v1.0. **Write-reopen-read round-trip implemented** for all field types across PDFKit (native), PDF.js (browser), and qpdf (CLI) providers. Results: **checkbox** limited (67% confidence — 6/9 fixtures round-trip; 3 non-synthetic PDFs fail due to PDFKit save/reopen limitation for specific widget encodings); **choice** production-ready (100% confidence, 9/9 round-trip); **text** production-ready (100% confidence, 9/9 round-trip); **radio** unsupported (no radio fields exist in the corpus). Cross-provider agreement: 1.0 for all tested types. Ghost fields: 0. CI gate accepts checkbox at limited confidence (≥50%). Known limitation: 3 PDFKit-specific checkbox round-trip failures are a **Verified** PDFKit limitation, not a code defect — synthetic/producer-reencode variants all pass. Radio round-trip is untested due to corpus absence; functional verification (read+write works) was validated manually |
+| RG-131 | Control-viewer observation pre-release gate | `PASS` | **Expanded corpus delivered 2026-09-01, then 25→38 fixtures / 14 document classes (commit d54b4c1):** form, scanned, rotated, encrypted, malformed, handwritten, mixed-content, large, geometry, navigation, text-only, layout, graphics + per-class representative fixtures. Manifest-driven (`governed-corpus-manifest.json`). `ControlViewerObservation.observeGovernedCorpus()` produces a `CorpusObservationReport` with per-fixture observations (5 PDFKit + 5 Poppler + 5 DualEngine + 1 human visual confirmation slot). **Full dual-engine verification:** PDFKit and Poppler both observe the dimensions; DualEngine records agreement; capability gaps (Poppler can't open encrypted/malformed) are classified as advisory, not failures. **Gate logic:** PDFKit opens and passes → PASS; neither viewer opens a known fixture → PASS (expected rejection); Poppler-only path → PASS; otherwise → FAIL. **All 38 fixtures pass — artifact `gatePassed: true`, 38/38 (regenerated 2026-09-06 with ISO-8601 timestamps).** Artifact persisted at `control-viewer-gate-report.json`. Remaining: human visual confirmation workflow (RG-135), broader real-world corpus |
+| RG-133 | AcroForm cross-provider parity experiment | `PARTIAL` | Gate report regenerated 2026-09-06 on the 40-fixture corpus (schema `pdf-editor.acroform-parity-experiment` v1.0): **choice 1.000 production_ready on every provider** (PDFKit, pdf-lib, qpdf all specComplete — plain-string, pair-form, numeric, hierarchical, empty-selection, editable-combo `/Opt` vocabularies; earlier 83–88% rows were measurement phantoms, see `docs/audits/choice-opt-lane-fix-2026-09-06.md`), **checkbox 1.000** and **text 1.000** production_ready on every provider, **radio 0.9375 Mixed** (pdf-lib production_ready; PDFKit + IncrementalWriter experimental, spec-incomplete `/V` and fail-closed refusals respectively). Multi-select listboxes (`/Ff` bit 22) are deliberately outside this corpus — covered by `GeneratedListboxFixtures` instead (`docs/audits/multiselect-listbox-pipeline-2026-09-06.md`). Falsifier: report missing/wrong schema, or choice/text/checkbox below production_ready in a regenerated report. Full section below. |
+| RG-134 | AcroForm parity release blocker | `PASS` | **CLOSED 2026-09-06 — resolved by fix, not exclusion.** The "PDFKit drops checkbox values on 3 fixtures" premise was falsified: byte-level probes showed the production `buttonWidgetState` path round-tripped every failing fixture; the failures were measurement artifacts (wrong write API, hardcoded Yes/Off expectations, leading-slash token leakage). Checkbox is now **production_ready on every provider** — PDFKit 23v/0f conf 1.000, pdf-lib 22v/0f conf 1.000, qpdf verifier 8v/0f; aggregate round-trip **1.000** on the 40-fixture corpus (13 vocabulary-diverse pikepdf-generated checkbox fixtures: Yes/On/Checked/1/Y/True × On/Off states, hierarchical names, multi-box, mixed-vocabulary pages). Two genuine production defects fixed along the way: orphan page-annot widgets (`/Annots`-only fields) invisible to `walkAcroForm`, and `/Opt`-mapped radio state resolution (§12.7.5.4 positional mapping). Full falsification record: `docs/audits/rg134-checkbox-closure-2026-09-06.md`. Residuals honestly documented: PDFKit radio is spec-incomplete (its annotation API omits group `/V` on save — measured); IncrementalWriter refuses compressed/no-AcroForm/broken-xref sources (fail-closed by design). Falsifier: a regenerated gate report showing any checkbox row below production_ready. | `PASS` | `AcroFormParityExperiment` runs against 40 corpus fixtures and produces the persisted JSON gate report at `benchmark/results/acroform-parity/acroform-parity-gate-report.json`. Schema `pdf-editor.acroform-parity-experiment` v1.0. Write-reopen-read round-trip with genuinely independent engines (PDFKit native API, pdf-lib Node lane, in-repo IncrementalWriter, qpdf CLI verifier) and four read-back channels (structural parser, pdf-lib reopen, qpdf JSON, PDFKit reopen). Final results: **checkbox 1.000** (all providers production-ready), **choice 1.000** (all providers production-ready), **text 1.000** (all providers production-ready), **radio 0.938** (pdf-lib 16v/0f production-ready; PDFKit experimental — spec-incomplete /V; IncrementalWriter experimental — compressed-object/no-AcroForm boundaries). Ghost fields: 0. |
 | RG-135 | Human visual confirmation pre-release gate | `PENDING` | Automated dual-engine observations (RG-131) prove what tools see; they cannot prove what a human sees. RG-135 requires a reviewer to visually inspect every governed fixture and record per-dimension confirmations (reopen, rotation, visual fidelity, form visibility, text readability) in the SwiftUI Human Review Panel (Workspace ▸ Human Review Panel…). Confirmations bind to the fixture's current SHA-256 — changed bytes invalidate prior confirmations as stale. Gate statuses: `fail` (reviewer recorded a failure on current bytes — blocks CI), `pending` (coverage incomplete — fails closed; advisory in CI, blocking at release), `pass` (all fixtures confirmed against current bytes — required before any version bump). CI step `Human review gate (RG-135)` validates the artifact pair and uploads it as a workflow artifact; the ledger persists at `benchmark/results/human-visual-confirmation/human-review-ledger.json` and the report at `human-review-gate-report.json`. Current state: 0/38 confirmed — every fixture requires a reviewer pass before release. | `PENDING` | `HumanVisualConfirmationStore` (Sources/PDFEditorCore/HumanVisualConfirmation.swift) evaluates the gate from the persisted ledger bound to `governed-corpus-manifest.json` digests; SwiftUI panel at Sources/PDFEditorApp/HumanReviewPanelView.swift records entries; 13 tests in `HumanVisualConfirmationTests` cover fail-closed semantics, stale-digest invalidation, latest-wins, and artifact persistence |
-| RG-136 | Cross-provider OCR WER regression gate | `PASS` | Every push runs `benchmark/compare_ocr_wer.py --gate` (Tesseract + Apple Vision) against the persisted baseline; fails on WER regression beyond baseline+0.05 tolerance or above the 0.10 absolute per-provider threshold. Baseline (Observed 2026-09-02, 8 fixtures): Tesseract avg WER 0.002, Vision 0.000. PaddleOCR/Marker absence is recorded as `not_ran` provenance, never a false pass; a gated provider returning only engine errors fails the gate; zero gated providers yields `skipped` (warning). Swift parity layer `OCRWerGateTests` (11 tests) mirrors the decision logic and validates the baseline against real corpus fixtures. Artifacts: `benchmark/results/ocr-corpus/ocr-wer-baseline.json` (schema pdf-editor.ocr-wer-baseline v1.0), `ocr-wer-gate-report.json` (schema pdf-editor.ocr-wer-gate v1.0), uploaded as CI workflow artifacts. Re-baselining is explicit via `--update-baseline` and auditable in git history. | `PASS` | Gate runner `benchmark/compare_ocr_wer.py` (`--gate`, `--update-baseline`, `--providers`); thresholds derived from measured evidence in `docs/audits/ocr-cross-provider-benchmark-2026-09-01.md`; CI step `OCR WER regression gate (RG-136)` builds PDFVisionOCRCLI and uploads artifacts |
+| RG-136 | Cross-provider OCR WER regression gate | `PASS` | Every push runs `benchmark/compare_ocr_wer.py --gate` (fast lane: Tesseract + Apple Vision); the heavy lane (nightly + manual dispatch) adds PaddleOCR + Marker. Fails on WER regression beyond baseline+0.05 tolerance or above the 0.10 absolute per-provider threshold. Baseline (Observed 2026-09-03, 8 fixtures, 4 providers): Tesseract avg WER 0.0024, Vision 0.000, PaddleOCR 0.1091, Marker 0.0157. PaddleOCR + Marker are regression-only gated (their averages are dominated by PaddleOCR's documented multi-column limitation); provider absence is recorded as `not_ran` provenance, never a false pass; a gated provider returning only engine errors fails the gate; zero gated providers yields `skipped` (warning). Swift parity layer `OCRWerGateTests` (11 tests) mirrors the decision logic and validates the baseline against real corpus fixtures. Artifacts: `benchmark/results/ocr-corpus/ocr-wer-baseline.json` (schema pdf-editor.ocr-wer-baseline v1.0), `ocr-wer-gate-report.json` (schema pdf-editor.ocr-wer-gate v1.0), uploaded as CI workflow artifacts. Re-baselining is explicit via `--update-baseline` and auditable in git history. | `PASS` | Gate runner `benchmark/compare_ocr_wer.py` (`--gate`, `--update-baseline`, `--providers`); thresholds derived from measured evidence in `docs/audits/ocr-cross-provider-benchmark-2026-09-01.md`; CI step `OCR WER regression gate (RG-136)` builds PDFVisionOCRCLI and uploads artifacts |
 | RG-137 | External dataset eval harness (FUNSD + DocLayNet) | `PASS` | Eval harnesses using public ground truth to measure project capabilities against real-world document diversity. FUNSD (CC BY 4.0, 50 test forms, 1,998 entities): bbox-guided upper bound achieves perfect precision/recall/F1 (1.000); QA pairing limited (0.228 F1) due to consecutive heuristic — honest finding that text-only extraction CAN achieve perfect entity detection with position guidance but QA pairing requires document structure understanding. DocLayNet (CDLA-Permissive, 100 pages sampled, 1,307 regions): text-only heuristics detect region boundaries (1.000 F1 by IoU) but cannot classify correctly (most classes 0% F1) — honest finding that layout classification requires visual features. Gate status: PASS (eval harnesses produce valid reports; no regression threshold yet — advisory until production pipeline is wired to extract from these datasets). Artifacts: `benchmark/results/external-dataset-eval/funsd-entity-eval-report.json` (schema pdf-editor.funsd-entity-eval v1.0), `doclaynet-layout-eval-report.json` (schema pdf-editor.doclaynet-layout-eval v1.0). | `PASS` | `benchmark/datasets/eval_funsd_entities.py`, `benchmark/datasets/eval_doclaynet_layout.py`; findings documented in `docs/audits/consolidated-audit-2026-09-02.md` |
+| RG-138 | Evidence-floor abstention for raster-only family claims | `PASS` | Fail-closed guard (§0/§4.3): a family claim (template match → prefill) promoted on geometry + coarse occupancy alone is "same page size", not "same form". `LayoutSimilarityV2` gains `coverage` (structured channels: text/field/annotation/region; raster ink alone is not structured content); `RecurringFormCalibrator` gains the `insufficientEvidence` tier and applies the floor at both promotion points (known-variant vacuous equality and above-threshold family). Abstained pairs route to the OCR/vision confirm lane (§8) or human visual review (RG-135). Falsified the "corpus composition is the binding constraint" hypothesis: 60 fixtures incl. 11 graphics-heavy did NOT separate the high scorers (scanned-noisy↔low-contrast = 0.9886 → abstains, not promoted); binding constraint is extraction resolution. Blend-sweep rows (85/8/7 and higher edge/occupancy) cannot be made green by weight tuning — measured occupancy Jaccard on identical re-encodings ≈ 0.873 vs projection ≈ 0.987; requires graded occupancy / tolerant multi-scale matching or OCR-lane routing. | `PASS` | `SimilarityCoverage` + `insufficientEvidence` (LayoutFingerprintV2.swift, RecurringFormCalibrator.swift); 15 tests `EvidenceFloorAbstentionTests` incl. real-corpus pair; F-3 gate reworked (precision-first: evidence-bearing hard negatives fail, evidence-less high scorers are recorded abstentions); `docs/audits/evidence-floor-abstention-rg138-2026-09-03.md` |
 | RG-132 | LayoutV2 family-threshold calibration artifact | `PASS` | Persisted JSON artifact at `benchmark/results/detector-calibration/layout-v2-family-threshold-calibration-2026-08-28.json` generated by `LayoutFingerprintThresholdCalibrationTests`. Schema `pdf-editor.layout-v2-family-threshold-calibration` v1.0. Corpus: 44 fixtures, 211 positive pairs, 735 hard-negative pairs. Ratified threshold: 0.90. Evidence: minPositive=0.9057, maxHardNegative=0.9806 (graphics-heavy cluster, documented as known limitation), top non-graphics negative=0.8529. Weights: geometry 0.35, text (30% projection + 70% cell Jaccard) 0.24, field 0.12, annotation 0.05, raster (projection profiles) 0.24, region 0.05. The test regenerates and persists the artifact on every run; CI must fail if the artifact is stale or the gap inverts. Known limitation: 3 graphics-heavy N-family pairs score above 0.90 due to similar raster projection profiles on raster-only pages |
 | RG-130 | Native/browser/companion rejection-ledger oracle | `PARTIAL` | Shared JavaScript and Swift normalizers, source-bound operation lineage, canonical error codes, recovery semantics, unknown-reason abstention, actual companion-host unavailable-capability evidence, and value-minimized comparison report are implemented. The fixture produces 4/6 equivalent comparisons, 2 explicit capability divergences, and 0 unknown comparisons. Universal live-provider emission, pre-source admission failures, and all long-term OCR, text replacement, page, redaction, signature, XFA, PDF/UA, repair, and high-fidelity lanes remain to be wired and measured |
 
@@ -231,10 +234,11 @@ Documentation is part of completion. A gate is not complete until its implementa
 | Feature A bounded reader/navigation | `GO` for internal development and review |
 | Native and web smoke paths | `PASS` on current evidence |
 | General lossless PDF editing | `NO-GO` |
-| General AcroForm fidelity | `NO-GO` — RG-134 blocks: checkbox 67% (limited) |
+| General AcroForm fidelity | `CONDITIONAL GO` — RG-134 CLOSED (checkbox 1.000, all providers production-ready); RG-133 2026-09-06: choice/text/checkbox 1.000 production-ready on every provider, radio 0.9375 Mixed (honest limitation on record); blocked only on RG-135 human pass |
 | Human visual confirmation | `NO-GO` — RG-135: 0/38 fixtures human-confirmed (pending) |
 | Cross-provider OCR quality | `PASS` — RG-136: Tesseract avg WER 0.002, Vision 0.000 vs baseline (tolerance ±0.05, threshold 0.10) |
-| External dataset validation | `PASS` — RG-137: FUNSD eval (1.000 F1 bbox-guided, 0.228 QA pairing), DocLayNet eval (1.000 IoU, 0% classification F1) |
+| External dataset validation | `PASS` (dataset survey) — RG-137: harnesses produce valid reports; measured baselines are honest lower bounds (FUNSD 1.000 F1 bbox-guided / 0.228 QA pairing; DocLayNet 1.000 IoU / 0% classification F1) — **no engine-performance claim is made by this gate** |
+| Raster-only family claims | `PASS` — RG-138: evidence-floor abstention — raster-only above-threshold pairs abstain and route to the confirm lane instead of promoting (scanned-noisy↔low-contrast 0.9886 → abstention) |
 | PDF/UA conformance | `NO-GO` |
 | Unrestricted production release | `NO-GO` |
 
@@ -562,37 +566,67 @@ Documentation is part of completion. A gate is not complete until its implementa
 
 ### RG-133: AcroForm cross-provider parity experiment
 
-- **Scope:** A cross-provider experiment tests how PDFKit, PDF.js, and qpdf
-  handle AcroForm field types (radio, checkbox, choice, text). For each type,
-  the experiment measures detection, read, write, and round-trip capability
-  with a confidence score and a production-readiness decision.
+- **Scope:** A cross-provider experiment tests how PDFKit, the production
+  IncrementalWriter, pdf-lib (Node lane), and qpdf handle AcroForm field
+  types (radio, checkbox, choice, text). For each type, the experiment
+  measures detection, read, write, and round-trip capability with a
+  confidence score and a production-readiness decision.
 - **Required evidence:** Persisted JSON gate report at
   `benchmark/results/acroform-parity/acroform-parity-gate-report.json`
   matching schema `pdf-editor.acroform-parity-experiment` v1.0. The report
   must contain per-field-type capability decisions, cross-provider agreement,
   round-trip success rates, and ghost field counts. CI regenerates the
   report on every run and verifies the report exists with correct schema.
-- **Current evidence:** 9 corpus fixtures (public-sample-form, contract-parity,
-  semantic-parity, diverse-layout-corpus, pdfkit-widgets, compressed-acroform,
-  hybrid-text-raster-form, pdfkit-widgets/noop, public-acroform/noop).
-  Write-reopen-read round-trip implemented and verified:
-  - **Checkbox:** limited (67% confidence) — 6/9 fixtures round-trip across
-    all 3 providers. 3 non-synthetic PDFs (`pdfkit-widgets`, `public-acroform`,
-    `rotated-widget-90`) fail due to PDFKit save/reopen limitation for specific
-    widget encodings. All synthetic/producer-reencode variants pass.
-    **Verified** PDFKit limitation, not a code defect.
-  - **Choice:** production-ready (100% confidence) — 9/9 round-trip, 0 ghost fields.
-  - **Text:** production-ready (100% confidence) — 9/9 round-trip, 0 ghost fields.
-  - **Radio:** unsupported — no radio fields exist in the corpus. Functional
-    verification (read+write) validated manually but no automated round-trip.
-  Cross-provider agreement: 1.0 for all tested types.
-- **Disposition:** `PARTIAL`. Choice and text are production-ready. Checkbox is
-  limited (67% with PDFKit-specific failures). Radio is unsupported (corpus
-  absence). The gate currently passes because CI accepts checkbox at limited
-  confidence (≥50%). A version bump requires checkbox production-ready
-  confidence (RG-134).
-- **Falsifier:** The report is missing, has wrong schema, or choice/text
-  drops below production-ready.
+- **Gate semantics (from the report's own logic):** a field type is
+  `isProductionReady` when every provider-role row reaches `production_ready`
+  (confidence ≥ 0.95 AND measured round-trip AND independent structural
+  spec-complete verification). The qpdf row is a read-only verifier — it
+  confirms writes against the bytes independently but does not gate.
+- **Current evidence (2026-09-06 gate report, 40-fixture corpus: 9 base +
+  8 radio + 13 checkbox + 7 choice + producer variants; regenerated
+  19:34Z on the post-multiselect binary):
+  - **Choice: round-trip 1.000, production_ready on every provider** (PDFKit,
+    pdf-lib, qpdf all specComplete). The 7-choice corpus covers plain-string,
+    pair-form `[export, display]`, numeric, hierarchical dotted, empty-
+    selection, and editable-combo `/Opt` vocabularies. The earlier 83–88%
+    rows were measurement phantoms (hardcoded Yes-style expectations,
+    display-vs-export confusion, stale-KVC reads after incremental updates);
+    read-back now accepts the export in `/V` bytes and either form from the
+    viewer. See `docs/audits/choice-opt-lane-fix-2026-09-06.md`. The 7
+    generated fixtures are guarded corpus members: a composition test fails
+    if any drops off disk or out of the corpus list, and choice provider
+    floors (≥16 verified per write lane, ≥8 for the qpdf verifier) fail the
+    suite if the real `/Opt` coverage stops measuring.
+  - **Checkbox: round-trip 1.000, production_ready on every provider**
+    (PDFKit 23v/0f, pdf-lib 22v/0f, both conf 1.000; qpdf verifier
+    specComplete). Measured 2026-09-06 20:03Z with the 13 generated
+    vocabulary fixtures guarded as corpus members (composition guard +
+    per-lane floors ≥22 verified on the write lanes, ≥8 for the qpdf
+    verifier, RG-134 ≥0.9 confidence bar asserted in the suite). The former
+    "PDFKit save/reopen limitation" claim in this section was **falsified**
+    by RG-134 — it was a measurement artifact, not an engine defect (see
+    RG-134 and its closure audit).
+  - **Text: round-trip 1.000, production_ready on every provider** (incl.
+    multi-widget text fields and orphan page-annot widgets, now resolved by
+    the orphan-merge walk).
+  - **Radio: round-trip 0.9375, Mixed** — pdf-lib 16v/0f conf 1.000,
+    production_ready (incl. `/Opt`-mapped positional state resolution);
+    PDFKit experimental (its annotation-API save omits the radio group /V);
+    IncrementalWriter experimental (compressed/no-AcroForm sources refused
+    fail-closed). This is the only row keeping `gatePassed: false`.
+  - **Multi-select listboxes** (`/Ff` bit 22, array `/V` + `/I`) are
+    deliberately outside this corpus: the writer refuses silent `/Ff`
+    upgrades and PDFKit cannot read array `/V` (measured 2026-09-06), so
+    single-select round-trip rates would not measure the multi-select claim.
+    Covered instead by `GeneratedListboxFixtures` with cross-engine
+    round-trips (`docs/audits/multiselect-listbox-pipeline-2026-09-06.md`).
+- **Disposition:** `PARTIAL`. Choice, checkbox, and text are production-ready
+  across all providers on the 40-fixture corpus; radio remains Mixed
+  (experimental on two providers). CI accepts the current report (checkbox
+  round-trip 1.000 ≥ 50% threshold); a version bump additionally requires
+  the RG-134 checkbox production-ready bar, which is met.
+- **Falsifier:** The report is missing, has wrong schema, or choice/text/
+  checkbox drops below production-ready in a regenerated report.
 - **Evidence:** [`Sources/PDFEditorCore/AcroFormParityExperiment.swift`](../Sources/PDFEditorCore/AcroFormParityExperiment.swift),
   [`Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift`](../Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift),
   [`benchmark/results/acroform-parity/acroform-parity-gate-report.json`](../benchmark/results/acroform-parity/acroform-parity-gate-report.json).
@@ -605,30 +639,26 @@ Documentation is part of completion. A gate is not complete until its implementa
   its round-trip failure would silently lose user data on save/reopen.
 - **Required evidence:** The AcroForm parity gate report (RG-133) must show
   checkbox `isProductionReady: true` with `confidence >= 0.9` across all
-  providers, OR the 3 failing fixtures must be classified as known-excluded
+  providers, OR the failing fixtures must be classified as known-excluded
   with explicit documented rationale and reviewer ratification.
-- **Current evidence:** RG-133 shows checkbox at 67% confidence (limited) on
-  9 fixtures. 3 non-synthetic PDFs (`pdfkit-widgets`, `public-acroform`,
-  `rotated-widget-90`) fail checkbox round-trip due to PDFKit save/reopen
-  limitation for specific widget encodings. All synthetic/producer-reencode
-  variants pass. **Verified** PDFKit limitation, not a code defect.
-- **Disposition:** `PARTIAL`. Checkbox is below production-ready threshold.
-  Version bumps are blocked until either: (a) checkbox confidence reaches
-  ≥90% (add more fixtures where PDFKit succeeds, or fix the 3 failing
-  encodings), or (b) the 3 failing fixtures are classified as known-excluded
-  with documented rationale and a reviewer ratifies the exclusion.
-- **Falsifier:** A version bump is tagged while this gate is not `PASS`.
-- **Resolution paths:**
-  1. **Fix PDFKit save/reopen for the 3 failing encodings** — requires
-     understanding why PDFKit drops checkbox values for `pdfkit-widgets`,
-     `public-acroform`, and `rotated-widget-90`. These are all non-synthetic
-     PDFs with specific widget annotation structures.
-  2. **Expand the corpus** with more fixtures where PDFKit succeeds, raising
-     the confidence denominator. Currently 6/9 pass; need 9/10+ for ≥90%.
-  3. **Classify as known-excluded** — document that the 3 failing fixtures
-     represent PDFKit limitations, not our code defects, and ratify the
-     exclusion with reviewer approval.
-- **Evidence:** Derived from RG-133 evidence; no additional files.
+- **Current evidence (2026-09-06, CLOSED):** checkbox **production_ready on
+  every provider** — PDFKit 23v/0f conf 1.000, pdf-lib 22v/0f conf 1.000,
+  qpdf verifier 8v/0f; aggregate round-trip **1.000** on the 40-fixture
+  corpus (13 vocabulary-diverse pikepdf-generated checkbox fixtures
+  included). The original "PDFKit drops checkbox values on 3 fixtures"
+  premise was **falsified**: the failures were measurement artifacts (wrong
+  write API, hardcoded Yes/Off expectations, leading-slash token leakage) —
+  byte-level probes showed the production `buttonWidgetState` path
+  round-tripped every failing fixture. Full falsification record and the 10
+  root causes (including two genuine production defects fixed: orphan
+  page-annot widgets invisible to `walkAcroForm`, and `/Opt`-mapped radio
+  state resolution) in
+  [`docs/audits/rg134-checkbox-closure-2026-09-06.md`](audits/rg134-checkbox-closure-2026-09-06.md).
+- **Disposition:** `PASS`. No known-exclusion was needed — resolved by fix.
+- **Falsifier:** A version bump is tagged while a regenerated gate report
+  shows any checkbox row below `production_ready` (confidence < 0.9).
+- **Evidence:** Derived from RG-133 evidence; closure audit at
+  [`docs/audits/rg134-checkbox-closure-2026-09-06.md`](audits/rg134-checkbox-closure-2026-09-06.md).
 
 ### RG-135: Human visual confirmation pre-release gate
 
@@ -666,33 +696,47 @@ Documentation is part of completion. A gate is not complete until its implementa
 
 ### RG-136: Cross-provider OCR WER regression gate
 
-- **Scope:** Every push runs the cross-provider OCR benchmark
+- **Scope:** CI runs the cross-provider OCR benchmark
   (`benchmark/compare_ocr_wer.py --gate`) against the persisted baseline and
   fails when a gated provider's average WER regresses beyond the baseline by
   more than 0.05 (absorbing renderer nondeterminism) or exceeds its absolute
   threshold (0.10 for Tesseract 5.5.0 and Apple Vision, derived from
   measured 0.0–0.019 and 0.0 respectively — see
   `docs/audits/ocr-cross-provider-benchmark-2026-09-01.md`).
-- **Baseline (Observed 2026-09-02, 8 fixtures):** Tesseract 5.5.0 avg WER
-  0.002; Apple Vision avg WER 0.000. Schema `pdf-editor.ocr-wer-baseline`
-  v1.0 at `benchmark/results/ocr-corpus/ocr-wer-baseline.json`; gate report
-  at `ocr-wer-gate-report.json` (schema `pdf-editor.ocr-wer-gate` v1.0).
+- **Baseline (Observed 2026-09-03, 8 fixtures, 4 providers):** Tesseract
+  5.5.0 avg WER 0.0024; Apple Vision avg WER 0.000; PaddleOCR PP-OCRv6 avg
+  WER 0.1091 (multi-column reading-order limitation, documented); Marker
+  (Surya) avg WER 0.0157. Schema `pdf-editor.ocr-wer-baseline` v1.0 at
+  `benchmark/results/ocr-corpus/ocr-wer-baseline.json`; gate report at
+  `ocr-wer-gate-report.json` (schema `pdf-editor.ocr-wer-gate` v1.0).
   Re-baselining is explicit (`--update-baseline`) and auditable in git.
-- **Provider provenance, never false passes:** PaddleOCR and Marker are
-  heavy optional dependencies; when absent from a session they are recorded
-  as `not_ran` provenance in the gate report. A gated provider that ran and
-  produced only engine errors fails the gate. A session where no gated
-  provider ran yields `skipped` (warning), never a silent pass.
-- **Swift parity layer:** `OCRWerGateTests` (11 tests) mirrors the
-  regression-decision logic in Swift (thresholds, tolerance, outcomes) and
-  validates the baseline artifact against the real corpus — a baseline
-  referencing missing fixtures or ERROR rows cannot gate CI.
+- **Two lanes:** fast lane (Tesseract + Vision) runs on every push; heavy
+  lane (all four providers, needs the datasets venv with paddleocr +
+  marker-pdf) runs nightly + manual dispatch. Heavy-lane skip is pass in
+  the evidence gate; heavy-lane failure is an error.
+- **Regression-only gating for PaddleOCR + Marker:** these providers are in
+  `GATE_REGRESSION_ONLY_PROVIDERS` — gated on regression-vs-baseline only,
+  with no absolute corpus-average threshold, because PaddleOCR's corpus
+  average is dominated by the documented multi-column reading-order
+  limitation (≈0.73 WER on that fixture). A regression or engine error
+  still fails the gate; the limitation itself never blocks it.
+- **Provider provenance, never false passes:** heavy providers absent from a
+  session are recorded as `not_ran` provenance in the gate report. A gated
+  provider that ran and produced only engine errors fails the gate. A
+  session where no gated provider ran yields `skipped` (warning), never a
+  silent pass.
+- **Swift parity layer:** `OCRWerGateTests` (14 tests) mirrors the
+  regression-decision logic in Swift (thresholds, tolerance, outcomes,
+  regression-only semantics) and validates the baseline artifact against the
+  real corpus — a baseline referencing missing fixtures or ERROR rows
+  cannot gate CI.
 - **Disposition:** `PASS` for CI. This gate is advisory for release
   disposition on its own but its artifacts feed RG-133/134-adjacent OCR
   capability claims.
-- **Falsifier:** A push where Tesseract or Vision WER exceeds baseline +
-  tolerance or the 0.10 threshold while the gate reports pass; or the
-  baseline artifact drifting from the corpus it claims to measure.
+- **Falsifier:** A push where any gated provider WER exceeds baseline +
+  tolerance (or the absolute threshold where one applies) while the gate
+  reports pass; or the baseline artifact drifting from the corpus it claims
+  to measure.
 - **Evidence files:** `benchmark/compare_ocr_wer.py` (gate runner),
   `benchmark/results/ocr-corpus/ocr-wer-baseline.json`,
   `benchmark/results/ocr-corpus/ocr-wer-gate-report.json`,

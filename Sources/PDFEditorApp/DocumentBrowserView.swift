@@ -6,6 +6,7 @@ import PDFEditorCore
 /// corpus search, and dedup detection.
 struct DocumentBrowserView: View {
     @ObservedObject var documentIndex: DocumentIndex
+    @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
     @State private var selectedTag: String?
     @State private var selectedFolder: String?
@@ -54,18 +55,26 @@ struct DocumentBrowserView: View {
     }
     
     var body: some View {
-        HSplitView {
-            // Sidebar — tags and folders
-            sidebar
-                .frame(minWidth: 180, idealWidth: 220)
-            
-            // Main content
-            VStack(spacing: 0) {
-                toolbar
-                documentList
+        VStack(spacing: 0) {
+            // Header bar
+            headerBar
+
+            Divider()
+
+            HSplitView {
+                // Sidebar — tags and folders
+                sidebar
+                    .frame(minWidth: 200, idealWidth: 220, maxWidth: 260)
+                
+                // Main content
+                VStack(spacing: 0) {
+                    toolbar
+                    Divider()
+                    documentContentArea
+                }
             }
         }
-        .searchable(text: $searchText, prompt: "Search documents by title, author, tags…")
+        .frame(width: 820, height: 560)
         .sheet(isPresented: $showTagManager) {
             TagManagerView(documentIndex: documentIndex)
         }
@@ -73,95 +82,198 @@ struct DocumentBrowserView: View {
             DedupReportView(documentIndex: documentIndex)
         }
     }
+
+    // MARK: - Header Bar
+
+    private var headerBar: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.accentColor.opacity(0.12))
+                    .frame(width: 32, height: 32)
+                Image(systemName: "books.vertical.fill")
+                    .font(.callout.weight(.bold))
+                    .foregroundStyle(Color.accentColor)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Document Corpus Browser")
+                    .font(.headline)
+                Text("Local document catalog, cross-document search, tags, and dedup audit.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            // Search field
+            HStack(spacing: 6) {
+                Image(systemName: "magnifyingglass")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextField("Search title, author, tags…", text: $searchText)
+                    .textFieldStyle(.plain)
+                    .font(.callout)
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+            )
+            .frame(width: 240)
+
+            Button("Done") {
+                dismiss()
+            }
+            .keyboardShortcut(.defaultAction)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
     
     // MARK: - Sidebar
     
     private var sidebar: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Corpus stats
-            VStack(alignment: .leading, spacing: 4) {
-                Label("Corpus", systemImage: "books.vertical")
-                    .font(.headline)
-                Text("\(documentIndex.entries.count) documents · \(documentIndex.totalPages) pages")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text(ByteCountFormatter.string(fromByteCount: documentIndex.totalSize, countStyle: .file))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            // Corpus stats card
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Label("Corpus Overview", systemImage: "chart.bar.doc.horizontal")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    Text("\(documentIndex.entries.count)")
+                        .font(.caption.monospacedDigit().weight(.semibold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.accentColor.opacity(0.12), in: Capsule())
+                        .foregroundStyle(Color.accentColor)
+                }
+
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("\(documentIndex.totalPages)")
+                            .font(.subheadline.weight(.semibold))
+                        Text("Pages")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    Divider()
+                        .frame(height: 20)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(ByteCountFormatter.string(fromByteCount: documentIndex.totalSize, countStyle: .file))
+                            .font(.subheadline.weight(.semibold))
+                        Text("Total Size")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
-            .padding()
+            .padding(12)
+            .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+            )
+            .padding(12)
             
             Divider()
             
-            // Folders
-            if !documentIndex.allFolders.isEmpty {
-                Text("Folders")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                
-                ForEach(Array(documentIndex.allFolders.sorted()), id: \.self) { folder in
-                    Button {
-                        selectedFolder = selectedFolder == folder ? nil : folder
-                    } label: {
-                        HStack {
-                            Label(folder, systemImage: "folder")
-                                .font(.callout)
-                            Spacer()
-                            Text("\(documentIndex.documents(in: folder).count)")
-                                .font(.caption)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    // Folders
+                    if !documentIndex.allFolders.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("FOLDERS")
+                                .font(.caption2.weight(.bold))
                                 .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
+                            
+                            ForEach(Array(documentIndex.allFolders.sorted()), id: \.self) { folder in
+                                Button {
+                                    selectedFolder = selectedFolder == folder ? nil : folder
+                                } label: {
+                                    HStack {
+                                        Label(folder, systemImage: "folder")
+                                            .font(.callout)
+                                        Spacer()
+                                        Text("\(documentIndex.documents(in: folder).count)")
+                                            .font(.caption2.monospacedDigit())
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(selectedFolder == folder ? Color.accentColor.opacity(0.15) : Color.clear, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
-                        .background(selectedFolder == folder ? Color.accentColor.opacity(0.15) : Color.clear)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
-                    .buttonStyle(.plain)
-                }
-                .padding(.horizontal)
-                
-                Divider()
-            }
-            
-            // Tags
-            HStack {
-                Text("Tags")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button {
-                    showTagManager = true
-                } label: {
-                    Image(systemName: "plus.circle")
-                        .font(.caption)
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal)
-            .padding(.top, 8)
-            
-            ForEach(Array(documentIndex.allTags.sorted()), id: \.self) { tag in
-                Button {
-                    selectedTag = selectedTag == tag ? nil : tag
-                } label: {
-                    HStack {
-                        Text("#\(tag)")
-                            .font(.callout)
-                        Spacer()
-                        Text("\(documentIndex.documents(withTag: tag).count)")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    
+                    // Tags
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Text("TAGS")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Button {
+                                showTagManager = true
+                            } label: {
+                                Image(systemName: "plus.circle")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.accentColor)
+                            }
+                            .buttonStyle(.plain)
+                            .help("Manage tags")
+                        }
+                        .padding(.horizontal, 4)
+                        
+                        if documentIndex.allTags.isEmpty {
+                            Text("No tags yet")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 4)
+                                .padding(.vertical, 2)
+                        } else {
+                            ForEach(Array(documentIndex.allTags.sorted()), id: \.self) { tag in
+                                Button {
+                                    selectedTag = selectedTag == tag ? nil : tag
+                                } label: {
+                                    HStack {
+                                        Text("#\(tag)")
+                                            .font(.callout)
+                                        Spacer()
+                                        Text("\(documentIndex.documents(withTag: tag).count)")
+                                            .font(.caption2.monospacedDigit())
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(selectedTag == tag ? Color.accentColor.opacity(0.15) : Color.clear, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 4)
-                    .background(selectedTag == tag ? Color.accentColor.opacity(0.15) : Color.clear)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
                 }
-                .buttonStyle(.plain)
+                .padding(12)
             }
-            .padding(.horizontal)
             
             Spacer()
             
@@ -170,11 +282,20 @@ struct DocumentBrowserView: View {
             Button {
                 showDedupReport = true
             } label: {
-                Label("Duplicates", systemImage: "doc.on.doc")
-                    .font(.callout)
+                HStack {
+                    Label("Duplicates Report", systemImage: "doc.on.doc")
+                        .font(.callout)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
             }
             .buttonStyle(.plain)
-            .padding()
+            .padding(12)
         }
         .background(Color(NSColor.controlBackgroundColor))
     }
@@ -183,9 +304,25 @@ struct DocumentBrowserView: View {
     
     private var toolbar: some View {
         HStack {
-            Text("\(filteredDocuments.count) documents")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 6) {
+                Text("\(filteredDocuments.count) documents")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                if selectedTag != nil || selectedFolder != nil {
+                    Button {
+                        selectedTag = nil
+                        selectedFolder = nil
+                    } label: {
+                        HStack(spacing: 3) {
+                            Text("Reset filter")
+                            Image(systemName: "xmark")
+                        }
+                        .font(.caption2)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.mini)
+                }
+            }
             
             Spacer()
             
@@ -195,23 +332,60 @@ struct DocumentBrowserView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .frame(width: 300)
+            .frame(width: 260)
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 16)
         .padding(.vertical, 8)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color(NSColor.windowBackgroundColor))
     }
     
-    // MARK: - Document List
+    // MARK: - Document List / Empty State
     
-    private var documentList: some View {
-        ScrollView {
-            LazyVStack(spacing: 1) {
-                ForEach(filteredDocuments) { entry in
-                    DocumentRowView(entry: entry, index: documentIndex)
+    @ViewBuilder
+    private var documentContentArea: some View {
+        if filteredDocuments.isEmpty {
+            VStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(Color.secondary.opacity(0.1))
+                        .frame(width: 56, height: 56)
+                    Image(systemName: "doc.text.magnifyingglass")
+                        .font(.title)
+                        .foregroundStyle(.secondary)
+                }
+
+                VStack(spacing: 4) {
+                    Text(searchText.isEmpty ? "No Documents Indexed" : "No Matching Documents")
+                        .font(.headline)
+                    Text(searchText.isEmpty ? "Documents opened or imported into Northstar are indexed locally with zero cloud egress." : "Try adjusting your search query or clearing active filters.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: 320)
+                }
+
+                if !searchText.isEmpty || selectedTag != nil || selectedFolder != nil {
+                    Button("Clear Filters") {
+                        searchText = ""
+                        selectedTag = nil
+                        selectedFolder = nil
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
                 }
             }
-            .padding(8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(nsColor: .textBackgroundColor))
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 4) {
+                    ForEach(filteredDocuments) { entry in
+                        DocumentRowView(entry: entry, index: documentIndex)
+                    }
+                }
+                .padding(12)
+            }
+            .background(Color(nsColor: .textBackgroundColor))
         }
     }
 }
@@ -225,26 +399,32 @@ struct DocumentRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // File icon
-            Image(systemName: "doc.fill")
-                .font(.title2)
-                .foregroundStyle(.secondary)
-                .frame(width: 32)
+            // File icon in tinted container
+            ZStack {
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.red.opacity(0.1))
+                    .frame(width: 38, height: 42)
+                Image(systemName: "doc.text.fill")
+                    .font(.title3)
+                    .foregroundStyle(.red.opacity(0.85))
+            }
             
             // Info
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(entry.fileName)
-                    .font(.body)
+                    .font(.callout.weight(.medium))
                     .lineLimit(1)
                 
                 HStack(spacing: 8) {
-                    Text("\(entry.pageCount) pages")
+                    Label("\(entry.pageCount) pages", systemImage: "doc.plaintext")
+                    Text("·")
                     Text(ByteCountFormatter.string(fromByteCount: entry.fileSize, countStyle: .file))
                     if !entry.author.isEmpty {
-                        Text(entry.author)
+                        Text("·")
+                        Label(entry.author, systemImage: "person")
                     }
                 }
-                .font(.caption)
+                .font(.caption2)
                 .foregroundStyle(.secondary)
                 
                 // Tags
@@ -252,11 +432,11 @@ struct DocumentRowView: View {
                     HStack(spacing: 4) {
                         ForEach(Array(entry.tags.prefix(3)), id: \.self) { tag in
                             Text("#\(tag)")
-                                .font(.caption2)
+                                .font(.caption2.weight(.medium))
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Color.accentColor.opacity(0.1))
-                                .clipShape(Capsule())
+                                .background(Color.accentColor.opacity(0.1), in: Capsule())
+                                .foregroundStyle(Color.accentColor)
                         }
                         if entry.tags.count > 3 {
                             Text("+\(entry.tags.count - 3)")
@@ -264,6 +444,7 @@ struct DocumentRowView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    .padding(.top, 1)
                 }
             }
             
@@ -274,8 +455,8 @@ struct DocumentRowView: View {
                 HStack(spacing: 2) {
                     ForEach(1...5, id: \.self) { star in
                         Image(systemName: star <= entry.rating ? "star.fill" : "star")
-                            .font(.caption)
-                            .foregroundStyle(star <= entry.rating ? .yellow : .secondary)
+                            .font(.caption2)
+                            .foregroundStyle(star <= entry.rating ? .yellow : .secondary.opacity(0.3))
                     }
                 }
             }
@@ -285,13 +466,22 @@ struct DocumentRowView: View {
                 index.toggleStar(entryID: entry.id)
             } label: {
                 Image(systemName: entry.isStarred ? "star.fill" : "star")
-                    .foregroundStyle(entry.isStarred ? .yellow : .secondary)
+                    .font(.callout)
+                    .foregroundStyle(entry.isStarred ? .yellow : .secondary.opacity(0.4))
             }
             .buttonStyle(.plain)
+            .help(entry.isStarred ? "Unstar document" : "Star document")
         }
-        .padding(10)
-        .background(isHovering ? Color.accentColor.opacity(0.05) : Color.clear)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(isHovering ? Color.primary.opacity(0.05) : Color.clear)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(isHovering ? Color.primary.opacity(0.08) : Color.clear, lineWidth: 1)
+        )
         .onHover { isHovering = $0 }
     }
 }

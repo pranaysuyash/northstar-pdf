@@ -1,0 +1,35 @@
+{
+  "fixtureCount" : 2,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "81e59007c14307ad7a40a99f051363b99c9a5d78c880f67507082f12ff72cef0",
+      "sourcePath" : "docs\/benchmarks\/pdfkit-form6-run-2026-08-23\/noop.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "3e01dac92555798ca8d4369ed0ea4021c35a264e0969b5d08cd026e30364b177",
+      "sourcePath" : "benchmark\/results\/rotation-corpus\/rotated-form6-mixed.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 26.6.2 (Build 25G83)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

@@ -162,7 +162,7 @@ Capture separate evidence for:
 
 ## 7. Control-viewer observation gate (RG-131)
 
-Run the control-viewer observation workflow against the governed corpus before any version bump. This gate verifies that every fixture opens, renders, displays forms, and extracts text correctly through PDFKit — the primary native viewer.
+Run the control-viewer observation workflow against the governed corpus before any version bump. Since 2026-09-01 this gate is **dual-engine**: it verifies that every fixture opens, renders, displays forms, and extracts text correctly through **PDFKit (primary native viewer) and Poppler** (`observeGovernedCorpus()` runs both, with DualEngine agreement recording; Poppler's inability to open encrypted/malformed fixtures is classified as advisory, not a failure). Current corpus: 38 fixtures across 14 document classes.
 
 ```swift
 let report = ControlViewerObservation.observeGovernedCorpus()

@@ -81,6 +81,7 @@ public struct ContentView: View {
   @StateObject private var governanceEngine = GovernanceEngine()
   @State private var searchProjectionState: SearchProjectionState = .none
   @State private var isAgentCommandPresented = false
+  @State private var recentDocumentToReselect: URL?
   @State private var isSecurityVaultPresented = false
   @State private var isBatchMergePresented = false
   @State private var isDocumentBrowserPresented = false
@@ -107,17 +108,28 @@ public struct ContentView: View {
     ReadingDisplayParams.params(for: model.readingMode)
   }
 
+  /// The window toolbar is a document instrument, not a disabled home-screen menu.
+  private var showsDocumentToolbar: Bool {
+    model.inspection != nil
+  }
+
   public var body: some View {
     mainContent
       .applyTheme(using: themeManager)
       .toolbar {
-        if readingParams.showToolbar {
-          appToolbar
-        } else {
-          // Skim mode: only show essential items (mode picker + page nav)
-          skimToolbar
+        if showsDocumentToolbar {
+          if readingParams.showToolbar {
+            appToolbar
+          } else {
+            // Skim mode: only show essential items (mode picker + page nav)
+            skimToolbar
+          }
         }
       }
+      .toolbarVisibility(
+        showsDocumentToolbar ? .visible : .hidden,
+        for: .windowToolbar
+      )
       .onAppear {
         NotificationCenter.default.addObserver(
           forName: .contentRoutingResult,
@@ -137,11 +149,22 @@ public struct ContentView: View {
         allowsMultipleSelection: false
       ) { result in
         if case .success(let urls) = result, let url = urls.first {
-          openImportedPDF(url)
+          if let staleURL = recentDocumentToReselect {
+            recentDocumentToReselect = nil
+            if model.reselectRecentDocument(staleURL, replacement: url) {
+              readingHistory.startSession(
+                documentID: url.lastPathComponent,
+                fileName: url.lastPathComponent,
+                startPage: 0
+              )
+            }
+          } else {
+            openImportedPDF(url)
+          }
         }
       }
       .alert(
-        "PDF Editor",
+        ProductIdentity.displayName,
         isPresented: Binding(
           get: { model.alertMessage != nil },
           set: { if !$0 { model.alertMessage = nil } }
@@ -168,7 +191,7 @@ public struct ContentView: View {
         CommitFlowSheet(model: model)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
-      .sheet(isPresented: $isSecurityVaultPresented) {
+      .sheet(isPresented: $model.isSecurityVaultPresented) {
         SecurityVaultSheet(model: model)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
@@ -176,15 +199,15 @@ public struct ContentView: View {
         BatchMergeSheet(model: model)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
-      .sheet(isPresented: $isDocumentBrowserPresented) {
+      .sheet(isPresented: $model.isDocumentBrowserPresented) {
         DocumentBrowserView(documentIndex: documentIndex)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
-      .sheet(isPresented: $isVersionComparePresented) {
+      .sheet(isPresented: $model.isVersionComparePresented) {
         VersionCompareView(versionStore: versionStore)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
-      .sheet(isPresented: $isGovernanceDashboardPresented) {
+      .sheet(isPresented: $model.isGovernanceDashboardPresented) {
         GovernanceDashboardView(engine: governanceEngine)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
@@ -279,7 +302,7 @@ public struct ContentView: View {
               model: model,
               inspection: inspection,
               renderingPipeline: renderingPipeline,
-              isSecurityVaultPresented: $isSecurityVaultPresented,
+              isSecurityVaultPresented: $model.isSecurityVaultPresented,
               annotationStore: annotationStore
             )
             .frame(minWidth: 320, idealWidth: 360, maxWidth: 460)
@@ -320,7 +343,7 @@ public struct ContentView: View {
         AgentCommandHUD(
           model: model,
           isPresented: $isAgentCommandPresented,
-          isSecurityVaultPresented: $isSecurityVaultPresented
+          isSecurityVaultPresented: $model.isSecurityVaultPresented
         )
         .transition(.scale(scale: 0.95).combined(with: .opacity))
       }
@@ -338,13 +361,117 @@ public struct ContentView: View {
     .onChange(of: model.readerScaleMode) { _, _ in model.scheduleViewStateAutosave() }
     .onChange(of: model.readerZoom) { _, _ in model.scheduleViewStateAutosave() }
     .onChange(of: model.readerRotation) { _, _ in model.scheduleViewStateAutosave() }
+    .onChange(of: model.inspection?.source.sha256, initial: true) { _, digest in
+      registerOpenedDocument(digest: digest)
+    }
+    .onChange(of: model.lastExportURL) { _, exportURL in
+      recordVersionSnapshot(exportURL: exportURL)
+    }
+  }
+
+  // MARK: - Document registry sync
+
+  /// Feeds the corpus index and governance engine when a document opens.
+  /// Both registries were read-side only before this hook; entries are
+  /// session-scoped and keyed by content digest so re-registering the same
+  /// document does not fork the index.
+  private func registerOpenedDocument(digest: String?) {
+    guard let digest, let inspection = model.inspection else { return }
+    let source = inspection.source
+    let path = model.sourceURL?.path ?? source.fileName
+    _ = documentIndex.addEntry(
+      DocumentIndexEntry(
+        filePath: path,
+        contentHash: digest,
+        pageCount: inspection.pages.count,
+        fileSize: Int64(source.byteCount),
+        title: inspection.metadata.title,
+        author: inspection.metadata.author
+      )
+    )
+    runGovernanceCheck(for: inspection, path: path)
+  }
+
+  /// Runs the seeded governance rules against the open document. Prior
+  /// auto-check violations are resolved first because
+  /// `runComplianceCheck` appends rather than replaces.
+  private func runGovernanceCheck(for inspection: DocumentInspection, path: String) {
+    if governanceEngine.rules.isEmpty {
+      seedGovernanceRules()
+    }
+    for violation in governanceEngine.violations where !violation.isResolved {
+      governanceEngine.resolveViolation(id: violation.id)
+    }
+    governanceEngine.clearResolved()
+    _ = governanceEngine.runComplianceCheck(
+      documents: [
+        (
+          path: path,
+          fileSize: Int64(inspection.source.byteCount),
+          isEncrypted: inspection.security.isEncrypted,
+          pageCount: inspection.pages.count
+        )
+      ]
+    )
+  }
+
+  /// Conservative default rule set: two extreme ceilings that rarely fire and
+  /// a disabled encryption mandate the user can enable from the dashboard.
+  private func seedGovernanceRules() {
+    governanceEngine.addRule(
+      PolicyRule(
+        type: .size,
+        name: "Large document notice",
+        description: "Flags documents larger than 250 MB.",
+        isEnabled: true,
+        severity: .warning,
+        parameters: ["maxSizeBytes": String(250 * 1024 * 1024)]
+      )
+    )
+    governanceEngine.addRule(
+      PolicyRule(
+        type: .retention,
+        name: "Page count ceiling",
+        description: "Flags documents above 5,000 pages.",
+        isEnabled: true,
+        severity: .info,
+        parameters: ["maxPages": "5000"]
+      )
+    )
+    governanceEngine.addRule(
+      PolicyRule(
+        type: .encryption,
+        name: "Require encrypted documents",
+        description: "Flags documents that are not encrypted.",
+        isEnabled: false,
+        severity: .warning,
+        parameters: ["required": "true"]
+      )
+    )
+  }
+
+  /// Records a version snapshot when an export completes so the version
+  /// compare surface reflects this session's export history.
+  private func recordVersionSnapshot(exportURL: URL?) {
+    guard exportURL != nil, let inspection = model.inspection else { return }
+    versionStore.saveSnapshot(
+      operations: model.operations,
+      sourceHash: inspection.source.sha256,
+      label: "Exported copy"
+    )
   }
 
   private var welcomeContent: some View {
     WelcomeView(
-      recentDocuments: model.recentDocuments.filter { FileManager.default.fileExists(atPath: $0.path) },
+      recentDocuments: model.recentDocuments,
       open: requestOpenDocument,
       openRecent: { model.open(url: $0) },
+      removeRecent: { model.removeRecentDocument($0) },
+      clearRecents: { model.clearRecentDocuments() },
+      reselectRecent: { staleURL in
+        recentDocumentToReselect = staleURL
+        model.isImporterPresented = true
+      },
       openDroppedPDF: openDroppedPDF,
       createBlank: { size in model.newDocument(pageSize: size) },
       createFromImages: { model.presentNewFromImagesPanel() },
@@ -473,17 +600,17 @@ public struct ContentView: View {
     ToolbarItem {
       Menu {
         Button("Document Browser…", systemImage: "books.vertical") {
-          isDocumentBrowserPresented = true
+          model.isDocumentBrowserPresented = true
         }
         .help("Browse and organize your document corpus")
 
         Button("Version History…", systemImage: "clock.arrow.circlepath") {
-          isVersionComparePresented = true
+          model.isVersionComparePresented = true
         }
         .help("Compare and revert document versions")
 
         Button("Governance Dashboard…", systemImage: "checkmark.shield") {
-          isGovernanceDashboardPresented = true
+          model.isGovernanceDashboardPresented = true
         }
         .help("View compliance status and policy rules")
 
@@ -494,12 +621,22 @@ public struct ContentView: View {
         }
         .help("Provider status, egress connections, and bridge log")
 
+        Button("Security & Privacy Vault…", systemImage: "lock.shield") {
+          model.isSecurityVaultPresented = true
+        }
+        .keyboardShortcut("8", modifiers: [.command])
+        .help("Hardware-isolated encrypted local stores and audit ledger (⌘8)")
+
         Divider()
 
+        #if DEBUG
+        // RG-135 reviewer panel: reads the developer checkout's governed
+        // corpus manifest, so it is a QA surface, not an end-user feature.
         Button("Human Review Panel…", systemImage: "eye") {
           isHumanReviewPresented = true
         }
         .help("Record human visual confirmations for governed fixtures (RG-135)")
+        #endif
       } label: {
         Label("Workspace", systemImage: "rectangle.3.group")
       }
@@ -666,7 +803,7 @@ public struct ContentView: View {
       Menu {
         Button {
           let docID = model.sourceURL?.lastPathComponent ?? "unknown"
-          let pageIdx = model.selectedPageIndex ?? 0
+          let pageIdx = model.selectedPageIndex
           let _ = readingHistory.addBookmark(
             documentID: docID,
             pageIndex: pageIdx,
@@ -849,7 +986,7 @@ public struct ContentView: View {
     let alert = NSAlert()
     alert.alertStyle = .warning
     alert.messageText = "This document has unexported changes."
-    alert.informativeText = "PDF Editor uses an export-only workflow: Export Copy... creates a separate edited PDF and never overwrites the source. Choose Continue to Open to select another PDF, or Cancel to keep working."
+    alert.informativeText = "Northstar uses an export-only workflow: Export Copy... creates a separate edited PDF and never overwrites the source. Choose Continue to Open to select another PDF, or Cancel to keep working."
     alert.addButton(withTitle: "Continue to Open")
     alert.addButton(withTitle: "Cancel")
     guard alert.runModal() == .alertFirstButtonReturn else { return }
@@ -926,86 +1063,152 @@ private struct RecoveryStatusBanner: View {
 
   var body: some View {
     if hasRecoveryState {
-      VStack(alignment: .leading, spacing: 8) {
+      // Inset glass card with amber accent
+      VStack(alignment: .leading, spacing: 0) {
+        // ── Header row ──────────────────────────────────────────────────────
         HStack(spacing: 8) {
-          Image(systemName: model.recoveryStatus == .corrupted ? "exclamationmark.triangle.fill" : "arrow.clockwise.circle.fill")
-            .foregroundStyle(model.recoveryStatus == .corrupted ? .red : .orange)
-          VStack(alignment: .leading, spacing: 2) {
+          // Status icon
+          Image(systemName: model.recoveryStatus == .corrupted
+            ? "exclamationmark.triangle.fill"
+            : (model.recoveryStatus == .replayable ? "checkmark.circle.fill" : "arrow.clockwise.circle.fill"))
+            .font(.system(size: 15, weight: .semibold))
+            .foregroundStyle(model.recoveryStatus == .corrupted ? .red
+              : (model.recoveryStatus == .replayable ? .green : .orange))
+            .symbolEffect(.pulse, options: .repeating, isActive: model.recoveryStatus == .available)
+
+          VStack(alignment: .leading, spacing: 1) {
             Text(recoveryTitle)
               .font(.caption.weight(.semibold))
-            Text("\(model.recoveryRecords.count) local record(s)")
+            Text(model.recoveryRecords.isEmpty
+              ? "No local records"
+              : "\(model.recoveryRecords.count) record\(model.recoveryRecords.count == 1 ? "" : "s") found")
               .font(.caption2.monospacedDigit())
               .foregroundStyle(.secondary)
           }
+
           Spacer()
+
+          // Primary CTA: Restore (only when restore is meaningful)
+          if model.recoveryStatus == .available || model.recoveryStatus == .metadataOnly {
+            Button {
+              withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75)) {
+                model.loadSavedSession()
+              }
+            } label: {
+              Label("Restore Edits", systemImage: "arrow.counterclockwise")
+                .font(.caption.weight(.semibold))
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.orange)
+            .controlSize(.small)
+            .accessibilityLabel("Restore edits from recovery session")
+            .help("Replay the saved recovery session onto this document")
+          }
+
+          // Expand/collapse toggle
           Button {
-            isDetailsExpanded.toggle()
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75)) {
+              isDetailsExpanded.toggle()
+            }
           } label: {
             Image(systemName: isDetailsExpanded ? "chevron.up" : "chevron.down")
+              .font(.caption.weight(.medium))
           }
           .buttonStyle(.borderless)
-          .accessibilityLabel(isDetailsExpanded ? "Hide recovery details" : "Inspect recovery details")
-          .help(isDetailsExpanded ? "Hide recovery details" : "Inspect recovery details")
-
-          Button {
-            isDiscardConfirmationPresented = true
-          } label: {
-            Image(systemName: "trash")
-          }
-          .buttonStyle(.borderless)
-          .foregroundStyle(.red)
-          .accessibilityLabel("Discard recovery session")
-          .help("Discard the local recovery session")
+          .foregroundStyle(.secondary)
+          .accessibilityLabel(isDetailsExpanded ? "Hide recovery details" : "Show recovery details")
+          .help(isDetailsExpanded ? "Hide recovery details" : "Show recovery details")
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
 
+        // ── Expanded tray ────────────────────────────────────────────────────
         if isDetailsExpanded {
-          VStack(alignment: .leading, spacing: 5) {
+          Divider()
+            .padding(.horizontal, 12)
+
+          VStack(alignment: .leading, spacing: 8) {
             Text(recoveryDetail)
               .font(.caption)
               .foregroundStyle(.secondary)
+
             if let lastSessionInfo = model.lastSessionInfo {
-              Text(lastSessionInfo)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+              HStack(spacing: 4) {
+                Image(systemName: "clock")
+                  .font(.caption2)
+                  .foregroundStyle(.tertiary)
+                Text(lastSessionInfo)
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+              }
             }
+
             ForEach(model.recoveryDiagnostics.prefix(3), id: \.self) { diagnostic in
               Label(diagnostic, systemImage: "info.circle")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             }
+
+            // Destructive action lives in the tray — clearly labelled
+            Divider()
+
+            Button(role: .destructive) {
+              isDiscardConfirmationPresented = true
+            } label: {
+              Label("Discard Session", systemImage: "trash")
+                .font(.caption.weight(.medium))
+            }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.red)
+            .accessibilityLabel("Discard recovery session")
+            .help("Permanently remove the local recovery records for this document")
           }
-          .padding(.leading, 24)
-          .transition(.opacity)
+          .padding(.horizontal, 12)
+          .padding(.vertical, 10)
+          .transition(.move(edge: .top).combined(with: .opacity))
         }
       }
-      .padding(.horizontal, 14)
-      .padding(.vertical, 8)
-      /* Apple Design §12: translucent material for status banner */
-      .background(.ultraThinMaterial)
-      .overlay(alignment: .bottom) {
-        Divider()
-      }
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+          .strokeBorder(
+            model.recoveryStatus == .corrupted
+              ? Color.red.opacity(0.35)
+              : (model.recoveryStatus == .replayable ? Color.green.opacity(0.3) : Color.orange.opacity(0.25)),
+            lineWidth: 1
+          )
+      )
+      .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
+      .padding(.horizontal, 10)
+      .padding(.vertical, 6)
       .transition(.move(edge: .top).combined(with: .opacity))
-      .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: isDetailsExpanded)
+      .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75), value: isDetailsExpanded)
+      .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75), value: model.recoveryStatus)
       .alert("Discard recovery session?", isPresented: $isDiscardConfirmationPresented) {
         Button("Cancel", role: .cancel) {}
-        Button("Discard Recovery", role: .destructive) {
+        Button("Discard Session", role: .destructive) {
           _ = model.discardRecovery()
-          isDetailsExpanded = false
+          withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75)) {
+            isDetailsExpanded = false
+          }
         }
       } message: {
-        Text("This removes the local recovery records for the current session. The source PDF and any exported copy remain unchanged.")
+        Text("This permanently removes the local recovery records for the current session. The source PDF and any exported copy remain unchanged.")
       }
     }
   }
 }
+
 
 // MARK: - Welcome View
 private struct WelcomeView: View {
   let recentDocuments: [URL]
   let open: () -> Void
   let openRecent: (URL) -> Void
+  let removeRecent: (URL) -> Void
+  let clearRecents: () -> Void
+  let reselectRecent: (URL) -> Void
   let openDroppedPDF: ([NSItemProvider]) -> Bool
   let createBlank: (CGSize) -> Void
   let createFromImages: () -> Void
@@ -1057,7 +1260,7 @@ private struct WelcomeView: View {
     }
     .onDrop(of: [UTType.pdf.identifier], isTargeted: $isDropTargeted, perform: openDroppedPDF)
     .accessibilityElement(children: .contain)
-    .accessibilityLabel("PDF Editor welcome surface")
+    .accessibilityLabel("Northstar welcome surface")
     .accessibilityValue(isDropTargeted ? "Ready to open a dropped PDF" : "Drop a PDF anywhere in this window")
     .onAppear {
       if reduceMotion {
@@ -1073,7 +1276,13 @@ private struct WelcomeView: View {
   @ViewBuilder
   private var recentDocumentsContent: some View {
     if !recentDocuments.isEmpty {
-      RecentDocumentsList(documents: recentDocuments, open: openRecent)
+      RecentDocumentsList(
+        documents: recentDocuments,
+        open: openRecent,
+        removeRecent: removeRecent,
+        clearRecents: clearRecents,
+        reselect: reselectRecent
+      )
     }
   }
 }
@@ -1118,6 +1327,7 @@ private struct WelcomeHero: View {
           .keyboardShortcut(.defaultAction)
           .buttonStyle(.borderedProminent)
           .controlSize(.large)
+          .accessibilityIdentifier("pdfEditor.home.open")
 
         Menu {
           ForEach(AppModel.ScratchPageSize.all) { size in
@@ -1137,6 +1347,7 @@ private struct WelcomeHero: View {
         }
         .buttonStyle(.bordered)
         .controlSize(.large)
+        .accessibilityIdentifier("pdfEditor.home.newBlank")
       }
     }
   }
@@ -1226,6 +1437,80 @@ private struct FlowStep: View {
   }
 }
 
+private struct QuickActionCard: View {
+  let title: String
+  let detail: String
+  let systemImage: String
+  let action: () -> Void
+  @State private var isHovered = false
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  var body: some View {
+    Button(action: action) {
+      HStack(spacing: 12) {
+        ZStack {
+          RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .fill(Color.accentColor.opacity(isHovered ? 0.16 : 0.08))
+            .frame(width: 38, height: 38)
+          Image(systemName: systemImage)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(Color.accentColor)
+        }
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text(title)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.primary)
+          Text(detail)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+        }
+
+        Spacer(minLength: 4)
+
+        Image(systemName: "chevron.forward")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(isHovered ? Color.accentColor : Color.secondary.opacity(0.35))
+          .offset(x: isHovered ? 2 : 0)
+          .animation(reduceMotion ? nil : .spring(response: 0.25, dampingFraction: 0.7), value: isHovered)
+      }
+      .padding(.horizontal, 14)
+      .padding(.vertical, 10)
+      .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
+      .background {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+          .fill(isHovered ? Color(nsColor: .controlBackgroundColor) : Color.primary.opacity(0.025))
+      }
+      .overlay {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+          .strokeBorder(
+            isHovered ? Color.accentColor.opacity(0.4) : Color.primary.opacity(0.08),
+            lineWidth: isHovered ? 1.5 : 1
+          )
+      }
+      .shadow(
+        color: isHovered ? Color.black.opacity(0.07) : .clear,
+        radius: 6,
+        y: 2
+      )
+      .scaleEffect(isHovered ? 1.012 : 1.0)
+    }
+    .buttonStyle(.plain)
+    .onHover { hovering in
+      if reduceMotion {
+        isHovered = hovering
+      } else {
+        withAnimation(.spring(response: 0.25, dampingFraction: 0.75)) {
+          isHovered = hovering
+        }
+      }
+    }
+    .accessibilityLabel("Create from \(title)")
+    .accessibilityHint(detail)
+  }
+}
+
 private struct HomeStartSurface: View {
   let isTargeted: Bool
   let createFromImages: () -> Void
@@ -1235,42 +1520,63 @@ private struct HomeStartSurface: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 18) {
-      HStack(spacing: 12) {
-        Image(systemName: isTargeted ? "arrow.down.doc.fill" : "arrow.down.doc")
-          .font(.title2)
-          .foregroundStyle(isTargeted ? Color.accentColor : .secondary)
-          .frame(width: 34, height: 34)
+      HStack(spacing: 14) {
+        ZStack {
+          Circle()
+            .fill(isTargeted ? Color.accentColor.opacity(0.2) : Color.primary.opacity(0.05))
+            .frame(width: 44, height: 44)
+          Image(systemName: isTargeted ? "arrow.down.doc.fill" : "arrow.down.doc")
+            .font(.title3.weight(.medium))
+            .foregroundStyle(isTargeted ? Color.accentColor : Color.secondary)
+            .scaleEffect(isTargeted ? 1.15 : 1.0)
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.65), value: isTargeted)
+        }
+
         VStack(alignment: .leading, spacing: 3) {
-          Text(isTargeted ? "Release to open" : "Drop a PDF anywhere in this window")
+          Text(isTargeted ? "Release to open in Northstar" : "Drop a PDF anywhere in this window")
             .font(.headline)
-          Text("The source stays untouched. Edits become a separate export copy.")
+            .foregroundStyle(.primary)
+          Text("The original file remains safely untouched. Edits create a separate export copy.")
             .font(.subheadline)
             .foregroundStyle(.secondary)
         }
+
         Spacer(minLength: 12)
-        Image(systemName: "arrow.down.circle")
-          .font(.title2)
-          .foregroundStyle(isTargeted ? Color.accentColor : Color.secondary.opacity(0.55))
+
+        HStack(spacing: 6) {
+          Image(systemName: "checkmark.shield")
+            .font(.caption.weight(.medium))
+            .foregroundStyle(Color.secondary.opacity(0.8))
+          Text("Non-destructive")
+            .font(.caption.weight(.medium))
+            .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(Color.primary.opacity(0.04), in: Capsule())
       }
 
       Divider()
 
       ViewThatFits(in: .horizontal) {
-        HStack(spacing: 10) {
-          creationAction(title: "Images", detail: "Turn images into pages", systemImage: "photo.on.rectangle", action: createFromImages)
-          creationAction(title: "Clipboard", detail: "Start from copied content", systemImage: "doc.on.clipboard", action: createFromClipboard)
-          creationAction(title: "Markdown", detail: "Compose a clean document", systemImage: "text.document", action: createFromMarkdown)
+        HStack(spacing: 12) {
+          QuickActionCard(title: "Images", detail: "Turn images into pages", systemImage: "photo.on.rectangle", action: createFromImages)
+          QuickActionCard(title: "Clipboard", detail: "Start from copied text", systemImage: "doc.on.clipboard", action: createFromClipboard)
+          QuickActionCard(title: "Markdown", detail: "Compose structured document", systemImage: "text.document", action: createFromMarkdown)
         }
         VStack(alignment: .leading, spacing: 10) {
-          creationAction(title: "Images", detail: "Turn images into pages", systemImage: "photo.on.rectangle", action: createFromImages)
-          creationAction(title: "Clipboard", detail: "Start from copied content", systemImage: "doc.on.clipboard", action: createFromClipboard)
-          creationAction(title: "Markdown", detail: "Compose a clean document", systemImage: "text.document", action: createFromMarkdown)
+          QuickActionCard(title: "Images", detail: "Turn images into pages", systemImage: "photo.on.rectangle", action: createFromImages)
+          QuickActionCard(title: "Clipboard", detail: "Start from copied text", systemImage: "doc.on.clipboard", action: createFromClipboard)
+          QuickActionCard(title: "Markdown", detail: "Compose structured document", systemImage: "text.document", action: createFromMarkdown)
         }
       }
     }
     .padding(22)
-    .frame(maxWidth: .infinity, minHeight: 190, alignment: .topLeading)
-    .background(Color.accentColor.opacity(isTargeted ? 0.12 : 0.045), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .frame(maxWidth: .infinity, minHeight: 196, alignment: .topLeading)
+    .background(
+      Color.accentColor.opacity(isTargeted ? 0.12 : 0.035),
+      in: RoundedRectangle(cornerRadius: 18, style: .continuous)
+    )
     .overlay {
       RoundedRectangle(cornerRadius: 18, style: .continuous)
         .strokeBorder(
@@ -1279,75 +1585,175 @@ private struct HomeStartSurface: View {
         )
     }
     .animation(reduceMotion ? nil : .easeOut(duration: 0.16), value: isTargeted)
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("PDF start workspace")
+    .accessibilityValue(isTargeted ? "Ready to open a dropped PDF" : "Drop a PDF or create a document")
+    .accessibilityIdentifier("pdfEditor.home.startWorkspace")
+  }
+}
+
+private struct RecentDocumentRowView: View {
+  let url: URL
+  let isAvailable: Bool
+  let open: (URL) -> Void
+  let removeRecent: (URL) -> Void
+  let reselect: (URL) -> Void
+  @State private var isHovered = false
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+  var body: some View {
+    let filename = url.lastPathComponent
+    Group {
+      if isAvailable {
+        actionButton(filename: filename)
+      } else {
+        locateButton(filename: filename)
+      }
+    }
+    .background {
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .fill(isHovered ? Color.primary.opacity(0.04) : Color.clear)
+    }
+    .onHover { hovering in
+      if reduceMotion {
+        isHovered = hovering
+      } else {
+        withAnimation(.easeOut(duration: 0.15)) {
+          isHovered = hovering
+        }
+      }
+    }
+    .contextMenu {
+      if isAvailable {
+        Button("Open") {
+          open(url)
+        }
+        Button("Reveal in Finder") {
+          NSWorkspace.shared.activateFileViewerSelecting([url])
+        }
+        Button("Copy Path") {
+          NSPasteboard.general.clearContents()
+          NSPasteboard.general.setString(url.path, forType: .string)
+        }
+        Divider()
+      }
+      Button("Remove from Recents", role: .destructive) {
+        removeRecent(url)
+      }
+    }
   }
 
-  private func creationAction(
-    title: String,
-    detail: String,
-    systemImage: String,
-    action: @escaping () -> Void
-  ) -> some View {
-    Button(action: action) {
-      HStack(spacing: 10) {
-        Image(systemName: systemImage)
-          .font(.body.weight(.medium))
-          .foregroundStyle(Color.accentColor)
-          .frame(width: 24)
-        VStack(alignment: .leading, spacing: 2) {
-          Text(title)
-            .font(.subheadline.weight(.semibold))
-          Text(detail)
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-        }
-        Spacer(minLength: 4)
+  @ViewBuilder
+  private func actionButton(filename: String) -> some View {
+    Button {
+      open(url)
+    } label: {
+      rowContent {
+        Image(systemName: "arrow.up.right")
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(isHovered ? Color.accentColor : Color.secondary.opacity(0.6))
+          .offset(x: isHovered ? 1 : 0, y: isHovered ? -1 : 0)
+          .animation(reduceMotion ? nil : .spring(response: 0.25, dampingFraction: 0.7), value: isHovered)
       }
-      .frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
     }
-    .buttonStyle(.bordered)
-    .controlSize(.large)
-    .accessibilityLabel("Create from \(title)")
-    .accessibilityHint(detail)
+    .buttonStyle(.plain)
+    .contentShape(Rectangle())
+    .help("Open \(filename)")
+    .accessibilityLabel("Open \(filename)")
+    .accessibilityHint("Opens the recent PDF")
+    .accessibilityIdentifier("pdfEditor.home.recent.\(filename)")
+  }
+
+  @ViewBuilder
+  private func locateButton(filename: String) -> some View {
+    rowContent {
+      Button("Locate…", systemImage: "folder") {
+        reselect(url)
+      }
+      .buttonStyle(.bordered)
+      .controlSize(.small)
+      .help("Choose the current location of \(filename)")
+      .accessibilityLabel("Locate \(filename)")
+    }
+    .contentShape(Rectangle())
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel("\(filename) needs to be located again")
+    .accessibilityHint("Choose its current location to continue")
+    .accessibilityIdentifier("pdfEditor.home.recent.\(filename)")
+  }
+
+  @ViewBuilder
+  private func rowContent<Accessory: View>(@ViewBuilder accessory: () -> Accessory) -> some View {
+    HStack(spacing: 10) {
+      ZStack {
+        RoundedRectangle(cornerRadius: 6, style: .continuous)
+          .fill((isAvailable ? Color.accentColor : Color.orange).opacity(0.12))
+          .frame(width: 28, height: 28)
+        Image(systemName: isAvailable ? "doc.text.fill" : "doc.badge.ellipsis")
+          .font(.system(size: 13, weight: .medium))
+          .foregroundStyle(isAvailable ? Color.accentColor : Color.orange)
+      }
+
+      VStack(alignment: .leading, spacing: 2) {
+        Text(url.deletingPathExtension().lastPathComponent)
+          .font(.callout.weight(.medium))
+          .foregroundStyle(.primary)
+          .lineLimit(1)
+        Text(isAvailable ? url.deletingLastPathComponent().lastPathComponent : "File needs to be located again")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .lineLimit(1)
+      }
+
+      Spacer(minLength: 10)
+
+      accessory()
+    }
+    .padding(.horizontal, 8)
+    .padding(.vertical, 6)
   }
 }
 
 private struct RecentDocumentsList: View {
   let documents: [URL]
   let open: (URL) -> Void
+  let removeRecent: (URL) -> Void
+  let clearRecents: () -> Void
+  let reselect: (URL) -> Void
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("Continue where you left off")
-        .font(.headline)
-      ForEach(documents, id: \.self) { url in
-        Button {
-          open(url)
-        } label: {
-          HStack(spacing: 10) {
-            Image(systemName: "doc.text")
-              .foregroundStyle(.blue)
-            VStack(alignment: .leading, spacing: 2) {
-              Text(url.deletingPathExtension().lastPathComponent)
-                .lineLimit(1)
-              Text(url.deletingLastPathComponent().lastPathComponent)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-            }
-            Spacer(minLength: 10)
-            Image(systemName: "arrow.up.right")
-              .font(.caption.weight(.semibold))
-              .foregroundStyle(.tertiary)
-          }
-          .contentShape(Rectangle())
+    VStack(alignment: .leading, spacing: 10) {
+      HStack {
+        Text("Continue where you left off")
+          .font(.headline)
+          .foregroundStyle(.primary)
+
+        Spacer()
+
+        Button("Clear Recents") {
+          clearRecents()
         }
         .buttonStyle(.plain)
-        .padding(.vertical, 4)
-        .accessibilityLabel("Open \(url.lastPathComponent)")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .help("Remove all recent document shortcuts")
+      }
+
+      VStack(spacing: 2) {
+        ForEach(documents, id: \.self) { url in
+          let isAvailable = FileManager.default.fileExists(atPath: url.path)
+          RecentDocumentRowView(
+            url: url,
+            isAvailable: isAvailable,
+            open: open,
+            removeRecent: removeRecent,
+            reselect: reselect
+          )
+        }
       }
     }
-    .frame(maxWidth: 330, alignment: .leading)
+    .frame(maxWidth: 420, alignment: .leading)
+    .accessibilityIdentifier("pdfEditor.home.recentDocuments")
   }
 }
 
@@ -1403,160 +1809,6 @@ private struct ManualTextSheet: View {
     }
     .padding(24)
     .frame(width: 380)
-  }
-}
-
-// MARK: - Signature Sheet
-private struct SignatureSheet: View {
-  @Bindable var model: AppModel
-  @State private var selectedTab = 0
-  @State private var typedName = ""
-  @State private var selectedFontIndex = 0
-  @State private var saveForLater = false
-  @State private var signatureLabel = ""
-
-  private let scriptFonts = ["Zapfino", "Snell Roundhand", "Bradley Hand"]
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 0) {
-      HStack {
-        VStack(alignment: .leading, spacing: 2) {
-          Text("Add your signature")
-            .font(.title3.weight(.semibold))
-          Text("Places a visual signature overlay.")
-            .font(.caption)
-            .foregroundStyle(.secondary)
-        }
-        Spacer()
-        Button("Cancel") {
-          model.isSignatureSheetPresented = false
-          model.pendingSignatureRegion = nil
-        }
-      }
-      .padding([.horizontal, .top], 24)
-      .padding(.bottom, 12)
-
-      Divider()
-
-      Picker("Signature method", selection: $selectedTab) {
-        Text("Draw").tag(0)
-        Text("Type").tag(1)
-        Text("Image").tag(2)
-        if !model.savedSignatures.isEmpty {
-          Text("Saved").tag(3)
-        }
-      }
-      .pickerStyle(.segmented)
-      .padding(.horizontal, 24)
-      .padding(.vertical, 12)
-
-      Group {
-        if selectedTab == 0 {
-          SignatureDrawTab(onApply: { applySignature($0, source: .drawn) })
-        } else if selectedTab == 1 {
-          SignatureTypeTab(
-            typedName: $typedName,
-            selectedFontIndex: $selectedFontIndex,
-            fontNames: scriptFonts,
-            onApply: { applySignature(renderTypedSignature(), source: .typed) }
-          )
-        } else if selectedTab == 2 {
-          SignatureImageTab(onApply: applySignature)
-        } else {
-          SignatureSavedTab(
-            signatures: model.savedSignatures,
-            onApply: applySavedSignature,
-            onDelete: { model.deleteSignatureFromVault(id: $0) },
-            onExport: exportSignature
-          )
-        }
-      }
-      .frame(height: 200)
-
-      Divider()
-
-      HStack {
-        Toggle("Save for future use", isOn: $saveForLater)
-          .font(.caption)
-        if saveForLater {
-          TextField("Label (optional)", text: $signatureLabel)
-            .textFieldStyle(.roundedBorder)
-            .frame(width: 140)
-            .font(.caption)
-        }
-      }
-      .padding(.horizontal, 24)
-      .padding(.vertical, 12)
-    }
-    .frame(width: 500)
-  }
-
-  private func signaturePlacementBounds() -> PDFRect? {
-    guard let inspection = model.inspection else { return nil }
-    if let region = model.pendingSignatureRegion {
-      return region.bounds
-    }
-    let page = inspection.pages.indices.contains(model.selectedPageIndex)
-      ? inspection.pages[model.selectedPageIndex] : inspection.pages[0]
-    let w = page.bounds.width * 0.35
-    let h = 60.0
-    return PDFRect(x: page.bounds.x + (page.bounds.width - w) / 2,
-                   y: page.bounds.y + 60,
-                   width: w, height: h)
-  }
-
-  private func applySignature(_ imageData: Data, source: SignatureSource = .image) {
-    guard let inspection = model.inspection,
-      let pageIndex = model.pendingSignatureRegion?.pageIndex ?? inspection.pages.first?.pageIndex,
-      let bounds = signaturePlacementBounds()
-    else { return }
-
-    model.applySignature(imageData, to: bounds, on: pageIndex)
-
-    if saveForLater {
-      let label = signatureLabel.isEmpty ? "Signature \(model.savedSignatures.count + 1)" : signatureLabel
-      let dataURL = "data:image/png;base64,\(imageData.base64EncodedString())"
-      model.saveSignatureToVault(label: label, dataURL: dataURL, source: source)
-    }
-  }
-
-  /// Place a signature already stored in the library and record its reuse.
-  private func applySavedSignature(_ sig: SavedSignature) {
-    guard let data = sig.signatureImageData,
-      let inspection = model.inspection,
-      let pageIndex = model.pendingSignatureRegion?.pageIndex ?? inspection.pages.first?.pageIndex,
-      let bounds = signaturePlacementBounds()
-    else { return }
-
-    model.applySignature(data, to: bounds, on: pageIndex)
-    model.recordSignatureUse(id: sig.id)
-  }
-
-  /// Export a library signature as a standalone PNG via a save panel.
-  private func exportSignature(_ sig: SavedSignature) {
-    guard let data = sig.signatureImageData else { return }
-    let panel = NSSavePanel()
-    panel.allowedContentTypes = [.png]
-    panel.nameFieldStringValue = (sig.label.isEmpty ? "signature" : sig.label) + ".png"
-    if panel.runModal() == .OK, let url = panel.url {
-      try? data.write(to: url)
-    }
-  }
-
-  private func renderTypedSignature() -> Data {
-    let font = NSFont(name: scriptFonts[selectedFontIndex], size: 48)
-      ?? NSFont.systemFont(ofSize: 48, weight: .light)
-    let attrs: [NSAttributedString.Key: Any] = [
-      .font: font,
-      .foregroundColor: NSColor.black
-    ]
-    let str = NSAttributedString(string: typedName.isEmpty ? "Signature" : typedName, attributes: attrs)
-    let size = str.size()
-    let image = NSImage(size: NSSize(width: size.width + 20, height: size.height + 12))
-    image.lockFocus()
-    str.draw(at: NSPoint(x: 10, y: 6))
-    image.unlockFocus()
-    return image.pngData ?? Data()
   }
 }
 

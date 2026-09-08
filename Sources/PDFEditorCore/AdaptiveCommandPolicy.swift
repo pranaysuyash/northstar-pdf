@@ -94,7 +94,7 @@ public struct AdaptiveCapabilityFacts: Equatable, Hashable, Sendable {
 }
 
 /// Stable identifiers for commands exposed by the policy.
-public enum AdaptiveCommandID: String, CaseIterable, Hashable, Sendable {
+public enum AdaptiveCommandID: String, CaseIterable, Hashable, Sendable, Codable {
   case search = "search"
   case commandPalette = "command-palette"
   case continueReading = "continue-reading"
@@ -161,7 +161,7 @@ public enum AdaptiveCommandAvailabilityState: String, CaseIterable, Hashable, Se
 
 /// Stable, user-explainable reasons for a command decision. Provider reason
 /// codes remain available alongside this value in `AdaptiveCommandDecision`.
-public enum AdaptiveCommandAvailabilityReason: String, CaseIterable, Hashable, Sendable {
+public enum AdaptiveCommandAvailabilityReason: String, CaseIterable, Hashable, Sendable, Codable {
   case requiresSearchPermission
   case requiresAnnotationPermission
   case requiresModifyPermission

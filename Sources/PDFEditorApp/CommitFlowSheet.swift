@@ -21,11 +21,20 @@ struct CommitFlowSheet: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       // Header
-      HStack {
+      HStack(spacing: 12) {
+        ZStack {
+          Circle()
+            .fill(Color.blue.opacity(0.15))
+            .frame(width: 36, height: 36)
+          Image(systemName: "signature")
+            .font(.callout.weight(.bold))
+            .foregroundStyle(Color.blue)
+        }
+
         VStack(alignment: .leading, spacing: 2) {
           Text("Sign Document")
-            .font(.title3.weight(.semibold))
-          Text("You are binding yourself to this document.")
+            .font(.headline)
+          Text("You are binding yourself to this document. Integrity is preflight-verified.")
             .font(.caption)
             .foregroundStyle(.secondary)
         }
@@ -35,9 +44,12 @@ struct CommitFlowSheet: View {
           model.isSignatureSheetPresented = false
           model.pendingSignatureRegion = nil
         }
+        .keyboardShortcut(.cancelAction)
       }
-      .padding([.horizontal, .top], 24)
+      .padding(.horizontal, 24)
+      .padding(.top, 20)
       .padding(.bottom, 12)
+      .background(Color(nsColor: .windowBackgroundColor))
 
       Divider()
 
@@ -58,7 +70,7 @@ struct CommitFlowSheet: View {
         completeView(entry: entry)
       }
     }
-    .frame(width: 540)
+    .frame(width: 580)
     .onAppear {
       beginVerification()
     }
@@ -217,24 +229,32 @@ struct CommitFlowSheet: View {
   private func bindingInfoSection(binding: CommitBindingInfo) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       Label("What you're signing", systemImage: "doc.text")
-        .font(.caption.weight(.semibold))
+        .font(.caption.weight(.bold))
+        .foregroundStyle(.secondary)
 
-      VStack(alignment: .leading, spacing: 4) {
+      VStack(alignment: .leading, spacing: 5) {
         LabeledContent("Document", value: binding.documentTitle.isEmpty ? binding.fileName : binding.documentTitle)
-        LabeledContent("Author", value: binding.documentAuthor)
+        LabeledContent("Author", value: binding.documentAuthor.isEmpty ? "—" : binding.documentAuthor)
         LabeledContent("Pages", value: "\(binding.pageCount)")
         LabeledContent("Size", value: ByteCountFormatter.string(fromByteCount: Int64(binding.fileSize), countStyle: .file))
-        LabeledContent("Hash", value: String(binding.documentHash.prefix(16)) + "...")
+        LabeledContent("SHA-256", value: String(binding.documentHash.prefix(16)) + "…")
       }
       .font(.caption)
     }
-    .padding(16)
-    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
+    .padding(14)
+    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .padding(.horizontal, 24)
+    .padding(.top, 12)
   }
 
   private func integritySection(integrity: CommitIntegrityCheck) -> some View {
     HStack(spacing: 12) {
       Image(systemName: integrity.isSafeToSign ? "checkmark.shield.fill" : "exclamationmark.triangle.fill")
+        .font(.title3)
         .foregroundStyle(integrity.isSafeToSign ? .green : .orange)
 
       VStack(alignment: .leading, spacing: 2) {
@@ -244,18 +264,25 @@ struct CommitFlowSheet: View {
           .font(.caption)
           .foregroundStyle(.secondary)
       }
+      Spacer()
     }
     .padding(12)
     .background(
       (integrity.isSafeToSign ? Color.green : Color.orange).opacity(0.08),
-      in: RoundedRectangle(cornerRadius: 8)
+      in: RoundedRectangle(cornerRadius: 10, style: .continuous)
     )
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .strokeBorder((integrity.isSafeToSign ? Color.green : Color.orange).opacity(0.2), lineWidth: 1)
+    )
+    .padding(.horizontal, 24)
   }
 
   private var signerSection: some View {
     VStack(alignment: .leading, spacing: 8) {
-      Label("Your identity", systemImage: "person")
-        .font(.caption.weight(.semibold))
+      Label("Your Identity", systemImage: "person.text.rectangle")
+        .font(.caption.weight(.bold))
+        .foregroundStyle(.secondary)
 
       TextField("Your name (required for audit record)", text: $commitManager.signerName)
         .textFieldStyle(.roundedBorder)
@@ -263,14 +290,20 @@ struct CommitFlowSheet: View {
       TextField("Reason for signing (optional)", text: $commitManager.signingReason)
         .textFieldStyle(.roundedBorder)
     }
-    .padding(16)
-    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
+    .padding(14)
+    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .padding(.horizontal, 24)
   }
 
   private var signatureMethodSection: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Label("Signature method", systemImage: "pencil.and.ruler")
-        .font(.caption.weight(.semibold))
+    VStack(alignment: .leading, spacing: 10) {
+      Label("Signature Method", systemImage: "pencil.and.ruler")
+        .font(.caption.weight(.bold))
+        .foregroundStyle(.secondary)
 
       Picker("Method", selection: $selectedTab) {
         Text("Draw").tag(0)
@@ -309,8 +342,14 @@ struct CommitFlowSheet: View {
       }
       .frame(height: 160)
     }
-    .padding(16)
-    .background(.quaternary.opacity(0.3), in: RoundedRectangle(cornerRadius: 8))
+    .padding(14)
+    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .padding(.horizontal, 24)
+    .padding(.bottom, 16)
   }
 
   // MARK: - Actions

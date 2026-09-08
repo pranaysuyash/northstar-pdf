@@ -1,0 +1,9 @@
+{
+  "name": "pdf-editor-acroform-lane",
+  "private": true,
+  "type": "module",
+  "description": "Genuinely independent AcroForm provider lane built on pdf-lib (pure-JS PDF implementation). Used by the cross-provider AcroForm parity experiment so the PDF.js/qpdf claims are measured against a real independent engine, not inferred from PDFKit.",
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}

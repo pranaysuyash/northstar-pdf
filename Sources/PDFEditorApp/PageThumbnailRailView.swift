@@ -37,10 +37,10 @@ public struct PageThumbnailRailView: View {
           Image(systemName: "plus")
             .font(.caption2.weight(.bold))
             .foregroundStyle(.secondary)
+            .frame(minWidth: 44, minHeight: 44)
         }
         .menuStyle(.borderlessButton)
         .disabled(!canOrganizePages)
-        .frame(width: 16)
         .accessibilityLabel("Insert page")
         .help("Insert page")
 

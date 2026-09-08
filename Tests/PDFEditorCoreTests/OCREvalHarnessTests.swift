@@ -200,7 +200,10 @@ struct OCREvalHarnessTests {
             fixtureID: "bias-test"
         )
         // Same input → same score regardless of provider name
-        #expect(resultA.aggregateScore == resultB.aggregateScore)
+        // Aggregate scoring uses Double arithmetic; provider anonymization
+        // must be semantically invariant without requiring bit-identical
+        // evaluation across equivalent floating-point operation order.
+        #expect(abs(resultA.aggregateScore - resultB.aggregateScore) < 1e-12)
         #expect(resultA.dimensionScores == resultB.dimensionScores)
     }
 

@@ -15,6 +15,7 @@ read them for method and findings history only.
 
 | Date | Audit | Title | Status |
 |---|---|---|---|
+| 2026-09-06 | [epistemic-integrity-audit-per-0922-2026-09-06.md](epistemic-integrity-audit-per-0922-2026-09-06.md) | Epistemic Integrity Audit — Full Repository (PER-0922): claim-vs-enforcement, reproducibility, doc-truth drift, full task ledger + implementation plan | current |
 | 2026-08-24 | [application-security-audit-per-pdev-0167.md](application-security-audit-per-pdev-0167.md) | Application Security & Threat Model Audit | current |
 | 2026-08-26 | [boundary-systems-architecture-audit-per-0933.md](boundary-systems-architecture-audit-per-0933.md) | Boundary Systems Architecture Audit (PER-0933) | current |
 | 2026-08-24 | [browser-contract-fixture-evidence-2026-08-24.md](browser-contract-fixture-evidence-2026-08-24.md) | Browser Contract Fixture Evidence | current |
@@ -86,3 +87,4 @@ read them for method and findings history only.
 | 2026-08-25 | [text-run-ocr-alignment-evidence-2026-08-25.md](text-run-ocr-alignment-evidence-2026-08-25.md) | Text-run replacement and OCR-layer alignment evidence | current |
 | 2026-08-24 | [wcag-and-accessibility-audit-per-pdev-0169.md](wcag-and-accessibility-audit-per-pdev-0169.md) | WCAG 2.1/2.2 Level AA & Assistive Technology Accessibility Audit | current |
 | 2026-08-26 | [repository-audit-2026-08-26-continuation.md](repository-audit-2026-08-26-continuation.md) | Repository Audit — 2026-08-26 Continuation (PER-0428) | current |
+| 2026-09-07 | [persona-launch-acceptance-audit-2026-09-07.md](persona-launch-acceptance-audit-2026-09-07.md) | Persona-Lens Launch & Buyer-Acceptance Audit (30 personas from Understanding_Personas_sept6) | current |

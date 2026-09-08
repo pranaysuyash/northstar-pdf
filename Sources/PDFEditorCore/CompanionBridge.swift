@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 // MARK: - Bridge States
 
@@ -43,6 +44,9 @@ public struct BridgeAuthentication: Codable, Sendable, Hashable {
 // MARK: - Egress Gate
 
 /// Controls network egress — disabled by default per zero-egress doctrine.
+/// V-05/V-06 mitigation: controls whether PDF content can reach companion hosts.
+/// Disabled by default — no network egress without explicit user consent.
+/// Protocol rejects non-local requests when disabled.
 public actor EgressGate {
     /// Whether egress is globally allowed.
     public private(set) var isEnabled: Bool = false
@@ -188,7 +192,10 @@ public actor CompanionBridge {
     private var authentication: BridgeAuthentication?
     
     /// Egress gate (disabled by default).
-    public let egressGate = EgressGate()
+    /// Immutable actor reference — safe to share across isolation domains
+    /// (nonisolated); all mutable gate state stays actor-isolated
+    /// inside EgressGate itself.
+    public nonisolated let egressGate = EgressGate()
     
     /// Resource limits for this bridge session.
     public var resourceLimits: ResourceLimits
@@ -227,15 +234,15 @@ public actor CompanionBridge {
     /// Initialize with transport configuration (creates transport lazily).
     public init(configuration: TransportConfiguration, resourceLimits: ResourceLimits = ResourceLimits()) {
         self.transportConfiguration = configuration
-        self.transport = CompanionTransportFactory.transport(for: configuration)
+        self.transport = CompanionTransportFactory.transport(for: configuration, egressGate: egressGate)
         self.resourceLimits = resourceLimits
     }
-    
+
     /// The active transport (creates from config if needed).
     private func getTransport() throws -> any CompanionTransport {
         if let transport { return transport }
         if let config = transportConfiguration {
-            let t = CompanionTransportFactory.transport(for: config)
+            let t = CompanionTransportFactory.transport(for: config, egressGate: egressGate)
             self.transport = t
             return t
         }
@@ -249,7 +256,14 @@ public actor CompanionBridge {
         guard !auth.isExpired else {
             throw BridgeError.authenticationExpired
         }
-        // In production: verify HMAC signature against origin bundle ID
+        // V-02 fix: verify HMAC signature against origin bundle ID
+        let expectedSignature = Self.computeHMAC(
+            originBundleID: auth.originBundleID,
+            timestamp: auth.timestamp
+        )
+        guard auth.signature == expectedSignature else {
+            throw BridgeError.notAuthenticated
+        }
         self.authentication = auth
         logRequest(.init(kind: .handshake, providerID: "system", success: true))
     }
@@ -356,7 +370,11 @@ public actor CompanionBridge {
             sourceDigest: sourceDigest,
             contractVersion: contractVersion,
             encryptedPayload: payload,
-            hmac: Data() // HMAC computed in production
+            hmac: Self.computeEnvelopeHMAC(
+                sourceDigest: sourceDigest,
+                contractVersion: contractVersion,
+                encryptedPayload: payload
+            )
         )
         
         // 7. Send via transport with timeout
@@ -465,5 +483,47 @@ extension CompanionBridge {
         logLock.lock()
         _requestLog.removeAll()
         logLock.unlock()
+    }
+    
+    // MARK: - V-02: HMAC Computation
+    
+    /// HMAC key derived from the bridge's origin and session context.
+    /// In production, this would be derived from a secure enclave or keychain.
+    private static var hmacKey: Data {
+        // V-02: Derive key from origin bundle ID and a fixed salt.
+        // In production, use a per-installation key from the keychain.
+        let salt = "com.pdf-editor.companion-bridge".data(using: .utf8)!
+        let key = SymmetricKey(data: SHA256.hash(data: salt))
+        return key.withUnsafeBytes { Data($0) }
+    }
+    
+    /// Compute HMAC signature for authentication token.
+    /// V-02 fix: replaces placeholder with real HMAC computation.
+    public static func computeHMAC(originBundleID: String, timestamp: Date) -> Data {
+        let payload = "\(originBundleID):\(timestamp.timeIntervalSince1970)".data(using: .utf8)!
+        let symmetricKey = SymmetricKey(data: hmacKey)
+        let signature = HMAC<SHA256>.authenticationCode(for: payload, using: symmetricKey)
+        return Data(signature)
+    }
+    
+    /// Compute HMAC for message envelope.
+    /// V-02 fix: provides integrity verification for bridge messages.
+    public static func computeEnvelopeHMAC(sourceDigest: String, contractVersion: String, encryptedPayload: Data) -> Data {
+        var data = Data()
+        data.append(contentsOf: sourceDigest.data(using: .utf8)!)
+        data.append(0x00)
+        data.append(contentsOf: contractVersion.data(using: .utf8)!)
+        data.append(0x00)
+        data.append(encryptedPayload)
+        let symmetricKey = SymmetricKey(data: hmacKey)
+        let signature = HMAC<SHA256>.authenticationCode(for: data, using: symmetricKey)
+        return Data(signature)
+    }
+    
+    /// Verify HMAC signature for message envelope.
+    /// V-02 fix: validates envelope integrity on receipt.
+    public static func verifyEnvelopeHMAC(_ hmac: Data, sourceDigest: String, contractVersion: String, encryptedPayload: Data) -> Bool {
+        let expected = computeEnvelopeHMAC(sourceDigest: sourceDigest, contractVersion: contractVersion, encryptedPayload: encryptedPayload)
+        return hmac == expected
     }
 }

@@ -12,7 +12,7 @@
         "minor": 0
       },
       "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
-      "generatedAt": "2026-09-01T17:43:01.014Z",
+      "generatedAt": "2026-09-08T10:47:32.057Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -265,7 +265,7 @@
       "minor": 0
     },
     "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
-    "generatedAt": "2026-09-01T17:43:01.014Z",
+    "generatedAt": "2026-09-08T10:47:32.057Z",
     "provider": {
       "id": "pdfjs-pdflib",
       "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -396,7 +396,7 @@
         "minor": 1
       },
       "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
-      "generatedAt": "2026-09-01T17:43:01.014Z",
+      "generatedAt": "2026-09-08T10:47:32.057Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -853,9 +853,9 @@
         "major": 1,
         "minor": 0
       },
-      "sessionID": "c7f19014-4230-4816-b339-3cbf84fc32dc",
+      "sessionID": "88be31d1-939a-41da-a9ca-20e6a34c6e81",
       "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
-      "generatedAt": "2026-09-01T17:43:01.069Z",
+      "generatedAt": "2026-09-08T10:47:32.112Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -919,7 +919,7 @@
         "major": 1,
         "minor": 0
       },
-      "generatedAt": "2026-09-01T17:43:01.014Z",
+      "generatedAt": "2026-09-08T10:47:32.058Z",
       "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
       "provider": {
         "id": "pdfjs-pdflib",
@@ -950,7 +950,7 @@
         },
         "memory": {
           "state": "available",
-          "usedJSHeapSize": 10628513,
+          "usedJSHeapSize": 10257078,
           "jsHeapSizeLimit": 4395630592
         },
         "storage": {
@@ -1095,7 +1095,7 @@
         "minor": 0
       },
       "sourceDigest": "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
-      "generatedAt": "2026-09-01T17:43:01.014Z",
+      "generatedAt": "2026-09-08T10:47:32.057Z",
       "provider": {
         "id": "pdfjs-pdflib",
         "version": "pdfjs-4.2.67+pdf-lib-1.17.1",
@@ -1135,7 +1135,7 @@
     "outputReopenable": true,
     "checks": [
       {
-        "id": "ba84688c-683b-4b4b-a5cc-8059121ac84c",
+        "id": "36fee0e3-1134-4f9b-aa73-3ee64509ca2d",
         "kind": "sourceDigest",
         "status": "passed",
         "message": "Source bytes still match the inspected SHA-256.",
@@ -1143,7 +1143,7 @@
         "operationIDs": []
       },
       {
-        "id": "f4d6a70b-0938-44ca-bfcb-9ce4fc8c6a1e",
+        "id": "141f0a91-d6fb-44ae-84f4-2a5608ae3eef",
         "kind": "outputReopen",
         "status": "passed",
         "message": "Encrypted source remains open in PDF.js with 1 page(s).",
@@ -1151,7 +1151,7 @@
         "operationIDs": []
       },
       {
-        "id": "a029e0a8-0ef8-455b-ad7f-2b982210c212",
+        "id": "c211317c-3bd4-4c54-9408-4a2ed0fc7d1a",
         "kind": "pageGeometry",
         "status": "passed",
         "message": "No-op export preserves the already-inspected encrypted page geometry.",
@@ -1159,7 +1159,7 @@
         "operationIDs": []
       },
       {
-        "id": "6fa9bac6-e372-4852-a89d-9590aa7dd0c1",
+        "id": "75554efd-260a-4db8-90ff-0321c4fb5cff",
         "kind": "nativeFields",
         "status": "skipped",
         "message": "No native field operations were requested.",
@@ -1167,7 +1167,7 @@
         "operationIDs": []
       },
       {
-        "id": "761af21c-eb95-4ddf-a996-65f2c5750d3e",
+        "id": "86083ca5-b67d-4711-a04a-41cc0d7b4ed4",
         "kind": "appliedOperations",
         "status": "passed",
         "message": "0 queued operation(s) were applied; the protected source was copied byte-for-byte.",
@@ -1175,7 +1175,7 @@
         "operationIDs": []
       },
       {
-        "id": "54b4c24d-c550-4bcd-b710-cd513f71e4b7",
+        "id": "cea1bcca-0daf-4633-95b3-9878f0a2b14f",
         "kind": "outsideRegionText",
         "status": "passed",
         "message": "No page content changed because the protected source was copied byte-for-byte.",
@@ -1191,7 +1191,7 @@
         }
       },
       {
-        "id": "06eb4fed-0f3a-4716-9634-ea2ec2eaab8e",
+        "id": "988f61e9-b5e2-417e-afe1-59613e9b07a9",
         "kind": "visualDiff",
         "status": "passed",
         "message": "No raster content changed because the protected source was copied byte-for-byte.",
@@ -1215,7 +1215,7 @@
         }
       },
       {
-        "id": "fc4db964-e4fd-419b-9054-893b2c52031a",
+        "id": "db8a15ca-8e3c-41b7-807a-013921612564",
         "kind": "privacyPreflight",
         "status": "passed",
         "message": "No protected privacy surface can change because the output digest equals the source digest.",
@@ -1229,7 +1229,7 @@
         }
       },
       {
-        "id": "8d082f30-1a5b-40b4-b751-8b00381bda23",
+        "id": "c8f27b28-6628-466e-94fa-5386ed53d301",
         "kind": "providerCapability",
         "status": "passed",
         "message": "No-op export used byte-preserving source download; no PDF writer was invoked.",
@@ -1252,7 +1252,7 @@
         "reopen-validation"
       ]
     },
-    "validatedAt": "2026-09-01T17:43:01.057Z",
+    "validatedAt": "2026-09-08T10:47:32.098Z",
     "operationIDs": []
   },
   "sourcePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",

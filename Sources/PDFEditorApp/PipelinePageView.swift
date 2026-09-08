@@ -7,18 +7,21 @@ import PDFKit
 /// PDFKit is demoted to a data source (text rects, link URLs, annotation data).
 /// All pixel output comes from the rendering pipeline's `RenderedPage` objects.
 ///
-/// ARCHITECTURE STATUS (truth-status: PROPOSED — not yet wired in):
+/// ARCHITECTURE STATUS (truth-status: Observed, corrected 2026-09-06):
 /// ```
-/// PipelinePageView (intended sole renderer)
-///   └── renderPageProgressive() → RenderedPage.imageData → NSImage
+/// PipelinePageView (wired; toggle-gated renderer)
+///   └── PipelineCanvasView → renderPageProgressive() → RenderedPage.imageData → NSImage
 ///       └── InteractionOverlay (text selection, links, annotations)
 ///             └── reads: pipeline text extraction + PDFKit metadata
 /// ```
-/// NOTE: As of 2026-08-28 this view is NOT yet integrated into `DocumentCanvasView`,
-/// which still renders via `PDFKitView` (`InteractivePDFView: PDFView`). The tiling/
-/// progressive capability is implemented here but currently orphaned. Wiring it in
-/// (replacing the PDFKit render surface) is the outstanding first-principles improvement
-/// (see decision D-058). Until then, the "sole renderer" claim is aspirational, not current.
+/// NOTE: This view IS wired in — `PipelineCanvasView` constructs it
+/// (`PipelineCanvasView.swift`) and `DocumentCanvasView` selects the pipeline
+/// surface when `usePipelineRendering` is enabled. The legacy `PDFKitView`
+/// (`InteractivePDFView: PDFView`) remains the default renderer, so the
+/// "sole renderer" claim is still aspirational; promotion is gated by the
+/// rendering-pipeline first-principles audit
+/// (`docs/audits/rendering-pipeline-1st-principles-architecture-2026-08-28.md`),
+/// not by D-058 (which governs the React/vanilla web cutover).
 ///
 /// Doctrine alignment (target state):
 /// - §3: Do things smartly — pipeline handles rendering, PDFKit handles data

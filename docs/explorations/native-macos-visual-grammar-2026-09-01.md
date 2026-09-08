@@ -122,6 +122,8 @@ keyboard shortcuts.
   when real recent entries exist.
 - Open document: sidebar/page rail, central canvas, optional inspector. Avoid
   adding a permanent dashboard layer over the document.
+- Empty home: hide the document window toolbar entirely; keep the standard
+  titlebar/menu bar and let the welcome workspace own admission and creation.
 - Secondary information: inspector or sheet for detail; no cards inside cards.
 - Toolbars: sparse, with icon and label only when the command is ambiguous.
 - Repeated files and capabilities may use compact cards or rows; page sections
@@ -182,6 +184,8 @@ keyboard shortcuts.
 - [x] Give the home surface explicit wide/narrow compositions with
   `ViewThatFits`, and honor reduced motion for home drop-state and recovery
   detail feedback.
+- [x] Hide the document toolbar when no PDF is open; preserve menu-bar recovery
+  and restore the document or skim toolbar after admission.
 - [x] Record contextual command history only after the native adapter accepts
   execution; unsupported image/object and canvas page-organization cases
   abstain instead of recording a false success.
@@ -189,15 +193,20 @@ keyboard shortcuts.
 - [ ] Add native UI verification for home actions, drop state, keyboard
   activation, and accessibility labels.
 
+- [x] Give the redesigned home actions stable accessibility identifiers and
+  keep replacement admission transactional so invalid or gated recent-file
+  choices preserve recovery state.
+
 ### Explore and document before broad implementation
 
 - [x] Use security-scoped bookmark records for successful user-owned opens and
   in-place drops, with legacy URL compatibility and explicit re-selection when
   a bookmark cannot resolve without UI.
 - [ ] Verify moved, revoked, inaccessible, and reselected recent-file states in
-  a packaged sandboxed app; show an explicit Locate/Re-select action for stale
-  or missing entries, and never treat a temporary provider copy as durable
-  source identity.
+  a packaged sandboxed app. The source now shows an explicit Locate action for
+  stale or missing entries and only adopts a replacement after successful
+  admission; packaged bookmark lifecycle and temporary-provider identity
+  behavior remain open.
 - [ ] Define the native visual token set for spacing, semantic color, type,
   material, elevation, and motion durations.
 - [ ] Map every major action to menu-bar command, toolbar exposure, shortcut,
@@ -208,6 +217,8 @@ keyboard shortcuts.
   two local histories do not become competing sources of truth.
 - [ ] Validate light/dark, high-contrast, reduced-motion, narrow-window,
   split-view, multi-window, and VoiceOver behavior on a real packaged app.
+- [ ] Observe the home-to-document-to-home toolbar transition in the packaged
+  app, including skim mode, close/reopen, menu recovery, and narrow resize.
 - [ ] Research licensed/provenance-safe illustration and icon assets if native
   shapes stop being sufficient; do not copy gallery screenshots or branding.
 

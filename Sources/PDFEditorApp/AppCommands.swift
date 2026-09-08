@@ -50,6 +50,9 @@ private enum PDFEditorCommand: Hashable {
     case continuous
     case twoUp
     case compareDiff
+    case documentBrowser
+    case versionHistory
+    case governanceDashboard
 }
 
 @MainActor
@@ -98,6 +101,8 @@ private struct PDFEditorCommandRouter {
         case .zoomIn, .zoomOut, .actualSize, .fitPage, .fitWidth,
              .singlePage, .continuous, .twoUp, .compareDiff:
             return model?.liveDocument != nil
+        case .documentBrowser, .versionHistory, .governanceDashboard:
+            return model != nil
         }
     }
 
@@ -218,6 +223,12 @@ private struct PDFEditorCommandRouter {
             model?.setReaderViewMode(.twoPage)
         case .compareDiff:
             model?.showDiffSheet = true
+        case .documentBrowser:
+            model?.isDocumentBrowserPresented = true
+        case .versionHistory:
+            model?.isVersionComparePresented = true
+        case .governanceDashboard:
+            model?.isGovernanceDashboardPresented = true
         }
     }
 
@@ -381,6 +392,19 @@ Button("Append PDF Pages...") {
         }
 
         CommandGroup(after: .saveItem) {
+            // Export-only workflow: ⌘S is bound to Export Copy so Mac muscle
+            // memory never hits a silent beep. The source is never overwritten.
+            Button("Save…") {
+                router.perform(.exportCopy)
+            }
+            .keyboardShortcut("s", modifiers: .command)
+            .disabled(!router.isEnabled(.exportCopy))
+            .help(
+                router.isEnabled(.exportCopy)
+                    ? "Export-only save: creates a separate edited PDF without overwriting the source."
+                    : "Unavailable until there are authorized, validated edits to export. The source file is never overwritten."
+            )
+
             Button("Save This Layout") {
                 router.perform(.savePinnedLayout)
             }
@@ -548,6 +572,23 @@ Button("Append PDF Pages...") {
                 .keyboardShortcut("4", modifiers: .command)
                 .help("Change tracking and annotation review.")
             }
+
+            Divider()
+
+            Button("Document Browser...") {
+                router.perform(.documentBrowser)
+            }
+            .disabled(!router.isEnabled(.documentBrowser))
+
+            Button("Version History & Compare...") {
+                router.perform(.versionHistory)
+            }
+            .disabled(!router.isEnabled(.versionHistory))
+
+            Button("Governance Dashboard...") {
+                router.perform(.governanceDashboard)
+            }
+            .disabled(!router.isEnabled(.governanceDashboard))
 
             Divider()
 

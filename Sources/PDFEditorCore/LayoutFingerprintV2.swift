@@ -2,6 +2,11 @@ import Foundation
 import PDFKit
 import CryptoKit
 
+
+/// **Scope note (2026-09-06, epistemic audit EI-B1):** offline calibration/benchmark
+/// subsystem — implemented and test-covered, but **not currently wired into the app's
+/// runtime paths**. Consumers: tests and offline tooling only. Do not cite its behavior
+/// as a product claim until wired. See docs/audits/epistemic-integrity-audit-per-0922-2026-09-06.md.
 /// Structured layout fingerprint V2 — the first-principles fix for the
 /// fingerprint-collision findings from the calibration corpus verification
 /// (2026-08-28, `docs/audits/calibration-corpus-verification-2026-08-28.md`).
@@ -55,6 +60,22 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
     /// SHA-256 of the canonical serialization — the equality key.
     public let digest: String
 
+    /// Structured-content coverage of THIS document alone (any page).
+    /// Used to gate the knownVariant equality claim: the canonical key is
+    /// only as strong as what it encodes. When a document is silent on every
+    /// structured channel, canonical equality with another silent document
+    /// is vacuous ("same page size, same emptiness") and must abstain — see
+    /// `RecurringFormCalibrator.classify`.
+    public var contentCoverage: SimilarityCoverage {
+        SimilarityCoverage(
+            text: pages.contains { !$0.textCells.isEmpty },
+            field: pages.contains { !$0.fieldCells.isEmpty },
+            annotation: pages.contains { !$0.annotationCells.isEmpty },
+            region: pages.contains { !$0.textRegions.isEmpty },
+            raster: pages.contains { !$0.rasterCells.isEmpty }
+        )
+    }
+
     public struct PageLayout: Codable, Sendable, Equatable {
         public let pageIndex: Int
         public let widthPoints: Int
@@ -92,6 +113,11 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
         /// threshold. Coarser than raw raster cells; captures where content
         /// exists structurally. Content-invariant.
         public let occupancyCells: [Cell]
+        /// Graded occupancy cells — fractional ink coverage (0.0–1.0) per cell.
+        /// Replaces binary occupancy for similarity comparison: cosine
+        /// similarity on graded values is inherently content-invariant because
+        /// it compares *how much* ink each cell has, not *whether* it has ink.
+        public let gradedOccupancyCells: [GradedCell]
 
         /// Backward-compatible init: old records without projection profiles
         /// or regions decode to empty (Codable default via custom init).
@@ -102,7 +128,8 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
             rasterProjectionH: [Double] = [], rasterProjectionV: [Double] = [],
             textProjectionH: [Double] = [], textProjectionV: [Double] = [],
             textRegions: [ContentInvariantRasterExtractor.Region] = [],
-            edgeCells: [Cell] = [], occupancyCells: [Cell] = []
+            edgeCells: [Cell] = [], occupancyCells: [Cell] = [],
+            gradedOccupancyCells: [GradedCell] = []
         ) {
             self.pageIndex = pageIndex
             self.widthPoints = widthPoints
@@ -119,6 +146,7 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
             self.textRegions = textRegions
             self.edgeCells = edgeCells
             self.occupancyCells = occupancyCells
+            self.gradedOccupancyCells = gradedOccupancyCells
         }
 
         private enum CodingKeys: String, CodingKey {
@@ -127,7 +155,7 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
             case rasterProjectionH, rasterProjectionV
             case textProjectionH, textProjectionV
             case textRegions
-            case edgeCells, occupancyCells
+            case edgeCells, occupancyCells, gradedOccupancyCells
         }
 
         public init(from decoder: Decoder) throws {
@@ -147,6 +175,7 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
             textRegions = try c.decodeIfPresent([ContentInvariantRasterExtractor.Region].self, forKey: .textRegions) ?? []
             edgeCells = try c.decodeIfPresent([Cell].self, forKey: .edgeCells) ?? []
             occupancyCells = try c.decodeIfPresent([Cell].self, forKey: .occupancyCells) ?? []
+            gradedOccupancyCells = try c.decodeIfPresent([GradedCell].self, forKey: .gradedOccupancyCells) ?? []
         }
     }
 
@@ -157,6 +186,45 @@ public struct LayoutFingerprintV2: Codable, Sendable, Equatable {
         public init(col: Int, row: Int) {
             self.col = col
             self.row = row
+        }
+    }
+
+    /// A quantized grid cell with fractional ink coverage (0.0–1.0).
+    /// Replaces binary occupancy for content-invariant comparison:
+    /// a cell with 80% coverage is structurally similar to one with 75%
+    /// coverage, unlike binary Jaccard where both are just "occupied."
+    ///
+    /// Multi-scale (2026-09-07): cells carry the grid scale they were
+    /// extracted at (16pt medium, 64pt coarse). Coarser cells aggregate
+    /// over larger regions, so their coverage is inherently more stable
+    /// under re-encoding (anti-aliasing, hinting) — the multi-scale
+    /// aggregation plan for the blend-sweep calibration row.
+    public struct GradedCell: Codable, Sendable, Equatable {
+        public let col: Int
+        public let row: Int
+        /// Fractional ink coverage in [0, 1]. Extracted by counting
+        /// non-blank pixels in the cell's rendered region and normalizing.
+        public let coverage: Double
+        /// Grid scale in points this cell was extracted at. Legacy records
+        /// (pre multi-scale) contained degenerate 4pt cells — a 4pt cell at
+        /// the 0.15 render scale spans <1 pixel, so their coverage was
+        /// binary in disguise; they decode as 16pt (the finest live scale).
+        public let scale: Double
+        public init(col: Int, row: Int, coverage: Double, scale: Double = 16.0) {
+            self.col = col
+            self.row = row
+            self.coverage = min(1.0, max(0.0, coverage))
+            self.scale = scale
+        }
+
+        private enum CodingKeys: String, CodingKey { case col, row, coverage, scale }
+
+        public init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            col = try c.decode(Int.self, forKey: .col)
+            row = try c.decode(Int.self, forKey: .row)
+            coverage = try c.decode(Double.self, forKey: .coverage)
+            scale = try c.decodeIfPresent(Double.self, forKey: .scale) ?? 16.0
         }
     }
 
@@ -255,15 +323,37 @@ public enum LayoutFingerprintV2Extractor {
             let textRegions = ContentInvariantRasterExtractor.extractRegions(
                 cells: textCells, cellSize: cellSizePoints, bounds: bounds)
 
-            // Edge detection: Sobel-like edge detector captures layout structure
-            // (lines, borders, regions) — content-invariant.
-            let edgeCells = ContentInvariantRasterExtractor.extractEdgeDetection(
-                page: page, bounds: bounds, cellSize: cellSizePoints)
+            // Cell-level text-structure channels (edge, occupancy, graded) are
+            // uninformative on raster-only pages. A page with no extractable
+            // text/field/annotation structure has no text layout to measure;
+            // its rendered pixels are image content, which is the projection
+            // channel's job (rasterProjection from rasterCells). Emitting
+            // cells there compared render noise across producers — a rotated
+            // raster page can never match at cell level (Observed: 85/8/7
+            // blend-sweep, 2026-09-08: the rotated-raster B pair dropped
+            // 0.971 → 0.8884 because both docs' raster pages emitted dense
+            // edge/occupancy cells). This matches the F-3 doctrine: "a raster
+            // page has zero extractable cells and is skipped as uninformative".
+            let hasTextStructure = !textCells.isEmpty
+                || !fieldCells.isEmpty || !annotationCells.isEmpty
+            let edgeCells = hasTextStructure
+                ? ContentInvariantRasterExtractor.extractEdgeDetection(
+                    page: page, bounds: bounds, cellSize: cellSizePoints)
+                : []
 
             // Structural occupancy: density-thresholded cells capture where content
             // exists structurally — coarser than raw raster, more robust.
-            let occupancyCells = ContentInvariantRasterExtractor.extractStructuralOccupancy(
-                page: page, bounds: bounds, cellSize: cellSizePoints)
+            let occupancyCells = hasTextStructure
+                ? ContentInvariantRasterExtractor.extractStructuralOccupancy(
+                    page: page, bounds: bounds, cellSize: cellSizePoints)
+                : []
+
+            // Graded occupancy: fractional ink coverage per cell (0.0–1.0).
+            // Used for content-invariant cosine similarity instead of binary Jaccard.
+            let gradedOccupancyCells = hasTextStructure
+                ? ContentInvariantRasterExtractor.extractGradedOccupancy(
+                    page: page, bounds: bounds, cellSize: cellSizePoints)
+                : []
 
             pages.append(LayoutFingerprintV2.PageLayout(
                 pageIndex: pageIndex,
@@ -280,7 +370,8 @@ public enum LayoutFingerprintV2Extractor {
                 textProjectionV: textProjection.vertical,
                 textRegions: textRegions,
                 edgeCells: edgeCells.sorted { ($0.row, $0.col) < ($1.row, $1.col) },
-                occupancyCells: occupancyCells.sorted { ($0.row, $0.col) < ($1.row, $1.col) }
+                occupancyCells: occupancyCells.sorted { ($0.row, $0.col) < ($1.row, $1.col) },
+                gradedOccupancyCells: gradedOccupancyCells
             ))
         }
         guard !pages.isEmpty else { return nil }
@@ -443,7 +534,89 @@ public enum LayoutFingerprintV2Extractor {
     }
 }
 
-// MARK: - Structured Similarity
+// MARK: - Evidence Coverage and Confirmation Routing
+
+/// Whether a similarity comparison rests on structured-content evidence.
+///
+/// A family claim ("same recurring form template") is only epistemically
+/// justified when at least one side of the pair carries structured content —
+/// extractable text, form fields, annotations, or connected-component text
+/// regions. When both sides are silent on every structured channel, the only
+/// remaining evidence is page geometry plus raster ink distribution:
+/// "same page size with similar ink density", which is not family evidence.
+///
+/// Observed (60-fixture corpus, 2026-09-01): six graphics-heavy hard-negative
+/// pairs score >= 0.90 purely on geometry + raster (e.g. scanned-noisy <->
+/// ocr-low-contrast = 0.9886, diverse-graphics-heavy <-> diverse-scanned-sim
+/// = 0.972). Corpus diversification was tried and did NOT remove them — the
+/// binding constraint is extraction resolution, not corpus composition. The
+/// evidence floor below converts those promotions into first-class
+/// abstentions that route to a confirmation lane (see
+/// `docs/audits/evidence-floor-abstention-rg138-2026-09-03.md`).
+///
+/// Doctrine alignment:
+/// - §2 Truth taxonomy — a family claim on zero content signal is an
+///   unverified inference; it is classified as abstention, not promotion
+/// - §0/§4.3 Fail-closed — a false promotion pollutes the template store and
+///   risks wrong prefill; a false abstention is recoverable (user re-specifies)
+public struct SimilarityCoverage: Codable, Sendable, Equatable {
+    /// Extractable text cells present on any page of either document.
+    public let text: Bool
+    /// AcroForm field (widget) cells present on any page of either document.
+    public let field: Bool
+    /// Non-widget annotation cells present on any page of either document.
+    public let annotation: Bool
+    /// Connected-component text regions present in either document.
+    public let region: Bool
+    /// Rendered raster/ink cells present on any page of either document.
+    /// Recorded for confirmation-lane routing only — ink is NOT structured
+    /// content evidence for a family claim.
+    public let raster: Bool
+
+    public init(text: Bool, field: Bool, annotation: Bool, region: Bool, raster: Bool) {
+        self.text = text
+        self.field = field
+        self.annotation = annotation
+        self.region = region
+        self.raster = raster
+    }
+
+    /// True when at least one structured-content channel carries signal in
+    /// either document. Raster/edge/occupancy are deliberately excluded —
+    /// they describe ink, not structure.
+    public var hasStructuredContent: Bool {
+        text || field || annotation || region
+    }
+
+    /// Human-readable list of the structured channels that are present.
+    public var description: String {
+        var present: [String] = []
+        if text { present.append("text") }
+        if field { present.append("fields") }
+        if annotation { present.append("annotations") }
+        if region { present.append("regions") }
+        if present.isEmpty {
+            return raster ? "no structured content (raster ink only)"
+                          : "no content signal at all"
+        }
+        return present.joined(separator: ", ")
+    }
+}
+
+/// Which confirmation lane an abstained family candidate escalates to.
+/// §8 capability routing: the family lane abstains, the confirm lane decides.
+public enum FamilyConfirmLane: String, Codable, Sendable, CaseIterable {
+    /// Both documents carry rendered ink but no extractable structured
+    /// content — the missing evidence (real text inside the pixels) can only
+    /// be read by OCR (`OCRCompanionBenchmark` spot-check). A chart-vs-scan
+    /// pair fails the OCR check; a true re-encoding pair passes it.
+    case ocrSpotCheck
+    /// Neither document has structured content nor rendered ink — nothing
+    /// automated can distinguish "identical blank template" from "unrelated
+    /// blank pages"; a reviewer must compare visually (RG-135 human visual
+    /// confirmation).
+    case humanVisual
+}
 
 /// Structured component similarity between two layout fingerprints.
 /// Replaces the semantically meaningless character-set Jaccard of V1.
@@ -457,6 +630,21 @@ public struct LayoutSimilarityV2: Codable, Sendable, Equatable {
     public let regionLayout: Double
     /// Weighted total (weights below).
     public let total: Double
+    /// Which structured-content channels carry signal in either document.
+    public let coverage: SimilarityCoverage
+
+    /// Evidence-floor gate: a family claim requires structured content on at
+    /// least one side. When false, `total` may still be >= the family
+    /// threshold — driven only by geometry + raster — and the classifier must
+    /// abstain (`.insufficientEvidence`) instead of promoting.
+    public var evidenceFloorMet: Bool { coverage.hasStructuredContent }
+
+    /// The confirmation lane an abstained candidate escalates to. Non-nil
+    /// exactly when the evidence floor is unmet.
+    public var confirmLane: FamilyConfirmLane? {
+        guard !evidenceFloorMet else { return nil }
+        return coverage.raster ? .ocrSpotCheck : .humanVisual
+    }
 }
 
 extension LayoutFingerprintV2 {
@@ -505,12 +693,18 @@ extension LayoutFingerprintV2 {
     /// - 0.24: gap 0.7479..0.9012 (maximum viable — minPositive 0.0012 above 0.90)
     /// - 0.26: FAILS (minPositive drops below 0.90)
     ///
-    /// The binding constraint is now corpus composition, not extraction
-    /// method. The top hard negative (hybrid-text-raster-form↔multi-column)
-    /// scores 0.7479, driven by both having similar raster density on
-    /// text-heavy pages. Further weight increases would require either
-    /// a richer raster encoding (multi-scale, edge-based) or a more
-    /// diverse corpus where family members diverge more in raster.
+    /// The binding constraint is now extraction resolution, not corpus
+    /// composition. The diversification hypothesis was tested and falsified
+    /// (Observed 2026-09-03, RG-138): expanding the corpus to 60 fixtures
+    /// including 11 graphics-heavy PDFs did NOT separate the graphics-heavy
+    /// high scorers (scanned-noisy↔low-contrast = 0.9886) — same geometry +
+    /// same raster ink pattern is indistinguishable at this resolution
+    /// regardless of corpus composition. Those pairs are resolved as
+    /// first-class evidence-floor abstentions (see SimilarityCoverage /
+    /// RecurringFormCalibrator.insufficientEvidence) that route to the
+    /// confirmation lane (OCR spot-check or human visual review) instead of
+    /// promoting. Further raster weight increases would require richer raster
+    /// encoding (multi-scale, graded occupancy), not more fixtures.
     ///
     /// Doctrine ref: §5 Evidence-based, §2 Truth taxonomy
     public static let rasterWeight: Double = 0.24
@@ -530,7 +724,8 @@ extension LayoutFingerprintV2 {
     /// Structured similarity to another fingerprint.
     public func similarity(
         to other: LayoutFingerprintV2,
-        rasterWeightOverride: Double? = nil
+        rasterWeightOverride: Double? = nil,
+        rasterBlendOverride: (projection: Double, edge: Double, occupancy: Double)? = nil
     ) -> LayoutSimilarityV2 {
         // Geometry: per-page mean over the shared page prefix; penalize page-count difference.
         let minPages = min(pages.count, other.pages.count)
@@ -543,7 +738,13 @@ extension LayoutFingerprintV2 {
                     / max(Double(max(a.widthPoints, b.widthPoints)), 1)
                 let hDiff = abs(Double(a.heightPoints - b.heightPoints))
                     / max(Double(max(a.heightPoints, b.heightPoints)), 1)
-                let rDiff = abs(Double(a.rotationDegrees - b.rotationDegrees)) / 360.0
+                // Rotation-aware geometry (2026-09-08, blend-sweep calibration):
+                // a page rotated by a multiple of 90° is the same layout — a
+                // rotated scan must match (F-3 doctrine). The penalty measures
+                // only the non-axis-aligned residual (45° delta → 45/360).
+                let rawRot = abs(Double(a.rotationDegrees - b.rotationDegrees))
+                let rDiff = [0.0, 90.0, 180.0, 270.0]
+                    .map { abs(rawRot - $0) }.min()! / 360.0
                 geometrySum += 1 - (wDiff + hDiff + rDiff) / 3
             }
         }
@@ -579,16 +780,29 @@ extension LayoutFingerprintV2 {
         let annotationLayout = alignedJaccard(other, keyPath: \.annotationCells)
 
         // Raster: blend of three content-invariant channels:
-        // - Projection profiles (70%): WHERE content exists along x/y axes — most robust
-        // - Edge detection (15%): layout structure (lines, borders, regions)
-        // - Structural occupancy (15%): where content exists structurally
+        // - Projection profiles (95%): WHERE content exists along x/y axes — most robust
+        // - Edge detection (3%): layout structure (lines, borders, regions)
+        // - Structural occupancy (2%): where content exists structurally
         // Edge/occupancy weights are low because cell-level operations are
         // sensitive to rendering differences; projection profiles are inherently
         // content-invariant (x/y histograms absorb pixel noise).
+        //
+        // Blend shares are overridable for calibration sweeps (same precedent
+        // as rasterWeightOverride); the shipped values are 0.95/0.03/0.02
+        // (calibrated 2026-09-01 — see raster-weight-analysis audit §9).
         let rasterProjection = projectionRasterSimilarity(other)
         let rasterEdge = edgeRasterSimilarity(other)
-        let rasterOccupancy = occupancyRasterSimilarity(other)
-        let rasterLayout = 0.95 * rasterProjection + 0.03 * rasterEdge + 0.02 * rasterOccupancy
+        // Prefer graded occupancy (continuous cosine similarity) over binary
+        // Jaccard when graded data is available. Graded occupancy is more
+        // content-invariant because it compares HOW MUCH ink each cell has,
+        // not WHETHER it has ink — reducing sensitivity to anti-aliasing.
+        let hasGraded = pages.contains { !$0.gradedOccupancyCells.isEmpty }
+            || other.pages.contains { !$0.gradedOccupancyCells.isEmpty }
+        let rasterOccupancy = hasGraded
+            ? gradedOccupancySimilarity(other)
+            : occupancyRasterSimilarity(other)
+        let b = rasterBlendOverride ?? (projection: 0.95, edge: 0.03, occupancy: 0.02)
+        let rasterLayout = b.projection * rasterProjection + b.edge * rasterEdge + b.occupancy * rasterOccupancy
 
         // Region: connected-component region similarity (content-invariant text layout).
         // Compares macro-level text structure (how many blocks, where, what shape)
@@ -646,6 +860,9 @@ extension LayoutFingerprintV2 {
             + renormAnnot * annotationLayout
             + renormRaster * rasterLayout
             + renormRegion * regionLayout
+        let coverage = SimilarityCoverage(
+            text: hasText, field: hasField, annotation: hasAnnot,
+            region: hasRegion, raster: hasRaster)
         return LayoutSimilarityV2(
             geometry: geometry,
             textLayout: textLayout,
@@ -653,7 +870,8 @@ extension LayoutFingerprintV2 {
             annotationLayout: annotationLayout,
             rasterLayout: rasterLayout,
             regionLayout: regionLayout,
-            total: total
+            total: total,
+            coverage: coverage
         )
     }
 
@@ -758,6 +976,65 @@ extension LayoutFingerprintV2 {
         _ other: LayoutFingerprintV2
     ) -> Double {
         return alignedJaccard(other, keyPath: \.occupancyCells)
+    }
+
+    /// Graded occupancy similarity — cosine similarity on fractional coverage.
+    ///
+    /// Unlike binary Jaccard (occupied/not), graded occupancy captures HOW
+    /// MUCH ink each cell has. Two cells with 80% and 75% coverage score
+    /// nearly identical, while binary Jaccard treats them as identical to
+    /// cells with 100% coverage. This reduces sensitivity to anti-aliasing
+    /// differences near content boundaries.
+    ///
+    /// Per-page aligned: compare graded vectors page-by-page.
+    private func gradedOccupancySimilarity(
+        _ other: LayoutFingerprintV2
+    ) -> Double {
+        let minPages = min(pages.count, other.pages.count)
+        guard minPages > 0 else { return 0 }
+
+        var sum = 0.0
+        var compared = 0
+        for i in 0..<minPages {
+            let aCells = pages[i].gradedOccupancyCells
+            let bCells = other.pages[i].gradedOccupancyCells
+
+            // Both empty → agreement on absence.
+            if aCells.isEmpty && bCells.isEmpty { continue }
+
+            // Build coverage vectors keyed by (scale, col, row) — the
+            // multi-scale grids share coordinate space, so a 16pt cell and a
+            // 64pt cell at the same (col, row) are different features and
+            // must not collide.
+            struct ScaleKey: Hashable { let scale: Double; let col: Int; let row: Int }
+            var allKeys = Set<ScaleKey>()
+            for c in aCells { allKeys.insert(ScaleKey(scale: c.scale, col: c.col, row: c.row)) }
+            for c in bCells { allKeys.insert(ScaleKey(scale: c.scale, col: c.col, row: c.row)) }
+
+            let sortedKeys = allKeys.sorted { ($0.scale, $0.row, $0.col) < ($1.scale, $1.row, $1.col) }
+            let aMap = Dictionary(uniqueKeysWithValues: aCells.map { (ScaleKey(scale: $0.scale, col: $0.col, row: $0.row), $0.coverage) })
+            let bMap = Dictionary(uniqueKeysWithValues: bCells.map { (ScaleKey(scale: $0.scale, col: $0.col, row: $0.row), $0.coverage) })
+
+            var vecA: [Double] = []
+            var vecB: [Double] = []
+            vecA.reserveCapacity(sortedKeys.count)
+            vecB.reserveCapacity(sortedKeys.count)
+            for key in sortedKeys {
+                vecA.append(aMap[key] ?? 0.0)
+                vecB.append(bMap[key] ?? 0.0)
+            }
+
+            // Cosine similarity on the coverage vectors.
+            let sim = Self.cosineSimilarity(vecA, vecB)
+            sum += sim
+            compared += 1
+        }
+
+        if compared == 0 { return 1.0 }
+
+        let countPenalty = Double(abs(pages.count - other.pages.count))
+            / Double(max(pages.count, other.pages.count))
+        return (sum / Double(compared)) * (1 - countPenalty)
     }
 
     /// Text similarity using text projection profiles.

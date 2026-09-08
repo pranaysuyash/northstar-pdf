@@ -1,0 +1,35 @@
+{
+  "fixtureCount" : 2,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+      "sourcePath" : "benchmark\/results\/public-sample-form.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "b80bca995c4381f6570eda6c6a186e45f86dc0f78fa24cf6ff551150c31ddc74",
+      "sourcePath" : "benchmark\/results\/2026-08-23-pdfkit-widgets\/fixture.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 26.6.2 (Build 25G83)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

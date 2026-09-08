@@ -21,13 +21,13 @@
   "familyThreshold" : 0.9,
   "generatedAt" : "2026-08-31",
   "hardNegativePairs" : 1329,
-  "maxHardNegative" : 0.9885809543936768,
+  "maxHardNegative" : 1,
   "maxPositive" : 1,
-  "minHardNegative" : 0.009177388660830118,
-  "minPositive" : 0.9016969255376681,
+  "minHardNegative" : 0.009227846819258922,
+  "minPositive" : 0.9251056408398455,
   "positivePairs" : 211,
   "schema" : "pdf-editor.layout-v2-family-threshold-calibration",
-  "separationGapMidpoint" : 0.9451389399656724,
+  "separationGapMidpoint" : 0.9625528204199227,
   "topHardNegatives" : [
     {
       "a" : "scanned-noisy.pdf",
@@ -36,7 +36,8 @@
         "N",
         "N"
       ],
-      "similarity" : 0.9885809543936768
+      "similarity" : 1,
+      "structuredContent" : false
     },
     {
       "a" : "diverse-graphics-heavy.pdf",
@@ -45,7 +46,8 @@
         "N",
         "N"
       ],
-      "similarity" : 0.9722599364884414
+      "similarity" : 0.9816172786084124,
+      "structuredContent" : false
     },
     {
       "a" : "ocr-clean-english.pdf",
@@ -54,7 +56,8 @@
         "N",
         "N"
       ],
-      "similarity" : 0.9646277698061831
+      "similarity" : 0.9720157408944319,
+      "structuredContent" : false
     },
     {
       "a" : "diverse-dense-grid.pdf",
@@ -63,7 +66,8 @@
         "N",
         "N"
       ],
-      "similarity" : 0.9309183913531187
+      "similarity" : 0.9435830695552581,
+      "structuredContent" : false
     },
     {
       "a" : "diverse-graphics-heavy.pdf",
@@ -72,7 +76,8 @@
         "N",
         "N"
       ],
-      "similarity" : 0.9125641279012549
+      "similarity" : 0.9249292184899567,
+      "structuredContent" : false
     },
     {
       "a" : "ocr-clean-english.pdf",
@@ -81,7 +86,8 @@
         "N",
         "N"
       ],
-      "similarity" : 0.9021270886460984
+      "similarity" : 0.9120521656005802,
+      "structuredContent" : false
     },
     {
       "a" : "ocr-dense-paragraph.pdf",
@@ -90,16 +96,18 @@
         "N",
         "N"
       ],
-      "similarity" : 0.8790899021985912
+      "similarity" : 0.8921541788280456,
+      "structuredContent" : false
     },
     {
-      "a" : "diverse-single-column.pdf",
-      "b" : "diverse-single-column-variant.pdf",
+      "a" : "scanned-noisy.pdf",
+      "b" : "diverse-scanned-sim.pdf",
       "classes" : [
         "N",
         "N"
       ],
-      "similarity" : 0.8498491486407229
+      "similarity" : 0.8529560437956684,
+      "structuredContent" : false
     }
   ],
   "version" : {

@@ -1,4 +1,5 @@
 import Foundation
+import PDFKit
 import Testing
 @testable import PDFEditorCore
 
@@ -26,18 +27,131 @@ struct PDFIncrementalWriterTests {
 
   // MARK: - Corpus breadth (compressed + tagged sources)
 
-  @Test func compressedSourceFailsClosedWithPreciseDiagnostic() throws {
+  /// 2026-09-07: object streams are now READ transparently (type-2 xref
+  /// entries resolve through the ObjStm), so the former fail-closed walk is
+  /// retired. The walk must see the same field tree qpdf reports
+  /// (applicant.{name,notes,subscribe,contact,country} + widget kids = 12
+  /// nodes) and the write must land as a prefix-preserving incremental
+  /// update whose promoted objects qpdf and the structural re-walk agree on.
+  /// PDFKit cannot reopen ANY incremental update onto this ObjStm-bearing
+  /// base (measured limitation — see objectStreamUpdateRejectionIsDocumented
+  /// below), so the cross-viewer assertion here is the structural walker +
+  /// qpdf shape, not PDFKit reopen.
+  @Test func compressedSourceWalksAndWritesThroughObjectStreams() throws {
     guard let corpus = corpusDir else { return }
     let data = try Data(contentsOf: corpus.appendingPathComponent("compressed-acroform.pdf"))
-    do {
-      _ = try PDFIncrementalFormWriter.walkAcroForm(data)
-      Issue.record("Compressed-object AcroForm was accepted; must fail closed")
-    } catch let error as PDFIncrementalFormWriter.WriterError {
-      guard case .compressedObject = error else {
-        Issue.record("Expected compressedObject, got: \(error.localizedDescription)")
-        return
-      }
-    }
+
+    // Walk: type-2 resolution must surface the full field tree.
+    let model = try PDFIncrementalFormWriter.walkAcroFormModel(data)
+    #expect(model.nodes.count == 12)
+    #expect(model.nodes.contains { $0.fullyQualifiedName == "applicant.name" })
+    #expect(model.nodes.contains { $0.fullyQualifiedName == "applicant.country" })
+    #expect(model.nodes.contains { $0.fieldType == "Btn" })
+
+    // Write: text edit on a compressed field produces a real incremental
+    // update (source byte-preserved as prefix) with promoted classic copies.
+    let plan = try PDFIncrementalFormWriter.resolveEditPlan(
+      nodes: model.nodes, targetFieldName: "applicant.name",
+      requestedValue: "ObjStm Alice", source: data)
+    let output = try PDFIncrementalFormWriter.incrementalFieldUpdate(
+      data, edits: plan.objectEdits, newObjects: plan.newObjectBodies)
+    #expect(output.prefix(data.count) == data)
+    #expect(output.count > data.count)
+
+    // Reopen through the /Prev merge: the edited object is now a type-1
+    // copy; the walker must read the NEW value, not the stale ObjStm one.
+    let reopened = try PDFIncrementalFormWriter.walkAcroFormModel(output)
+    #expect(reopened.nodes.count == model.nodes.count)
+    let nameNode = reopened.nodes.first { $0.fullyQualifiedName == "applicant.name" }
+    #expect(nameNode?.value == "ObjStm Alice")
+
+    // Independent engine: qpdf must find the updated object byte-clean.
+    let tmp = FileManager.default.temporaryDirectory
+      .appendingPathComponent("objstm-edited-\(UUID().uuidString).pdf")
+    try output.write(to: tmp)
+    defer { try? FileManager.default.removeItem(at: tmp) }
+    let proc = Process()
+    proc.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/qpdf")
+    proc.arguments = ["--check", tmp.path]
+    let pipe = Pipe()
+    proc.standardOutput = pipe
+    proc.standardError = pipe
+    try proc.run()
+    proc.waitUntilExit()
+    #expect(proc.terminationStatus == 0)
+  }
+
+  /// Measured 2026-09-07: PDFKit rejects EVERY incremental update appended
+  /// to a file whose base revision carries object streams — three
+  /// producer-independent shapes all rejected (native writer output;
+  /// hand-appended classic xref; hand-appended classic xref with /ID),
+  /// while qpdf validates the same files byte-clean and the ORIGINAL
+  /// hybrid file itself opens. PDFKit's own save sidesteps this by
+  /// silently NORMALIZING the file (full rewrite, all /ObjStm gone —
+  /// 37052 bytes, object streams stripped). This canary documents the
+  /// reader limitation and the producer behavior; if PDFKit ever learns
+  /// to read hybrid updates, this test surfaces the change for
+  /// re-verification rather than silently shipping the old assumption.
+  @Test func objectStreamUpdateRejectionIsDocumented() throws {
+    guard let corpus = corpusDir else { return }
+    let srcURL = corpus.appendingPathComponent("compressed-acroform.pdf")
+    let data = try Data(contentsOf: srcURL)
+
+    // Producer-independent shape 1: native writer output.
+    let model = try PDFIncrementalFormWriter.walkAcroFormModel(data)
+    let plan = try PDFIncrementalFormWriter.resolveEditPlan(
+      nodes: model.nodes, targetFieldName: "applicant.name",
+      requestedValue: "X", source: data)
+    let writerOutput = try PDFIncrementalFormWriter.incrementalFieldUpdate(
+      data, edits: plan.objectEdits, newObjects: plan.newObjectBodies)
+    let u1 = FileManager.default.temporaryDirectory
+      .appendingPathComponent("objstm-hybrid-\(UUID().uuidString).pdf")
+    try writerOutput.write(to: u1)
+    defer { try? FileManager.default.removeItem(at: u1) }
+    #expect(PDFDocument(url: u1) == nil)
+
+    // Producer-independent shape 2: hand-appended classic xref (qpdf-clean,
+    // verified 2026-09-07) — rejection is not a writer artifact.
+    var handAppended = data
+    let objOffset = handAppended.count
+    handAppended.append(Data("10 0 obj\n<< /V (probe) >>\nendobj\n".utf8))
+    let xrefOffset = handAppended.count
+    handAppended.append(
+      Data(
+        """
+        xref
+        10 1
+        \(String(format: "%010d 00000 n \n", objOffset))
+        trailer
+        << /Size 41 /Prev 6271 /Root 3 0 R >>
+        startxref
+        \(xrefOffset)
+        %%EOF
+        """.utf8))
+    let u2 = FileManager.default.temporaryDirectory
+      .appendingPathComponent("objstm-hand-\(UUID().uuidString).pdf")
+    try handAppended.write(to: u2)
+    defer { try? FileManager.default.removeItem(at: u2) }
+    #expect(PDFDocument(url: u2) == nil)
+
+    // Control: the UNMODIFIED hybrid file opens fine — the rejection is
+    // specific to the appended-update shape, not ObjStm per se.
+    #expect(PDFDocument(url: srcURL) != nil)
+
+    // Producer behavior: PDFKit's own save normalizes object streams away
+    // (full rewrite). Pin that too: if a future PDFKit preserves ObjStm
+    // through save, this flips and demands re-verification of the reader
+    // limitation above.
+    guard let doc = PDFDocument(url: srcURL),
+      let field = doc.page(at: 0)?.annotations.first(where: { $0.fieldName == "applicant.name" })
+    else { return }
+    field.setValue("PDFKit wrote this", forAnnotationKey: .widgetValue)
+    let u3 = FileManager.default.temporaryDirectory
+      .appendingPathComponent("objstm-pdfkit-saved-\(UUID().uuidString).pdf")
+    doc.write(to: u3)
+    defer { try? FileManager.default.removeItem(at: u3) }
+    let saved = try Data(contentsOf: u3)
+    #expect(saved.range(of: Data("/ObjStm".utf8)) == nil)
   }
 
   @Test func taggedSourceIsDetectedAndPreservedThroughIncrementalEdit() throws {
@@ -427,6 +541,93 @@ struct PDFIncrementalWriterTests {
     #expect(patched.contains("/Pages 2 0 R"))
     #expect(patched.contains("/Lang (en)"))
     #expect(patched.contains("/V (test)"))
+  }
+
+  // MARK: - Radio regression guards (writer fixes 2026-09-03)
+
+  /// PDF literal strings may encode dotted field names as octal escapes
+  /// (PDFKit writes (applicant\056contact)); the FQN must decode or tree
+  /// walkers cannot match "applicant.contact".
+  @Test func literalOctalEscapesDecodeToDots() throws {
+    #expect(PDFIncrementalFormWriter.decodePdfTextString("(applicant\\056contact)")
+      == "applicant.contact")
+    #expect(PDFIncrementalFormWriter.decodePdfTextString("(a\\142c)") == "abc")
+    #expect(PDFIncrementalFormWriter.decodePdfTextString("(line\\nfeed)") == "line\nfeed")
+  }
+
+  /// A radio group whose export vocabulary is literally "0"/"1" must treat a
+  /// requested "0" as a *selection*, not as the Off token (Observed failing
+  /// on public-acroform's applicant.contact before the fix).
+  @Test func radioExportZeroSelectsInsteadOfClearing() throws {
+    // Flattened merged layout: both field+widget kids carry their /AP states.
+    let kid0 = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 39, fullyQualifiedName: "applicant.contact", isWidget: true,
+      rect: [0, 0, 19, 19], buttonStates: ["/0", "/Off"], fieldType: "Btn",
+      childObjectNumbers: [])
+    let kid1 = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 52, fullyQualifiedName: "applicant.contact", isWidget: true,
+      rect: [20, 0, 39, 19], buttonStates: ["/1", "/Off"], fieldType: "Btn",
+      childObjectNumbers: [])
+    let edits = try PDFIncrementalFormWriter.resolveEdits(
+      nodes: [kid0, kid1], targetFieldName: "applicant.contact", requestedValue: "0")
+    let byObject = Dictionary(grouping: edits) { $0.objectNumber }
+      .mapValues { $0.flatMap { $0.pairs } }
+    #expect(byObject[39]?.contains { $0.key == "/V" && $0.value == "/0" } == true)
+    #expect(byObject[39]?.contains { $0.key == "/AS" && $0.value == "/0" } == true)
+    #expect(byObject[52]?.contains { $0.key == "/AS" && $0.value == "/Off" } == true)
+    #expect(byObject[52]?.contains { $0.key == "/V" } != true,
+            "The Off sibling must not receive the selected value")
+
+    // Selecting the other export flips the /AS pair.
+    let edits2 = try PDFIncrementalFormWriter.resolveEdits(
+      nodes: [kid0, kid1], targetFieldName: "applicant.contact", requestedValue: "1")
+    let byObject2 = Dictionary(grouping: edits2) { $0.objectNumber }
+      .mapValues { $0.flatMap { $0.pairs } }
+    #expect(byObject2[39]?.contains { $0.key == "/AS" && $0.value == "/Off" } == true)
+    #expect(byObject2[52]?.contains { $0.key == "/V" && $0.value == "/1" } == true)
+    #expect(byObject2[52]?.contains { $0.key == "/AS" && $0.value == "/1" } == true)
+  }
+
+  /// True Off tokens still clear the group when they are not a real export.
+  @Test func radioOffTokenStillClears() throws {
+    let kid0 = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 39, fullyQualifiedName: "g", isWidget: true,
+      rect: [0, 0, 19, 19], buttonStates: ["/0", "/Off"], fieldType: "Btn",
+      childObjectNumbers: [])
+    let kid1 = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 52, fullyQualifiedName: "g", isWidget: true,
+      rect: [20, 0, 39, 19], buttonStates: ["/1", "/Off"], fieldType: "Btn",
+      childObjectNumbers: [])
+    let edits = try PDFIncrementalFormWriter.resolveEdits(
+      nodes: [kid0, kid1], targetFieldName: "g", requestedValue: "Off")
+    let byObject = Dictionary(grouping: edits) { $0.objectNumber }
+      .mapValues { $0.flatMap { $0.pairs } }
+    #expect(byObject[39]?.contains { $0.key == "/AS" && $0.value == "/Off" } == true)
+    #expect(byObject[52]?.contains { $0.key == "/AS" && $0.value == "/Off" } == true)
+  }
+
+  /// Tree layout: /V belongs on the dedicated field node; /AS lands on the
+  /// widget able to render the state (its /AP), siblings go Off.
+  @Test func treeLayoutVOnFieldAndAsOnCarrier() throws {
+    let field = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 25, fullyQualifiedName: "g", isWidget: false,
+      rect: nil, buttonStates: [], fieldType: "Btn", childObjectNumbers: [26, 27])
+    let kid0 = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 26, fullyQualifiedName: "g", isWidget: true,
+      rect: [0, 0, 19, 19], buttonStates: ["/0", "/Off"], fieldType: "Btn",
+      childObjectNumbers: [])
+    let kid1 = PDFIncrementalFormWriter.FormObjectNode(
+      objectNumber: 27, fullyQualifiedName: "g", isWidget: true,
+      rect: [20, 0, 39, 19], buttonStates: ["/1", "/Off"], fieldType: "Btn",
+      childObjectNumbers: [])
+    let edits = try PDFIncrementalFormWriter.resolveEdits(
+      nodes: [field, kid0, kid1], targetFieldName: "g", requestedValue: "0")
+    let byObject = Dictionary(grouping: edits) { $0.objectNumber }
+      .mapValues { $0.flatMap { $0.pairs } }
+    #expect(byObject[25]?.contains { $0.key == "/V" && $0.value == "/0" } == true)
+    #expect(byObject[26]?.contains { $0.key == "/AS" && $0.value == "/0" } == true)
+    #expect(byObject[27]?.contains { $0.key == "/AS" && $0.value == "/Off" } == true)
+    #expect(byObject[26]?.contains { $0.key == "/V" } != true)
   }
 
   // MARK: - Helpers

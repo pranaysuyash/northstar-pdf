@@ -90,22 +90,15 @@
     ]
   },
   "fixtureCount": 18,
-  "mismatchCount": 39,
+  "mismatchCount": 6,
   "mismatchCounts": {
-    "native-fields": 1,
-    "validation.check-kinds": 16,
-    "validation.check-status": 16,
     "candidate-semantic-set": 2,
     "candidate.count": 2,
     "page.geometry-or-text": 1,
     "coordinates": 1
   },
-  "unexpectedMismatchCount": 33,
-  "unexpectedMismatchCounts": {
-    "native-fields": 1,
-    "validation.check-kinds": 16,
-    "validation.check-status": 16
-  },
+  "unexpectedMismatchCount": 0,
+  "unexpectedMismatchCounts": {},
   "independentPreservationReport": "benchmark/results/contract-parity-2026-08-24/independent-preservation-report.json",
   "independentBrowserViewerReport": "benchmark/results/contract-parity-2026-08-24/independent-browser-viewer-report.json",
   "independentBrowserViewer": {
@@ -144,8 +137,8 @@
       "sourceViewerStatus": "passed",
       "nativeStatus": "passed",
       "browserStatus": "passed",
-      "nativeStructuralStatus": "failed",
-      "browserStructuralStatus": "failed"
+      "nativeStructuralStatus": "passed",
+      "browserStructuralStatus": "passed"
     },
     {
       "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
@@ -290,11 +283,11 @@
     {
       "parityCaseID": "PARITY-001",
       "sourcePath": "benchmark/results/public-sample-form.pdf",
-      "sourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "sourceBinding": {
-        "liveSourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
-        "nativeSourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
-        "browserSourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+        "liveSourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "nativeSourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
+        "browserSourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
         "nativeMatchesLive": true,
         "browserMatchesLive": true,
         "expectedFailure": false
@@ -318,169 +311,19 @@
           "outputDigestCompared": false
         },
         "semanticProjectionDigest": {
-          "native": "315adbcb16b2a1cdba4f686c1d8b6557af202216b814d9f90f45c32dc43a5792",
-          "browser": "88c88327d8e22c9ae60b1e298fbfbe0bb6672c69d8c4360ba3181e62d9cdee98",
+          "native": "b6a41c4f82cec3946da1aaafd1544cc0c81b0ace83c8888a2d29bd27fbb8f3ee",
+          "browser": "3e5b281b452cb5a0c07e6b1d7e0847d0646a20d1131f4981f517d1457fcc5b59",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 3,
-      "unexpectedMismatches": [
-        {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
-          "native": [
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
-            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
-          ],
-          "web": [
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
-            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
-          ]
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 3,
-      "mismatches": [
-        {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
-          "native": [
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
-            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
-          ],
-          "web": [
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
-            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
-          ]
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "native-fields",
-          "path": "document.payload.fields",
-          "native": [
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
-            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
-          ],
-          "web": [
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.contact\",\"kind\":\"button\",\"bounds\":{\"x\":255.5,\"y\":523.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.country\",\"kind\":\"choice\",\"bounds\":{\"x\":185.5,\"y\":477.39,\"width\":251,\"height\":23},\"valuePresent\":true,\"choiceCount\":5,\"hasChoices\":true}",
-            "{\"pageIndex\":0,\"name\":\"applicant.name\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":705.39,\"width\":251,\"height\":23},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.notes\",\"kind\":\"text\",\"bounds\":{\"x\":185.5,\"y\":617.39,\"width\":251,\"height\":67},\"valuePresent\":false,\"choiceCount\":0,\"hasChoices\":false}",
-            "{\"pageIndex\":0,\"name\":\"applicant.subscribe\",\"kind\":\"button\",\"bounds\":{\"x\":185.5,\"y\":567.39,\"width\":19,\"height\":19},\"valuePresent\":true,\"choiceCount\":0,\"hasChoices\":false}"
-          ]
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-002",
@@ -514,108 +357,18 @@
         },
         "semanticProjectionDigest": {
           "native": "9b39f4cbd3a4a9abc85f73c0c053f212e14b3823c9b9b056068e3663786bb78b",
-          "browser": "b70ab1d7f794d6ce6a36d5c723ba0091aa054010df8b4af68e69751ad251b5ec",
+          "browser": "9d13e769315f75abc2e00fb253a771e7d36b376f0c5dccbd49e1ad087fd5e641",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-003",
@@ -649,108 +402,18 @@
         },
         "semanticProjectionDigest": {
           "native": "1db1333ba8a5e9d2284b8624fa9177b4d5a61b848dc8e9003379b66c7f517dae",
-          "browser": "bbd89b0e287967a54d7210ab27a70e435f92fdf41512c591a59eb3d709abc999",
+          "browser": "fc68698750bf417c165353e803055e70bd6b88fc2bdbde4860d2efd706c69800",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-004",
@@ -784,108 +447,18 @@
         },
         "semanticProjectionDigest": {
           "native": "d21f03a92f928d2c4092df48582bafbbce981cedbd62c817b2297d53d262192b",
-          "browser": "5920173215077a73b2d90191fa424e0e5fb3f9b83fb15fba7a4c3b9eab29e988",
+          "browser": "fbedd07bb17d119f4899638d47cdef120ca53da176cfa3fc7194b6f4958be514",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-005",
@@ -919,7 +492,7 @@
         },
         "semanticProjectionDigest": {
           "native": "38cdfd7a553add055a27caafe93cb3533dc012d95bc3a80a008abf8da5074979",
-          "browser": "fd9b9201a3ac30a77604ddcfba84772ce6ef0c74c405e5b27a23a843042a6b31",
+          "browser": "eb4cd37d0a010b79cd4811ca038dec9d8c0b66bb177d2ad707468e5e62415804",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
@@ -929,39 +502,9 @@
         "candidate.count"
       ],
       "allowedMismatchCount": 2,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 4,
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 2,
       "mismatches": [
         {
           "kind": "candidate-semantic-set",
@@ -1104,35 +647,6 @@
           "path": "document.payload.candidates.length",
           "native": 72,
           "web": 56
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
         }
       ],
       "firstMismatches": [
@@ -1277,35 +791,6 @@
           "path": "document.payload.candidates.length",
           "native": 72,
           "web": 56
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
         }
       ]
     },
@@ -1341,108 +826,18 @@
         },
         "semanticProjectionDigest": {
           "native": "8d86ddd31d473133413c86906ab73e2fc2aebe0e14a47e5f722f7cca7c956777",
-          "browser": "13638c2d74fa0b27cd450e179fc99d265ce947bf980bdd1e3a13e844f7ed94f1",
+          "browser": "3fc79347bf402971d148284543c7688271caed75494391d1a23349db68975427",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-007",
@@ -1521,108 +916,18 @@
         },
         "semanticProjectionDigest": {
           "native": "badfd0708dbbf0ecadaf532cf9b369cf4eaa9db98e5bafe430213532e456850f",
-          "browser": "45a8933fe85f4ecc89013a4f8310d96de6e1dcb522034692c45b0987bd43caf1",
+          "browser": "363339099aae640c2b6e912c7b8ad7cfecdeef0822aa7ba57af6587838f03ccf",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-009",
@@ -1656,108 +961,18 @@
         },
         "semanticProjectionDigest": {
           "native": "9b5f4da09dfb7a737a284c414c3490c95e92d074aa59e79d6418fe0dc69f9470",
-          "browser": "a3d55d9dc74a987d03d2e4e7571cd63b560349f3efc29ff0750c6eabac1f89b4",
+          "browser": "227b29cbf703543df46fde9f42d4edd384305d130e0b1a667ba06a5ec9c96c97",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-010",
@@ -1791,108 +1006,18 @@
         },
         "semanticProjectionDigest": {
           "native": "d2206c1d75f6e0e1cdce83a5f8fa69154498564a5e2b92b658d2e84d41cee72a",
-          "browser": "ce938358c65bead949506c32deaec81086a7a0015480c5419bb2a1670a1ff937",
+          "browser": "caed048a96a4ff77c532679fda14446b3cfab8e1c690bf2c69ec962fae186a41",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-011",
@@ -1926,7 +1051,7 @@
         },
         "semanticProjectionDigest": {
           "native": "c73e9685db5485332bac24b9995529d86f626cf32c6605d881d13e0497d3e884",
-          "browser": "7d027b059cecaf468ec7e35435d4e047a6d01fef7859f1eeb66a63982994125b",
+          "browser": "ba2affde541a77249aa1101e7db5b47017932875e8a4776e7dd2a432fa5a4f95",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
@@ -1936,39 +1061,9 @@
         "candidate.count"
       ],
       "allowedMismatchCount": 2,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 4,
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 2,
       "mismatches": [
         {
           "kind": "candidate-semantic-set",
@@ -2111,35 +1206,6 @@
           "path": "document.payload.candidates.length",
           "native": 72,
           "web": 56
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
         }
       ],
       "firstMismatches": [
@@ -2284,35 +1350,6 @@
           "path": "document.payload.candidates.length",
           "native": 72,
           "web": 56
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
         }
       ]
     },
@@ -2348,108 +1385,18 @@
         },
         "semanticProjectionDigest": {
           "native": "83b0fa53cd17262d595bde7d45f867a92cd09db7c5b77659b7419658b452e6aa",
-          "browser": "f46985ff79e97d1cb556b968423eb826e2e5847743ab3cbbea60b241a1939d84",
+          "browser": "3ec92fbbfdf520012c91bdb7d3aeb5fb41fba51f26d8201b3cade31f3063654b",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-013",
@@ -2483,108 +1430,18 @@
         },
         "semanticProjectionDigest": {
           "native": "7bb3385edc5b3a3e1f4d3ec37e2c0f8d42310253fd1c46bafef278a624ece4d0",
-          "browser": "d31035e154343ad3cb6a1f98857e8b71ad3b91c3b9553ca5692ce8373c7a8ba7",
+          "browser": "ac3b9b5d4c8ee9b8504acdd45a53c74ec757471797a56a2790663fe39c3455e1",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-014",
@@ -2618,108 +1475,18 @@
         },
         "semanticProjectionDigest": {
           "native": "3cb3cf0da551c997c65ea002fa5b0fe84b81763523234c5a0c859f933195f797",
-          "browser": "a57df981f00a472eda2e61926a1475020f882d1c3f9e7bc8084c7444b65e6156",
+          "browser": "6e0dbd057d617f9e374d490ca5c156d50e09b0bf336400969f528f230d28ffb4",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-015",
@@ -2753,7 +1520,7 @@
         },
         "semanticProjectionDigest": {
           "native": "33a67541da02109adb539c5c1c6bdfbf282df1b7dcb49a355fb0337cae83ed80",
-          "browser": "eebfa4aceeb99b402a8a3bc49b30643b7dbc0d74d433bd578c56d52adc2196ab",
+          "browser": "3afed8254ec31a6d7657bb24af4709f47161168857d4c2d8c893aa7e5e2c82b5",
           "exactDigestEquality": false,
           "comparatorEquivalent": false
         }
@@ -2763,39 +1530,9 @@
         "coordinates"
       ],
       "allowedMismatchCount": 2,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 4,
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 2,
       "mismatches": [
         {
           "kind": "page.geometry-or-text",
@@ -2892,35 +1629,6 @@
               }
             }
           ]
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
         }
       ],
       "firstMismatches": [
@@ -3019,35 +1727,6 @@
               }
             }
           ]
-        },
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
         }
       ]
     },
@@ -3128,108 +1807,18 @@
         },
         "semanticProjectionDigest": {
           "native": "d3dbfed054f21523d8fada63ef2a251af1243ca399f7e6f9186ef70e1f3f3062",
-          "browser": "34623f00d6605473265080b4f37bc89f751d52400402438ed2f67be4bfbbe054",
+          "browser": "3d276a3939691e3d90154731ef18381855c7ae6a5787ad4c5f64e3d14f5db565",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     },
     {
       "parityCaseID": "PARITY-018",
@@ -3263,108 +1852,18 @@
         },
         "semanticProjectionDigest": {
           "native": "e1e90219b081bb7dea3bc79d306dfff4aefbe4382da7494dcd363c974af2e0b7",
-          "browser": "0e8881a39dedab5000c4d05cb879b12b35807b8e16bc53e548de9d5085505327",
+          "browser": "da408c868055c4e242f8735a9f6b89d767925f1922c98264acd3871c21fcd431",
           "exactDigestEquality": false,
-          "comparatorEquivalent": false
+          "comparatorEquivalent": true
         }
       },
       "allowedMismatchKinds": [],
       "allowedMismatchCount": 0,
-      "unexpectedMismatchCount": 2,
-      "unexpectedMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "mismatchCount": 2,
-      "mismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ],
-      "firstMismatches": [
-        {
-          "kind": "validation.check-kinds",
-          "path": "validation.checks",
-          "native": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "sourceDigest",
-            "visualDiff"
-          ],
-          "web": [
-            "appliedOperations",
-            "nativeFields",
-            "outputReopen",
-            "outsideRegionText",
-            "pageGeometry",
-            "privacyPreflight",
-            "sourceDigest",
-            "visualDiff"
-          ]
-        },
-        {
-          "kind": "validation.check-status",
-          "path": "validation.checks.privacyPreflight.status",
-          "native": null,
-          "web": "passed"
-        }
-      ]
+      "unexpectedMismatchCount": 0,
+      "unexpectedMismatches": [],
+      "mismatchCount": 0,
+      "mismatches": [],
+      "firstMismatches": []
     }
   ]
 }

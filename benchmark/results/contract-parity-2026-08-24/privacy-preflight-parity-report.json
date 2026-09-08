@@ -45,7 +45,7 @@
     {
       "sourcePath": "benchmark/results/public-sample-form.pdf",
       "expectedFailure": false,
-      "sourceDigest": "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+      "sourceDigest": "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "nativeStatus": "observed",
       "browserStatus": "observed",
       "mismatchCount": 6,
@@ -73,11 +73,11 @@
             "byKind": {
               "button": {
                 "fieldCount": 3,
-                "populatedFieldCount": 3
+                "populatedFieldCount": 0
               },
               "choice": {
                 "fieldCount": 1,
-                "populatedFieldCount": 1
+                "populatedFieldCount": 0
               },
               "text": {
                 "fieldCount": 2,
@@ -85,7 +85,7 @@
               }
             },
             "fieldCount": 6,
-            "populatedFieldCount": 4,
+            "populatedFieldCount": 0,
             "reasonCodes": [
               "fieldValuePresenceOnly"
             ],
@@ -107,7 +107,7 @@
             "encryptionState": "plain",
             "formFieldCount": 6,
             "metadataFieldCount": 8,
-            "populatedFormFieldCount": 4,
+            "populatedFormFieldCount": 0,
             "signatureCount": 0
           }
         },

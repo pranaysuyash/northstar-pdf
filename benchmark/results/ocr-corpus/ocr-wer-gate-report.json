@@ -9,6 +9,7 @@
       "over_absolute_threshold": false,
       "provider": "Apple Vision",
       "regressed_vs_baseline": false,
+      "regression_only": false,
       "regression_tolerance": 0.05,
       "threshold": 0.1
     },
@@ -20,15 +21,30 @@
       "over_absolute_threshold": false,
       "provider": "Tesseract 5.5.0",
       "regressed_vs_baseline": false,
+      "regression_only": false,
       "regression_tolerance": 0.05,
       "threshold": 0.1
+    },
+    {
+      "outcome": "not_ran",
+      "provider": "PaddleOCR PP-OCRv6",
+      "regression_only": true,
+      "threshold": null
+    },
+    {
+      "outcome": "not_ran",
+      "provider": "Marker (Surya)",
+      "regression_only": true,
+      "threshold": null
     }
   ],
   "gated_providers": [
     "Apple Vision",
-    "Tesseract 5.5.0"
+    "Tesseract 5.5.0",
+    "PaddleOCR PP-OCRv6",
+    "Marker (Surya)"
   ],
-  "generated_at": "2026-09-02T09:37:10Z",
+  "generated_at": "2026-09-03T14:02:44Z",
   "per_fixture_thresholds": {
     "PaddleOCR PP-OCRv6": {
       "clean-english": 0.1,

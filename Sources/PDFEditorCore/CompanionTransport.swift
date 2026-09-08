@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 import os
 #if canImport(Network)
 import Network
@@ -57,6 +58,8 @@ public enum TransportError: Error, LocalizedError, Sendable {
     case socketError(String)
     case cancelled
     case notConnected
+    /// Zero-egress doctrine: the EgressGate refused this network send.
+    case egressDenied(String)
 
     public var errorDescription: String? {
         switch self {
@@ -70,6 +73,7 @@ public enum TransportError: Error, LocalizedError, Sendable {
         case .socketError(let detail): return "Socket error: \(detail)"
         case .cancelled: return "Request was cancelled"
         case .notConnected: return "Transport is not connected"
+        case .egressDenied(let detail): return "Network egress denied by EgressGate: \(detail)"
         }
     }
 }
@@ -102,6 +106,10 @@ public struct TransportConfiguration: Codable, Sendable, Hashable {
     /// Whether to keep connections alive between requests.
     public var keepAlive: Bool
 
+    /// V-03: Trusted certificate fingerprints (SHA-256) for TLS validation.
+    /// Empty set means validate against system trust store only.
+    public var trustedCertificateFingerprints: Set<String>
+
     public init(
         mode: TransportMode = .local,
         httpEndpoint: URL? = nil,
@@ -110,7 +118,8 @@ public struct TransportConfiguration: Codable, Sendable, Hashable {
         requireTLS: Bool = true,
         maxRetries: Int = 3,
         retryBaseDelay: TimeInterval = 0.5,
-        keepAlive: Bool = true
+        keepAlive: Bool = true,
+        trustedCertificateFingerprints: Set<String> = []
     ) {
         self.mode = mode
         self.httpEndpoint = httpEndpoint
@@ -120,6 +129,7 @@ public struct TransportConfiguration: Codable, Sendable, Hashable {
         self.maxRetries = maxRetries
         self.retryBaseDelay = retryBaseDelay
         self.keepAlive = keepAlive
+        self.trustedCertificateFingerprints = trustedCertificateFingerprints
     }
 
     /// Local IPC configuration (Unix domain socket).
@@ -151,12 +161,19 @@ public enum TransportMode: String, Codable, Sendable, CaseIterable {
 /// Creates the appropriate transport based on configuration.
 public struct CompanionTransportFactory {
     /// Create a transport from the given configuration.
-    public static func transport(for config: TransportConfiguration) -> any CompanionTransport {
+    ///
+    /// `egressGate` is applied to the HTTP transport only (local IPC and the
+    /// in-process mock are not network egress). When omitted, the HTTP
+    /// transport still gets a fresh disabled gate — fail-closed by default.
+    public static func transport(
+        for config: TransportConfiguration,
+        egressGate: EgressGate? = nil
+    ) -> any CompanionTransport {
         switch config.mode {
         case .local:
             return LocalCompanionTransport(configuration: config)
         case .http:
-            return HTTPCompanionTransport(configuration: config)
+            return HTTPCompanionTransport(configuration: config, egressGate: egressGate ?? EgressGate())
         case .mock:
             return MockCompanionTransport()
         }
@@ -175,12 +192,21 @@ public final class HTTPCompanionTransport: CompanionTransport, @unchecked Sendab
     private let sessionDelegate: HTTPTransportDelegate
     private var connected = false
 
-    public var isConnected: Bool { connected }
+    /// Zero-egress doctrine enforcement point (V-05/V-06): every network send
+    /// and handshake consults this gate before any byte leaves the process.
+    /// Defaults to a fresh disabled gate — an ungated HTTP transport cannot
+    /// exist. Share the bridge's gate (`CompanionBridge.egressGate`) so the
+    /// dashboard's enable/disable actually controls the data path.
+    public let egressGate: EgressGate
 
-    public init(configuration: TransportConfiguration) {
+    public init(configuration: TransportConfiguration, egressGate: EgressGate = EgressGate()) {
         self.configuration = configuration
+        self.egressGate = egressGate
 
-        let delegate = HTTPTransportDelegate()
+        // V-03: Initialize delegate with trusted certificate fingerprints
+        let delegate = HTTPTransportDelegate(
+            trustedFingerprints: configuration.trustedCertificateFingerprints
+        )
         self.sessionDelegate = delegate
 
         let sessionConfig = URLSessionConfiguration.default
@@ -195,10 +221,25 @@ public final class HTTPCompanionTransport: CompanionTransport, @unchecked Sendab
         self.session = URLSession(configuration: sessionConfig, delegate: delegate, delegateQueue: nil)
     }
 
+    public var isConnected: Bool { connected }
+
+    /// Fail-closed egress check: throws unless the gate is enabled and this
+    /// endpoint's host has been explicitly allowed. Called before any network
+    /// byte leaves the process.
+    private func requireEgress(to endpoint: URL) async throws {
+        let identifier = endpoint.host() ?? endpoint.absoluteString
+        guard await egressGate.isConnectionAllowed(identifier) else {
+            throw TransportError.egressDenied(
+                "endpoint \(identifier) is not allowed; enable egress and allow-list the host"
+            )
+        }
+    }
+
     public func send(_ envelope: Data, timeout: TimeInterval) async throws -> Data {
         guard let endpoint = configuration.httpEndpoint else {
             throw TransportError.connectionFailed("No HTTP endpoint configured")
         }
+        try await requireEgress(to: endpoint)
 
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
@@ -252,6 +293,7 @@ public final class HTTPCompanionTransport: CompanionTransport, @unchecked Sendab
         guard let endpoint = configuration.httpEndpoint else {
             throw TransportError.connectionFailed("No HTTP endpoint configured")
         }
+        try await requireEgress(to: endpoint)
 
         let handshakeURL = endpoint.appendingPathComponent("handshake")
         var urlRequest = URLRequest(url: handshakeURL)
@@ -295,16 +337,59 @@ public final class HTTPCompanionTransport: CompanionTransport, @unchecked Sendab
 // MARK: - HTTP Transport Delegate
 
 /// URLSession delegate that handles TLS and connection events.
+///
+/// V-03 fix: validates companion server certificate instead of accepting all.
+/// In production, this validates against a pinned certificate or system trust store.
 private final class HTTPTransportDelegate: NSObject, URLSessionDelegate, URLSessionTaskDelegate, @unchecked Sendable {
+    /// Trusted certificate fingerprints (SHA-256) for companion servers.
+    /// In production, these would be loaded from a secure configuration.
+    private let trustedFingerprints: Set<String>
+    
+    init(trustedFingerprints: Set<String> = []) {
+        self.trustedFingerprints = trustedFingerprints
+    }
+    
     func urlSession(
         _ session: URLSession,
         didReceive challenge: URLAuthenticationChallenge,
         completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
-        // In production: validate companion server certificate.
-        // For now, accept all (the egress gate controls whether
-        // we connect at all).
-        completionHandler(.performDefaultHandling, nil)
+        // V-03: Validate TLS certificate
+        guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        
+        guard let serverTrust = challenge.protectionSpace.serverTrust else {
+            completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+        
+        // Validate certificate chain
+        var error: CFError?
+        guard SecTrustEvaluateWithError(serverTrust, &error) else {
+            completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+        
+        // If we have pinned fingerprints, validate against them
+        if !trustedFingerprints.isEmpty {
+            guard let chain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate],
+                  let certificate = chain.first else {
+                completionHandler(.cancelAuthenticationChallenge, nil)
+                return
+            }
+            
+            let certData = SecCertificateCopyData(certificate) as Data
+            let fingerprint = SHA256.hash(data: certData).map { String(format: "%02x", $0) }.joined()
+            
+            guard trustedFingerprints.contains(fingerprint) else {
+                completionHandler(.cancelAuthenticationChallenge, nil)
+                return
+            }
+        }
+        
+        completionHandler(.useCredential, URLCredential(trust: serverTrust))
     }
 
     func urlSession(
@@ -332,6 +417,9 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
     private var readPipe: Pipe?
     private var writePipe: Pipe?
     private var process: Process?
+    private var socketFileHandle: FileHandle?
+    private var readHandle: FileHandle?
+    private var writeHandle: FileHandle?
     private var connected = false
 
     public var isConnected: Bool { connected }
@@ -342,6 +430,7 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
     }
 
     /// Connect to a running companion process via its Unix socket.
+    /// V-04 fix: uses native Swift sockets instead of external socat dependency.
     public func connect() throws {
         guard !connected else { return }
 
@@ -350,28 +439,41 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
             throw TransportError.connectionFailed("Socket not found at \(socketPath)")
         }
 
-        // Create pipes for communication
-        let inputPipe = Pipe()
-        let outputPipe = Pipe()
-
-        let proc = Process()
-        proc.executableURL = URL(fileURLWithPath: "/usr/bin/socat")
-        proc.arguments = [
-            "STDIO", "UNIX-CONNECT:\(socketPath)"
-        ]
-        proc.standardInput = outputPipe
-        proc.standardOutput = inputPipe
-        proc.standardError = FileHandle.nullDevice
-
-        do {
-            try proc.run()
-        } catch {
-            throw TransportError.connectionFailed("Failed to launch socat: \(error.localizedDescription)")
+        // V-04: Use native Swift Unix domain socket instead of socat
+        let socketFD = socket(AF_UNIX, SOCK_STREAM, 0)
+        guard socketFD >= 0 else {
+            throw TransportError.connectionFailed("Failed to create socket: \(String(cString: strerror(errno)))")
         }
 
-        self.process = proc
-        self.readPipe = inputPipe
-        self.writePipe = outputPipe
+        var addr = sockaddr_un()
+        addr.sun_family = sa_family_t(AF_UNIX)
+        let pathBytes = socketPath.utf8CString
+        guard pathBytes.count <= MemoryLayout.size(ofValue: addr.sun_path) else {
+            close(socketFD)
+            throw TransportError.connectionFailed("Socket path too long")
+        }
+        withUnsafeMutablePointer(to: &addr.sun_path) { ptr in
+            ptr.withMemoryRebound(to: CChar.self, capacity: pathBytes.count) { dest in
+                for i in 0..<pathBytes.count {
+                    dest[i] = pathBytes[i]
+                }
+            }
+        }
+
+        let connectResult = withUnsafePointer(to: &addr) { ptr in
+            ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
+                Darwin.connect(socketFD, sockaddrPtr, socklen_t(MemoryLayout<sockaddr_un>.size))
+            }
+        }
+
+        guard connectResult == 0 else {
+            close(socketFD)
+            throw TransportError.connectionFailed("Failed to connect to socket: \(String(cString: strerror(errno)))")
+        }
+
+        // V-04: Store the socket file handle for direct I/O. Reads and writes
+        // go through this handle — no socat subprocess, no pipe indirection.
+        self.socketFileHandle = FileHandle(fileDescriptor: socketFD, closeOnDealloc: true)
         self.connected = true
     }
 
@@ -399,6 +501,10 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
         self.process = proc
         self.readPipe = inputPipe
         self.writePipe = outputPipe
+        // Capture the pipe file handles once — repeated access can hand out
+        // distinct FileHandle wrappers over the same descriptor.
+        self.readHandle = inputPipe.fileHandleForReading
+        self.writeHandle = outputPipe.fileHandleForWriting
         self.connected = true
     }
 
@@ -407,34 +513,38 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
             throw TransportError.notConnected
         }
 
-        guard let writePipe = writePipe, let readPipe = readPipe else {
-            throw TransportError.connectionFailed("Pipes not initialized")
-        }
-
         // Encode as length-prefixed frame
         let frame = lengthPrefix(envelope)
 
-        // Write
-        writePipe.fileHandleForWriting.write(frame)
-
-        // Read response with timeout
-        let readHandle = readPipe.fileHandleForReading
-        let readTask = Task<Data?, Never> { () -> Data? in
-            self.readResponse(from: readHandle)
-        }
-
-        // Race between read and timeout
-        let startTime = Date()
-        while Date().timeIntervalSince(startTime) < timeout {
-            if let data = await readTask.value {
-                return data
+        // Write the frame: native socket (V-04) or pipe to a launched process.
+        if let socketHandle = socketFileHandle {
+            do {
+                try socketHandle.write(contentsOf: frame)
+            } catch {
+                throw TransportError.connectionFailed("Socket write failed: \(error.localizedDescription)")
             }
-            try await Task.sleep(nanoseconds: 10_000_000) // 10ms poll
+        } else if let writeHandle = writeHandle {
+            writeHandle.write(frame)
+        } else {
+            throw TransportError.connectionFailed("Transport I/O not initialized")
         }
 
-        // Cancel the read task
-        readTask.cancel()
-        throw TransportError.timeout(timeout)
+        // Read the length-prefixed response, bounded by the timeout.
+        // poll() keeps the read timeout-aware, so the detached task always
+        // self-terminates by the deadline (no leaked blocked threads).
+        guard let readHandle = socketFileHandle ?? readHandle else {
+            throw TransportError.connectionFailed("Transport I/O not initialized")
+        }
+        let fd = readHandle.fileDescriptor
+
+        let response: Data? = await Task.detached(priority: .userInitiated) {
+            self.readFrameSync(fd: fd, timeout: timeout)
+        }.value
+
+        guard let response else {
+            throw TransportError.timeout(timeout)
+        }
+        return response
     }
 
     public func handshake(_ request: Data) async throws -> Data {
@@ -449,8 +559,12 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
     public func disconnect() async {
         connected = false
 
-        writePipe?.fileHandleForWriting.closeFile()
-        readPipe?.fileHandleForReading.closeFile()
+        socketFileHandle?.closeFile()
+        socketFileHandle = nil
+        writeHandle?.closeFile()
+        writeHandle = nil
+        readHandle?.closeFile()
+        readHandle = nil
         process?.terminate()
         process = nil
         readPipe = nil
@@ -459,16 +573,39 @@ public final class LocalCompanionTransport: CompanionTransport, @unchecked Senda
 
     // MARK: - Frame Helpers
 
-    /// Read a length-prefixed frame from a file handle.
-    private func readResponse(from handle: FileHandle) -> Data? {
-        // Read 4-byte length prefix
-        let lengthData = handle.readData(ofLength: 4)
-        guard lengthData.count == 4 else { return nil }
+    /// Read a length-prefixed frame synchronously within `timeout` seconds,
+    /// or return nil if the deadline expires first.
+    private func readFrameSync(fd: Int32, timeout: TimeInterval) -> Data? {
+        let deadline = Date().addingTimeInterval(timeout)
+        guard let lengthData = readExact(fd: fd, count: 4, deadline: deadline), lengthData.count == 4 else {
+            return nil
+        }
 
         let length = lengthData.withUnsafeBytes { $0.load(as: UInt32.self) }.bigEndian
         guard length > 0, length < 100_000_000 else { return nil } // Sanity check: 100MB max
 
-        return handle.readData(ofLength: Int(length))
+        return readExact(fd: fd, count: Int(length), deadline: deadline)
+    }
+
+    /// Read exactly `count` bytes from `fd` before `deadline`, or return nil.
+    private func readExact(fd: Int32, count: Int, deadline: Date) -> Data? {
+        var result = Data()
+        while result.count < count {
+            let remaining = deadline.timeIntervalSinceNow
+            guard remaining > 0 else { return nil }
+
+            var pfd = pollfd(fd: fd, events: Int16(POLLIN), revents: 0)
+            let pollTimeoutMs = Int32(min(remaining, 1.0) * 1000)
+            let rc = poll(&pfd, 1, pollTimeoutMs)
+            if rc < 0 { return nil }
+            if rc == 0 { continue } // poll slice expired; loop re-checks the deadline
+
+            var chunk = [UInt8](repeating: 0, count: count - result.count)
+            let bytesRead = Darwin.read(fd, &chunk, chunk.count)
+            guard bytesRead > 0 else { return nil }
+            result.append(contentsOf: chunk.prefix(Int(bytesRead)))
+        }
+        return result
     }
 
     /// Wrap data in a length-prefixed frame.

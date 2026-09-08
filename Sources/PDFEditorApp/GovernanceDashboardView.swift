@@ -5,6 +5,7 @@ import PDFEditorCore
 /// Shows policy rules, violations, compliance status, and allows rule management.
 struct GovernanceDashboardView: View {
     @ObservedObject var engine: GovernanceEngine
+    @Environment(\.dismiss) private var dismiss
     @State private var selectedTab: Tab = .overview
     @State private var showAddRule = false
     @State private var showResolvedViolations = false
@@ -18,7 +19,7 @@ struct GovernanceDashboardView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header with compliance score
+            // Header with compliance score & Done CTA
             header
             
             // Tab bar
@@ -28,8 +29,8 @@ struct GovernanceDashboardView: View {
                 }
             }
             .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.vertical, 8)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
             
             Divider()
             
@@ -45,7 +46,7 @@ struct GovernanceDashboardView: View {
                 auditTab
             }
         }
-        .frame(minWidth: 600, minHeight: 500)
+        .frame(width: 820, height: 560)
         .sheet(isPresented: $showAddRule) {
             AddRuleSheet(engine: engine)
         }
@@ -56,39 +57,52 @@ struct GovernanceDashboardView: View {
     private var header: some View {
         let summary = engine.complianceSummary
         
-        return HStack(spacing: 24) {
-            VStack(alignment: .leading) {
-                Text("Governance")
-                    .font(.title2)
-                Text("\(summary.activeRules) active rules")
+        return HStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.teal.opacity(0.15))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "checkmark.shield.fill")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.teal)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Governance & Policy Dashboard")
+                    .font(.headline)
+                Text("\(summary.activeRules) active policy rules · Local compliance engine")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             
             Spacer()
             
-            // Compliance score
-            VStack {
+            // Compliance gauge pill
+            HStack(spacing: 8) {
                 ZStack {
                     Circle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 8)
-                        .frame(width: 60, height: 60)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 4)
+                        .frame(width: 28, height: 28)
                     Circle()
                         .trim(from: 0, to: summary.complianceScore)
-                        .stroke(summary.isCompliant ? Color.green : Color.orange, lineWidth: 8)
-                        .frame(width: 60, height: 60)
+                        .stroke(summary.isCompliant ? Color.green : Color.orange, lineWidth: 4)
+                        .frame(width: 28, height: 28)
                         .rotationEffect(.degrees(-90))
-                    Text("\(Int(summary.complianceScore * 100))%")
-                        .font(.caption)
-                        .fontWeight(.bold)
                 }
-                Text("Compliance")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("\(Int(summary.complianceScore * 100))%")
+                        .font(.caption.monospacedDigit().weight(.bold))
+                    Text("Compliant")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             
-            // Violation counts
-            HStack(spacing: 16) {
+            // Violation badges
+            HStack(spacing: 6) {
                 if summary.criticalViolations > 0 {
                     ViolationBadge(count: summary.criticalViolations, color: .red, label: "Critical")
                 }
@@ -102,9 +116,17 @@ struct GovernanceDashboardView: View {
                     ViolationBadge(count: summary.resolvedViolations, color: .green, label: "Resolved")
                 }
             }
+
+            Button("Done") {
+                dismiss()
+            }
+            .keyboardShortcut(.defaultAction)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
         }
-        .padding()
-        .background(Color(NSColor.controlBackgroundColor))
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color(NSColor.windowBackgroundColor))
     }
     
     // MARK: - Overview Tab

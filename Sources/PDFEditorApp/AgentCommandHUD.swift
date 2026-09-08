@@ -38,6 +38,11 @@ public struct AgentCommandHUD: View {
   @State private var query = ""
   @State private var selectedIndex = 0
   @FocusState private var isFieldFocused: Bool
+  // MARK: - Agentic loop host state (D-078)
+  @State private var activePlan: AgentPlan?
+  @State private var planSheetPresented = false
+  @State private var planStatusLine: String?
+  @State private var runJournal = AgentRunJournal()
 
   public init(
     model: AppModel,
@@ -143,18 +148,20 @@ public struct AgentCommandHUD: View {
     var items: [AgentCommandItem] = adaptiveContextCommands
 
     // 1. Intelligent Fill & Auto-Completion
-    if let profile = model.currentProfile {
+    // D-078: bulk fill no longer fires preview+apply back-to-back. It
+    // proposes a complete-document plan that the user approves first; the
+    // executor then applies it under fresh availability decisions.
+    if model.currentProfile != nil {
       items.append(
         AgentCommandItem(
-          id: "bulk-fill-apply",
-          title: "Bulk Fill with Profile: \(profile.displayName)",
-          subtitle: "Auto-populate all matching native fields and detected static candidates",
+          id: "bulk-fill-plan",
+          title: "Bulk Fill with Profile: \(model.currentProfile!.displayName)",
+          subtitle: "Propose a reviewed plan: focus fill, apply values, present export review",
           icon: "sparkles",
           category: "AI & Automation",
           isAvailable: model.inspection != nil
         ) {
-          model.previewBulkFill()
-          model.applyBulkFill()
+          proposePlan(query: "fill out this form")
         }
       )
     } else {
@@ -410,16 +417,21 @@ public struct AgentCommandHUD: View {
     VStack(spacing: 0) {
       // Search Bar Header
       HStack(spacing: 12) {
-        Image(systemName: "sparkle.magnifyingglass")
-          .font(.title3.weight(.medium))
-          .foregroundStyle(.tint)
+        ZStack {
+          Circle()
+            .fill(Color.accentColor.opacity(0.15))
+            .frame(width: 32, height: 32)
+          Image(systemName: "sparkle.magnifyingglass")
+            .font(.callout.weight(.semibold))
+            .foregroundStyle(Color.accentColor)
+        }
 
-        TextField("Ask Agent or search commands (e.g. 'fill', 'ocr', 'diff', 'sign')…", text: $query)
+        TextField("Ask Agent for a plan (e.g. 'fill', 'ocr', 'export') or search commands…", text: $query)
           .textFieldStyle(.plain)
           .font(.body)
           .focused($isFieldFocused)
           .onSubmit {
-            executeSelected()
+            proposePlan(query: query)
           }
 
         if !query.isEmpty {
@@ -436,19 +448,19 @@ public struct AgentCommandHUD: View {
         Text("ESC")
           .font(.caption2.weight(.bold))
           .padding(.horizontal, 6)
-          .padding(.vertical, 2)
-          .background(Color.secondary.opacity(0.15))
-          .clipShape(RoundedRectangle(cornerRadius: 4))
+          .padding(.vertical, 3)
+          .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
           .foregroundStyle(.secondary)
       }
       .padding(.horizontal, 16)
-      .padding(.vertical, 14)
+      .padding(.vertical, 12)
 
       Divider()
 
       // Results List
       if filteredCommands.isEmpty {
-        VStack(spacing: 8) {            Image(systemName: "questionmark.folder")
+        VStack(spacing: 8) {
+          Image(systemName: "questionmark.folder")
             .font(.title)
             .foregroundStyle(.secondary)
           Text("No matching agent commands")
@@ -488,18 +500,62 @@ public struct AgentCommandHUD: View {
       Divider()
 
       // Footer
-      HStack {
-        Label("Local-first agent execution · Zero-egress guarantee", systemImage: "shield.checkered")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
+      HStack(spacing: 12) {
+        HStack(spacing: 6) {
+          Image(systemName: "checkmark.shield.fill")
+            .font(.caption2.weight(.bold))
+            .foregroundStyle(.green)
+          Text("Local execution · Zero egress")
+            .font(.caption2.weight(.medium))
+            .foregroundStyle(.secondary)
+        }
+
         Spacer()
-        Text("↵ to run · ⎋ to close")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
+
+        HStack(spacing: 10) {
+          HStack(spacing: 4) {
+            Text("↵")
+              .font(.caption2.weight(.bold))
+              .padding(.horizontal, 5)
+              .padding(.vertical, 2)
+              .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+            Text("propose plan")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+
+          HStack(spacing: 4) {
+            Text("⎋")
+              .font(.caption2.weight(.bold))
+              .padding(.horizontal, 5)
+              .padding(.vertical, 2)
+              .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+            Text("close")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+        }
       }
-      .padding(.horizontal, 14)
-      .padding(.vertical, 8)
-      .background(Color.secondary.opacity(0.04))
+      .padding(.horizontal, 16)
+      .padding(.vertical, 9)
+      .background(Color.primary.opacity(0.03))
+    }
+    .sheet(isPresented: $planSheetPresented) {
+      if let plan = activePlan {
+        AgentPlanSheetView(
+          plan: plan,
+          statusLine: planStatusLine,
+          onApprove: approveAndRunActivePlan,
+          onCancel: {
+            if var current = activePlan, current.state == .awaitingApproval {
+              current.cancel()
+              activePlan = current
+            }
+            planSheetPresented = false
+          },
+          onDone: { planSheetPresented = false }
+        )
+      }
     }
     .frame(width: 580)
     .background(.ultraThinMaterial)
@@ -542,32 +598,212 @@ public struct AgentCommandHUD: View {
     executeCommand(filteredCommands[selectedIndex])
   }
 
+  // MARK: - Agentic loop host (D-078)
+  //
+  // The host proposes plans, collects approval, then drives the pure
+  // executor policy with freshly assessed decisions before every step.
+  // All mutations flow through existing AppModel methods; the loop adds
+  // sequencing, gating, and journaling — never a second mutation path.
+
+  private func planRequest(query: String) -> AgentPlanRequest? {
+    guard let inspection = model.inspection else { return nil }
+    return AgentPlanRequest(
+      query: query,
+      intent: adaptiveIntent,
+      scope: .single,
+      sourceDigest: inspection.source.sha256,
+      hasProfile: model.currentProfile != nil,
+      hasCandidates: !(inspection.candidates.isEmpty),
+      hasOperations: !model.operations.isEmpty,
+      canExport: model.canExportCurrentOperations
+    )
+  }
+
+  private func proposePlan(query: String) {
+    guard let request = planRequest(query: query) else {
+      executeSelected()
+      return
+    }
+    switch DeterministicAgentPlanner.propose(request: request) {
+    case .plan(let plan):
+      activePlan = plan
+      planStatusLine = nil
+      planSheetPresented = true
+    case .commandSearch:
+      executeSelected()
+    }
+  }
+
+  private func approveAndRunActivePlan() {
+    guard var plan = activePlan, plan.state == .awaitingApproval else { return }
+    plan.approve()
+    runApprovedPlan(plan: &plan)
+  }
+
+  /// Steps the host knows how to perform. Anything else escalates with
+  /// `.capabilityUnsupported` instead of improvising.
+  private func canPerform(_ step: AgentPlanStep) -> Bool {
+    switch step.id {
+    case "step-focus-fill", "step-bulk-apply", "step-ocr", "step-present-export":
+      return true
+    default:
+      switch step.commandID {
+      case .search, .undo, .redo, .fillForm, .export, .extractText:
+        return true
+      default:
+        return false
+      }
+    }
+  }
+
+  private func performStep(_ step: AgentPlanStep) {
+    AdaptiveCommandHistory.shared.record(step.commandID)
+    switch step.id {
+    case "step-focus-fill":
+      model.setEditorMode(.fill)
+    case "step-bulk-apply":
+      // Approved above; permissions still enforced inside applyBulkFill.
+      // Skipped fields are reported, never forced.
+      model.previewBulkFill()
+      model.applyBulkFill()
+    case "step-ocr":
+      model.runOCROnSelectedPage()
+    case "step-present-export":
+      model.presentExportReview()
+    default:
+      switch step.commandID {
+      case .search: model.routeSearchCommand()
+      case .undo: model.undo()
+      case .redo: model.redo()
+      case .fillForm: model.setEditorMode(.fill)
+      case .export: model.presentExportReview()
+      case .extractText: model.runOCROnSelectedPage()
+      default: break // Unreachable: canPerform gates this path.
+      }
+    }
+  }
+
+  private func freshDecisions() -> [AdaptiveCommandID: AdaptiveCommandDecision] {
+    let input = AdaptiveCommandContext.input(
+      model: model, intent: adaptiveIntent, target: .documentScrolling)
+    return Dictionary(uniqueKeysWithValues:
+      AdaptiveCommandPolicy.standard.assess(input).map { ($0.command.id, $0) })
+  }
+
+  private func journalTerminal(plan: AgentPlan, escalated: Bool) {
+    runJournal.append(AgentRunRecord(
+      planID: plan.id,
+      goal: plan.goal,
+      stepOutcomes: plan.steps.map { "\($0.id):\($0.state.rawValue)" },
+      escalated: escalated,
+      reasonCodes: (plan.escalation?.reasons ?? []).map(\.rawValue)
+    ))
+  }
+
+  private func runApprovedPlan(plan: inout AgentPlan) {
+    plan.state = .running
+    var outcomes: [String] = []
+    loop: while true {
+      let digest = model.inspection?.source.sha256 ?? ""
+      let action = AgentExecutor.nextAction(
+        plan: plan,
+        decisions: freshDecisions(),
+        sourceDigestMatches: digest == plan.sourceDigest && !plan.sourceDigest.isEmpty
+      )
+      switch action {
+      case .requestPlanApproval:
+        planStatusLine = "The plan needs approval first."
+        break loop
+      case .cancelled:
+        planStatusLine = "Plan cancelled. Nothing was applied."
+        break loop
+      case .planInvalid(let reason):
+        plan.state = .invalid
+        planStatusLine = reason
+        journalTerminal(plan: plan, escalated: true)
+        break loop
+      case .succeed:
+        plan.state = .succeeded
+        planStatusLine = "Plan complete: \(outcomes.count) step(s) ran. Review the results; undo remains available."
+        journalTerminal(plan: plan, escalated: false)
+        break loop
+      case .escalate(let escalation):
+        plan.state = .escalated
+        plan.escalation = escalation
+        planStatusLine = escalation.message + " Nothing was applied by the failed step; earlier applied steps stay reversible via Undo."
+        journalTerminal(plan: plan, escalated: true)
+        break loop
+      case .runStep(let id, _), .retryStep(let id, _):
+        guard let step = plan.steps.first(where: { $0.id == id }), canPerform(step) else {
+          plan.state = .escalated
+          plan.escalation = AgentEscalation(
+            stepID: id, commandID: plan.steps.first(where: { $0.id == id })?.commandID,
+            reasons: [.capabilityUnsupported],
+            message: "The plan reached a step with no host action. Parked with nothing applied by this step.",
+            attemptsExhausted: false
+          )
+          planStatusLine = plan.escalation!.message
+          journalTerminal(plan: plan, escalated: true)
+          break loop
+        }
+        performStep(step)
+        outcomes.append("\(id):ok")
+        let result = AgentExecutor.applyStepReport(plan: plan, stepID: id, report: .succeeded)
+        plan = result.plan
+        // NOTE: v1 host actions are synchronous and non-throwing, so the
+        // transient-failure report has no host source yet; retry bounds stay
+        // enforced and tested at the policy layer for provider-backed steps.
+      }
+    }
+    activePlan = plan
+  }
+
   private struct AgentCommandRowView: View {
     let item: AgentCommandItem
     let isSelected: Bool
 
+    private var categoryColor: Color {
+      switch item.category {
+      case "Current Context": return .blue
+      case "AI & Automation": return .purple
+      case "Intelligence": return .teal
+      case "Authoring": return .green
+      case "Export": return .orange
+      default: return .secondary
+      }
+    }
+
     var body: some View {
       HStack(spacing: 12) {
-        Image(systemName: item.icon)
-          .font(.title3.weight(.medium))
-          .frame(width: 24, height: 24)
-          .foregroundStyle(item.isAvailable ? Color.accentColor : Color.secondary)
+        ZStack {
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(item.isAvailable ? (isSelected ? Color.accentColor.opacity(0.18) : Color.primary.opacity(0.06)) : Color.clear)
+            .frame(width: 32, height: 32)
+          Image(systemName: item.icon)
+            .font(.callout.weight(.medium))
+            .foregroundStyle(item.isAvailable ? (isSelected ? Color.accentColor : Color.primary) : Color.secondary)
+        }
 
         VStack(alignment: .leading, spacing: 2) {
-          HStack {
+          HStack(spacing: 8) {
             Text(item.title)
-              .font(.callout.weight(.medium))
+              .font(.callout.weight(isSelected ? .semibold : .medium))
               .foregroundStyle(item.isAvailable ? Color.primary : Color.secondary)
 
             Spacer()
 
             Text(item.category)
-              .font(.caption2)
-              .foregroundStyle(.secondary)
-              .padding(.horizontal, 6)
-              .padding(.vertical, 2)
-              .background(Color.secondary.opacity(0.1))
-              .clipShape(Capsule())
+              .font(.caption2.weight(.semibold))
+              .foregroundStyle(categoryColor)
+              .padding(.horizontal, 7)
+              .padding(.vertical, 2.5)
+              .background(categoryColor.opacity(0.12), in: Capsule())
+
+            if isSelected {
+              Image(systemName: "arrow.right")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(Color.accentColor)
+            }
           }
 
           Text(item.subtitle)
@@ -577,9 +813,15 @@ public struct AgentCommandHUD: View {
         }
       }
       .padding(.horizontal, 12)
-      .padding(.vertical, 8)
-      .background(isSelected ? Color.accentColor.opacity(0.12) : Color.clear)
-      .clipShape(RoundedRectangle(cornerRadius: 6))
+      .padding(.vertical, 7)
+      .background(
+        isSelected ? Color.accentColor.opacity(0.09) : Color.clear,
+        in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 10, style: .continuous)
+          .strokeBorder(isSelected ? Color.accentColor.opacity(0.28) : Color.clear, lineWidth: 1)
+      )
     }
   }
 
@@ -590,5 +832,105 @@ public struct AgentCommandHUD: View {
     hapticCommand = UUID()
     isPresented = false
     item.action()
+  }
+}
+
+// MARK: - Agent plan sheet (D-078)
+
+// Preview -> approve/cancel -> progress -> escalation. The sheet never
+// applies anything itself; approval hands the plan to the host loop.
+private struct AgentPlanSheetView: View {
+  let plan: AgentPlan
+  let statusLine: String?
+  let onApprove: () -> Void
+  let onCancel: () -> Void
+  let onDone: () -> Void
+
+  private var isTerminal: Bool {
+    [.succeeded, .failed, .escalated, .cancelled, .invalid].contains(plan.state)
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      VStack(alignment: .leading, spacing: 4) {
+        Text("Agent plan · \(plan.goal.rawValue)")
+          .font(.headline)
+        Text("“\(plan.queryText)” — bound to the current document. Changing documents invalidates the plan.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      }
+
+      ForEach(plan.steps) { step in
+        HStack(alignment: .top, spacing: 10) {
+          Image(systemName: stepIcon(step.state))
+            .foregroundStyle(stepColor(step.state))
+            .frame(width: 20)
+          VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 6) {
+              Text(step.title)
+                .font(.subheadline.weight(.semibold))
+              if step.isMutating {
+                Text("NEEDS APPROVAL")
+                  .font(.caption2.weight(.bold).monospaced())
+                  .foregroundStyle(.orange)
+              }
+            }
+            Text(step.detail)
+              .font(.caption)
+              .foregroundStyle(.secondary)
+          }
+        }
+      }
+
+      if let escalation = plan.escalation {
+        Label(escalation.message, systemImage: "exclamationmark.triangle.fill")
+          .font(.caption)
+          .foregroundStyle(.orange)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+
+      if let statusLine {
+        Text(statusLine)
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+      }
+
+      HStack {
+        if plan.state == .awaitingApproval {
+          Button("Cancel") { onCancel() }
+          Spacer()
+          Button("Approve & run") { onApprove() }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
+        } else {
+          Spacer()
+          Button(isTerminal ? "Done" : "Close") { onDone() }
+            .buttonStyle(.borderedProminent)
+            .keyboardShortcut(.defaultAction)
+        }
+      }
+    }
+    .padding(20)
+    .frame(width: 440)
+  }
+
+  private func stepIcon(_ state: AgentStepState) -> String {
+    switch state {
+    case .proposed, .approved: return "circle"
+    case .running: return "circle.dotted"
+    case .succeeded: return "checkmark.circle.fill"
+    case .failed: return "xmark.circle.fill"
+    case .skipped: return "minus.circle"
+    }
+  }
+
+  private func stepColor(_ state: AgentStepState) -> Color {
+    switch state {
+    case .succeeded: return .green
+    case .failed: return .red
+    case .running: return .accentColor
+    default: return .secondary
+    }
   }
 }

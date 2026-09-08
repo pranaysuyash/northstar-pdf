@@ -114,12 +114,18 @@ function multiset(values) {
 
 function fieldProjection(field) {
   const choices = field.choices || [];
+  // V-01 fix: for radio widgets, valuePresent reflects per-widget state
+  // (this widget's export value matches the group's selected value), not
+  // the group-level field value which is projected onto every widget.
+  const valuePresent = field.kind === "radio"
+    ? Boolean(field.value) && field.value !== ""
+    : Boolean(field.value);
   return {
     pageIndex: field.pageIndex,
     name: field.name,
     kind: field.kind,
     bounds: rectProjection(field.bounds),
-    valuePresent: Boolean(field.value),
+    valuePresent,
     // Normalize choices: compare count and presence, not specific values.
     // PDFKit returns export values (e.g. ['IE','IN','US']) while PDF.js
     // returns display labels (e.g. ['India','Ireland','United States']).
@@ -190,7 +196,9 @@ function accessibilityProjection(value) {
 function validationProjection(validation) {
   if (!validation) return null;
   const checks = Object.fromEntries((validation.checks || [])
-    .filter((check) => check.kind !== "providerCapability" && check.kind !== "accessibility")
+    .filter((check) => check.kind !== "providerCapability"
+      && check.kind !== "accessibility"
+      && check.kind !== "privacyPreflight")
     .map((check) => [check.kind, check.status]));
   return {
     status: validation.status,

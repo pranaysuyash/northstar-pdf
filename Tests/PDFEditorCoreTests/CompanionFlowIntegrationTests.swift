@@ -72,11 +72,13 @@ struct CompanionFlowIntegrationTests {
     return SourceDigest.compute(from: data, documentName: "test.pdf")
   }
 
-  /// A valid bridge authentication.
-  private func bridgeAuth() -> BridgeAuthentication {
-    BridgeAuthentication(
-      originBundleID: "com.example.pdf-editor",
-      signature: Data("integration-test-sig".utf8)
+  /// A valid bridge authentication (V-02: real HMAC signature).
+  private func bridgeAuth(bundleID: String = "com.example.pdf-editor") -> BridgeAuthentication {
+    let timestamp = Date()
+    return BridgeAuthentication(
+      originBundleID: bundleID,
+      signature: CompanionBridge.computeHMAC(originBundleID: bundleID, timestamp: timestamp),
+      timestamp: timestamp
     )
   }
 
@@ -250,10 +252,11 @@ struct CompanionFlowIntegrationTests {
   @Test("Expired bridge authentication rejected")
   func expiredAuthRejected() async throws {
     let bridge = CompanionBridge()
+    let expiredTimestamp = Date().addingTimeInterval(-7200)
     let expiredAuth = BridgeAuthentication(
       originBundleID: "com.example.app",
-      signature: Data("sig".utf8),
-      timestamp: Date().addingTimeInterval(-7200),
+      signature: CompanionBridge.computeHMAC(originBundleID: "com.example.app", timestamp: expiredTimestamp),
+      timestamp: expiredTimestamp,
       ttlSeconds: 3600
     )
     do {

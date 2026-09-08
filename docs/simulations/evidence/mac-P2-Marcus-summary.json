@@ -1,0 +1,41 @@
+{
+  "fixtureCount" : 3,
+  "fixtures" : [
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "91d7ede0c6f942df47df9d284d96ffebab323fecc3a710f758047d24a53bf4b9",
+      "sourcePath" : "benchmark\/results\/browser-corpus\/hybrid-text-raster-form.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "7aa4e042cb249c5dc36fce672a91c7ca43c39fd7fce1dc43e70f8890212abacf",
+      "sourcePath" : "benchmark\/results\/browser-corpus\/encrypted-hybrid.pdf",
+      "status" : "inspected"
+    },
+    {
+      "expectedFailure" : false,
+      "sourceDigest" : "80216d04ff21a6344910d78aed5d54abd770e46abd560b53c98a41e811a8eb45",
+      "sourcePath" : "benchmark\/results\/navigation-corpus\/navigation-metadata.pdf",
+      "status" : "inspected"
+    }
+  ],
+  "harness" : "pdf-editor-native-contract-parity",
+  "provider" : {
+    "capabilities" : [
+      "render",
+      "text",
+      "forms",
+      "overlay",
+      "export",
+      "reopen-validation"
+    ],
+    "id" : "pdfkit",
+    "platform" : "macOS",
+    "version" : "Version 26.6.2 (Build 25G83)"
+  },
+  "version" : {
+    "major" : 1,
+    "minor" : 0
+  }
+}

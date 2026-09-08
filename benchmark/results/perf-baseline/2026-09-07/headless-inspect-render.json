@@ -1,0 +1,149 @@
+{
+  "fixtures" : [
+    {
+      "errorCode" : null,
+      "export" : null,
+      "fixtureID" : "fixture-1",
+      "inspection" : {
+        "attachmentCount" : 0,
+        "candidateCount" : 0,
+        "fieldCount" : 4,
+        "linkCount" : 0,
+        "outlineCount" : 0,
+        "pageCount" : 1,
+        "warningCount" : 0
+      },
+      "memory" : {
+        "after" : {
+          "physicalFootprintBytes" : 6636168,
+          "residentBytes" : 22773760,
+          "virtualBytes" : 445935730688
+        },
+        "before" : {
+          "physicalFootprintBytes" : 2048456,
+          "residentBytes" : 10436608,
+          "virtualBytes" : 445769318400
+        }
+      },
+      "render" : {
+        "status" : "completed"
+      },
+      "status" : "measured"
+    },
+    {
+      "errorCode" : null,
+      "export" : null,
+      "fixtureID" : "fixture-2",
+      "inspection" : {
+        "attachmentCount" : 0,
+        "candidateCount" : 0,
+        "fieldCount" : 800,
+        "linkCount" : 0,
+        "outlineCount" : 0,
+        "pageCount" : 200,
+        "warningCount" : 0
+      },
+      "memory" : {
+        "after" : {
+          "physicalFootprintBytes" : 11223736,
+          "residentBytes" : 27361280,
+          "virtualBytes" : 445937680384
+        },
+        "before" : {
+          "physicalFootprintBytes" : 6636168,
+          "residentBytes" : 22806528,
+          "virtualBytes" : 445935730688
+        }
+      },
+      "render" : {
+        "status" : "completed"
+      },
+      "status" : "measured"
+    }
+  ],
+  "requestedOperations" : [
+    "inspect",
+    "render_page"
+  ],
+  "runMetadata" : {
+
+  },
+  "schema" : "pdf-editor.performance-benchmark.v1",
+  "status" : "completed",
+  "telemetry" : [
+    {
+      "failedSampleCount" : 0,
+      "maximumMilliseconds" : 91.615292,
+      "minimumMilliseconds" : 81.036959,
+      "p50Milliseconds" : 81.036959,
+      "p95Milliseconds" : 91.615292,
+      "sampleCount" : 2,
+      "stage" : "open_load",
+      "successfulSampleCount" : 2
+    },
+    {
+      "failedSampleCount" : 0,
+      "maximumMilliseconds" : 0.6615,
+      "minimumMilliseconds" : 0.630583,
+      "p50Milliseconds" : 0.630583,
+      "p95Milliseconds" : 0.6615,
+      "sampleCount" : 2,
+      "stage" : "page_render",
+      "successfulSampleCount" : 2
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "detection",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "undo",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "redo",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "save",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "impact_validation",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "ocr",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "vector_parse",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "diff",
+      "successfulSampleCount" : 0
+    },
+    {
+      "failedSampleCount" : 0,
+      "sampleCount" : 0,
+      "stage" : "template_match",
+      "successfulSampleCount" : 0
+    }
+  ]
+}

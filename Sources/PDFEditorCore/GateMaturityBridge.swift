@@ -1,5 +1,10 @@
 import Foundation
 
+
+/// **Scope note (2026-09-06, epistemic audit EI-B1):** offline calibration/benchmark
+/// subsystem — implemented and test-covered, but **not currently wired into the app's
+/// runtime paths**. Consumers: tests and offline tooling only. Do not cite its behavior
+/// as a product claim until wired. See docs/audits/epistemic-integrity-audit-per-0922-2026-09-06.md.
 /// Bridge between CapabilityMaturityModel and release-gates.md.
 ///
 /// Maps capability evidence gates to release gate statuses and generates

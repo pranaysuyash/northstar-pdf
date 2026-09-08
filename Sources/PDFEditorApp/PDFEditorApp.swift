@@ -143,6 +143,11 @@ final class PDFEditorWindowController {
     weak var window: NSWindow?
     var model: AppModel?
 
+    /// Every live window controller, for external-open routing decisions.
+    static var existingControllers: [PDFEditorWindowController] {
+        liveControllers.allObjects
+    }
+
     func register() {
         Self.liveControllers.add(self)
     }
@@ -253,12 +258,25 @@ private struct PDFEditorWindow: View {
                 windowController.register()
                 PDFEditorNativeTerminationProbe.prepare(model: model)
                 PDFEditorNativeWindowProbe.schedule()
+                if ProcessInfo.processInfo.environment["PDF_EDITOR_INITIAL_VAULT"] == "1" {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        model.isSecurityVaultPresented = true
+                    }
+                }
             }
     }
 }
 
 @MainActor
 final class PDFEditorAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Launch-services delivers command-line document arguments only to
+        // bundled apps; a raw SwiftPM binary must drain argv itself or the
+        // buyer path "open this PDF with Northstar" never fires (sim
+        // finding PL-I30 GAP-A).
+        PDFEditorExternalOpenRouter.drainCommandLineArguments()
+    }
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         let flushed = PDFEditorWindowController.flushRecoveryForTermination()
         PDFEditorNativeTerminationProbe.record(flushed: flushed)
@@ -268,12 +286,99 @@ final class PDFEditorAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
-        guard let url = urls.first,
-              let controller = PDFEditorWindowController.focusedController,
-              let model = controller.model
-        else { return }
+        PDFEditorExternalOpenRouter.shared.enqueue(urls.filter { $0.isFileURL })
+    }
+}
+
+/// Single deterministic router for every externally requested document open
+/// (Finder "Open With", double-click, `open` with arguments, argv).
+///
+/// Before this router the open paths diverged: argv files were dropped, and
+/// Apple-Event opens raced SwiftUI's own WindowGroup handling, producing a
+/// duplicate start-surface window whose focus left the menu bar validating
+/// against an empty model (sim finding PL-I30 GAP-B). Routing all opens
+/// through one queue, opening into the key window, and closing any *other*
+/// visible window that is still a clean scratch surface makes the outcome
+/// deterministic: one window, showing the requested document.
+@MainActor
+final class PDFEditorExternalOpenRouter {
+    static let shared = PDFEditorExternalOpenRouter()
+
+    private var pendingURLs: [URL] = []
+    private var drainScheduled = false
+    private var drainAttempts = 0
+
+    func enqueue(_ urls: [URL]) {
+        guard !urls.isEmpty else { return }
+        pendingURLs.append(contentsOf: urls)
+        scheduleDrain()
+    }
+
+    /// Process document paths passed on the command line at launch.
+    static func drainCommandLineArguments() {
+        let urls = CommandLine.arguments.dropFirst()
+            .filter { $0.lowercased().hasSuffix(".pdf") }
+            .map { URL(fileURLWithPath: $0) }
+            .filter { FileManager.default.fileExists(atPath: $0.path) }
+        guard !urls.isEmpty else { return }
+        MainActor.assumeIsolated {
+            Self.shared.enqueue(urls)
+        }
+    }
+
+    private func scheduleDrain() {
+        guard !drainScheduled else { return }
+        drainScheduled = true
+        drainAttempts = 0
+        drain()
+    }
+
+    /// The first window mounts asynchronously after launch, so an argv open
+    /// can arrive before any controller exists. Retry briefly; give up
+    /// without data loss — the URLs stay queued for a later enqueue.
+    private func drain() {
+        guard !pendingURLs.isEmpty else {
+            drainScheduled = false
+            return
+        }
+        if let controller = PDFEditorWindowController.focusedController,
+           let model = controller.model {
+            open(pendingURLs, into: controller, model: model)
+            pendingURLs.removeAll()
+            drainScheduled = false
+            return
+        }
+        drainAttempts += 1
+        if drainAttempts < 30 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.drain()
+            }
+        } else {
+            drainScheduled = false
+        }
+    }
+
+    private func open(_ urls: [URL], into controller: PDFEditorWindowController, model: AppModel) {
+        guard let url = urls.first else { return }
         model.open(url: url)
         controller.window?.makeKeyAndOrderFront(nil)
+        closeOtherScratchWindows(keeping: controller)
+    }
+
+    /// After an external open, exactly one window should show the document.
+    /// Any *other* visible window that is still an empty, clean start surface
+    /// is closed. Windows with real state (scratch edits, documents) are
+    /// never touched — the invariant is "no external open may discard work."
+    private func closeOtherScratchWindows(keeping kept: PDFEditorWindowController) {
+        for controller in PDFEditorWindowController.existingControllers where controller !== kept {
+            guard let model = controller.model,
+                  model.inspection == nil,
+                  !model.isDirty,
+                  let window = controller.window,
+                  window.isVisible
+            else { continue }
+            controller.close()
+        }
     }
 }
 
@@ -294,7 +399,7 @@ struct PDFEditorApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("PDF Editor", id: "pdf-editor") {
+        WindowGroup(ProductIdentity.displayName, id: "pdf-editor") {
             PDFEditorWindow()
         }
         .defaultSize(width: 1_280, height: 820)

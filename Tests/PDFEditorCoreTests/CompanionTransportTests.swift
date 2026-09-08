@@ -1,10 +1,18 @@
+import Darwin
 import Foundation
 import Testing
 @testable import PDFEditorCore
 
 @Suite("Companion Transport")
 struct CompanionTransportTests {
-
+    
+    // MARK: - V-02: Helper for valid HMAC signatures
+    
+    /// Create a valid HMAC signature for testing.
+    private func validSignature(bundleID: String = "com.example.app", timestamp: Date = Date()) -> Data {
+        CompanionBridge.computeHMAC(originBundleID: bundleID, timestamp: timestamp)
+    }
+    
     // MARK: - Mock Transport
 
     @Test("Mock transport sends and receives messages")
@@ -200,9 +208,12 @@ struct CompanionTransportTests {
     func bridgeMockTransport() async throws {
         let mockTransport = MockCompanionTransport()
         let bridge = CompanionBridge(transport: mockTransport)
+        // V-02: use same timestamp for both signature and auth
+        let ts = Date()
         try await bridge.authenticate(BridgeAuthentication(
             originBundleID: "com.example.app",
-            signature: Data("sig".utf8)
+            signature: validSignature(timestamp: ts),
+            timestamp: ts
         ))
 
         // Configure mock to return a valid BridgeResponse
@@ -245,13 +256,16 @@ struct CompanionTransportTests {
     }
 
     @Test("Bridge transport error propagates correctly")
-    func bridgeTransportError() async {
+    func bridgeTransportError() async throws {
         let mockTransport = MockCompanionTransport()
         mockTransport.setNextError(TransportError.timeout(30))
         let bridge = CompanionBridge(transport: mockTransport)
-        try? await bridge.authenticate(BridgeAuthentication(
+        // V-02: use same timestamp for both signature and auth
+        let ts = Date()
+        try await bridge.authenticate(BridgeAuthentication(
             originBundleID: "com.example.app",
-            signature: Data("sig".utf8)
+            signature: validSignature(timestamp: ts),
+            timestamp: ts
         ))
 
         do {
@@ -273,9 +287,16 @@ struct CompanionTransportTests {
         let mockTransport = MockCompanionTransport()
         mockTransport.setNextError(TransportError.connectionFailed("test"))
         let bridge = CompanionBridge(transport: mockTransport)
+        // V-02 fix: use valid HMAC signature
+        let timestamp = Date()
+        let validSignature = CompanionBridge.computeHMAC(
+            originBundleID: "com.example.app",
+            timestamp: timestamp
+        )
         try? await bridge.authenticate(BridgeAuthentication(
             originBundleID: "com.example.app",
-            signature: Data("sig".utf8)
+            signature: validSignature,
+            timestamp: timestamp
         ))
 
         do {
@@ -358,9 +379,11 @@ struct CompanionTransportTests {
     @Test("Bridge configuration stores and creates transport")
     func bridgeConfigCreation() async throws {
         let bridge = CompanionBridge(configuration: .mock)
+        let ts1 = Date()
         try await bridge.authenticate(BridgeAuthentication(
             originBundleID: "com.example.app",
-            signature: Data("sig".utf8)
+            signature: validSignature(timestamp: ts1),
+            timestamp: ts1
         ))
 
         let mockTransport = MockCompanionTransport()
@@ -370,9 +393,11 @@ struct CompanionTransportTests {
 
         // Replace transport with a mock for testing
         let testBridge = CompanionBridge(transport: mockTransport)
+        let ts2 = Date()
         try await testBridge.authenticate(BridgeAuthentication(
             originBundleID: "com.example.app",
-            signature: Data("sig".utf8)
+            signature: validSignature(timestamp: ts2),
+            timestamp: ts2
         ))
 
         let response = try await testBridge.sendRequest(
@@ -420,6 +445,95 @@ struct CompanionTransportTests {
         }
     }
 
+    // MARK: - Zero-Egress Doctrine Enforcement (V-05/V-06)
+
+    /// S2: before EgressGate enforcement landed, this send attempted a real
+    /// network request and failed with a connection error — not egressDenied.
+    @Test("HTTP transport refuses to send while egress gate is disabled")
+    func httpTransportSendDeniedWhenGateDisabled() async {
+        let config = TransportConfiguration.http(endpoint: URL(string: "https://companion.invalid")!)
+        let transport = HTTPCompanionTransport(configuration: config)
+
+        do {
+            _ = try await transport.send(Data("payload".utf8), timeout: 5)
+            Issue.record("Expected egress denial")
+        } catch let error as TransportError {
+            guard case .egressDenied = error else {
+                Issue.record("Expected .egressDenied, got \(error)")
+                return
+            }
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
+
+    @Test("HTTP transport refuses to handshake while egress gate is disabled")
+    func httpTransportHandshakeDeniedWhenGateDisabled() async {
+        let config = TransportConfiguration.http(endpoint: URL(string: "https://companion.invalid")!)
+        let transport = HTTPCompanionTransport(configuration: config)
+
+        do {
+            _ = try await transport.handshake(Data("hello".utf8))
+            Issue.record("Expected egress denial")
+        } catch let error as TransportError {
+            guard case .egressDenied = error else {
+                Issue.record("Expected .egressDenied, got \(error)")
+                return
+            }
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
+        }
+    }
+
+    /// Once the gate is enabled and the host is allow-listed, the transport
+    /// proceeds past the gate and fails later at the network layer (port 9
+    /// refuses instantly), proving the gate no longer blocks an allowed host.
+    /// URLSession errors surface as URLError through the retry loop, so the
+    /// assertion is "the failure is not egressDenied" rather than a specific type.
+    @Test("HTTP transport proceeds past gate when enabled and host allowed")
+    func httpTransportSendAllowedAfterGateEnable() async {
+        var config = TransportConfiguration.http(endpoint: URL(string: "https://127.0.0.1:9/")!)
+        config.maxRetries = 0
+        config.connectionTimeout = 3
+        let gate = EgressGate()
+        let transport = HTTPCompanionTransport(configuration: config, egressGate: gate)
+
+        await gate.enable()
+        await gate.allowConnection("127.0.0.1")
+
+        do {
+            _ = try await transport.send(Data("payload".utf8), timeout: 5)
+            Issue.record("Expected connection failure for refused port")
+        } catch {
+            if let transportError = error as? TransportError,
+               case .egressDenied = transportError {
+                Issue.record("Allowed host must not be blocked by the gate")
+            }
+            // Any other failure (URLError connection refused, …) proves the gate passed.
+        }
+    }
+
+    /// The shared gate the bridge exposes must be the one the HTTP transport
+    /// enforces, so the dashboard's enable/disable controls the data path.
+    @Test("Factory passes the shared gate to the HTTP transport")
+    func factorySharesEgressGate() async {
+        let gate = EgressGate()
+        let config = TransportConfiguration.http(endpoint: URL(string: "https://companion.invalid")!)
+        let transport = CompanionTransportFactory.transport(for: config, egressGate: gate)
+
+        guard let httpTransport = transport as? HTTPCompanionTransport else {
+            Issue.record("Expected HTTP transport")
+            return
+        }
+
+        let enforcedGate = await httpTransport.egressGate.isEnabled
+        let sharedGate = await gate.isEnabled
+        #expect(enforcedGate == sharedGate)
+
+        await gate.enable()
+        #expect(await httpTransport.egressGate.isEnabled)
+    }
+
     // MARK: - Local Transport
 
     @Test("Local transport initializes with socket path")
@@ -461,6 +575,141 @@ struct CompanionTransportTests {
         let transport = LocalCompanionTransport(configuration: config)
         await transport.disconnect()
         #expect(!transport.isConnected)
+    }
+
+    // MARK: - V-04: Native Unix Socket Round-Trip
+
+    /// Spawn a blocking Unix domain socket server at `path` that reads one
+    /// length-prefixed frame and either echoes the payload back reversed
+    /// (proving a real round trip) or stays silent to exercise the timeout.
+    private func startEchoServer(at path: String, respond: Bool = true) {
+        Thread.detachNewThread {
+            let fd = socket(AF_UNIX, SOCK_STREAM, 0)
+            guard fd >= 0 else { return }
+
+            var addr = sockaddr_un()
+            addr.sun_family = sa_family_t(AF_UNIX)
+            let pathBytes = path.utf8CString
+            guard pathBytes.count <= MemoryLayout.size(ofValue: addr.sun_path) else {
+                close(fd)
+                return
+            }
+            withUnsafeMutablePointer(to: &addr.sun_path) { ptr in
+                ptr.withMemoryRebound(to: CChar.self, capacity: pathBytes.count) { dest in
+                    for i in 0..<pathBytes.count {
+                        dest[i] = pathBytes[i]
+                    }
+                }
+            }
+
+            unlink(path)
+            let bindResult = withUnsafePointer(to: &addr) { ptr in
+                ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) {
+                    Darwin.bind(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
+                }
+            }
+            guard bindResult == 0, listen(fd, 1) == 0 else {
+                close(fd)
+                return
+            }
+
+            var clientAddr = addr
+            let clientFD = withUnsafeMutablePointer(to: &clientAddr) { ptr in
+                var len = socklen_t(MemoryLayout<sockaddr_un>.size)
+                return accept(fd, ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { $0 }, &len)
+            }
+            guard clientFD >= 0 else {
+                close(fd)
+                return
+            }
+
+            func readExact(_ count: Int) -> Data? {
+                var data = Data()
+                while data.count < count {
+                    var chunk = [UInt8](repeating: 0, count: count - data.count)
+                    let n = Darwin.read(clientFD, &chunk, chunk.count)
+                    guard n > 0 else { return nil }
+                    data.append(contentsOf: chunk.prefix(Int(n)))
+                }
+                return data
+            }
+
+            guard let lengthData = readExact(4), lengthData.count == 4 else {
+                close(clientFD)
+                close(fd)
+                return
+            }
+            let length = lengthData.withUnsafeBytes { $0.load(as: UInt32.self) }.bigEndian
+            guard let payload = readExact(Int(length)) else {
+                close(clientFD)
+                close(fd)
+                return
+            }
+
+            if respond {
+                // Echo the payload back, reversed, to prove a real round trip.
+                let echoed = Data(payload.reversed())
+                var outLen = UInt32(echoed.count).bigEndian
+                var frame = Data(bytes: &outLen, count: 4)
+                frame.append(echoed)
+                frame.withUnsafeBytes { _ = Darwin.write(clientFD, $0.baseAddress, frame.count) }
+            } else {
+                // Stay silent so the client's send() must time out.
+                Thread.sleep(forTimeInterval: 5)
+            }
+
+            close(clientFD)
+            close(fd)
+            unlink(path)
+        }
+    }
+
+    /// Wait for the server socket file to appear (server binds asynchronously).
+    private func waitForSocketFile(_ path: String) async throws {
+        let deadline = Date().addingTimeInterval(3)
+        while !FileManager.default.fileExists(atPath: path), Date() < deadline {
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        #expect(FileManager.default.fileExists(atPath: path))
+    }
+
+    @Test("V-04 native socket round-trips a frame without socat")
+    func nativeSocketRoundTrip() async throws {
+        let path = "/tmp/pdf-editor-v04-roundtrip-\(UUID().uuidString).sock"
+        startEchoServer(at: path)
+        try await waitForSocketFile(path)
+
+        let transport = LocalCompanionTransport(configuration: .local(socketPath: path))
+        try transport.connect()
+        #expect(transport.isConnected)
+
+        let payload = Data("v04-native-socket-round-trip".utf8)
+        let response = try await transport.send(payload, timeout: 3)
+        #expect(response == Data(payload.reversed()))
+
+        await transport.disconnect()
+        #expect(!transport.isConnected)
+    }
+
+    @Test("V-04 native socket enforces send timeout")
+    func nativeSocketTimeout() async throws {
+        let path = "/tmp/pdf-editor-v04-timeout-\(UUID().uuidString).sock"
+        startEchoServer(at: path, respond: false)
+        try await waitForSocketFile(path)
+
+        let transport = LocalCompanionTransport(configuration: .local(socketPath: path))
+        try transport.connect()
+
+        do {
+            _ = try await transport.send(Data("ping".utf8), timeout: 1)
+            Issue.record("Expected timeout")
+        } catch TransportError.timeout {
+            // Expected
+        } catch {
+            Issue.record("Wrong error: \(error)")
+        }
+
+        await transport.disconnect()
     }
 
     // MARK: - Codable Round-Trip

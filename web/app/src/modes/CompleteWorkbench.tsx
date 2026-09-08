@@ -195,8 +195,8 @@ export function CompleteWorkbench({
             <span className="muted">
               · {candidate.suggestedFieldType ?? "region"} · score {candidate.score.toFixed(2)}
             </span>
-            {candidate.evidence.slice(0, 3).map((line, i) => (
-              <p key={i} className="small muted" style={{ margin: "4px 0 0" }}>
+            {candidate.evidence.slice(0, 3).map((line) => (
+              <p key={line.slice(0, 30)} className="small muted" style={{ margin: "4px 0 0" }}>
                 {line}
               </p>
             ))}

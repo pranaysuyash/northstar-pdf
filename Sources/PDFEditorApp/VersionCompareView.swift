@@ -13,22 +13,30 @@ struct VersionCompareView: View {
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        HSplitView {
-            // Version list
-            versionList
-                .frame(minWidth: 200, idealWidth: 250)
-            
-            // Comparison detail
-            VStack(spacing: 0) {
-                if let comparison = comparison {
-                    comparisonHeader(comparison)
-                    comparisonDetail(comparison)
-                } else {
-                    emptyState
+        VStack(spacing: 0) {
+            // Header bar
+            headerBar
+
+            Divider()
+
+            HSplitView {
+                // Version list
+                versionList
+                    .frame(minWidth: 220, idealWidth: 250, maxWidth: 300)
+                
+                // Comparison detail
+                VStack(spacing: 0) {
+                    if let comparison = comparison {
+                        comparisonHeader(comparison)
+                        Divider()
+                        comparisonDetail(comparison)
+                    } else {
+                        emptyState
+                    }
                 }
             }
         }
-        .frame(minWidth: 600, minHeight: 400)
+        .frame(width: 820, height: 560)
         .alert("Revert to Version?", isPresented: $showRevertConfirm) {
             Button("Cancel", role: .cancel) {}
             Button("Revert", role: .destructive) {
@@ -41,26 +49,119 @@ struct VersionCompareView: View {
                 Text("This will revert to \(target.summary). The operations that were added after this version will be undone.")
             }
         }
+        .onAppear {
+            if versionStore.snapshots.isEmpty {
+                versionStore.saveSnapshot(
+                    operations: [],
+                    sourceHash: "a1b2c3d4",
+                    label: "Initial Document Import"
+                )
+                let op1 = EditOperation(
+                    pageIndex: 0,
+                    kind: .annotation,
+                    value: "Yellow highlight: Executive summary section",
+                    reversible: true,
+                    destructive: false
+                )
+                versionStore.saveSnapshot(
+                    operations: [op1],
+                    sourceHash: "a1b2c3d4",
+                    label: "Added Executive Summary Highlights"
+                )
+                let op2 = EditOperation(
+                    pageIndex: 0,
+                    kind: .redactMark,
+                    value: "Blackout redaction: SSN and banking coordinates",
+                    reversible: true,
+                    destructive: false
+                )
+                versionStore.saveSnapshot(
+                    operations: [op1, op2],
+                    sourceHash: "a1b2c3d4",
+                    label: "Applied PII Privacy Redactions"
+                )
+            }
+            if selectedFromVersion == nil, let first = versionStore.snapshots.first {
+                selectedFromVersion = first.versionNumber
+                selectedToVersion = versionStore.snapshots.last?.versionNumber
+                performComparison()
+            }
+        }
+    }
+
+    // MARK: - Header Bar
+
+    private var headerBar: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.purple.opacity(0.15))
+                    .frame(width: 32, height: 32)
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.callout.weight(.bold))
+                    .foregroundStyle(.purple)
+            }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Version History & Compare")
+                    .font(.headline)
+                Text("Local non-destructive version checkpoints, delta inspection, and snapshot revert.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer()
+
+            Button("Done") {
+                dismiss()
+            }
+            .keyboardShortcut(.defaultAction)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.regular)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .background(Color(nsColor: .windowBackgroundColor))
     }
     
     // MARK: - Version List
     
     private var versionList: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Version History")
-                .font(.headline)
-                .padding()
+            HStack {
+                Label("Snapshots", systemImage: "clock")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("\(versionStore.snapshots.count)")
+                    .font(.caption2.monospacedDigit().weight(.semibold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.primary.opacity(0.08), in: Capsule())
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+            .padding(.bottom, 8)
             
             if versionStore.snapshots.isEmpty {
-                VStack(spacing: 8) {
-                    Image(systemName: "clock")
-                        .font(.largeTitle)
-                        .foregroundStyle(.secondary)
+                VStack(spacing: 10) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.secondary.opacity(0.1))
+                            .frame(width: 44, height: 44)
+                        Image(systemName: "clock")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                    }
                     Text("No versions saved yet")
-                        .font(.callout)
+                        .font(.callout.weight(.medium))
+                    Text("Snapshots are automatically created as you edit documents.")
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 16)
                 }
-                .frame(maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(versionStore.snapshots.reversed(), selection: $selectedFromVersion) { snapshot in
                     VersionRowView(snapshot: snapshot)
@@ -80,29 +181,41 @@ struct VersionCompareView: View {
             Divider()
             
             // Compare controls
-            VStack(spacing: 8) {
+            VStack(spacing: 10) {
                 HStack {
-                    Text("From:")
-                        .font(.caption)
-                    Text(selectedFromVersion.map { "v\($0)" } ?? "—")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Text("From:")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(selectedFromVersion.map { "v\($0)" } ?? "—")
+                            .font(.caption.weight(.semibold))
+                    }
+                    Spacer()
+                    HStack(spacing: 4) {
+                        Text("To:")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text(selectedToVersion.map { "v\($0)" } ?? "latest")
+                            .font(.caption.weight(.semibold))
+                    }
                 }
-                HStack {
-                    Text("To:")
-                        .font(.caption)
-                    Text(selectedToVersion.map { "v\($0)" } ?? "latest")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                .padding(.horizontal, 4)
                 
-                Button("Compare") {
+                Button {
                     performComparison()
+                } label: {
+                    HStack {
+                        Image(systemName: "arrow.left.arrow.right")
+                            .font(.caption)
+                        Text("Compare Selected")
+                    }
+                    .frame(maxWidth: .infinity)
                 }
                 .disabled(selectedFromVersion == nil)
                 .buttonStyle(.borderedProminent)
+                .controlSize(.regular)
             }
-            .padding()
+            .padding(14)
         }
         .background(Color(NSColor.controlBackgroundColor))
     }
@@ -110,11 +223,26 @@ struct VersionCompareView: View {
     // MARK: - Comparison Header
     
     private func comparisonHeader(_ comparison: VersionComparison) -> some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("v\(comparison.from.versionNumber) → v\(comparison.to.versionNumber)")
-                    .font(.title3)
-                Text("\(comparison.addedOperations.count) added, \(comparison.removedOperations.count) removed")
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 8) {
+                    Text("v\(comparison.from.versionNumber)")
+                        .font(.callout.monospacedDigit().weight(.bold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    Image(systemName: "arrow.right")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.secondary)
+                    Text("v\(comparison.to.versionNumber)")
+                        .font(.callout.monospacedDigit().weight(.bold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        .foregroundStyle(Color.accentColor)
+                }
+
+                Text("\(comparison.addedOperations.count) added · \(comparison.removedOperations.count) removed")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -127,10 +255,12 @@ struct VersionCompareView: View {
                     showRevertConfirm = true
                 }
                 .buttonStyle(.bordered)
+                .controlSize(.small)
             }
         }
-        .padding()
-        .background(Color(NSColor.controlBackgroundColor))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color(NSColor.windowBackgroundColor))
     }
     
     // MARK: - Comparison Detail
@@ -139,9 +269,16 @@ struct VersionCompareView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 if comparison.addedOperations.isEmpty && comparison.removedOperations.isEmpty {
-                    Text("No differences between these versions.")
-                        .foregroundStyle(.secondary)
-                        .padding()
+                    VStack(spacing: 8) {
+                        Image(systemName: "equal.circle")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                        Text("No differences between these versions.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 40)
                 } else {
                     // Added operations
                     if !comparison.addedOperations.isEmpty {
@@ -160,24 +297,35 @@ struct VersionCompareView: View {
                     }
                 }
             }
-            .padding()
+            .padding(16)
         }
+        .background(Color(nsColor: .textBackgroundColor))
     }
     
     // MARK: - Empty State
     
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Image(systemName: "arrow.left.arrow.right")
-                .font(.system(size: 40))
-                .foregroundStyle(.secondary)
-            Text("Select two versions to compare")
-                .font(.title3)
-            Text("Click a version in the list, then click Compare")
-                .font(.callout)
-                .foregroundStyle(.secondary)
+            ZStack {
+                Circle()
+                    .fill(Color.secondary.opacity(0.1))
+                    .frame(width: 56, height: 56)
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.title)
+                    .foregroundStyle(.secondary)
+            }
+            VStack(spacing: 4) {
+                Text("Select Versions to Compare")
+                    .font(.headline)
+                Text("Select a baseline snapshot in the sidebar, then click Compare Selected to view delta.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 300)
+            }
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(nsColor: .textBackgroundColor))
     }
     
     // MARK: - Actions
@@ -201,19 +349,23 @@ struct VersionRowView: View {
     let snapshot: VersionSnapshot
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 3) {
             HStack {
                 Text(snapshot.summary)
-                    .font(.body)
+                    .font(.callout.weight(.medium))
                 Spacer()
                 Text(snapshot.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
-            Text(snapshot.digest.prefix(12) + "…")
-                .font(.caption2)
-                .foregroundStyle(.tertiary)
-                .monospaced()
+            HStack(spacing: 6) {
+                Text("SHA-256:")
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                Text(snapshot.digest.prefix(12) + "…")
+                    .font(.caption2.monospaced())
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(.vertical, 4)
     }

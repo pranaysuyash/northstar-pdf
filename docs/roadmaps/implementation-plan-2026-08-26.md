@@ -154,3 +154,4 @@ G6 last.
 
 **Maintenance rule:** same as task-inventory — completed items move down with
 evidence pointers, never deleted.
+| 2026-08-26 PM | **P7.G1 wired**: `PdfController.exportCopy` now validates operations against the canonical `pdf-contract-mutation-gate.mjs` contract before any pdf-lib usage (S2: gate check added, test suite unaffected). Gates G2–G6 remain to be sequenced | this change; D-058; flaky-register rows

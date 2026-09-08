@@ -150,7 +150,9 @@ public struct DocumentSplitView: View {
           }
         } label: {
           Image(systemName: "chevron.left")
+            .frame(minWidth: 44, minHeight: 44)
         }
+        .accessibilityLabel("Previous page in \(label) pane")
         .disabled(pageIndex.wrappedValue <= 0)
 
         Spacer()
@@ -168,7 +170,9 @@ public struct DocumentSplitView: View {
           }
         } label: {
           Image(systemName: "chevron.right")
+            .frame(minWidth: 44, minHeight: 44)
         }
+        .accessibilityLabel("Next page in \(label) pane")
         .disabled(pageIndex.wrappedValue >= totalPages - 1)
       }
       .padding(.horizontal, 8)
@@ -184,8 +188,10 @@ public struct DocumentSplitView: View {
         state.isSynchronized.toggle()
       } label: {
         Image(systemName: state.isSynchronized ? "link" : "link.badge.xmark")
-          .font(.caption)
+          .font(.body)
+          .frame(minWidth: 44, minHeight: 44)
       }
+      .accessibilityLabel(state.isSynchronized ? "Unlink panes" : "Synchronize panes")
       .help(state.isSynchronized ? "Panes are synchronized" : "Panes navigate independently")
 
       Button {
@@ -193,9 +199,11 @@ public struct DocumentSplitView: View {
           state.splitDirection = state.splitDirection == .horizontal ? .vertical : .horizontal
         }
       } label: {
-        Image(systemName: state.splitDirection == .horizontal ? "rectangle.split纵向" : "rectangle.split横向")
-          .font(.caption)
+        Image(systemName: state.splitDirection == .horizontal ? "rectangle.split.2x1" : "rectangle.split.1x2")
+          .font(.body)
+          .frame(minWidth: 44, minHeight: 44)
       }
+      .accessibilityLabel("Toggle split direction")
       .help("Toggle split direction")
     }
     .padding(4)

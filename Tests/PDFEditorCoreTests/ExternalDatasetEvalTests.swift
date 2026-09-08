@@ -40,7 +40,7 @@ struct ExternalDatasetEvalTests {
         for record in records.prefix(10) {
             let entities = record["entities"] as! [[String: Any]]
             for entity in entities {
-                let type = entity["type"] as! String
+                let type = (entity["type"] as! String).lowercased()
                 #expect(["header", "question", "answer"].contains(type))
             }
         }

@@ -36,6 +36,8 @@ export interface NativeField {
   kind: "text" | "checkbox" | "radio" | "choice" | "other";
   pageIndex: number;
   value: string;
+  /** V-01 fix: per-widget export value for radio buttons (PDF.js buttonValue). */
+  buttonValue?: string;
   choices: string[];
   /** Normalized PDF-space rectangle backing the widget (crop-relative). */
   rect: Rect;
@@ -204,17 +206,18 @@ export class PdfController {
   async #capturePageSizes(
     doc: import("../../../vendor/pdfjs/pdf.min.mjs").PdfDocumentProxy
   ): Promise<PageSize[]> {
-    const sizes: PageSize[] = [];
-    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
-      try {
-        const page = await doc.getPage(pageNumber);
-        const viewport = page.getViewport({ scale: 1 });
-        sizes.push({ width: viewport.width, height: viewport.height });
-      } catch {
-        sizes.push({ width: 612, height: 792 });
-      }
-    }
-    return sizes;
+    const pageNumbers = Array.from({ length: doc.numPages }, (_, i) => i + 1);
+    return Promise.all(
+      pageNumbers.map((pageNumber) =>
+        doc
+          .getPage(pageNumber)
+          .then((page) => {
+            const viewport = page.getViewport({ scale: 1 });
+            return { width: viewport.width, height: viewport.height } satisfies PageSize;
+          })
+          .catch(() => ({ width: 612, height: 792 } satisfies PageSize))
+      )
+    );
   }
 
   async open(data: ArrayBuffer): Promise<void> {
@@ -532,16 +535,23 @@ export class PdfController {
           const rawValue = String(
             (annotation as { fieldValue?: unknown }).fieldValue ?? ""
           );
-          const value =
-            kind === "checkbox" || kind === "radio"
-              ? /^off$/i.test(rawValue)
-                ? ""
-                : rawValue
-              : rawValue;
+          const buttonVal = String(
+            (annotation as { buttonValue?: unknown }).buttonValue ?? ""
+          );
+          let value: string;
+          if (kind === "radio") {
+            // V-01 fix: per-widget radio state — only report valuePresent when
+            // this widget's export value matches the group's selected value.
+            value = rawValue === buttonVal ? rawValue : "";
+          } else if (kind === "checkbox") {
+            value = /^off$/i.test(rawValue) ? "" : rawValue;
+          } else {
+            value = rawValue;
+          }
           const rect = Array.isArray(annotation.rect)
             ? normalizeRect(annotation.rect as [number, number, number, number])
             : { x: 0, y: 0, width: 0, height: 0 };
-          fieldsOnPage.push({ id: name, name, kind, pageIndex: pageNumber - 1, value, choices: [], rect });
+          fieldsOnPage.push({ id: name, name, kind, pageIndex: pageNumber - 1, value, buttonValue: kind === "radio" ? buttonVal : undefined, choices: [], rect });
         }
         return fieldsOnPage;
       })
@@ -638,7 +648,39 @@ export class PdfController {
     };
 
     if (!this.#sourceBytes) throw new Error("No source document is open.");
-    const pdfLib = await ensurePdfLib();
+
+    // G1: Mutation-gate preflight — validate operations against the canonical contract
+    // before any pdf-lib usage. Reject early if the contract is violated.
+    try {
+      const { ok } = await assertExportableContract({
+        currentSourceDigest: this.#sourceDigest,
+        operations,
+      });
+      if (!ok) {
+        checks.push({
+          id: "mutationGate",
+          kind: "failed",
+          detail: "Operations failed canonical contract validation."
+        });
+        const passed = checks.every((c) => c.status !== "failed");
+        if (!passed) {
+          triggerDownload(new Uint8Array(), exportFileName());
+          return { checks, passed };
+        }
+      }
+    } catch (e) {
+      // Gate rejected via throw (ContractMutationError).
+      checks.push({
+        id: "mutationGate",
+        kind: "failed",
+        detail: e instanceof Error ? e.message : String(e)
+      });
+      const passed = checks.every((c) => c.status !== "failed");
+      if (!passed) {
+        triggerDownload(new Uint8Array(), exportFileName());
+        return { checks, passed };
+      }
+    }
 
     // Encrypted sources stay write-refused; only byte-preserving copies pass.
     if (this.#usedPassword && operations.length) {
@@ -647,6 +689,7 @@ export class PdfController {
         + "The protected source remains read-only."
       );
     }
+    const pdfLib = await ensurePdfLib();
 
     const fieldOps = operations.filter((op) => op.kind === "nativeFieldValue");
     const overlayOps = operations.filter((op) => op.kind === "overlayText");

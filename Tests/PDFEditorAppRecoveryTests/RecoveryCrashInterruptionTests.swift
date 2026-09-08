@@ -96,8 +96,18 @@ struct RecoveryCrashInterruptionTests {
     process.standardError = FileHandle.nullDevice
     try process.run()
 
-    let deadline = Date().addingTimeInterval(20)
+    // Load-tolerant startup deadline: the child pays process spawn + model
+    // construction + full source-document inspection before it can emit its
+    // phase event. Under heavy machine load (Observed: builds co-running at
+    // load 100-230) that can exceed the original 20s; inside a full
+    // `swift test` run the OCR Companion Benchmark suite (~30 min of 5 real
+    // OCR providers) saturates the machine and exceeded 60s too (3/3 full
+    // runs, passed standalone every time — docs/flaky-register.md 2026-09-07).
+    // 240s still bounds a genuinely hung child at 4 minutes.
+    let deadline = Date().addingTimeInterval(240)
     var observed = false
+    var childExitedEarly = false
+    var childExitStatus: Int32 = -1
     while Date() < deadline {
       if let data = try? Data(contentsOf: eventURL),
         String(decoding: data, as: UTF8.self) == phase.rawValue
@@ -105,11 +115,29 @@ struct RecoveryCrashInterruptionTests {
         observed = true
         break
       }
-      if !process.isRunning { break }
+      if !process.isRunning {
+        childExitedEarly = true
+        process.waitUntilExit()
+        childExitStatus = process.terminationStatus
+        break
+      }
       try await Task.sleep(nanoseconds: 20_000_000)
     }
 
-    #expect(observed)
+    // A child that exits before emitting its phase is a HARNESS failure
+    // (crash, missing dependency, store init error) — diagnose it as such
+    // instead of letting it masquerade as a recovery-semantics regression.
+    if !observed, childExitedEarly {
+      Issue.record(
+        Comment(rawValue: "child harness exited before emitting phase '\(phase.rawValue)' (exit status \(childExitStatus)) — harness/dependency failure, not a recovery-semantics failure"))
+    }
+    let deadlineNote =
+      childExitedEarly
+      ? "(exited early, status \(childExitStatus))"
+      : "(still running at deadline)"
+    #expect(
+      observed,
+      Comment(rawValue: "child did not reach phase '\(phase.rawValue)' within the startup deadline \(deadlineNote)"))
     if process.isRunning {
       _ = kill(process.processIdentifier, SIGKILL)
     }

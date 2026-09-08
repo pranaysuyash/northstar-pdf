@@ -243,6 +243,21 @@ public final class AppModel {
       persistRecentDocumentRecords(Array(records))
     }
   }
+
+  /// Removes a specific URL from the recent documents list.
+  public func removeRecentDocument(_ url: URL) {
+    let standardized = url.standardizedFileURL
+    let records = loadRecentDocumentRecords().filter { record in
+      guard let docURL = URL(string: record.urlString)?.standardizedFileURL else { return false }
+      return docURL != standardized
+    }
+    persistRecentDocumentRecords(records)
+  }
+
+  /// Clears all recent documents from history.
+  public func clearRecentDocuments() {
+    persistRecentDocumentRecords([])
+  }
   /// Up to 4 recently opened PDF file URLs, persisted across launches via UserDefaults.
   /// Formatted value suggestions for the most recently focused region
   /// (profile matches first). Empty when nothing sensible to offer.
@@ -561,6 +576,14 @@ public final class AppModel {
   public var pendingSignatureRegion: RegionCandidate?
   /// Whether the signature sheet is presented.
   public var isSignatureSheetPresented = false
+  /// Whether the Security & Privacy Vault sheet is presented.
+  public var isSecurityVaultPresented = false
+  /// Whether the Document Corpus Browser sheet is presented.
+  public var isDocumentBrowserPresented = false
+  /// Whether the Version History & Compare sheet is presented.
+  public var isVersionComparePresented = false
+  /// Whether the Governance Dashboard sheet is presented.
+  public var isGovernanceDashboardPresented = false
   /// Saved signatures (interim: app-sandboxed store; v2 migrates to Keychain per D-010).
   public var savedSignatures: [SavedSignature] = []
   /// Whether the redaction commit confirmation is presented (L3 gate).
@@ -597,7 +620,7 @@ public final class AppModel {
   public var isSearchHistoryPresented = false
   public var readingMode: ReadingMode = .study
   /// When true, the pipeline renders pixels and PDFKit is demoted to interaction-only.
-  public var usePipelineRendering: Bool = true
+  public var usePipelineRendering: Bool = false
   public var isFreezePaneActive: Bool = false
   public var freezePaneConfig: FreezePaneConfig = .none
   public var contentSuggestion: ContentSuggestion?
@@ -845,7 +868,12 @@ public final class AppModel {
     cachedSourceDocument = nil
     // Clear OCR processed pages (will be re-detected if needed)
     ocrProcessedPageIndices.removeAll()
-    statusMessage = "Memory pressure: cleared non-essential caches."
+    // Never stomp an in-flight scan's status: the pressure handler used to
+    // overwrite "Scanning page N…" mid-flight and the fill lane looked wedged
+    // even while recognition was still running (sim finding PL-I29).
+    if autoOCRPendingPages.isEmpty {
+      statusMessage = "Memory pressure: cleared non-essential caches."
+    }
   }
 
   /// Keychain-backed local vault access is explicit in the UI. No template
@@ -1428,7 +1456,19 @@ public final class AppModel {
     liveDocument != nil && !operations.isEmpty
   }
 
-  public var hasUnexportedChanges: Bool { isDirty }
+  /// Operation count at the last successful export (0 = never exported).
+  /// `hasUnexportedChanges` compares against this; `isDirty` intentionally
+  /// tracks source modification independently because Export Copy does not
+  /// replace the source.
+  private var lastExportedOperationCount: Int = 0
+
+  /// True when the operation ledger has changed since the last successful
+  /// export copy. Stays honest across export → edit and export → undo
+  /// (a ledger identical to the exported one is correctly not "unexported").
+  public var hasUnexportedChanges: Bool {
+    guard liveDocument != nil else { return false }
+    return operations.count != lastExportedOperationCount
+  }
 
   public func lifecycleDecision(for action: LifecycleAction) -> LifecycleDecisionInfo {
     LifecycleDecisionInfo(
@@ -1606,6 +1646,7 @@ public final class AppModel {
       }
       ocrProcessedPageIndices = []
       operations = []
+      lastExportedOperationCount = 0
       replayCheckpoints = []
       operationViewStates = []
       redoEntries = []
@@ -1699,6 +1740,27 @@ public final class AppModel {
     persistRecentDocumentRecords(records)
   }
 
+  /// Replace a stale recent-file identity only after the replacement has been
+  /// admitted by the normal open pipeline. A failed replacement restores the
+  /// original record so a missing source is never silently forgotten.
+  @discardableResult
+  public func reselectRecentDocument(_ staleURL: URL, replacement: URL) -> Bool {
+    let originalRecords = loadRecentDocumentRecords()
+    var withoutStale = originalRecords
+    withoutStale.removeAll {
+      URL(string: $0.urlString)?.standardizedFileURL == staleURL.standardizedFileURL
+    }
+    persistRecentDocumentRecords(withoutStale)
+
+    let expectedReplacement = replacement.standardizedFileURL
+    open(url: replacement)
+    guard sourceURL?.standardizedFileURL == expectedReplacement, inspection != nil else {
+      persistRecentDocumentRecords(originalRecords)
+      return false
+    }
+    return true
+  }
+
   public func submitPassword() {
     guard let url = passwordPendingURL else { return }
     let attempted = passwordAttempt
@@ -1729,6 +1791,7 @@ public func resetDocument() {
     isNegotiating = false
     ocrProcessedPageIndices = []
     operations = []
+    lastExportedOperationCount = 0
     showDiff = false
     currentDiff = nil
     replayCheckpoints = []
@@ -3509,6 +3572,11 @@ public func resetDocument() {
   /// Fill mode convenience: scanned or text-poor pages get one automatic
   /// local OCR pass so suggestions appear without a manual step. Results
   /// merge through the same reviewed-candidate path (never auto-applied).
+  ///
+  /// Native fields come first: when the page already exposes native widgets,
+  /// the fill lane surfaces them directly and the opportunistic OCR pass is
+  /// skipped (sim finding PL-I29: a text-empty page with one native field
+  /// must never block the fill lane behind a recognition round-trip).
   private func autoOCRIfNeededForFillMode(pageIndex: Int) {
     guard editorMode == .fill || editorMode == .sign else { return }
     guard !ocrProcessedPageIndices.contains(pageIndex),
@@ -3517,6 +3585,8 @@ public func resetDocument() {
     guard let snapshot = inspection?.pages[safe: pageIndex],
       snapshot.hasSelectableText == false || snapshot.characterCount == 0
     else { return }
+    let pageHasNativeFields = inspection?.fields.contains { $0.pageIndex == pageIndex } ?? false
+    guard !pageHasNativeFields else { return }
     guard let livePage = liveDocument?.page(at: pageIndex) else { return }
     nonisolated(unsafe) let page = livePage
 
@@ -3527,11 +3597,28 @@ public func resetDocument() {
         page: page, pageIndex: pageIndex)
       guard let self else { return }
       self.autoOCRPendingPages.remove(pageIndex)
-      if let observations {
+      if let observations, !observations.isEmpty {
         self.mergeOCRObservations(observations, pageIndex: pageIndex)
+      } else if self.editorMode == .fill || self.editorMode == .sign {
+        // Silent success is fine, but silent failure used to leave the
+        // status frozen on "Scanning…" forever (sim finding PL-I29). An
+        // empty or failed recognition is reported honestly so the fill
+        // lane stays actionable via the manual OCR Page affordance.
+        if self.autoOCRPendingPages.isEmpty {
+          self.statusMessage =
+            "Automatic scan found no text on page \(pageIndex + 1). Use OCR Page to retry."
+        }
       }
-      // Silent by design on failure: auto-scan is opportunistic; manual OCR
-      // still reports errors loudly.
+    }
+    // Watchdog: a wedged recognition pass must never pin the status
+    // message. After the bound, the status returns to the mode summary;
+    // a late completion still merges through the normal reviewed path.
+    Task { @MainActor [weak self] in
+      try? await Task.sleep(nanoseconds: 45_000_000_000)
+      guard let self, self.autoOCRPendingPages.contains(pageIndex) else { return }
+      self.autoOCRPendingPages.remove(pageIndex)
+      self.statusMessage =
+        "Automatic scan timed out on page \(pageIndex + 1). Use OCR Page to retry."
     }
   }
 
@@ -4315,6 +4402,12 @@ public func resetDocument() {
       }
       if result.report.status == .failed {
         alertMessage = result.report.messages.joined(separator: "\n")
+      }
+      // A validated export becomes the reference point for "unexported
+      // changes"; a failed validation does not (the copy is unreliable).
+      if lastExportURL != nil,
+         result.report.status == .validated || result.report.status == .validatedWithWarnings {
+        lastExportedOperationCount = operations.count
       }
       // Save session after successful export
       saveSession()

@@ -3,7 +3,7 @@
   "fixtures" : [
     {
       "expectedFailure" : false,
-      "sourceDigest" : "bb54019130ef9b4930806ebe5368a047f39472559d39dc2f80bafb361ccab80b",
+      "sourceDigest" : "5a681d44622f2ee577808e77f034525314d48a628b9cad26f7788564c9e922e8",
       "sourcePath" : "benchmark\/results\/public-sample-form.pdf",
       "status" : "inspected"
     },

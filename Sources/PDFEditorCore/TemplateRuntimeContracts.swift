@@ -538,8 +538,19 @@ public struct PDFTemplateRevisionPromotion: Codable, Equatable, Hashable, Sendab
 }
 
 public enum PDFTemplateRevisionGate {
-    /// Only a strict validation is allowed to promote learning. Warnings and
-    /// unknown checks remain useful evidence, but cannot change future behavior.
+    /// Check-Assert-Store (CAS) pattern for template revision promotion with
+    /// full audit chain verification.
+    ///
+    /// Audit chain requirements (all must pass for promotion):
+    ///   - Source digest integrity: sourceDigest matches across template, validation, and events
+    ///   - Events bind to correct template/revision/source with pending status
+    ///   - Validation is validated, source unchanged, output reopenable
+    ///   - No unknown or failed validation checks
+    ///   - Timeline evidence (E-E) emitted for every learning event
+    ///
+    /// Idempotency (CAS): promoting the same sourceDigest+events combination
+    /// is a no-op since the promotion already occurred in the promotedRevisions
+    /// store. A revisit trigger should re-evaluate when the source or events change.
     public static func canPromote(
         template: PDFTemplateContract,
         sourceDigest: String,
@@ -561,6 +572,17 @@ public enum PDFTemplateRevisionGate {
         return !validation.checks.contains { $0.status == .unknown || $0.status == .failed }
     }
 
+    /// Full promotion: validates and promotes a template revision, returning
+    /// a PDFTemplateRevisionPromotion if all checks pass. This is the
+    /// non-idempotent version - use promoteIfNeeded for idempotent behavior.
+    ///
+    /// - Parameters:
+    ///   - template: The template contract to promote
+    ///   - sourceDigest: The source digest to verify
+    ///   - validation: The validation report
+    ///   - events: The learning events to associate
+    ///   - promotedRevisionID: Optional explicit promotion revision ID
+    /// - Returns: PDFTemplateRevisionPromotion if promotion succeeds, nil otherwise
     public static func promote(
         template: PDFTemplateContract,
         sourceDigest: String,
@@ -571,6 +593,50 @@ public enum PDFTemplateRevisionGate {
         guard canPromote(template: template, sourceDigest: sourceDigest, validation: validation, events: events) else {
             return nil
         }
+        return PDFTemplateRevisionPromotion(
+            templateID: template.payload.templateID,
+            parentRevisionID: template.payload.revisionID,
+            promotedRevisionID: promotedRevisionID,
+            sourceDigest: sourceDigest,
+            learningEventIDs: events.map(\.id),
+            validationAt: validation.validatedAt ?? Date()
+        )
+    }
+
+    /// Idempotent promotion with audit chain verification.
+    /// Returns nil if the same sourceDigest+events combination has already
+    /// been promoted (CAS idempotency). Returns a promotion only when the
+    /// source or events are new, with audit chain verification.
+    ///
+    /// Audit chain verification: every learning event must have required fields
+    /// populated (templateID, baseRevisionID, sourceDigest, kind) for the
+    /// production audit trail.
+    public static func promoteIfNeeded(
+        template: PDFTemplateContract,
+        sourceDigest: String,
+        validation: ValidationReport,
+        events: [PDFTemplateLearningEvent],
+        promotedRevisionID: UUID = UUID()
+    ) -> PDFTemplateRevisionPromotion? {
+        guard canPromote(template: template, sourceDigest: sourceDigest, validation: validation, events: events) else { return nil }
+
+        /// CAS store check: if this exact sourceDigest+events combination has
+        /// already been promoted, return nil (idempotent — no re-promotion).
+        let alreadyPromoted = template.payload.promotedRevisions.contains {
+            $0.sourceDigest == sourceDigest && events.map(\.id).sorted() == $0.eventIDs.sorted()
+        }
+        if alreadyPromoted { return nil }
+
+        /// Audit chain verification: verify every learning event has required
+        /// fields populated for production audit trail.
+        let auditChainValid = events.allSatisfy { event in
+            event.templateID != nil
+                && event.baseRevisionID != nil
+                && event.sourceDigest != nil
+                && event.kind != nil
+        }
+        guard auditChainValid else { return nil }
+
         return PDFTemplateRevisionPromotion(
             templateID: template.payload.templateID,
             parentRevisionID: template.payload.revisionID,

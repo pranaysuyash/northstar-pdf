@@ -115,10 +115,16 @@ public enum PDFIncrementalFormWriter {
 
   struct XrefInfo {
     var entries: [Int: (offset: Int, generation: Int)]
-    /// Object numbers living inside compressed object streams (xref type 2).
-    /// Targeting one fails closed with a precise diagnostic instead of a
-    /// generic not-found.
-    var compressedObjects: Set<Int>
+    /// Type-2 xref entries: object number → (object-stream object number,
+    /// index of the object within that stream's header). Objects living in
+    /// compressed object streams are RESOLVED through this map (2026-09-07:
+    /// objectSpan inflates the ObjStm and extracts the object body) — the
+    /// former fail-closed `compressedObject` rejection on any walk targeting
+    /// a compressed object is retired; the error case now reports only
+    /// genuinely undecodable object streams.
+    var objectStreams: [Int: (stream: Int, index: Int)]
+    /// Every object number that lives inside an object stream (derived).
+    var compressedObjects: Set<Int> { Set(objectStreams.keys) }
     var trailer: [String: String]
     var size: Int
   }
@@ -126,11 +132,52 @@ public enum PDFIncrementalFormWriter {
   static func parseXref(_ data: Data, offset: Int) throws -> XrefInfo {
     let bytes = [UInt8](data)
     guard offset < bytes.count else { throw WriterError.unsupportedXref("offset out of range") }
-    let head = latin1(bytes[offset..<min(bytes.count, offset + 5)])
-    if head.hasPrefix("xref") {
-      return try parseClassicXref(bytes, offset: offset)
+    // Incremental files carry several xref sections chained by /Prev. The
+    // parser must merge them (later sections win) or it cannot re-read its own
+    // incrementalFieldUpdate output — object references to untouched original
+    // objects would throw objectNotFound.
+    var mergedEntries: [Int: (offset: Int, generation: Int)] = [:]
+    var mergedObjectStreams: [Int: (stream: Int, index: Int)] = [:]
+    var size = 0
+    var trailer: [String: String] = [:]
+    var sectionOffset = offset
+    var seen = Set<Int>()
+    while sectionOffset > 0, !seen.contains(sectionOffset), sectionOffset < bytes.count {
+      seen.insert(sectionOffset)
+      let head = latin1(bytes[sectionOffset..<min(bytes.count, sectionOffset + 5)])
+      let info: XrefInfo
+      if head.hasPrefix("xref") {
+        info = try parseClassicXref(bytes, offset: sectionOffset)
+      } else {
+        info = try parseXrefStream(bytes, offset: sectionOffset)
+      }
+      // Newest-wins per OBJECT, not per table: an object's classification
+      // (type-1 offset vs type-2 ObjStm member) is decided by the NEWEST
+      // section that mentions it. Without the cross-guard, an older section's
+      // stale type-1 offset could shadow a newer type-2 record (or
+      // vice-versa) and objectSpan would read the wrong revision.
+      for (number, entry) in info.entries
+      where mergedEntries[number] == nil && mergedObjectStreams[number] == nil {
+        mergedEntries[number] = entry
+      }
+      for (number, location) in info.objectStreams
+      where mergedObjectStreams[number] == nil && mergedEntries[number] == nil {
+        mergedObjectStreams[number] = location
+      }
+      size = max(size, info.size)
+      // Keep the NEWEST section's trailer (/Root, /AcroForm, /Encrypt…): it
+      // describes the current revision. The oldest section's trailer can be
+      // partial or superseded (Observed: a synthetic-producer re-encode whose
+      // original trailer lacks a usable /Root).
+      if trailer.isEmpty { trailer = info.trailer }
+      guard let prevToken = info.trailer["/Prev"],
+        let prev = Int(prevToken.trimmingCharacters(in: .whitespaces)), prev > 0
+      else { break }
+      sectionOffset = prev
     }
-    return try parseXrefStream(bytes, offset: offset)
+    return XrefInfo(
+      entries: mergedEntries, objectStreams: mergedObjectStreams,
+      trailer: trailer, size: size)
   }
 
   private static func parseClassicXref(_ bytes: [UInt8], offset: Int) throws -> XrefInfo {
@@ -190,7 +237,7 @@ public enum PDFIncrementalFormWriter {
     guard sawTrailer else { throw WriterError.unsupportedXref("no trailer") }
     let declaredSize = Int(trailer["/Size"]?.trimmingCharacters(in: .whitespaces) ?? "0") ?? size
     return XrefInfo(
-        entries: entries, compressedObjects: [], trailer: trailer,
+        entries: entries, objectStreams: [:], trailer: trailer,
         size: max(size, declaredSize))
   }
 
@@ -324,7 +371,7 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     }
 
     var entries: [Int: (offset: Int, generation: Int)] = [:]
-    var compressedObjects: Set<Int> = []
+    var objectStreams: [Int: (stream: Int, index: Int)] = [:]
     var size = 0
     var pos = 0
     func readInt(_ at: Int, _ len: Int) -> Int {
@@ -346,24 +393,36 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
           entries[start + i] = (f1, f2)
           if start + i + 1 > size { size = start + i + 1 }
         } else if type == 2 {
-          compressedObjects.insert(start + i)
+          // Object lives in object stream f1 at header index f2. Resolution
+          // happens on demand in objectSpan (inflate the ObjStm, walk the
+          // header pairs, extract the body).
+          objectStreams[start + i] = (f1, f2)
         }
-        // Type 2 entries (objects inside compressed object streams) are
-        // recorded only as compressed; targeting such an object later fails
-        // closed with the precise compressedObject diagnostic.
       }
     }
     let declaredSize = Int(trailer["/Size"]?.trimmingCharacters(in: .whitespaces) ?? "0") ?? size
     return XrefInfo(
-      entries: entries, compressedObjects: compressedObjects, trailer: trailer,
+      entries: entries, objectStreams: objectStreams, trailer: trailer,
       size: max(size, declaredSize))
   }
 
   static func inflateZlib(_ bytes: [UInt8]) -> [UInt8]? {
     guard bytes.count > 6 else { return nil }
+    // §7.3.8.1: the EOL preceding "endstream" is NOT part of the stream
+    // data. Callers slice up to "endstream" so a trailing \r\n (or both)
+    // can ride along; for compressed streams those bytes land after the
+    // Adler-32 and corrupt a strict raw-DEFLATE decode (Observed
+    // 2026-09-07: PDFBox-produced xref stream, 121 raw bytes → 110
+    // instead of 156 decoded — every xref entry after the first 27 was
+    // silently dropped). Strip them before unwrapping.
+    var payload = bytes
+    while let last = payload.last, last == 0x0A || last == 0x0D {
+      payload.removeLast()
+    }
+    guard payload.count > 6 else { return nil }
     // zlib wrapper: 2-byte header + 4-byte Adler-32; COMPRESSION_ZLIB is raw
     // DEFLATE, so strip the wrapper before inflating.
-    let raw = Array(bytes[2..<(bytes.count - 4)])
+    let raw = Array(payload[2..<(payload.count - 4)])
     var capacity = max(4096, raw.count * 4)
     while capacity <= 1 << 30 {
       var destination = [UInt8](repeating: 0, count: capacity)
@@ -424,8 +483,15 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
   static func objectSpan(
     _ data: Data, xref: XrefInfo, objectNumber: Int
   ) throws -> (generation: Int, text: String) {
-    if xref.compressedObjects.contains(objectNumber) {
-      throw WriterError.compressedObject(objectNumber)
+    // Type-2 entry: the object lives compressed inside an object stream.
+    // Inflate the ObjStm, parse its header pairs (objNum offset …), and
+    // extract the object body as classic "N 0 obj … endobj" text so every
+    // downstream consumer (walker, dict editor, edit resolver) is byte-shape
+    // identical to the uncompressed path — no caller changes.
+    if let location = xref.objectStreams[objectNumber] {
+      return try extractFromObjectStream(
+        data, xref: xref, objectNumber: objectNumber, streamObject: location.stream,
+        headerIndex: location.index)
     }
     guard let entry = xref.entries[objectNumber] else {
       throw WriterError.objectNotFound(objectNumber)
@@ -441,11 +507,158 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     return (entry.generation, String(region[region.startIndex..<endObj.upperBound]))
   }
 
+  /// Resolves a type-2 xref entry by inflating its containing object stream
+  /// and slicing out one object body. The ObjStm itself is located through
+  /// `xref` (it may live in an OLDER revision's type-1 table, or in a newer
+  /// incremental section — both are covered by the merged XrefInfo).
+  private static func extractFromObjectStream(
+    _ data: Data, xref: XrefInfo, objectNumber: Int, streamObject: Int, headerIndex: Int
+  ) throws -> (generation: Int, text: String) {
+    // The ObjStm object itself must be an uncompressed type-1 object (object
+    // streams may not nest). Guard anyway and report precisely if a source
+    // violates that.
+    guard let streamEntry = xref.entries[streamObject] else {
+      throw WriterError.malformedStructure(
+        "object stream \(streamObject) for object \(objectNumber) has no xref entry")
+    }
+    let bytes = [UInt8](data)
+    guard streamEntry.offset >= 0, streamEntry.offset < bytes.count else {
+      throw WriterError.malformedStructure(
+        "object stream \(streamObject) offset out of range")
+    }
+    let region = latin1(bytes[streamEntry.offset...])
+    guard let streamMarker = region.range(of: "stream") else {
+      throw WriterError.malformedStructure(
+        "object stream \(streamObject) has no stream keyword")
+    }
+    guard let dictOpen = region.range(
+      of: "<<", range: region.startIndex..<streamMarker.lowerBound)
+    else {
+      throw WriterError.malformedStructure("object stream \(streamObject) dict missing")
+    }
+    let dictEnd = skipValue(region, dictOpen.lowerBound)
+    let dict = String(region[dictOpen.lowerBound..<dictEnd])
+
+    // Filter policy: FlateDecode only. The xref-stream parser enforces the
+    // same policy; fail closed with a precise diagnostic on anything else
+    // (LZW, RunLength, crypt filters) rather than emitting garbage.
+    guard dict.contains("/FlateDecode"), !dict.contains("/Crypt") else {
+      throw WriterError.unsupportedXref(
+        "object stream \(streamObject) uses a filter other than FlateDecode")
+    }
+
+    var dataStart = streamMarker.upperBound
+    while dataStart < region.endIndex, region[dataStart] == "\r" || region[dataStart] == "\n" {
+      dataStart = region.index(after: dataStart)
+    }
+    guard let endStream = region.range(of: "endstream", range: dataStart..<region.endIndex)
+    else {
+      throw WriterError.malformedStructure(
+        "object stream \(streamObject) has no endstream")
+    }
+    let startIdx = streamEntry.offset + region.distance(from: region.startIndex, to: dataStart)
+    let endIdx = streamEntry.offset + region.distance(from: region.startIndex, to: endStream.lowerBound)
+    guard endIdx > startIdx, endIdx <= bytes.count else {
+      throw WriterError.malformedStructure(
+        "object stream \(streamObject) content out of bounds")
+    }
+    guard let inflated = inflateZlib(Array(bytes[startIdx..<endIdx])) else {
+      throw WriterError.unsupportedXref(
+        "object stream \(streamObject) inflate failed")
+    }
+    let content = latin1(inflated)
+
+    // /N: object count. /First: byte offset of the stream DATA after the
+    // header. Header format: alternating <objNum> <relativeOffset> pairs.
+    var objectCount = 0
+    var firstOffset = 0
+    if let nToken = valueOfKey("/N", in: dict),
+      let n = Int(nToken.trimmingCharacters(in: .whitespaces))
+    {
+      objectCount = n
+    }
+    if let firstToken = valueOfKey("/First", in: dict),
+      let first = Int(firstToken.trimmingCharacters(in: .whitespaces))
+    {
+      firstOffset = first
+    }
+    guard objectCount > 0, firstOffset > 0, firstOffset <= content.count else {
+      throw WriterError.malformedStructure(
+        "object stream \(streamObject) has unusable /N /First")
+    }
+    guard headerIndex >= 0, headerIndex < objectCount else {
+      throw WriterError.malformedStructure(
+        "object \(objectNumber) index \(headerIndex) out of range for object stream \(streamObject)")
+    }
+
+    // Parse exactly headerIndex+1 pairs (stop early once we have the one we
+    // need — avoids quadratic scans on large ObjStms). The header is plain
+    // ASCII "objNum relOffset" pairs, so a single integer cursor over the
+    // inflated bytes is both simpler and safe.
+    let header = Array(inflated[0..<min(firstOffset, inflated.count)])
+    var cursor = 0
+    var targetStart = -1
+    var targetEnd = -1
+    var position = 0
+    func scanInt() -> Int? {
+      while cursor < header.count, isPdfWhitespace(Character(UnicodeScalar(header[cursor]))) {
+        cursor += 1
+      }
+      let begin = cursor
+      while cursor < header.count, header[cursor] >= 0x30, header[cursor] <= 0x39 { cursor += 1 }
+      guard cursor > begin else { return nil }
+      var value = 0
+      for b in header[begin..<cursor] { value = value * 10 + Int(b - 0x30) }
+      return value
+    }
+    while true {
+      guard let objNum = scanInt(), let relOffset = scanInt() else {
+        // Header exhausted: if this is the LAST object in the stream its
+        // body legitimately runs to end-of-data (handled below); reaching
+        // the wanted index without a pair is malformed.
+        break
+      }
+      // The pair at headerIndex identifies the requested object; its offset
+      // marks the body start, and the NEXT pair's offset marks the body end.
+      if position == headerIndex {
+        guard objNum == objectNumber else {
+          throw WriterError.malformedStructure(
+            "object stream \(streamObject) header index \(headerIndex) holds object \(objNum), expected \(objectNumber) — xref/ObjStm mismatch")
+        }
+        targetStart = relOffset
+      } else if position == headerIndex + 1 {
+        targetEnd = relOffset
+        break
+      }
+      position += 1
+    }
+    // Body end: the next pair's offset when present, otherwise end-of-data
+    // (the last object in the stream runs to the end). Offsets are relative
+    // to /First.
+    if targetEnd < 0 { targetEnd = content.count - firstOffset }
+    let bodyStart = firstOffset + targetStart
+    let bodyEnd = min(firstOffset + targetEnd, content.count)
+    guard bodyStart < bodyEnd, bodyEnd <= content.count else {
+      throw WriterError.malformedStructure(
+        "object \(objectNumber) has empty/oversized body in object stream \(streamObject)")
+    }
+    let bodyBegin = content.index(content.startIndex, offsetBy: bodyStart)
+    let bodyFinish = content.index(content.startIndex, offsetBy: bodyEnd)
+    let body = String(content[bodyBegin..<bodyFinish])
+    // Render as a classic indirect object so downstream byte-shape consumers
+    // (topLevelEntries, insertIntoDict, refObjectNumber) work unchanged.
+    let text = "\(objectNumber) 0 obj\n\(body)\nendobj"
+    return (0, text)
+  }
+
   // MARK: - Dictionary scanning
 
   struct DictEntry {
     let key: String
     let valueRange: Range<String.Index>
+    /// Span of just the key token (e.g. "/V") — removal edits delete from
+    /// here through value end so no orphan whitespace/leaf remains.
+    let keyRange: Range<String.Index>
   }
 
   /// Top-level key/value spans of the first PDF dictionary in `text`.
@@ -477,7 +690,8 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
         let key = String(text[keyStart..<p])
         let valueStart = p
         let valueEnd = skipValue(text, p)
-        entries.append(DictEntry(key: key, valueRange: valueStart..<valueEnd))
+        entries.append(
+          DictEntry(key: key, valueRange: valueStart..<valueEnd, keyRange: keyStart..<p))
         p = valueEnd
         continue
       }
@@ -613,18 +827,49 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     let base = String(objectText[objectText.startIndex..<close])
     let tail = String(objectText[close...])
     let entries = topLevelEntries(base)
+    // Removals (value == removeKeySentinel) delete the whole "key value"
+    // span (key start through value end) — removals and replacements both
+    // mutate spans, so they must be applied in one DESCENDING position pass.
     var result = base
-    // Replace from the end so earlier spans stay valid while editing.
-    for pair in pairs.reversed() {
-      if let existing = entries.first(where: { $0.key == pair.key }) {
-        // Ensure a space separates the key from the new value
-        let needsSpace = existing.valueRange.lowerBound > result.startIndex &&
-          !isPdfWhitespace(result[result.index(before: existing.valueRange.lowerBound)])
-        let replacement = needsSpace ? " \(pair.value)" : pair.value
-        result.replaceSubrange(existing.valueRange, with: replacement)
-      } else {
-        result.insert(contentsOf: " \(pair.key) \(pair.value)", at: close)
+    var spanEdits: [(range: Range<String.Index>, text: String?,)] = []
+    for pair in pairs {
+      guard let existing = entries.first(where: { $0.key == pair.key }) else {
+        if pair.value == removeKeySentinel {
+          spanEdits.append((base.startIndex..<base.startIndex, nil))
+        }
+        continue
       }
+      let removal = pair.value == removeKeySentinel
+      // Replacement edits span ONLY the value (the value span starts at the
+      // whitespace after the key and the replacement re-supplies its own
+      // leading space below — the original byte-preserving behavior).
+      // Removal edits span key start → value end so the whole "key value"
+      // leaf disappears without orphan whitespace.
+      let from: String.Index =
+        removal ? existing.keyRange.lowerBound : existing.valueRange.lowerBound
+      let to: String.Index = existing.valueRange.upperBound
+      spanEdits.append((from..<to, removal ? nil : pair.value))
+    }
+    for edit in spanEdits.sorted(by: { $0.range.lowerBound > $1.range.lowerBound }) {
+      guard edit.range.lowerBound != edit.range.upperBound || edit.text != nil else { continue }
+      var text = edit.text ?? ""
+      // Replacements keep a separating space when the char before the value
+      // span is not whitespace (removals swallow the key's own leading
+      // boundary instead).
+      if edit.text != nil, edit.range.lowerBound > result.startIndex,
+        !isPdfWhitespace(result[result.index(before: edit.range.lowerBound)])
+      {
+        text = " \(text)"
+      }
+      result.replaceSubrange(edit.range, with: text)
+    }
+    // Missing keys append at the END of the current result — never at a
+    // stale index captured before replacements changed its length (which
+    // previously spliced "/AP <<…>>" inside a /V string value). Removal
+    // sentinels for keys that are already absent are no-ops.
+    for pair in pairs
+    where pair.value != removeKeySentinel && !entries.contains(where: { $0.key == pair.key }) {
+      result += " \(pair.key) \(pair.value)"
     }
     return result + tail
   }
@@ -644,11 +889,36 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     let xref = try parseXref(source, offset: xrefOffset)
     guard xref.trailer["/Encrypt"] == nil else { throw WriterError.encryptedUnsupported }
 
+    // Coalesce edits that target the same object: each appended copy is
+    // rendered from the ORIGINAL object text, so two separate edits to one
+    // object would produce two xref entries for the same number and the
+    // later copy would silently drop the earlier copy's pairs (observed as
+    // choice /V edits being clobbered by the /AP appearance edit on merged
+    // field+widget objects). Merging pairs keeps every caller's keys — last
+    // pair wins when the same key is edited twice.
+    var merged: [Int: [String: String]] = [:]
+    var order: [Int] = []
+    for edit in edits {
+      if merged[edit.objectNumber] == nil {
+        merged[edit.objectNumber] = [:]
+        order.append(edit.objectNumber)
+      }
+      for pair in edit.pairs {
+        merged[edit.objectNumber]?[pair.0] = pair.1
+      }
+    }
+    let coalescedEdits: [ObjectEdit] = order.map { number in
+      let pairs = merged[number]!
+      return ObjectEdit(
+        objectNumber: number,
+        pairs: pairs.map { ($0, $1) }.sorted { $0.0 < $1.0 })
+    }
+
     var chunks: [Data] = [source]
     var total = source.count
     var subsections: [(objectNumber: Int, generation: Int, offset: Int)] = []
 
-    for edit in edits {
+    for edit in coalescedEdits {
       let (generation, objectText) = try objectSpan(
         source, xref: xref, objectNumber: edit.objectNumber)
       let newBody = insertIntoDict(objectText, pairs: edit.pairs)
@@ -703,6 +973,74 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     public let buttonStates: [String]
     public let fieldType: String?
     public let childObjectNumbers: [Int]
+    /// Field-level value (`/V`): the export value for buttons, the string for
+    /// text/choice. Names are stored without the leading slash (e.g. "1").
+    public let value: String?
+    /// Widget appearance state (`/AS`): which appearance the widget currently
+    /// renders (e.g. "1"/"Off" for a radio kid). Name, no leading slash.
+    public let appearanceState: String?
+    /// Choice-field option values (`/Opt`) when the node carries them.
+    /// Plain string arrays decode as themselves; `[export, display]` pair
+    /// arrays decode as the export element (PDF 32000-1 §12.7.5.4, Table 247).
+    public let optionValues: [String]
+    /// Display strings for pair-form `/Opt` elements (`[export display]`).
+    /// Index-aligned with `optionValues`; display == export for plain-string
+    /// options. Viewers expose this string through their field APIs while
+    /// `/V` carries the export — callers comparing viewer reads must accept
+    /// either (Measured 2026-09-06: PDFKit `widgetStringValue` reports
+    /// "Ground (5-7 days)" after an incremental write of /V=ground).
+    public let optionDisplayValues: [String]
+    /// The widget's /AP /N on-state name: any appearance-state key other than
+    /// "Off". For /Opt-mapped radio groups the state name is producer-chosen
+    /// (e.g. /0 /1) and unrelated to the export value — the mapping is
+    /// positional via /Opt (Measured 2026-09-06, pdf-lib select()).
+    public let appearanceStateOnName: String?
+    /// True when the node declares the choice /Ff combo bit (18, value 262144).
+    public let isCombo: Bool
+    /// True when the node declares the choice /Ff multi-select bit
+    /// (22, value 2097152 = 1 << 21). Multi-select listboxes carry an ARRAY
+    /// /V (one string per selected export) and SHOULD carry /I, the sorted
+    /// option indices of the selection (§12.7.5.4, Table 247; measured
+    /// against pdf-lib PDFAcroChoice.setValues which writes both).
+    public let isMultiSelect: Bool
+    /// All string elements of /V when /V is an ARRAY (multi-select choice).
+    /// Empty when /V is absent or single-valued (then `value` carries it).
+    public let values: [String]
+    /// Sorted option indices decoded from /I (multi-select selection),
+    /// empty when /I is absent.
+    public let selectedIndices: [Int]
+
+    init(
+      objectNumber: Int, fullyQualifiedName: String, isWidget: Bool, rect: [Double]?,
+      buttonStates: [String], fieldType: String?, childObjectNumbers: [Int],
+      value: String? = nil, appearanceState: String? = nil,
+      optionValues: [String] = [], isCombo: Bool = false,
+      optionDisplayValues: [String] = [],
+      appearanceStateOnName: String? = nil,
+      values: [String] = [],
+      isMultiSelect: Bool = false,
+      selectedIndices: [Int] = []
+    ) {
+      self.objectNumber = objectNumber
+      self.fullyQualifiedName = fullyQualifiedName
+      self.isWidget = isWidget
+      self.rect = rect
+      self.buttonStates = buttonStates
+      self.fieldType = fieldType
+      self.childObjectNumbers = childObjectNumbers
+      self.value = value
+      self.appearanceState = appearanceState
+      self.optionValues = optionValues
+      self.optionDisplayValues = optionDisplayValues
+      self.appearanceStateOnName = appearanceStateOnName
+        ?? buttonStates.first(where: {
+          $0.lowercased() != "/off" && !$0.isEmpty && $0.lowercased() != "off"
+        }).map { $0.hasPrefix("/") ? String($0.dropFirst()) : $0 }
+      self.isCombo = isCombo
+      self.values = values
+      self.isMultiSelect = isMultiSelect
+      self.selectedIndices = selectedIndices
+    }
   }
 
   /// Extended AcroForm model with document-level safety facts.
@@ -741,11 +1079,46 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
       throw WriterError.malformedStructure("AcroForm has no /Fields")
     }
     var nodes: [FormObjectNode] = []
+    var walkedObjects: Set<Int> = []
     for ref in arrayRefs(fieldsToken) {
       guard let number = refObjectNumber(ref) else { continue }
       try walkField(
         source, xref: xref, objectNumber: number, parentPath: "", visited: [],
         into: &nodes)
+      walkedObjects.insert(number)
+    }
+    for node in nodes { walkedObjects.insert(node.objectNumber) }
+    // Orphan-widget merge: some producers (and PDFKit's own writer — Observed
+    // 2026-09-06 on public-sample-form: applicant.name / applicant.notes
+    // carry /FT /Tx + /T but appear ONLY in the page /Annots arrays, not in
+    // AcroForm /Fields) leave field widgets outside the field tree. Walk
+    // every page's /Annots and merge the widgets the tree walk missed so
+    // edits resolve for the same field set PDFKit exposes.
+    for (_, pageText) in pageObjects(source, xref: xref) {
+      guard var annotsToken = valueOfKey("/Annots", in: pageText) else { continue }
+      // /Annots may be an indirect array object (Observed 2026-09-06 on
+      // public-sample-form: /Annots 9 0 R where obj 9 is the bare array
+      // [10 0 R …]). Resolve one level of indirection before parsing refs.
+      if !annotsToken.hasPrefix("["), let arrNumber = refObjectNumber(annotsToken),
+        let (_, arrText) = try? objectSpan(source, xref: xref, objectNumber: arrNumber)
+      {
+        // objectSpan returns the full "N 0 obj … endobj" region — extract the
+        // bracketed array body for arrayRefs.
+        if let open = arrText.firstIndex(of: "["), let close = arrText.lastIndex(of: "]"),
+          open < close
+        {
+          annotsToken = String(arrText[open...close])
+        }
+      }
+      for ref in arrayRefs(annotsToken) {
+        guard let number = refObjectNumber(ref), !walkedObjects.contains(number)
+        else { continue }
+        let before = nodes.count
+        try? walkField(
+          source, xref: xref, objectNumber: number, parentPath: "", visited: [],
+          into: &nodes)
+        if nodes.count > before { walkedObjects.insert(number) }
+      }
     }
     // RG-014 parity: signature-field presence through /SigFlags or /FT /Sig.
     var sigFlags: Int?
@@ -757,6 +1130,24 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     return AcroFormModel(
       nodes: nodes, acroFormObjectNumber: acroFormNumber, sigFlags: sigFlags,
       hasSignatureField: hasSignatureField)
+  }
+
+  /// Yields every object in the file that is a page dictionary
+  /// (`/Type /Page`). Used by the orphan-widget merge — producers may attach
+  /// field widgets to a page's /Annots without listing them in AcroForm
+  /// /Fields, and those fields must still resolve for edits.
+  private static func pageObjects(
+    _ source: Data, xref: XrefInfo
+  ) -> [(number: Int, text: String)] {
+    var pages: [(Int, String)] = []
+    for number in 1..<xref.size {
+      guard let (_, text) = try? objectSpan(source, xref: xref, objectNumber: number)
+      else { continue }
+      if valueOfKey("/Type", in: text)?.hasPrefix("/Page") == true {
+        pages.append((number, text))
+      }
+    }
+    return pages
   }
 
   private static func walkField(
@@ -785,6 +1176,61 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
       buttonStates = appearanceStates(source, xref: xref, apToken: apToken)
     }
     let kidRefs = valueOfKey("/Kids", in: text).map(arrayRefs) ?? []
+    // /V may be a name (buttons: /1, /Off), a string (text/choice), or an
+    // ARRAY of strings (multi-select choice). Array tokens do NOT populate
+    // `value` — a decoded array token would be garbage; they land in
+    // `values` below.
+    let value: String?
+    if let vToken = valueOfKey("/V", in: text), !vToken.hasPrefix("[") {
+      if vToken.hasPrefix("/") {
+        value = String(vToken.dropFirst())
+      } else {
+        value = decodePdfTextString(vToken)
+      }
+    } else {
+      value = nil
+    }
+    // /AS is always a name on widget kids.
+    let appearanceState = valueOfKey("/AS", in: text).map { String($0.dropFirst()) }
+    // Choice fields carry their options in /Opt (§12.7.5.4): a string array,
+    // or an array of [export, display] pairs — export element wins for the
+    // structural value model, matching what /V must contain.
+    var optionValues: [String] = []
+    var optionDisplayValues: [String] = []
+    // /Opt appears on choice fields AND on radio-group /Btn fields
+    // (§12.7.5.4 Table 247: it positionally maps export values to widget
+    // kids — Observed 2026-09-06 on compressed-acroform: /Btn radio with
+    // /Opt [<hex email> <hex phone>] and kid states /0 /1). Parsing it only
+    // for Ch made /Opt radios unresolvable for exports.
+    if fieldType == "Ch" || fieldType == "Btn",
+      let optToken = valueOfKey("/Opt", in: text)
+    {
+      optionValues = parseChoiceOptArray(optToken)
+      optionDisplayValues = parseChoiceOptDisplayArray(optToken)
+    }
+    // Combo bit (18) on choice fields: editable text entry is allowed.
+    let isCombo =
+      fieldType == "Ch"
+      && valueOfKey("/Ff", in: text).flatMap(Int.init).map { $0 & 262_144 != 0 } == true
+    // Multi-select bit (22, 1 << 21 = 2097152) on choice fields: the /V may
+    // hold an array of selected export values and /I the sorted selection
+    // indices (PDF 32000-1 §12.7.5.4 Table 247).
+    let isMultiSelect =
+      fieldType == "Ch"
+      && valueOfKey("/Ff", in: text).flatMap(Int.init).map { $0 & 2_097_152 != 0 } == true
+    // Array /V: when present, /V is the multi-select value array. Elements
+    // are text strings; names (unlikely but producer-seen) decode name-only.
+    // Single-valued /V already landed in `value` above; arrays do NOT
+    // populate `value` — callers must read `values` for the multi form so a
+    // single-selection write can never masquerade as an array read.
+    var values: [String] = []
+    var selectedIndices: [Int] = []
+    if let vToken = valueOfKey("/V", in: text), vToken.hasPrefix("[") {
+      values = parseChoiceOptArray(vToken)
+    }
+    if let iTokens = valueOfKey("/I", in: text).flatMap({ parseNumberArray($0) }), !iTokens.isEmpty {
+      selectedIndices = iTokens.map { Int($0) }.filter { $0 >= 0 }
+    }
     let node = FormObjectNode(
       objectNumber: objectNumber,
       fullyQualifiedName: fqn,
@@ -792,7 +1238,15 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
       rect: rect,
       buttonStates: buttonStates,
       fieldType: fieldType,
-      childObjectNumbers: kidRefs.compactMap(refObjectNumber)
+      childObjectNumbers: kidRefs.compactMap(refObjectNumber),
+      value: value,
+      appearanceState: appearanceState,
+      optionValues: optionValues,
+      isCombo: isCombo,
+      optionDisplayValues: optionDisplayValues,
+      values: values,
+      isMultiSelect: isMultiSelect,
+      selectedIndices: selectedIndices
     )
     nodes.append(node)
     for kid in kidRefs {
@@ -804,19 +1258,55 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
   }
 
   /// Extracts the appearance-state names (/AP /N dict keys) for button fields.
+  ///
+  /// Producers differ in how /AP /N is stored, so resolution follows
+  /// indirection like a viewer would:
+  /// - inline:  `/AP << /N << /Yes 12 0 R /Off 13 0 R >> >>`
+  /// - indirect: `/AP 18 0 R` where 18 is `<< /N 28 0 R >>` and 28 is
+  ///   itself an appearance-characteristics dict (`<< /D … /N 33 0 R >>`)
+  ///   whose /N finally maps state names to streams (Observed on the
+  ///   PDFKit-produced public-acroform fixture).
   static func appearanceStates(_ source: Data, xref: XrefInfo, apToken: String) -> [String] {
-    func statesFromDict(_ dictText: String) -> [String] {
-      let entries = topLevelEntries(dictText)
-      guard let n = entries.first(where: { $0.key == "/N" }) else { return [] }
-      let value = String(dictText[n.valueRange]).trimmingCharacters(in: .whitespacesAndNewlines)
-      guard value.hasPrefix("<<") else { return [] }
-      return topLevelEntries(value).map { $0.key }
+    func resolveToDictText(_ token: String, hops: Int) -> String? {
+      let t = token.trimmingCharacters(in: .whitespacesAndNewlines)
+      if hops > 6 { return nil }
+      if t.hasPrefix("<<") { return t }
+      guard let number = refObjectNumber(t),
+        let (_, text) = try? objectSpan(source, xref: xref, objectNumber: number)
+      else { return nil }
+      return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-    if apToken.hasPrefix("<<") { return statesFromDict(apToken) }
+    func stateKeys(_ dictText: String) -> [String] {
+      let entries = topLevelEntries(dictText)
+      guard let n = entries.first(where: { $0.key == "/N" }),
+        var current = resolveToDictText(
+          String(dictText[n.valueRange]), hops: 0)
+      else { return [] }
+      // Follow the /N value through nested characteristic dicts until the
+      // terminal state map (a dict whose keys are the state names).
+      var hops = 0
+      while hops < 6 {
+        let keys = topLevelEntries(current).map { $0.key }
+        // Appearance-characteristics dict: /D /R /N point at sub-dicts.
+        // Re-enter via its /N (normal appearance) sub-map.
+        if keys.contains("/N"), keys.count <= 3 {
+          if let n = topLevelEntries(current).first(where: { $0.key == "/N" }),
+            let next = resolveToDictText(
+              String(current[n.valueRange]), hops: hops + 1) {
+            current = next
+            hops += 1
+            continue
+          }
+        }
+        return keys
+      }
+      return []
+    }
+    if apToken.hasPrefix("<<") { return stateKeys(apToken) }
     guard let apNumber = refObjectNumber(apToken),
       let (_, apText) = try? objectSpan(source, xref: xref, objectNumber: apNumber)
     else { return [] }
-    return statesFromDict(apText)
+    return stateKeys(apText)
   }
 
   // MARK: - Token helpers
@@ -857,6 +1347,109 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     return numbers.isEmpty ? nil : numbers
   }
 
+  /// Splits a PDF array token into its top-level elements (strings, names,
+  /// numbers, or nested arrays), respecting string/nesting boundaries.
+  static func topLevelArrayElements(_ token: String) -> [String] {
+    guard token.hasPrefix("["), token.hasSuffix("]"), token.count >= 2 else { return [] }
+    let inner = String(token.dropFirst().dropLast())
+    var elements: [String] = []
+    var current = ""
+    var bracketDepth = 0
+    var inString = false
+    var escape = false
+    for ch in inner {
+      if escape {
+        current.append(ch)
+        escape = false
+        continue
+      }
+      if inString {
+        current.append(ch)
+        if ch == "\\" {
+          escape = true
+        } else if ch == ")" {
+          inString = false
+        }
+        continue
+      }
+      switch ch {
+      case "(":
+        inString = true
+        current.append(ch)
+      case "[":
+        bracketDepth += 1
+        current.append(ch)
+      case "]":
+        bracketDepth = max(0, bracketDepth - 1)
+        current.append(ch)
+      case " ", "\t", "\n", "\r":
+        if bracketDepth == 0 {
+          if !current.isEmpty { elements.append(current); current = "" }
+        } else {
+          current.append(ch)
+        }
+      default:
+        current.append(ch)
+      }
+    }
+    if !current.isEmpty { elements.append(current) }
+    return elements
+  }
+
+  /// Decodes a choice field's `/Opt` array into export values.
+  ///
+  /// Per PDF 32000-1 §12.7.5.4 (Table 247) each element is either a text
+  /// string (export value == display value) or a two-element array
+  /// `[export, display]`. Anything else (names, numbers, malformed) is
+  /// decoded best-effort; unparseable elements are skipped rather than
+  /// invented, so callers never see phantom options.
+  static func parseChoiceOptArray(_ token: String) -> [String] {
+    var values: [String] = []
+    for element in topLevelArrayElements(token) {
+      let t = element.trimmingCharacters(in: .whitespacesAndNewlines)
+      if t.hasPrefix("[") {
+        // Pair form: first element is the export value.
+        let pair = topLevelArrayElements(t)
+        if let first = pair.first {
+          values.append(decodePdfTextString(first))
+        }
+      } else if t.hasPrefix("(") || t.hasPrefix("<") {
+        values.append(decodePdfTextString(t))
+      } else if t.hasPrefix("/") {
+        values.append(String(t.dropFirst()))
+      }
+    }
+    return values
+  }
+
+  /// Decodes a choice field's `/Opt` array into the DISPLAY strings viewers
+  /// show. Index-aligned with `parseChoiceOptArray` results; for plain string
+  /// elements display == export, for pair form `[export display]` it is the
+  /// second element (export when the pair omits it).
+  static func parseChoiceOptDisplayArray(_ token: String) -> [String] {
+    var values: [String] = []
+    for element in topLevelArrayElements(token) {
+      let t = element.trimmingCharacters(in: .whitespacesAndNewlines)
+      if t.hasPrefix("[") {
+        let pair = topLevelArrayElements(t)
+        if pair.count >= 2 {
+          values.append(decodePdfTextString(pair[1]))
+        } else if let first = pair.first {
+          values.append(decodePdfTextString(first))
+        } else {
+          values.append("")
+        }
+      } else if t.hasPrefix("(") || t.hasPrefix("<") {
+        values.append(decodePdfTextString(t))
+      } else if t.hasPrefix("/") {
+        values.append(String(t.dropFirst()))
+      } else {
+        values.append("")
+      }
+    }
+    return values
+  }
+
   static func trimName(_ token: String) -> String {
     var t = token.trimmingCharacters(in: .whitespacesAndNewlines)
     if t.hasPrefix("/") { t.removeFirst() }
@@ -887,9 +1480,64 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
       return latin1(bytes)
     }
     if t.hasPrefix("("), t.hasSuffix(")"), t.count >= 2 {
-      return String(t.dropFirst().dropLast())
+      // PDF literal strings support \ddd octal escapes (1–3 octal digits,
+      // decoding to a single byte) plus \n \r \t \b \f \( \) \\.
+      // Real-world producers escape non-ASCII partial names — e.g. PDFKit
+      // writes (applicant\056contact) for a dotted field name — so the FQN
+      // must be fully decoded or tree walkers cannot match "applicant.contact".
+      return decodeLiteralString(String(t.dropFirst().dropLast()))
     }
     return t
+  }
+
+  /// Decodes a PDF literal-string body: \ddd octal escapes and the standard
+  /// \n \r \t \b \f \( \) \\ escapes. Unknown escapes keep the escaped
+  /// character literally.
+  static func decodeLiteralString(_ body: String) -> String {
+    var out: [UInt8] = []
+    let scalars = Array(body.unicodeScalars)
+    var i = 0
+    while i < scalars.count {
+      let c = scalars[i]
+      if c != "\\" {
+        if c.value < 256 {
+          out.append(UInt8(c.value))
+        } else {
+          out.append(contentsOf: Array(String(c).utf8))
+        }
+        i += 1
+        continue
+      }
+      // Escape sequence.
+      guard i + 1 < scalars.count else { break }
+      let next = scalars[i + 1]
+      if next.value >= 0x30 && next.value <= 0x37 {
+        // Octal \ddd: consume up to 3 octal digits.
+        var value = 0
+        var digits = 0
+        var j = i + 1
+        while j < scalars.count, digits < 3,
+              scalars[j].value >= 0x30, scalars[j].value <= 0x37 {
+          value = value * 8 + Int(scalars[j].value - 0x30)
+          j += 1
+          digits += 1
+        }
+        out.append(UInt8(value & 0xFF))
+        i = j
+      } else {
+        switch next {
+        case "n": out.append(0x0A)
+        case "r": out.append(0x0D)
+        case "t": out.append(0x09)
+        case "b": out.append(0x08)
+        case "f": out.append(0x0C)
+        default:
+          if next.value < 256 { out.append(UInt8(next.value)) }
+        }
+        i += 2
+      }
+    }
+    return latin1(out)
   }
 
   static func valueOfKey(_ key: String, in objectText: String) -> String? {
@@ -950,6 +1598,96 @@ extension PDFIncrementalFormWriter {
   /// (Helvetica, own /Resources) so strict viewers render the new value
   /// without relying on `/NeedAppearances` regeneration — which would force
   /// unrelated fields to re-render and is therefore deliberately avoided.
+  /// Resolves the edit plan for setting a MULTI-SELECT listbox selection.
+  ///
+  /// PDF 32000-1 §12.7.5.4 (Table 247): with /Ff bit 22 set, /V is an array
+  /// of selected export strings and /I the sorted option indices. Measured
+  /// against pdf-lib PDFAcroChoice.setValues: for >1 selections it writes
+  /// /V as a string array AND /I as sorted indices; for exactly one
+  /// selection /V is a single string and /I is deleted; for an empty
+  /// selection /V is deleted entirely. This plan reproduces all three
+  /// shapes:
+  /// - values empty:            delete /V (and /I) — empty multi-selection
+  /// - values single:           /V as one string, /I removed
+  /// - values multi:            /V array + /I sorted indices, /Ff OR bit 22
+  ///
+  /// Writes /V on the terminal field node (tree layout) or the merged
+  /// field+widget object. Throws when any requested export is not in the
+  /// field's /Opt vocabulary (fail closed — callers must not write phantom
+  /// selections) or when the field is not a choice field.
+  public static func resolveMultiSelectEditPlan(
+    nodes: [FormObjectNode],
+    targetFieldName: String,
+    requestedValues: [String],
+    source: Data
+  ) throws -> ResolvedEditPlan {
+    let fieldNodes = nodes.filter { $0.fullyQualifiedName == targetFieldName && $0.fieldType == "Ch" }
+    guard let terminal = fieldNodes.first(where: { !$0.isWidget })
+      ?? fieldNodes.first else {
+      throw WriterError.fieldNotFound(targetFieldName)
+    }
+    let options = terminal.optionValues
+    let displays = terminal.optionDisplayValues
+    // Resolve each request against exports OR display strings (viewers
+    // accept either; /Opt pairs map display→export positionally).
+    func resolveExport(_ request: String) -> String? {
+      if options.contains(request) { return request }
+      if let idx = displays.firstIndex(of: request), idx < options.count {
+        return options[idx]
+      }
+      return nil
+    }
+    // Dedup while preserving request order.
+    var exports: [String] = []
+    for request in requestedValues {
+      guard let export = resolveExport(request) else {
+        throw WriterError.requestedStateUnavailable(
+          field: targetFieldName, state: request)
+      }
+      if !exports.contains(export) { exports.append(export) }
+    }
+    guard !exports.isEmpty || terminal.isMultiSelect || !options.isEmpty else {
+      throw WriterError.malformedStructure(
+        "\(targetFieldName): refusing to write a value to a field with no /Opt vocabulary")
+    }
+
+    var pairs: [(key: String, value: String)] = []
+    if exports.isEmpty {
+      // Empty multi-selection: /V deleted entirely (pdf-lib deletes the key;
+      // measured on PDFAcroChoice.setValues). Empty-string values are the
+      // sentinel this writer uses for "remove key" (insertIntoDict).
+      pairs.append(("/V", removeKeySentinel))
+      pairs.append(("/I", removeKeySentinel))
+    } else if exports.count == 1 {
+      // Single selection: /V single string, /I removed (pdf-lib deletes it
+      // for singleton writes — measured on updateSelectedIndices).
+      pairs.append(("/V", pdfString(exports[0])))
+      pairs.append(("/I", removeKeySentinel))
+    } else {
+      // Fail closed: a multi-value write to a field WITHOUT bit 22 would
+      // have to flip the field's /Ff semantics to be legal (pdf-lib's
+      // PDFOptionList.select() auto-enables multiselect for its form-CREATION
+      // convenience). This writer fills documents whose field semantics the
+      // document author chose — silently upgrading single-select to
+      // multi-select changes what the form means. Refuse; a caller that
+      // genuinely wants the upgrade can write the /Ff bit itself as an
+      // explicit, audited step.
+      guard terminal.isMultiSelect else {
+        throw WriterError.requestedStateUnavailable(
+          field: targetFieldName,
+          state: "multi-selection [\(exports.joined(separator: ", "))] on a single-select listbox")
+      }
+      let vArray = exports.map { pdfString($0) }.joined(separator: " ")
+      pairs.append(("/V", "[\(vArray)]"))
+      let indices = exports.compactMap { options.firstIndex(of: $0) }.sorted()
+      let iArray = indices.map(String.init).joined(separator: " ")
+      pairs.append(("/I", "[\(iArray)]"))
+    }
+    return ResolvedEditPlan(
+      objectEdits: [ObjectEdit(objectNumber: terminal.objectNumber, pairs: pairs)],
+      newObjectBodies: [])
+  }
+
   public static func resolveEditPlan(
     nodes: [FormObjectNode],
     targetFieldName: String,
@@ -1035,51 +1773,115 @@ extension PDFIncrementalFormWriter {
     targetFieldName: String,
     requestedValue: String
   ) throws -> [ObjectEdit] {
+    // Normalize state names: /AP keys arrive as "/0", "/Off". The set of
+    // selectable on-states is everything but the Off appearance.
+    let stripSlash: (String) -> String = {
+      $0.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    }
     let onStates = Set(
-      (terminal.buttonStates + widgetKids.flatMap { $0.buttonStates }).map {
-        $0.trimmingCharacters(in: .whitespaces)
-      }
+      (terminal.buttonStates + widgetKids.flatMap { $0.buttonStates }).map(stripSlash)
     )
-    let namedOnStates = onStates.filter { $0 != "/Off" }
+    let namedOnStates = onStates.filter { $0.lowercased() != "off" }
     let normalized = requestedValue.trimmingCharacters(in: .whitespacesAndNewlines)
     let lowered = normalized.lowercased()
-    let offTokens: Set<String> = ["off", "0", "", "false", "no", "unchecked"]
+    // "Off-like" tokens only deselect when they are NOT a real export value of
+    // this group. Radio groups legitimately use "0"/"1" as export vocabulary
+    // (Observed: public-acroform's applicant.contact), so a literal "0"
+    // request must select that state — not write /Off everywhere.
+    let offTokens: Set<String> = ["off", "", "false", "no", "unchecked"]
     let booleanOnTokens: Set<String> = ["true", "yes", "on", "1", "checked"]
+    let exactState = namedOnStates.first { $0.lowercased() == lowered }
 
-    if offTokens.contains(lowered) {
-      var edits = [ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", "/Off")])]
-      for kid in widgetKids {
-        edits.append(ObjectEdit(objectNumber: kid.objectNumber, pairs: [("/AS", "/Off")]))
+    if offTokens.contains(lowered), exactState == nil {
+      // Explicit deselect: /V /Off on the field node, /AS /Off on every widget.
+      // Merge per object so no revision drops a pair (see note below).
+      var deselectPairs: [Int: [(key: String, value: String)]] = [:]
+      deselectPairs[terminal.objectNumber, default: []].append(("/V", "/Off"))
+      let deselectWidgets = ([terminal] + widgetKids).filter { $0.isWidget }
+      for widget in deselectWidgets {
+        deselectPairs[widget.objectNumber, default: []].append(("/AS", "/Off"))
       }
-      if widgetKids.isEmpty {
-        edits[0].pairs.append(("/AS", "/Off"))
+      if deselectWidgets.isEmpty {
+        deselectPairs[terminal.objectNumber, default: []].append(("/AS", "/Off"))
       }
-      return edits
+      return deselectPairs
+        .sorted { $0.key < $1.key }
+        .map { ObjectEdit(objectNumber: $0.key, pairs: $0.value) }
     }
 
     let selectedState: String
-    if let exact = namedOnStates.first(where: {
-      $0.trimmingCharacters(in: CharacterSet(charactersIn: "/")).lowercased() == lowered
-    }) {
+    if let exact = exactState {
       selectedState = exact
     } else if namedOnStates.count == 1, booleanOnTokens.contains(lowered) {
       selectedState = namedOnStates.first!
+    } else if let exportState = optMappedState(
+      forExport: normalized, terminal: terminal, widgetKids: widgetKids)
+    {
+      // /Opt-mapped radio group (§12.7.5.4 Table 247): the requested value is
+      // an EXPORT that maps positionally to a kid whose /AP /N state name is
+      // producer-chosen (Observed 2026-09-06: /Opt [<hex email> <hex phone>]
+      // with states /0 /1 — pdf-lib select('email') writes /V=/email
+      // (spec says /V carries the export) and /AS=/0 on kid 0). The exact-
+      // state match above cannot see this because the export never appears
+      // in /AP, so resolve it here instead of failing with
+      // requestedStateUnavailable.
+      selectedState = exportState
     } else {
       throw WriterError.requestedStateUnavailable(field: targetFieldName, state: normalized)
     }
 
-    var edits = [ObjectEdit(objectNumber: terminal.objectNumber, pairs: [("/V", selectedState)])]
-    if widgetKids.isEmpty {
-      edits[0].pairs.append(("/AS", selectedState))
-    } else {
-      for kid in widgetKids {
-        let kidStates = Set(kid.buttonStates)
-        let kidState = kidStates.contains(selectedState) ? selectedState : "/Off"
-        edits.append(ObjectEdit(objectNumber: kid.objectNumber, pairs: [("/AS", kidState)]))
-      }
+    let widgets = ([terminal] + widgetKids).filter { $0.isWidget }
+    // The widget whose /AP can render the selected state is the AS carrier.
+    // (buttonStates keys are stored with their leading slash, e.g. "/0".)
+    let stateCarrier = widgets.first { $0.buttonStates.contains("/\(selectedState)") }
+    // /V goes on the dedicated field node (tree layout), or on the state
+    // carrier when field and widget are the same object (merged layout).
+    let valueTarget = terminal.isWidget ? (stateCarrier ?? terminal) : terminal
+
+    // One redefinition per object: incrementalFieldUpdate appends each edit as
+    // its own object revision, so the last edit for an object wins — pairs for
+    // the same object must be merged into a single ObjectEdit.
+    var pairsByObject: [Int: [(key: String, value: String)]] = [:]
+    func add(_ object: Int, _ key: String, _ value: String) {
+      pairsByObject[object, default: []].append((key, value))
     }
-    return edits
+    // State names serialize as PDF names (leading slash): /V /0, /AS /Off.
+    add(valueTarget.objectNumber, "/V", "/\(selectedState)")
+    if let carrier = stateCarrier {
+      for widget in widgets {
+        add(widget.objectNumber, "/AS",
+            widget.objectNumber == carrier.objectNumber
+              ? "/\(selectedState)" : "/Off")
+      }
+    } else if widgets.isEmpty {
+      // Merged field+widget with no discovered appearances: keep /AS in sync
+      // with /V on the same object.
+      add(valueTarget.objectNumber, "/AS", "/\(selectedState)")
+    }
+    // No carrier and a dedicated field node: /V alone (widgets untouched);
+    // viewers regenerate appearances via /NeedAppearances semantics.
+    return pairsByObject
+      .sorted { $0.key < $1.key }
+      .map { ObjectEdit(objectNumber: $0.key, pairs: $0.value) }
   }
+
+  /// Resolves an /Opt radio export to its kid's /AP /N state name
+  /// (positional mapping: Opt[i] ↔ kid i). Returns nil when the group has no
+  /// /Opt or the export is not listed.
+  private static func optMappedState(
+    forExport export: String, terminal: FormObjectNode, widgetKids: [FormObjectNode]
+  ) -> String? {
+    let options = terminal.optionValues
+    guard !options.isEmpty, let idx = options.firstIndex(of: export) else { return nil }
+    let widgets = ([terminal] + widgetKids).filter { $0.isWidget }
+    guard idx < widgets.count else { return nil }
+    return widgets[idx].appearanceStateOnName
+  }
+
+  /// Sentinel pair value telling insertIntoDict to REMOVE the key from the
+  /// object dictionary. Non-empty and unrepresentable as PDF syntax (spaces
+  /// are stripped by callers), so it can never collide with a real value.
+  static let removeKeySentinel = "\u{0}remove-key\u{0}"
 
   /// Serializes a Swift string as a PDF literal string with required escapes.
   static func pdfString(_ value: String) -> String {

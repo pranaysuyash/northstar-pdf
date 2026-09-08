@@ -307,35 +307,65 @@ public struct DocumentCanvasView: View {
         model.setZoom(max(0.25, model.readerZoom - 0.1))
       } label: {
         Image(systemName: "minus")
-          .font(.caption.weight(.bold))
+          .font(.system(size: 11, weight: .bold))
+          .foregroundStyle(.primary)
+          .frame(width: 22, height: 22)
+          .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
       .accessibilityLabel("Zoom out")
 
-      Text("\(Int(model.readerZoom * 100))%")
-        .font(.caption.weight(.semibold).monospacedDigit())
-        .frame(width: 38)
-        .accessibilityLabel("Zoom level \(Int(model.readerZoom * 100)) percent")
-        .accessibilityAddTraits(.isStaticText)
+      Menu {
+        Button("Fit Width") {
+          model.setReaderScaleMode(.fitWidth)
+        }
+        Button("Fit Page") {
+          model.setReaderScaleMode(.fitPage)
+        }
+        Divider()
+        Button("50%") { model.setZoom(0.5) }
+        Button("75%") { model.setZoom(0.75) }
+        Button("100% (Actual Size)") { model.setZoom(1.0) }
+        Button("125%") { model.setZoom(1.25) }
+        Button("150%") { model.setZoom(1.5) }
+        Button("200%") { model.setZoom(2.0) }
+      } label: {
+        Text("\(Int(model.readerZoom * 100))%")
+          .font(.caption.weight(.semibold).monospacedDigit())
+          .foregroundStyle(.primary)
+          .padding(.horizontal, 4)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 4))
+      }
+      .menuStyle(.borderlessButton)
+      .fixedSize()
+      .help("Click to choose zoom level or fit mode")
+      .accessibilityLabel("Zoom level \(Int(model.readerZoom * 100)) percent. Click for options.")
 
       Button {
         model.setZoom(min(3.0, model.readerZoom + 0.1))
       } label: {
         Image(systemName: "plus")
-          .font(.caption.weight(.bold))
+          .font(.system(size: 11, weight: .bold))
+          .foregroundStyle(.primary)
+          .frame(width: 22, height: 22)
+          .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
       .accessibilityLabel("Zoom in")
 
       Divider()
-        .frame(height: 12)
+        .frame(height: 14)
         .accessibilityHidden(true)
 
       Button {
         model.rotateLeft()
       } label: {
         Image(systemName: "arrow.counterclockwise")
-          .font(.caption)
+          .font(.system(size: 12, weight: .medium))
+          .foregroundStyle(.secondary)
+          .frame(width: 22, height: 22)
+          .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
       .accessibilityLabel("Rotate left 90 degrees")
@@ -345,7 +375,10 @@ public struct DocumentCanvasView: View {
         model.rotateRight()
       } label: {
         Image(systemName: "arrow.clockwise")
-          .font(.caption)
+          .font(.system(size: 12, weight: .medium))
+          .foregroundStyle(.secondary)
+          .frame(width: 22, height: 22)
+          .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
       .accessibilityLabel("Rotate right 90 degrees")
@@ -356,7 +389,7 @@ public struct DocumentCanvasView: View {
       // restore behavior returns to the configured default policy.
       if model.hasPinnedLayout {
         Divider()
-          .frame(height: 12)
+          .frame(height: 14)
           .accessibilityHidden(true)
 
         Button {
@@ -365,6 +398,7 @@ public struct DocumentCanvasView: View {
           Image(systemName: "pin.fill")
             .font(.caption)
             .foregroundStyle(.orange)
+            .frame(width: 20, height: 22)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Saved layout is active for this document. Click to clear.")
@@ -372,7 +406,7 @@ public struct DocumentCanvasView: View {
       }
     }
     .padding(.horizontal, 10)
-    .padding(.vertical, 6)
+    .padding(.vertical, 5)
     .background(.ultraThinMaterial)
     .clipShape(Capsule())
     .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
@@ -1225,15 +1259,6 @@ public struct PDFKitView: NSViewRepresentable {
     overlayView.wantsLayer = true
     view.addSubview(overlayView)
     context.coordinator.overlayView = overlayView
-
-    // Pipeline tile overlay — composites pipeline-rendered tiles above PDFKit
-    let tileOverlay = PipelineTileOverlayView(frame: view.bounds)
-    tileOverlay.autoresizingMask = [.width, .height]
-    tileOverlay.wantsLayer = true
-    tileOverlay.layer?.zPosition = 50 // above PDFKit (0), below freeze panes (100)
-    tileOverlay.renderingPipeline = renderingPipeline
-    view.addSubview(tileOverlay)
-    context.coordinator.tileOverlay = tileOverlay
 
     // Freeze pane overlay — sits above the presentation overlay
     let freezeOverlay = FreezePaneOverlayView(frame: view.bounds)

@@ -1,6 +1,7 @@
 import Foundation
 import Testing
 import PDFKit
+import Darwin
 @testable import PDFEditorCore
 
 /// Tests for OCR companion benchmark with real ground-truth fixtures.
@@ -71,9 +72,11 @@ struct OCRCompanionBenchmarkTests {
     // MARK: - PDFKit Provider (baseline — no OCR, text layer only)
 
     @Test("PDFKit: can extract text from fixture with text layer")
-    func pdfkitTextExtraction() {
+    func pdfkitTextExtraction() async throws {
         let provider = PDFKitOCRProvider()
-        let (text, confidence) = provider.ocrPDF("benchmark/results/ocr-corpus/clean-english.pdf")
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPDF("benchmark/results/ocr-corpus/clean-english.pdf")
+        }
         // PDFKit on raster-only PDFs returns empty (no text layer)
         #expect(text.isEmpty || !text.isEmpty, "PDFKit processes the PDF")
         print("[ocr-benchmark] PDFKit clean-english: '\(text.prefix(50))' confidence=\(confidence)")
@@ -82,14 +85,16 @@ struct OCRCompanionBenchmarkTests {
     // MARK: - Tesseract Provider (real OCR)
 
     @Test("Tesseract: clean English produces near-zero WER")
-    func tesseractCleanEnglish() throws {
+    func tesseractCleanEnglish() async throws {
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Tesseract must produce output")
         #expect(confidence > 0.8, "Clean English should have high confidence")
 
@@ -100,14 +105,16 @@ struct OCRCompanionBenchmarkTests {
     }
 
     @Test("Tesseract: noisy invoice has moderate WER")
-    func tesseractNoisyInvoice() throws {
+    func tesseractNoisyInvoice() async throws {
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Tesseract must produce output on noisy image")
 
         let gt = "Invoice Number: 2024-0831\nAmount Due: 1,234.56 dollars\nDate: August 31, 2026"
@@ -117,14 +124,16 @@ struct OCRCompanionBenchmarkTests {
     }
 
     @Test("Tesseract: rotated certificate handles rotation")
-    func tesseractRotated() throws {
+    func tesseractRotated() async throws {
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/rotated-certificate.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Tesseract must handle rotated images")
 
         let gt = "Certificate of Achievement\nAwarded to: Dr. Alan Turing\nFor Excellence in Computer Science"
@@ -134,14 +143,16 @@ struct OCRCompanionBenchmarkTests {
     }
 
     @Test("Tesseract: mixed punctuation preserves special characters")
-    func tesseractMixedPunctuation() throws {
+    func tesseractMixedPunctuation() async throws {
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/mixed-punctuation.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Tesseract must produce output")
 
         let gt = "Email: user@example.com | Phone: 555-123-4567\nFax: 1-800-555-0199\nOrder 12345-ABC. Total: 42.50 EUR (VAT included)"
@@ -153,14 +164,16 @@ struct OCRCompanionBenchmarkTests {
     // MARK: - Vision Framework Provider
 
     @Test("Vision: clean English produces zero WER")
-    func visionCleanEnglish() throws {
+    func visionCleanEnglish() async throws {
         let provider = VisionFrameworkOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Vision must produce output")
         #expect(confidence > 0.90, "Clean English should have very high confidence")
 
@@ -171,14 +184,16 @@ struct OCRCompanionBenchmarkTests {
     }
 
     @Test("Vision: noisy invoice handles noise")
-    func visionNoisyInvoice() throws {
+    func visionNoisyInvoice() async throws {
         let provider = VisionFrameworkOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Vision must handle noisy images")
 
         let gt = "Invoice Number: 2024-0831\nAmount Due: 1,234.56 dollars\nDate: August 31, 2026"
@@ -188,14 +203,16 @@ struct OCRCompanionBenchmarkTests {
     }
 
     @Test("Vision: multi-column layout reads all columns")
-    func visionMultiColumn() throws {
+    func visionMultiColumn() async throws {
         let provider = VisionFrameworkOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/multi-column.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "Vision must handle multi-column")
 
         // Vision should read both columns
@@ -209,14 +226,16 @@ struct OCRCompanionBenchmarkTests {
     // MARK: - PaddleOCR Provider
 
     @Test("PaddleOCR: clean English produces zero WER")
-    func paddleCleanEnglish() throws {
+    func paddleCleanEnglish() async throws {
         let provider = PaddleOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "PaddleOCR must produce output")
         #expect(confidence >= 0.90, "Clean English should have very high confidence")
 
@@ -227,14 +246,16 @@ struct OCRCompanionBenchmarkTests {
     }
 
     @Test("PaddleOCR: noisy invoice handles noise")
-    func paddleNoisyInvoice() throws {
+    func paddleNoisyInvoice() async throws {
         let provider = PaddleOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = provider.ocrPNG(pngPath)
+        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+            provider.ocrPNG(pngPath)
+        }
         #expect(!text.isEmpty, "PaddleOCR must handle noisy images")
 
         let gt = "Invoice Number: 2024-0831\nAmount Due: 1,234.56 dollars\nDate: August 31, 2026"
@@ -246,7 +267,8 @@ struct OCRCompanionBenchmarkTests {
     // MARK: - Cross-Provider Comparison
 
     @Test("Cross-provider: Vision and Tesseract both achieve < 5% WER on clean English")
-    func crossProviderCleanEnglish() throws {
+    func crossProviderCleanEnglish() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
         let gt = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump."
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -266,67 +288,120 @@ struct OCRCompanionBenchmarkTests {
             print("[ocr-benchmark] \(name) clean-english: WER=\(String(format: "%.1f", wer * 100))% conf=\(String(format: "%.1f", confidence * 100))%")
             #expect(wer < 0.25, "\(name) WER should be < 25%, got \(wer * 100)%")
         }
+        }
     }
 
     // MARK: - Full Benchmark Run
 
     @Test("Full benchmark: PDFKit produces baseline (no OCR)")
-    func fullBenchmarkPDFKit() {
-        let report = OCRCompanionBenchmark.runBenchmark(provider: PDFKitOCRProvider())
-        print(report.summary)
-        // PDFKit on raster-only PDFs extracts nothing — abstention expected
-        #expect(report.fixtureCount == 9)
+    func fullBenchmarkPDFKit() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
+            let report = OCRCompanionBenchmark.runBenchmark(provider: PDFKitOCRProvider())
+            print(report.summary)
+            // PDFKit on raster-only PDFs extracts nothing — abstention expected
+            #expect(report.fixtureCount == 9)
+        }
     }
 
     @Test("Full benchmark: Tesseract produces measurable WER")
-    func fullBenchmarkTesseract() {
-        let report = OCRCompanionBenchmark.runBenchmark(provider: TesseractProvider())
-        print(report.summary)
-        #expect(report.fixtureCount == 9)
-        #expect(report.averageConfidence > 0.70, "Tesseract should have decent confidence")
+    func fullBenchmarkTesseract() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
+            let report = OCRCompanionBenchmark.runBenchmark(provider: TesseractProvider())
+            print(report.summary)
+            #expect(report.fixtureCount == 9)
+            #expect(report.averageConfidence > 0.70, "Tesseract should have decent confidence")
 
-        // Print per-fixture WER
-        for result in report.results {
-            let fixture = OCRCompanionBenchmark.standardFixtures.first { $0.id == result.fixtureID }
-            let werStr = result.wordErrorRate.map { String(format: "%.1f", $0 * 100) + "%" } ?? "N/A"
-            print("[ocr-benchmark] \(result.fixtureID): WER=\(werStr) conf=\(String(format: "%.2f", result.confidence)) time=\(String(format: "%.0f", result.processingTimeMs))ms")
+            // Print per-fixture WER
+            for result in report.results {
+                let werStr = result.wordErrorRate.map { String(format: "%.1f", $0 * 100) + "%" } ?? "N/A"
+                print("[ocr-benchmark] \(result.fixtureID): WER=\(werStr) conf=\(String(format: "%.2f", result.confidence)) time=\(String(format: "%.0f", result.processingTimeMs))ms")
+            }
         }
     }
 
     @Test("Full benchmark: Vision produces WER")
-    func fullBenchmarkVision() {
-        let report = OCRCompanionBenchmark.runBenchmark(provider: VisionFrameworkOCRProvider())
-        print(report.summary)
-        #expect(report.fixtureCount == 9)
+    func fullBenchmarkVision() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
+            let report = OCRCompanionBenchmark.runBenchmark(provider: VisionFrameworkOCRProvider())
+            print(report.summary)
+            #expect(report.fixtureCount == 9)
+        }
     }
 
     @Test("Full benchmark: PaddleOCR produces WER")
-    func fullBenchmarkPaddleOCR() {
-        let report = OCRCompanionBenchmark.runBenchmark(provider: PaddleOCRProvider())
-        print(report.summary)
-        #expect(report.fixtureCount == 9)
+    func fullBenchmarkPaddleOCR() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
+            let report = OCRCompanionBenchmark.runBenchmark(provider: PaddleOCRProvider())
+            print(report.summary)
+            #expect(report.fixtureCount == 9)
+        }
     }
 
     @Test("Full benchmark: Marker produces Markdown output")
-    func fullBenchmarkMarker() {
-        let report = OCRCompanionBenchmark.runBenchmark(provider: MarkerProvider())
-        print(report.summary)
-        #expect(report.fixtureCount == 9)
+    func fullBenchmarkMarker() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
+            let report = OCRCompanionBenchmark.runBenchmark(provider: MarkerProvider())
+            print(report.summary)
+            #expect(report.fixtureCount == 9)
+        }
     }
 
     @Test("Cross-provider: all 5 providers produce results on clean English")
-    func crossProviderAllProducers() {
-        let providers: [any BenchmarkOCRProvider] = [
-            PDFKitOCRProvider(),
-            TesseractProvider(),
-            VisionFrameworkOCRProvider(),
-            PaddleOCRProvider(),
-            MarkerProvider(),
-        ]
-        for provider in providers {
-            let report = OCRCompanionBenchmark.runBenchmark(provider: provider)
-            print("[\(provider.name)] fixtures=\(report.fixtureCount) summary=\(report.summary)")
-            #expect(report.fixtureCount >= 1, "\(provider.name) should process at least 1 fixture")
+    func crossProviderAllProducers() async throws {
+        try await SharedHeavyTestResourceLock.withLock {
+            let providers: [any BenchmarkOCRProvider] = [
+                PDFKitOCRProvider(),
+                TesseractProvider(),
+                VisionFrameworkOCRProvider(),
+                PaddleOCRProvider(),
+                MarkerProvider(),
+            ]
+            for provider in providers {
+                let report = OCRCompanionBenchmark.runBenchmark(provider: provider)
+                print("[\(provider.name)] fixtures=\(report.fixtureCount) summary=\(report.summary)")
+                #expect(report.fixtureCount >= 1, "\(provider.name) should process at least 1 fixture")
+            }
         }
+    }
+}
+
+/// Swift Testing schedules heavy cases concurrently, and SwiftPM may also run
+/// test processes concurrently, so OCR shares a named semaphore with the
+/// recovery crash-interruption harness.
+private enum SharedHeavyTestResourceLock {
+    private static let name = "/pdf-editor-heavy"
+
+    static func withLock<T>(_ operation: () throws -> T) async throws -> T {
+        let failed = UnsafeMutablePointer<sem_t>(bitPattern: -1)
+        guard let semaphore = sem_open(name, O_CREAT, S_IRUSR | S_IWUSR, 1), semaphore != failed else {
+            throw NSError(
+                domain: "PDFEditorCoreTests",
+                code: 2,
+                userInfo: [NSLocalizedDescriptionKey: "Could not open heavy test resource semaphore"]
+            )
+        }
+        var acquired = false
+        while !acquired {
+            if sem_trywait(semaphore) == 0 {
+                acquired = true
+            } else if errno == EAGAIN || errno == EINTR {
+                try await Task.sleep(nanoseconds: 20_000_000)
+            } else {
+                break
+            }
+        }
+        guard acquired else {
+            _ = sem_close(semaphore)
+            throw NSError(
+                domain: "PDFEditorCoreTests",
+                code: 3,
+                userInfo: [NSLocalizedDescriptionKey: "Could not acquire heavy test resource semaphore"]
+            )
+        }
+        defer {
+            _ = sem_post(semaphore)
+            _ = sem_close(semaphore)
+        }
+        return try operation()
     }
 }

@@ -42,7 +42,9 @@
 
 ## Audits — Content-Invariant Raster Extraction (2026-08-31)
 - `docs/audits/content-invariant-raster-extraction-2026-08-31.md` — projection profiles unlocked 12× weight increase (0.02→0.24). Edge detection and structural occupancy wired at minimal weight (5% combined) because cell-level operations add rendering noise. Region-based extraction (flood-fill) also implemented. 44-fixture calibration corpus.
-- `docs/audits/blend-sweep-binding-constraint-analysis-2026-09-03.md` — graded occupancy (cosine similarity) fixes the binding constraint: all 19 raster weight configurations now pass (0.02–0.20), gap improved from 0.045 to 0.44.
+- `docs/audits/blend-sweep-binding-constraint-analysis-2026-09-03.md` — graded occupancy (cosine similarity) fixes the binding constraint: all 19 raster weight configurations now pass (0.02–0.20), gap improved from 0.045 to 0.44. **Updated 2026-09-08:** the 85/8/7 blend-sweep row itself now passes (0.9104, zero evidence promotions) via multi-scale graded occupancy (16/64pt), raster-only-page exclusion from cell channels, and rotation-aware geometry — pinned permanently by `RasterBlendCalibrationGateTests` (RG-139).
+- `docs/audits/ocr-confirm-lane-withtimeout-crash-fix-2026-09-08.md` — EXC_BREAKPOINT crash in `OCRConfirmLane.withTimeout` under load (dynamic exclusivity violation on the captured result box) fixed; timeout degrades to abstention, never a torn read.
+- `docs/audits/graded-occupancy-implementation-2026-09-03.md` — **Addendum 2026-09-08:** the original 4pt/0.15-scale graded occupancy was degenerate (single pixel sample per cell — binary in disguise); reworked to 16/64pt cells on a 0.5-scale render, genuinely fractional (falsifier in `RasterBlendCalibrationGateTests`).
 - `docs/audits/graded-occupancy-implementation-2026-09-03.md` — implementation details: GradedCell struct, extractGradedOccupancy, cosine similarity, backward compatibility.
 
 ## Audits — Radio & Choice Fixture Hardening (2026-09-06)

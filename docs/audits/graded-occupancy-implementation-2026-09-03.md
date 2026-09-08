@@ -80,5 +80,29 @@ Two pre-existing failures unrelated to this change:
 
 **Both resolved 2026-09-06** (plus RecentDocumentHistoryTests /private/var vs /var symlink mismatch — the third known pre-existing failure):
 - ManifestFieldPresenceGate: the test compared the manifest's pikepdf field-tree count (`/Fields` = [hybridField], 1) against PDFKit's page-widget count (6 base-form annotations orphaned when `write_xfa` rebuilt the AcroForm) — a semantics conflation, not a fixture defect (fixture sha256 matches the manifest exactly). The test now counts field-tree entries with pikepdf semantics.
-- RecoveryCrashInterruption: load-tolerant child-startup deadline (20s → 60s) with harness-failure diagnostics — the child pays spawn + model init + full inspection before emitting its phase, which exceeded 20s under heavy machine load.
+- RecoveryCrashInterruption: load-tolerant child-startup deadline (20s → 240s) with harness-failure diagnostics; after full-suite evidence showed five OCR provider jobs could still starve the child across SwiftPM test targets, the heavy lanes now share a process-level lock so the deadline remains a genuine hung-child bound rather than a contention workaround.
 - RecentDocumentHistory: falsified test premise — bookmark resolution TRACKS same-volume renames (resolved URL = moved.pdf, file exists — better than the assumed stale-path behavior) and canonicalizes /var → /private/var (symlink traversal `standardizedFileURL` does not perform). Test now compares symlink-resolved URLs on both sides and measures current bookmark semantics.
+
+## Addendum (2026-09-08): multi-scale rework — the 2026-09-03 version was degenerate
+
+**Observed (blend-sweep calibration probe, 2026-09-08):** the original
+`extractGradedOccupancy` rendered at 0.15 scale with 4pt cells — a 4pt cell
+spans ~0.6 px at that scale, so each cell's "fractional coverage" was a
+**single pixel sample**: coverage ∈ {0, 1}, i.e. binary in disguise. The
+cosine similarity was operating on binary data with extra steps.
+
+**Verified fix (2026-09-07/08, in `ContentInvariantRasterExtractor.swift`):**
+
+- `gradedScales: [16.0, 64.0]` — coarse grids only; the degenerate 4pt scale
+  is dropped from the graded channel.
+- Render scale 0.15 → 0.5: a 16pt cell spans ~8 px/side (~64 samples), a
+  64pt cell ~32 px/side (~1024 samples) — coverage is genuinely fractional.
+- Measured on the corpus: 439 distinct coverage values (3dp), 3.7% exactly-0/1
+  cells (vs 629/16.6% under an intermediate ungated version; the 2026-09-03
+  original was ~100% degenerate).
+- `gradedOccupancySimilarity` keys vectors by (scale, col, row) so the two
+  grids cannot collide; `GradedCell` gained a `scale` field with explicit
+  backward-compatible Codable (old records decode with scale 0 sentinel).
+
+**Falsifier:** `RasterBlendCalibrationGateTests.gradedOccupancyIsFractional`
+(≥20 distinct coverage values, <10% degenerate cells, scales == {16, 64}).

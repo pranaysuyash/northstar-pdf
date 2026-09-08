@@ -61,6 +61,22 @@ struct RecoveryCrashInterruptionTests {
     expectedGeneration: Int?,
     expectedOperationCount: Int
   ) async throws {
+    try await SharedHeavyTestResourceLock.withLock {
+      try await assertInterruptionUnlocked(
+        phase: phase,
+        mode: mode,
+        expectedGeneration: expectedGeneration,
+        expectedOperationCount: expectedOperationCount
+      )
+    }
+  }
+
+  private func assertInterruptionUnlocked(
+    phase: RecoveryInterruptionPhase,
+    mode: ScenarioMode,
+    expectedGeneration: Int?,
+    expectedOperationCount: Int
+  ) async throws {
     let rootURL = fileManager.temporaryDirectory
       .appendingPathComponent("pdf-editor-recovery-interruption-\(UUID().uuidString)", isDirectory: true)
     try fileManager.createDirectory(at: rootURL, withIntermediateDirectories: true)
@@ -199,5 +215,46 @@ struct RecoveryCrashInterruptionTests {
       code: 1,
       userInfo: [NSLocalizedDescriptionKey: "Recovery interruption harness was not built."]
     )
+  }
+}
+
+/// Serializes the two process-heavy integration lanes across Swift Testing
+/// tasks and SwiftPM test processes. A suite-local `.serialized` trait cannot
+/// prevent OCR workers from starving the recovery child-process handshake.
+private enum SharedHeavyTestResourceLock {
+  private static let name = "/pdf-editor-heavy"
+
+  static func withLock<T>(_ operation: () async throws -> T) async throws -> T {
+    let failed = UnsafeMutablePointer<sem_t>(bitPattern: -1)
+    guard let semaphore = sem_open(name, O_CREAT, S_IRUSR | S_IWUSR, 1), semaphore != failed else {
+      throw NSError(
+        domain: "PDFEditorAppRecoveryTests",
+        code: 2,
+        userInfo: [NSLocalizedDescriptionKey: "Could not open heavy test resource semaphore"]
+      )
+    }
+    var acquired = false
+    while !acquired {
+      if sem_trywait(semaphore) == 0 {
+        acquired = true
+      } else if errno == EAGAIN || errno == EINTR {
+        try await Task.sleep(nanoseconds: 20_000_000)
+      } else {
+        break
+      }
+    }
+    guard acquired else {
+      _ = sem_close(semaphore)
+      throw NSError(
+        domain: "PDFEditorAppRecoveryTests",
+        code: 3,
+        userInfo: [NSLocalizedDescriptionKey: "Could not acquire heavy test resource semaphore"]
+      )
+    }
+    defer {
+      _ = sem_post(semaphore)
+      _ = sem_close(semaphore)
+    }
+    return try await operation()
   }
 }

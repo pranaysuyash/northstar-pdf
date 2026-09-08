@@ -89,6 +89,9 @@ public struct ContentView: View {
   @State private var isGovernanceDashboardPresented = false
   @State private var isCompanionHealthPresented = false
   @State private var isHumanReviewPresented = false
+  @State private var isCanvasDropTargeted = false
+  @State private var droppedDocumentURL: URL?
+  @State private var isDropDisambiguationPresented = false
   // Apple Design §13: haptic trigger tokens
   @State private var hapticNew = UUID()
   @State private var hapticOpen = UUID()
@@ -126,10 +129,6 @@ public struct ContentView: View {
           }
         }
       }
-      .toolbarVisibility(
-        showsDocumentToolbar ? .visible : .hidden,
-        for: .windowToolbar
-      )
       .onAppear {
         NotificationCenter.default.addObserver(
           forName: .contentRoutingResult,
@@ -352,6 +351,42 @@ public struct ContentView: View {
       reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.25, dampingFraction: 0.8),
       value: isAgentCommandPresented
     )
+    .onDrop(of: [UTType.pdf.identifier], isTargeted: $isCanvasDropTargeted) { providers in
+      handleCanvasDroppedPDF(providers)
+    }
+    .sheet(isPresented: $isDropDisambiguationPresented) {
+      if let droppedURL = droppedDocumentURL {
+        DocumentDropDisambiguationSheet(
+          droppedURL: droppedURL,
+          currentFileName: model.inspection?.source.fileName ?? "Current Document",
+          hasUnsavedEdits: !model.operations.isEmpty,
+          onOpenNewWindow: {
+            isDropDisambiguationPresented = false
+            NSWorkspace.shared.open(
+              [droppedURL],
+              withApplicationAt: Bundle.main.bundleURL,
+              configuration: NSWorkspace.OpenConfiguration()
+            )
+          },
+          onCompareSideBySide: {
+            isDropDisambiguationPresented = false
+            model.openDiffComparison()
+          },
+          onAppendPages: {
+            isDropDisambiguationPresented = false
+            model.insertPages(from: droppedURL)
+          },
+          onSwitchDocument: {
+            isDropDisambiguationPresented = false
+            model.open(url: droppedURL)
+          },
+          onCancel: {
+            isDropDisambiguationPresented = false
+            droppedDocumentURL = nil
+          }
+        )
+      }
+    }
     .onChange(of: model.selectedPageIndex) { _, _ in model.scheduleViewStateAutosave() }
     .onChange(of: model.selectedFieldID) { _, _ in model.scheduleViewStateAutosave() }
     .onChange(of: model.selectedCandidateID) { _, _ in model.scheduleViewStateAutosave() }
@@ -510,6 +545,39 @@ public struct ContentView: View {
       }
       Task { @MainActor in
         model.open(url: destination)
+      }
+    }
+    return true
+  }
+
+  private func handleCanvasDroppedPDF(_ providers: [NSItemProvider]) -> Bool {
+    guard let provider = providers.first else { return false }
+    provider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.pdf.identifier) { url, inPlace, error in
+      guard let url else {
+        Task { @MainActor in
+          model.alertMessage = "Could not open the dropped PDF: \(error?.localizedDescription ?? "the provider returned no file")"
+        }
+        return
+      }
+      let targetURL: URL
+      if inPlace {
+        targetURL = url
+      } else {
+        let destination = FileManager.default.temporaryDirectory
+          .appendingPathComponent("PDFEditor-Drop-\(UUID().uuidString).pdf")
+        do {
+          try FileManager.default.copyItem(at: url, to: destination)
+          targetURL = destination
+        } catch {
+          Task { @MainActor in
+            model.alertMessage = "Could not copy the dropped PDF: \(error.localizedDescription)"
+          }
+          return
+        }
+      }
+      Task { @MainActor in
+        self.droppedDocumentURL = targetURL
+        self.isDropDisambiguationPresented = true
       }
     }
     return true
@@ -1016,9 +1084,11 @@ private struct RecoveryStatusBanner: View {
   @Bindable var model: AppModel
   @State private var isDetailsExpanded = false
   @State private var isDiscardConfirmationPresented = false
+  @State private var isDismissed = false
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private var hasRecoveryState: Bool {
+    if isDismissed { return false }
     switch model.recoveryStatus {
     case .none:
       return !model.recoveryRecords.isEmpty || !model.recoveryDiagnostics.isEmpty
@@ -1118,6 +1188,20 @@ private struct RecoveryStatusBanner: View {
           .foregroundStyle(.secondary)
           .accessibilityLabel(isDetailsExpanded ? "Hide recovery details" : "Show recovery details")
           .help(isDetailsExpanded ? "Hide recovery details" : "Show recovery details")
+
+          // Dismiss button
+          Button {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.75)) {
+              isDismissed = true
+            }
+          } label: {
+            Image(systemName: "xmark")
+              .font(.caption2.weight(.bold))
+          }
+          .buttonStyle(.borderless)
+          .foregroundStyle(.secondary)
+          .accessibilityLabel("Dismiss recovery status")
+          .help("Dismiss recovery notification")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -2263,3 +2347,125 @@ private struct AppearanceSettingsSection: View {
     }
   }
 }
+
+// MARK: - Document Drop Disambiguation Sheet (TASK-A5 / D-086)
+
+struct DocumentDropDisambiguationSheet: View {
+  let droppedURL: URL
+  let currentFileName: String
+  let hasUnsavedEdits: Bool
+  let onOpenNewWindow: () -> Void
+  let onCompareSideBySide: () -> Void
+  let onAppendPages: () -> Void
+  let onSwitchDocument: () -> Void
+  let onCancel: () -> Void
+
+  var body: some View {
+    VStack(spacing: 16) {
+      HStack(spacing: 12) {
+        ZStack {
+          RoundedRectangle(cornerRadius: 10, style: .continuous)
+            .fill(Color.accentColor.opacity(0.15))
+            .frame(width: 44, height: 44)
+          Image(systemName: "doc.on.doc.fill")
+            .font(.title3)
+            .foregroundStyle(Color.accentColor)
+        }
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text("Document Dropped onto Workspace")
+            .font(.headline)
+          Text("“\(droppedURL.lastPathComponent)”")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+        Spacer()
+      }
+
+      Text("Choose how to handle this document relative to your open file (\(currentFileName)):")
+        .font(.callout)
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .fixedSize(horizontal: false, vertical: true)
+
+      VStack(spacing: 8) {
+        Button {
+          onOpenNewWindow()
+        } label: {
+          HStack {
+            Label("Open in New Window", systemImage: "macwindow.badge.plus")
+              .font(.body.weight(.medium))
+            Spacer()
+            Text("Recommended")
+              .font(.caption2.weight(.bold))
+              .foregroundStyle(Color.accentColor)
+              .padding(.horizontal, 7)
+              .padding(.vertical, 2.5)
+              .background(Color.accentColor.opacity(0.12), in: Capsule())
+          }
+          .padding(8)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+
+        Button {
+          onCompareSideBySide()
+        } label: {
+          HStack {
+            Label("Compare Side-by-Side (Diff)", systemImage: "rectangle.split.2x1")
+              .font(.body.weight(.medium))
+            Spacer()
+          }
+          .padding(8)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+
+        Button {
+          onAppendPages()
+        } label: {
+          HStack {
+            Label("Append Pages to Current Document", systemImage: "doc.badge.plus")
+              .font(.body.weight(.medium))
+            Spacer()
+          }
+          .padding(8)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+
+        Button {
+          onSwitchDocument()
+        } label: {
+          HStack {
+            Label(
+              hasUnsavedEdits ? "Switch Document (Unsaved Edits Exist)" : "Switch to This Document",
+              systemImage: "arrow.triangle.swap"
+            )
+            .font(.body.weight(.medium))
+            Spacer()
+            if hasUnsavedEdits {
+              Text("Warning")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.orange)
+            }
+          }
+          .padding(8)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+      }
+
+      HStack {
+        Spacer()
+        Button("Cancel") {
+          onCancel()
+        }
+        .keyboardShortcut(.cancelAction)
+      }
+    }
+    .padding(20)
+    .frame(width: 480)
+  }
+}
+

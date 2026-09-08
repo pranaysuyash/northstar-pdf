@@ -237,6 +237,11 @@ public struct DocumentCanvasView: View {
             model.selectedAnnotationID = nil
             isAnnotationToolbarVisible = false
             selectedAnnotationText = ""
+          },
+          onVisiblePageChanged: { newIndex in
+            if model.selectedPageIndex != newIndex {
+              model.selectedPageIndex = newIndex
+            }
           }
         )
       }
@@ -998,6 +1003,7 @@ public struct PDFKitView: NSViewRepresentable {
   public let onDismissInlineEditor: () -> Void
   public let onTextSelectionChanged: ((String, PDFRect, Int) -> Void)?
   public let onSelectionCleared: (() -> Void)?
+  public let onVisiblePageChanged: ((Int) -> Void)?
 
   public init(
     document: PDFDocument?,
@@ -1023,7 +1029,8 @@ public struct PDFKitView: NSViewRepresentable {
     onCommitInlineEditor: @escaping (String) -> Void,
     onDismissInlineEditor: @escaping () -> Void,
     onTextSelectionChanged: ((String, PDFRect, Int) -> Void)? = nil,
-    onSelectionCleared: (() -> Void)? = nil
+    onSelectionCleared: (() -> Void)? = nil,
+    onVisiblePageChanged: ((Int) -> Void)? = nil
   ) {
     self.document = document
     self.renderingPipeline = renderingPipeline
@@ -1049,6 +1056,7 @@ public struct PDFKitView: NSViewRepresentable {
     self.onDismissInlineEditor = onDismissInlineEditor
     self.onTextSelectionChanged = onTextSelectionChanged
     self.onSelectionCleared = onSelectionCleared
+    self.onVisiblePageChanged = onVisiblePageChanged
   }
 
   private final class ProjectionObserverTokenStore {
@@ -1083,6 +1091,7 @@ public struct PDFKitView: NSViewRepresentable {
     weak var inlineEditorHostView: NSView?
     private let projectionObserverTokenStore = ProjectionObserverTokenStore()
     var lastNavigatedPageIndex: Int?
+    var onVisiblePageChanged: ((Int) -> Void)?
     var lastSearchSignature: String?
     var lastScaleSignature: String?
     var lastDisplayMode: PDFDisplayMode?
@@ -1213,6 +1222,12 @@ public struct PDFKitView: NSViewRepresentable {
               self.tileOverlay?.currentScale = view.scaleFactor
               self.tileOverlay?.viewportRect = view.currentPage?.bounds(for: view.displayBox) ?? .zero
               self.tileOverlay?.forceReload()
+
+              // Propagate visible page change to application model
+              if self.lastNavigatedPageIndex != pageIndex {
+                self.lastNavigatedPageIndex = pageIndex
+                self.onVisiblePageChanged?(pageIndex)
+              }
             }
           }
         }
@@ -1336,6 +1351,7 @@ public struct PDFKitView: NSViewRepresentable {
     view.onPageTap = onPageTap
     view.onTextSelectionChanged = onTextSelectionChanged
     view.onSelectionCleared = onSelectionCleared
+    context.coordinator.onVisiblePageChanged = onVisiblePageChanged
     view.onProjectionInvalidated = { @MainActor [weak coordinator = context.coordinator] in
       coordinator?.invalidateOverlay()
     }

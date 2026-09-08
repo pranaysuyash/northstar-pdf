@@ -263,6 +263,14 @@ private struct PDFEditorWindow: View {
                         model.isSecurityVaultPresented = true
                     }
                 }
+                if model.inspection == nil {
+                    if let envPath = ProcessInfo.processInfo.environment["PDF_EDITOR_OPEN_SOURCE"],
+                       FileManager.default.fileExists(atPath: envPath) {
+                        model.open(url: URL(fileURLWithPath: envPath))
+                    } else if let argPath = CommandLine.arguments.dropFirst().first(where: { $0.lowercased().hasSuffix(".pdf") && FileManager.default.fileExists(atPath: $0) }) {
+                        model.open(url: URL(fileURLWithPath: argPath))
+                    }
+                }
             }
     }
 }

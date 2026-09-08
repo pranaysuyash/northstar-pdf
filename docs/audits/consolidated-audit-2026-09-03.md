@@ -184,3 +184,19 @@ The project demonstrates **strong alignment** across all three audit dimensions 
 - **PopplerRenderer similarity:** Placeholder implementation (byte-identical check only). Needs real bitmap comparison for production.
 
 **Overall verdict:** All new work is HEALTHY across all three audit dimensions. No defects found. One MEDIUM debt item (PopplerRenderer similarity).
+
+## Addendum (2026-09-08): PopplerRenderer similarity debt closed
+
+The "Remaining risks" MEDIUM item above is stale: `structuralSimilarity`
+is no longer a byte-identical-only check. The implementation (verified
+on-disk 2026-09-08) decodes both PNGs via ImageIO, downsamples each to a
+32×32 device-gray grid (CGContext, low interpolation), and returns
+`1 − normalized mean absolute pixel difference`, short-circuiting to 1.0
+only for byte-identical inputs. Undecodable images return `nil` — callers
+must treat that as unknown, never as a score (fail-closed read-back
+contract).
+
+Falsifier for the debt's closure: `PopplerRendererTests` exercises
+non-identical renders through `structuralSimilarity` and asserts a
+score strictly between the byte-identical short-circuit and the
+undecodable `nil` path.

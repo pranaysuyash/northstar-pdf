@@ -56,6 +56,10 @@ let package = Package(
             name: "PDFPerformanceBenchmark",
             targets: ["PDFPerformanceBenchmark"]
         ),
+        .executable(
+            name: "PDFReviewStatus",
+            targets: ["PDFReviewStatus"]
+        ),
     ],
 
     targets: [
@@ -102,6 +106,10 @@ let package = Package(
         ),
         .executableTarget(
             name: "PDFPerformanceBenchmark",
+            dependencies: ["PDFEditorCore"]
+        ),
+        .executableTarget(
+            name: "PDFReviewStatus",
             dependencies: ["PDFEditorCore"]
         ),
         .testTarget(

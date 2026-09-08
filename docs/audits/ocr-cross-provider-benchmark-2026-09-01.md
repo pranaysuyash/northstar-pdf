@@ -89,3 +89,34 @@
 **PaddleOCR is a layout-dependent option** — perfect on single-column (0% WER), poor on multi-column (73% WER). Good for multilingual or when layout is simple.
 **Marker is deferred** — API instability in v2.0; needs wrapper rewrite. Surya backend is promising for PDF→Markdown conversion.
 **tesseract.js** — wired in browser lane (`compare_ocr_providers.mjs`), not benchmarked in Python lane.
+
+## Addendum (2026-09-08): PaddleOCR multi-column reading-order post-processing shipped
+
+The PaddleOCR 0.73 WER on the multi-column fixture was diagnosed as an
+*ordering* artifact, not a recognition failure: `predict()` returns lines in
+detection order, which interleaves side-by-side columns (L1,R1,L2,R2,…
+instead of L1,L2,L3,R1,R2,R3). The no-tuning-position stance is preserved —
+the fix operates on the wrapper's output ordering, never on recognition
+output or thresholds.
+
+New shared module `benchmark/ocr_reading_order.py`:
+- Band model — vertical bands, each read single-column (top-to-bottom) or
+  column-wise (left-to-right columns, top-to-bottom inside a column). A band
+  is read column-wise only when clustering yields 2+ columns with pairwise
+  disjoint x-extents (the newspaper rule); stacked/indented content falls
+  back to single-column order.
+- `normalize_paddle_result` handles PP-OCRv6 dict/object results, `rec_boxes`
+  (xywh) and `rec_polys` (4-point); missing geometry keeps engine order
+  honestly (no guessed ordering).
+- Deterministic: stable sorts with explicit tiebreakers, no randomness.
+- Built-in self-test (`python3 benchmark/ocr_reading_order.py`): 5/5 geometry
+  checks (two-column, stacked, indents, header+columns, empty); the first two
+  implementations failed these checks during development and were corrected —
+  recorded as evidence the tests are load-bearing.
+
+Wired into both `PaddleOCRProvider.extract_from_pdf` (compare_ocr_wer.py, the
+RG-136 gate lane) and `benchmark/paddleocr_wrapper.py`. Expected effect:
+multi-column WER 0.73 → near 0; the gate's PaddleOCR regression-only policy
+stays as-is until a re-run regenerates the baseline (`--update-baseline`,
+auditable in git). Falsifier: a regenerated multi-column PaddleOCR WER
+remaining > 0.10 despite non-empty box geometry.

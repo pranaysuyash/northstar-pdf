@@ -2555,9 +2555,9 @@ public func resetDocument() {
   }
 
   /// FillHighlight descriptors for the PDFKitView overlay layer.
-  /// Empty unless editorMode is .fill or .sign.
+  /// Shows fields/candidates in fill/sign modes, and ambient affordances in read/edit modes.
   public var fillHighlightRegions: [FillHighlight] {
-    guard let inspection, editorMode == .fill || editorMode == .sign else { return [] }
+    guard let inspection else { return [] }
     var highlights: [FillHighlight] = []
 
     if editorMode == .fill {
@@ -2588,7 +2588,7 @@ public func resetDocument() {
           label: candidate.effectiveDisplayName
         ))
       }
-    } else {
+    } else if editorMode == .sign {
       // Sign mode: only signature candidates
       for candidate in activeCandidates where candidate.entryMode == .signature {
         let isFocused = selectedCandidateID == candidate.id
@@ -2598,6 +2598,36 @@ public func resetDocument() {
           bounds: candidate.bounds,
           state: isFocused ? .focused : .signatureRegion,
           label: candidate.effectiveDisplayName
+        ))
+      }
+    } else {
+      // Read and Edit modes: show ambient affordances for detected interactive fields
+      // so the user immediately sees where fillable fields exist and can click them directly.
+      for field in inspection.fields {
+        let isFocused = selectedFieldID == field.id
+        let state: FillHighlight.State = isFocused ? .focused : .nativeField
+        highlights.append(FillHighlight(
+          id: "field:\(field.id)",
+          pageIndex: field.pageIndex,
+          bounds: field.bounds,
+          state: state,
+          label: isFocused ? field.name : nil
+        ))
+      }
+      for candidate in activeCandidates {
+        let isFocused = selectedCandidateID == candidate.id
+        let isFilled = candidate.status == .confirmed
+        let state: FillHighlight.State
+        if isFocused { state = .focused }
+        else if candidate.entryMode == .signature { state = .signatureRegion }
+        else if isFilled { state = .candidateFilled }
+        else { state = .candidateUnfilled }
+        highlights.append(FillHighlight(
+          id: "candidate:\(candidate.id.uuidString)",
+          pageIndex: candidate.pageIndex,
+          bounds: candidate.bounds,
+          state: state,
+          label: isFocused ? candidate.effectiveDisplayName : nil
         ))
       }
     }

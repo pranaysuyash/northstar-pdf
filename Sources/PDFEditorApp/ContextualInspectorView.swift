@@ -128,113 +128,226 @@ public struct ContextualInspectorView: View {
   // MARK: - Complete Tab (case focus; raw value "Complete")
   private var focusTabContent: some View {
     VStack(alignment: .leading, spacing: 16) {
-      // 1. Evidence Rail
-      contextEvidenceRail
+      if let mark = selectedAnnotation {
+        // Selection Scope: Annotation
+        selectedAnnotationContextCard(mark)
+        selectedAnnotationCard(mark)
+      } else if let candidate = model.selectedCandidate {
+        // Selection Scope: Candidate Region
+        selectedCandidateContextCard(candidate)
+        selectedCandidateCard(candidate)
+      } else if let field = model.selectedField {
+        // Selection Scope: Native Form Field
+        selectedNativeFieldContextCard(field)
+        selectedNativeFieldCard(field)
+      } else {
+        // Document Scope: No entity selected
+        documentOverviewCard
+        authoringToolsPalette
+        detectedFieldsNavigator
+        profileBulkFillCard
+        candidateSuggestionsList
+      }
 
-      // 1a. Explain quiet contextual projections without turning the canvas
+      // Explain quiet contextual projections without turning the canvas
       // menu into a disabled command inventory.
       adaptiveCommandStatusSection
 
-      if let mark = selectedAnnotation {
-        selectedAnnotationCard(mark)
-      }
-
-      // 2. Authoring Toolbar
-      authoringToolsPalette
-
-      // 3. Selected Candidate Card
-      if let candidate = model.selectedCandidate {
-        selectedCandidateCard(candidate)
-      }
-
-      // 4. Selected Native Field Card
-      if let field = model.selectedField {
-        selectedNativeFieldCard(field)
-      }
-
-      // 5. Quick Bulk Fill Card
-      profileBulkFillCard
-
-      // 6. Active Suggested Areas List
-      candidateSuggestionsList
-
-      // 7. Search Matches (if any)
+      // Search Matches (if any)
       if !model.searchMatches.isEmpty {
         searchMatchesSection
       }
     }
+    .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedFieldID)
+    .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedCandidateID)
+    .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedAnnotationID)
   }
 
   @ViewBuilder
   private var contextEvidenceRail: some View {
     if let mark = selectedAnnotation {
-      evidenceRail(
-        title: "Selected annotation",
-        symbol: mark.type.symbolName,
-        source: "Page \(mark.pageIndex + 1)",
-        provider: "Local annotation sidecar",
-        confidence: "User-authored",
-        limitation: mark.note.isEmpty
-          ? "This mark is stored separately from the source PDF."
-          : "The note is commentary and does not change source PDF bytes.",
-        nextAction: "Use the contextual menu to inspect this annotation."
-      )
+      selectedAnnotationContextCard(mark)
     } else if let candidate = model.selectedCandidate {
-      let explanation = SuggestionExplainer.explain(candidate)
-      evidenceRail(
-        title: "Detected suggestion",
-        symbol: "scope",
-        source: "Page \(candidate.pageIndex + 1)",
-        provider: explanation.providerID,
-        confidence: confidenceLabel(candidate.score),
-        limitation: candidate.fusion?.state == "supported"
-          ? "Independent signals agree, but the region still needs your confirmation."
-          : "Evidence is mixed or limited; confirm the region before applying it.",
-        nextAction: candidate.isDirectlyEditable
-          ? "Review the value and place it when ready."
-          : "Review the suggested region before marking it."
-      )
+      selectedCandidateContextCard(candidate)
     } else if let field = model.selectedField {
-      evidenceRail(
-        title: "Native PDF field",
-        symbol: "checkmark.square",
-        source: "Page \(field.pageIndex + 1)",
-        provider: inspection.provenance.fieldInspector,
-        confidence: "Source structure",
-        limitation: "Confirm the field value and export behavior before delivery.",
-        nextAction: "Use the field editor or Fill mode to complete it."
-      )
+      selectedNativeFieldContextCard(field)
     } else {
-      evidenceRail(
-        title: "Document context",
-        symbol: "doc.text.magnifyingglass",
-        source: inspection.source.fileName,
-        provider: inspection.provenance.textExtractor,
-        confidence: "Source inspection",
-        limitation: inspection.warnings.first ?? "No selected object is being interpreted.",
-        nextAction: "Select text, a field, or a suggestion to reveal its evidence."
-      )
+      documentOverviewCard
     }
   }
 
-  private func evidenceRail(
-    title: String,
-    symbol: String,
-    source: String,
-    provider: String,
-    confidence: String,
-    limitation: String,
-    nextAction: String
-  ) -> some View {
+  private var documentOverviewCard: some View {
     VStack(alignment: .leading, spacing: 10) {
       HStack(spacing: 8) {
-        Image(systemName: symbol)
+        Image(systemName: "doc.text")
           .font(.system(size: 14, weight: .semibold))
           .foregroundStyle(Color.accentColor)
-        Text(title)
+        Text(inspection.source.fileName)
           .font(.subheadline.weight(.semibold))
+          .lineLimit(1)
         Spacer()
-        Text("EVIDENCE")
+        Text("DOCUMENT")
+          .font(.system(size: 9, weight: .bold, design: .monospaced))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+          .foregroundStyle(.secondary)
+      }
+
+      HStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("PAGES")
+            .font(.caption2.weight(.bold))
+            .foregroundStyle(.tertiary)
+          Text("\(inspection.pages.count)")
+            .font(.caption.weight(.medium))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text("FILLABLE")
+            .font(.caption2.weight(.bold))
+            .foregroundStyle(.tertiary)
+          Text(inspection.fields.isEmpty ? "None" : "\(inspection.fields.count) field\(inspection.fields.count == 1 ? "" : "s")")
+            .font(.caption.weight(.medium))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+        VStack(alignment: .leading, spacing: 2) {
+          Text("STATUS")
+            .font(.caption2.weight(.bold))
+            .foregroundStyle(.tertiary)
+          HStack(spacing: 3) {
+            Circle()
+              .fill(Color.green)
+              .frame(width: 6, height: 6)
+            Text("Ready")
+              .font(.caption.weight(.medium))
+              .foregroundStyle(Color.primary)
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+      }
+    }
+    .padding(12)
+    .background(.thinMaterial)
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .shadow(color: Color.black.opacity(0.04), radius: 4, y: 1)
+  }
+
+  private var detectedFieldsNavigator: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack {
+        Label("Detected Fields", systemImage: "list.bullet.rectangle")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(.secondary)
+        Spacer()
+        if let label = model.fillProgressLabel {
+          Text(label)
+            .font(.caption2.weight(.medium))
+            .foregroundStyle(Color.accentColor)
+        }
+      }
+
+      if inspection.fields.isEmpty {
+        Text("No interactive form fields detected in this document.")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+          .padding(.vertical, 4)
+      } else {
+        VStack(spacing: 4) {
+          ForEach(inspection.fields) { field in
+            let isFilled = !model.currentValue(for: field).isEmpty
+            Button {
+              model.selectedFieldID = field.id
+              model.selectedCandidateID = nil
+              model.selectedAnnotationID = nil
+              model.jumpToPage(field.pageIndex)
+            } label: {
+              HStack(spacing: 8) {
+                Image(systemName: isFilled ? "checkmark.circle.fill" : "circle")
+                  .font(.system(size: 11))
+                  .foregroundStyle(isFilled ? Color.green : Color.secondary)
+
+                VStack(alignment: .leading, spacing: 1) {
+                  Text(field.name.isEmpty ? "Unnamed Field" : field.name)
+                    .font(.caption.weight(.medium))
+                    .lineLimit(1)
+                    .foregroundStyle(Color.primary)
+                  Text("p.\(field.pageIndex + 1) · \(field.kind.rawValue)")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if isFilled {
+                  Text(model.currentValue(for: field))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .frame(maxWidth: 80, alignment: .trailing)
+                } else {
+                  Text("Unfilled")
+                    .font(.system(size: 9, weight: .medium))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background(Color.primary.opacity(0.06), in: Capsule())
+                    .foregroundStyle(.secondary)
+                }
+
+                Image(systemName: "chevron.right")
+                  .font(.system(size: 9, weight: .semibold))
+                  .foregroundStyle(.tertiary)
+              }
+              .padding(.horizontal, 8)
+              .padding(.vertical, 6)
+              .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                  .fill(model.selectedFieldID == field.id ? Color.accentColor.opacity(0.12) : Color.primary.opacity(0.03))
+              )
+            }
+            .buttonStyle(.plain)
+          }
+        }
+      }
+    }
+    .padding(12)
+    .background(.thinMaterial)
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .shadow(color: Color.black.opacity(0.04), radius: 4, y: 1)
+  }
+
+  private func selectedAnnotationContextCard(_ mark: AnnotationMark) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Button {
+          model.selectedAnnotationID = nil
+        } label: {
+          HStack(spacing: 4) {
+            Image(systemName: "chevron.left")
+              .font(.system(size: 10, weight: .semibold))
+            Text("Document")
+              .font(.caption2.weight(.medium))
+          }
+          .padding(.horizontal, 6)
+          .padding(.vertical, 3)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .help("Return to document overview")
+
+        Spacer()
+
+        Text("PAGE \(mark.pageIndex + 1)")
           .font(.system(size: 9, weight: .bold, design: .monospaced))
           .padding(.horizontal, 6)
           .padding(.vertical, 2)
@@ -242,27 +355,128 @@ public struct ContextualInspectorView: View {
           .foregroundStyle(Color.accentColor)
       }
 
-      HStack(alignment: .top, spacing: 12) {
-        evidenceRailMetric("Source", source)
-        evidenceRailMetric("Provider", provider)
-        evidenceRailMetric("Confidence", confidence)
+      HStack(spacing: 8) {
+        Image(systemName: mark.type.symbolName)
+          .font(.system(size: 14, weight: .semibold))
+          .foregroundStyle(Color.accentColor)
+        Text(mark.type.displayName)
+          .font(.subheadline.weight(.semibold))
       }
 
-      Label(limitation, systemImage: "exclamationmark.triangle")
-        .font(.caption2)
-        .foregroundStyle(.secondary)
-        .fixedSize(horizontal: false, vertical: true)
-
-      Label(nextAction, systemImage: "arrow.right.circle")
-        .font(.caption.weight(.medium))
-        .foregroundStyle(Color.accentColor)
-        .fixedSize(horizontal: false, vertical: true)
+      if !mark.selectedText.isEmpty {
+        Text("\"\(mark.selectedText)\"")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+          .lineLimit(2)
+      }
     }
     .padding(12)
     .background(.thinMaterial)
     .overlay(
       RoundedRectangle(cornerRadius: 10, style: .continuous)
         .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .shadow(color: Color.black.opacity(0.04), radius: 4, y: 1)
+  }
+
+  private func selectedCandidateContextCard(_ candidate: RegionCandidate) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Button {
+          model.selectedCandidateID = nil
+        } label: {
+          HStack(spacing: 4) {
+            Image(systemName: "chevron.left")
+              .font(.system(size: 10, weight: .semibold))
+            Text("Document")
+              .font(.caption2.weight(.medium))
+          }
+          .padding(.horizontal, 6)
+          .padding(.vertical, 3)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .help("Return to document overview")
+
+        Spacer()
+
+        Text("PAGE \(candidate.pageIndex + 1)")
+          .font(.system(size: 9, weight: .bold, design: .monospaced))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.orange.opacity(0.12), in: Capsule())
+          .foregroundStyle(Color.orange)
+      }
+
+      HStack(spacing: 8) {
+        Image(systemName: "scope")
+          .font(.system(size: 14, weight: .semibold))
+          .foregroundStyle(Color.orange)
+        Text(candidate.effectiveDisplayName.isEmpty ? "Detected Region" : candidate.effectiveDisplayName)
+          .font(.subheadline.weight(.semibold))
+      }
+
+      Text(candidate.isDirectlyEditable ? "Click to type into this field, or accept suggestion." : "Suggested region for marking or signing.")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+    }
+    .padding(12)
+    .background(.thinMaterial)
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .shadow(color: Color.black.opacity(0.04), radius: 4, y: 1)
+  }
+
+  private func selectedNativeFieldContextCard(_ field: NativeField) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Button {
+          model.selectedFieldID = nil
+        } label: {
+          HStack(spacing: 4) {
+            Image(systemName: "chevron.left")
+              .font(.system(size: 10, weight: .semibold))
+            Text("Document")
+              .font(.caption2.weight(.medium))
+          }
+          .padding(.horizontal, 6)
+          .padding(.vertical, 3)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .help("Return to document overview")
+
+        Spacer()
+
+        Text("PAGE \(field.pageIndex + 1)")
+          .font(.system(size: 9, weight: .bold, design: .monospaced))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.blue.opacity(0.12), in: Capsule())
+          .foregroundStyle(Color.blue)
+      }
+
+      HStack(spacing: 8) {
+        Image(systemName: "checkmark.square")
+          .font(.system(size: 14, weight: .semibold))
+          .foregroundStyle(Color.blue)
+        Text(field.name.isEmpty ? "Form Field" : field.name)
+          .font(.subheadline.weight(.semibold))
+      }
+
+      Text("Native form field ready for input or autofill.")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+    }
+    .padding(12)
+    .background(.thinMaterial)
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .stroke(Color.blue.opacity(0.2), lineWidth: 1)
     )
     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     .shadow(color: Color.black.opacity(0.04), radius: 4, y: 1)
@@ -1792,6 +2006,58 @@ public struct ContextualInspectorView: View {
             .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
         )
       }
+
+      // Engine & Execution Provenance Card
+      VStack(alignment: .leading, spacing: 8) {
+        Label("Engine & Execution Provenance", systemImage: "cpu")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(.secondary)
+
+        HStack {
+          Text("Rendering Provider")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          Spacer()
+          Text(model.usePipelineRendering ? "Custom Metal/CoreGraphics Pipeline" : "Apple PDFKit Native Engine")
+            .font(.caption2.weight(.medium))
+        }
+
+        HStack {
+          Text("Pipeline Mode")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          Spacer()
+          Text(model.usePipelineRendering ? "Direct Pipeline" : "Standard Bridge")
+            .font(.caption2.monospaced())
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+        }
+
+        HStack {
+          Text("Native Form Fields")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          Spacer()
+          Text("\(inspection.fields.count) parsed via AcroForm")
+            .font(.caption2)
+        }
+
+        HStack {
+          Text("Detected Candidates")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+          Spacer()
+          Text("\(model.activeCandidates.count) region(s)")
+            .font(.caption2)
+        }
+      }
+      .padding(12)
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+          .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+      )
 
       // Export Validation Status
       if let exportReport = model.exportReport {

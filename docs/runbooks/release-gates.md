@@ -182,10 +182,28 @@ The gate:
 - Writes `benchmark/results/control-viewer-gate-report.json` as the CI artifact.
 - Is deterministic across runs (same corpus → same verdict).
 
-**Current scope:** 16 governed fixtures (native-form, static-form). Scanned, rotated, encrypted, malformed, handwritten, mixed-content, and large classes are under-represented. A second independent viewer (Poppler, MuPDF) is not yet wired.
+**Current scope:** 38 governed fixtures across 14 document classes (2026-09-06 artifact, gate PASS); per-class coverage is reviewed at each release. The dual-engine wiring (Poppler) landed 2026-09-01; an additional independent viewer (MuPDF) is used in the preservation-sensitive gate (§5) rather than here.
 
 **Release rule:** The release disposition in §8 must not produce a `GO` if `report.gatePassed` is `false`.
 
-## 8. Release disposition
+## 8. Human visual confirmation gate (RG-135)
+
+Machine gates cannot attest that a render *looks right*. Before any version bump, the reviewer panel (`HumanReviewPanelView`, DEBUG-gated per D-074) must confirm every governed fixture against its current SHA-256 bytes.
+
+```sh
+swift test --filter "HumanVisualConfirmationTests"
+```
+
+The gate:
+- Reads the ledger + gate report at `benchmark/results/human-visual-confirmation/` (uploaded as CI artifacts).
+- Fails closed: `pending` until every governed fixture has a human confirmation bound to the fixture's current digest.
+- Any confirmation recorded against stale bytes (fixture edited since review) reverts that fixture to `pending`.
+- A reviewer-recorded failure blocks CI outright (uploaded gate report shows `gatePassed == false`).
+
+**Release rule:** A version bump must not run while RG-135 is not `PASS`. Until version-bump tooling exists, this is enforced by the disposition in §9: any release report citing a version bump without a `PASS` RG-135 gate report is invalid and must be rejected in review.
+
+## 9. Release disposition
 
 The release report must contain a gate table, failed gates, blocked gates, evidence links, supported subset, known limitations, rollback/recovery path, and a final `GO`, `NO-GO`, or scoped `GO` decision.
+
+Hard blockers (a `GO` is invalid while any of these is not `PASS`): RG-131 control-viewer observation (§7), RG-135 human visual confirmation (§8), and the AcroForm parity floors asserted by the CI AcroForm parity gate (`benchmark/results/acroform-parity/acroform-parity-gate-report.json`; checkbox/choice/text production_ready, radio honestly Mixed with documented reasons).

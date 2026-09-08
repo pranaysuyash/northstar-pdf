@@ -48,6 +48,9 @@ dist/
 /out.*
 /*.pdf
 
+# Local downloaded benchmark fixture (use the governed corpus under docs/benchmarks/)
+/benchmark/results/form6-voter-application.pdf
+
 # Agent-generated reports and task outputs
 outputs/
 

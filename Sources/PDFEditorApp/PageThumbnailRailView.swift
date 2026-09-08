@@ -59,14 +59,32 @@ public struct PageThumbnailRailView: View {
       Divider()
 
       // Pages List
-      ScrollView {
-        LazyVStack(spacing: 8) {
-          let counts = pageBadgeCounts
-          ForEach(inspection.pages) { page in
-            pageThumbnailCard(page, counts: counts)
+      ScrollViewReader { proxy in
+        ScrollView {
+          LazyVStack(spacing: 8) {
+            let counts = pageBadgeCounts
+            ForEach(inspection.pages) { page in
+              PageThumbnailCardView(
+                model: model,
+                page: page,
+                fieldCount: counts.fields[page.pageIndex, default: 0],
+                candidateCount: counts.candidates[page.pageIndex, default: 0],
+                redactionCount: counts.redactions[page.pageIndex, default: 0],
+                renderingPipeline: renderingPipeline,
+                canOrganizePages: canOrganizePages,
+                totalPages: inspection.pages.count,
+                onRecordOrganization: recordPageOrganization
+              )
+              .id(page.pageIndex)
+            }
+          }
+          .padding(10)
+        }
+        .onChange(of: model.selectedPageIndex) { _, newIndex in
+          withAnimation(.easeInOut(duration: 0.25)) {
+            proxy.scrollTo(newIndex, anchor: .center)
           }
         }
-        .padding(10)
       }
     }
     /* Apple Design §12: heavier material for structural sidebar */
@@ -99,16 +117,59 @@ public struct PageThumbnailRailView: View {
     return counts
   }
 
-  @ViewBuilder
-  private func pageThumbnailCard(
-    _ page: PageSnapshot,
-    counts: PageBadgeCounts
-  ) -> some View {
-    let isSelected = model.selectedPageIndex == page.pageIndex
-    let fieldCount = counts.fields[page.pageIndex, default: 0]
-    let candidateCount = counts.candidates[page.pageIndex, default: 0]
-    let redactionCount = counts.redactions[page.pageIndex, default: 0]
+  private var canOrganizePages: Bool {
+    let input = AdaptiveCommandContext.input(
+      model: model,
+      intent: .organize,
+      target: .pageThumbnail
+    )
+    return AdaptiveCommandPolicy.standard.assess(input)
+      .first { $0.command.id == .organizePages }?.state.isActionable ?? false
+  }
 
+  private func recordPageOrganization() {
+    AdaptiveCommandHistory.shared.record(.organizePages)
+  }
+}
+
+private struct PageThumbnailCardView: View {
+  let model: AppModel
+  let page: PageSnapshot
+  let fieldCount: Int
+  let candidateCount: Int
+  let redactionCount: Int
+  let renderingPipeline: RenderingPipeline
+  let canOrganizePages: Bool
+  let totalPages: Int
+  let onRecordOrganization: () -> Void
+
+  @State private var isHovered = false
+
+  var isSelected: Bool {
+    model.selectedPageIndex == page.pageIndex
+  }
+
+  private var cardBackground: Color {
+    if isSelected {
+      return Color.accentColor.opacity(0.12)
+    } else if isHovered {
+      return Color.primary.opacity(0.05)
+    } else {
+      return Color.clear
+    }
+  }
+
+  private var cardBorderColor: Color {
+    if isSelected {
+      return Color.accentColor.opacity(0.35)
+    } else if isHovered {
+      return Color.primary.opacity(0.12)
+    } else {
+      return Color.clear
+    }
+  }
+
+  var body: some View {
     Button {
       model.selectedPageIndex = page.pageIndex
     } label: {
@@ -178,72 +239,66 @@ public struct PageThumbnailRailView: View {
             }
           }
         }
+        Spacer(minLength: 0)
       }
       .padding(8)
-      .background(
-        isSelected ? Color.accentColor.opacity(0.10) : Color.clear
-      )
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background(cardBackground)
+      .contentShape(RoundedRectangle(cornerRadius: 8))
       .clipShape(RoundedRectangle(cornerRadius: 8))
-      .contextMenu {
-        if canOrganizePages {
-          Menu("Organize Page", systemImage: "rectangle.split.3x1") {
-            Button("Rotate Clockwise 90°", systemImage: "rotate.right") {
-              recordPageOrganization()
-              model.rotatePage(at: page.pageIndex, by: 90)
-            }
-            Button("Rotate Counter-Clockwise 90°", systemImage: "rotate.left") {
-              recordPageOrganization()
-              model.rotatePage(at: page.pageIndex, by: 270)
-            }
-            Divider()
-            if page.pageIndex > 0 {
-              Button("Move Page Up", systemImage: "arrow.up") {
-                recordPageOrganization()
-                model.movePage(from: page.pageIndex, to: page.pageIndex - 1)
-              }
-            }
-            if page.pageIndex < inspection.pages.count - 1 {
-              Button("Move Page Down", systemImage: "arrow.down") {
-                recordPageOrganization()
-                model.movePage(from: page.pageIndex, to: page.pageIndex + 1)
-              }
-            }
-            Divider()
-            Button("Insert Blank Page After", systemImage: "plus.rectangle") {
-              recordPageOrganization()
-              model.insertBlankPage(at: page.pageIndex + 1)
-            }
-            Divider()
-            Button("Delete Page", systemImage: "trash", role: .destructive) {
-              recordPageOrganization()
-              model.deletePage(at: page.pageIndex)
-            }
-            .disabled(inspection.pages.count <= 1)
-          }
-        } else {
-          Label("Page editing unavailable", systemImage: "lock")
-        }
-      }
+      .overlay(
+        RoundedRectangle(cornerRadius: 8)
+          .strokeBorder(cardBorderColor, lineWidth: 1)
+      )
     }
     .buttonStyle(.plain)
+    .onHover { hovering in
+      isHovered = hovering
+    }
+    .contextMenu {
+      if canOrganizePages {
+        Menu("Organize Page", systemImage: "rectangle.split.3x1") {
+          Button("Rotate Clockwise 90°", systemImage: "rotate.right") {
+            onRecordOrganization()
+            model.rotatePage(at: page.pageIndex, by: 90)
+          }
+          Button("Rotate Counter-Clockwise 90°", systemImage: "rotate.left") {
+            onRecordOrganization()
+            model.rotatePage(at: page.pageIndex, by: 270)
+          }
+          Divider()
+          if page.pageIndex > 0 {
+            Button("Move Page Up", systemImage: "arrow.up") {
+              onRecordOrganization()
+              model.movePage(from: page.pageIndex, to: page.pageIndex - 1)
+            }
+          }
+          if page.pageIndex < totalPages - 1 {
+            Button("Move Page Down", systemImage: "arrow.down") {
+              onRecordOrganization()
+              model.movePage(from: page.pageIndex, to: page.pageIndex + 1)
+            }
+          }
+          Divider()
+          Button("Insert Blank Page After", systemImage: "plus.rectangle") {
+            onRecordOrganization()
+            model.insertBlankPage(at: page.pageIndex + 1)
+          }
+          Divider()
+          Button("Delete Page", systemImage: "trash", role: .destructive) {
+            onRecordOrganization()
+            model.deletePage(at: page.pageIndex)
+          }
+          .disabled(totalPages <= 1)
+        }
+      } else {
+        Label("Page editing unavailable", systemImage: "lock")
+      }
+    }
     .accessibilityElement(children: .combine)
     .accessibilityLabel("Page \(page.pageLabel), \(page.characterCount) characters, \(fieldCount) fields, \(candidateCount) suggestions")
     .accessibilityHint("Selects page \(page.pageLabel)")
     .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : [.isButton])
-  }
-
-  private var canOrganizePages: Bool {
-    let input = AdaptiveCommandContext.input(
-      model: model,
-      intent: .organize,
-      target: .pageThumbnail
-    )
-    return AdaptiveCommandPolicy.standard.assess(input)
-      .first { $0.command.id == .organizePages }?.state.isActionable ?? false
-  }
-
-  private func recordPageOrganization() {
-    AdaptiveCommandHistory.shared.record(.organizePages)
   }
 }
 

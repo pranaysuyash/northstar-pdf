@@ -224,14 +224,34 @@ class PaddleOCRProvider:
         all_text = []
         total_conf = 0.0
         total_count = 0
-        
+
+        # Column-aware reading-order post-processing (2026-09-08): PaddleOCR
+        # returns lines in detection order, which interleaves side-by-side
+        # columns — the multi-column fixture measured WER 0.73 from ordering
+        # alone (recognition itself was correct). ocr_reading_order reorders
+        # boxes into bands/columns; when box geometry is unavailable the
+        # engine order is kept honestly (no guessed ordering).
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from ocr_reading_order import order_ocr_boxes, normalize_paddle_result
+        except ImportError:
+            order_ocr_boxes = None
+
         for img_file in sorted(Path(tmp_dir).glob("page-*.png")):
             result = ocr.predict(str(img_file))
             if result and len(result) > 0:
                 for page_result in result:
-                    texts = page_result.get('rec_texts', []) if isinstance(page_result, dict) else getattr(page_result, 'rec_texts', [])
                     scores = page_result.get('rec_scores', []) if isinstance(page_result, dict) else getattr(page_result, 'rec_scores', [])
-                    for txt, conf in zip(texts, scores):
+                    if order_ocr_boxes is not None:
+                        texts, boxes, scores = normalize_paddle_result(page_result)
+                        if boxes:
+                            page_texts = order_ocr_boxes(boxes)
+                        else:
+                            page_texts = texts  # no geometry: keep engine order
+                    else:
+                        texts = page_result.get('rec_texts', []) if isinstance(page_result, dict) else getattr(page_result, 'rec_texts', [])
+                        page_texts = texts
+                    for txt, conf in zip(page_texts, scores):
                         all_text.append(txt)
                         total_conf += conf
                         total_count += 1

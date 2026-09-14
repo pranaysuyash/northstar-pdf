@@ -2,8 +2,13 @@
 // Verifies three-way rendering and extraction conformance across PDFKit, PDF.js, and Poppler/MuPDF
 import assert from "node:assert";
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const FIXTURE_PATH = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
+// Repo root derived from this file's location (Tests/ -> repo root) so the
+// governed fixture resolves on any checkout, not just the owner's machine.
+const REPO_ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const FIXTURE_PATH = path.join(REPO_ROOT, "benchmark/results/public-sample-form.pdf");
 
 console.log("Running Multi-Engine 3-Way Conformance Validator...");
 

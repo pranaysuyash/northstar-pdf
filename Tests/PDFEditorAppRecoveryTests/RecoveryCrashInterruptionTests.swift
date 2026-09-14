@@ -119,8 +119,10 @@ struct RecoveryCrashInterruptionTests {
     // `swift test` run the OCR Companion Benchmark suite (~30 min of 5 real
     // OCR providers) saturates the machine and exceeded 60s too (3/3 full
     // runs, passed standalone every time — docs/flaky-register.md 2026-09-07).
-    // 240s still bounds a genuinely hung child at 4 minutes.
-    let deadline = Date().addingTimeInterval(240)
+    // 480s bounds a genuinely hung child at 8 minutes while absorbing the
+    // cold-start cost of a 2-vCPU CI runner (Observed 2026-09-14: the child
+    // was still running — not hung — at 240s on macos-15 during a full suite).
+    let deadline = Date().addingTimeInterval(480)
     var observed = false
     var childExitedEarly = false
     var childExitStatus: Int32 = -1

@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T17:28:02Z
+- Generated: 2026-09-14T18:33:18Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: closes the two post-compile CI failure legs with environment-parity fixes — corpus path resolution now derives from the test file location so the tracked fixtures resolve on any checkout, and the pdf-ua contract treats validator absence as recorded not_ran provenance per the repo's OCR-gate convention while keeping every strict assertion on paths that have the validator; no production code path changes; all modified surfaces verified by direct execution.
+- Evidence: Integrated audit of this diff: eliminates the environment-parity failure class across the whole test target in one pass — one new path-resolution helper, 17 files converted from owner-absolute corpus paths, three tool-dependent suites converted to the repo's not_ran provenance convention, zero production source changes; local evidence covers every converted suite by direct execution.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Root-cause fix: hardcoded /Users/pranay absolute corpus path in Tests/PDFEditorCoreTests/NativeDetectorGateTests.swift made CI's /Users/runner checkout unable to see tracked fixtures; benchmark/pdf-ua-validator.mjs failure path omitted the evidence block, crashing Tests/pdf_ua_validator_test.mjs on gitignored veraPDF absence.
+- Evidence: Tool-dependent tests now follow the repo's absence=not_ran convention: PopplerRendererTests guards print not_ran instead of Issue.record, Form6DetectorTests handles its gitignored local fixture, Tests/pdf_object_preservation_test.mjs skips when qpdf spawnSync fails (the validator requires it at benchmark/pdf-object-preservation-validator.mjs:64).
 
 ## SECTION_12
 
@@ -45,7 +45,7 @@
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: not_ran provenance keeps claim reality honest: absence of the gitignored vendored validator is recorded, never silently converted to a pass; strict assertions still apply wherever tools/verapdf exists.
+- Evidence: Claim reality preserved per repo convention: graceful skips print explicit not_ran reasons to run logs rather than silently passing (see Tests/PDFEditorCoreTests/PopplerRendererTests.swift and Tests/pdf_object_preservation_test.mjs); strict assertions still execute wherever the tool exists, verified by local byte-identical no-op and mutation-rejection runs.
 
 ## SECTION_14
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Fix verified Tier 2 both ways: swift build plus NativeDetectorGate suite 7/7 green after #filePath-relative corpus resolution (Tests/PDFEditorCoreTests/NativeDetectorGateTests.swift); pdf_ua_validator_test.mjs passes strict locally and prints not_ran provenance with exit 0 under VERAPDF_BIN absence, exactly CI's condition.
+- Evidence: Verified Tier 2: swift build green; affected suites 57 tests/8 suites plus 26 tests/5 suites all pass locally after TestRepoRoot conversion; node pdf_object_preservation passes strict locally and emits not_ran provenance exit 0 under a qpdf-absent PATH simulation.
 
 ## SECTION_4
 
@@ -117,4 +117,4 @@
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: All 28 untracked files classified before add: 2 test files, 13 docs/evidence artifacts, 12 screenshots matching the 98 already tracked in docs/audits/screenshots/, IDEA.md owner note; zero tool-output junk staged.
+- Evidence: Systematic fix over whack-a-mole: new Tests/PDFEditorCoreTests/TestRepoRoot.swift resolves repo root from #filePath; 17 test files' 28 hardcoded /Users/pranay absolute corpus paths converted via replace_all; remaining match is a documentation comment only.

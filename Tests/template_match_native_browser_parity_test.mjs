@@ -4,12 +4,27 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
-import { chromium } from "playwright";
 import {
   calibrateDocumentClassPolicies,
   TEMPLATE_MATCH_BENCHMARK_VERSION
 } from "../web/template-match-benchmark.mjs";
 import { REVIEWED_TEMPLATE_FIXTURES } from "./fixtures/template_matching_reviewed_fixtures.mjs";
+
+// Browser-classified test: playwright (and the Chrome channel it drives) is
+// a local dev dependency, absent on CI node checkouts. Absence is recorded
+// as not_ran provenance instead of an import crash — same convention as the
+// pdf_ua and object-preservation contract tests.
+let chromium;
+try {
+  ({ chromium } = await import("playwright"));
+} catch {
+  console.log(JSON.stringify({
+    test: "template_match_native_browser_parity",
+    status: "not_ran",
+    reason: "playwright not installed (browser-classified test); absence = not_ran provenance"
+  }));
+  process.exit(0);
+}
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(testDirectory, "..");

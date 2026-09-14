@@ -16,6 +16,18 @@ struct AcroFormParityExperimentTests {
     /// - native-incremental (6 producer re-encodes: synthetic, tagged, compressed)
     /// - browser-corpus hybrid (text + raster form)
     /// - rotation-corpus (rotated widgets)
+    /// qpdf is a local brew dependency on the PATH; the experiment's
+    /// independent-verifier channel requires it (read-only structural reads).
+    private static func qpdfAvailable() -> Bool {
+        let proc = Process()
+        proc.executableURL = URL(fileURLWithPath: "/usr/bin/which")
+        proc.arguments = ["qpdf"]
+        proc.standardOutput = Pipe()
+        proc.standardError = Pipe()
+        do { try proc.run(); proc.waitUntilExit() } catch { return false }
+        return proc.terminationStatus == 0
+    }
+
     private static func corpusFixtures() -> [String] {
         let fm = FileManager.default
         let projectRoot = URL(fileURLWithPath: #filePath)
@@ -199,6 +211,14 @@ struct AcroFormParityExperimentTests {
 
     @Test("Experiment runs against real PDF corpus and persists gate report")
     func experimentRuns() {
+        // qpdf is the independent structural verifier this experiment exists
+        // to measure; without it the run would be exactly the relabeled-engine
+        // lie the regression guards below forbid. Absence = not_ran provenance.
+        if !Self.qpdfAvailable() {
+            print("not_ran: qpdf not installed; the independent-verifier experiment requires it (brew install qpdf)")
+            return
+        }
+
         let fixtures = Self.corpusFixtures()
         #expect(fixtures.count >= 1, "Need at least 1 corpus fixture")
 

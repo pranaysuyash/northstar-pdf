@@ -33,11 +33,13 @@ jobs:
       - name: Select Xcode
         run: |
           # Use the latest available Xcode on the runner.
-          XCODE_PATH=$(ls /Applications/Xcode_*.xcodeproj 2>/dev/null | sort -V | tail -1)
-          if [ -n "$XCODE_PATH" ]; then
-            XCODE_NAME=$(basename "$XCODE_PATH" .xcodeproj)
-            sudo xcode-select -s "/Applications/$XCODE_NAME.app/Contents/Developer"
-            echo "Selected: $XCODE_NAME"
+          # (Glob must match the .app bundle; Xcode_*.xcodeproj never matches,
+          #  which silently left the runner's default — older — toolchain
+          #  selected and failed builds using Swift 6.1+ syntax. Fix 2026-09-14.)
+          XCODE_APP=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XCODE_APP" ]; then
+            sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+            echo "Selected: $(basename "$XCODE_APP")"
           fi
           swift --version
           xcrun --show-sdk-path

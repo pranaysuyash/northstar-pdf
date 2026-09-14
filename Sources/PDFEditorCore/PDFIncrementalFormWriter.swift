@@ -831,7 +831,7 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
     // span (key start through value end) — removals and replacements both
     // mutate spans, so they must be applied in one DESCENDING position pass.
     var result = base
-    var spanEdits: [(range: Range<String.Index>, text: String?,)] = []
+    var spanEdits: [(range: Range<String.Index>, text: String?)] = []
     for pair in pairs {
       guard let existing = entries.first(where: { $0.key == pair.key }) else {
         if pair.value == removeKeySentinel {

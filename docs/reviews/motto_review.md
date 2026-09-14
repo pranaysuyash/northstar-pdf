@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T15:54:30Z
+- Generated: 2026-09-14T16:46:34Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this fix diff: two-line repair of the CI failure mode diagnosed from run 34864369397 logs (compiler diagnostic PDFIncrementalFormWriter.swift:834:64 unexpected ',' separator) — the syntax is accepted by the local newest toolchain (why 1694 local tests passed) and rejected by the runner default the broken glob left selected; removing the comma is valid on every Swift version and the glob repair restores the documented select-latest behavior; no behavior change to shipped code paths.
+- Evidence: Integrated audit of this diff: closes the two post-compile CI failure legs with environment-parity fixes — corpus path resolution now derives from the test file location so the tracked fixtures resolve on any checkout, and the pdf-ua contract treats validator absence as recorded not_ran provenance per the repo's OCR-gate convention while keeping every strict assertion on paths that have the validator; no production code path changes; all modified surfaces verified by direct execution.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Root-cause fix for 6-day CI red: Swift 6.1-only tuple trailing comma in Sources/PDFEditorCore/PDFIncrementalFormWriter.swift:834 plus broken Xcode selection glob in .github/workflows/ci.yml (Xcode_*.xcodeproj never matches .app bundles, silently pinning an older runner toolchain).
+- Evidence: Root-cause fix: hardcoded /Users/pranay absolute corpus path in Tests/PDFEditorCoreTests/NativeDetectorGateTests.swift made CI's /Users/runner checkout unable to see tracked fixtures; benchmark/pdf-ua-validator.mjs failure path omitted the evidence block, crashing Tests/pdf_ua_validator_test.mjs on gitignored veraPDF absence.
 
 ## SECTION_12
 
@@ -45,7 +45,7 @@
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: No marketing or user-facing claims change in this diff; docs/audits/macos-app-design-skill-audit-2026-09-11.md landing with code enforces claim-vs-implementation honesty for the stubbed intents and print.
+- Evidence: not_ran provenance keeps claim reality honest: absence of the gitignored vendored validator is recorded, never silently converted to a pass; strict assertions still apply wherever tools/verapdf exists.
 
 ## SECTION_14
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Fix verified Tier 2: swift build green after removing the tuple-type trailing comma at Sources/PDFEditorCore/PDFIncrementalFormWriter.swift:834; sweep confirms it was the only paren-closer trailing comma in Sources/ and Tests/.
+- Evidence: Fix verified Tier 2 both ways: swift build plus NativeDetectorGate suite 7/7 green after #filePath-relative corpus resolution (Tests/PDFEditorCoreTests/NativeDetectorGateTests.swift); pdf_ua_validator_test.mjs passes strict locally and prints not_ran provenance with exit 0 under VERAPDF_BIN absence, exactly CI's condition.
 
 ## SECTION_4
 

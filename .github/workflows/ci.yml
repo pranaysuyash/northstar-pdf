@@ -334,11 +334,13 @@ jobs:
 
       - name: Select Xcode
         run: |
-          XCODE_PATH=$(ls /Applications/Xcode_*.xcodeproj 2>/dev/null | sort -V | tail -1)
-          if [ -n "$XCODE_PATH" ]; then
-            XCODE_NAME=$(basename "$XCODE_PATH" .xcodeproj)
-            sudo xcode-select -s "/Applications/$XCODE_NAME.app/Contents/Developer"
-            echo "Selected: $XCODE_NAME"
+          # Same glob defect as the main job's Select Xcode (fixed in the
+          # b5720d3 pass): Xcode_*.xcodeproj never matches .app bundles, so
+          # this silently kept the runner's default toolchain selected.
+          XCODE_APP=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$XCODE_APP" ]; then
+            sudo xcode-select -s "$XCODE_APP/Contents/Developer"
+            echo "Selected: $(basename "$XCODE_APP")"
           fi
 
       - name: Build Vision CLI

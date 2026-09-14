@@ -47,6 +47,7 @@ public struct PipelineCanvasView: NSViewRepresentable {
     public let onDismissInlineEditor: () -> Void
     public let onTextSelectionChanged: ((String, PDFRect, Int) -> Void)?
     public let onSelectionCleared: (() -> Void)?
+    public let onVisiblePageChanged: ((Int) -> Void)?
 
     public init(
         document: PDFDocument?,
@@ -72,7 +73,8 @@ public struct PipelineCanvasView: NSViewRepresentable {
         onCommitInlineEditor: @escaping (String) -> Void,
         onDismissInlineEditor: @escaping () -> Void,
         onTextSelectionChanged: ((String, PDFRect, Int) -> Void)? = nil,
-        onSelectionCleared: (() -> Void)? = nil
+        onSelectionCleared: (() -> Void)? = nil,
+        onVisiblePageChanged: ((Int) -> Void)? = nil
     ) {
         self.document = document
         self.renderingPipeline = renderingPipeline
@@ -98,6 +100,7 @@ public struct PipelineCanvasView: NSViewRepresentable {
         self.onDismissInlineEditor = onDismissInlineEditor
         self.onTextSelectionChanged = onTextSelectionChanged
         self.onSelectionCleared = onSelectionCleared
+        self.onVisiblePageChanged = onVisiblePageChanged
     }
 
     public func makeCoordinator() -> Coordinator {

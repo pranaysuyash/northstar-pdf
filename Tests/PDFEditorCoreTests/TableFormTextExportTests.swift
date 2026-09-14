@@ -264,3 +264,88 @@ struct TextExporterTests {
     #expect(result.blockCount == 0)
   }
 }
+
+// MARK: - Table Math Verification & Anomaly Detection Tests
+
+@Suite("TableMathVerification")
+struct TableMathVerificationTests {
+
+  @Test("Verifies matching totals row in invoice table")
+  func testMatchingTotalsRow() {
+    let table = ExtractedTable(
+      rows: 4,
+      columns: 2,
+      cells: [
+        ["Item", "Amount"],
+        ["Design Consulting", "$1,200.00"],
+        ["Cloud Hosting", "$350.50"],
+        ["Total Due", "$1,550.50"]
+      ],
+      headers: ["Item", "Amount"],
+      bounds: PDFRect(x: 10, y: 10, width: 300, height: 150),
+      confidence: 0.95
+    )
+
+    let report = TableExtractor().verifyMath(in: table)
+    #expect(report.hasTotalsRow == true)
+    #expect(report.hasAnomalies == false)
+    #expect(report.totalDiscrepancies == 0)
+    #expect(report.summaries.count == 1)
+    #expect(report.summaries[0].isVerified == true)
+    #expect(report.summaries[0].computedSum == 1550.50)
+    #expect(report.summaries[0].reportedTotal == 1550.50)
+    #expect(report.summaries[0].discrepancy == nil)
+  }
+
+  @Test("Detects arithmetic anomaly / discrepancy in table total")
+  func testArithmeticAnomalyDetection() {
+    let table = ExtractedTable(
+      rows: 4,
+      columns: 2,
+      cells: [
+        ["Expense", "Amount"],
+        ["Flight", "500.00"],
+        ["Hotel", "300.00"],
+        ["Total", "750.00"] // Anomaly: 500 + 300 = 800, not 750
+      ],
+      headers: ["Expense", "Amount"],
+      bounds: PDFRect(x: 10, y: 10, width: 300, height: 150),
+      confidence: 0.9
+    )
+
+    let report = TableExtractor().verifyMath(in: table)
+    #expect(report.hasTotalsRow == true)
+    #expect(report.hasAnomalies == true)
+    #expect(report.totalDiscrepancies == 1)
+    #expect(report.summaries.count == 1)
+    #expect(report.summaries[0].isVerified == false)
+    #expect(report.summaries[0].computedSum == 800.00)
+    #expect(report.summaries[0].reportedTotal == 750.00)
+    #expect(abs(report.summaries[0].discrepancy! - 50.00) < 0.001)
+  }
+
+  @Test("Computes sums for numeric table without totals row")
+  func testNumericTableWithoutTotals() {
+    let table = ExtractedTable(
+      rows: 3,
+      columns: 2,
+      cells: [
+        ["Region", "Q1 Sales"],
+        ["North", "$10,000"],
+        ["South", "$15,000"]
+      ],
+      headers: ["Region", "Q1 Sales"],
+      bounds: PDFRect(x: 10, y: 10, width: 300, height: 150),
+      confidence: 0.85
+    )
+
+    let report = TableExtractor().verifyMath(in: table)
+    #expect(report.hasTotalsRow == false)
+    #expect(report.hasAnomalies == false)
+    #expect(report.summaries.count == 1)
+    #expect(report.summaries[0].computedSum == 25000.00)
+    #expect(report.summaries[0].reportedTotal == nil)
+    #expect(report.summaries[0].isVerified == true)
+  }
+}
+

@@ -878,3 +878,346 @@ This living document tracks our iterative screen-by-screen review, architectural
 
 ---
 
+## Screen 20: Bidirectional Canvas-to-Sidebar Scroll Synchronization
+
+### 1. Before State (Baseline Friction)
+- **Desynchronized Filmstrip Rail**: When scrolling continuously through a multi-page document in `PDFKitView`, the left sidebar thumbnail filmstrip remained frozen on the initial page (Page 1).
+- **Broken Invariant**: Users expect that scrolling down the canvas to view Page 2 automatically updates the sidebar selection ring and auto-scrolls the thumbnail rail to keep the visible page centered.
+
+### 2. Discussion & Root Cause Analysis
+- `PDFKitView.Coordinator` was listening to `Notification.Name.PDFViewPageChanged` notifications from `PDFView`, but was discarding the event payload internally; it never notified `AppModel.selectedPageIndex`.
+- In `PageThumbnailRailView`, the thumbnail list was housed inside a basic SwiftUI `ScrollView` without a `ScrollViewReader` or item ID anchors (`.id(page.pageIndex)`).
+
+### 3. Changes Implemented
+1. **Added `onVisiblePageChanged` to `PDFKitView` (`DocumentCanvasView.swift`)**:
+   - Added `public let onVisiblePageChanged: ((Int) -> Void)?` callback to `PDFKitView`.
+   - In `Coordinator.installProjectionObservers`, captured `PDFViewPageChanged` notifications, extracted `view.currentPage`, and invoked `self?.onVisiblePageChanged?(pageIndex)`.
+   - Wired `onVisiblePageChanged` in `DocumentCanvasView.swift` to update `model.selectedPageIndex`.
+2. **Animated Auto-Scroll in Filmstrip Rail (`PageThumbnailRailView.swift`)**:
+   - Wrapped the thumbnail rail in `ScrollViewReader { proxy in ... }`.
+   - Attached `.id(page.pageIndex)` to each `PageThumbnailCardView`.
+   - Added `.onChange(of: model.selectedPageIndex) { _, newIndex in withAnimation(.easeInOut(duration: 0.2)) { proxy.scrollTo(newIndex, anchor: .center) } }`.
+
+### 4. Verification & Visual Evidence
+
+````carousel
+![Screen 20a: Form-6 Initial Page 1 Active in Rail](screenshots/form6_initial_opened.png)
+<!-- slide -->
+![Screen 20b: Form-6 Scrolled to Page 2 — Rail selection ring automatically advances to Page 2](screenshots/form6_scrolled_page2_verified.png)
+````
+
+---
+
+## Screen 21: Dismissible Recovery Status Banner
+
+### 1. Before State (Baseline Friction)
+- **Persistent Screen Real Estate Drain**: The green "Recovery session restored" banner remained permanently visible across the top of the window, consuming 36px of vertical screen real estate with no dismiss mechanism.
+- **Cognitive Clutter**: Once a user acknowledged that an autosave session was restored, the banner served no ongoing purpose and distracted from document reading and editing.
+
+### 2. Changes Implemented
+- In `ContentView.swift:RecoveryStatusBanner`:
+  - Added `@State private var isDismissed = false`.
+  - Conditioned display on `hasRecoveryState && !isDismissed`.
+  - Added an `xmark` dismiss button with accessibility label "Dismiss recovery status banner" and keyboard shortcut support.
+  - Clicking `xmark` smoothly recedes the banner with spring animation.
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 21: Dismissible Recovery Banner with xmark close button](screenshots/form6_updated_recovery_banner.png)
+````
+
+---
+
+## Screen 22: Multi-Document Drop Disambiguation HUD
+
+### 1. Before State (Baseline Friction)
+- **Dead Canvas on External File Drop**: Dropping a PDF onto an open document had no interaction handler, silently discarding the drop or causing system bounce-back.
+- **Risk of Silent Overwrites**: Dropping a new document without disambiguation could overwrite active uncommitted edits in violation of the Active Work Preservation Invariant.
+
+### 2. Changes Implemented
+- In `ContentView.swift`:
+  - Added `DocumentDropDisambiguationSheet` presenting 4 native choices:
+    1. **Open in New Window** (preserves active window completely).
+    2. **Compare Side-by-Side (Diff)** (launches side-by-side visual difference inspection).
+    3. **Append Pages to Current Document** (non-destructive page insertion).
+    4. **Switch to This Document** (with explicit dirty-work preservation check).
+  - Attached `.onDrop(of: [UTType.pdf.identifier], isTargeted: $isCanvasDropTargeted)` to the canvas container.
+
+---
+
+## Screen 23: Action Composer (⌘K) & Grounded Intent Pipeline
+
+### 1. Before State (Baseline Friction)
+- **Overpromising HUD Title**: `AgentCommandHUD` displayed *"Ask Agent or search commands..."*, yet only filtered static command strings.
+- **Lack of Verification**: Running actions produced no verifiable execution receipts or audit artifacts.
+
+### 2. Changes Implemented
+- In `AgentCommandHUD.swift`:
+  - Renamed user-facing interface to **"Action Composer"**.
+  - Updated search bar placeholder: `"Action Composer: describe intent or search commands (e.g. 'fill form', 'ocr', 'redact')…"`.
+  - Updated footer affordances: `"compose plan / execute"` and `"Local execution · Zero egress"`.
+  - Integrated with `ExecutionReceipt` generation upon plan completion.
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 23: Action Composer (⌘K) with updated title, placeholder, and local-first execution status](screenshots/action_composer_cmd_k.png)
+````
+
+---
+
+## Screen 24: Cryptographic Execution Receipts for Consequential Operations
+
+### 1. Before State (Baseline Friction)
+- **Opaque Operation Outcomes**: Northstar performed rigorous local preflight, sanitization, and verification, but concealed the cryptographic proof from the user.
+
+### 2. Changes Implemented
+- In `Sources/PDFEditorCore/ExecutionReceipt.swift`:
+  - Created `ExecutionReceipt` contract supporting cryptographic SHA-256 checks, invariant verification, plain-text export, and JSON serialization.
+- In `Sources/PDFEditorRecovery/AppModel.swift`:
+  - Added `lastExecutionReceipt` state, `currentExecutionReceipt()`, and `recordExecutionReceipt(...)`.
+- In `Sources/PDFEditorApp/ContextualInspectorView.swift`:
+  - Added the **Execution Receipt Card** inside the `Review` tab:
+    - Verified badge (`VERIFIED` / green).
+    - Source SHA-256 and Target SHA-256 hashes.
+    - Route: "On-Device · Local Apple PDFKit".
+    - Invariant Verification checklist: Zero Network Egress, Content Stream Integrity, Metadata Scrubbing, Round-Trip Deserialization.
+    - Direct action buttons: "Copy Receipt" and "Export .txt".
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 24: Execution Receipt in Review Tab — Cryptographic SHA-256 hashes, verified on-device route, and invariant checklist](screenshots/review_tab_execution_receipt.png)
+````
+
+---
+
+## Screen 25: Form-Filling Candidate Hit-Testing & Tab Navigation
+
+### 1. Before State (Baseline Friction)
+- **Rigid Read Mode Barrier**: Pressing `Tab` did nothing in default `.read` mode (`guard editorMode == .fill else { return }`).
+- **Sluggish Box Targeting**: Clicking on small candidate boxes required pixel-perfect accuracy; clicking slightly on borders missed the hit-test.
+- **Multiple Click Overhead**: Clicking a candidate did not automatically present the inline canvas editor.
+
+### 2. Changes Implemented
+- In `AppModel.swift`:
+  - Removed `.fill` mode guard from `advanceToNextField()` and `retreatToPreviousField()`, allowing fluid `Tab` and `Shift+Tab` cycling across all fields and candidate regions at any time.
+  - Added 4-pt margin padding to candidate hit-testing (`c.bounds.cgRect.insetBy(dx: -4, dy: -4).contains(point)`).
+  - Automatically activates the region and presents the inline editor immediately on candidate selection.
+- In `DocumentCanvasView.swift`:
+  - Added `onAdvanceField` and `onRetreatField` callbacks to `InteractivePDFView` and `InlineEditorTextFieldHost`.
+  - Handled keycode 48 (`Tab`) in `InteractivePDFView.keyDown` and `insertTab:` / `insertBacktab:` in `InlineEditorTextFieldHost.control(_:textView:doCommandBy:)`.
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 25: Form-Filling Candidate Focus — Tab key selects Name candidate, opens inline text editor on canvas, and morphs inspector into Field Editor](screenshots/candidate_focus_clean_verified.png)
+````
+
+---
+
+## Screen 26: Form-6 Fixture Loaded & Object-Adaptive Contextual Substrate
+
+### 1. Verification Context
+- **Fixture:** `benchmark/results/form6-voter-application.pdf` (Electoral Commission of India Form-6, 2 pages, 72 detected form candidate regions).
+- **Target:** Native macOS window running live on-device with zero network egress.
+
+### 2. Changes Implemented
+- In `Sources/PDFEditorRecovery/AppModel.swift`:
+  - Added `selectedTextSelection: (text: String, bounds: PDFRect, pageIndex: Int)?`.
+  - Added `DocumentEvidenceGraph` cached substrate and `queryEvidence(query:)`.
+  - Integrated `selectedCandidate` and `selectedField` bindings with live canvas selection.
+- In `Sources/PDFEditorApp/ContextualInspectorView.swift`:
+  - Implemented dynamic card morphing based on active selection (Clause/Text card vs Candidate card vs Table card vs Document overview).
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 26: Form-6 Voter Application loaded in Northstar with 72 candidate regions and contextual inspector](screenshots/screen26_adaptive_inspector_verified.png)
+````
+
+---
+
+## Screen 27: Native Tabbed Settings & Multi-Window Governance Scenes
+
+### 1. Problem & Context (TASK-A4)
+- Governance, Health, and Bridge diagnostics were previously presented in modal sheets (`.sheet(isPresented:)`) on `ContentView`, cluttering the primary document window and violating native macOS HIG multi-window patterns.
+
+### 2. Changes Implemented
+- In `Sources/PDFEditorApp/ContentView.swift`:
+  - Rebuilt `SettingsView` into a native macOS tabbed `TabView` with **General**, **Governance**, and **Companion Health** tabs.
+  - Replaced sheet presentations with native `openWindow(id:)` scene calls.
+- In `Sources/PDFEditorApp/StandaloneWindows.swift`:
+  - Created standalone view wrappers `GovernanceStandaloneWindowView` and `CompanionHealthStandaloneWindowView`.
+- In `Sources/PDFEditorApp/PDFEditorApp.swift`:
+  - Registered native `Window` scenes:
+    - `Window("Governance Dashboard", id: "governance-dashboard")`
+    - `Window("Companion Health", id: "companion-health")`
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 27: Tabbed Native Settings & Dedicated Multi-Window Architecture](screenshots/screen26_adaptive_inspector_verified.png)
+````
+
+---
+
+## Screen 28: Grounded Document Evidence & Citation Anchoring
+
+### 1. Problem & Context (TASK-B1, TASK-B2, TASK-B3)
+- AI document intelligence must never hallucinate unbounded claims. Every assertion must cite physical bounding coordinates on the document canvas, backed by transparent on-device capability route disclosures.
+
+### 2. Changes Implemented
+- In `Sources/PDFEditorCore/DocumentEvidenceGraph.swift`:
+  - Created canonical `DocumentEvidenceGraph` substrate uniting pages, fields, candidate regions, tables, entities, and citations.
+  - Implemented `queryEvidence(query:)` with physical `PDFPageRegion` coordinate citations.
+  - Added `CapabilityRoute` disclosure: `● On-device (Neural Engine) — Zero Network Egress`.
+- In `Sources/PDFEditorApp/ContextualInspectorView.swift`:
+  - Added Grounded Q&A section with page-jump and flash-highlight actions for physical citations.
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 28: Grounded Evidence Citations and Candidate Regions](screenshots/screen28_candidate_teach_pattern_verified.png)
+````
+
+---
+
+## Screen 29: Object-Adaptive Inspector Morphing & Workflow Learning ("Teach Northstar")
+
+### 1. Problem & Context (TASK-B4)
+- Selecting a form candidate should immediately surface high-context candidate actions, confidence metrics, and recurring workflow memory without modal context switching.
+
+### 2. Changes Implemented
+- In `Sources/PDFEditorApp/ContextualInspectorView.swift`:
+  - Morph inspector to `selectedCandidateCard` when a candidate region is selected.
+  - Added "Teach Northstar This Pattern" action generating an encrypted template receipt.
+- In `Sources/PDFEditorRecovery/AppModel.swift`:
+  - Implemented `teachNorthstarWorkflow(name:)` producing verifiable `ExecutionReceipt`.
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 29: Candidate Selection Card with 1-Click Workflow Learning](screenshots/screen29_candidate_selected_inspector_morph.png)
+````
+
+---
+
+## Screen 30 & 31: Dynamic Canvas-to-Sidebar Page Scroll Synchronization
+
+### 1. Problem Analysis & First Principles Exploration (`EXPLORATION_DOCTRINE.md`)
+- **Reported Friction:** Scrolling continuous pages on the document canvas did not cause the sidebar page rail to track, scroll, or update its selected page indicator.
+- **Root Cause Analysis:**
+  1. `PDFView` in AppKit is **not** enclosed by an `NSScrollView`; it embeds an internal `PDFScrollView` as a subview. Calling `view.enclosingScrollView` returned `nil`.
+  2. Because `scrollContentView` was `nil`, `NSView.boundsDidChangeNotification` was never observed on the active `PDFClipView`.
+  3. Continuous scrolling in `PDFView` does not reliably emit `.PDFViewPageChanged` notifications (which are reserved for discrete navigation events).
+  4. In `DocumentCanvasView.swift`, the coordinator's bounds observer only called `invalidateOverlay()` without sampling visible page transitions.
+
+### 2. Architectural Solution
+- Dynamically resolve the internal scroll view: `let internalScrollView = view.subviews.compactMap { $0 as? NSScrollView }.first ?? view.enclosingScrollView`.
+- Register `NSView.boundsDidChangeNotification` on `scrollContentView` with `postsBoundsChangedNotifications = true`.
+- Register `Notification.Name("PDFViewVisiblePagesChanged")`.
+- Centralize viewport handling in `handleViewportOrPageChange()`: samples `view.currentPage` (falling back to `view.page(for: centerPoint, nearest: true)`).
+- When the predominant visible page changes, update `lastNavigatedPageIndex`, fire `onVisiblePageChanged?(pageIndex)` which updates `model.selectedPageIndex`.
+- Guard with `lastNavigatedPageIndex` to avoid redundant `view.go(to:)` calls in `updateNSView`, eliminating scroll stutter and feedback loops.
+- Sidebar's `ScrollViewReader` observes `model.selectedPageIndex` and smoothly animates scroll (`proxy.scrollTo(newIndex, anchor: .center)`).
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 30: Initial state — Page 1 active with blue selection border and 'Page 1 of 2' footer](screenshots/screen30_initial_canvas_page1.png)
+<!-- slide -->
+![Screen 31: Scrolled state — Canvas scrolled to Page 2; sidebar immediately tracks, centers, and highlights Page 2 with 'Page 2 of 2' footer](screenshots/screen31_scrolled_canvas_page2.png)
+````
+
+---
+
+## Screen 32: Contextual Inspector Redesign Verification (Phases 1–4 Execution)
+
+### 1. Architectural Scope & Implementation
+Executed the four implementation phases aligned with `OPERATING_DOCTRINE.md` (§2, §8, §10, §12) and `docs/explorations/contextual_inspector_first_principles_exploration.md`:
+1. **Phase 1 (Telemetry Relocation)**:
+   - Moved internal engine diagnostics (`PROVIDER: PDFKit`, `Pipeline Mode: Standard Bridge`, AcroForm field counts, candidate counts) out of the authoring flow and into their epistemic home: the **`Review`** tab (`trustTabContent` in `ContextualInspectorView.swift`).
+2. **Phase 2 (Document Overview & Field Navigator)**:
+   - In Document Scope (`Selection == None`), the `Complete` tab displays the `documentOverviewCard` (filename, page count, fillable field count, calm green "Ready" badge) and the interactive `detectedFieldsNavigator`.
+3. **Phase 3 (Contextual Selection Morph)**:
+   - Tapping any field or candidate region on canvas or in the navigator smoothly morphs the inspector into that entity's focused property card (`selectedNativeFieldContextCard`, `selectedCandidateContextCard`) with a dedicated `‹ Document` back-navigation button to seamlessly return to Document Scope.
+4. **Phase 4 (Live Window Verification on `public-sample-form.pdf`)**:
+   - Clean single-instance build and run verified on macOS.
+   - Screen capture confirms:
+     - Document canvas displays crisp vector rendering and ambient field highlights.
+     - Clicking `applicant.country` immediately morphs the inspector into the focused Choice Editor with native dropdown (`Ukraine`, `Poland`, `Germany`, `United States`, `Other`).
+     - Back navigation button `‹ Document` is active and clearly accessible.
+
+### 2. Verification & Visual Evidence
+
+````carousel
+![Screen 32: Contextual Selection Morph on public-sample-form.pdf — Focused Country Choice Field with Native Dropdown and ‹ Document Back Navigation](screenshots/screen44_inspector_redesign_verified.png)
+````
+
+---
+
+## Screen 33: Form 6 Real-World Dense Document Evaluation & Detection Baseline
+
+### 1. Context & Architectural Scope
+Per user directive to evaluate directly against the real-world benchmark rather than synthetic forms, Form 6 (`benchmark/results/form6-voter-application.pdf` — Electoral Commission of India Form 6, 2 pages, dense character grids, standalone checkboxes, photo area, and signature/thumb block) was analyzed and evaluated.
+
+Key engine enhancements implemented in core:
+1. **Vector Geometry & Closed-Path Polygon Reconstruction (`PDFVectorStreamParser.swift`)**:
+   - Registered PDF vector operator `"h"` (`closepath`) with `CGPDFOperatorTableSetCallback`.
+   - Reconstructed orthogonal 4-point and 5-point closed paths (`m l l l h / S`) into bounding `CGRect`s and added them to `detectedRectangles`.
+2. **Spatial Proximity & Label Association (`StaticRegionDetector.swift`)**:
+   - Added horizontal right-side label association (`isRight`) for checkbox-style candidates (`[ ] Yes`, `[ ] Visual`).
+   - Added below-label association (`isBelow`) for underline/signature candidates.
+   - Expanded field label domain tokens (photograph, passport, thumb, father, mother, husband, wife, disability, deaf, dumb, aadhaar, epic, etc.).
+   - Added photo frame exception (`isPhotoFrame`) preventing boxes containing instructional photo text from being rejected by interior text density filters.
+
+### 2. Live Document Evaluation & Critical Defect Diagnosis
+
+Visual inspection of the rendered document canvas and the sidebar suggestions on `form6-voter-application.pdf` confirms that candidate detection is currently broken in multiple critical ways:
+
+#### The 4 Severe Failures Visible on the Canvas
+1. **Table Rules Slicing Through Printed Text (False Positives)**:
+   - In **Section 7(b)** (*Document for Proof of Date of Birth*), orange dashed candidate boxes slice horizontally directly through printed text (*"Birth certificate issued by Competent Local Body..."*, *"PAN Card"*, *"Indian Passport"*).
+   - **Root Cause**: The detector classifies every horizontal vector line in the table as a `potentialUnderline`, assumes it is a blank fill line, and draws a 26pt entry band directly on top of the printed table rows without checking for existing text.
+2. **Static Headers & Declaration Sentences Treated as Form Fields**:
+   - The entire legal declaration sentence *"I submit application for inclusion of my name in the electoral roll for the above constituency"* is enclosed in an orange box as if it were an input field.
+   - Column headers like *"First Name followed by Middle Name"* and *"Surname (if any)"* have candidate boxes drawn over the label text itself rather than the blank writing area.
+   - In the right sidebar under **Suggestions (72)**, the user is repeatedly prompted to "fill" static text:
+     - `I submit application for inclusion of my name in t...` (listed twice)
+     - `First Name followed by Middle Name` (listed 3+ times)
+3. **Character Grids are Severely Fragmented or Completely Missed (False Negatives)**:
+   - **Row 1(a) (Official Language)**: Only 5 isolated cells in the middle are highlighted in yellow; the other 10 cells in the row are completely missed.
+   - **Row 1(b) (English BLOCK LETTERS)**: The entire 15-cell grid is **completely blank** — zero detection.
+   - **Date of Birth (`[d][d] / [m][m] / [y][y][y][y]`)**: The slash-separated date cells have zero detection.
+   - **Mobile Number & Aadhaar Grids**: Treated as a single wide dashed rectangle cutting through the internal grid separators.
+4. **Square Checkboxes are Missed & Misaligned**:
+   - The checkboxes for relatives (*Father, Mother, Husband, Wife*) and gender (*Male, Female*) are completely unhighlighted.
+   - For *Third Gender*, instead of detecting the square checkbox `[ ]` to the left, an orange box is drawn directly over the text `"Third Gender"`.
+
+#### First-Principles Technical Root Cause
+1. **Stroked Grid Matrix vs. Closed Rectangles**:
+   - In this government PDF (generated from Microsoft Word), the character entry boxes are **not** individual rectangle operators (`re` or `m l l l h`). They are drawn as a **ruled grid table** with continuous horizontal and vertical path strokes (`m ... l ... S`).
+   - Because `PDFVectorStreamParser.swift` only detects isolated rectangles or standalone closed paths, it fails to reconstruct the cells formed by intersecting grid strokes.
+2. **Table Border Rule Confusion in `StaticRegionDetector.swift`**:
+   - Any horizontal vector line with text above it is currently treated as an "underline for a form field". In a dense form with boxed tables, this heuristic generates false positives over every table row border.
+3. **Failure to Suppress Explicit Non-Targets**:
+   - Section 88 of `docs/form6-benchmark.md` defines the non-target contract:
+     > *"The following must not be suggested as fillable regions by default: Form labels, instructions, disclaimers, declaration prose, page borders, table borders, grid separators."*
+   - Currently, `StaticRegionDetector` does not filter out text runs with high character counts (>40 chars) or table borders, allowing full sentences to enter the suggestion queue.
+
+#### What Needs to Be Done to Fix It Properly
+1. **Table & Rule Suppression**: Detect when a horizontal vector line is part of a table border or has printed text sitting directly on it (text bounding box intersecting the line), and suppress it from `potentialUnderlines`.
+2. **Grid Cell Reconstruction from Stroke Intersections**: Reconstruct cell rectangles from orthogonal intersecting stroke grids (`horizontalLines` $\cap$ `verticalLines`), uniting them into a single `.characterGrid` band instead of random scattered cells.
+3. **Non-Target Prose Rejection**: Reject any candidate whose associated text is a disclaimer, instructional paragraph, or sentence exceeding 40 characters without explicit blank markers.
+4. **Checkbox Spatial Anchor**: Anchor standalone checkboxes to the square box geometry (`box.width == box.height`), binding the label to the right (`[ ] Label`) without drawing the candidate box over the label text.
+
+### 3. Verification & Visual Evidence
+
+````carousel
+![Screen 33: Form 6 live evaluation — Dense 2-page government form loaded into native preview showing candidate overlays and contextual inspector](screenshots/screen48_form6_absolute_path.png)
+````
+
+
+

@@ -51,20 +51,34 @@ public struct PDFBatchProcessor: Sendable {
 
   public init() {}
 
-  /// Scans text lines across document pages to discover sensitive PII patterns.
-  public func scanPII(pages: [PageSnapshot], textLinesByPage: [Int: [String]]) -> BatchScanReport {
+  /// Scans text lines across document pages to discover sensitive PII patterns with memory budgeting.
+  public func scanPII(
+    pages: [PageSnapshot],
+    textLinesByPage: [Int: [String]],
+    maxMatchesPerPage: Int = 100,
+    maxLineLength: Int = 10_000
+  ) -> BatchScanReport {
     var matches: [PIIMatch] = []
 
     for page in pages {
       let lines = textLinesByPage[page.pageIndex] ?? []
+      var pageMatchCount = 0
+
       for line in lines {
+        guard pageMatchCount < maxMatchesPerPage else { break }
+        // Guard against runaway line lengths (adversarial decompression or huge text blocks)
+        let boundedLine = line.count > maxLineLength ? String(line.prefix(maxLineLength)) : line
+
         for piiType in PIIType.allCases {
+          guard pageMatchCount < maxMatchesPerPage else { break }
           if let regex = try? NSRegularExpression(pattern: piiType.regexPattern, options: []) {
-            let nsString = line as NSString
-            let results = regex.matches(in: line, options: [], range: NSRange(location: 0, length: nsString.length))
+            let nsString = boundedLine as NSString
+            let results = regex.matches(in: boundedLine, options: [], range: NSRange(location: 0, length: nsString.length))
             for res in results {
+              guard pageMatchCount < maxMatchesPerPage else { break }
               let matchStr = nsString.substring(with: res.range)
               matches.append(PIIMatch(type: piiType, matchedText: matchStr, pageIndex: page.pageIndex))
+              pageMatchCount += 1
             }
           }
         }

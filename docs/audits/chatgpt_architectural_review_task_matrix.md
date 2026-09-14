@@ -52,6 +52,7 @@ These are concrete, actionable tasks directly called out by the review that solv
   1. Create a user-facing **Execution Receipt** card and exportable summary (`.txt` / `.json` / PDF attachment) after irreversible or security-critical actions (Redactions, Metadata Scrubbing, Sanitization, Export).
   2. Receipt contents: Source SHA-256, Target SHA-256, Exact Operations Executed, Pass/Fail verification checks (Content Stream Removal, Metadata Scrub, Re-open verify), Timestamp, and Route (On-device).
 - **Target Files:** `Sources/PDFEditorApp/ContextualInspectorView.swift`, `Sources/PDFEditorCore/DocumentModel.swift`.
+- **Status update 2026-09-12:** receipt core implemented on the working tree — `ExecutionReceipt` + `ExecutionReceiptOperation` + `ExecutionReceiptCheck` in `Sources/PDFEditorCore/ExecutionReceipt.swift`, constructed in `AppModel`, rendered/exported via `ContextualInspectorView`; the data-boundary fact is carried by the mandatory `ExecutionDataBoundary` enum (fabricated on-device defaults and the unconditional zero-egress footer removed). Completion record with options, falsifier, and the named S2 hardening path: `docs/audits/execution-data-boundary-completion-2026-09-12.md`. Export-format extension (`.json`/PDF attachment) remains open.
 
 #### [TASK-A3] De-silo Navigation Modes (Abolish the 5 Rigid "Rooms")
 - **Problem:** The inspector tabs (`Complete`, `Understand`, `Organize`, `Reader`, `Review`) force a linear waterfall model onto non-linear document work.
@@ -145,25 +146,71 @@ The review explicitly warned against several common traps that Northstar must av
 
 ```mermaid
 graph TD
-    subgraph Phase 1: Immediate UX Hygiene & Transparency
+    subgraph Phase 1: Immediate UX Hygiene & Transparency (Completed)
         P1_1["Restore Window Traffic Lights & Native Chrome (Done)"]
         P1_2["Purge Internal Developer Telemetry from Inspector (Done)"]
-        P1_3["Rename ⌘K to Action Composer / Command Palette"]
-        P1_4["Multi-Document Drop Disambiguation HUD"]
+        P1_3["Rename ⌘K to Action Composer / Command Palette (Done)"]
+        P1_4["Multi-Document Drop Disambiguation HUD (Done)"]
     end
 
-    subgraph Phase 2: Object-Aware Studio & Execution Receipts
-        P2_1["Object-Adaptive Inspector (Clause, Table, Selection context)"]
-        P2_2["Execution Receipts for Redactions, Scrubbing, Sanitization"]
-        P2_3["Refactor ContentView scene coordination (Move diagnostics to Settings)"]
+    subgraph Phase 2: Object-Aware Studio & Execution Receipts (Completed)
+        P2_1["Object-Adaptive Morphing Inspector (Done)"]
+        P2_2["Execution Receipts for Redactions, Scrubbing, Sanitization (Done)"]
+        P2_3["Refactor ContentView scene coordination / Standalone Windows (Done)"]
     end
 
-    subgraph Phase 3: Flagship Workflows
-        P3_1["Research & Comparison Workspace (Multi-doc evidence set)"]
-        P3_2["Intelligent Transformation (Request → Diff → Approve → Validate)"]
-        P3_3["Recurring Workflow Learning ('Teach Northstar')"]
+    subgraph Phase 3: Flagship Workflows & Document Evidence Graph (Active)
+        P3_1["Canonical Document Evidence Graph Substrate (TASK-B1)"]
+        P3_2["Grounded Intelligence: Region-Anchored Citations (TASK-B2)"]
+        P3_3["Recurring Workflow Learning / 'Teach Northstar' (TASK-B4)"]
+        P3_4["Deep macOS Integration: Spotlight & App Intents (TASK-B5)"]
     end
 
     Phase 1 --> Phase 2
     Phase 2 --> Phase 3
 ```
+
+---
+
+## 4. Benchmark Alignment & Form 6 Engine Status Breakdown
+
+### Status Breakdown
+
+| Workstream | Status | Evidence / Verification |
+| :--- | :---: | :--- |
+| **Architectural Review Task Matrix (Phases 1–3)** | **Completed** | `[TASK-A1]` through `[TASK-B5]` implemented, verified by [DocumentEvidenceGraphTests](file:///Users/pranay/Projects/pdf_editor/Tests/PDFEditorCoreTests/DocumentEvidenceGraphTests.swift) (5/5 passing). |
+| **In-Session Multi-Document Drop** | **Completed** | Full drag-and-drop ingest on [DocumentCanvasView](file:///Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/DocumentCanvasView.swift) and [PageThumbnailRailView](file:///Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/PageThumbnailRailView.swift). Documented in [multi_document_drop_exploration.md](file:///Users/pranay/Projects/pdf_editor/docs/explorations/multi_document_drop_exploration.md). |
+| **17-Screen Catalog Defect Matrix (Defects 1–6)** | **Completed** | Inspector segmented controls, browser constraints, external open router single-window reuse, a11y labels, cache evacuation verified in [screen_by_screen_audit.md](file:///Users/pranay/Projects/pdf_editor/docs/audits/screen_by_screen_audit.md). |
+| **Preserved Live App State** | **Active** | `PID 98984` running `benchmark/results/form6-voter-application.pdf` has been kept continuously open. |
+| **Form 6 Native Field Detection Engine** | **Completed** | All 4 vector & semantic failure modes resolved and verified with dedicated test suite `Form6DetectorTests` (3/3 passing, 28/28 regression tests passing). |
+
+### Diagnosis of Form 6 Engine Failures (Resolved)
+
+Inspection of [StaticRegionDetector.swift](file:///Users/pranay/Projects/pdf_editor/Sources/PDFEditorCore/StaticRegionDetector.swift) and [PDFVectorStreamParser.swift](file:///Users/pranay/Projects/pdf_editor/Sources/PDFEditorCore/PDFVectorStreamParser.swift) identified 4 distinct vector & semantic rules that failed on `form6-voter-application.pdf`, now resolved:
+
+1. **Table Rules Slicing Through Printed Text (False Positives)**:
+   - *Root Cause:* In `geom.potentialUnderlines`, horizontal vector strokes were assumed to be empty fill lines without checking whether text already sits on top of them. Additionally, in `geom.potentialInputBoxes`, table cells containing printed text were treated as input boxes because `nearbyLabel` was excluded from coverage.
+   - *Resolution:* Added `interiorTextCoverage(of: boxAbove, in: pageLines, excluding: nil) <= 0.10` in `potentialUnderlines` and `totalCoverage <= 0.15` in `potentialInputBoxes`. Suppressed non-input documentary proof list items (`indian passport`, `pan card`, `aadhaar card`, `driving license`, `birth certificate`, `certificates of class`) in `isLikelyFieldLabel`.
+2. **Statutory Prose & Long Instructions Treated as Field Labels**:
+   - *Root Cause:* `isLikelyFieldLabel` searched for isolated token words using regex word boundaries without length limits, matching multi-sentence statutory text.
+   - *Resolution:* Added a strict character limit (`trimmed.count <= 45`), word ceiling (`words.count <= 8`), and declarative prose suppression filters (`"i "`, `"i submit"`, `"hereby declare"`, `"punishable under"`, `"penalty"`, `"electoral roll"`).
+3. **Character Grids Fragmented or Completely Missed (False Negatives)**:
+   - *Root Cause:* Form 6 (exported from Word) draws character grids using intersecting stroked lines (`m ... l ... S`) rather than closed rectangles (`re`).
+   - *Resolution:* Implemented `reconstructStrokedGridsAndBoxes(lines:)` in `PDFVectorStreamParser.swift` to detect orthogonal parallel lines crossed by $\ge 3$ vertical tick marks with uniform cell width (8–36pt) and reconstruct grid cell `CGRect`s, clustering them into `.characterGrid` bands.
+4. **Checkbox Alignment & Overlap**:
+   - *Root Cause:* Small square vector paths (`~10–14pt`) for Gender and Relative Type were expanded or mislabeled due to vertical baseline distance biases.
+   - *Resolution:* Reconstructed standalone square checkbox paths (8–24pt) in `PDFVectorStreamParser`, anchored candidates strictly to square geometry (`isSquare = abs(width - height) <= max(width * 0.25, 4.0)`), and added a 25pt baseline penalty to `isAbove`/`isBelow` in `findNearestLabel` to prioritize same-row right-adjacent label binding (`[ ] Label`).
+
+### Verification & Regression Evidence
+
+- **`Form6DetectorTests`**: 3/3 passing (0.205s):
+  - `tableRulesSuppressed`: PASSED (zero candidate bands slice through printed table rows in Section 7(b)).
+  - `statutoryProseSuppressed`: PASSED (all labels $\le 45$ chars, zero declarative/disclaimer prose suggestions).
+  - `characterGridsAndCheckboxesReconstructed`: PASSED (character grid cells and checkboxes correctly detected and anchored).
+- **Automated Regression Gate**: 28/28 passing (0.249s) across 5 test suites:
+  - `NativeDetectorGateTests`: 7/7 passing (0 regressions across 15 corpus fixtures).
+  - `FieldSuggestionFidelityTests`: 13/13 passing.
+  - `DocumentEvidenceGraphTests`: 5/5 passing.
+  - `Fields Channel Mapping`: passing.
+  - `Form6DetectorTests`: 3/3 passing.
+

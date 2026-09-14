@@ -83,6 +83,52 @@ public struct PDFRect: Codable, Equatable, Hashable, Sendable {
     let uh = max(s1.y + s1.height, s2.y + s2.height) - uy
     return PDFRect(x: ux, y: uy, width: uw, height: uh)
   }
+
+  public var area: Double {
+    let s = standardized
+    return max(0, s.width) * max(0, s.height)
+  }
+
+  public func intersectionRatio(with other: PDFRect) -> Double {
+    let a1 = self.area
+    let a2 = other.area
+    let minArea = min(a1, a2)
+    guard minArea > 0 else { return 0 }
+    guard let inter = self.intersection(other) else { return 0 }
+    return inter.area / minArea
+  }
+}
+
+public struct PDFQuad: Codable, Equatable, Hashable, Sendable {
+  public let p1: CGPoint
+  public let p2: CGPoint
+  public let p3: CGPoint
+  public let p4: CGPoint
+
+  public init(p1: CGPoint, p2: CGPoint, p3: CGPoint, p4: CGPoint) {
+    self.p1 = p1
+    self.p2 = p2
+    self.p3 = p3
+    self.p4 = p4
+  }
+
+  public init(rect: PDFRect) {
+    let s = rect.standardized
+    self.p1 = CGPoint(x: s.x, y: s.y)
+    self.p2 = CGPoint(x: s.x + s.width, y: s.y)
+    self.p3 = CGPoint(x: s.x + s.width, y: s.y + s.height)
+    self.p4 = CGPoint(x: s.x, y: s.y + s.height)
+  }
+
+  public var boundingBox: PDFRect {
+    let xs = [p1.x, p2.x, p3.x, p4.x]
+    let ys = [p1.y, p2.y, p3.y, p4.y]
+    let minX = xs.min() ?? 0
+    let maxX = xs.max() ?? 0
+    let minY = ys.min() ?? 0
+    let maxY = ys.max() ?? 0
+    return PDFRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
+  }
 }
 
 public struct DocumentSource: Codable, Equatable, Hashable, Sendable {
@@ -190,6 +236,13 @@ public enum CandidateStatus: String, Codable, CaseIterable, Hashable, Sendable {
   case unknown
 }
 
+public enum EpistemicConfidenceTier: String, Codable, CaseIterable, Equatable, Hashable, Sendable {
+  case verified = "verified"
+  case high = "high"
+  case medium = "medium"
+  case provisional = "provisional"
+}
+
 public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Sendable {
   public let id: UUID
   public let pageIndex: Int
@@ -216,6 +269,19 @@ public struct RegionCandidate: Codable, Equatable, Hashable, Identifiable, Senda
   public let sourceDigest: String?
   /// Var since Stage 2: recalibration re-fuses with learned weights.
   public var fusion: EvidenceFusionResult?
+
+  public var confidenceTier: EpistemicConfidenceTier {
+    if kind == .nativeField {
+      return .verified
+    }
+    if score >= 0.85 {
+      return .high
+    } else if score >= 0.60 {
+      return .medium
+    } else {
+      return .provisional
+    }
+  }
 
   private enum CodingKeys: String, CodingKey {
     case id

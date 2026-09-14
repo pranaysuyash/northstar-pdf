@@ -118,3 +118,19 @@ Process inspection may be recorded as unavailable when macOS privacy prevents
 - `deploy-web.mjs` intentionally has no host/provider assumptions (no CDN,
   no upload credentials); pointing it at a concrete host is a release-gate
   decision, not a tooling default.
+
+## `airgap-watch.mjs` — runtime network-boundary capture
+
+Privacy-forensics harness for persona sims (audit §10.12 / NS-P5): spawns a
+command or attaches to a running pid, samples `lsof -i` on an interval,
+allowlists loopback (plus explicit `--allow host[:port]`), records every socket
+as value-free metadata, and exits non-zero on any violation so a sim run can
+gate on it.
+
+```bash
+node tools/airgap-watch.mjs --exec .build/debug/PDFEditor --out tmp/airgap.json
+node tools/airgap-watch.mjs --pid 1234 --duration 30
+node tools/airgap-watch.mjs --exec ./app --allow api.example.com:443
+```
+
+Verdict is in the JSON report (`verdict: PASS|FAIL`); exit code mirrors it.

@@ -14,6 +14,18 @@
       "threshold": 0.1
     },
     {
+      "avg_wer": 0.017857142857142856,
+      "baseline_avg_wer": 0.017857142857142856,
+      "fixture_count": 8,
+      "outcome": "pass",
+      "over_absolute_threshold": false,
+      "provider": "PaddleOCR PP-OCRv6",
+      "regressed_vs_baseline": false,
+      "regression_only": false,
+      "regression_tolerance": 0.05,
+      "threshold": 0.1
+    },
+    {
       "avg_wer": 0.002403846153846154,
       "baseline_avg_wer": 0.002403846153846154,
       "fixture_count": 8,
@@ -26,25 +38,25 @@
       "threshold": 0.1
     },
     {
-      "outcome": "not_ran",
-      "provider": "PaddleOCR PP-OCRv6",
-      "regression_only": true,
-      "threshold": null
-    },
-    {
-      "outcome": "not_ran",
+      "avg_wer": 0.015685328185328185,
+      "baseline_avg_wer": 0.015685328185328185,
+      "fixture_count": 8,
+      "outcome": "pass",
+      "over_absolute_threshold": false,
       "provider": "Marker (Surya)",
+      "regressed_vs_baseline": false,
       "regression_only": true,
+      "regression_tolerance": 0.05,
       "threshold": null
     }
   ],
   "gated_providers": [
     "Apple Vision",
-    "Tesseract 5.5.0",
     "PaddleOCR PP-OCRv6",
+    "Tesseract 5.5.0",
     "Marker (Surya)"
   ],
-  "generated_at": "2026-09-03T14:02:44Z",
+  "generated_at": "2026-09-11T19:00:17Z",
   "per_fixture_thresholds": {
     "PaddleOCR PP-OCRv6": {
       "clean-english": 0.1,
@@ -53,6 +65,8 @@
   },
   "ran_providers": [
     "Apple Vision",
+    "Marker (Surya)",
+    "PaddleOCR PP-OCRv6",
     "Tesseract 5.5.0"
   ],
   "regression_tolerance": 0.05,

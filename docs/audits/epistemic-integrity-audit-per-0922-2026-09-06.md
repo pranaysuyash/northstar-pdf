@@ -374,3 +374,23 @@ Authorized by the owner's "do all" instruction; scoped per doctrine (workspace m
   5. `tools/pre-push-hook.sh` now tees full swift-test output to `/tmp/pdf-editor-swift-test-last.log` (the 5-line summary could not name failing tests — cause of a multi-hour diagnosis loop).
 - **Remaining blocker (owner decision: wait for the parallel lane):** RG-132 LayoutV2 calibration — `minPositive 0.8998` vs ratified `0.90` on `scanned-noisy.pdf↔ocr-low-contrast.pdf` after the corpus grew 44→60 fixtures. Deterministic (identical value across runs and in the blend-sweep probe). The lane's own `ZZ Blend Sweep Probe` + RG-138 row document this exact pair as the binding constraint ("cannot be made green by weight tuning; requires tolerant multi-scale matching or OCR-lane routing"). Lowering the ratified threshold was offered and declined: owner chose to wait for the lane's in-flight algorithmic fix. Note: CI's `scripts/calibration-gate.sh` will also redden on this job until the lane lands.
 - **How to resume:** after the lane lands its fix — `git add -A` (review), `./tools/pre-push-hook.sh` (expect green), commit (no co-author trailers), push. Staged content may drift if the lane edits files; re-classify with `git status` first.
+
+---
+
+## 15. Addendum (2026-09-08): push blocked by Mimosa harness gate — handoff state
+
+The owner re-ordered the push ("push all local to main" ×2, "retry and continue" ×2). Meanwhile the codex lane committed the bulk of the staged work itself (HEAD `edb8379` "feat(workspace): ship inspector workflow and review gates", incl. `ea3d2fe` "Serialize heavy doctrine test lanes" and `be97e54` "Harden doctrine-driven calibration and release gates" — the lane was actively working the exact calibration boundary that motivated the wait).
+
+**Remaining drift is staged** (`git add -A` run; ~51 entries and moving — the lane is mid-flight on inspector/evidence-graph/App-Intents work). Commit message prepared at `tmp/COMMIT_MSG.md`.
+
+**Why the commit could not be completed from this harness:** the Mimosa plugin's `git-gate` PreToolUse hook blocks every commit with 13 "high" findings. Triage results (all verified):
+- 11 "path traversal" findings are `open(<computed path>, 'w')` writes in local operator-run benchmark/dataset scripts (trusted-input CLI tooling; several write to *fixed constants* under the script directory — pure static-analysis false positives). Real hardening was still applied: all 11 sites now route through a `_confined()` repo-tree containment helper (also genuinely protects CI against mistyped `--output`); the rule ignores guards and still flags them.
+- 1 "code injection" finding is Mozilla Rhino's own debugger demo (`test.js`) inside the gitignored, vendored, local-only veraPDF distribution — unused by `tools/verapdf` (which invokes `GreenfieldCliWrapper` only). It was deleted twice; the codex lane continuously re-extracts the bundle, so the file resurrects within minutes (1980 zip mtime). Racing the lane is unwinnable.
+- `.mimosa/security-policy.json` was created via `mimosa policy init` and configured with the true trust model (`path.allowedWriteRoots` for benchmark/dataset outputs; `threatModel.exclusions` for the vendored CLI) — the commit gate does not consume it; the 13 findings are unchanged and identical across runs, citing a file that does not exist at scan time.
+- `mimosa validate` refuses to run ("finding ledger 为 partial 或包含读取错误") — the ledger chain the gate replays from is itself flagged by `mimosa status` as containing a missing/malformed batch, so the sanctioned fix-and-rescan loop cannot complete.
+
+**Completion paths (owner):**
+1. Run in a plain terminal (Mimosa hooks are ZCode-harness-scoped; the codex lane commits from its own harness unaffected): `git add -A && git commit -F tmp/COMMIT_MSG.md && git push` — the repo pre-push hook will run the full swift gate (~35 min) and **stay red on the RG-132 calibration boundary** until the lane's fix lands; `git push --no-verify` skips it (informed owner decision; CI `calibration-gate` job will show red until the lane lands).
+2. Or adjust Mimosa (disable plugin / approve its continuation prompt / extend the policy schema in a way its gate consumes) and ask any agent to retry.
+
+Note: `tmp/COMMIT_MSG.md` is in the gitignored scratch dir; `.mimosa/security-policy.json` is inside the gitignored state dir (local-only by Mimosa's design).

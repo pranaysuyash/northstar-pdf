@@ -1,13 +1,36 @@
 import Foundation
 
+public enum SemanticFieldTaxonomy: String, CaseIterable, Sendable {
+  case personFullName = "person.name.full"
+  case personFirstName = "person.name.first"
+  case personLastName = "person.name.last"
+  case personMiddleName = "person.name.middle"
+  case identitySSN = "identity.national_id.ssn"
+  case identityTaxID = "identity.national_id.tax_id"
+  case identityPassport = "identity.national_id.passport"
+  case contactPhone = "contact.telephony.phone"
+  case contactMobile = "contact.telephony.mobile"
+  case contactEmail = "contact.electronic.email"
+  case contactAddress = "contact.postal.address"
+  case contactCity = "contact.postal.city"
+  case contactState = "contact.postal.state"
+  case contactZipCode = "contact.postal.zip"
+  case dateOfBirth = "identity.demographic.birth_date"
+  case financialIBAN = "financial.payment.iban"
+  case financialRouting = "financial.payment.routing"
+  case financialAccount = "financial.payment.account"
+}
+
 /// A human-facing name derived from raw document text near a fillable region.
 public struct CanonicalLabel: Equatable, Hashable, Sendable {
   public let displayName: String
   public let confidence: Double
+  public let semanticKey: String?
 
-  public init(displayName: String, confidence: Double) {
+  public init(displayName: String, confidence: Double, semanticKey: String? = nil) {
     self.displayName = displayName
     self.confidence = confidence
+    self.semanticKey = semanticKey
   }
 }
 
@@ -79,10 +102,11 @@ public enum FieldLabelCanonicalizer {
     }
     text = text.trimmingCharacters(in: .whitespaces)
 
-    guard text.count >= 2 else { return nil }
+    guard text.count >= 2 && text.count <= 50 else { return nil }
 
-    // A name made only of generic layout tokens is not a field name.
+    // A name made only of generic layout tokens or containing long prose is not a field name.
     let words = text.split(separator: " ").map(String.init)
+    guard words.count <= 8 else { return nil }
     let meaningful = words.filter { !genericTokens.contains($0.lowercased()) }
     if meaningful.isEmpty { return nil }
     if words.count > meaningful.count { adjusted = true }
@@ -98,7 +122,67 @@ public enum FieldLabelCanonicalizer {
     }
 
     let confidence: Double = adjusted ? 0.7 : 0.95
-    return CanonicalLabel(displayName: text, confidence: confidence)
+    let semanticKey = inferSemanticKey(from: text)
+    return CanonicalLabel(displayName: text, confidence: confidence, semanticKey: semanticKey)
+  }
+
+  public static func inferSemanticKey(from text: String) -> String? {
+    let lower = text.lowercased()
+    if lower.contains("full name") || lower.contains("applicant name") || lower.contains("legal name") || lower == "name" {
+      return SemanticFieldTaxonomy.personFullName.rawValue
+    }
+    if lower.contains("first name") || lower.contains("given name") {
+      return SemanticFieldTaxonomy.personFirstName.rawValue
+    }
+    if lower.contains("last name") || lower.contains("surname") || lower.contains("family name") {
+      return SemanticFieldTaxonomy.personLastName.rawValue
+    }
+    if lower.contains("middle name") || lower.contains("middle initial") {
+      return SemanticFieldTaxonomy.personMiddleName.rawValue
+    }
+    if lower.contains("ssn") || lower.contains("social security") {
+      return SemanticFieldTaxonomy.identitySSN.rawValue
+    }
+    if lower.contains("tax id") || lower.contains("tin") || lower.contains("ein") || lower.contains("itin") {
+      return SemanticFieldTaxonomy.identityTaxID.rawValue
+    }
+    if lower.contains("passport") {
+      return SemanticFieldTaxonomy.identityPassport.rawValue
+    }
+    if lower.contains("mobile") || lower.contains("cell") {
+      return SemanticFieldTaxonomy.contactMobile.rawValue
+    }
+    if lower.contains("phone") || lower.contains("telephone") || lower.contains("tel") {
+      return SemanticFieldTaxonomy.contactPhone.rawValue
+    }
+    if lower.contains("email") || lower.contains("e-mail") {
+      return SemanticFieldTaxonomy.contactEmail.rawValue
+    }
+    if lower.contains("address") || lower.contains("street") {
+      return SemanticFieldTaxonomy.contactAddress.rawValue
+    }
+    if lower.contains("city") || lower.contains("town") {
+      return SemanticFieldTaxonomy.contactCity.rawValue
+    }
+    if lower.contains("state") || lower.contains("province") {
+      return SemanticFieldTaxonomy.contactState.rawValue
+    }
+    if lower.contains("zip") || lower.contains("postal") {
+      return SemanticFieldTaxonomy.contactZipCode.rawValue
+    }
+    if lower.contains("birth") || lower.contains("dob") {
+      return SemanticFieldTaxonomy.dateOfBirth.rawValue
+    }
+    if lower.contains("iban") {
+      return SemanticFieldTaxonomy.financialIBAN.rawValue
+    }
+    if lower.contains("routing") {
+      return SemanticFieldTaxonomy.financialRouting.rawValue
+    }
+    if lower.contains("account") {
+      return SemanticFieldTaxonomy.financialAccount.rawValue
+    }
+    return nil
   }
 
   /// Best display name for a candidate from its stored fields, matching the

@@ -289,7 +289,7 @@ Phase 6 (Advanced)
 | Sharing | ✅ Strong | ✅ Strong | PARITY |
 | Protecting | ✅ Strong | ✅ Strong | PARITY |
 | Privacy | ✅ LOCAL | ❌ Cloud | **ADVANTAGE** |
-| Price | ✅ FREE | ❌ $$$$ | **ADVANTAGE** |
+| Price | ✅ Free reader + $79 one-time Pro (D-052) | ❌ $239.88/yr sub | **ADVANTAGE** |
 
 ### 4.2 After Phase 3 (Week 12)
 
@@ -297,7 +297,7 @@ Phase 6 (Advanced)
 |---|---|---|---|
 | Understanding | ✅ AI-powered | ✅ AI | PARITY |
 | Privacy | ✅ LOCAL | ❌ Cloud | **ADVANTAGE** |
-| Price | ✅ FREE | ❌ $$$$ | **ADVANTAGE** |
+| Price | ✅ Free reader + $79 one-time Pro (D-052) | ❌ $239.88/yr sub | **ADVANTAGE** |
 
 ### 4.3 After Phase 5 (Week 30)
 
@@ -376,6 +376,18 @@ Phase 6 (Advanced)
 - Operating Doctrine §3, §5, §8
 
 ## 8. Completion Log (updated 2026-08-27)
+
+> **⚠️ SUPERSESSION (2026-09-07, launch-audit claim-enforcement sweep PL-I12):** the ✅ DONE
+> statuses below are **code-level**, verified by unit tests — several completed subsystems
+> have **no app consumer and are not user-reachable** in any plane. Verified library-only
+> examples: `AISummarizer`, `CitationTools`, `ContentRouter`, `ReadingAnalytics`,
+> `BatchReadProcessor`, `TableExporter`, `TextExporter`, `PDFUATaggingEngine`
+> (`docs/explorations/features-flows-loops-exploration-2026-09-06.md` §4, grep-verified;
+> epistemic audit EI-B1). Do **not** cite rows from this table as product or launch
+> claims. Wire-or-descope decisions for each orphan are ledgered as PL-D12 in
+> `persona-launch-acceptance-audit-2026-09-07.md` §10.11. Pricing claims in §4
+> ("Price: FREE") are **superseded by D-052** (`docs/decisions.md`: Free reader /
+> Pro $79 one-time / Agent+ $4.99·mo).
 
 ### Reader Archetype (J1-J6, J18-J19)
 

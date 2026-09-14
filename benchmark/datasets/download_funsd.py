@@ -13,6 +13,19 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
+def _confined(path):
+    """Confine writes to the repository tree.
+
+    Explicit containment anchor: these scripts run under operator control and
+    CI; every write must resolve inside the repo, and static analysis gets a
+    provable check instead of inferring one.
+    """
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+    resolved = os.path.abspath(str(path))
+    if os.path.commonpath([resolved, repo_root]) != repo_root:
+        raise SystemExit(f"refusing to write outside the repository: {resolved}")
+    return path
+
 ROOT = Path(__file__).resolve().parent
 EVAL_DIR = ROOT / "funsd" / "eval"
 DATA_DIR = ROOT / "funsd" / "data"
@@ -36,8 +49,7 @@ def download_funsd():
             examples.append(record)
 
         out_path = DATA_DIR / f"{split_name}.json"
-        with open(out_path, "w") as f:
-            json.dump(examples, f, indent=2)
+        Path(_confined(out_path)).write_text(json.dumps(examples, indent=2))
         print(f"[funsd] Saved {len(examples)} examples to {out_path}")
 
     return ds
@@ -110,11 +122,9 @@ def generate_eval():
         "entityTypes": ["header", "question", "answer"],
         "evalMetrics": ["entity_extraction_f1", "header_detection_precision", "qa_pairing_accuracy"],
     }
-    with open(EVAL_DIR / "manifest.json", "w") as f:
-        json.dump(manifest, f, indent=2)
+    Path(_confined(EVAL_DIR / "manifest.json")).write_text(json.dumps(manifest, indent=2))
 
-    with open(EVAL_DIR / "README.md", "w") as f:
-        f.write(f"""# FUNSD External Evaluation Set
+    readme = f"""# FUNSD External Evaluation Set
 
 **Dataset:** FUNSD (Form Understanding in Noisy Scanned Documents)
 **License:** CC BY 4.0
@@ -123,14 +133,14 @@ def generate_eval():
 **Downloaded:** {datetime.now().strftime('%Y-%m-%d')}
 
 ## Splits
-""")
-        for name, info in splits.items():
-            f.write(f"- **{name}**: {info['count']} documents\n")
-        f.write("""
+"""
+    readme += "".join(f"- **{name}**: {info['count']} documents\n" for name, info in splits.items())
+    readme += """
 ## Ground Truth Format
 Each document: `{id, text, entities[{text, box, type}], entityCount}`
 Entity types: `header`, `question`, `answer`
-""")
+"""
+    Path(_confined(EVAL_DIR / "README.md")).write_text(readme)
 
     print(f"[funsd] Eval manifest: {EVAL_DIR / 'manifest.json'}")
 

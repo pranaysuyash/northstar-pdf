@@ -200,3 +200,58 @@ Falsifier for the debt's closure: `PopplerRendererTests` exercises
 non-identical renders through `structuralSimilarity` and asserts a
 score strictly between the byte-identical short-circuit and the
 undecodable `nil` path.
+
+---
+
+## Consolidated cycle (2026-09-06 → 2026-09-08): AcroForm closure, gates, and crash hardening
+
+Per-stream records exist for every item below (linked); this cycle consolidates
+their findings, cross-checks them against on-disk reality, and lists what
+remains open. Coverage: eight work streams, each with a dated record + falsifier.
+
+### Coverage matrix
+
+| Stream | Dated record | Outcome | Falsifier |
+|---|---|---|---|
+| RG-134 checkbox closure | `rg134-checkbox-closure-2026-09-06.md` | Premise falsified — failures were measurement artifacts, not engine defects; resolved by fix. checkbox 1.000 all providers; two genuine defects fixed (orphan page-annot widgets, `/Opt` positional radio mapping) | Regenerated gate report with any checkbox row below production_ready |
+| RG-133 corpus regeneration | `choice-opt-lane-fix-2026-09-06.md` | 40-fixture corpus; choice/checkbox/text 1.000 production_ready every provider; radio 0.9375 honestly Mixed | Report schema/rows below production_ready |
+| Radio/choice fixture hardening | `radio-choice-fixture-hardening-2026-09-06.md` | Radio corpus built from zero; fail-closed verifier now distinguishes degenerate "Off"-only groups; 11 diversity + 6 radio tests green | Suite failure or verifier accepting reserved Off |
+| Multi-select listbox pipeline | `multiselect-listbox-pipeline-2026-09-06.md` | `/Ff` bit-22 + array `/V` round-trip; deliberately outside RG-133 corpus (covered by GeneratedListboxFixtures) | Round-trip test failure |
+| IncrementalWriter object streams | `docs/decisions.md` D-079 | Compressed/xref-stream sources leave the fail-closed rejection set; root cause `inflateZlib` trailing-EOL; PDFKit hybrid-reopen limitation documented with measured reason; noop.pdf falsification recorded | Walker regressing to rejection on compressed-acroform.pdf |
+| CI acroform-parity regression gate | `.github/workflows/ci.yml` (step + artifact upload) | RG-136 mirror: fresh report regeneration → schema validation → fail on any checkbox/choice/text row below production_ready; report uploaded as CI artifact | CI step green while committed report regresses |
+| RG-139 raster blend gate | `blend-sweep-binding-constraint-analysis-2026-09-03.md` addendum + `RasterBlendCalibrationGateTests` | 85/8/7 row passes 0.9104 (was 0.8935); shipped 95/3/2 improved 0.9017→0.9251; zero evidence promotions at every blend. Three structural fixes: multi-scale graded occupancy (16/64pt), raster-only-page exclusion from cell channels, rotation-aware geometry | Gate test failure on either pinned blend |
+| OCRConfirmLane crash | `ocr-confirm-lane-withtimeout-crash-fix-2026-09-08.md` | EXC_BREAKPOINT under load diagnosed as dynamic-exclusivity violation on captured result box; fixed with semaphore-guarded read; timeout now degrades to abstention | Reproduction under load or torn read |
+
+### Cycle-level findings
+
+1. **Measurement-artifact pattern recurs.** RG-134 ("PDFKit drops checkbox
+   values") and the choice 83–88% rows were both measurement defects, not
+   engine defects. Doctrine check (§3 proportional rigor): the fix is always
+   the same — make the measurement independently verifiable before blaming
+   the engine. Both closures followed it.
+2. **Documentation kept pace by design.** Every stream landed with its dated
+   record + falsifier in the same change (§14/§31). Runbook §7 stale
+   contradiction and §8 RG-135 version-bump blocker wiring were closed
+   2026-09-08; INDEX cross-references updated.
+3. **New tooling shipped with tests:** `PDFReviewStatus` CLI (RG-135 per-fixture
+   review status, exit 2 on fail; smoke-tested end-to-end) and
+   `benchmark/ocr_reading_order.py` (band/column reading-order model, 5/5
+   self-test, wired into both PaddleOCR lanes).
+
+### Remaining risks (honest)
+
+- **Full-suite consolidation run outstanding.** Repeatedly aborted by machine
+  contention (load storms, bundle races, helper reaping); per-suite runs are
+  green but one complete post-change `swift test` pass has not landed yet.
+  This is verification debt, not known breakage.
+- **PaddleOCR baseline pre-dates the reading-order fix.** Regression-only gate
+  unaffected; re-run with `--update-baseline` to realize the 0.73→~0 gain in
+  the gate numbers (falsifier in the OCR addendum).
+  **→ CLOSED 2026-09-11:** baseline re-run executed; PaddleOCR avg 0.1091 →
+  0.0179 (multi-column 0.7297 → 0.0000, falsifier did not fire); PaddleOCR
+  promoted to the 0.10 absolute threshold per the gate config's documented
+  intent; gate report regenerated PASS. Receipt:
+  `docs/audits/ocr-cross-provider-benchmark-2026-09-01.md` §2026-09-11.
+- **RG-135 human pass 0/38 by design** — blocks version bumps, not CI.
+- **PDFKit radio `/V` spec-incompleteness** — measured limitation, on record;
+  IncrementalWriter boundary refusals remain fail-closed.

@@ -140,7 +140,8 @@ public struct PDFDigitalSignatureVerifier: Sendable {
     let nsString = pdfString as NSString
     guard let match = regex.firstMatch(in: pdfString, options: [], range: NSRange(location: 0, length: nsString.length)),
           match.numberOfRanges >= 2 else { return nil }
-    return nsString.substring(with: match.range(at: 1))
+    let raw = nsString.substring(with: match.range(at: 1))
+    return sanitizeMetadataString(raw)
   }
 
   private func extractSignatureReason(_ pdfString: String) -> String? {
@@ -148,6 +149,13 @@ public struct PDFDigitalSignatureVerifier: Sendable {
     let nsString = pdfString as NSString
     guard let match = regex.firstMatch(in: pdfString, options: [], range: NSRange(location: 0, length: nsString.length)),
           match.numberOfRanges >= 2 else { return nil }
-    return nsString.substring(with: match.range(at: 1))
+    let raw = nsString.substring(with: match.range(at: 1))
+    return sanitizeMetadataString(raw)
+  }
+
+  private func sanitizeMetadataString(_ raw: String) -> String {
+    let clean = raw.unicodeScalars.filter { !CharacterSet.controlCharacters.contains($0) }
+    let str = String(String.UnicodeScalarView(clean)).trimmingCharacters(in: .whitespacesAndNewlines)
+    return String(str.prefix(256))
   }
 }

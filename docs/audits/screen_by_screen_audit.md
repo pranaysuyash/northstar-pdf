@@ -184,22 +184,24 @@ This comprehensive audit catalogs **17 interface states**, identifying several c
 
 ## 2. Comprehensive Defect & Improvement Catalog
 
-| # | Severity | Component / File | Issue Description | Root Cause | Proposed Fix |
-|---|---|---|---|---|---|
-| **1** | **High (Visual)** | `ContextualInspectorView.swift` | **Segmented Picker Label Bug:** The text `"Inspector Section"` wraps into a vertical single-letter column to the left of the tabs, breaking horizontal alignment and truncating tab titles. | `Picker("Inspector Section", selection: $selectedTab)` lacks `.labelsHidden()` in SwiftUI on macOS. | Add `.labelsHidden()` to the picker in `ContextualInspectorView`. |
-| **2** | **High (UI/UX)** | `DocumentBrowserView.swift` | **Modal Sizing & Overlap Bug:** Sheet collapses into an unusable 400x120 box with search field overlapping items; no dismiss button. | View lacks `.frame(minWidth: 800, minHeight: 500)` and `@Environment(\.dismiss)` navigation toolbar. | Add standard window frame constraints, title, and a "Done" button in `.toolbar`. |
-| **3** | **Medium (Architecture)** | `PDFEditorApp.swift` | **External Open Duplicate Window (GAP-B):** Calling `open <file>` spawns a secondary window instead of reusing the initial scratch window. | `PDFEditorExternalOpenRouter` does not synchronously claim the existing key window before SwiftUI's default `WindowGroup` instantiates a second scene. | Enforce single-window reuse in `PDFEditorExternalOpenRouter` and close empty scratch windows immediately upon external open. |
-| **4** | **Medium (Accessibility)** | `ContentView.swift` | **Accessibility Label Leak (GAP-E):** Fill mode button in the editor toolbar announces raw SF symbol name `"pencil.and.list.clipboard"`. | Picker or button item does not provide explicit `.accessibilityLabel("Fill form fields")`. | Add explicit `.accessibilityLabel("Fill")` and descriptive hint to the editor mode selector. |
-| **5** | **Low (UX/Ergonomics)** | `ContentView.swift` | **Toolbar Overflow Menu Clutter:** Secondary items like `Workspace` and `Export` overflow into a generic `>>` menu on standard 1280x820 displays. | Toolbar item placement uses default priorities without `.secondaryAction` consolidation. | Group tools logically and specify `.help` / compact representations so primary actions remain directly visible. |
-| **6** | **Low (Diagnostics)** | `AppModel.swift` | **Memory Pressure Cleared Warning (GAP-C):** Rapid scans or inspector switches trigger a yellow warning banner `"Memory pressure: cleared non-essential caches"`. | Cache evacuation threshold is tuned conservatively for large corpus runs. | Adjust cache budget thresholds and add a debounce to thumbnail generation. |
+| # | Severity | Component / File | Issue Description | Root Cause | Proposed Fix | Status |
+|---|---|---|---|---|---|---|
+| **1** | **High (Visual)** | `ContextualInspectorView.swift` | **Segmented Picker Label Bug:** The text `"Inspector Section"` wraps into a vertical single-letter column to the left of the tabs, breaking horizontal alignment and truncating tab titles. | `Picker("Inspector Section", selection: $selectedTab)` lacks `.labelsHidden()` in SwiftUI on macOS. | Add `.labelsHidden()` to the picker in `ContextualInspectorView`. | **Resolved & Verified** |
+| **2** | **High (UI/UX)** | `DocumentBrowserView.swift` | **Modal Sizing & Overlap Bug:** Sheet collapses into an unusable 400x120 box with search field overlapping items; no dismiss button. | View lacks `.frame(minWidth: 800, minHeight: 500)` and `@Environment(\.dismiss)` navigation toolbar. | Add standard window frame constraints, title, and a "Done" button in `.toolbar`. | **Resolved & Verified** |
+| **3** | **Medium (Architecture)** | `PDFEditorApp.swift` | **External Open Duplicate Window (GAP-B):** Calling `open <file>` spawns a secondary window instead of reusing the initial scratch window. | `PDFEditorExternalOpenRouter` does not synchronously claim the existing key window before SwiftUI's default `WindowGroup` instantiates a second scene. | Enforce single-window reuse in `PDFEditorExternalOpenRouter` and close empty scratch windows immediately upon external open. | **Resolved & Verified** |
+| **4** | **Medium (Accessibility)** | `ContentView.swift` | **Accessibility Label Leak (GAP-E):** Fill mode button in the editor toolbar announces raw SF symbol name `"pencil.and.list.clipboard"`. | Picker or button item does not provide explicit `.accessibilityLabel("Fill form fields")`. | Add explicit `.accessibilityLabel("Fill")` and descriptive hint to the editor mode selector. | **Resolved & Verified** |
+| **5** | **Low (UX/Ergonomics)** | `ContentView.swift` | **Toolbar Overflow Menu Clutter:** Secondary items like `Workspace` and `Export` overflow into a generic `>>` menu on standard 1280x820 displays. | Toolbar item placement uses default priorities without `.secondaryAction` consolidation. | Group tools logically and specify `.help` / compact representations so primary actions remain directly visible. | **Resolved & Verified** |
+| **6** | **Low (Diagnostics)** | `AppModel.swift` | **Memory Pressure Cleared Warning (GAP-C):** Rapid scans or inspector switches trigger a yellow warning banner `"Memory pressure: cleared non-essential caches"`. | Cache evacuation threshold is tuned conservatively for large corpus runs. | Adjust cache budget thresholds and add a debounce to thumbnail generation. | **Resolved & Verified** |
 
 ---
 
-## 3. Next Steps & Recommended Path
+## 3. Resolution Verification Summary
 
-With all 17 interface screens captured, verified, and cataloged, we have a clear, evidence-based baseline. We can now proceed to implement fixes in a clean, isolated sequence:
-1. Fix the `ContextualInspectorView` segmented picker label bug (`.labelsHidden()`).
-2. Fix `DocumentBrowserView` and `VersionCompareView` frame constraints and add dismiss buttons.
-3. Fix the Accessibility label leak on the Fill mode button.
-4. Improve window routing in `PDFEditorExternalOpenRouter` to eliminate duplicate window spawning.
-5. Re-run simulations to capture updated "After" screenshots confirming resolution.
+All 6 cataloged defects from the 17-screen audit have been systematically resolved, compiled, and verified against the native testing gate:
+1. **Picker Labels**: Segmented tab control in `ContextualInspectorView` renders horizontally with labels hidden.
+2. **Sheet Sizing & Navigation**: `DocumentBrowserView` enforces `(width: 820, height: 560)` with clean dismiss capabilities.
+3. **External Open Window Router**: `PDFEditorExternalOpenRouter` deterministic routing unifies open requests into one window.
+4. **Assistive Accessibility**: Mode picker and fill offers declare semantic accessibility labels and hints.
+5. **Toolbar Hygiene**: Secondary workspace tools consolidated into native macOS menu representations.
+6. **Cache Invariants**: Memory pressure warnings debounced and guarded against active scans.
+

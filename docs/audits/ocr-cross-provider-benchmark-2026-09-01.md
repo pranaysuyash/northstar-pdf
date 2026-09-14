@@ -120,3 +120,59 @@ multi-column WER 0.73 → near 0; the gate's PaddleOCR regression-only policy
 stays as-is until a re-run regenerates the baseline (`--update-baseline`,
 auditable in git). Falsifier: a regenerated multi-column PaddleOCR WER
 remaining > 0.10 despite non-empty box geometry.
+
+## Addendum (2026-09-11): Baseline re-run with reading-order fix — PaddleOCR enforced
+
+The 2026-09-08 addendum deferred gate-policy follow-through until a re-run
+regenerated the baseline. That re-run is done; the falsifier did not fire.
+
+**Method.** The gate runner supports `--gate --update-baseline`, but a
+full-corpus single invocation was not used: detached background launches are
+killed by the session sandbox between tool calls (three launch patterns
+tried — plain `nohup`, runner script, subshell-orphan — all died before the
+first fixture), so the run was executed as four per-provider foreground
+invocations (`--providers` filter, each well inside a tool-call window),
+rows captured from each run's `cross-provider-wer-report.json`, and the
+baseline written once via the module's own `write_baseline` (wholesale
+replacement is the writer's only mode — a Paddle-only `--update-baseline`
+would have wiped the Tesseract/Vision/Marker reference rows, silently
+weakening the CI fast lane's regression-vs-baseline check). The gate report
+was then regenerated via the module's own `evaluate_gate`. No numbers were
+hand-written into the artifacts.
+
+**Measured (8 fixtures, all rows status OK):**
+
+| Provider | Old baseline (09-03) | New baseline (09-11) | Note |
+|---|---|---|---|
+| PaddleOCR PP-OCRv6 | 0.1091 (multi-column 0.7297) | **0.0179** (multi-column **0.0000**) | reading-order fix collapsed the outlier; residual is the mixed-punctuation recognition miss (0.1429, pre-dates the fix, present in other providers) |
+| Tesseract 5.5.0 | 0.0024 | 0.0024 | reproduced exactly |
+| Apple Vision | 0.0000 | 0.0000 | reproduced exactly |
+| Marker (Surya) | 0.0157 | 0.0157 | reproduced exactly (multi-column 0.0541 residual is markdown-conversion behavior, not a defect) |
+
+**Gate policy completion.** The gate config documented that PaddleOCR's
+regression-only classification was provisional ("enforcement lands together
+with reading-order post-processing"). With the fix measured, that intent is
+completed: PaddleOCR is added to `GATE_WER_THRESHOLDS` (0.10 absolute,
+~5.6× headroom over the measured average; a single-fixture ordering
+regression at the historical failure mode would cost ~+0.125 average and
+fail both threshold and regression-vs-baseline) and removed from
+`GATE_REGRESSION_ONLY_PROVIDERS`. Marker (Surya) remains regression-only:
+its residual WER is markdown-conversion design, not a defect.
+
+**Swift mirror sync.** `OCRWerGateTests` hardcodes its own copy of the gate
+classification (deliberate parity layer, "keep in sync" header), so the
+reclassification is mirrored there: thresholds, regression-only list, the
+four-providers-at-baseline case, and a new case pinning that a reading-order
+spike (0.40) fails PaddleOCR both on absolute threshold and vs baseline.
+14/14 pass. The gate report regenerated against the new baseline:
+**PASS** — Apple Vision 0.0000, PaddleOCR 0.0179, Tesseract 0.0024 (all
+threshold 0.10), Marker 0.0157 (regression-only).
+
+**Falsifier status:** did not fire (multi-column PaddleOCR WER = 0.0000
+with non-empty box geometry, on the real lane via `PaddleOCRProvider`).
+
+**Provenance:** fresh runs 2026-09-11, machine-local CPU inference
+(paddleocr 3.7.0 in `benchmark/datasets/.venv`, marker-pdf same venv,
+tesseract CLI, PDFVisionOCRCLI build). Prior baseline preserved in git
+history; pre-edit copy at `/tmp/ocr-wer-baseline-backup-20260911.json`
+(session-local).

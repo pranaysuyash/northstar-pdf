@@ -2,6 +2,7 @@ import AppKit
 import PDFEditorCore
 import PDFEditorRecovery
 import SwiftUI
+import UniformTypeIdentifiers
 
 public struct PageThumbnailRailView: View {
   let model: AppModel
@@ -9,6 +10,7 @@ public struct PageThumbnailRailView: View {
   /// Shared rendering pipeline (owned by ContentView) whose cache this rail
   /// both consumes and warms.
   let renderingPipeline: RenderingPipeline
+  @State private var isRailDropTargeted = false
 
   public init(
     model: AppModel,
@@ -80,6 +82,18 @@ public struct PageThumbnailRailView: View {
           }
           .padding(10)
         }
+        .onDrop(of: [UTType.pdf.identifier, UTType.fileURL.identifier], isTargeted: $isRailDropTargeted) { providers in
+          handleRailDroppedPDF(providers)
+        }
+        .overlay {
+          if isRailDropTargeted {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+              .strokeBorder(Color.accentColor, lineWidth: 2)
+              .background(Color.accentColor.opacity(0.08))
+              .padding(4)
+              .allowsHitTesting(false)
+          }
+        }
         .onChange(of: model.selectedPageIndex) { _, newIndex in
           withAnimation(.easeInOut(duration: 0.25)) {
             proxy.scrollTo(newIndex, anchor: .center)
@@ -92,6 +106,30 @@ public struct PageThumbnailRailView: View {
     .accessibilityElement(children: .contain)
     .accessibilityLabel("Page navigation")
     .accessibilityIdentifier("pdfEditor.pageNavigation")
+  }
+
+  private func handleRailDroppedPDF(_ providers: [NSItemProvider]) -> Bool {
+    guard let provider = providers.first else { return false }
+    provider.loadInPlaceFileRepresentation(forTypeIdentifier: UTType.pdf.identifier) { url, inPlace, error in
+      guard let url else { return }
+      let targetURL: URL
+      if inPlace {
+        targetURL = url
+      } else {
+        let destination = FileManager.default.temporaryDirectory
+          .appendingPathComponent("PDFEditor-RailDrop-\(UUID().uuidString).pdf")
+        do {
+          try FileManager.default.copyItem(at: url, to: destination)
+          targetURL = destination
+        } catch {
+          return
+        }
+      }
+      Task { @MainActor in
+        model.insertPages(from: targetURL)
+      }
+    }
+    return true
   }
 
   /// Per-page badge counts, built in one pass. Computing these inside each

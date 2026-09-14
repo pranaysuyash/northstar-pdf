@@ -181,12 +181,49 @@ public final class PDFVectorStreamParser: @unchecked Sendable {
             ctx.currentPath.append(pt)
         }
 
+        // Close subpath: h
+        CGPDFOperatorTableSetCallback(opTable, "h") { _, info in
+            guard let info else { return }
+            let ctx = Unmanaged<ScannerContext>.fromOpaque(info).takeUnretainedValue()
+            if let first = ctx.currentPath.first, let last = ctx.currentPath.last, first != last {
+                let rect = CGRect(
+                    x: min(last.x, first.x),
+                    y: min(last.y, first.y),
+                    width: max(abs(first.x - last.x), 1.0),
+                    height: max(abs(first.y - last.y), 1.0)
+                ).standardized
+                ctx.detectedLines.append(rect)
+                ctx.currentPath.append(first)
+            }
+        }
+
         // Stroke or fill commit operators
         let commitCallback: CGPDFOperatorCallback = { _, info in
             guard let info else { return }
             let ctx = Unmanaged<ScannerContext>.fromOpaque(info).takeUnretainedValue()
             ctx.detectedRectangles.append(contentsOf: ctx.currentRects)
             ctx.currentRects.removeAll(keepingCapacity: true)
+
+            // Reconstruct rectangles from closed orthogonal paths (e.g. m l l l h / S)
+            let pts = ctx.currentPath
+            if (pts.count == 4 || pts.count == 5) {
+                let xs = pts.map(\.x)
+                let ys = pts.map(\.y)
+                if let minX = xs.min(), let maxX = xs.max(), let minY = ys.min(), let maxY = ys.max() {
+                    let w = maxX - minX
+                    let h = maxY - minY
+                    // Check orthogonality: all points must be on the bounding box corners
+                    let tolerance: CGFloat = 2.0
+                    let isRectangular = pts.allSatisfy { pt in
+                        (abs(pt.x - minX) <= tolerance || abs(pt.x - maxX) <= tolerance) &&
+                        (abs(pt.y - minY) <= tolerance || abs(pt.y - maxY) <= tolerance)
+                    }
+                    if isRectangular && w >= 6 && h >= 6 {
+                        ctx.detectedRectangles.append(CGRect(x: minX, y: minY, width: w, height: h))
+                    }
+                }
+            }
+
             ctx.currentPath.removeAll(keepingCapacity: true)
         }
 
@@ -211,20 +248,123 @@ public final class PDFVectorStreamParser: @unchecked Sendable {
         return processRawGeometry(context: context)
     }
 
+    private static func reconstructStrokedGridsAndBoxes(
+        lines: [CGRect]
+    ) -> (cells: [CGRect], consumedLineIndices: Set<Int>) {
+        var cells: [CGRect] = []
+        var consumed = Set<Int>()
+
+        var horizontalLines: [(index: Int, rect: CGRect)] = []
+        var verticalLines: [(index: Int, rect: CGRect)] = []
+
+        for (idx, line) in lines.enumerated() {
+            if line.height <= 3.0 && line.width >= 8.0 {
+                horizontalLines.append((idx, line))
+            } else if line.width <= 3.0 && line.height >= 8.0 {
+                verticalLines.append((idx, line))
+            }
+        }
+
+        horizontalLines.sort { $0.rect.minY < $1.rect.minY }
+
+        for i in 0..<horizontalLines.count {
+            let h1 = horizontalLines[i]
+            for j in (i + 1)..<horizontalLines.count {
+                let h2 = horizontalLines[j]
+                let rowHeight = h2.rect.minY - h1.rect.minY
+                if rowHeight > 36.0 { break }
+                guard rowHeight >= 8.0 else { continue }
+
+                let overlapMinX = max(h1.rect.minX, h2.rect.minX)
+                let overlapMaxX = min(h1.rect.maxX, h2.rect.maxX)
+                guard overlapMaxX - overlapMinX >= 8.0 else { continue }
+
+                var dividerXPositions: [CGFloat] = []
+                var dividerIndices: [Int] = []
+
+                for v in verticalLines {
+                    let vRect = v.rect
+                    if vRect.midX >= overlapMinX - 3.0 && vRect.midX <= overlapMaxX + 3.0 {
+                        if vRect.minY <= h1.rect.minY + 4.0 && vRect.maxY >= h2.rect.minY - 4.0 {
+                            dividerXPositions.append(vRect.midX)
+                            dividerIndices.append(v.index)
+                        }
+                    }
+                }
+
+                guard dividerXPositions.count >= 2 else { continue }
+
+                dividerXPositions.sort()
+                var uniqueX: [CGFloat] = []
+                for x in dividerXPositions {
+                    if let last = uniqueX.last {
+                        if abs(x - last) > 2.0 {
+                            uniqueX.append(x)
+                        }
+                    } else {
+                        uniqueX.append(x)
+                    }
+                }
+
+                guard uniqueX.count >= 2 else { continue }
+
+                var widths: [CGFloat] = []
+                for k in 0..<(uniqueX.count - 1) {
+                    widths.append(uniqueX[k + 1] - uniqueX[k])
+                }
+
+                // Case A: Multi-cell Grid (>= 3 cells with uniform width, e.g. BLOCK LETTERS, DOB, Mobile)
+                if widths.count >= 3 {
+                    let minW = widths.min() ?? 0
+                    let maxW = widths.max() ?? 0
+                    if minW >= 8.0 && maxW <= 36.0 && (maxW - minW <= 5.0 || maxW / max(minW, 1.0) <= 1.35) {
+                        for k in 0..<widths.count {
+                            cells.append(CGRect(x: uniqueX[k], y: h1.rect.minY, width: widths[k], height: rowHeight))
+                        }
+                        consumed.insert(h1.index)
+                        consumed.insert(h2.index)
+                        for dIdx in dividerIndices { consumed.insert(dIdx) }
+                    }
+                }
+                // Case B: Standalone Square Checkbox (1 cell where width ≈ height ≈ 8-24pt)
+                else if widths.count == 1 {
+                    let w = widths[0]
+                    if w >= 8.0 && w <= 24.0 && abs(w - rowHeight) <= 4.0 {
+                        if h1.rect.width <= w + 6.0 && h2.rect.width <= w + 6.0 {
+                            cells.append(CGRect(x: uniqueX[0], y: h1.rect.minY, width: w, height: rowHeight))
+                            consumed.insert(h1.index)
+                            consumed.insert(h2.index)
+                            for dIdx in dividerIndices { consumed.insert(dIdx) }
+                        }
+                    }
+                }
+            }
+        }
+
+        return (cells, consumed)
+    }
+
     private static func processRawGeometry(context: ScannerContext) -> ParsedPageGeometry {
         let mediaBox = context.mediaBox
         let pageArea = max(mediaBox.width * mediaBox.height, 1.0)
+
+        // Reconstruct character grid cells and square checkboxes from stroked lines
+        let (strokedCells, consumedLines) = reconstructStrokedGridsAndBoxes(lines: context.detectedLines)
+
+        // Combine directly detected rectangles with reconstructed cells
+        var allRectangles = context.detectedRectangles
+        allRectangles.append(contentsOf: strokedCells)
 
         // Filter out whole-page background boxes and tiny point noise
         var cleanRects: [CGRect] = []
         var inputBoxes: [PDFRect] = []
         var checkboxes: [PDFRect] = []
-        let rectangleReserveHint = min(context.detectedRectangles.count, 64)
+        let rectangleReserveHint = min(allRectangles.count, 64)
         cleanRects.reserveCapacity(rectangleReserveHint)
         inputBoxes.reserveCapacity(rectangleReserveHint)
         checkboxes.reserveCapacity(rectangleReserveHint)
 
-        for rect in context.detectedRectangles {
+        for rect in allRectangles {
             let area = rect.width * rect.height
             // Exclude full-page container (e.g. >95% page area) and zero-size artifacts
             if area > pageArea * 0.95 || rect.width < 3 || rect.height < 3 {
@@ -243,10 +383,11 @@ public final class PDFVectorStreamParser: @unchecked Sendable {
         }
 
         // Filter horizontal lines (underlines): width >= 24, height <= 4
+        // Exclude lines consumed by stroked grid/box reconstruction
         var underlines: [PDFRect] = []
         underlines.reserveCapacity(min(context.detectedLines.count, 64))
-        for line in context.detectedLines {
-            if line.width >= 24 && line.height <= 4.0 {
+        for (idx, line) in context.detectedLines.enumerated() {
+            if !consumedLines.contains(idx) && line.width >= 24 && line.height <= 4.0 {
                 underlines.append(PDFRect(line))
             }
         }

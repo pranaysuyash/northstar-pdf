@@ -122,3 +122,65 @@ The fixture now has a bounded reviewed editor run covering grouped character
 regions, static choice marking, native-field synthesis, export, and reopen
 validation. OCR/CV fallback evidence is covered separately by the native reader
 gate. General detector quality remains an open research and measurement problem.
+
+### September 2026 Native Engine Evaluation Record
+
+- **Engine Core Updates**:
+  - `PDFVectorStreamParser.swift`: Registered `"h"` closepath callback; reconstructed orthogonal 4-point/5-point closed paths into candidate bounding boxes.
+  - `StaticRegionDetector.swift`: Added right-side label association for checkbox rows (`[ ] Yes`), bottom-label association for signature/underline lines, expanded voter-domain dictionary, and added photo-frame density exception.
+- **Observed Native Output**:
+  - Live native preview app (`PDFEditor`) identified 55+ interactive candidates directly from the source vector stream and text runs without AcroForm widgets.
+  - Form 6 evaluation visual evidence captured in `docs/audits/screenshots/screen48_form6_absolute_path.png` and logged as Screen 33 in `docs/audits/screen_improvement_log.md`.
+
+## Documented Gaps for Subsequent Detection Iterations
+
+Visual inspection of the rendered document canvas and the sidebar suggestions on `form6-voter-application.pdf` confirms that candidate detection is currently broken in multiple critical ways:
+
+### 1. The 4 Severe Failures Visible on the Canvas
+
+1. **Table Rules Slicing Through Printed Text (False Positives)**:
+   - In **Section 7(b)** (*Document for Proof of Date of Birth*), orange dashed boxes slice horizontally directly through printed text (*"Birth certificate issued by Competent Local Body..."*, *"PAN Card"*, *"Indian Passport"*).
+   - **Why**: The detector classifies every horizontal vector line in the table as a `potentialUnderline`, assumes it is a blank fill line, and draws a 26pt entry band directly on top of the printed table rows without checking for existing text.
+
+2. **Static Headers & Declaration Sentences Treated as Form Fields**:
+   - The entire legal declaration sentence *"I submit application for inclusion of my name in the electoral roll for the above constituency"* is enclosed in an orange box as if it were an input field.
+   - Column headers like *"First Name followed by Middle Name"* and *"Surname (if any)"* have candidate boxes drawn over the label text itself rather than the blank writing area.
+   - In the right sidebar under **Suggestions (72)**, the user is repeatedly prompted to "fill" static text:
+     - `I submit application for inclusion of my name in t...` (listed twice)
+     - `First Name followed by Middle Name` (listed 3+ times)
+
+3. **Character Grids are Severely Fragmented or Completely Missed (False Negatives)**:
+   - **Row 1(a) (Official Language)**: Only 5 isolated cells in the middle are highlighted in yellow; the other 10 cells in the row are completely missed.
+   - **Row 1(b) (English BLOCK LETTERS)**: The entire 15-cell grid is **completely blank** — zero detection.
+   - **Date of Birth (`[d][d] / [m][m] / [y][y][y][y]`)**: The slash-separated date cells have zero detection.
+   - **Mobile Number & Aadhaar Grids**: Treated as a single wide dashed rectangle cutting through the internal grid separators.
+
+4. **Square Checkboxes are Missed & Misaligned**:
+   - The checkboxes for relatives (*Father, Mother, Husband, Wife*) and gender (*Male, Female*) are completely unhighlighted.
+   - For *Third Gender*, instead of detecting the square checkbox `[ ]` to the left, an orange box is drawn directly over the text `"Third Gender"`.
+
+---
+
+### 2. First-Principles Technical Root Cause
+
+1. **Stroked Grid Matrix vs. Closed Rectangles**:
+   - In this government PDF (generated from Microsoft Word), the character entry boxes are **not** individual rectangle operators (`re` or `m l l l h`). They are drawn as a **ruled grid table** with continuous horizontal and vertical path strokes (`m ... l ... S`).
+   - Because `PDFVectorStreamParser.swift` only detects isolated rectangles or standalone closed paths, it fails to reconstruct the cells formed by intersecting grid strokes.
+2. **Table Border Rule Confusion in `StaticRegionDetector.swift`**:
+   - Any horizontal vector line with text above it is currently treated as an "underline for a form field". In a dense form with boxed tables, this heuristic generates false positives over every table row border.
+3. **Failure to Suppress Explicit Non-Targets**:
+   - Section 88 of `docs/form6-benchmark.md` defines the non-target contract:
+     > *"The following must not be suggested as fillable regions by default: Form labels, instructions, disclaimers, declaration prose, page borders, table borders, grid separators."*
+   - Currently, `StaticRegionDetector` does not filter out text runs with high character counts (>40 chars) or table borders, allowing full sentences to enter the suggestion queue.
+
+---
+
+### 3. What Needs to Be Done to Fix It Properly
+
+1. **Table & Rule Suppression**: Detect when a horizontal vector line is part of a table border or has printed text sitting directly on it (text bounding box intersecting the line), and suppress it from `potentialUnderlines`.
+2. **Grid Cell Reconstruction from Stroke Intersections**: Reconstruct cell rectangles from orthogonal intersecting stroke grids (`horizontalLines` $\cap$ `verticalLines`), uniting them into a single `.characterGrid` band instead of random scattered cells.
+3. **Non-Target Prose Rejection**: Reject any candidate whose associated text is a disclaimer, instructional paragraph, or sentence exceeding 40 characters without explicit blank markers.
+4. **Checkbox Spatial Anchor**: Anchor standalone checkboxes to the square box geometry (`box.width == box.height`), binding the label to the right (`[ ] Label`) without drawing the candidate box over the label text.
+
+
+

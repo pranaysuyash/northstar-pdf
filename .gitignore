@@ -125,4 +125,14 @@ EMPTY-STATE-SKETCHES*.html
 # Python bytecode (added 2026-09-06 — a tracked .pyc was previously committed)
 __pycache__/
 *.pyc
+
+# Intentionally tracked exceptions to the rules above (classified 2026-09-14
+# during the pre-commit artifact classification for the C1 evidence commit):
+# - /Web-Prototype.zip is the web-audit design source-of-truth artifact and
+#   stays tracked even though it matches the ignore pattern below.
+# - outputs/agent-task-registry.md, outputs/delightful-experience-redesign-report.md,
+#   and outputs/overview.md predate the outputs/ rule and stay tracked as
+#   historical reports. NEW files under outputs/ remain ignored.
+# Do not "fix" this drift with git rm --cached; untracking would delete the
+# design source-of-truth and historical reports from the repo surface.
 /Web-Prototype.zip

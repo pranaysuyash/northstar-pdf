@@ -1,0 +1,14 @@
+{
+  "tool": "airgap-watch.mjs",
+  "startedAt": "2026-09-10T18:46:29.653Z",
+  "finishedAt": "2026-09-10T18:46:42.095Z",
+  "mode": "pid",
+  "pid": 64565,
+  "allowlist": [
+    "loopback"
+  ],
+  "sampleIntervalMs": 400,
+  "connections": [],
+  "violations": [],
+  "verdict": "PASS"
+}

@@ -3315,3 +3315,33 @@ and produce an implementation plan.
 - **Validation:** `PDFIncrementalWriterTests` object-stream walk/write/round-trip tests (25/25 writer tests green); `qpdf --check` on written output; parity report regenerated 2026-09-08 (radio Mixed: experimental/production_ready/unsupported with per-fixture reasons; checkbox/choice/text production_ready).
 - **Falsifier:** a compressed-base fixture that walks but fails `qpdf --check` after an incremental edit, or a non-ObjStm fixture newly rejected by the walker.
 - **Rollback:** restore the compressed-set rejection (one guard); no data migration.
+
+## D-080: Fill mode is native-fields-first; opportunistic auto-OCR is bounded and honest
+
+- **Date:** 2026-09-07
+- **Status:** Implemented (Tier 2 build + sim re-run pending PL-V04)
+- **Context:** First native computer-use sim (`docs/simulations/RUN-2026-09-07-N2N1-native-first-run-and-fill.md`, PL-I29/PL-R11) found the fill lane hanging: a text-empty page with one native checkbox widget triggered `autoOCRIfNeededForFillMode`, whose `try?` swallowed recognition failures and left "Scanning page N…" pinned indefinitely; the memory-pressure handler could overwrite that status mid-flight, and the menu bar wedged disabled during the scan window.
+- **Decision:** (1) Auto-OCR is skipped for any page that already exposes native fields — the native lane is the primary fill surface; OCR remains the fallback for text-poor pages *without* widgets. (2) A failed/empty recognition now reports honestly ("Automatic scan found no text on page N. Use OCR Page to retry.") instead of sticking. (3) A 45 s watchdog bounds the status so a wedged pass can never pin it; a late completion still merges through the normal reviewed path. (4) The memory-pressure handler no longer stomps an in-flight scan's status.
+- **Trade-offs:** A scanned page that *also* has some native fields loses the automatic static-blank suggestions until the user runs OCR Page manually — deliberate: reviewed native evidence beats opportunistic OCR latency in the wedge journey.
+- **Validation:** sim re-run (PL-V04) on `yes_off_unchecked_basic.pdf` must show fill mode activating with the native field surfaced and no "Scanning…" status; watchdog covered by behavior test on recognition failure.
+- **Falsifier:** any fixture where fill mode re-enters a stuck "Scanning…" state, or a native-field page that auto-runs OCR.
+- **Owner:** Native lane.
+
+## D-081: All externally requested opens route through one router; outcome is one coherent window
+
+- **Date:** 2026-09-07
+- **Status:** Implemented (Tier 2 build + sim re-run pending PL-V04)
+- **Context:** Sim finding PL-I30: argv document arguments produced a windowless process (SwiftPM binaries get no Launch Services argv routing), and Apple-Event opens raced SwiftUI's WindowGroup handling, yielding a duplicate start-surface window whose focus left the menu bar validating against an empty model.
+- **Decision:** `PDFEditorExternalOpenRouter` owns every external open (argv drained in `applicationDidFinishLaunching`, Launch Services `application(_:open:)`, future URLs). Opens land in the key window's model; after the open, any *other* visible window that is still a clean scratch surface (no document, no unsaved edits) is closed so the buyer's "open this file" ends with exactly one window showing their document. Windows with documents or edits are never touched — a dirty focused window keeps its state and the open goes through the normal dirty-guard path on a future pass.
+- **Trade-offs:** A welcome window the user had arranged is closed when an external open arrives; acceptable because it holds zero state by definition (no document, not dirty).
+- **Validation:** post-bundle gate steps in `docs/codesign-notarize-workflow.md` §10 (argv, double-click, dirty-window invariant, air-gap watch).
+- **Falsifier:** any external open that leaves two windows, a windowless process, or a menu bar disabled for the open document.
+- **Owner:** Native lane.
+
+## D-082: Memory-pressure response is status-preserving; full policy review tracked under PL-R14/PL-I23
+
+- **Date:** 2026-09-07
+- **Status:** Partially implemented (handler fix in D-080(4)); cache/eviction policy review open
+- **Context:** The dispatch memory-pressure handler cleared caches mid-scan and overwrote the status message (sim finding, §10.12). The ≤250 MB synchronous main-actor open (EI-B5 / PL-I23) remains the larger open pressure-path risk.
+- **Decision:** The handler preserves in-flight scan status (implemented). The remaining policy questions — eviction candidates, thresholds, user-visible messaging, and the main-actor open — are consolidated in PL-R14/PL-I23 rather than patched piecemeal.
+- **Owner:** Native lane + owner for PL-I23 scheduling.

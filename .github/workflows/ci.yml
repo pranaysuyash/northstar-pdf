@@ -81,6 +81,58 @@ jobs:
       - name: Calibration gate (regenerate + validate 60-fixture corpus)
         run: scripts/calibration-gate.sh 2>&1
 
+      # RG-139 raster blend-sweep gate: reruns the permanent blend gate suite
+      # (fresh regeneration — the report is a product of this run, not a
+      # committed file) and validates the persisted JSON invariants. Fails on:
+      #   - Test failure (a gated blend no longer separates)
+      #   - Schema mismatch or missing report
+      #   - Either gated blend (95/3/2 shipped, 85/8/7 target) dropping below
+      #     the ratified 0.90 family threshold
+      #   - Any evidence-bearing hard-negative promotion (RG-138 evidence floor)
+      #   - Corpus shrinkage below the 50-fixture floor
+      # See docs/release-gates.md RG-139; suite:
+      # Tests/PDFEditorCoreTests/RasterBlendCalibrationGateTests.swift.
+      - name: Raster blend gate (RG-139)
+        run: |
+          swift test --filter RasterBlendCalibrationGate 2>&1
+          python3 - <<'PY'
+          import json, sys, pathlib
+
+          report = pathlib.Path('benchmark/results/raster-blend-gate/raster-blend-gate-report.json')
+          if not report.exists():
+              print('::error::RG-139 raster blend gate report not found')
+              sys.exit(1)
+          data = json.load(open(report))
+          if data.get('schema') != 'pdf-editor.raster-blend-gate':
+              print(f"::error::Unexpected schema: {data.get('schema')}")
+              sys.exit(1)
+          # Corpus floor: the gate test requires >= 50 of the 56-fixture F-3
+          # corpus to extract. A silently shrunken corpus must not pass.
+          corpus = data.get('corpusSize', 0)
+          if corpus < 50:
+              print(f'::error::Blend gate corpus too small: {corpus} fixtures (floor: 50)')
+              sys.exit(1)
+          blends = data.get('blends', [])
+          if not blends:
+              print('::error::Blend gate report contains no blend rows')
+              sys.exit(1)
+          if not data.get('gatePassed', False):
+              print('::error::RG-139 gatePassed=false — a gated blend row regressed')
+              sys.exit(1)
+          for b in blends:
+              label = b.get('label', '?')
+              min_pos = b.get('minPositive', 0)
+              promotions = b.get('evidencePromotions', [])
+              print(f"  {label}: minPos={min_pos:.4f} ev-promotions={len(promotions)} abstentions={b.get('abstentions', 0)}")
+              if min_pos < 0.90:
+                  print(f"::error::{label}: minPositive {min_pos:.4f} < 0.90 — positive recognition collapsed (worst: {b.get('worstPositivePair')})")
+                  sys.exit(1)
+              if promotions:
+                  print(f"::error::{label}: evidence-bearing hard negatives promoted: {promotions[:4]}")
+                  sys.exit(1)
+          print('Raster blend gate (RG-139) passed: 95/3/2 and 85/8/7 hold the 0.90 separation.')
+          PY
+
       # Manifest field presence gate: verifies every corpus-sweep fixture's
       # structural expectations (widget count, annotation count, page count)
       # match live PDFKit inspection. Catches name-vs-structure inference
@@ -213,6 +265,14 @@ jobs:
           path: benchmark/results/acroform-parity/acroform-parity-gate-report.json
           if-no-files-found: error
 
+      - name: Upload raster blend gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: raster-blend-gate
+          path: benchmark/results/raster-blend-gate/raster-blend-gate-report.json
+          if-no-files-found: error
+
       - name: Upload human-review artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -253,11 +313,13 @@ jobs:
   # ── Gate 6: OCR WER heavy lane (all four providers) ───────────────────
   # RG-136 heavy lane: runs the full cross-provider benchmark (Tesseract,
   # Apple Vision, PaddleOCR, Marker) against the same persisted baseline.
-  # PaddleOCR + Marker are gated on regression-vs-baseline ONLY (their corpus
-  # average is dominated by the documented multi-column reading-order
-  # limitation, so an absolute threshold would block on the limitation, not
-  # on regressions — see GATE_REGRESSION_ONLY_PROVIDERS in
-  # benchmark/compare_ocr_wer.py). Runs nightly and on manual dispatch
+  # PaddleOCR carries the 0.10 absolute threshold since the 2026-09-11
+  # re-baseline (reading-order post-processing collapsed the multi-column
+  # outlier 0.7297 → 0.0000; measured avg 0.0179 — see
+  # docs/audits/ocr-cross-provider-benchmark-2026-09-01.md §2026-09-11).
+  # Marker is gated on regression-vs-baseline ONLY (its corpus average
+  # reflects markdown-conversion design, not a defect — see
+  # GATE_REGRESSION_ONLY_PROVIDERS in benchmark/compare_ocr_wer.py). Runs nightly and on manual dispatch
   # because installing paddleocr + marker-pdf + torch on a fresh runner is
   # heavy; a provider that fails to run is recorded as not_ran provenance and
   # never fails the gate, so a broken install cannot cause a false pass.

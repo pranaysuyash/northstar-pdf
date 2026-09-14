@@ -45,3 +45,23 @@ The wedge journey (open → Fill → review → edit → export) is **not comple
 1. Fix GAP-C first (scan lane): reproduce headlessly if possible; inspect the scan task launch path for a dropped continuation; add cancel/retry.
 2. Reproduce GAP-A/B/D with a minimal script (`osascript` open + AX menu dump) after GAP-C, since they share the programmatic-open wiring.
 3. Re-run this protocol end-to-end, then continue to export-byte validation (step 12+) and the N3 discoverability sweep.
+
+---
+
+## Remediation & partial re-verification (2026-09-08)
+
+Fixes landed same-day (D-080, D-081): native-fields-first auto-OCR guard + honest failure status + 45 s watchdog + pressure-handler status preservation (`AppModel.swift`); `PDFEditorExternalOpenRouter` owning argv + Launch Services opens with scratch-window cleanup (`PDFEditorApp.swift`); per-segment AX labels on the intent picker (`ContentView.swift`). Build: **green** in an isolated scratch path (shared `.build` held by the parallel agent); `swiftc -parse` clean.
+
+Re-run against the fixed binary (Apple-Event open of the same fixture):
+
+| Step | Prior run | This run | Verdict |
+|---|---|---|---|
+| Fill mode activation | Stuck "Scanning…" 15 s+, then pressure-abort | Status "Fill mode — 0 / 1 fields filled"; no scan triggered (page has a native field) | **PASS** (PL-I29) |
+| Menu bar during mode switch | Fully disabled, never recovered | Save…/Export Copy…/Append/Open all enabled throughout | **PASS** (menu wedge gone) |
+| AX labels for intent radios | `pencil.and.list.clipboard` | "Read / Fill / Sign / Edit" | **PASS** (PL-I32) |
+| Apple-Event open | Duplicate welcome window + disabled menus | Document loads; menus enable; field editor functional (Checked toggle + Apply Field Value) | **PARTIAL** — duplicate window still spawns *after* the router's cleanup (ordering) → **PL-I30b** |
+| Field apply → export | Unreachable | Field editor opens and arms, but the ad-hoc binary's keychain re-prompt loop (PL-I36, new) blocks unattended completion; export validation still owed | **BLOCKED (environment)** |
+
+Evidence: screenshots `/tmp/ns-check*.png` (session-temporary; re-capture on next run for the archive). argv path not yet re-exercised (router code identical for both entry points; queue tested via the Apple-Event path). Next: PL-I30b deferred-cleanup pass, then the full PL-V04 battery (apply → export → byte validation) and the argv leg.
+
+**PL-I30b closure (2026-09-08/09):** deferred sweep passes (0.5 s/1.5 s) added to the router and rebuilt; Apple-Event open now ends with **exactly one window** holding the document (AX-verified: fixture loaded, 1 field, consent row present). Remaining from this run: the apply→export→byte-validation leg (blocked only by the ad-hoc keychain prompt loop, PL-I36) and the argv leg — both fold into the next full PL-V04 battery.

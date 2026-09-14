@@ -15,7 +15,7 @@ import Foundation
 // MARK: - Extracted Table
 
 /// A table extracted from the PDF with enriched metadata.
-public struct ExtractedTable: Sendable, Identifiable {
+public struct ExtractedTable: Sendable, Identifiable, Equatable, Hashable {
     public let id: String
     public let rows: Int
     public let columns: Int
@@ -206,7 +206,106 @@ public struct TableExtractor: Sendable {
         }.joined(separator: "\n\n")
     }
 
+    // MARK: - Table Math Verification & Anomaly Detection
+
+    /// Verifies arithmetic totals in table columns and detects calculation anomalies.
+    public func verifyMath(in table: ExtractedTable) -> TableMathReport {
+        guard table.rows > 1 && table.columns > 0 else {
+            return TableMathReport(summaries: [], totalDiscrepancies: 0, hasTotalsRow: false)
+        }
+
+        let headers = table.headers ?? (0..<table.columns).map { "Column \($0 + 1)" }
+        let totalKeywords = ["total", "subtotal", "sum", "grand total", "net total", "amount due", "balance due"]
+
+        // Find candidate total row in cells
+        var totalRowIndex: Int?
+        for (rIdx, row) in table.cells.enumerated().reversed() {
+            let rowText = row.joined(separator: " ").lowercased()
+            if totalKeywords.contains(where: { rowText.contains($0) }) {
+                totalRowIndex = rIdx
+                break
+            }
+        }
+
+        var summaries: [TableColumnMathSummary] = []
+        var discrepanciesCount = 0
+
+        for colIdx in 0..<table.columns {
+            let colName = colIdx < headers.count ? headers[colIdx] : "Col \(colIdx + 1)"
+
+            // Collect numbers from rows before the total row (or all rows if no total row)
+            let limitRow = totalRowIndex ?? table.cells.count
+            var numbers: [Double] = []
+
+            let startRow = table.hasHeaders ? 1 : 0
+            for r in startRow..<limitRow {
+                guard r < table.cells.count, colIdx < table.cells[r].count else { continue }
+                if let num = parseNumber(table.cells[r][colIdx]) {
+                    numbers.append(num)
+                }
+            }
+
+            // Only report columns that contain numerical series
+            guard numbers.count >= 2 else { continue }
+
+            let computed = numbers.reduce(0, +)
+
+            if let tRow = totalRowIndex, tRow < table.cells.count, colIdx < table.cells[tRow].count,
+               let reported = parseNumber(table.cells[tRow][colIdx]) {
+                let diff = abs(computed - reported)
+                let isMatch = diff < 0.015 // floating-point allowance
+                let discrepancy = isMatch ? nil : (computed - reported)
+                if !isMatch { discrepanciesCount += 1 }
+
+                summaries.append(
+                    TableColumnMathSummary(
+                        columnIndex: colIdx,
+                        columnName: colName,
+                        computedSum: computed,
+                        reportedTotal: reported,
+                        isVerified: isMatch,
+                        discrepancy: discrepancy
+                    )
+                )
+            } else {
+                summaries.append(
+                    TableColumnMathSummary(
+                        columnIndex: colIdx,
+                        columnName: colName,
+                        computedSum: computed,
+                        reportedTotal: nil,
+                        isVerified: true,
+                        discrepancy: nil
+                    )
+                )
+            }
+        }
+
+        return TableMathReport(
+            summaries: summaries,
+            totalDiscrepancies: discrepanciesCount,
+            hasTotalsRow: totalRowIndex != nil
+        )
+    }
+
     // MARK: - Helpers
+
+    private func parseNumber(_ text: String) -> Double? {
+        let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "$", with: "")
+            .replacingOccurrences(of: "€", with: "")
+            .replacingOccurrences(of: "£", with: "")
+            .replacingOccurrences(of: "₹", with: "")
+            .replacingOccurrences(of: ",", with: "")
+
+        if cleaned.hasPrefix("(") && cleaned.hasSuffix(")") {
+            let inner = String(cleaned.dropFirst().dropLast())
+            if let val = Double(inner) {
+                return -val
+            }
+        }
+        return Double(cleaned)
+    }
 
     private func escapeCSV(_ value: String) -> String {
         if value.contains(",") || value.contains("\"") || value.contains("\n") {
@@ -215,3 +314,48 @@ public struct TableExtractor: Sendable {
         return value
     }
 }
+
+// MARK: - Table Math Verification Models
+
+public struct TableColumnMathSummary: Sendable, Codable, Equatable, Identifiable {
+    public var id: String { "col-\(columnIndex)" }
+    public let columnIndex: Int
+    public let columnName: String
+    public let computedSum: Double
+    public let reportedTotal: Double?
+    public let isVerified: Bool
+    public let discrepancy: Double?
+
+    public init(
+        columnIndex: Int,
+        columnName: String,
+        computedSum: Double,
+        reportedTotal: Double?,
+        isVerified: Bool,
+        discrepancy: Double?
+    ) {
+        self.columnIndex = columnIndex
+        self.columnName = columnName
+        self.computedSum = computedSum
+        self.reportedTotal = reportedTotal
+        self.isVerified = isVerified
+        self.discrepancy = discrepancy
+    }
+}
+
+public struct TableMathReport: Sendable, Codable, Equatable {
+    public let summaries: [TableColumnMathSummary]
+    public let totalDiscrepancies: Int
+    public let hasTotalsRow: Bool
+
+    public var hasAnomalies: Bool {
+        totalDiscrepancies > 0
+    }
+
+    public init(summaries: [TableColumnMathSummary], totalDiscrepancies: Int, hasTotalsRow: Bool) {
+        self.summaries = summaries
+        self.totalDiscrepancies = totalDiscrepancies
+        self.hasTotalsRow = hasTotalsRow
+    }
+}
+

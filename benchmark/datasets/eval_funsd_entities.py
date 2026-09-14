@@ -26,7 +26,21 @@ import re
 import sys
 import time
 from collections import Counter, defaultdict
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+def _confined(path):
+    """Confine writes to the repository tree.
+
+    Explicit containment anchor: these scripts run under operator control and
+    CI; every write must resolve inside the repo, and static analysis gets a
+    provable check instead of inferring one.
+    """
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+    resolved = os.path.abspath(str(path))
+    if os.path.commonpath([resolved, repo_root]) != repo_root:
+        raise SystemExit(f"refusing to write outside the repository: {resolved}")
+    return path
 
 
 # ---------------------------------------------------------------------------
@@ -342,8 +356,7 @@ def main():
     output_dir = os.path.join(project_root, 'results', 'external-dataset-eval')
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, 'funsd-entity-eval-report.json')
-    with open(output_path, 'w') as f:
-        json.dump(report, f, indent=2, sort_keys=True)
+    Path(_confined(output_path)).write_text(json.dumps(report, indent=2, sort_keys=True))
     print(f"\nReport saved to: {output_path}")
     
     return 0

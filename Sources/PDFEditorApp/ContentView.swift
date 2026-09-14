@@ -72,6 +72,7 @@ public struct ContentView: View {
   @Binding private var searchFocusEvent: Int
   /// Shared rendering pipeline: the canvas and the thumbnail rail consume the
   /// same cache so thumbnails and progressive renders warm each other.
+  @Environment(\.openWindow) private var openWindow
   @State private var renderingPipeline = RenderingPipeline()
   @StateObject private var themeManager = ThemeManager()
   @StateObject private var readingHistory = ReadingHistoryManager()
@@ -206,23 +207,8 @@ public struct ContentView: View {
         VersionCompareView(versionStore: versionStore)
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
-      .sheet(isPresented: $model.isGovernanceDashboardPresented) {
-        GovernanceDashboardView(engine: governanceEngine)
-          .transition(.scale(scale: 0.96).combined(with: .opacity))
-      }
       .sheet(isPresented: $isHumanReviewPresented) {
         HumanReviewPanelView()
-          .transition(.scale(scale: 0.96).combined(with: .opacity))
-      }
-      .sheet(isPresented: $isCompanionHealthPresented) {
-        CompanionHealthDashboardView(
-          health: CompanionHealthCheck(
-            bridge: model.companionBridge,
-            registry: model.providerRegistry,
-            egressGate: model.companionBridge.egressGate,
-            contractStore: model.contractStore
-          )
-        )
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.showDiffSheet) {
@@ -293,7 +279,11 @@ public struct ContentView: View {
             searchProjectionState: $searchProjectionState,
             searchFocusEvent: $searchFocusEvent,
             isCommandPalettePresented: $isAgentCommandPresented,
-            annotationStore: annotationStore
+            annotationStore: annotationStore,
+            onDocumentDropped: { url in
+              self.droppedDocumentURL = url
+              self.isDropDisambiguationPresented = true
+            }
           )
 
           if readingParams.showInspector {
@@ -678,16 +668,16 @@ public struct ContentView: View {
         .help("Compare and revert document versions")
 
         Button("Governance Dashboard…", systemImage: "checkmark.shield") {
-          model.isGovernanceDashboardPresented = true
+          openWindow(id: "governance-dashboard")
         }
-        .help("View compliance status and policy rules")
+        .help("View compliance status and policy rules in a dedicated native window")
 
         Divider()
 
         Button("Companion Health…", systemImage: "heart.text.square") {
-          isCompanionHealthPresented = true
+          openWindow(id: "companion-health")
         }
-        .help("Provider status, egress connections, and bridge log")
+        .help("Provider status, egress connections, and bridge log in a dedicated native window")
 
         Button("Security & Privacy Vault…", systemImage: "lock.shield") {
           model.isSecurityVaultPresented = true
@@ -721,7 +711,13 @@ public struct ContentView: View {
         )
       ) {
         ForEach(EditorMode.allCases, id: \.self) { mode in
-          Label(mode.displayName, systemImage: mode.symbolName).tag(mode)
+          Label(mode.displayName, systemImage: mode.symbolName)
+            .tag(mode)
+            // Segmented pickers expose the SF Symbol name (e.g.
+            // "pencil.and.list.clipboard") as the segment's accessibility
+            // label when a symbol is present (sim finding PL-I32). Assistive
+            // tech must read the human mode name, never a symbol identifier.
+            .accessibilityLabel(mode.displayName)
         }
       }
       .pickerStyle(.segmented)
@@ -982,6 +978,48 @@ public struct ContentView: View {
             Text(label)
               .font(.caption)
               .foregroundStyle(.secondary)
+          }
+        }
+
+        if model.editorMode == .edit {
+          Button {
+            model.scanAndStagePIIRedactions()
+          } label: {
+            HStack(spacing: 4) {
+              Image(systemName: "shield.lefthalf.filled.badge.checkmark")
+              Text("Scan Sensitive PII")
+                .fontWeight(.medium)
+            }
+            .font(.caption)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(Color.red.opacity(0.12))
+            .foregroundStyle(Color.red)
+            .clipShape(Capsule())
+          }
+          .buttonStyle(.plain)
+          .accessibilityLabel("Scan sensitive PII")
+          .help("Scan text for SSNs, Credit Cards, Emails, and Phone Numbers to stage for redaction review")
+
+          if model.redactionMarkCount > 0 {
+            Button {
+              model.isRedactionCommitPresented = true
+            } label: {
+              HStack(spacing: 4) {
+                Image(systemName: "lock.shield.fill")
+                Text("Commit \(model.redactionMarkCount) Redaction\(model.redactionMarkCount == 1 ? "" : "s")")
+                  .fontWeight(.medium)
+              }
+              .font(.caption)
+              .padding(.horizontal, 8)
+              .padding(.vertical, 3)
+              .background(Color.red)
+              .foregroundStyle(.white)
+              .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Commit \(model.redactionMarkCount) redactions permanently")
+            .help("Permanently redact marked regions into a new PDF copy (Tier 4 action)")
           }
         }
 
@@ -2229,6 +2267,28 @@ struct SignatureSavedTab: View {
 }
 
 public struct SettingsView: View {
+  public init() {}
+
+  public var body: some View {
+    TabView {
+      GeneralSettingsTab()
+        .tabItem {
+          Label("General", systemImage: "gearshape")
+        }
+      GovernanceSettingsTab()
+        .tabItem {
+          Label("Governance", systemImage: "checkmark.shield")
+        }
+      CompanionHealthSettingsTab()
+        .tabItem {
+          Label("Companion Health", systemImage: "heart.text.square")
+        }
+    }
+    .frame(width: 580, height: 480)
+  }
+}
+
+public struct GeneralSettingsTab: View {
   @AppStorage("layoutRestorePolicy") private var layoutRestorePolicyRaw: String =
     UserDefaults.standard.string(forKey: "layoutRestorePolicy") ?? AppModel.LayoutRestorePolicy.fixedDefault.rawValue
   @State private var didClearAdaptiveCommandHistory = false
@@ -2305,7 +2365,6 @@ public struct SettingsView: View {
     }
     .formStyle(.grouped)
     .scenePadding()
-    .frame(width: 460)
   }
 }
 

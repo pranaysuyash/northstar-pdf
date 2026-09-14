@@ -291,3 +291,35 @@ After implementation, evidence will be recorded in:
 and stapling require an Apple Developer account and credentials that are not
 available in this environment. This document serves as the runbook for when
 those credentials become available.
+
+## 9. Document-type wiring for the buyer "Open With" path (PL-R15, 2026-09-07)
+
+The bundled app must keep the document-type declarations that make Launch
+Services route PDFs to Northstar. `tools/native-preview-Info.plist` already
+declares `CFBundleDocumentTypes` for the `pdf` extension (role Viewer); the
+bundle step MUST copy these keys into the distributed app's Info.plist:
+
+- `CFBundleDocumentTypes` (extension `pdf`; add `LSItemContentTypes`
+  `com.adobe.pdf` alongside the extension form so UTI-based routing also hits)
+- `CFBundleTypeRole`: `Viewer`
+- Optional Open-With ranking: `LSHandlerRank` `Alternate` (default/owner stays
+  with the user's chosen reader; Northstar must never hijack PDFs on install)
+
+## 10. External-open contract to verify post-bundle (pairs with PL-I30)
+
+The native app routes all externally requested opens through
+`PDFEditorExternalOpenRouter` (`Sources/PDFEditorApp/PDFEditorApp.swift`):
+argv at launch, Launch Services `application(_:open:)`, and
+`open this file` all land in one queue that opens into the key window and
+closes any *other* visible window that is still a clean scratch surface
+(no document, no unsaved edits). The gate is not DONE until a signed bundle
+passes, on a clean machine:
+
+1. `open -a Northstar <fixture.pdf>` → one window, document loaded, menu bar enabled
+2. Finder double-click → same outcome
+3. With a second dirty document window open, an external open must NOT close
+   or replace it (no-work-loss invariant)
+4. `node tools/airgap-watch.mjs --exec <bundle binary>` stays PASS during 1–3
+
+Evidence goes to `docs/release-gates.md` RG-122 and the RUN doc series in
+`docs/simulations/`.

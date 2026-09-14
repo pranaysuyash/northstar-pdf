@@ -233,11 +233,18 @@ private enum SharedHeavyTestResourceLock {
         userInfo: [NSLocalizedDescriptionKey: "Could not open heavy test resource semaphore"]
       )
     }
+    // Bounded acquire (2026-09-12, docs/flaky-register.md same date): POSIX
+    // named semaphores do NOT auto-release when a holder is SIGKILLed, so a
+    // timeout-killed run leaks the lock and the previous unbounded spin hung
+    // every later heavy-lane run silently forever. Bound converts the silent
+    // hang into a fail-closed error that names the exact remediation.
+    let acquireDeadline = Date().addingTimeInterval(300)
     var acquired = false
     while !acquired {
       if sem_trywait(semaphore) == 0 {
         acquired = true
       } else if errno == EAGAIN || errno == EINTR {
+        guard Date() < acquireDeadline else { break }
         try await Task.sleep(nanoseconds: 20_000_000)
       } else {
         break
@@ -248,7 +255,7 @@ private enum SharedHeavyTestResourceLock {
       throw NSError(
         domain: "PDFEditorAppRecoveryTests",
         code: 3,
-        userInfo: [NSLocalizedDescriptionKey: "Could not acquire heavy test resource semaphore"]
+        userInfo: [NSLocalizedDescriptionKey: "Heavy test resource semaphore '\(name)' not acquired within 300s. Known cause (flaky-register 2026-09-12): a previous run holding the lock was killed, leaking the kernel-persistent named semaphore. Remediate with: pkill -f swiftpm-testing-helper (confirm orphans first), then sem_unlink('\(name)') — the next sem_open(O_CREAT) recreates it."]
       )
     }
     defer {

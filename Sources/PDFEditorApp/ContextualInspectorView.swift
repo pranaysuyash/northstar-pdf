@@ -43,6 +43,9 @@ public struct ContextualInspectorView: View {
   @State private var renameDraft = ""
   @State private var templateDisplayName = "Reviewed local layout"
   @State private var isDiscardingExportPresented = false
+  @State private var isReceiptCopied = false
+  @State private var evidenceQueryDraft = ""
+  @State private var groundedQueryResult: GroundedQueryResult?
 
   public init(
     model: AppModel,
@@ -111,6 +114,16 @@ public struct ContextualInspectorView: View {
         selectedTab = .focus
       }
     }
+    .onChange(of: model.selectedTextSelection?.text, initial: true) { _, newText in
+      if newText != nil {
+        selectedTab = .focus
+      }
+    }
+    .onChange(of: model.selectedTable?.id, initial: true) { _, newTableID in
+      if newTableID != nil {
+        selectedTab = .focus
+      }
+    }
     .confirmationDialog(
       "Discard the derived export copy?",
       isPresented: $isDiscardingExportPresented,
@@ -128,7 +141,17 @@ public struct ContextualInspectorView: View {
   // MARK: - Complete Tab (case focus; raw value "Complete")
   private var focusTabContent: some View {
     VStack(alignment: .leading, spacing: 16) {
-      if let mark = selectedAnnotation {
+      if let xfa = model.xfaInspectionResult, xfa.kind != .absent {
+        xfaFormBanner(xfa)
+      }
+
+      if let table = model.selectedTable {
+        // Selection Scope: Table Object
+        selectedTableContextCard(table)
+      } else if let selection = model.selectedTextSelection {
+        // Selection Scope: Text / Clause
+        selectedTextContextCard(selection)
+      } else if let mark = selectedAnnotation {
         // Selection Scope: Annotation
         selectedAnnotationContextCard(mark)
         selectedAnnotationCard(mark)
@@ -161,6 +184,74 @@ public struct ContextualInspectorView: View {
     .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedFieldID)
     .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedCandidateID)
     .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedAnnotationID)
+  }
+
+  private func xfaFormBanner(_ xfa: XFAFormProcessor.XFAInspectionResult) -> some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack(spacing: 8) {
+        Image(systemName: "doc.text.below.ecg")
+          .foregroundStyle(Color.orange)
+        Text("XFA Form Detected (\(xfa.kind.rawValue))")
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        if xfa.requiresFallbackFlattening {
+          Text("Dynamic")
+            .font(.caption2.weight(.bold))
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(Color.orange.opacity(0.15), in: Capsule())
+            .foregroundStyle(Color.orange)
+        }
+      }
+
+      Text("Contains \(xfa.packetNames.joined(separator: ", ")) packets with \(xfa.extractedFields.count) XML dataset entries.")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      if !xfa.extractedFields.isEmpty {
+        DisclosureGroup("Extracted Field Data (\(xfa.extractedFields.count))") {
+          VStack(alignment: .leading, spacing: 4) {
+            ForEach(Array(xfa.extractedFields.keys.sorted().prefix(8)), id: \.self) { key in
+              HStack {
+                Text(key)
+                  .font(.caption2.monospaced())
+                  .foregroundStyle(.secondary)
+                Spacer()
+                Text(xfa.extractedFields[key] ?? "")
+                  .font(.caption2.weight(.medium))
+                  .lineLimit(1)
+              }
+            }
+            if xfa.extractedFields.count > 8 {
+              Text("+ \(xfa.extractedFields.count - 8) more fields in XML dataset")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+          }
+          .padding(.top, 4)
+        }
+        .font(.caption)
+
+        Button {
+          let datasetText = xfa.extractedFields.map { "\($0.key): \($0.value)" }.joined(separator: "\n")
+          NSPasteboard.general.clearContents()
+          NSPasteboard.general.setString(datasetText, forType: .string)
+          model.statusMessage = "Copied XFA dataset to clipboard."
+        } label: {
+          Label("Copy Form Dataset", systemImage: "doc.on.clipboard")
+            .font(.caption.weight(.medium))
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+      }
+    }
+    .padding(12)
+    .background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 10, style: .continuous)
+        .strokeBorder(Color.orange.opacity(0.25), lineWidth: 1)
+    )
   }
 
   @ViewBuilder
@@ -495,6 +586,271 @@ public struct ContextualInspectorView: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
+  private func selectedTextContextCard(_ selection: (text: String, bounds: PDFRect, pageIndex: Int)) -> some View {
+    VStack(alignment: .leading, spacing: 12) {
+      HStack(spacing: 8) {
+        Image(systemName: "text.quote")
+          .foregroundStyle(Color.accentColor)
+        Text("Selected Text / Clause")
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text("PAGE \(selection.pageIndex + 1)")
+          .font(.system(size: 9, weight: .bold, design: .monospaced))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+          .foregroundStyle(.secondary)
+      }
+
+      Text("\"\(selection.text)\"")
+        .font(.callout)
+        .lineLimit(5)
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(NSColor.textBackgroundColor).opacity(0.6), in: RoundedRectangle(cornerRadius: 6))
+
+      HStack(spacing: 12) {
+        Text("\(selection.text.split(separator: " ").count) words")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+        Text("\(selection.text.count) characters")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+        Spacer()
+        Text("● On-device (Neural Engine)")
+          .font(.caption2.weight(.medium))
+          .foregroundStyle(.green)
+      }
+
+      VStack(spacing: 8) {
+        HStack(spacing: 8) {
+          Button {
+            model.redactSelectedText()
+          } label: {
+            Label("Redact Selection", systemImage: "eye.slash")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.borderedProminent)
+          .tint(.red)
+
+          Button {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(selection.text, forType: .string)
+            model.statusMessage = "Copied text to clipboard."
+          } label: {
+            Label("Copy Text", systemImage: "doc.on.doc")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
+        }
+      }
+    }
+    .padding(12)
+    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
+    .overlay(
+      RoundedRectangle(cornerRadius: 8)
+        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+  }
+
+  private func selectedTableContextCard(_ table: ExtractedTable) -> some View {
+    let mathReport = TableExtractor().verifyMath(in: table)
+
+    return VStack(alignment: .leading, spacing: 12) {
+      HStack(spacing: 8) {
+        Image(systemName: "tablecells.badge.ellipsis")
+          .font(.subheadline.weight(.semibold))
+          .foregroundStyle(Color.accentColor)
+        Text("Selected Table (\(table.rows)×\(table.columns))")
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text("PAGE \(table.pageIndex + 1)")
+          .font(.system(size: 9, weight: .bold, design: .monospaced))
+          .padding(.horizontal, 6)
+          .padding(.vertical, 2)
+          .background(Color.primary.opacity(0.06), in: Capsule())
+          .foregroundStyle(.secondary)
+
+        Button {
+          model.selectedTable = nil
+        } label: {
+          Image(systemName: "xmark.circle.fill")
+            .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.plain)
+      }
+
+      // Math Verification & Anomaly Status Card
+      VStack(alignment: .leading, spacing: 6) {
+        if mathReport.hasAnomalies {
+          HStack(spacing: 6) {
+            Image(systemName: "exclamationmark.triangle.fill")
+              .foregroundStyle(.orange)
+            Text("Calculation Discrepancy Detected")
+              .font(.caption.weight(.bold))
+              .foregroundStyle(.orange)
+            Spacer()
+            Text("\(mathReport.totalDiscrepancies) Anomaly")
+              .font(.system(size: 9, weight: .bold))
+              .padding(.horizontal, 5)
+              .padding(.vertical, 1)
+              .background(Color.orange.opacity(0.15), in: Capsule())
+              .foregroundStyle(.orange)
+          }
+
+          ForEach(mathReport.summaries.filter { !$0.isVerified }) { summary in
+            VStack(alignment: .leading, spacing: 2) {
+              Text(summary.columnName)
+                .font(.caption2.weight(.semibold))
+              HStack {
+                Text("Computed Sum: \(String(format: "%.2f", summary.computedSum))")
+                  .font(.system(size: 10, design: .monospaced))
+                Spacer()
+                Text("Reported: \(String(format: "%.2f", summary.reportedTotal ?? 0))")
+                  .font(.system(size: 10, design: .monospaced))
+                  .foregroundStyle(.red)
+              }
+            }
+            .padding(6)
+            .background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 4))
+          }
+        } else if mathReport.hasTotalsRow {
+          HStack(spacing: 6) {
+            Image(systemName: "checkmark.seal.fill")
+              .foregroundStyle(.green)
+            Text("Column Totals Verified")
+              .font(.caption.weight(.semibold))
+              .foregroundStyle(.green)
+            Spacer()
+            Text("PASSED")
+              .font(.system(size: 9, weight: .bold))
+              .padding(.horizontal, 5)
+              .padding(.vertical, 1)
+              .background(Color.green.opacity(0.15), in: Capsule())
+              .foregroundStyle(.green)
+          }
+          Text("All reported totals match computed column values without discrepancies.")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        } else if !mathReport.summaries.isEmpty {
+          HStack(spacing: 6) {
+            Image(systemName: "function")
+              .foregroundStyle(Color.accentColor)
+            Text("Computed Column Totals")
+              .font(.caption.weight(.semibold))
+          }
+          ForEach(mathReport.summaries) { summary in
+            HStack {
+              Text(summary.columnName)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+              Spacer()
+              Text(String(format: "%.2f", summary.computedSum))
+                .font(.caption2.monospacedDigit().weight(.medium))
+            }
+          }
+        }
+      }
+      .padding(8)
+      .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 6))
+
+      // Focus & Navigation Actions
+      HStack(spacing: 8) {
+        Button {
+          model.flashEvidenceAnchor(pageIndex: table.pageIndex, bounds: table.bounds)
+        } label: {
+          Label("Focus on Canvas", systemImage: "target")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .controlSize(.small)
+      }
+
+      // Export Buttons
+      HStack(spacing: 6) {
+        Button {
+          let csv = TableExtractor().exportCSV(table)
+          NSPasteboard.general.clearContents()
+          NSPasteboard.general.setString(csv, forType: .string)
+          model.statusMessage = "Copied table CSV to clipboard."
+        } label: {
+          Label("Copy CSV", systemImage: "doc.on.doc")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+
+        Button {
+          let md = TableExtractor().exportMarkdown(table)
+          NSPasteboard.general.clearContents()
+          NSPasteboard.general.setString(md, forType: .string)
+          model.statusMessage = "Copied table Markdown to clipboard."
+        } label: {
+          Label("Markdown", systemImage: "tablecells")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+
+        Button {
+          if let json = TableExtractor().exportJSON(table),
+             let jsonStr = String(data: json, encoding: .utf8) {
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(jsonStr, forType: .string)
+            model.statusMessage = "Copied table JSON to clipboard."
+          }
+        } label: {
+          Label("JSON", systemImage: "curlybraces")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+      }
+
+      // Preview (first 4 rows)
+      VStack(alignment: .leading, spacing: 4) {
+        Text("DATA PREVIEW")
+          .font(.system(size: 9, weight: .bold))
+          .foregroundStyle(.secondary)
+
+        ScrollView(.horizontal, showsIndicators: false) {
+          VStack(alignment: .leading, spacing: 1) {
+            if let headers = table.headers {
+              HStack(spacing: 0) {
+                ForEach(headers, id: \.self) { header in
+                  Text(header)
+                    .font(.caption2.weight(.semibold))
+                    .frame(minWidth: 64, alignment: .leading)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Color.primary.opacity(0.08))
+                }
+              }
+            }
+
+            ForEach(Array(table.dataRows.prefix(4).enumerated()), id: \.offset) { _, row in
+              HStack(spacing: 0) {
+                ForEach(row, id: \.self) { cell in
+                  Text(cell)
+                    .font(.caption2)
+                    .frame(minWidth: 64, alignment: .leading)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    .padding(12)
+    .background(Color.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 8))
+    .overlay(
+      RoundedRectangle(cornerRadius: 8)
+        .stroke(Color.primary.opacity(0.08), lineWidth: 1)
+    )
+  }
+
   private var selectedAnnotation: AnnotationMark? {
     guard let id = model.selectedAnnotationID else { return nil }
     return annotationStore.marks.first { $0.id == id }
@@ -741,6 +1097,16 @@ public struct ContextualInspectorView: View {
         .help(isRenamingCandidate ? "Save name" : "Rename this suggestion")
         .accessibilityLabel(isRenamingCandidate ? "Save suggestion name" : "Rename suggestion")
         Spacer()
+        HStack(spacing: 4) {
+          Image(systemName: "sparkles")
+          Text("Tier 2 · Suggestion")
+        }
+        .font(.caption2.weight(.medium))
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
+        .background(Color.yellow.opacity(0.18))
+        .clipShape(Capsule())
+
         Text(confidenceLabel(candidate.score))
           .font(.caption2.monospacedDigit())
           .padding(.horizontal, 6)
@@ -759,21 +1125,30 @@ public struct ContextualInspectorView: View {
           .font(.caption.weight(.medium))
       }
 
-      // Deterministic evidence card (R7 baseline): why this suggestion
-      // exists and what to double-check before applying it.
+      // Progressive disclosure for advanced spatial geometry and evidence breakdown
       let explanation = SuggestionExplainer.explain(candidate)
-      VStack(alignment: .leading, spacing: 3) {
-        ForEach(explanation.reasons, id: \.self) { reason in
-          Label(reason, systemImage: "checkmark.circle")
+      DisclosureGroup("Advanced Geometry & Evidence") {
+        VStack(alignment: .leading, spacing: 3) {
+          Text("Bounds: (\(Int(candidate.bounds.x)), \(Int(candidate.bounds.y)), \(Int(candidate.bounds.width))×\(Int(candidate.bounds.height)))")
+            .font(.caption2.monospacedDigit())
+            .foregroundStyle(.secondary)
+          Text("Confidence Tier: \(candidate.confidenceTier.rawValue.capitalized)")
             .font(.caption2)
             .foregroundStyle(.secondary)
+          ForEach(explanation.reasons, id: \.self) { reason in
+            Label(reason, systemImage: "checkmark.circle")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+          }
+          ForEach(explanation.cautions, id: \.self) { caution in
+            Label(caution, systemImage: "exclamationmark.triangle")
+              .font(.caption2)
+              .foregroundStyle(.orange)
+          }
         }
-        ForEach(explanation.cautions, id: \.self) { caution in
-          Label(caution, systemImage: "exclamationmark.triangle")
-            .font(.caption2)
-            .foregroundStyle(.orange)
-        }
+        .padding(.top, 2)
       }
+      .font(.caption)
 
       if candidate.isDirectlyEditable {
         TextField("Enter value to place here", text: $overlayDraft)
@@ -848,6 +1223,17 @@ public struct ContextualInspectorView: View {
           .font(.caption)
         }
       }
+
+      Divider()
+      Button {
+        _ = model.teachNorthstarWorkflow(name: candidate.effectiveDisplayName)
+      } label: {
+        Label("Teach Northstar This Pattern", systemImage: "sparkles")
+          .font(.caption)
+          .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.bordered)
+      .help("Save candidate geometry and type associations as a reusable workflow pattern")
     }
     .padding(12)
     .background(Color.accentColor.opacity(0.08))
@@ -1158,6 +1544,9 @@ public struct ContextualInspectorView: View {
   // MARK: - Understand Tab
   private var understandTabContent: some View {
     VStack(alignment: .leading, spacing: 14) {
+      // Grounded Evidence Q&A (TASK-B2)
+      groundedEvidenceQASection
+
       // ── Empty / Pre-analysis state ──────────────────────────────────────────
       if understandResult.summary == nil && !isLoadingUnderstand {
         VStack(spacing: 20) {
@@ -1288,6 +1677,109 @@ public struct ContextualInspectorView: View {
         .frame(maxWidth: .infinity, alignment: .trailing)
       }
     }
+  }
+
+  // MARK: - Grounded Evidence Q&A Section [TASK-B2, TASK-B3]
+  private var groundedEvidenceQASection: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      HStack(spacing: 6) {
+        Image(systemName: "quote.opening")
+          .foregroundStyle(Color.accentColor)
+        Text("Grounded Evidence Q&A")
+          .font(.subheadline.weight(.semibold))
+        Spacer()
+        Text("● Zero Egress")
+          .font(.caption2.weight(.medium))
+          .foregroundStyle(.green)
+      }
+
+      Text("Ask questions anchored directly to verifiable document coordinates.")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+
+      HStack(spacing: 6) {
+        TextField("e.g. 'applicant name', 'table', 'date'…", text: $evidenceQueryDraft)
+          .textFieldStyle(.roundedBorder)
+          .onSubmit {
+            runEvidenceQuery()
+          }
+
+        Button {
+          runEvidenceQuery()
+        } label: {
+          Image(systemName: "arrow.right.circle.fill")
+            .font(.title3)
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(Color.accentColor)
+        .disabled(evidenceQueryDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+      }
+
+      if let result = groundedQueryResult {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(result.answer)
+            .font(.callout)
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 8))
+
+          if !result.citations.isEmpty {
+            Text("EVIDENCE ANCHORS (\(result.citations.count))")
+              .font(.caption2.weight(.bold))
+              .foregroundStyle(.secondary)
+
+            ForEach(result.citations) { citation in
+              citationRowView(for: citation)
+            }
+          }
+        }
+      }
+    }
+    .padding(12)
+    .background(Color.primary.opacity(0.02), in: RoundedRectangle(cornerRadius: 10))
+    .overlay(
+      RoundedRectangle(cornerRadius: 10)
+        .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+    )
+  }
+
+  private func runEvidenceQuery() {
+    guard !evidenceQueryDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+    let query = evidenceQueryDraft
+    let tables = understandResult.tables?.tables ?? []
+    let ner = understandResult.nerEntities?.entities ?? []
+    let graph = model.getOrBuildEvidenceGraph(tables: tables, nerEntities: ner)
+    groundedQueryResult = graph?.queryEvidence(query: query)
+  }
+
+  private func citationRowView(for citation: EvidenceCitation) -> some View {
+    Button {
+      model.flashEvidenceAnchor(pageIndex: citation.pageIndex, bounds: citation.bounds)
+    } label: {
+      HStack {
+        Image(systemName: "target")
+          .foregroundStyle(Color.accentColor)
+        VStack(alignment: .leading, spacing: 2) {
+          Text(citation.excerpt)
+            .font(.caption.weight(.medium))
+            .lineLimit(1)
+          Text("Page \(citation.pageIndex + 1) · Score \(citationScorePercent(citation))%")
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+        }
+        Spacer()
+        Image(systemName: "arrow.right")
+          .font(.caption2)
+          .foregroundStyle(.secondary)
+      }
+      .padding(8)
+      .background(Color.accentColor.opacity(0.06), in: RoundedRectangle(cornerRadius: 6))
+    }
+    .buttonStyle(.plain)
+  }
+
+  private func citationScorePercent(_ citation: EvidenceCitation) -> Int {
+    Int(citation.relevanceScore * 100)
   }
 
   private func understandFeatureBullet(_ label: String, systemImage: String, color: Color) -> some View {
@@ -1494,6 +1986,16 @@ public struct ContextualInspectorView: View {
               .font(.caption2)
               .foregroundStyle(.secondary)
           }
+
+          Button {
+            model.selectedTable = table
+            model.flashEvidenceAnchor(pageIndex: table.pageIndex, bounds: table.bounds)
+          } label: {
+            Label("Select & Verify Table", systemImage: "tablecells.badge.ellipsis")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.borderedProminent)
+          .controlSize(.small)
 
           // Table preview (first 4 rows)
           ScrollView(.horizontal, showsIndicators: false) {
@@ -2007,6 +2509,107 @@ public struct ContextualInspectorView: View {
         )
       }
 
+      // Digital Signature & Cryptographic Integrity Section (PL-D12)
+      VStack(alignment: .leading, spacing: 8) {
+        HStack {
+          Label("Digital Signatures", systemImage: "signature")
+            .font(.caption.weight(.bold))
+            .foregroundStyle(.secondary)
+          Spacer()
+          Button {
+            model.verifyDigitalSignatures()
+          } label: {
+            Image(systemName: "arrow.clockwise")
+              .font(.caption2)
+          }
+          .buttonStyle(.plain)
+          .help("Re-verify digital signatures")
+          .accessibilityLabel("Re-verify digital signatures")
+        }
+
+        if let sig = model.signatureVerificationResult {
+          HStack(spacing: 8) {
+            switch sig.status {
+            case .validAndTrusted:
+              Label("Valid & Trusted", systemImage: "checkmark.seal.fill")
+                .foregroundStyle(.green)
+            case .validDigestUntrustedCert:
+              Label("Valid Digest (Self-Signed)", systemImage: "checkmark.seal")
+                .foregroundStyle(.blue)
+            case .digestMismatch:
+              Label("Digest Mismatch", systemImage: "exclamationmark.triangle.fill")
+                .foregroundStyle(.red)
+            case .invalidByteRange:
+              Label("Invalid ByteRange", systemImage: "xmark.octagon.fill")
+                .foregroundStyle(.red)
+            case .unsigned:
+              Label("Unsigned Document", systemImage: "doc")
+                .foregroundStyle(.secondary)
+            }
+            Spacer()
+            if sig.isAlteredAfterSigning {
+              Text("Altered Post-Signing")
+                .font(.caption2.weight(.semibold))
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(Color.red.opacity(0.15), in: Capsule())
+                .foregroundStyle(Color.red)
+            }
+          }
+          .font(.caption.weight(.medium))
+
+          if let signer = sig.signerName, !signer.isEmpty {
+            HStack {
+              Text("Signer:")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+              Spacer()
+              Text(signer)
+                .font(.caption2.weight(.medium))
+            }
+          }
+
+          if let reason = sig.signatureReason, !reason.isEmpty {
+            HStack {
+              Text("Reason:")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+              Spacer()
+              Text(reason)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            }
+          }
+
+          if let digest = sig.computedSHA256 {
+            HStack {
+              Text("SHA-256:")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+              Spacer()
+              Text("\(digest.prefix(16))…")
+                .font(.caption2.monospaced())
+                .foregroundStyle(.secondary)
+            }
+          }
+        } else {
+          Button {
+            model.verifyDigitalSignatures()
+          } label: {
+            Label("Verify Signatures", systemImage: "signature")
+              .font(.caption.weight(.medium))
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.small)
+        }
+      }
+      .padding(12)
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+          .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+      )
+
       // Engine & Execution Provenance Card
       VStack(alignment: .leading, spacing: 8) {
         Label("Engine & Execution Provenance", systemImage: "cpu")
@@ -2057,6 +2660,156 @@ public struct ContextualInspectorView: View {
       .overlay(
         RoundedRectangle(cornerRadius: 8, style: .continuous)
           .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+      )
+
+      // Execution Receipt Card (TASK-A2 / D-085)
+      let receipt = model.currentExecutionReceipt()
+      VStack(alignment: .leading, spacing: 10) {
+        HStack(spacing: 8) {
+          Label("Execution Receipt", systemImage: "checkmark.seal.fill")
+            .font(.caption.weight(.bold))
+            .foregroundStyle(Color.accentColor)
+
+          Spacer()
+
+          Text(receipt.isSuccess ? "VERIFIED" : "ATTENTION")
+            .font(.system(size: 9, weight: .bold))
+            .padding(.horizontal, 6)
+            .padding(.vertical, 2)
+            .background(receipt.isSuccess ? Color.green.opacity(0.15) : Color.orange.opacity(0.15), in: Capsule())
+            .foregroundStyle(receipt.isSuccess ? Color.green : Color.orange)
+        }
+
+        Text(receipt.actionName)
+          .font(.subheadline.weight(.semibold))
+
+        VStack(alignment: .leading, spacing: 4) {
+          HStack {
+            Text("Route")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+            Spacer()
+            Text(receipt.executionRoute)
+              .font(.caption2.weight(.medium))
+          }
+
+          HStack {
+            Text("Source SHA")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+            Spacer()
+            Text(String(receipt.sourceDigest.prefix(12)) + "…")
+              .font(.caption2.monospaced())
+              .padding(.horizontal, 4)
+              .padding(.vertical, 1)
+              .background(Color.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 3))
+          }
+
+          HStack {
+            Text("Target SHA")
+              .font(.caption2)
+              .foregroundStyle(.secondary)
+            Spacer()
+            Text(String(receipt.targetDigest.prefix(12)) + "…")
+              .font(.caption2.monospaced())
+              .padding(.horizontal, 4)
+              .padding(.vertical, 1)
+              .background(Color.secondary.opacity(0.1), in: RoundedRectangle(cornerRadius: 3))
+          }
+        }
+
+        Divider()
+
+        // Verification Checks
+        VStack(alignment: .leading, spacing: 4) {
+          Text("INVARIANT VERIFICATION")
+            .font(.system(size: 9, weight: .bold))
+            .foregroundStyle(.secondary)
+
+          ForEach(receipt.verificationChecks) { check in
+            HStack(alignment: .top, spacing: 6) {
+              Image(systemName: check.passed ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .font(.system(size: 11))
+                .foregroundStyle(check.passed ? Color.green : Color.red)
+                .padding(.top, 1)
+              VStack(alignment: .leading, spacing: 1) {
+                Text(check.name)
+                  .font(.caption2.weight(.medium))
+                Text(check.detail)
+                  .font(.system(size: 10))
+                  .foregroundStyle(.secondary)
+              }
+            }
+          }
+        }
+
+        Divider()
+
+        HStack(spacing: 8) {
+          Button {
+            let plainText = receipt.exportAsPlainText()
+            NSPasteboard.general.clearContents()
+            NSPasteboard.general.setString(plainText, forType: .string)
+            isReceiptCopied = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+              isReceiptCopied = false
+            }
+          } label: {
+            HStack(spacing: 4) {
+              Image(systemName: isReceiptCopied ? "checkmark" : "doc.on.clipboard")
+              Text(isReceiptCopied ? "Copied!" : "Copy Receipt")
+            }
+            .font(.caption2.weight(.medium))
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.small)
+
+          Button {
+            let panel = NSSavePanel()
+            panel.title = "Export Execution Receipt"
+            panel.nameFieldStringValue = "Execution-Receipt-\(receipt.id.uuidString.prefix(8)).txt"
+            panel.allowedContentTypes = [.plainText]
+            if panel.runModal() == .OK, let url = panel.url {
+              try? receipt.exportAsPlainText().write(to: url, atomically: true, encoding: .utf8)
+            }
+          } label: {
+            HStack(spacing: 4) {
+              Image(systemName: "square.and.arrow.down")
+              Text("Export .txt")
+            }
+            .font(.caption2.weight(.medium))
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.small)
+
+          Button {
+            let panel = NSSavePanel()
+            panel.title = "Export Execution Receipt (JSON)"
+            panel.nameFieldStringValue = "Execution-Receipt-\(receipt.id.uuidString.prefix(8)).json"
+            panel.allowedContentTypes = [.json]
+            if panel.runModal() == .OK, let url = panel.url {
+              let encoder = JSONEncoder()
+              encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+              if let data = try? encoder.encode(receipt) {
+                try? data.write(to: url)
+              }
+            }
+          } label: {
+            HStack(spacing: 4) {
+              Image(systemName: "doc.badge.gearshape")
+              Text("Export .json")
+            }
+            .font(.caption2.weight(.medium))
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.small)
+        }
+      }
+      .padding(12)
+      .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+      .overlay(
+        RoundedRectangle(cornerRadius: 8, style: .continuous)
+          .strokeBorder(Color.accentColor.opacity(0.18), lineWidth: 1)
       )
 
       // Export Validation Status

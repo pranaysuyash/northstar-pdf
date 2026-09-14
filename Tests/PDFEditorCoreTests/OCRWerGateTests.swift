@@ -16,7 +16,8 @@ import Foundation
 /// - §2 Truth taxonomy — the baseline is Observed evidence tied to corpus
 ///   bytes; mismatched digests demote it to stale (gate requires re-baseline).
 /// - §5 Evidence-based — thresholds carry measured provenance in the runner
-///   (Tesseract 0.0–0.019, Vision 0.0) and in docs/audits.
+///   (Tesseract 0.0–0.019, Vision 0.0, PaddleOCR 0.0179 post-reading-order)
+///   and in docs/audits.
 /// - §13 Claim reality — a provider that did not run is recorded as
 ///   `notRan`, never folded into a pass.
 
@@ -29,11 +30,16 @@ public enum OCRWerGateMirror {
     public static let thresholds: [String: Double] = [
         "Tesseract 5.5.0": 0.10,
         "Apple Vision": 0.10,
+        // Re-classified 2026-09-11: reading-order post-processing removed the
+        // multi-column layout outlier (WER 0.7297 → 0.0000), so PaddleOCR's
+        // corpus average (measured 0.0179) is engine quality, not layout.
+        // Mirrors GATE_WER_THRESHOLDS in benchmark/compare_ocr_wer.py.
+        "PaddleOCR PP-OCRv6": 0.10,
     ]
     /// Providers gated on regression-vs-baseline ONLY (no absolute threshold).
     /// Mirror of GATE_REGRESSION_ONLY_PROVIDERS in benchmark/compare_ocr_wer.py.
+    /// PaddleOCR left this list on 2026-09-11 (see thresholds above).
     public static let regressionOnlyProviders: [String] = [
-        "PaddleOCR PP-OCRv6",
         "Marker (Surya)",
     ]
     public static let regressionTolerance: Double = 0.05
@@ -158,16 +164,17 @@ struct OCRWerGateTests {
 
     @Test("Mirror: within threshold and tolerance passes")
     func passCase() {
+        // All four providers at their 2026-09-11 measured baselines.
         let cur = [
-            OCRWerGateMirror.Row(provider: "Tesseract 5.5.0", wer: 0.01, isError: false),
+            OCRWerGateMirror.Row(provider: "Tesseract 5.5.0", wer: 0.0024, isError: false),
             OCRWerGateMirror.Row(provider: "Apple Vision", wer: 0.0, isError: false),
-            OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false),
+            OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.0179, isError: false),
             OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 0.0157, isError: false),
         ]
         let base = [
-            OCRWerGateMirror.Row(provider: "Tesseract 5.5.0", wer: 0.01, isError: false),
+            OCRWerGateMirror.Row(provider: "Tesseract 5.5.0", wer: 0.0024, isError: false),
             OCRWerGateMirror.Row(provider: "Apple Vision", wer: 0.0, isError: false),
-            OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false),
+            OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.0179, isError: false),
             OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 0.0157, isError: false),
         ]
         let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["Tesseract 5.5.0", "Apple Vision", "PaddleOCR PP-OCRv6", "Marker (Surya)"])
@@ -226,16 +233,22 @@ struct OCRWerGateTests {
         #expect(checks.first { $0.provider == "Tesseract 5.5.0" }?.outcome == .pass)
     }
 
-    @Test("Mirror: regression-only provider (PaddleOCR) passes at baseline despite high absolute WER")
-    func regressionOnlyBaselinePassCase() {
-        // PaddleOCR's corpus average (0.109) is above a typical absolute
-        // threshold due to the documented multi-column limitation, but it is
-        // gated on regression-vs-baseline only: at baseline it must pass.
-        let cur = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false)]
-        let base = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.1091, isError: false)]
+    @Test("Mirror: PaddleOCR (absolute threshold) passes at measured baseline and fails a reading-order spike")
+    func paddleAbsoluteThresholdCase() {
+        // Re-classified 2026-09-11: at its measured baseline (0.0179) PaddleOCR
+        // passes; a multi-column reading-order regression (0.40, the historical
+        // failure mode) both exceeds the absolute threshold and regresses vs
+        // baseline, so the gate catches it two ways.
+        let cur = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.0179, isError: false)]
+        let base = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.0179, isError: false)]
         let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: base, ranProviders: ["PaddleOCR PP-OCRv6"])
         #expect(verdict == "pass")
         #expect(checks.first { $0.provider == "PaddleOCR PP-OCRv6" }?.outcome == .pass)
+
+        let spike = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 0.40, isError: false)]
+        let (spikeVerdict, spikeChecks) = OCRWerGateMirror.evaluate(current: spike, baselineRows: base, ranProviders: ["PaddleOCR PP-OCRv6"])
+        #expect(spikeVerdict == "fail")
+        #expect(spikeChecks.first { $0.provider == "PaddleOCR PP-OCRv6" }?.outcome == .regression)
     }
 
     @Test("Mirror: regression-only provider fails when WER spikes vs its baseline")
@@ -249,10 +262,12 @@ struct OCRWerGateTests {
 
     @Test("Mirror: regression-only provider engine error fails the gate")
     func regressionOnlyEngineErrorCase() {
-        let cur = [OCRWerGateMirror.Row(provider: "PaddleOCR PP-OCRv6", wer: 1.0, isError: true)]
-        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: [], ranProviders: ["PaddleOCR PP-OCRv6"])
+        // Marker remains regression-only; PaddleOCR was re-classified to an
+        // absolute threshold on 2026-09-11 (see paddleAbsoluteThresholdCase).
+        let cur = [OCRWerGateMirror.Row(provider: "Marker (Surya)", wer: 1.0, isError: true)]
+        let (verdict, checks) = OCRWerGateMirror.evaluate(current: cur, baselineRows: [], ranProviders: ["Marker (Surya)"])
         #expect(verdict == "fail")
-        #expect(checks.first { $0.provider == "PaddleOCR PP-OCRv6" }?.outcome == .error)
+        #expect(checks.first { $0.provider == "Marker (Surya)" }?.outcome == .error)
     }
 
     // MARK: Baseline artifact integrity (real corpus)

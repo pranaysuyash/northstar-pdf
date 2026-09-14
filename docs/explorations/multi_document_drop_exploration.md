@@ -126,10 +126,18 @@ struct DocumentDropDisambiguationView: View {
 
 ---
 
-## 6. Recommendations & Next Steps
+## 6. Implementation Status & Verification
 
-1. **Phase 1 (Immediate UX Quality):**
-   - Fix the Welcome workspace titlebar so Mac **traffic light controls** are permanently visible.
-   - Remove the **developer telemetry** (`PROVIDER: PDFKit`, `CONFIDENCE: Source inspection`) from the Contextual Inspector and replace it with a clean document overview.
-2. **Phase 2 (Drop Ingestion Exploration):**
-   - Wire the canvas drop target to display the lightweight **Drop Disambiguation HUD** whenever a PDF is dragged onto an open document.
+1. **Phase 1 (Immediate UX Quality — Completed):**
+   - Restored permanent visibility of macOS window controls / traffic lights across welcome and inspection workspaces.
+   - Relocated internal engine telemetry (`PROVIDER: PDFKit`, `CONFIDENCE: Source inspection`, AcroForm field counts) to the `Review` tab (`trustTabContent` in `ContextualInspectorView.swift`).
+   - Integrated the calm `documentOverviewCard` and `detectedFieldsNavigator` into the `Complete` tab.
+2. **Phase 2 (In-Session Drop Ingestion — Completed):**
+   - **Canvas Drop Support**: Overcame AppKit/SwiftUI `PDFView` boundary limits by registering `InteractivePDFView` for `.fileURL` dragged types and implementing `NSDraggingDestination` protocols (`draggingEntered`, `draggingUpdated`, `performDragOperation`).
+   - **Canvas Disambiguation Sheet**: Dropping a PDF onto the active document canvas triggers `DocumentDropDisambiguationSheet`, providing clear non-destructive choices:
+     - `"Open in New Window"` (Spawns a separate window via `NSWorkspace`).
+     - `"Compare Side-by-Side (Diff)"` (Launches the visual difference inspection engine).
+     - `"Insert Pages Here (Append)"` (Merges pages into the active file).
+     - `"Switch Document"` (Safely loads the dropped PDF).
+   - **Page Thumbnail Rail Drop**: Integrated `.onDrop` directly onto `PageThumbnailRailView` with live hover feedback (`isRailDropTargeted`), instantly appending pages from dropped PDFs into the active document via `model.insertPages(from:)`.
+

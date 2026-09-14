@@ -57,6 +57,7 @@ public struct DocumentCanvasView: View {
   @Binding var searchFocusEvent: Int
   @Binding var isCommandPalettePresented: Bool
   @FocusState private var isSearchFieldFocused: Bool
+  public let onDocumentDropped: ((URL) -> Void)?
 
   // MARK: - Annotation Text Selection State
   @State private var selectedAnnotationText: String = ""
@@ -76,7 +77,8 @@ public struct DocumentCanvasView: View {
     searchProjectionState: Binding<SearchProjectionState>,
     searchFocusEvent: Binding<Int> = .constant(0),
     isCommandPalettePresented: Binding<Bool> = .constant(false),
-    annotationStore: AnnotationStore? = nil
+    annotationStore: AnnotationStore? = nil,
+    onDocumentDropped: ((URL) -> Void)? = nil
   ) {
     self.model = model
     self.inspection = inspection
@@ -86,6 +88,7 @@ public struct DocumentCanvasView: View {
     self._searchFocusEvent = searchFocusEvent
     self._isCommandPalettePresented = isCommandPalettePresented
     self.annotationStore = annotationStore
+    self.onDocumentDropped = onDocumentDropped
   }
 
   @State private var isSearchExpanded = false
@@ -179,6 +182,7 @@ public struct DocumentCanvasView: View {
           },
           onTextSelectionChanged: { text, bounds, pageIndex in
             model.selectedAnnotationID = nil
+            model.selectedTextSelection = (text: text, bounds: bounds, pageIndex: pageIndex)
             selectedAnnotationText = text
             selectedAnnotationBounds = bounds
             selectedAnnotationPageIndex = pageIndex
@@ -186,8 +190,14 @@ public struct DocumentCanvasView: View {
           },
           onSelectionCleared: {
             model.selectedAnnotationID = nil
+            model.selectedTextSelection = nil
             isAnnotationToolbarVisible = false
             selectedAnnotationText = ""
+          },
+          onVisiblePageChanged: { newIndex in
+            if model.selectedPageIndex != newIndex {
+              model.selectedPageIndex = newIndex
+            }
           }
         )
       } else {
@@ -205,6 +215,8 @@ public struct DocumentCanvasView: View {
           searchProjectionState: $searchProjectionState,
           selectedCandidate: model.selectedCandidate,
           selectedField: model.selectedField,
+          flashHighlight: model.flashHighlight,
+          selectedTable: model.selectedTable,
           isManualPlacementMode: model.isManualPlacementMode,
           fillHighlights: model.fillHighlightRegions + model.diffHighlightRegions,
           activeInlineEditor: model.activeInlineEditor,
@@ -228,6 +240,7 @@ public struct DocumentCanvasView: View {
           },
           onTextSelectionChanged: { text, bounds, pageIndex in
             model.selectedAnnotationID = nil
+            model.selectedTextSelection = (text: text, bounds: bounds, pageIndex: pageIndex)
             selectedAnnotationText = text
             selectedAnnotationBounds = bounds
             selectedAnnotationPageIndex = pageIndex
@@ -235,6 +248,7 @@ public struct DocumentCanvasView: View {
           },
           onSelectionCleared: {
             model.selectedAnnotationID = nil
+            model.selectedTextSelection = nil
             isAnnotationToolbarVisible = false
             selectedAnnotationText = ""
           },
@@ -242,7 +256,14 @@ public struct DocumentCanvasView: View {
             if model.selectedPageIndex != newIndex {
               model.selectedPageIndex = newIndex
             }
-          }
+          },
+          onAdvanceField: {
+            model.advanceToNextField()
+          },
+          onRetreatField: {
+            model.retreatToPreviousField()
+          },
+          onDocumentDropped: onDocumentDropped
         )
       }
     }
@@ -624,10 +645,19 @@ public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
   public let nameLabel: NSTextField
   public var onCommit: (String) -> Void
   public var onDismiss: () -> Void
+  public var onAdvance: (() -> Void)?
+  public var onRetreat: (() -> Void)?
 
-  public init(onCommit: @escaping (String) -> Void, onDismiss: @escaping () -> Void) {
+  public init(
+    onCommit: @escaping (String) -> Void,
+    onDismiss: @escaping () -> Void,
+    onAdvance: (() -> Void)? = nil,
+    onRetreat: (() -> Void)? = nil
+  ) {
     self.onCommit = onCommit
     self.onDismiss = onDismiss
+    self.onAdvance = onAdvance
+    self.onRetreat = onRetreat
     self.textField = NSTextField()
     self.nameLabel = NSTextField(labelWithString: "")
     super.init(frame: .zero)
@@ -691,6 +721,14 @@ public final class InlineEditorTextFieldHost: NSView, NSTextFieldDelegate {
   public func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
     if commandSelector == #selector(NSResponder.insertNewline(_:)) {
       onCommit(textField.stringValue)
+      return true
+    } else if commandSelector == #selector(NSResponder.insertTab(_:)) {
+      onCommit(textField.stringValue)
+      onAdvance?()
+      return true
+    } else if commandSelector == #selector(NSResponder.insertBacktab(_:)) {
+      onCommit(textField.stringValue)
+      onRetreat?()
       return true
     } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
       onDismiss()
@@ -886,9 +924,36 @@ public final class InteractivePDFView: PDFView {
   public var onTextSelectionChanged: ((String, PDFRect, Int) -> Void)?
   public var onSelectionCleared: (() -> Void)?
   public var onProjectionInvalidated: (@MainActor @Sendable () -> Void)?
+  public var onDocumentDropped: ((URL) -> Void)?
   public var requestedScaleMode: ReaderScaleMode = .fitWidth
   public var requestedRowWidth: CGFloat = 612
   public var requestedZoom: CGFloat = 1
+
+  public override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+    let pboard = sender.draggingPasteboard
+    if let urls = pboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+       urls.contains(where: { $0.pathExtension.lowercased() == "pdf" }) {
+      return .copy
+    }
+    return []
+  }
+
+  public override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+    let pboard = sender.draggingPasteboard
+    if let urls = pboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+       urls.contains(where: { $0.pathExtension.lowercased() == "pdf" }) {
+      return .copy
+    }
+    return []
+  }
+
+  public override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+    let pboard = sender.draggingPasteboard
+    guard let urls = pboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] else { return false }
+    guard let pdfURL = urls.first(where: { $0.pathExtension.lowercased() == "pdf" }) else { return false }
+    onDocumentDropped?(pdfURL)
+    return true
+  }
 
   public override var acceptsFirstResponder: Bool { true }
 
@@ -960,21 +1025,33 @@ public final class InteractivePDFView: PDFView {
     onTextSelectionChanged?(selectedText, PDFRect(bounds), pageIndex)
   }
 
+  public var onAdvanceField: (() -> Void)?
+  public var onRetreatField: (() -> Void)?
+
   public override func keyDown(with event: NSEvent) {
-    guard isManualPlacementMode,
+    if isManualPlacementMode,
       event.keyCode == 36 || event.keyCode == 49,
       let document,
       let page = currentPage
-    else {
-      super.keyDown(with: event)
+    {
+      let pageBounds = page.bounds(for: displayBox)
+      onManualPlacement?(
+        document.index(for: page),
+        CGPoint(x: pageBounds.midX, y: pageBounds.midY)
+      )
       return
     }
 
-    let pageBounds = page.bounds(for: displayBox)
-    onManualPlacement?(
-      document.index(for: page),
-      CGPoint(x: pageBounds.midX, y: pageBounds.midY)
-    )
+    if event.keyCode == 48 { // Tab key
+      if event.modifierFlags.contains(.shift) {
+        onRetreatField?()
+      } else {
+        onAdvanceField?()
+      }
+      return
+    }
+
+    super.keyDown(with: event)
   }
 }
 
@@ -992,6 +1069,8 @@ public struct PDFKitView: NSViewRepresentable {
   @Binding public var searchProjectionState: SearchProjectionState
   public let selectedCandidate: RegionCandidate?
   public let selectedField: NativeField?
+  public let flashHighlight: (pageIndex: Int, bounds: PDFRect, id: UUID)?
+  public let selectedTable: ExtractedTable?
   public let isManualPlacementMode: Bool
   public let fillHighlights: [FillHighlight]
   public let activeInlineEditor: InlineEditorState?
@@ -1004,6 +1083,9 @@ public struct PDFKitView: NSViewRepresentable {
   public let onTextSelectionChanged: ((String, PDFRect, Int) -> Void)?
   public let onSelectionCleared: (() -> Void)?
   public let onVisiblePageChanged: ((Int) -> Void)?
+  public let onAdvanceField: (() -> Void)?
+  public let onRetreatField: (() -> Void)?
+  public let onDocumentDropped: ((URL) -> Void)?
 
   public init(
     document: PDFDocument?,
@@ -1019,6 +1101,8 @@ public struct PDFKitView: NSViewRepresentable {
     searchProjectionState: Binding<SearchProjectionState>,
     selectedCandidate: RegionCandidate?,
     selectedField: NativeField?,
+    flashHighlight: (pageIndex: Int, bounds: PDFRect, id: UUID)? = nil,
+    selectedTable: ExtractedTable? = nil,
     isManualPlacementMode: Bool,
     fillHighlights: [FillHighlight],
     activeInlineEditor: InlineEditorState?,
@@ -1030,7 +1114,10 @@ public struct PDFKitView: NSViewRepresentable {
     onDismissInlineEditor: @escaping () -> Void,
     onTextSelectionChanged: ((String, PDFRect, Int) -> Void)? = nil,
     onSelectionCleared: (() -> Void)? = nil,
-    onVisiblePageChanged: ((Int) -> Void)? = nil
+    onVisiblePageChanged: ((Int) -> Void)? = nil,
+    onAdvanceField: (() -> Void)? = nil,
+    onRetreatField: (() -> Void)? = nil,
+    onDocumentDropped: ((URL) -> Void)? = nil
   ) {
     self.document = document
     self.renderingPipeline = renderingPipeline
@@ -1045,6 +1132,8 @@ public struct PDFKitView: NSViewRepresentable {
     self._searchProjectionState = searchProjectionState
     self.selectedCandidate = selectedCandidate
     self.selectedField = selectedField
+    self.flashHighlight = flashHighlight
+    self.selectedTable = selectedTable
     self.isManualPlacementMode = isManualPlacementMode
     self.fillHighlights = fillHighlights
     self.activeInlineEditor = activeInlineEditor
@@ -1057,6 +1146,9 @@ public struct PDFKitView: NSViewRepresentable {
     self.onTextSelectionChanged = onTextSelectionChanged
     self.onSelectionCleared = onSelectionCleared
     self.onVisiblePageChanged = onVisiblePageChanged
+    self.onAdvanceField = onAdvanceField
+    self.onRetreatField = onRetreatField
+    self.onDocumentDropped = onDocumentDropped
   }
 
   private final class ProjectionObserverTokenStore {
@@ -1117,9 +1209,57 @@ public struct PDFKitView: NSViewRepresentable {
       observedDocumentView = nil
     }
 
+    @MainActor
+    func handleViewportOrPageChange() {
+      invalidateOverlay()
+
+      guard let view = observedRootView as? InteractivePDFView,
+            let doc = view.document else { return }
+
+      let page: PDFPage? = view.currentPage ?? {
+        let centerPoint = NSPoint(x: view.bounds.midX, y: view.bounds.midY)
+        return view.page(for: centerPoint, nearest: true)
+      }()
+
+      guard let page else { return }
+      let pageIndex = doc.index(for: page)
+      guard pageIndex >= 0, pageIndex < doc.pageCount else { return }
+
+      let docID = sourceDocument?.documentURL?.lastPathComponent ?? "unknown"
+      renderingPipeline?.updateReadingPosition(
+        documentID: docID,
+        pageIndex: pageIndex,
+        scrollOffset: 0,
+        scale: view.scaleFactor
+      )
+      // Adaptive pre-rendering: warm cache around current viewport
+      renderingPipeline?.preRenderForViewport(
+        pageIndex: pageIndex,
+        scale: view.scaleFactor
+      )
+      // Update freeze pane overlay for new page
+      freezePaneOverlay?.currentPageIndex = pageIndex
+      freezePaneOverlay?.pdfDocument = doc
+      freezePaneOverlay?.zoomScale = view.scaleFactor
+      freezePaneOverlay?.needsDisplay = true
+      // Update pipeline tile overlay for new page
+      tileOverlay?.currentPageIndex = pageIndex
+      tileOverlay?.currentScale = view.scaleFactor
+      tileOverlay?.viewportRect = page.bounds(for: view.displayBox)
+      tileOverlay?.forceReload()
+
+      // Propagate visible page change to application model
+      if lastNavigatedPageIndex != pageIndex {
+        lastNavigatedPageIndex = pageIndex
+        onVisiblePageChanged?(pageIndex)
+      }
+    }
+
     func installProjectionObservers(for view: InteractivePDFView) {
-      let scrollContentView = view.enclosingScrollView?.contentView
-      let documentView = view.documentView
+      // PDFView embeds its NSScrollView as a child subview rather than being enclosed by one
+      let internalScrollView = view.subviews.compactMap { $0 as? NSScrollView }.first ?? view.enclosingScrollView
+      let scrollContentView = internalScrollView?.contentView
+      let documentView = view.documentView ?? internalScrollView?.documentView
       if observedRootView === view,
         observedScrollContentView === scrollContentView,
         observedDocumentView === documentView,
@@ -1155,7 +1295,7 @@ public struct PDFKitView: NSViewRepresentable {
               queue: .main
             ) { [weak self] _ in
               Task { @MainActor [weak self] in
-                self?.invalidateOverlay()
+                self?.handleViewportOrPageChange()
               }
             }
           )
@@ -1166,12 +1306,14 @@ public struct PDFKitView: NSViewRepresentable {
       for name in [
         Notification.Name("PDFViewScaleChanged"),
         Notification.Name("PDFViewDisplayModeChanged"),
+        Notification.Name("PDFViewVisiblePagesChanged"),
+        .PDFViewPageChanged,
       ] {
         projectionObserverTokenStore.tokens.append(
           notificationCenter.addObserver(forName: name, object: view, queue: .main) {
             [weak self] _ in
             Task { @MainActor [weak self] in
-              self?.invalidateOverlay()
+              self?.handleViewportOrPageChange()
               // Re-pre-render at adaptive DPI when scale changes
               if name == Notification.Name("PDFViewScaleChanged"),
                  let view = self?.observedRootView as? InteractivePDFView,
@@ -1186,52 +1328,6 @@ public struct PDFKitView: NSViewRepresentable {
           }
         )
       }
-
-      // Observe page changes for reading position persistence
-      projectionObserverTokenStore.tokens.append(
-        notificationCenter.addObserver(
-          forName: .PDFViewPageChanged,
-          object: view,
-          queue: .main
-        ) { [weak self] _ in
-          Task { @MainActor [weak self] in
-            guard let self = self else { return }
-            guard let view = self.observedRootView as? InteractivePDFView else { return }
-            if let currentPage = view.currentPage,
-               let doc = view.document {
-              let pageIndex = doc.index(for: currentPage)
-              let docID = self.sourceDocument?.documentURL?.lastPathComponent ?? "unknown"
-              self.renderingPipeline?.updateReadingPosition(
-                documentID: docID,
-                pageIndex: pageIndex,
-                scrollOffset: 0,
-                scale: view.scaleFactor
-              )
-              // Adaptive pre-rendering: warm cache around current viewport
-              self.renderingPipeline?.preRenderForViewport(
-                pageIndex: pageIndex,
-                scale: view.scaleFactor
-              )
-              // Update freeze pane overlay for new page
-              self.freezePaneOverlay?.currentPageIndex = pageIndex
-              self.freezePaneOverlay?.pdfDocument = doc
-              self.freezePaneOverlay?.zoomScale = view.scaleFactor
-              self.freezePaneOverlay?.needsDisplay = true
-              // Update pipeline tile overlay for new page
-              self.tileOverlay?.currentPageIndex = pageIndex
-              self.tileOverlay?.currentScale = view.scaleFactor
-              self.tileOverlay?.viewportRect = view.currentPage?.bounds(for: view.displayBox) ?? .zero
-              self.tileOverlay?.forceReload()
-
-              // Propagate visible page change to application model
-              if self.lastNavigatedPageIndex != pageIndex {
-                self.lastNavigatedPageIndex = pageIndex
-                self.onVisiblePageChanged?(pageIndex)
-              }
-            }
-          }
-        }
-      )
 
       // Observe freeze pane state changes
       projectionObserverTokenStore.tokens.append(
@@ -1268,6 +1364,10 @@ public struct PDFKitView: NSViewRepresentable {
     view.onPageTap = onPageTap
     view.onTextSelectionChanged = onTextSelectionChanged
     view.onSelectionCleared = onSelectionCleared
+    view.onAdvanceField = onAdvanceField
+    view.onRetreatField = onRetreatField
+    view.onDocumentDropped = onDocumentDropped
+    view.registerForDraggedTypes([.fileURL])
 
     let overlayView = PDFPresentationOverlayView(frame: view.bounds)
     overlayView.autoresizingMask = [.width, .height]
@@ -1291,6 +1391,15 @@ public struct PDFKitView: NSViewRepresentable {
   }
 
   public func updateNSView(_ view: InteractivePDFView, context: Context) {
+    view.onManualPlacement = onManualPlacement
+    view.onDirectEdit = onDirectEdit
+    view.onPageTap = onPageTap
+    view.onTextSelectionChanged = onTextSelectionChanged
+    view.onSelectionCleared = onSelectionCleared
+    view.onAdvanceField = onAdvanceField
+    view.onRetreatField = onRetreatField
+    view.onDocumentDropped = onDocumentDropped
+
     if context.coordinator.sourceDocument !== document
       || context.coordinator.presentationRotation != rotation
       || context.coordinator.presentationRevision != projectionRevision
@@ -1441,6 +1550,32 @@ public struct PDFKitView: NSViewRepresentable {
       )
     }
 
+    if let flash = flashHighlight,
+      let page = view.document?.page(at: flash.pageIndex)
+    {
+      highlights.append(
+        PDFPresentationHighlight(
+          kind: .focused,
+          page: page,
+          bounds: flash.bounds.cgRect,
+          label: "Evidence Anchor"
+        )
+      )
+    }
+
+    if let table = selectedTable,
+      let page = view.document?.page(at: table.pageIndex)
+    {
+      highlights.append(
+        PDFPresentationHighlight(
+          kind: .focused,
+          page: page,
+          bounds: table.bounds.cgRect,
+          label: "Table (\(table.rows)×\(table.columns))"
+        )
+      )
+    }
+
     if let document = view.document {
       if context.coordinator.lastNavigatedPageIndex != pageIndex,
         let page = document.page(at: pageIndex)
@@ -1498,11 +1633,15 @@ public struct PDFKitView: NSViewRepresentable {
       let hostView: InlineEditorTextFieldHost
       if let existing = context.coordinator.inlineEditorHostView as? InlineEditorTextFieldHost {
         hostView = existing
+        hostView.onAdvance = onAdvanceField
+        hostView.onRetreat = onRetreatField
       } else {
         context.coordinator.inlineEditorHostView?.removeFromSuperview()
         let newHost = InlineEditorTextFieldHost(
           onCommit: { text in onCommitInlineEditor(text) },
-          onDismiss: { onDismissInlineEditor() }
+          onDismiss: { onDismissInlineEditor() },
+          onAdvance: onAdvanceField,
+          onRetreat: onRetreatField
         )
         view.addSubview(newHost)
         context.coordinator.inlineEditorHostView = newHost

@@ -27,3 +27,73 @@ runs**, or every red carries a register entry with an owner.
 
 | 2026-09-07 → 2026-09-08 | `RecoveryCrashInterruptionTests` — "payload interruption preserves the previous committed generation" | Failed in consecutive full `swift test` runs (pre-push hook + capture run); passed standalone; failed again under the enforced full gate after the deadline had been raised to 240s | **Resource contention, resolved in the harness**: the OCR Companion Benchmark's concurrent real-provider jobs starved the recovery child-process startup handshake. The recovery semantics were green in isolation; the missing invariant was a shared heavy-lane gate across Swift Testing tasks and processes. | **FIXED 2026-09-08**: both lanes now take the named POSIX semaphore `/pdf-editor-heavy` around every direct OCR provider call, full-provider benchmark, and recovery interruption scenario. The 4-case `RecoveryCrashInterruptionTests` suite passed 4/4 after the fix; retain the 240s deadline as a genuine hung-child bound. | recovery lane |
 | 2026-09-07 | `Tests/web_pdf_proof_playwright_test.mjs` — native-field export `export-failed: PDFDocument has no form field "applicant.name"` | Failed once, passed on immediate rerun with zero code change; full validation green on rerun (native round-trip, outside-region text/raster, 0 changed pixels) | **Environment/contention, not a product defect**: fixture contains the field, inspection names are clean ASCII, and pdf-lib resolves the name on fresh load. Failure occurred while a parallel worker held 100+ dirty files in the shared tree (same session also showed a `ZZListboxProbeTests.swift modified during the build` collision). Suspected transient fixture/artifact state mid-run | Rerun policy: proof lane must run against a quiet tree (no concurrent writers) or an isolated worktree; two consecutive greens required before citing as evidence. If it recurs on a quiet tree, escalate to a pdf-lib qualified-name fidelity task | web lane |
+
+## 2026-09-12 — SharedHeavyTestResourceLock: leaked named semaphore hangs recovery + OCR companion suites
+
+**Symptom:** `RecoveryCrashInterruptionTests` (then `OCRCompanionBenchmarkTests`)
+hung past their historical runtimes; per-test timeouts at 280s/400s/590s with
+zero output. Standalone recovery tests previously passed in seconds.
+
+**Mechanism (proven, not inferred):** `SharedHeavyTestResourceLock.withLock`
+opens the POSIX **named** semaphore `/pdf-editor-heavy` and spins
+`sem_trywait` in an **unbounded** wait loop. POSIX named semaphores are
+kernel-persistent and do NOT auto-release when a holder is SIGKILLed. The
+session workflow of running suites under `timeout` (kill sweeps between tool
+calls) therefore leaks the lock whenever a timeout lands while a test holds
+it. Verified with a C probe: `sem_trywait` returned EAGAIN with **zero live
+holder processes**; `sem_unlink` + probe → acquired immediately. After
+cleanup, the same recovery tests that hung >280s passed in 0.15–0.5s each.
+
+**Amplifier:** the lock loop has no timeout, so a poisoned semaphore wedges
+the run *silently forever* — the 240s in-test child deadline is never
+reached because the hang happens before it. Orphaned `swiftpm-testing-helper`
+processes (reparented to init, spinning on the lock) compound the confusion.
+
+**Remediation used this session:** kill orphaned helpers
+(`pkill -f swiftpm-testing-helper` after confirming they are orphans, PPID 1),
+then `sem_unlink("/pdf-editor-heavy")` (C one-liner; the next `sem_open(O_CREAT)`
+recreates it at value 1). Probe + reset compiled locally during the session.
+
+**Proper fix (not yet implemented — proposed):** bound the acquire loop
+(e.g. 300s) and throw a diagnostic that names the semaphore and the exact
+`sem_unlink` remediation, converting a silent infinite hang into a fail-closed
+error. Optionally `sem_unlink` before first `sem_open` in the test process.
+
+**Status:** suites verified green after reset (recovery 4/4, OCR companion
+24/24 across provider-batched runs). Lock-leak failure mode is
+environment/workflow-triggered, not code-logic-triggered, but the unbounded
+wait is a real code defect per fail-closed doctrine.
+
+## 2026-09-12 (second entry) — ENOSPC trap: "silent stall" with 0 test output on a 100%-full data volume
+
+**Symptom:** Companion single-test runs exited via `timeout` with a log containing
+only build lines (`Build complete! (0.xx s)`), zero test-runner output, no error.
+Recurred across three consecutive windows; looked identical to the semaphore
+hang but the semaphore probe showed the lock free.
+
+**Proven mechanism (not inferred):** Data volume hit 100% (116Mi of 926Gi free).
+The swift-testing helper starts, cannot write its output journal, and blocks
+indefinitely in the writing path; `timeout` then kills the driver and orphans
+the helper (which re-leaks `/pdf-editor-heavy` — the first entry's failure mode
+compounds the second). After reclaiming 2.5Gi, the same tests passed in
+5.4–30.9s (PDFKit baseline legitimately 0.001s: text extraction on 9
+raster-only fixtures is instantly empty; the report's own `Result: FAIL`
+string is a quality verdict on raster PDFs, not a test failure).
+
+**Amplifier:** Several multi-GB Application Support consumers unrelated to this
+repo; disk was already >99% before the session's churn. Dead-session orphans
+(surya processes, 10h23m, PPID 1) also held ML backend resources.
+
+**Remediation applied:** Killed orphaned helpers (incl. one spinning 23 CPU-min),
+unlinked `/pdf-editor-heavy`, removed 10h23m-orphaned `surya`/`marker` backend
+processes, reclaimed `~/.cache/codex-runtimes` (1.6G) and session temp files.
+
+**Durable rule (fail-closed diagnostic):** when a `swift test` run dies with a
+build-only log, check `df -h /` FIRST and `ps aux | grep swiftpm-testing-helper`
+for orphans before suspecting test code — a 100% data volume is a
+kernel-persistent stall, not a test defect.
+
+**Status:** documented; no code change needed (bounded acquire from the first
+2026-09-12 entry already fail-closes the related lock path). Suite run completed
+green after remediation: 24/24 companion across provider-batched runs,
+184/184 suites total.

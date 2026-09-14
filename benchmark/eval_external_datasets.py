@@ -19,6 +19,19 @@ from pathlib import Path
 from collections import Counter
 from typing import Dict, List, Tuple
 
+def _confined(path):
+    """Confine writes to the repository tree.
+
+    Explicit containment anchor: these scripts run under operator control and
+    CI; every write must resolve inside the repo, and static analysis gets a
+    provable check instead of inferring one.
+    """
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    resolved = os.path.abspath(str(path))
+    if os.path.commonpath([resolved, repo_root]) != repo_root:
+        raise SystemExit(f"refusing to write outside the repository: {resolved}")
+    return path
+
 ROOT = Path(__file__).resolve().parent
 DATASETS_DIR = ROOT / "datasets"
 
@@ -229,8 +242,7 @@ def main():
     }
     
     output_path = DATASETS_DIR / "external-datasets-eval-report.json"
-    with open(output_path, "w") as f:
-        json.dump(report, f, indent=2)
+    Path(_confined(output_path)).write_text(json.dumps(report, indent=2))
     
     print(f"\nReport saved to {output_path}")
 

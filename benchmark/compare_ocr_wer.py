@@ -35,14 +35,20 @@ from typing import Dict, List, Tuple, Optional
 GATE_WER_THRESHOLDS = {
     "Tesseract 5.5.0": 0.10,     # clean-print baseline: measured 0.0-0.019
     "Apple Vision": 0.10,        # measured 0.0 on all ground-truth fixtures
+    # Enforced as of the 2026-09-11 re-baseline: the reading-order fix
+    # (benchmark/ocr_reading_order.py) collapsed the multi-column outlier
+    # from WER 0.7297 to 0.0000, so PaddleOCR's corpus average is now engine
+    # quality (measured avg 0.0179, dominated by the mixed-punctuation
+    # recognition miss at 0.1429), not layout ordering. Threshold 0.10 gives
+    # ~5.6x headroom over the measured average while still catching any
+    # ordering-regression on a single fixture (~+0.125 avg impact).
+    "PaddleOCR PP-OCRv6": 0.10,
 }
 
-# PaddleOCR's multi-column reading-order confusion (WER 0.73 measured on
-# multi-column) makes its corpus average dominated by layout, not engine
-# quality. These per-fixture targets are recorded in the gate report as
-# ADVISORY provenance (not enforced); enforcement lands together with
-# reading-order post-processing, otherwise the gate would block on a known,
-# documented layout limitation rather than a regression.
+# Historical per-fixture ADVISORY targets for PaddleOCR, superseded on
+# 2026-09-11: with reading-order post-processing wired into the lane and
+# enforced via GATE_WER_THRESHOLDS, these are provenance only. Kept for
+# gate-report schema continuity.
 GATE_WER_THRESHOLDS_PER_FIXTURE = {
     "PaddleOCR PP-OCRv6": {
         "clean-english": 0.10,
@@ -55,21 +61,38 @@ GATE_WER_THRESHOLDS_PER_FIXTURE = {
 GATE_REGRESSION_TOLERANCE = 0.05
 
 # Providers gated on WER regression vs the persisted baseline ONLY (no
-# absolute corpus-average threshold). Rationale: their corpus average is
-# dominated by a known, documented layout limitation (PaddleOCR multi-column
-# reading-order confusion measures ~0.73 WER) — an absolute threshold would
-# block on the limitation, not on regressions. Regression-vs-baseline still
-# fails the gate when the engine gets worse than its measured baseline, and
-# engine errors (all-ERROR rows) fail it outright. An absent provider is
-# recorded as not_ran and never folds into a pass.
+# absolute corpus-average threshold). PaddleOCR was removed from this list
+# on 2026-09-11 when reading-order post-processing made its corpus average
+# engine-quality-dominated (see GATE_WER_THRESHOLDS); it now has an
+# absolute threshold like the other gated providers. Marker (Surya)
+# remains regression-only: its pipeline is layout-aware document
+# conversion, and its residual WER (multi-column 0.0541, mixed-
+# punctuation 0.0714) is markdown-conversion behavior, not a defect — an
+# absolute threshold would block on the design, not on regressions.
+# Regression-vs-baseline still fails the gate when an engine gets worse
+# than its measured baseline, and engine errors (all-ERROR rows) fail it
+# outright. An absent provider is recorded as not_ran and never folds
+# into a pass.
 GATE_REGRESSION_ONLY_PROVIDERS = [
-    "PaddleOCR PP-OCRv6",
     "Marker (Surya)",
 ]
 
 # Minimum number of gate-thresholded providers that must actually run in a
 # session for the gate verdict to count. Below this, the gate is 'skipped'.
 GATE_MIN_PROVIDERS = 1
+
+def _confined(path):
+    """Confine writes to the repository tree.
+
+    Explicit containment anchor: these scripts run under operator control and
+    CI; every write must resolve inside the repo, and static analysis gets a
+    provable check instead of inferring one.
+    """
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    resolved = os.path.abspath(str(path))
+    if os.path.commonpath([resolved, repo_root]) != repo_root:
+        raise SystemExit(f"refusing to write outside the repository: {resolved}")
+    return path
 
 BASELINE_ARTIFACT = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -584,22 +607,22 @@ def run_benchmark(corpus_dir: str, provider_filter: Optional[str] = None,
     
     # Save results
     output_path = os.path.join(corpus_dir, "cross-provider-wer-report.json")
-    with open(output_path, 'w') as f:
-        json.dump({
-            "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "providers": provider_names,
-            "fixture_count": len(fixtures),
-            "results": results,
-            "summary": {
-                pname: {
-                    "avg_wer": sum(s["wer"]) / len(s["wer"]),
-                    "avg_cer": sum(s["cer"]) / len(s["cer"]),
-                    "avg_confidence": sum(s["conf"]) / len(s["conf"]),
-                    "avg_latency_ms": sum(s["lat"]) / len(s["lat"]),
-                }
-                for pname, s in provider_stats.items()
+    report = {
+        "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "providers": provider_names,
+        "fixture_count": len(fixtures),
+        "results": results,
+        "summary": {
+            pname: {
+                "avg_wer": sum(s["wer"]) / len(s["wer"]),
+                "avg_cer": sum(s["cer"]) / len(s["cer"]),
+                "avg_confidence": sum(s["conf"]) / len(s["conf"]),
+                "avg_latency_ms": sum(s["lat"]) / len(s["lat"]),
             }
-        }, f, indent=2)
+            for pname, s in provider_stats.items()
+        }
+    }
+    Path(_confined(output_path)).write_text(json.dumps(report, indent=2))
     
     print(f"\nResults saved to {output_path}")
     
@@ -620,8 +643,7 @@ def write_baseline(results: List[dict], fixture_count: int, corpus_dir: str) -> 
         "results": results,
         "summary": _summary_for(results),
     }
-    with open(BASELINE_ARTIFACT, "w") as f:
-        json.dump(baseline, f, indent=2, sort_keys=True)
+    Path(_confined(BASELINE_ARTIFACT)).write_text(json.dumps(baseline, indent=2, sort_keys=True))
     print(f"Baseline written to {BASELINE_ARTIFACT}")
 
 
@@ -735,8 +757,7 @@ def run_gate(corpus_dir: str, update_baseline: bool = False, provider_filter: Op
         baseline = json.load(open(BASELINE_ARTIFACT))
 
     report = evaluate_gate(results, baseline, ran_providers)
-    with open(GATE_REPORT, "w") as f:
-        json.dump(report, f, indent=2, sort_keys=True)
+    Path(_confined(GATE_REPORT)).write_text(json.dumps(report, indent=2, sort_keys=True))
 
     print(f"\n{'=' * 80}")
     print(f"RG-136 OCR WER GATE: {report['verdict'].upper()}")

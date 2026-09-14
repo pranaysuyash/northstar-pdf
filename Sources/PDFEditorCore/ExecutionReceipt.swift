@@ -1,8 +1,41 @@
 import Foundation
 
-/// D-085 / TASK-A2: An immutable, cryptographically-grounded audit receipt produced
-/// after consequential, irreversible, or security-critical document operations
-/// (e.g. Export, Sanitization, Redaction commitment, Batch fill).
+/// TASK-A2 / OPERATING_DOCTRINE §2 (truth-status): an observed provenance fact
+/// stating where the operation's data could travel while it executed. It is a
+/// mandatory, default-less argument of `ExecutionReceipt`, so no receipt can
+/// exist without the executing path stating this fact. `renderedDescription`
+/// renders the fact conditionally — it never asserts a guarantee the executing
+/// path did not supply.
+public enum ExecutionDataBoundary: String, Codable, Sendable, Hashable {
+  /// Inputs read and outputs written entirely on this device; no data left the
+  /// process boundary during execution (as observed by the executing path).
+  case onDeviceIsolated = "on-device-isolated"
+
+  /// On-device execution with a documented exception: data left the device.
+  /// The receipt's `notes` must state what left and where; a receipt using
+  /// this boundary with empty notes is incomplete by construction.
+  case onDeviceWithEgress = "on-device-with-egress"
+
+  /// The prose rendering printed on the receipt's "Data Boundary" line.
+  public var renderedDescription: String {
+    switch self {
+    case .onDeviceIsolated:
+      return "On-device · data confined to the local process boundary (no network egress observed by the executing path)."
+    case .onDeviceWithEgress:
+      return "On-device execution · data left the device during execution (see receipt notes for the documented exception)."
+    }
+  }
+}
+
+/// TASK-A2 (docs/audits/chatgpt_architectural_review_task_matrix.md): An immutable
+/// audit receipt produced after consequential, irreversible, or security-critical
+/// document operations (e.g. Export, Sanitization, Redaction commitment, Batch fill).
+///
+/// Epistemic contract (OPERATING_DOCTRINE §2 truth-status): `executionRoute` and
+/// `dataBoundary` are observed provenance facts supplied by the executing path —
+/// they have no defaults, so a receipt cannot be created without stating where and
+/// how the work ran. Claims are rendered conditionally from those facts; the
+/// receipt never prints an unconditional provenance slogan.
 public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Sendable {
   public let id: UUID
   public let actionName: String
@@ -10,6 +43,7 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
   public let sourceDigest: String
   public let targetDigest: String
   public let executionRoute: String
+  public let dataBoundary: ExecutionDataBoundary
   public let operationsExecuted: [ExecutionReceiptOperation]
   public let verificationChecks: [ExecutionReceiptCheck]
   public let outputDestination: String?
@@ -22,7 +56,8 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
     timestamp: Date = Date(),
     sourceDigest: String,
     targetDigest: String,
-    executionRoute: String = "On-Device · Local Apple PDFKit",
+    executionRoute: String,
+    dataBoundary: ExecutionDataBoundary,
     operationsExecuted: [ExecutionReceiptOperation] = [],
     verificationChecks: [ExecutionReceiptCheck] = [],
     outputDestination: String? = nil,
@@ -35,6 +70,7 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
     self.sourceDigest = sourceDigest
     self.targetDigest = targetDigest
     self.executionRoute = executionRoute
+    self.dataBoundary = dataBoundary
     self.operationsExecuted = operationsExecuted
     self.verificationChecks = verificationChecks
     self.outputDestination = outputDestination
@@ -56,7 +92,8 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
       "Action          : \(actionName)",
       "Timestamp       : \(dateStr)",
       "Execution Route : \(executionRoute)",
-      "Status          : \(isSuccess ? "VERIFIED SUCCESS" : "FAILED / ESCALATED")",
+      "Data Boundary   : \(dataBoundary.renderedDescription)",
+      "Status          : \(isSuccess ? "COMPLETED" : "FAILED / ESCALATED")",
       "Source SHA-256  : \(sourceDigest)",
       "Target SHA-256  : \(targetDigest)",
     ]
@@ -85,8 +122,6 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
       lines.append("  \(mark) \(check.name): \(check.detail)")
     }
 
-    lines.append("============================================================")
-    lines.append("Cryptographically verified on-device. Zero network egress.")
     lines.append("============================================================")
     return lines.joined(separator: "\n")
   }
@@ -129,7 +164,7 @@ public struct ExecutionReceiptCheck: Identifiable, Codable, Equatable, Hashable,
     id: UUID = UUID(),
     name: String,
     passed: Bool,
-    detail: String
+    detail: String = "Verified"
   ) {
     self.id = id
     self.name = name

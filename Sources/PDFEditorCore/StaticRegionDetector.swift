@@ -191,7 +191,7 @@ public enum StaticRegionDetector {
         let checkboxInteriorCoverage = interiorTextCoverage(
           of: box, in: pageLines, excluding: nearbyLabel)
         guard checkboxInteriorCoverage <= 0.40 else { continue }
-        var evidenceStrings = [
+        let evidenceStrings = [
           "Vector checkbox geometry detected (\(Int(box.width))x\(Int(box.height))pt).",
           "Associated label: \"\(nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines))\"",
         ]
@@ -254,13 +254,18 @@ public enum StaticRegionDetector {
         }
         // Rectangles whose interior is mostly static text are decorative
         // panels or borders; a fillable entry area is empty inside.
-        let coverage = interiorTextCoverage(
-          of: box, in: pageLines, excluding: nearbyLabel)
-        guard coverage <= 0.40 else { continue }
-        let inferredType = inferFieldType(from: nearbyLabel.text)
+        // EXCEPTION: Photo frame areas explicitly contain text instructing photo pasting.
+        let isPhotoFrame = nearbyLabel.text.lowercased().contains("photo") ||
+                           nearbyLabel.text.lowercased().contains("photograph") ||
+                           box.width >= 80 && box.height >= 90 && box.width <= 160 && box.height <= 200
+        let totalCoverage = interiorTextCoverage(
+          of: box, in: pageLines, excluding: nil)
+        guard isPhotoFrame || totalCoverage <= 0.15 else { continue }
+        let isSquare = abs(box.width - box.height) <= max(box.width * 0.25, 4.0) && box.width <= 32.0
+        let inferredType = isPhotoFrame ? .choice : inferFieldType(from: nearbyLabel.text)
         var evidenceStrings = ["Vector bounding box (\(Int(box.width))x\(Int(box.height))pt)."]
 
-        let score = 0.80
+        let score = isPhotoFrame ? 0.88 : 0.80
         evidenceStrings.append(
             "Associated label: \"\(nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines))\"")
 
@@ -274,7 +279,7 @@ public enum StaticRegionDetector {
             evidence: evidenceStrings,
             coordinate: PDFPageRegion(pageIndex: geom.pageIndex, rect: box),
             suggestedFieldType: inferredType,
-            entryMode: entryMode(for: inferredType, isGrouped: false),
+            entryMode: entryMode(for: inferredType, isGrouped: false, isSquare: isSquare),
             labelText: nearbyLabel.text.trimmingCharacters(in: .whitespacesAndNewlines),
             evidenceItems: [
               CandidateEvidence(
@@ -318,8 +323,20 @@ public enum StaticRegionDetector {
         let bandHeight = min(26.0, max(10.0, nearbyLabel.bounds.height * 1.35))
         let boxAbove = PDFRect(
           x: line.x, y: line.y, width: line.width, height: bandHeight)
+
+        // An underline field must be an empty writing area above the line.
+        // If printed static text already occupies the band, this is a table
+        // rule, section divider, or underlined text, NOT a form blank.
+        let coverage = interiorTextCoverage(
+          of: boxAbove, in: pageLines, excluding: nil)
+        guard coverage <= 0.10 else { continue }
+
+        // The associated label must sit outside the entry band (to the left or above).
+        let labelOverlap = nearbyLabel.bounds.cgRect.intersection(boxAbove.cgRect)
+        guard labelOverlap.isNull || labelOverlap.height < 4.0 else { continue }
+
         let inferredType = inferFieldType(from: nearbyLabel.text)
-        var evidenceStrings = [
+        let evidenceStrings = [
           "Vector underline stroke detected (\(Int(line.width))pt).",
           String(
             format: "Entry band height derived from label line metrics (%.1fpt).",
@@ -480,7 +497,20 @@ public enum StaticRegionDetector {
       )
     }
 
-    return candidates
+    // Spatial deduplication: if two candidates on the same page overlap with ratio >= 0.80, keep the higher-scoring one
+    var deduplicated: [RegionCandidate] = []
+    for candidate in candidates {
+      if let existingIndex = deduplicated.firstIndex(where: {
+        $0.pageIndex == candidate.pageIndex && $0.bounds.intersectionRatio(with: candidate.bounds) >= 0.80
+      }) {
+        if candidate.score > deduplicated[existingIndex].score {
+          deduplicated[existingIndex] = candidate
+        }
+      } else {
+        deduplicated.append(candidate)
+      }
+    }
+    return deduplicated
   }
 
   private static func findNearestLabel(
@@ -504,15 +534,45 @@ public enum StaticRegionDetector {
         lineBounds.minY >= boxRect.maxY - 5
         && abs(lineBounds.minX - boxRect.minX) < max(boxRect.width, 100.0)
         && (lineBounds.minY - boxRect.maxY) < maxDistance
+      // Check if label is to the right of the box (standard for checkboxes: [ ] Label)
+      let isRight =
+        lineBounds.minX >= boxRect.maxX - 10
+        && (lineBounds.minX - boxRect.maxX) < maxDistance
+        && abs(lineBounds.midY - boxRect.midY) < max(boxRect.height, 20.0)
+      // Check if label is below the box (common for signature / photo areas)
+      let isBelow =
+        lineBounds.maxY <= boxRect.minY + 5
+        && (boxRect.minY - lineBounds.maxY) < maxDistance
+        && abs(lineBounds.midX - boxRect.midX) < max(boxRect.width, 150.0)
 
-      if isLeft {
+      let isSmallSquare = boxRect.width <= 24.0 && boxRect.height <= 24.0
+
+      if isSmallSquare && isRight {
+        let dist = lineBounds.minX - boxRect.maxX
+        if dist >= 0 && dist < minDistance {
+          minDistance = dist
+          bestMatch = line
+        }
+      } else if isLeft {
         let dist = boxRect.minX - lineBounds.maxX
         if dist >= 0 && dist < minDistance {
           minDistance = dist
           bestMatch = line
         }
+      } else if isRight {
+        let dist = lineBounds.minX - boxRect.maxX
+        if dist >= 0 && dist < minDistance {
+          minDistance = dist
+          bestMatch = line
+        }
       } else if isAbove {
-        let dist = lineBounds.minY - boxRect.maxY
+        let dist = (lineBounds.minY - boxRect.maxY) + 25.0
+        if dist >= 0 && dist < minDistance {
+          minDistance = dist
+          bestMatch = line
+        }
+      } else if isBelow {
+        let dist = (boxRect.minY - lineBounds.maxY) + 25.0
         if dist >= 0 && dist < minDistance {
           minDistance = dist
           bestMatch = line
@@ -526,8 +586,23 @@ public enum StaticRegionDetector {
   /// a field-intent token. Layout words such as "Section:" and "Note:" are
   /// deliberate hard negatives in the detector calibration corpus.
   private static func isLikelyFieldLabel(_ text: String) -> Bool {
-    let normalized = text
-      .lowercased()
+    let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard trimmed.count >= 2 && trimmed.count <= 45 else { return false }
+
+    let lower = trimmed.lowercased()
+    // Suppress legal declarations, statutory disclaimers, and documentary proof list items
+    if lower.hasPrefix("i ") || lower.hasPrefix("i,") || lower.hasPrefix("i hereby")
+      || lower.hasPrefix("i submit") || lower.contains("punishable under")
+      || lower.contains("electoral roll") || lower.contains("penalty")
+      || lower.contains("disclaimer") || lower.contains("instructions:")
+      || lower.contains("applicable rules") || lower.contains("section 31")
+      || lower.contains("indian passport") || lower.contains("pan card")
+      || lower.contains("aadhaar card") || lower.contains("driving license")
+      || lower.contains("birth certificate") || lower.contains("certificates of class") {
+      return false
+    }
+
+    let normalized = lower
       .replacingOccurrences(of: "_", with: " ")
       .replacingOccurrences(of: ".", with: " ")
       .replacingOccurrences(of: ":", with: " ")
@@ -536,7 +611,10 @@ public enum StaticRegionDetector {
       "signature", "sign", "ssn", "zip", "postal", "amount", "number",
       "account", "agree", "check", "select", "choice", "gender", "relationship",
       "city", "state", "country", "company", "employer", "license", "policy",
-      "claim", "reference", "id"
+      "claim", "reference", "id", "photo", "photograph", "passport", "thumb",
+      "father", "mother", "husband", "wife", "guardian", "relative",
+      "locomotive", "visual", "disability", "deaf", "dumb", "yes", "no",
+      "aadhaar", "pan", "epic", "residence", "house", "village", "town", "post"
     ]
     return tokens.contains { token in
       normalized.range(of: "\\b\(token)\\b", options: .regularExpression) != nil
@@ -583,12 +661,14 @@ public enum StaticRegionDetector {
     return .text
   }
 
-  private static func entryMode(for fieldType: SuggestedFieldType, isGrouped: Bool)
-    -> CandidateEntryMode
-  {
+  private static func entryMode(
+    for fieldType: SuggestedFieldType,
+    isGrouped: Bool,
+    isSquare: Bool = false
+  ) -> CandidateEntryMode {
     switch fieldType {
     case .checkbox:
-      return .checkbox
+      return isSquare ? .checkbox : (isGrouped ? .radioGroup : .singleText)
     case .radio:
       return .radioGroup
     case .signature:

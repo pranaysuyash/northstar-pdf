@@ -1931,3 +1931,25 @@ block claiming a final engine, cross-platform fidelity, or licensing clearance.
   `Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift`,
   `benchmark/results/rejection-ledger/2026-08-31/report.json`, and
   `docs/audits/provider-rejection-ledger-evidence-2026-08-31.md`.
+
+### F-077: Static form vector decomposition requires orthogonal stroke reconstruction and prose suppression
+
+- **Date:** 2026-09-09
+- **Status:** Verified via ground-truth fixture inspection on `form6-voter-application.pdf` (fixture SHA-256 `2cf1421343c22676f15eff0ec6f31a4df6e7f7975dc0f3d88d2b29a1dcc79d34`).
+- **Observed Failures on Canvas:**
+  1. *Table Rules Slicing Through Printed Text (False Positives):* In Section 7(b) (*Document for Proof of Date of Birth*), orange candidate boxes slice horizontally directly through printed text (*"Birth certificate issued by Competent Local Body..."*, *"PAN Card"*, *"Indian Passport"*). The detector classifies every horizontal vector line in the table as a `potentialUnderline` and draws a 26pt entry band directly on top of printed table rows.
+  2. *Static Headers & Declaration Sentences Treated as Form Fields:* The entire legal declaration sentence *"I submit application for inclusion of my name in the electoral roll for the above constituency"* is enclosed in an orange box as an input field. Column headers like *"First Name followed by Middle Name"* and *"Surname (if any)"* have candidate boxes drawn over the label text itself. In the right sidebar under **Suggestions (72)**, the user is repeatedly prompted to "fill" static text: `I submit application for inclusion of my name in t...` (listed twice), and `First Name followed by Middle Name` (listed 3+ times).
+  3. *Character Grids Fragmented or Completely Missed (False Negatives):* In Row 1(a) (Official Language), only 5 isolated cells in the middle are detected while 10 are missed. Row 1(b) (English BLOCK LETTERS, 15 cells) has **zero detection**. Date of Birth (`[d][d] / [m][m] / [y][y][y][y]`) slash-separated date cells have zero detection. Mobile Number & Aadhaar Grids are treated as a single wide dashed rectangle cutting through internal grid separators.
+  4. *Square Checkboxes Missed & Misaligned:* Relatives (*Father, Mother, Husband, Wife*) and gender (*Male, Female*) checkboxes are completely unhighlighted. For *Third Gender*, an orange box is drawn directly over the text `"Third Gender"` instead of detecting the square `[ ]` to the left.
+- **First-Principles Root Causes:**
+  1. *Stroked Grid Matrix vs. Closed Rectangles:* Character entry boxes in office-generated PDFs are drawn as ruled tables with continuous horizontal and vertical path strokes (`m ... l ... S`) rather than closed `re` or `m l l l h` paths. The parser only scans isolated rectangles and fails to reconstruct enclosed cells from intersecting grid strokes.
+  2. *Table Border Rule Confusion:* Treating any horizontal vector line with text above it as a form underline generates false positives over every table row border.
+  3. *Non-Target Leakage (Section 88 Non-Target Contract):* `StaticRegionDetector` does not filter out text runs with high character counts (>40 chars) or table borders, violating the explicit non-target contract in `docs/form6-benchmark.md`.
+- **Remediation Requirements:**
+  1. *Table & Rule Suppression:* Detect when a horizontal vector line is part of a table border or has printed text sitting directly on it (interior text coverage > 0.10), suppressing it from `potentialUnderlines`.
+  2. *Grid Cell Reconstruction from Stroke Intersections:* Reconstruct cell rectangles from orthogonal intersecting stroke grids (`horizontalLines` $\cap$ `verticalLines`), uniting them into a single `.characterGrid` band instead of random scattered cells.
+  3. *Non-Target Prose Rejection:* Reject any candidate whose associated text is a disclaimer, instructional paragraph, or sentence exceeding 40 characters without explicit blank markers.
+  4. *Checkbox Spatial Anchor:* Anchor standalone checkboxes to the square box geometry (`box.width == box.height`), binding the label to the right (`[ ] Label`) without drawing the candidate box over the label text.
+- **Sources:** `docs/form6-benchmark.md`, `docs/audits/screen_improvement_log.md` (Screen 33), `Tests/fixtures/static_region_reviewed_corpus.mjs`, `Sources/PDFEditorCore/PDFVectorStreamParser.swift`, and `Sources/PDFEditorCore/StaticRegionDetector.swift`.
+
+

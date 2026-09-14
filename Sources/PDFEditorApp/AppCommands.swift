@@ -53,6 +53,8 @@ private enum PDFEditorCommand: Hashable {
     case documentBrowser
     case versionHistory
     case governanceDashboard
+    case confirmField
+    case rejectField
 }
 
 @MainActor
@@ -103,6 +105,8 @@ private struct PDFEditorCommandRouter {
             return model?.liveDocument != nil
         case .documentBrowser, .versionHistory, .governanceDashboard:
             return model != nil
+        case .confirmField, .rejectField:
+            return model?.selectedCandidate != nil
         }
     }
 
@@ -229,6 +233,10 @@ private struct PDFEditorCommandRouter {
             model?.isVersionComparePresented = true
         case .governanceDashboard:
             model?.isGovernanceDashboardPresented = true
+        case .confirmField:
+            model?.confirmSelectedCandidate()
+        case .rejectField:
+            model?.rejectSelectedCandidate()
         }
     }
 
@@ -450,6 +458,20 @@ Button("Append PDF Pages...") {
         }
 
         CommandGroup(after: .textEditing) {
+            Button("Confirm Field") {
+                router.perform(.confirmField)
+            }
+            .keyboardShortcut(.return, modifiers: .command)
+            .disabled(!router.isEnabled(.confirmField))
+            .help("Confirm the selected field suggestion.")
+
+            Button("Reject Field") {
+                router.perform(.rejectField)
+            }
+            .keyboardShortcut(.delete, modifiers: .command)
+            .disabled(!router.isEnabled(.rejectField))
+            .help("Dismiss the selected field suggestion.")
+
             Divider()
 
             Button("Find...") {

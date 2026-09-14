@@ -293,6 +293,14 @@ final class PDFEditorAppDelegate: NSObject, NSApplicationDelegate {
             : .terminateCancel
     }
 
+    // Launch-time argv on a BARE executable is a SwiftUI/AppKit suppression
+    // (no window is ever created; unaffected by this delegate — verified
+    // empirically 2026-09-09/11, PL-I30). It is a developer-only artifact:
+    // buyers launch the BUNDLED app, where Launch Services delivers real
+    // `odoc` events at runtime, handled below. Developers use
+    // PDF_EDITOR_OPEN_SOURCE (in-window hook) instead of argv.
+    //
+    // Runtime Open-With (app already running) arrives here — verified path.
     func application(_ application: NSApplication, open urls: [URL]) {
         PDFEditorExternalOpenRouter.shared.enqueue(urls.filter { $0.isFileURL })
     }
@@ -371,6 +379,15 @@ final class PDFEditorExternalOpenRouter {
         model.open(url: url)
         controller.window?.makeKeyAndOrderFront(nil)
         closeOtherScratchWindows(keeping: controller)
+        // SwiftUI's WindowGroup can create its own start-surface window for
+        // the same open event after this router has already run (sim finding
+        // PL-I30b). Sweep again once the scene machinery settles; the sweep
+        // only ever closes clean scratch surfaces, so re-running is safe.
+        for delay in [0.5, 1.5] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                self?.closeOtherScratchWindows(keeping: controller)
+            }
+        }
     }
 
     /// After an external open, exactly one window should show the document.
@@ -414,6 +431,16 @@ struct PDFEditorApp: App {
         .commands {
             AppCommands()
         }
+        Window("Governance Dashboard", id: "governance-dashboard") {
+            GovernanceStandaloneWindowView()
+        }
+        .defaultSize(width: 820, height: 560)
+
+        Window("Companion Health", id: "companion-health") {
+            CompanionHealthStandaloneWindowView()
+        }
+        .defaultSize(width: 680, height: 520)
+
         Settings {
             SettingsView()
         }

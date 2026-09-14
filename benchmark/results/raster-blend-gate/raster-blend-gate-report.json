@@ -1,0 +1,42 @@
+{
+  "blends" : [
+    {
+      "abstentions" : 6,
+      "evidencePromotions" : [
+
+      ],
+      "gatePassed" : true,
+      "label" : "95\/3\/2 shipped",
+      "minPositive" : 0.92510564083984548,
+      "threshold" : 0.90000000000000002,
+      "weights" : {
+        "edge" : 0.029999999999999999,
+        "occupancy" : 0.02,
+        "projection" : 0.94999999999999996
+      },
+      "worstPositivePair" : "hybrid-text-raster-form.pdf↔rotated-hybrid-90.pdf"
+    },
+    {
+      "abstentions" : 6,
+      "evidencePromotions" : [
+
+      ],
+      "gatePassed" : true,
+      "label" : "85\/8\/7 target",
+      "minPositive" : 0.91043368173509465,
+      "threshold" : 0.90000000000000002,
+      "weights" : {
+        "edge" : 0.080000000000000002,
+        "occupancy" : 0.070000000000000007,
+        "projection" : 0.84999999999999998
+      },
+      "worstPositivePair" : "hybrid-text-raster-form.pdf↔rotated-hybrid-90.pdf"
+    }
+  ],
+  "corpusSize" : 56,
+  "familyThreshold" : 0.90000000000000002,
+  "gatePassed" : true,
+  "generatedAt" : "2026-09-12T04:18:07Z",
+  "schema" : "pdf-editor.raster-blend-gate",
+  "version" : "1.0"
+}

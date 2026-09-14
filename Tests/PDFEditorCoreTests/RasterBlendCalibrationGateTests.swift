@@ -40,7 +40,12 @@ import PDFKit
 @Suite("Raster Blend Calibration Gate (85/8/7)")
 struct RasterBlendCalibrationGateTests {
 
-  private static let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+  /// Corpus root, resolved from this file's location — runner-portable.
+  /// (The previous hardcoded /Users/pranay/... path only resolved on the
+  /// local machine and would have extracted zero fixtures on CI.)
+  private static let results = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .appendingPathComponent("benchmark/results").path
 
   /// The 56-fixture F-3 corpus (same families: A layout-identical,
   /// B 2-page text+raster, N layout-distinct). Mirrors
@@ -125,6 +130,37 @@ struct RasterBlendCalibrationGateTests {
     ("85/8/7 target", 0.85, 0.08, 0.07),
   ]
 
+  /// Opt-in per-pair diagnostics (2026-09-12). CI runs this gate fail-closed
+  /// with summary output only; a local run can set
+  /// PDF_EDITOR_BLEND_GATE_DIAG=1 to print the full per-pair blend table
+  /// (every pair with family class, weighted total, and per-channel facets,
+  /// plus promotion-risk and recall-risk rankings). This flag NEVER changes
+  /// any assertion — it only adds printing — so a CI pass and a local diag
+  /// run measure exactly the same thing.
+  private static let diagnosticsEnabled: Bool = {
+    guard let raw = ProcessInfo.processInfo.environment["PDF_EDITOR_BLEND_GATE_DIAG"],
+          !raw.isEmpty else { return false }
+    return !["0", "false", "no", "off"].contains(raw.lowercased())
+  }()
+
+  /// One pair's facets under one blend, captured only when diagnostics are
+  /// enabled (zero memory/behavior cost for the default CI path).
+  private struct PairDiagRow {
+    let a: String
+    let b: String
+    let familyClass: String   // "positive" or "negative"
+    let total: Double
+    let geometry: Double
+    let text: Double
+    let field: Double
+    let annotation: Double
+    let raster: Double
+    let region: Double
+    let evidenceFloorMet: Bool
+    let isPromotion: Bool
+    let isAbstention: Bool
+  }
+
   @Test("85/8/7 blend: positives separate from hard negatives at both gated blends")
   func blendSeparatesCorpus() throws {
     var fps: [(name: String, family: String, fp: LayoutFingerprintV2)] = []
@@ -142,11 +178,15 @@ struct RasterBlendCalibrationGateTests {
 
     let threshold = LayoutFingerprintV2.familyThreshold
 
+    var blendRows: [[String: Any]] = []
+    var overallPass = true
+
     for blend in Self.gatedBlends {
       var minPositive = 1.0
       var worstPositive = ""
       var evidencePromotions: [String] = []
       var abstentions = 0
+      var diagRows: [PairDiagRow] = []
 
       for i in 0..<fps.count {
         for j in (i + 1)..<fps.count {
@@ -172,14 +212,122 @@ struct RasterBlendCalibrationGateTests {
               abstentions += 1
             }
           }
+          if Self.diagnosticsEnabled {
+            diagRows.append(PairDiagRow(
+              a: a.name, b: b.name,
+              familyClass: isPositive ? "positive" : "negative",
+              total: sim,
+              geometry: result.geometry,
+              text: result.textLayout,
+              field: result.fieldLayout,
+              annotation: result.annotationLayout,
+              raster: result.rasterLayout,
+              region: result.regionLayout,
+              evidenceFloorMet: result.evidenceFloorMet,
+              isPromotion: !isPositive && sim >= threshold && result.coverage.hasStructuredContent,
+              isAbstention: !isPositive && sim >= threshold && !result.coverage.hasStructuredContent))
+          }
         }
       }
 
       print("[blend-gate] \(blend.label): minPos=\(String(format: "%.4f", minPositive)) ev-promotions=\(evidencePromotions.count) abstentions=\(abstentions)")
+      if Self.diagnosticsEnabled {
+        Self.printDiagnostics(blend: blend, threshold: threshold, rows: diagRows)
+      }
+      let rowPassed = evidencePromotions.isEmpty && minPositive >= threshold
+      overallPass = overallPass && rowPassed
       #expect(evidencePromotions.isEmpty,
               "\(blend.label): evidence-bearing hard negative promoted: \(evidencePromotions.prefix(4))")
       #expect(minPositive >= threshold,
               "\(blend.label): layout-identical positive not recognized: worst \(worstPositive)=\(String(format: "%.4f", minPositive)) vs \(threshold)")
+
+      blendRows.append([
+        "label": blend.label,
+        "weights": ["projection": blend.p, "edge": blend.e, "occupancy": blend.o],
+        "threshold": threshold,
+        "minPositive": minPositive,
+        "worstPositivePair": worstPositive,
+        "evidencePromotions": evidencePromotions,
+        "abstentions": abstentions,
+        "gatePassed": rowPassed,
+      ])
+    }
+
+    Self.writeGateReport(rows: blendRows, corpusSize: fps.count, overallPassed: overallPass)
+  }
+
+  /// Opt-in diagnostics printer (only called when PDF_EDITOR_BLEND_GATE_DIAG
+  /// is set). Worst-first ordering: positive rows ascending (recall risk at
+  /// the top), then negatives ≥ threshold descending (promotion/abstention
+  /// risk at the top), then a compact full table. One line per pair:
+  /// total followed by the per-channel facets g/t/f/a/r/region — the same
+  /// decomposition LayoutSimilarityV2 exposes, so a suspicious total can be
+  /// attributed to its channel immediately.
+  private static func printDiagnostics(
+    blend: (label: String, p: Double, e: Double, o: Double),
+    threshold: Double,
+    rows: [PairDiagRow]
+  ) {
+    print("[blend-gate-diag] === \(blend.label) — per-pair detail (\(rows.count) pairs) ===")
+
+    let positives = rows.filter { $0.familyClass == "positive" }.sorted { $0.total < $1.total }
+    let promotions = rows.filter { $0.isPromotion }.sorted { $0.total > $1.total }
+    let abstentions = rows.filter { $0.isAbstention }.sorted { $0.total > $1.total }
+
+    func line(_ r: PairDiagRow) -> String {
+      let flag = r.isPromotion ? " PROMOTION" : (r.isAbstention ? " abstain" : "")
+      return String(
+        format: "[blend-gate-diag] %@↔%@ %@ total=%.4f g=%.3f t=%.3f f=%.3f a=%.3f r=%.3f reg=%.3f%@",
+        r.a, r.b, r.familyClass,
+        r.total, r.geometry, r.text, r.field, r.annotation, r.raster, r.region,
+        r.evidenceFloorMet ? "" : " (no-structured)") + flag
+    }
+
+    print("[blend-gate-diag] -- recall risk (positives, ascending) --")
+    for r in positives.prefix(10) { print(line(r)) }
+    if positives.count > 10 { print("[blend-gate-diag] … \(positives.count - 10) more positives (all ≥ minPos above)") }
+
+    if !promotions.isEmpty {
+      print("[blend-gate-diag] -- PROMOTIONS (gate would fail; full list) --")
+      for r in promotions { print(line(r)) }
+    }
+    if !abstentions.isEmpty {
+      print("[blend-gate-diag] -- abstentions ≥ threshold (descending) --")
+      for r in abstentions { print(line(r)) }
+    }
+
+    print("[blend-gate-diag] -- full table (total ascending within class, negative then positive) --")
+    for r in rows.sorted(by: { ($0.familyClass, $0.total) < ($1.familyClass, $1.total) }) {
+      print(line(r))
+    }
+    print("[blend-gate-diag] === end \(blend.label) ===")
+  }
+
+  /// Persists the gate report for CI validation — mirrors the acroform-parity
+  /// gate-report pattern (swift test regenerates; the CI step validates the
+  /// JSON invariants and uploads the artifact).
+  private static func writeGateReport(rows: [[String: Any]], corpusSize: Int, overallPassed: Bool) {
+    let report: [String: Any] = [
+      "schema": "pdf-editor.raster-blend-gate",
+      "version": "1.0",
+      "generatedAt": ISO8601DateFormatter().string(from: Date()),
+      "corpusSize": corpusSize,
+      "familyThreshold": LayoutFingerprintV2.familyThreshold,
+      "blends": rows,
+      "gatePassed": overallPassed,
+    ]
+    guard let data = try? JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]) else {
+      Issue.record("blend gate report serialization failed")
+      return
+    }
+    let root = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+    let dir = root.appendingPathComponent("benchmark/results/raster-blend-gate")
+    try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    do {
+      try data.write(to: dir.appendingPathComponent("raster-blend-gate-report.json"))
+    } catch {
+      Issue.record("blend gate report write failed: \(error)")
     }
   }
 

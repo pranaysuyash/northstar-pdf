@@ -8,9 +8,23 @@ Parquet columns: image, bboxes, category_id, segmentation, area, pdf_cells, meta
 """
 
 import json
+import os
 import sys
 from pathlib import Path
 from datetime import datetime
+
+def _confined(path):
+    """Confine writes to the repository tree.
+
+    Explicit containment anchor: these scripts run under operator control and
+    CI; every write must resolve inside the repo, and static analysis gets a
+    provable check instead of inferring one.
+    """
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+    resolved = os.path.abspath(str(path))
+    if os.path.commonpath([resolved, repo_root]) != repo_root:
+        raise SystemExit(f"refusing to write outside the repository: {resolved}")
+    return path
 
 ROOT = Path(__file__).resolve().parent
 EVAL_DIR = ROOT / "doclaynet" / "eval"
@@ -60,10 +74,8 @@ def download():
     test_records = [r for r in all_records if r["split"] == "test"]
     train_records = [r for r in all_records if r["split"] == "train_sample"]
 
-    with open(DATA_DIR / "test.json", "w") as f:
-        json.dump(test_records, f, indent=2)
-    with open(DATA_DIR / "train_sample.json", "w") as f:
-        json.dump(train_records, f, indent=2)
+    Path(_confined(DATA_DIR / "test.json")).write_text(json.dumps(test_records, indent=2))
+    Path(_confined(DATA_DIR / "train_sample.json")).write_text(json.dumps(train_records, indent=2))
 
     print(f"[doclaynet] Test: {len(test_records)} pages")
     print(f"[doclaynet] Train sample: {len(train_records)} pages")
@@ -129,8 +141,7 @@ def generate_eval(test_records, train_records):
         },
         "evalMetrics": ["layout_detection_mAP", "class_precision_recall", "bounding_box_iou"],
     }
-    with open(EVAL_DIR / "manifest.json", "w") as f:
-        json.dump(manifest, f, indent=2)
+    Path(_confined(EVAL_DIR / "manifest.json")).write_text(json.dumps(manifest, indent=2))
     print(f"[doclaynet] Eval manifest written")
 
 if __name__ == "__main__":

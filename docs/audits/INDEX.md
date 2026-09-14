@@ -15,6 +15,7 @@ read them for method and findings history only.
 
 | Date | Audit | Title | Status |
 |---|---|---|---|
+| 2026-09-11 | [macos-app-design-skill-audit-2026-09-11.md](macos-app-design-skill-audit-2026-09-11.md) | macOS App Design Skill Audit: Mac-citizenship pass over the native shell with MAD-001..018 findings and implement/research/decision task ledger | current |
 | 2026-09-06 | [epistemic-integrity-audit-per-0922-2026-09-06.md](epistemic-integrity-audit-per-0922-2026-09-06.md) | Epistemic Integrity Audit — Full Repository (PER-0922): claim-vs-enforcement, reproducibility, doc-truth drift, full task ledger + implementation plan | current |
 | 2026-08-24 | [application-security-audit-per-pdev-0167.md](application-security-audit-per-pdev-0167.md) | Application Security & Threat Model Audit | current |
 | 2026-08-26 | [boundary-systems-architecture-audit-per-0933.md](boundary-systems-architecture-audit-per-0933.md) | Boundary Systems Architecture Audit (PER-0933) | current |

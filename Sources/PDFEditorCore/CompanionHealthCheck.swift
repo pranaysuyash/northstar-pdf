@@ -35,6 +35,16 @@ public final class CompanionHealthCheck: ObservableObject {
         self.contractStore = contractStore
     }
 
+    public static func makeDefault() -> CompanionHealthCheck {
+        let bridge = CompanionBridge(resourceLimits: ResourceLimits())
+        return CompanionHealthCheck(
+            bridge: bridge,
+            registry: ProviderRegistry(),
+            egressGate: bridge.egressGate,
+            contractStore: ContractStore()
+        )
+    }
+
     // MARK: - Public Actions
 
     /// Clear the bridge request log.

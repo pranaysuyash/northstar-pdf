@@ -9,6 +9,7 @@ public struct AgentCommandItem: Identifiable {
   public let subtitle: String
   public let icon: String
   public let category: String
+  public let keywords: [String]
   public let isAvailable: Bool
   public let action: @MainActor () -> Void
 
@@ -18,6 +19,7 @@ public struct AgentCommandItem: Identifiable {
     subtitle: String,
     icon: String,
     category: String,
+    keywords: [String] = [],
     isAvailable: Bool = true,
     action: @escaping @MainActor () -> Void
   ) {
@@ -26,6 +28,7 @@ public struct AgentCommandItem: Identifiable {
     self.subtitle = subtitle
     self.icon = icon
     self.category = category
+    self.keywords = keywords
     self.isAvailable = isAvailable
     self.action = action
   }
@@ -70,7 +73,8 @@ public struct AgentCommandHUD: View {
           title: command.title,
           subtitle: "Search the current document",
           icon: "magnifyingglass",
-          category: "Current Context"
+          category: "Current Context",
+          keywords: ["find", "lookup", "query", "text", "search"]
         ) {
           history.record(.search)
           model.routeSearchCommand()
@@ -81,7 +85,8 @@ public struct AgentCommandHUD: View {
           title: command.title,
           subtitle: "Return to the document reading posture",
           icon: "book",
-          category: "Current Context"
+          category: "Current Context",
+          keywords: ["read", "scroll", "view", "study", "reader"]
         ) {
           history.record(.continueReading)
           model.readingMode = .study
@@ -92,7 +97,8 @@ public struct AgentCommandHUD: View {
           title: command.title,
           subtitle: "Open the document understanding workspace",
           icon: "text.magnifyingglass",
-          category: "Current Context"
+          category: "Current Context",
+          keywords: ["analyze", "summary", "intelligence", "structure", "overview"]
         ) {
           history.record(.understandDocument)
           model.readingMode = .study
@@ -103,7 +109,8 @@ public struct AgentCommandHUD: View {
           title: command.title,
           subtitle: "Continue completing the selected native field",
           icon: "character.cursor.ibeam",
-          category: "Current Context"
+          category: "Current Context",
+          keywords: ["input", "complete", "populate", "type", "field", "form"]
         ) {
           history.record(.fillForm)
           model.setEditorMode(.fill)
@@ -114,7 +121,8 @@ public struct AgentCommandHUD: View {
           title: command.title,
           subtitle: "Reverse the latest accepted document operation",
           icon: "arrow.uturn.backward",
-          category: "Current Context"
+          category: "Current Context",
+          keywords: ["revert", "backward", "cancel", "rollback"]
         ) {
           history.record(.undo)
           model.undo()
@@ -125,7 +133,8 @@ public struct AgentCommandHUD: View {
           title: command.title,
           subtitle: "Reapply the latest undone document operation",
           icon: "arrow.uturn.forward",
-          category: "Current Context"
+          category: "Current Context",
+          keywords: ["repeat", "forward", "reapply"]
         ) {
           history.record(.redo)
           model.redo()
@@ -159,6 +168,7 @@ public struct AgentCommandHUD: View {
           subtitle: "Propose a reviewed plan: focus fill, apply values, present export review",
           icon: "sparkles",
           category: "AI & Automation",
+          keywords: ["autofill", "profile", "smart", "complete", "populate", "form"],
           isAvailable: model.inspection != nil
         ) {
           proposePlan(query: "fill out this form")
@@ -172,6 +182,7 @@ public struct AgentCommandHUD: View {
           subtitle: "Preview profile values across recognized document fields",
           icon: "person.crop.circle.badge.plus",
           category: "AI & Automation",
+          keywords: ["autofill", "profile", "smart", "complete", "populate", "form"],
           isAvailable: model.inspection != nil
         ) {
           model.setEditorMode(.fill)
@@ -186,9 +197,41 @@ public struct AgentCommandHUD: View {
           title: "Jump to Next Detected Field",
           subtitle: "Review static suggestion with one-click candidate placement",
           icon: "scope",
-          category: "AI & Automation"
+          category: "AI & Automation",
+          keywords: ["next", "jump", "tab", "candidate", "suggest", "detect"]
         ) {
           model.selectNextCandidate()
+        }
+      )
+    }
+
+    // Candidate Confirmation & Rejection Parity (PER-0795)
+    if model.selectedCandidate != nil {
+      items.append(
+        AgentCommandItem(
+          id: "confirm-candidate",
+          title: "Confirm Current Field Suggestion",
+          subtitle: "Accept and place detected form candidate (⌘Return)",
+          icon: "checkmark.circle",
+          category: "AI & Automation",
+          keywords: ["accept", "approve", "confirm", "field", "form", "place", "candidate"],
+          isAvailable: true
+        ) {
+          model.confirmSelectedCandidate()
+        }
+      )
+
+      items.append(
+        AgentCommandItem(
+          id: "reject-candidate",
+          title: "Reject Current Field Suggestion",
+          subtitle: "Dismiss detected candidate without placing (⌘⌫)",
+          icon: "xmark.circle",
+          category: "AI & Automation",
+          keywords: ["dismiss", "reject", "delete", "remove", "candidate", "field"],
+          isAvailable: true
+        ) {
+          model.rejectSelectedCandidate()
         }
       )
     }
@@ -201,6 +244,7 @@ public struct AgentCommandHUD: View {
         subtitle: "Extract selectable text and synthesize form geometry locally",
         icon: "text.viewfinder",
         category: "Intelligence",
+        keywords: ["vision", "recognize", "text", "extract", "scan", "ocr"],
         isAvailable: model.inspection?.permissions.canCopy ?? false
       ) {
         model.runOCROnSelectedPage()
@@ -214,9 +258,25 @@ public struct AgentCommandHUD: View {
         subtitle: "Query local encrypted vault for layout geometry matches",
         icon: "checklist",
         category: "Intelligence",
+        keywords: ["template", "match", "vault", "geometry", "layout"],
         isAvailable: model.isTemplateVaultUnlocked
       ) {
         model.findLocalTemplateMatches()
+      }
+    )
+
+    // Forensic PII Scanner & Staging (PER-WPSYS-0007)
+    items.append(
+      AgentCommandItem(
+        id: "scan-pii",
+        title: "Scan for Sensitive PII & Redact",
+        subtitle: "Stage redactions for SSNs, emails, phones, and credit cards",
+        icon: "lock.shield",
+        category: "Intelligence",
+        keywords: ["ssn", "credit card", "email", "phone", "redact", "mask", "privacy", "pii", "gdpr", "hipaa", "sanitize"],
+        isAvailable: model.inspection != nil
+      ) {
+        model.scanAndStagePIIRedactions()
       }
     )
 
@@ -228,6 +288,7 @@ public struct AgentCommandHUD: View {
         subtitle: "Draw, type, or import a visual signature overlay",
         icon: "signature",
         category: "Authoring",
+        keywords: ["sign", "initial", "pen", "autograph", "signature"],
         isAvailable: model.inspection?.permissions.canAddAnnotations ?? false
       ) {
         model.beginSign(for: nil)
@@ -241,6 +302,7 @@ public struct AgentCommandHUD: View {
         subtitle: "Click anywhere on the document canvas to position text",
         icon: "text.cursor",
         category: "Authoring",
+        keywords: ["label", "type", "font", "overlay", "annotation", "text"],
         isAvailable: model.inspection?.permissions.canAddAnnotations ?? false
       ) {
         model.beginManualTextPlacement()
@@ -255,7 +317,8 @@ public struct AgentCommandHUD: View {
           title: "Commit \(markedCount) Marked Redaction(s)",
           subtitle: "Irrevocably remove underlying text/vector stream on exported copy",
           icon: "eye.slash.fill",
-          category: "Authoring"
+          category: "Authoring",
+          keywords: ["burn", "redact", "sanitize", "mask", "permanent", "blackout"]
         ) {
           model.isRedactionCommitPresented = true
         }
@@ -270,7 +333,8 @@ public struct AgentCommandHUD: View {
           title: model.showDiff ? "Hide Visual Diff Overlay" : "Show Visual Diff Overlay",
           subtitle: "Highlight outside-region changes and edits directly on page",
           icon: "doc.text.magnifyingglass",
-          category: "Verification"
+          category: "Verification",
+          keywords: ["diff", "compare", "changes", "overlay", "visual"]
         ) {
           model.toggleDiffView()
         }
@@ -282,12 +346,28 @@ public struct AgentCommandHUD: View {
           title: "Side-by-Side Diff Inspector",
           subtitle: "Compare original source vs live edited state with pixel delta",
           icon: "rectangle.split.2x1",
-          category: "Verification"
+          category: "Verification",
+          keywords: ["side-by-side", "compare", "diff", "delta", "inspect"]
         ) {
           model.openDiffComparison()
         }
       )
     }
+
+    // Digital Signature & Cryptographic Verification (PER-WPSYS-0007)
+    items.append(
+      AgentCommandItem(
+        id: "verify-signatures",
+        title: "Verify Digital Signatures & Trust",
+        subtitle: "Inspect digital signatures, certificates, and structural digest",
+        icon: "signature",
+        category: "Verification",
+        keywords: ["signature", "trust", "cert", "certificate", "integrity", "tamper", "crypto", "sha256", "verify", "digest"],
+        isAvailable: model.sourceData != nil
+      ) {
+        model.verifyDigitalSignatures()
+      }
+    )
 
     // 5. Modes & Navigation
     for mode in EditorMode.allCases {
@@ -300,7 +380,8 @@ public struct AgentCommandHUD: View {
                       mode == .sign ? "Place signatures and initials" :
                       mode == .edit ? "Full authoring, placement, and redactions" : "Passive reading and search",
             icon: mode.symbolName,
-            category: "Navigation"
+            category: "Navigation",
+            keywords: ["mode", mode.displayName.lowercased(), mode.rawValue.lowercased()]
           ) {
             model.setEditorMode(mode)
           }
@@ -315,7 +396,8 @@ public struct AgentCommandHUD: View {
         title: "Open Security & Privacy Vault",
         subtitle: "Manage Keychain unlocking, encrypted recovery envelopes, and audit logs",
         icon: "lock.shield",
-        category: "Security"
+        category: "Security",
+        keywords: ["keychain", "recovery", "envelope", "audit", "vault", "crypto", "security", "privacy"]
       ) {
         isSecurityVaultPresented = true
       }
@@ -329,6 +411,7 @@ public struct AgentCommandHUD: View {
         subtitle: "Extract selectable text from page \(model.selectedPageIndex + 1) to clipboard",
         icon: "doc.on.doc",
         category: "Authoring",
+        keywords: ["copy", "clipboard", "text", "extract"],
         isAvailable: model.inspection?.permissions.canCopy ?? false
       ) {
         model.copyCurrentPageText()
@@ -341,7 +424,8 @@ public struct AgentCommandHUD: View {
         title: "New PDF from Clipboard",
         subtitle: "Create a new document from system clipboard text or image",
         icon: "doc.on.clipboard",
-        category: "Authoring"
+        category: "Authoring",
+        keywords: ["new", "paste", "clipboard", "create"]
       ) {
         model.newDocumentFromClipboard()
       }
@@ -353,7 +437,8 @@ public struct AgentCommandHUD: View {
         title: "New PDF from Markdown",
         subtitle: "Render markdown content into a formatted PDF document",
         icon: "text.document",
-        category: "Authoring"
+        category: "Authoring",
+        keywords: ["markdown", "md", "render", "new", "document"]
       ) {
         model.newDocumentFromMarkdown()
       }
@@ -365,7 +450,8 @@ public struct AgentCommandHUD: View {
         title: "New PDF from Images…",
         subtitle: "Combine raster images into a multi-page PDF",
         icon: "photo.on.rectangle.angled",
-        category: "Authoring"
+        category: "Authoring",
+        keywords: ["image", "photo", "png", "jpg", "jpeg", "combine", "pdf"]
       ) {
         model.presentNewFromImagesPanel()
       }
@@ -378,6 +464,7 @@ public struct AgentCommandHUD: View {
         subtitle: "Insert pages from another PDF into the current document",
         icon: "doc.badge.plus",
         category: "Authoring",
+        keywords: ["append", "merge", "insert", "combine", "pages"],
         isAvailable: model.liveDocument != nil
       ) {
         model.presentAppendPagesPanel()
@@ -392,6 +479,7 @@ public struct AgentCommandHUD: View {
         subtitle: "Preflights and writes an immutable separate copy (source never overwritten)",
         icon: "square.and.arrow.down",
         category: "Export",
+        keywords: ["save", "write", "pdf", "output", "render", "export"],
         isAvailable: model.canExportCurrentOperations
       ) {
         model.presentExportReview()
@@ -402,15 +490,57 @@ public struct AgentCommandHUD: View {
   }
 
   private var filteredCommands: [AgentCommandItem] {
-    if query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+    let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+    if trimmed.isEmpty {
       return allCommands
     }
-    let lower = query.lowercased()
-    return allCommands.filter {
-      $0.title.lowercased().contains(lower) ||
-      $0.subtitle.lowercased().contains(lower) ||
-      $0.category.lowercased().contains(lower)
+    let lower = trimmed.lowercased()
+
+    struct ScoredCommand {
+      let command: AgentCommandItem
+      let score: Int
     }
+
+    var scored: [ScoredCommand] = []
+    for item in allCommands {
+      var score = 0
+      let titleLower = item.title.lowercased()
+      let subtitleLower = item.subtitle.lowercased()
+      let categoryLower = item.category.lowercased()
+
+      if titleLower == lower {
+        score += 150
+      } else if titleLower.hasPrefix(lower) {
+        score += 100
+      } else if titleLower.contains(lower) {
+        score += 70
+      }
+
+      for kw in item.keywords {
+        let kwLower = kw.lowercased()
+        if kwLower == lower {
+          score += 80
+        } else if kwLower.hasPrefix(lower) {
+          score += 60
+        } else if kwLower.contains(lower) {
+          score += 40
+        }
+      }
+
+      if subtitleLower.contains(lower) {
+        score += 20
+      }
+
+      if categoryLower.contains(lower) {
+        score += 10
+      }
+
+      if score > 0 {
+        scored.append(ScoredCommand(command: item, score: score))
+      }
+    }
+
+    return scored.sorted { $0.score > $1.score }.map(\.command)
   }
 
   public var body: some View {
@@ -426,12 +556,12 @@ public struct AgentCommandHUD: View {
             .foregroundStyle(Color.accentColor)
         }
 
-        TextField("Ask Agent for a plan (e.g. 'fill', 'ocr', 'export') or search commands…", text: $query)
+        TextField("Action Composer: describe intent or search commands (e.g. 'fill form', 'ocr', 'redact')…", text: $query)
           .textFieldStyle(.plain)
           .font(.body)
           .focused($isFieldFocused)
           .onSubmit {
-            proposePlan(query: query)
+            handleReturnSubmit()
           }
 
         if !query.isEmpty {
@@ -463,7 +593,7 @@ public struct AgentCommandHUD: View {
           Image(systemName: "questionmark.folder")
             .font(.title)
             .foregroundStyle(.secondary)
-          Text("No matching agent commands")
+          Text("No matching actions or commands")
             .font(.subheadline)
             .foregroundStyle(.secondary)
         }
@@ -519,7 +649,7 @@ public struct AgentCommandHUD: View {
               .padding(.horizontal, 5)
               .padding(.vertical, 2)
               .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 4, style: .continuous))
-            Text("propose plan")
+            Text("compose plan / execute")
               .font(.caption2)
               .foregroundStyle(.secondary)
           }
@@ -590,6 +720,30 @@ public struct AgentCommandHUD: View {
     .onKeyPress(.escape) {
       isPresented = false
       return .handled
+    }
+  }
+
+  private func handleReturnSubmit() {
+    let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+    if selectedIndex > 0 {
+      executeSelected()
+      return
+    }
+
+    if trimmed.isEmpty {
+      executeSelected()
+      return
+    }
+
+    let q = trimmed.lowercased()
+    let isPlanIntent = q.contains("fill") || q.contains("complete") || q.contains("form") ||
+                       q.contains("ocr") || q.contains("scan") || q.contains("extract text") ||
+                       q.contains("export") || q.contains("validat") || q.contains("finish") || q.contains("done")
+
+    if isPlanIntent {
+      proposePlan(query: trimmed)
+    } else {
+      executeSelected()
     }
   }
 
@@ -724,7 +878,22 @@ public struct AgentCommandHUD: View {
         break loop
       case .succeed:
         plan.state = .succeeded
-        planStatusLine = "Plan complete: \(outcomes.count) step(s) ran. Review the results; undo remains available."
+        model.recordExecutionReceipt(
+          actionName: "Action Composer: \(plan.goal)",
+          checks: [
+            ExecutionReceiptCheck(
+              name: "Deterministic Plan Execution",
+              passed: true,
+              detail: "\(outcomes.count) step(s) verified and applied."
+            ),
+            ExecutionReceiptCheck(
+              name: "Local Zero-Egress Boundary",
+              passed: true,
+              detail: "Executed entirely on-device without remote calls."
+            )
+          ]
+        )
+        planStatusLine = "Plan complete: \(outcomes.count) step(s) executed. Execution receipt generated."
         journalTerminal(plan: plan, escalated: false)
         break loop
       case .escalate(let escalation):

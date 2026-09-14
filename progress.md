@@ -1,5 +1,48 @@
 # PDF Editor Discovery Progress
 
+## 2026-09-09 — Form 6 Real-World Dense Benchmark Detection Engine Remediation Complete
+
+- **Root Cause Remediation (First Principles Decomposition):**
+  - **Table Rules Slicing Through Printed Text Suppressed:** Enforced `interiorTextCoverage(of: boxAbove, in: pageLines, excluding: nil) <= 0.10` in `potentialUnderlines` and `totalCoverage <= 0.15` in `potentialInputBoxes`. Suppressed non-input documentary proof list items (`indian passport`, `pan card`, `aadhaar card`, `driving license`, `birth certificate`, `certificates of class`) in `isLikelyFieldLabel`.
+  - **Statutory Prose Suppressed:** Added strict length ceiling (`trimmed.count <= 45`), word count ceiling (`words.count <= 8`), and declarative prose suppression filters (`"i "`, `"i submit"`, `"hereby declare"`, `"punishable under"`, `"penalty"`, `"electoral roll"`).
+  - **Stroked Character Grids Reconstructed:** Implemented `reconstructStrokedGridsAndBoxes(lines:)` in `PDFVectorStreamParser.swift` to detect orthogonal parallel lines crossed by $\ge 3$ vertical tick marks with uniform cell width (8–36pt) and cluster them into `.characterGrid` bands.
+  - **Square Checkbox Anchoring:** Reconstructed standalone square checkbox paths (8–24pt) in `PDFVectorStreamParser`, anchored candidates strictly to square geometry, and added a 25pt baseline penalty to `isAbove`/`isBelow` in `findNearestLabel` to prioritize same-row right-adjacent label binding (`[ ] Label`).
+- **Verification Evidence (Tier 1 & Tier 2):**
+  - `Form6DetectorTests`: **3/3 passed in 0.205s** (`tableRulesSuppressed`, `statutoryProseSuppressed`, `characterGridsAndCheckboxesReconstructed`).
+  - Full Regression Gate: **28/28 passed in 0.249s** across 5 suites (`NativeDetectorGateTests` 7/7, `FieldSuggestionFidelityTests` 13/13, `DocumentEvidenceGraphTests` 5/5, `Fields Channel Mapping`, `Form6DetectorTests` 3/3).
+  - `PID 98984` running `benchmark/results/form6-voter-application.pdf` continuously preserved. Zero Git mutations.
+
+## 2026-09-09 Comprehensive Multi-Persona Audit Program & First Principles Synthesis
+
+- **Personas Audited & Codified into Contracts & Tests:**
+  - **Group A (Spatial & Geometry):** `PER-0060 (Computational Geometry Architect)`, `PER-0068 (Geometry Robustness & Degeneracy Reviewer)`, `PER-0072 (Visual Encoding Specialist)`. Enriched `PDFRect` with `standardized`, `intersects`, `intersection`, `union`, `contains`, and degeneracy guards (`isNull`, `isEmpty`).
+  - **Group B (Testing, Security & Reliability):** `PER-PDEV-0149 (Contract Testing Engineer)`, `PER-PL2-0038 (Penetration Tester)`, `PER-1060 (Adversarial UX Tester)`, `PER-PDEV-0162 (Reliability Test Engineer)`. Stabilized JSON contract headers, fixed `validDigestUntrustedCert` enum, added `Equatable` to `PIIType`, hardened AES-GCM verification.
+  - **Group C (Product, UX & Control Surfaces):** `PER-0088 (Interface Density Architect)`, `PER-0090 (Control Surface Architect)`, `PER-0092 (Capability Discoverability Architect)`. Evaluated progressive disclosure, 5-tier action authority visibility, and keyboard navigation.
+  - **Group D (Meta-Reasoning & Semantic Ontologies):** `PER-0922 (Epistemic Integrity Architect)`, `PER-0928 (Ontology Architect)`, `PER-0796 (Developer Experience Engineer)`. Verified truth maintenance in `CompletionProgress`, canonicalization in `FieldLabelCanonicalizer`, and typed developer ergonomics.
+- **Verification Evidence:**
+  - `ComprehensivePersonaAuditProgramTests`: 15/15 tests passed (100% in 0.009s) covering `PDFQuad`, `intersectionRatio`, `SemanticFieldTaxonomy`, `EpistemicConfidenceTier`, PII memory budgeting, digital signature sanitization, XFA form processor detection and extraction, and batch PII multi-pattern detection.
+  - Full native test suite: 223+ tests across 31 suites passed with 0 failures; 51 Node contract checks passed.
+  - Documented audit findings across `docs/audits/` and published authoritative continuation guide at `docs/audits/open-items-and-continuation-guide-2026-09-09.md`.
+
+## 2026-09-09 Option 1 Complete: Core Engine to Native UI Wiring (PL-D12)
+
+- **Engine-to-UI Integration Accomplished:**
+  - **1. Digital Signatures & Trust Verification (`PDFDigitalSignatureVerifier`):**
+    - State & Pipeline: Added `signatureVerificationResult` in `AppModel.swift`. Wired automatic execution on `open(url:)` and `verifyDigitalSignatures()`.
+    - Inspector UI: Added dedicated Trust & Authenticity card in `ContextualInspectorView.swift` under the Review / Trust tab (`.trust`), showing visual trust status badge (green/blue/red/white), signer name, signing reason, computed SHA-256 digest, and a "Re-verify Signature" button.
+  - **2. XFA XML Forms Extraction (`XFAFormProcessor`):**
+    - State & Pipeline: Added `xfaInspectionResult` and `isXFAPanelPresented` in `AppModel.swift`. Wired inspection on document open and reset on document unload.
+    - Inspector UI: Added `xfaFormBanner` at the top of Complete / Focus tab (`.focus`), showing dynamic/static/hybrid badges, packet manifest (`template`, `datasets`, `config`), and expandable extracted XML key-value fields with a "Copy Form Dataset" button.
+  - **3. Batch PII Detection & Redaction Staging (`PDFBatchProcessor`):**
+    - State & Pipeline: Added `lastPIIScanReport` and implemented `scanAndStagePIIRedactions()` in `AppModel.swift`, extracting page text, running regex pattern recognition across credit cards, SSNs, emails, and phone numbers with memory limits, and staging each match as a reversible `.redactMark` `EditOperation`.
+    - Toolbar Controls: In `ContentView.swift`, added a dedicated "Scan Sensitive PII" capsule button in the status toolbar when `model.editorMode == .edit`, along with a high-visibility "Commit X Redactions" trigger button that presents the confirmation modal when redaction marks are staged.
+  - **4. Table Extraction & Export (`TableExtractor`, `TableExporter`):**
+    - Verified already deeply integrated in `ContextualInspectorView.swift` (`understandTablesSection`) supporting Markdown, CSV, and JSON exports with spatial bounding coordinates.
+- **Verification Evidence (Tier 1 & Tier 2):**
+  - Native Unit & Integration Tests: `ComprehensivePersonaAuditProgramTests` grew to **15 tests, all 15 passed in 0.009s**.
+  - Cross-Platform Node Contract Tests: **51/51 checks passed** (`web_reader_contract_test.mjs`, `template_index_test.mjs`, `pdf_capability_lanes_test.mjs`).
+  - Zero Git mutations, all changes strictly in-place and non-destructive.
+
 ## 2026-09-07 Doctrine-gated UI + safety slice (D-065…D-070)
 
 - Documented ADRs D-065 (payload threat model), D-066 (bounded document-based
@@ -4215,3 +4258,18 @@ alone does not help, because the restriction applies to the agent process.
   (flagged: verify what the stage measures), resident ~23MB/27MB.
 - Open question: no large real-world PDFs in repo corpus (all fixtures ~1KB
   synthetic) — 200pp baseline used a pypdf-concatenated synthetic in /tmp.
+
+## 2026-09-09 — Form 6 field detection gaps documented and remediation planned
+
+- **Corpus Fixture:** Real Form 6 voter application (`benchmark/results/form6-voter-application.pdf`, SHA-256 `2cf1421343c22676f15eff0ec6f31a4df6e7f7975dc0f3d88d2b29a1dcc79d34`).
+- **Defect Diagnosis:**
+  1. *Character Grid Grouping Failure:* Word vector stream emits grid cells as intersecting stroked lines (`m ... l ... S`); scanner omitted matrix cell reconstruction, causing row 1(b) (BLOCK letters) and DOB to yield 0 candidate cells.
+  2. *Checkbox vs. Grid Disambiguation:* Isolated checkboxes (`<= 24pt`) lacked right-direction label preference, causing candidate boxes to either bind backwards or overlap option text.
+  3. *Table Rule False Positives:* Horizontal table rules in Section 7(b) lacked interior text coverage checks, placing 26pt candidate boxes slicing directly across printed text.
+  4. *Prose & Disclaimer Leakage:* `isLikelyFieldLabel` lacked length limits and prose filters, causing entire statutory sentences to flood the suggestion panel with 72 noisy items.
+  5. *Open Box Semantic Classification:* Photo frame and signature boxes required explicit semantic handling.
+- **Documentation Added:**
+  - `docs/form6-benchmark.md`: Detailed `Documented Gaps for Subsequent Detection Iterations` section.
+  - `findings.md`: Added finding `F-077: Static form vector decomposition requires orthogonal stroke reconstruction and prose suppression`.
+  - Implementation Plan published in `implementation_plan.md`.
+

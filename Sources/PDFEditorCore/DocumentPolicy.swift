@@ -141,6 +141,7 @@ public struct PolicyViolation: Codable, Sendable, Identifiable {
 /// Evaluates policies against documents and tracks violations.
 @MainActor
 public final class GovernanceEngine: ObservableObject {
+  public static let shared = GovernanceEngine()
   /// Active policy rules.
   @Published public var rules: [PolicyRule] = []
   /// Detected violations.

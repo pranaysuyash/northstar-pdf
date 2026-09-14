@@ -19,7 +19,7 @@ import CryptoKit
 // MARK: - Corpus Paths
 
 private enum CorpusPath {
-    static let root = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    static let root = "\(TestRepoRoot.prefix)benchmark/results"
     static let corpusSweep = "\(root)/corpus-sweep-2026-08-25"
     static let browserCorpus = "\(root)/browser-corpus"
     static let contractParity = "\(root)/contract-parity-2026-08-24"

@@ -19,8 +19,8 @@ import PDFKit
 struct ManifestFieldPresenceGate {
 
   private static let manifestURL = URL(fileURLWithPath:
-    "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25/manifest.json")
-  private static let fixtureDir = "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25"
+    "\(TestRepoRoot.prefix)benchmark/results/corpus-sweep-2026-08-25/manifest.json")
+  private static let fixtureDir = "\(TestRepoRoot.prefix)benchmark/results/corpus-sweep-2026-08-25"
 
   private struct ManifestFixture: Decodable {
     let expected: Expected?

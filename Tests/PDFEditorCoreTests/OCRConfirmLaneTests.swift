@@ -75,7 +75,7 @@ struct OCRConfirmLaneTests {
     /// and the lane should reject the false family candidate.
     @Test("Chart-vs-scan: OCR confirms different content → reject")
     func chartVsScanRejects() throws {
-        let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+        let results = "\(TestRepoRoot.prefix)benchmark/results"
         let candidatePDF = "\(results)/browser-corpus/scanned-noisy.pdf"
         let templatePDF = "\(results)/ocr-corpus/low-contrast.pdf"
 
@@ -108,7 +108,7 @@ struct OCRConfirmLaneTests {
     /// should extract the same text and the lane should promote.
     @Test("Re-encoding: OCR confirms same content → promote")
     func reEncodingPromotes() throws {
-        let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+        let results = "\(TestRepoRoot.prefix)benchmark/results"
         let fixture = "\(results)/ocr-corpus/clean-english.pdf"
 
         guard FileManager.default.fileExists(atPath: fixture) else {
@@ -138,7 +138,7 @@ struct OCRConfirmLaneTests {
     /// Batch confirmation with mixed pairs.
     @Test("Batch confirmation returns correct counts")
     func batchConfirmation() throws {
-        let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+        let results = "\(TestRepoRoot.prefix)benchmark/results"
         let fixture = "\(results)/ocr-corpus/clean-english.pdf"
 
         guard FileManager.default.fileExists(atPath: fixture) else {
@@ -165,7 +165,7 @@ struct OCRConfirmLaneTests {
     /// End-to-end: calibrator abstains → confirm lane decides.
     @Test("Calibrator abstain → confirm lane decides (end-to-end)")
     func endToEndFlow() throws {
-        let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+        let results = "\(TestRepoRoot.prefix)benchmark/results"
         let paths = [
             "\(results)/browser-corpus/scanned-noisy.pdf",
             "\(results)/ocr-corpus/low-contrast.pdf"

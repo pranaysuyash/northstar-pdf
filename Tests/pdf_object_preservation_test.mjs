@@ -2,9 +2,24 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 import { compareObjectPreservation, changedObjectIDs } from "../benchmark/pdf-object-preservation-validator.mjs";
 
 const root = path.resolve(new URL("..", import.meta.url).pathname);
+
+// The object-preservation validator shells out to qpdf for structural reads.
+// qpdf is a local brew dependency, absent on CI checkouts; absence is
+// recorded as not_ran provenance (same convention as pdf_ua_validator_test).
+const qpdfCheck = spawnSync("qpdf", ["--version"], { encoding: "utf8" });
+if (qpdfCheck.error || qpdfCheck.status !== 0) {
+  console.log(JSON.stringify({
+    test: "pdf_object_preservation",
+    status: "not_ran",
+    reason: "qpdf not installed; absence = not_ran provenance"
+  }));
+  process.exit(0);
+}
+
 const sourcePath = path.join(root, "benchmark/results/public-sample-form.pdf");
 const editedPath = path.join(root, "benchmark/results/2026-08-23-public-acroform/mutated.pdf");
 const tempDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "pdf-editor-object-preservation-"));

@@ -75,7 +75,7 @@ struct DualLaneDetectorGateTests {
   func unreviewedFixtureFailsClosed() throws {
     // Use a real PDF that's NOT in the ground truth. The public-sample-form
     // is in the threshold calibration corpus but not the detector ground truth.
-    let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    let results = "\(TestRepoRoot.prefix)benchmark/results"
     let sampleForm = URL(fileURLWithPath: "\(results)/public-sample-form.pdf")
     guard FileManager.default.fileExists(atPath: sampleForm.path) else { return }
 
@@ -148,7 +148,7 @@ struct DualLaneDetectorGateTests {
   // MARK: - Helpers
 
   private func corpusSweepFixtures() -> [URL] {
-    let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    let results = "\(TestRepoRoot.prefix)benchmark/results"
     let sweepDir = "\(results)/corpus-sweep-2026-08-25"
     let names = [
       "plain-text.pdf", "multi-column.pdf", "navigation.pdf", "geometry.pdf",

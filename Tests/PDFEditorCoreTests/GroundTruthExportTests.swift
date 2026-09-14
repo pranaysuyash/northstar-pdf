@@ -113,7 +113,7 @@ struct GroundTruthExportTests {
     #expect(decoded.cases.allSatisfy { $0.provenance == "human-reviewed" })
 
     // Persist the artifact.
-    let artifactURL = URL(fileURLWithPath: "/Users/pranay/Projects/pdf_editor/benchmark/results/detector-calibration")
+    let artifactURL = URL(fileURLWithPath: "\(TestRepoRoot.prefix)benchmark/results/detector-calibration")
       .appendingPathComponent("corpus_sweep_ground_truth.json")
     try? data.write(to: artifactURL)
     #expect(FileManager.default.fileExists(atPath: artifactURL.path), "Export must be persisted")

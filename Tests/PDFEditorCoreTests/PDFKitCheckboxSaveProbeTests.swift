@@ -11,8 +11,8 @@ import PDFKit
 @MainActor
 struct PDFKitCheckboxSaveReopenProbeTests {
 
-    static let pdfBoxNoop = "/Users/pranay/Projects/pdf_editor/benchmark/results/2026-08-25-pdfbox-public-acroform/noop.pdf"
-    static let pdfLibLane = "/Users/pranay/Projects/pdf_editor/benchmark/acroform-lane/lane.mjs"
+    static let pdfBoxNoop = "\(TestRepoRoot.prefix)benchmark/results/2026-08-25-pdfbox-public-acroform/noop.pdf"
+    static let pdfLibLane = "\(TestRepoRoot.prefix)benchmark/acroform-lane/lane.mjs"
 
     @Test("pdf-lib writes checkbox Yes; PDFKit annotation API read sees Yes before write")
     func readBeforeWrite() throws {

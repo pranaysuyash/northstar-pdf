@@ -113,7 +113,7 @@ struct FieldCandidateMappingParityTests {
 
   @Test("Swift mapping produces identical output to mjs fieldCandidates for base form")
   func crossLaneParityBaseForm() throws {
-    let sweepDir = "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25"
+    let sweepDir = "\(TestRepoRoot.prefix)benchmark/results/corpus-sweep-2026-08-25"
     let pdfURL = URL(fileURLWithPath: "\(sweepDir)/plain-text.pdf")
     guard FileManager.default.fileExists(atPath: pdfURL.path) else { return }
 
@@ -148,7 +148,7 @@ struct FieldCandidateMappingParityTests {
 
   @Test("liveCandidates combines detector candidates and field candidates")
   func liveCandidatesCombinesBothChannels() throws {
-    let sweepDir = "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25"
+    let sweepDir = "\(TestRepoRoot.prefix)benchmark/results/corpus-sweep-2026-08-25"
     let pdfURL = URL(fileURLWithPath: "\(sweepDir)/plain-text.pdf")
     guard FileManager.default.fileExists(atPath: pdfURL.path) else { return }
 
@@ -176,7 +176,7 @@ struct FieldCandidateMappingParityTests {
 
   @Test("Contract snapshot fieldCandidates envelope matches Swift mapping")
   func contractSnapshotFieldCandidatesEnvelope() throws {
-    let sweepDir = "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25"
+    let sweepDir = "\(TestRepoRoot.prefix)benchmark/results/corpus-sweep-2026-08-25"
     let pdfURL = URL(fileURLWithPath: "\(sweepDir)/plain-text.pdf")
     guard FileManager.default.fileExists(atPath: pdfURL.path) else { return }
 

@@ -113,7 +113,7 @@ struct NativeDetectorGateTests {
   func gateFailsClosedOnUnreviewedFixture() throws {
     // The base form has no reviewed ground truth (no fixtureID entries):
     // a new corpus entry cannot silently pass the gate.
-    let fixtures = [URL(fileURLWithPath: "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf")]
+    let fixtures = [URL(fileURLWithPath: "\(TestRepoRoot.prefix)benchmark/results/public-sample-form.pdf")]
     let result = try gate.run(provider: provider, fixtures: fixtures)
 
     #expect(!result.passed)

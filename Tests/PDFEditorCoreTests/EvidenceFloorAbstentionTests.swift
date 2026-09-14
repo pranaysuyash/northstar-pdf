@@ -319,7 +319,7 @@ struct EvidenceFloorAbstentionTests {
     /// Both PDFs are scans with no extractable text layer.
     @Test("Real corpus: scanned-noisy vs ocr-low-contrast abstains, does not promote")
     func realCorpusGraphicsPairAbstains() throws {
-        let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+        let results = "\(TestRepoRoot.prefix)benchmark/results"
         let paths = [
             "\(results)/browser-corpus/scanned-noisy.pdf",
             "\(results)/ocr-corpus/low-contrast.pdf"

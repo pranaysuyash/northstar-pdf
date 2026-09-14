@@ -95,7 +95,7 @@ import PDFKit
 @Suite("Layout Fingerprint Threshold Calibration (F-3)")
 struct LayoutFingerprintThresholdCalibrationTests {
 
-  private static let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+  private static let results = "\(TestRepoRoot.prefix)benchmark/results"
 
   /// (name, family, note). Family: "A" layout-identical, "N" layout-distinct.
   private static let corpus: [(name: String, family: String, note: String)] = [

@@ -8,7 +8,7 @@ import PDFKit
 @Suite("Raster weight recalibration (multi-scale)")
 struct RasterWeightRecalibrationTests {
     
-    private static let corpus = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    private static let corpus = "\(TestRepoRoot.prefix)benchmark/results"
     
     /// Load a fixture and extract its V2 fingerprint
     private func load(_ relativePath: String) -> LayoutFingerprintV2? {

@@ -29,7 +29,7 @@ import PDFKit
 @Suite("Template Fingerprint V2 Unification")
 struct TemplateFingerprintV2UnificationTests {
 
-  private static let results = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+  private static let results = "\(TestRepoRoot.prefix)benchmark/results"
   private static let keyA = Data("test-workspace-key-A-2026".utf8)
   private static let keyB = Data("test-workspace-key-B-2026".utf8)
 

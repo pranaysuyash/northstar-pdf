@@ -8,7 +8,7 @@ import PDFKit
 @Suite("Content-invariant raster extraction (focused)")
 struct ContentInvariantRasterTests {
 
-    private static let corpus = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    private static let corpus = "\(TestRepoRoot.prefix)benchmark/results"
 
     /// Load a fixture's first page
     private func loadPage(_ relativePath: String) -> (PDFPage, CGRect)? {

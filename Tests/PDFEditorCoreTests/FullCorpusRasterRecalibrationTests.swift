@@ -8,7 +8,7 @@ import PDFKit
 @Suite("Full corpus raster recalibration (multi-scale)")
 struct FullCorpusRasterRecalibrationTests {
 
-    private static let corpus = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    private static let corpus = "\(TestRepoRoot.prefix)benchmark/results"
     private static let sweep = "\(corpus)/corpus-sweep-2026-08-25"
 
     /// Load all corpus fixtures

@@ -20,7 +20,7 @@ import CryptoKit
 @Suite("Layout Fingerprint V2 — Real Corpus")
 struct LayoutFingerprintV2Tests {
 
-    private static let corpusRoot = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    private static let corpusRoot = "\(TestRepoRoot.prefix)benchmark/results"
 
     private static let sweepNames = [
         "plain-text.pdf", "multi-column.pdf", "geometry.pdf", "navigation.pdf"
@@ -291,7 +291,7 @@ struct LayoutFingerprintV2Tests {
     func rasterCellsExtracted() throws {
         // scanned-noisy.pdf is a raster-only page — should have raster cells
         let scannedURL = URL(fileURLWithPath:
-            "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf")
+            "\(TestRepoRoot.prefix)benchmark/results/browser-corpus/scanned-noisy.pdf")
         guard FileManager.default.fileExists(atPath: scannedURL.path) else { return }
         guard let doc = PDFDocument(url: scannedURL),
               let fp = LayoutFingerprintV2Extractor.extract(from: doc) else {
@@ -306,9 +306,9 @@ struct LayoutFingerprintV2Tests {
     @Test("Raster channel discriminates scanned from text pages")
     func rasterDiscriminates() throws {
         let scannedURL = URL(fileURLWithPath:
-            "/Users/pranay/Projects/pdf_editor/benchmark/results/browser-corpus/scanned-noisy.pdf")
+            "\(TestRepoRoot.prefix)benchmark/results/browser-corpus/scanned-noisy.pdf")
         let textURL = URL(fileURLWithPath:
-            "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25/plain-text.pdf")
+            "\(TestRepoRoot.prefix)benchmark/results/corpus-sweep-2026-08-25/plain-text.pdf")
         guard FileManager.default.fileExists(atPath: scannedURL.path),
               FileManager.default.fileExists(atPath: textURL.path) else { return }
         guard let scannedDoc = PDFDocument(url: scannedURL),

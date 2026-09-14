@@ -7,7 +7,7 @@ import PDFKit
 @Suite("Control Viewer Observation")
 struct ControlViewerObservationTests {
     
-    private static let corpus = "/Users/pranay/Projects/pdf_editor/benchmark/results"
+    private static let corpus = "\(TestRepoRoot.prefix)benchmark/results"
     
     @Test("Observation runs against real PDF")
     func observationRuns() {

@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T19:13:12Z
+- Generated: 2026-09-14T19:49:08Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: closes the four evidenced node-contract failures and three swift failures from run 34883315361 — an ESM/CJS module-format fix for vendored code, one repo-relative fixture path, two wrong availability predicates made honest (wrapper-vs-engine, import-crash-vs-skip), one deadline calibrated to observed CI cold start, and tool-dependent swift guards converted to the repo not_ran convention; remaining 10 node files with owner-absolute paths run only in tool-dependent lanes and are ledgered as hygiene follow-up, not masked.
+- Evidence: Integrated audit of this diff: completes the tool-dependency conversion for the last failing family found in CI run 34887729702 (17 issues, all OCRCompanionBenchmarkTests, all instant-fail on absent engines) — probes mirror the providers' own executable paths so the gate cannot silently pass when the engine is present but broken; strict assertions unchanged wherever engines exist; no production source changes.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: web/vendor/pdf-lib/package.json pins commonjs so the vendored UMD bundle loads under Node 24 require; AcroFormParityExperimentTests gains a qpdfAvailable() Process probe gating the experiment with not_ran provenance; RecoveryCrashInterruptionTests startup deadline 240s to 480s with CI cold-start observation recorded in the comment.
+- Evidence: OCRCompanionBenchmarkTests gains availability probes matching each provider's own hardcoded executable (/opt/homebrew/bin/tesseract; benchmark/datasets/.venv python3 and marker_single via TestRepoRoot) and 11 real-provider tests now record not_ran provenance instead of instant expectation failures on checkouts without the engines.
 
 ## SECTION_12
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2 locally: node export_page_fact passes after web/vendor/pdf-lib/package.json commonjs pin (Node 24 was loading the UMD as ESM where self is undefined); multi_engine passes with repo-relative fixture; pdf_ua strict pass; template_match syntax-checked; swift suites AcroFormParity 53s, Poppler, RecoveryCrashInterruption all pass (18 tests).
+- Evidence: Verified Tier 2: swift build --build-tests green with all guards; swift test --filter OCRCompanionBenchmarkTests/tesseractCleanEnglish passes the strict path in 0.674s on a machine where /opt/homebrew/bin/tesseract exists; CI absence path is a static Bool guard identical in structure to the already-verified pdf_ua probe.
 
 ## SECTION_4
 

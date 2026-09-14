@@ -74,7 +74,7 @@ struct OCRConfirmLaneTests {
     /// Two scans with different content — OCR should extract different text
     /// and the lane should reject the false family candidate.
     @Test("Chart-vs-scan: OCR confirms different content → reject")
-    func chartVsScanRejects() throws {
+    func chartVsScanRejects() async throws {
         let results = "\(TestRepoRoot.prefix)benchmark/results"
         let candidatePDF = "\(results)/browser-corpus/scanned-noisy.pdf"
         let templatePDF = "\(results)/ocr-corpus/low-contrast.pdf"
@@ -85,13 +85,15 @@ struct OCRConfirmLaneTests {
             return
         }
 
-        let result = lane.confirm(
-            candidatePDF: candidatePDF,
-            templatePDF: templatePDF,
-            candidateDigest: "scanned-noisy-digest",
-            templateID: "low-contrast-template",
-            familyScore: 0.9886
-        )
+        let result = try await SharedHeavyTestResourceLock.withLock {
+            lane.confirm(
+                candidatePDF: candidatePDF,
+                templatePDF: templatePDF,
+                candidateDigest: "scanned-noisy-digest",
+                templateID: "low-contrast-template",
+                familyScore: 0.9886
+            )
+        }
 
         print("[OCR-confirm evidence] decision=\(result.decision.rawValue)")
         for (name, pr) in result.providerResults {
@@ -107,7 +109,7 @@ struct OCRConfirmLaneTests {
     /// Two copies of the same document (same fixture, same bytes) — OCR
     /// should extract the same text and the lane should promote.
     @Test("Re-encoding: OCR confirms same content → promote")
-    func reEncodingPromotes() throws {
+    func reEncodingPromotes() async throws {
         let results = "\(TestRepoRoot.prefix)benchmark/results"
         let fixture = "\(results)/ocr-corpus/clean-english.pdf"
 
@@ -117,13 +119,15 @@ struct OCRConfirmLaneTests {
         }
 
         // Same document as both candidate and template — re-encoding pair
-        let result = lane.confirm(
-            candidatePDF: fixture,
-            templatePDF: fixture,
-            candidateDigest: "clean-english-digest",
-            templateID: "clean-english-template",
-            familyScore: 1.0
-        )
+        let result = try await SharedHeavyTestResourceLock.withLock {
+            lane.confirm(
+                candidatePDF: fixture,
+                templatePDF: fixture,
+                candidateDigest: "clean-english-digest",
+                templateID: "clean-english-template",
+                familyScore: 1.0
+            )
+        }
 
         print("[OCR-confirm evidence] decision=\(result.decision.rawValue)")
         for (name, pr) in result.providerResults {
@@ -137,7 +141,7 @@ struct OCRConfirmLaneTests {
 
     /// Batch confirmation with mixed pairs.
     @Test("Batch confirmation returns correct counts")
-    func batchConfirmation() throws {
+    func batchConfirmation() async throws {
         let results = "\(TestRepoRoot.prefix)benchmark/results"
         let fixture = "\(results)/ocr-corpus/clean-english.pdf"
 
@@ -146,12 +150,14 @@ struct OCRConfirmLaneTests {
             return
         }
 
-        let batch = lane.confirmBatch([
-            (candidatePDF: fixture, templatePDF: fixture,
-             candidateDigest: "same-digest", templateID: "tpl-a", familyScore: 1.0),
-            (candidatePDF: "/dev/null", templatePDF: "/dev/null",
-             candidateDigest: "null-digest", templateID: "tpl-b", familyScore: 0.95),
-        ])
+        let batch = try await SharedHeavyTestResourceLock.withLock {
+            lane.confirmBatch([
+                (candidatePDF: fixture, templatePDF: fixture,
+                 candidateDigest: "same-digest", templateID: "tpl-a", familyScore: 1.0),
+                (candidatePDF: "/dev/null", templatePDF: "/dev/null",
+                 candidateDigest: "null-digest", templateID: "tpl-b", familyScore: 0.95),
+            ])
+        }
 
         #expect(batch.totalPairs == 2)
         #expect(batch.promoted >= 1,
@@ -164,7 +170,7 @@ struct OCRConfirmLaneTests {
 
     /// End-to-end: calibrator abstains → confirm lane decides.
     @Test("Calibrator abstain → confirm lane decides (end-to-end)")
-    func endToEndFlow() throws {
+    func endToEndFlow() async throws {
         let results = "\(TestRepoRoot.prefix)benchmark/results"
         let paths = [
             "\(results)/browser-corpus/scanned-noisy.pdf",
@@ -198,13 +204,15 @@ struct OCRConfirmLaneTests {
 
         // Step 2: If calibrator abstained, escalate to confirm lane
         if tier == .insufficientEvidence {
-            let confirmResult = lane.confirm(
-                candidatePDF: paths[0],
-                templatePDF: paths[1],
-                candidateDigest: "digest-scan-a",
-                templateID: templateID ?? "unknown",
-                familyScore: score
-            )
+            let confirmResult = try await SharedHeavyTestResourceLock.withLock {
+                lane.confirm(
+                    candidatePDF: paths[0],
+                    templatePDF: paths[1],
+                    candidateDigest: "digest-scan-a",
+                    templateID: templateID ?? "unknown",
+                    familyScore: score
+                )
+            }
 
             print("[OCR-confirm e2e] confirm decision=\(confirmResult.decision.rawValue)")
             for (name, pr) in confirmResult.providerResults {
@@ -223,4 +231,50 @@ struct OCRConfirmLaneTests {
         let description: String
         init(_ d: String) { description = d }
     }
+}
+
+/// Shared named semaphore with the OCR Companion Benchmark and recovery
+/// crash-interruption suites. The confirm lane runs real Tesseract + Vision
+/// OCR; without this lock it executes concurrently with the ~16-minute OCR
+/// benchmark suite and Apple Vision returns empty output under the resulting
+/// load (Observed twice in full-suite runs 2026-09-14: "Vision: 0 chars,
+/// WER 1.0000" → false abstain; passed standalone both times).
+private enum SharedHeavyTestResourceLock {
+  private static let name = "/pdf-editor-heavy"
+
+  static func withLock<T>(_ operation: () async throws -> T) async throws -> T {
+    let failed = UnsafeMutablePointer<sem_t>(bitPattern: -1)
+    guard let semaphore = sem_open(name, O_CREAT, S_IRUSR | S_IWUSR, 1), semaphore != failed else {
+      throw NSError(
+        domain: "PDFEditorCoreTests",
+        code: 2,
+        userInfo: [NSLocalizedDescriptionKey: "Could not open heavy test resource semaphore"]
+      )
+    }
+    let acquireDeadline = Date().addingTimeInterval(300)
+    var acquired = false
+    while !acquired {
+      if sem_trywait(semaphore) == 0 {
+        acquired = true
+      } else if errno == EAGAIN || errno == EINTR {
+        guard Date() < acquireDeadline else { break }
+        try await Task.sleep(nanoseconds: 20_000_000)
+      } else {
+        break
+      }
+    }
+    guard acquired else {
+      _ = sem_close(semaphore)
+      throw NSError(
+        domain: "PDFEditorCoreTests",
+        code: 3,
+        userInfo: [NSLocalizedDescriptionKey: "Heavy test resource semaphore '\(name)' not acquired within 300s. Known cause (flaky-register 2026-09-12): a previous run holding the lock was killed, leaking the kernel-persistent named semaphore. Remediate with: pkill -f swiftpm-testing-helper (confirm orphans first), then sem_unlink('\(name)') — the next sem_open(O_CREAT) recreates it."]
+      )
+    }
+    defer {
+      _ = sem_post(semaphore)
+      _ = sem_close(semaphore)
+    }
+    return try await operation()
+  }
 }

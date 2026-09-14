@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T15:21:58Z
+- Generated: 2026-09-14T15:54:30Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of staged diff: commit pins the only-green tree as evidence (C1), converts 12 Mimosa path-write findings into statically provable confined writes (fresh deep scan seals at 0 findings), lands buyer-path audits and sim evidence docs, and carries the MAD-001 stub openly; residual falsifiables (CI red at HEAD, root-owned tmp dir EACCES making hook coverage partial) are named, not absorbed.
+- Evidence: Integrated audit of this fix diff: two-line repair of the CI failure mode diagnosed from run 34864369397 logs (compiler diagnostic PDFIncrementalFormWriter.swift:834:64 unexpected ',' separator) — the syntax is accepted by the local newest toolchain (why 1694 local tests passed) and rejected by the runner default the broken glob left selected; removing the comma is valid on every Swift version and the glob repair restores the documented select-latest behavior; no behavior change to shipped code paths.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Root-cause fix: all 12 flagged write sinks across benchmark/compare_ocr_wer.py and benchmark/datasets/ converted to Path(_confined()).write_text — containment kept, sinks statically provable; all 6 scripts py_compile green.
+- Evidence: Root-cause fix for 6-day CI red: Swift 6.1-only tuple trailing comma in Sources/PDFEditorCore/PDFIncrementalFormWriter.swift:834 plus broken Xcode selection glob in .github/workflows/ci.yml (Xcode_*.xcodeproj never matches .app bundles, silently pinning an older runner toolchain).
 
 ## SECTION_12
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Evidence-Tier 2 claimed honestly: swift build green + targeted slice in Tests/PDFEditorCoreTests/ (EvidenceFusionTests 4/4) passed; S2 not claimed; full swift test executes in the pre-push gate.
+- Evidence: Fix verified Tier 2: swift build green after removing the tuple-type trailing comma at Sources/PDFEditorCore/PDFIncrementalFormWriter.swift:834; sweep confirms it was the only paren-closer trailing comma in Sources/ and Tests/.
 
 ## SECTION_4
 

@@ -27,6 +27,13 @@ function normalizedFailure(code, sourceDigest, diagnostic) {
     errorCode: code,
     sourceDigest,
     diagnostic,
+    evidence: {
+      validatorVersion: "veraPDF 1.30.2",
+      profile: "PDF/UA-1",
+      sourceBytesRemainLocal: true,
+      heuristicReadingOrderUsedAsConformance: false,
+      validatorExecuted: false
+    },
     rawDocumentContentInReport: false
   };
 }
@@ -70,7 +77,8 @@ export function validatePdfUA(filePath, { password = null } = {}) {
       validatorVersion: "veraPDF 1.30.2",
       profile: "PDF/UA-1",
       sourceBytesRemainLocal: true,
-      heuristicReadingOrderUsedAsConformance: false
+      heuristicReadingOrderUsedAsConformance: false,
+      validatorExecuted: true
     },
     rawDocumentContentInReport: false
   };

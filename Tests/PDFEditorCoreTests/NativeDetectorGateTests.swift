@@ -22,10 +22,20 @@ import Testing
 // MARK: - Corpus Paths
 
 private enum GateCorpusPath {
-  static let sweep = "/Users/pranay/Projects/pdf_editor/benchmark/results/corpus-sweep-2026-08-25"
+  // Resolve from the test source location so the governed corpus is found on
+  // any checkout path; the previous absolute path only existed on the owner's
+  // machine, which is why CI could never see the 15 sweep fixtures.
+  private static let repoRoot = URL(fileURLWithPath: #filePath)
+    .deletingLastPathComponent() // Tests/PDFEditorCoreTests
+    .deletingLastPathComponent() // Tests
+    .deletingLastPathComponent() // repo root
+
+  static var sweep: String {
+    repoRoot.appendingPathComponent("benchmark/results/corpus-sweep-2026-08-25").path
+  }
 
   static func sweepPDF(_ name: String) -> URL {
-    URL(fileURLWithPath: "\(sweep)/\(name)")
+    repoRoot.appendingPathComponent("benchmark/results/corpus-sweep-2026-08-25/\(name)")
   }
 }
 

@@ -22,6 +22,7 @@
   "generatedAt" : "2026-08-31",
   "hardNegativePairs" : 1329,
   "maxHardNegative" : 1,
+  "maxHardNegativeWithEvidence" : 0.8493455806115857,
   "maxPositive" : 1,
   "minHardNegative" : 0.009227846819258922,
   "minPositive" : 0.9251056408398455,

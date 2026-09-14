@@ -250,6 +250,13 @@ struct LayoutFingerprintThresholdCalibrationTests {
     let excluded: [ExcludedEntry]
     let familyThreshold: Double
     let maxHardNegative: Double
+    /// Similarity max over hard negatives that carry structured content —
+    /// the precision-relevant quantity. Overall maxHardNegative includes the
+    /// degenerate encrypted fixture (similarity exactly 1.0 against
+    /// everything: no extractable content → evidence-floor abstention by
+    /// design) and the documented graphics-heavy cluster, so it is reported
+    /// but not gated.
+    let maxHardNegativeWithEvidence: Double
     let minPositive: Double
     let maxPositive: Double
     let minHardNegative: Double
@@ -288,6 +295,7 @@ struct LayoutFingerprintThresholdCalibrationTests {
     #expect(hardNegatives.count >= 400, "Expected at least 400 negative pairs, got \(hardNegatives.count)")
 
     let maxNegative = hardNegatives.map(\.similarity).max() ?? 0
+    let maxNegativeWithEvidence = hardNegatives.filter { $0.structuredContent }.map(\.similarity).max() ?? 0
     let minPositive = positives.map(\.similarity).min() ?? 0
     let maxPositive = positives.map(\.similarity).max() ?? 0
     let minNegative = hardNegatives.map(\.similarity).min() ?? 0
@@ -354,6 +362,7 @@ struct LayoutFingerprintThresholdCalibrationTests {
       positives: positives, hardNegatives: hardNegatives,
       maxNegative: maxNegative, minPositive: minPositive,
       maxPositive: maxPositive, minNegative: minNegative, threshold: threshold,
+      maxNegativeWithEvidence: maxNegativeWithEvidence,
       topNegatives: Array(topNegatives))
   }
 
@@ -380,6 +389,7 @@ struct LayoutFingerprintThresholdCalibrationTests {
     maxPositive: Double,
     minNegative: Double,
     threshold: Double,
+    maxNegativeWithEvidence: Double,
     topNegatives: [PairScore]
   ) {
     let artifact = CalibrationArtifact(
@@ -392,6 +402,7 @@ struct LayoutFingerprintThresholdCalibrationTests {
       excluded: Self.excluded.map { CalibrationArtifact.ExcludedEntry(name: $0.name, reason: $0.reason) },
       familyThreshold: threshold,
       maxHardNegative: maxNegative,
+      maxHardNegativeWithEvidence: maxNegativeWithEvidence,
       minPositive: minPositive,
       maxPositive: maxPositive,
       minHardNegative: minNegative,

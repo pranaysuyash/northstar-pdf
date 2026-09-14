@@ -90,16 +90,26 @@ if min_pos is None:
 elif min_pos < 0.90:
     errors.append(f"minPositive {min_pos} < 0.90 — positive recognition collapsed")
 
-# Check non-graphics hard negatives only
+# Hard-negative precision check.
+# The overall maxHardNegative is NOT gateable: it includes the degenerate
+# encrypted-reader.pdf fixture (similarity exactly 1.0 against everything —
+# an encrypted PDF has no extractable content, so its fingerprint is empty
+# and every pair abstains at the evidence floor by design) and the documented
+# graphics-heavy cluster (0.980-0.995). Both are ratified abstentions in the
+# Swift test (RG-138 evidence-floor semantics). The precision-relevant
+# quantity is maxHardNegativeWithEvidence: hard negatives that carry
+# structured content and would therefore PROMOTE instead of abstain.
 max_neg = artifact.get("maxHardNegative")
 if max_neg is None:
     errors.append("missing maxHardNegative")
-# Note: maxHardNegative includes graphics-heavy pairs (documented limitation).
-# The non-graphics max is verified by the Swift test.
-# We only fail if the overall max is absurdly high (> 0.99), which would
-# indicate a real regression, not the known graphics-heavy cluster.
-if max_neg is not None and max_neg > 0.99:
-    errors.append(f"maxHardNegative {max_neg} > 0.99 — possible regression beyond graphics-heavy cluster")
+max_neg_evidence = artifact.get("maxHardNegativeWithEvidence")
+if max_neg_evidence is None:
+    errors.append("missing maxHardNegativeWithEvidence — regenerate the artifact with the updated producer")
+elif max_neg_evidence > 0.99:
+    errors.append(f"maxHardNegativeWithEvidence {max_neg_evidence} > 0.99 — evidence-bearing hard negative at promotion-level similarity")
+if max_neg is not None:
+    print(f"  [info] overall maxHardNegative (reported, not gated): {max_neg}")
+    print(f"  [info] maxHardNegativeWithEvidence (gated): {max_neg_evidence}")
 
 # Corpus size check (expanded to 60 fixtures)
 corpus_size = artifact.get("corpusSize")

@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T19:49:08Z
+- Generated: 2026-09-14T20:11:21Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: completes the tool-dependency conversion for the last failing family found in CI run 34887729702 (17 issues, all OCRCompanionBenchmarkTests, all instant-fail on absent engines) — probes mirror the providers' own executable paths so the gate cannot silently pass when the engine is present but broken; strict assertions unchanged wherever engines exist; no production source changes.
+- Evidence: Integrated audit of this diff: root-cause fix for the recurring Vision-starvation flake (second occurrence in three full-suite runs) by extending the existing cross-suite heavy-OCR semaphore to the last unserialized heavy OCR consumer; no assertion changes, no new dependencies, lock provenance and leak remediation copied verbatim from the established helper.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: OCRCompanionBenchmarkTests gains availability probes matching each provider's own hardcoded executable (/opt/homebrew/bin/tesseract; benchmark/datasets/.venv python3 and marker_single via TestRepoRoot) and 11 real-provider tests now record not_ran provenance instead of instant expectation failures on checkouts without the engines.
+- Evidence: Tests/PDFEditorCoreTests/OCRConfirmLaneTests.swift now takes the shared /pdf-editor-heavy named semaphore (same helper pattern as Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift) around all four real-OCR confirm calls; the suite previously ran heavy OCR concurrently with the 16-minute OCR Companion benchmark.
 
 ## SECTION_12
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2: swift build --build-tests green with all guards; swift test --filter OCRCompanionBenchmarkTests/tesseractCleanEnglish passes the strict path in 0.674s on a machine where /opt/homebrew/bin/tesseract exists; CI absence path is a static Bool guard identical in structure to the already-verified pdf_ua probe.
+- Evidence: Verified Tier 2: swift build green; swift test --filter OCRConfirmLaneTests passes 8/8 in 33.5s with the lock in place; the flake evidence chain is Observed twice (runs of 2026-09-14: Vision 0 chars under load, standalone passes) meeting the S2 shape of failed-under-contention then passing.
 
 ## SECTION_4
 

@@ -5,7 +5,7 @@
   ],
   "fixtureCount" : 38,
   "gatePassed" : true,
-  "generatedAt" : "2026-09-14T18:35:04Z",
+  "generatedAt" : "2026-09-14T19:15:00Z",
   "passedCount" : 38,
   "summary" : "PASS: 38\/38 fixtures observed, all passed",
   "verdicts" : [
@@ -14,109 +14,109 @@
       "passed" : true,
       "relativePath" : "public-sample-form.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:51Z",
+        "generatedAt" : "2026-09-14T19:14:31Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:50Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 173 characters",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -124,7 +124,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect public-sample-form.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -141,109 +141,109 @@
       "passed" : true,
       "relativePath" : "browser-corpus\/scanned-noisy.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:51Z",
+        "generatedAt" : "2026-09-14T19:14:33Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 100.00%",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:31Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:32Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 74.86%",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -251,7 +251,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect scanned-noisy.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -268,109 +268,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/clean-english.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:52Z",
+        "generatedAt" : "2026-09-14T19:14:34Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 4.55%",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:51Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.53%",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:33Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -378,7 +378,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect clean-english.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -395,109 +395,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/rotated-certificate.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:52Z",
+        "generatedAt" : "2026-09-14T19:14:35Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 2.75%",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:34Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.89%",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -505,7 +505,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect rotated-certificate.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -522,109 +522,109 @@
       "passed" : true,
       "relativePath" : "rotation-corpus\/rotated-widget-90.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:53Z",
+        "generatedAt" : "2026-09-14T19:14:35Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=90° rendered=true",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.12%",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 4 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=90° valid",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.74%",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:52Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 30 characters",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -632,7 +632,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect rotated-widget-90.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -649,109 +649,109 @@
       "passed" : true,
       "relativePath" : "rotation-corpus\/rotated-form6-mixed.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:53Z",
+        "generatedAt" : "2026-09-14T19:14:36Z",
         "observations" : [
           {
             "description" : "PDF opened with 2 pages",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=90° rendered=true",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 35.02%",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 2 page(s)",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 2321 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=90° valid",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:35Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 13.33%",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 5915 characters",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -759,7 +759,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect rotated-form6-mixed.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -776,109 +776,109 @@
       "passed" : true,
       "relativePath" : "browser-corpus\/rotated-hybrid-90.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:53Z",
+        "generatedAt" : "2026-09-14T19:14:37Z",
         "observations" : [
           {
             "description" : "PDF opened with 2 pages",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=90° rendered=true",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.84%",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 2 page(s)",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=90° valid",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:36Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 175 characters",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -886,7 +886,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect rotated-hybrid-90.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -903,109 +903,109 @@
       "passed" : true,
       "relativePath" : "security-corpus\/encrypted-reader.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:53Z",
+        "generatedAt" : "2026-09-14T19:14:37Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.00%",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler failed to open PDF",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "pdfinfo failed with status 1",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "pdftoppm failed with status 1",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "No AcroForm detected",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted no text",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler disagree on reopen",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1013,7 +1013,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect encrypted-reader.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1030,109 +1030,109 @@
       "passed" : true,
       "relativePath" : "browser-corpus\/encrypted-hybrid.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:54Z",
+        "generatedAt" : "2026-09-14T19:14:37Z",
         "observations" : [
           {
             "description" : "PDF opened with 2 pages",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.00%",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 2 page(s)",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler failed to open PDF",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "pdfinfo failed with status 1",
-            "observedAt" : "2026-09-14T18:34:53Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "pdftoppm failed with status 1",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "No AcroForm detected",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted no text",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler disagree on reopen",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler cannot open this PDF; PDFKit result accepted",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1140,7 +1140,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect encrypted-hybrid.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1157,109 +1157,109 @@
       "passed" : true,
       "relativePath" : "security-corpus\/truncated-128-bytes.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:54Z",
+        "generatedAt" : "2026-09-14T19:14:37Z",
         "observations" : [
           {
             "description" : "PDF failed to open",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Could not load page",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Could not load page",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Could not open PDF",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Could not load page",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler failed to open PDF",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "pdfinfo failed with status 1",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "pdftoppm failed with status 1",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "No AcroForm detected",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted no text",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1267,7 +1267,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect truncated-128-bytes.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1284,109 +1284,109 @@
       "passed" : true,
       "relativePath" : "browser-corpus\/malformed-hybrid-truncated.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:54Z",
+        "generatedAt" : "2026-09-14T19:14:38Z",
         "observations" : [
           {
             "description" : "PDF failed to open",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Could not load page",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Could not load page",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Could not open PDF",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Could not load page",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:37Z",
             "passed" : false,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler failed to open PDF",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "pdfinfo failed with status 1",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "pdftoppm failed with status 1",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "No AcroForm detected",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted no text",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : false,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "Both viewers failed to open PDF (expected for malformed\/encrypted)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1394,7 +1394,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect malformed-hybrid-truncated.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1411,109 +1411,109 @@
       "passed" : true,
       "relativePath" : "governed-corpus\/handwritten-simulated-entries.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:55Z",
+        "generatedAt" : "2026-09-14T19:14:40Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 98.07%",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:54Z",
+            "observedAt" : "2026-09-14T19:14:38Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 100.00%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1521,7 +1521,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect handwritten-simulated-entries.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1538,109 +1538,109 @@
       "passed" : true,
       "relativePath" : "browser-corpus\/hybrid-text-raster-form.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:55Z",
+        "generatedAt" : "2026-09-14T19:14:40Z",
         "observations" : [
           {
             "description" : "PDF opened with 2 pages",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 2 page(s)",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 174 characters",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1648,7 +1648,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect hybrid-text-raster-form.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1665,109 +1665,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-mixed-3page.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:55Z",
+        "generatedAt" : "2026-09-14T19:14:41Z",
         "observations" : [
           {
             "description" : "PDF opened with 3 pages",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 11.96%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 3 page(s)",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 1450 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:40Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 6.01%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 3167 characters",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1775,7 +1775,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-mixed-3page.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1792,109 +1792,109 @@
       "passed" : true,
       "relativePath" : "browser-corpus\/large-hybrid-40-pages.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:55Z",
+        "generatedAt" : "2026-09-14T19:14:41Z",
         "observations" : [
           {
             "description" : "PDF opened with 40 pages",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 120 form field(s) across 40 page(s)",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Skipped rendering for 40-page document (pdfinfo confirmed readable)",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 3480 characters",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -1902,7 +1902,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect large-hybrid-40-pages.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -1919,109 +1919,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-form-layout.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:56Z",
+        "generatedAt" : "2026-09-14T19:14:42Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 5.33%",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 52 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:55Z",
+            "observedAt" : "2026-09-14T19:14:41Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.17%",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 62 characters",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2029,7 +2029,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-form-layout.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2046,109 +2046,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/geometry.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:56Z",
+        "generatedAt" : "2026-09-14T19:14:43Z",
         "observations" : [
           {
             "description" : "PDF opened with 4 pages",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 4 page(s)",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:42Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 245 characters",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2156,7 +2156,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect geometry.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2173,109 +2173,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/navigation.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:56Z",
+        "generatedAt" : "2026-09-14T19:14:43Z",
         "observations" : [
           {
             "description" : "PDF opened with 3 pages",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 3 page(s)",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 223 characters",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2283,7 +2283,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect navigation.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2300,109 +2300,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/plain-text.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:57Z",
+        "generatedAt" : "2026-09-14T19:14:44Z",
         "observations" : [
           {
             "description" : "PDF opened with 3 pages",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 3 page(s)",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:56Z",
+            "observedAt" : "2026-09-14T19:14:43Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 510 characters",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2410,7 +2410,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect plain-text.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2427,109 +2427,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/multi-column.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:57Z",
+        "generatedAt" : "2026-09-14T19:14:45Z",
         "observations" : [
           {
             "description" : "PDF opened with 2 pages",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 2 page(s)",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:44Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 380 characters",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2537,7 +2537,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect multi-column.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2554,109 +2554,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-dense-grid.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:57Z",
+        "generatedAt" : "2026-09-14T19:14:45Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 47.41%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 24.64%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2664,7 +2664,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-dense-grid.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2681,109 +2681,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-sparse-text.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:57Z",
+        "generatedAt" : "2026-09-14T19:14:46Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.43%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 28 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:45Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.20%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 31 characters",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2791,7 +2791,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-sparse-text.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2808,109 +2808,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-header-footer.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:58Z",
+        "generatedAt" : "2026-09-14T19:14:46Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 24.75%",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 964 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:57Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 21.76%",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 969 characters",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -2918,7 +2918,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-header-footer.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -2935,109 +2935,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-landscape-chart.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:58Z",
+        "generatedAt" : "2026-09-14T19:14:47Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 38.21%",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 30 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:46Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 35.01%",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 33 characters",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3045,7 +3045,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-landscape-chart.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3062,109 +3062,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-graphics-heavy.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:58Z",
+        "generatedAt" : "2026-09-14T19:14:48Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 34.16%",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:47Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 24.82%",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3172,7 +3172,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-graphics-heavy.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3189,109 +3189,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/dense-paragraph.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:59Z",
+        "generatedAt" : "2026-09-14T19:14:49Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 7.38%",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:58Z",
+            "observedAt" : "2026-09-14T19:14:48Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.98%",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3299,7 +3299,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect dense-paragraph.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3316,109 +3316,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/low-contrast.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:34:59Z",
+        "generatedAt" : "2026-09-14T19:14:50Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 100.00%",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:49Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 100.00%",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3426,7 +3426,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect low-contrast.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3443,109 +3443,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/noisy-invoice.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:00Z",
+        "generatedAt" : "2026-09-14T19:14:52Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.28%",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:34:59Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:50Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 41.51%",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3553,7 +3553,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect noisy-invoice.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3570,109 +3570,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/printed-scan.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:01Z",
+        "generatedAt" : "2026-09-14T19:14:53Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:00Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 4.54%",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:52Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.80%",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3680,7 +3680,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect printed-scan.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3697,109 +3697,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/small-font.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:01Z",
+        "generatedAt" : "2026-09-14T19:14:54Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 2.90%",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:53Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.16%",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3807,7 +3807,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect small-font.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3824,109 +3824,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-scanned-sim.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:02Z",
+        "generatedAt" : "2026-09-14T19:14:55Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 100.00%",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:01Z",
+            "observedAt" : "2026-09-14T19:14:54Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 100.00%",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -3934,7 +3934,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-scanned-sim.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -3951,109 +3951,109 @@
       "passed" : true,
       "relativePath" : "diverse-layout-corpus\/diverse-three-column.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:02Z",
+        "generatedAt" : "2026-09-14T19:14:55Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 7.64%",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 1268 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.71%",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1306 characters",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4061,7 +4061,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect diverse-three-column.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -4078,109 +4078,109 @@
       "passed" : true,
       "relativePath" : "ocr-corpus\/multi-column.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:02Z",
+        "generatedAt" : "2026-09-14T19:14:56Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 7.50%",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:55Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 2.06%",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 1 characters",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4188,7 +4188,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect multi-column.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -4205,109 +4205,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/signed-invalid-structure.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:03Z",
+        "generatedAt" : "2026-09-14T19:14:57Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:02Z",
+            "observedAt" : "2026-09-14T19:14:56Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 173 characters",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4315,7 +4315,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect signed-invalid-structure.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -4332,109 +4332,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/metadata-malformed.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:03Z",
+        "generatedAt" : "2026-09-14T19:14:58Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:57Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 173 characters",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4442,7 +4442,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect metadata-malformed.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -4459,109 +4459,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/xfa-hybrid.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:03Z",
+        "generatedAt" : "2026-09-14T19:14:58Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 173 characters",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4569,7 +4569,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect xfa-hybrid.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -4586,109 +4586,109 @@
       "passed" : true,
       "relativePath" : "corpus-sweep-2026-08-25\/xfa-dynamic.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:04Z",
+        "generatedAt" : "2026-09-14T19:14:59Z",
         "observations" : [
           {
             "description" : "PDF opened with 1 pages",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 3.70%",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 6 form field(s) across 1 page(s)",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 163 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:03Z",
+            "observedAt" : "2026-09-14T19:14:58Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 1.18%",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 173 characters",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4696,7 +4696,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect xfa-dynamic.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"
@@ -4713,109 +4713,109 @@
       "passed" : true,
       "relativePath" : "navigation-corpus\/navigation-metadata.pdf",
       "report" : {
-        "generatedAt" : "2026-09-14T18:35:04Z",
+        "generatedAt" : "2026-09-14T19:15:00Z",
         "observations" : [
           {
             "description" : "PDF opened with 3 pages",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "reopen"
           },
           {
             "description" : "Rotation=0° rendered=true",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.47%",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Found 0 form field(s) across 3 page(s)",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "form_visibility"
           },
           {
             "description" : "Extracted 0 characters from page 0",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "PDFKit",
             "type" : "text_readability"
           },
           {
             "description" : "Poppler opened PDF successfully",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "reopen"
           },
           {
             "description" : "Page rot=0° valid",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:14:59Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "rotation"
           },
           {
             "description" : "Non-blank: 0.18%",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "visual_fidelity"
           },
           {
             "description" : "Poppler detected AcroForm",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "form_visibility"
           },
           {
             "description" : "Poppler extracted 84 characters",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "Poppler",
             "type" : "text_readability"
           },
           {
             "description" : "PDFKit and Poppler agree on reopen",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "reopen"
           },
           {
             "description" : "PDFKit and Poppler agree on rotation",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "rotation"
           },
           {
             "description" : "PDFKit and Poppler agree on visual_fidelity",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "visual_fidelity"
           },
           {
             "description" : "PDFKit and Poppler agree on form_visibility",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "form_visibility"
           },
           {
             "description" : "PDFKit and Poppler agree on text_readability",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : true,
             "tool" : "DualEngine",
             "type" : "text_readability"
@@ -4823,7 +4823,7 @@
           {
             "description" : "Requires human visual confirmation before release",
             "evidence" : "Reviewer must visually inspect navigation-metadata.pdf in a PDF viewer",
-            "observedAt" : "2026-09-14T18:35:04Z",
+            "observedAt" : "2026-09-14T19:15:00Z",
             "passed" : false,
             "tool" : "HumanReviewer",
             "type" : "human_visual_confirm"

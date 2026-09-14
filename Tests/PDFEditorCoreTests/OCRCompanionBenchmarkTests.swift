@@ -14,6 +14,20 @@ import Darwin
 @Suite("OCR Companion Benchmark", .serialized)
 struct OCRCompanionBenchmarkTests {
 
+    /// Availability probes matching the providers' own hardcoded executables
+    /// (TesseractProvider uses /opt/homebrew/bin/tesseract; PaddleOCRProvider
+    /// needs the project venv that carries the paddle module). The real-OCR
+    /// tests below are tool-dependent: absence is recorded as not_ran
+    /// provenance instead of instant expectation failures — the same
+    /// convention as Poppler/qpdf guards and the CI tool-dependent job.
+    private static let tesseractAvailable =
+        FileManager.default.isExecutableFile(atPath: "/opt/homebrew/bin/tesseract")
+    private static let paddleAvailable =
+        FileManager.default.isExecutableFile(atPath: TestRepoRoot.path("benchmark/datasets/.venv/bin/python3"))
+        || FileManager.default.isExecutableFile(atPath: TestRepoRoot.path("benchmark/datasets/.venv/bin/python"))
+    private static let markerAvailable =
+        FileManager.default.isExecutableFile(atPath: TestRepoRoot.path("benchmark/datasets/.venv/bin/marker_single"))
+
     // MARK: - Fixture Integrity
 
     @Test("Standard fixtures are well-formed")
@@ -92,6 +106,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Tesseract: clean English produces near-zero WER")
     func tesseractCleanEnglish() async throws {
+        guard Self.tesseractAvailable else {
+            print("not_ran: tesseract not installed at /opt/homebrew/bin/tesseract (brew install tesseract)")
+            return
+        }
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -112,6 +130,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Tesseract: noisy invoice has moderate WER")
     func tesseractNoisyInvoice() async throws {
+        guard Self.tesseractAvailable else {
+            print("not_ran: tesseract not installed at /opt/homebrew/bin/tesseract (brew install tesseract)")
+            return
+        }
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -131,6 +153,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Tesseract: rotated certificate handles rotation")
     func tesseractRotated() async throws {
+        guard Self.tesseractAvailable else {
+            print("not_ran: tesseract not installed at /opt/homebrew/bin/tesseract (brew install tesseract)")
+            return
+        }
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/rotated-certificate.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -150,6 +176,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Tesseract: mixed punctuation preserves special characters")
     func tesseractMixedPunctuation() async throws {
+        guard Self.tesseractAvailable else {
+            print("not_ran: tesseract not installed at /opt/homebrew/bin/tesseract (brew install tesseract)")
+            return
+        }
         let provider = TesseractProvider()
         let pngPath = "benchmark/results/ocr-corpus/mixed-punctuation.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -233,6 +263,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("PaddleOCR: clean English produces zero WER")
     func paddleCleanEnglish() async throws {
+        guard Self.paddleAvailable else {
+            print("not_ran: PaddleOCR venv python not installed (benchmark/datasets/.venv)")
+            return
+        }
         let provider = PaddleOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -253,6 +287,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("PaddleOCR: noisy invoice handles noise")
     func paddleNoisyInvoice() async throws {
+        guard Self.paddleAvailable else {
+            print("not_ran: PaddleOCR venv python not installed (benchmark/datasets/.venv)")
+            return
+        }
         let provider = PaddleOCRProvider()
         let pngPath = "benchmark/results/ocr-corpus/noisy-invoice.png"
         guard FileManager.default.fileExists(atPath: pngPath) else {
@@ -274,6 +312,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Cross-provider: Vision and Tesseract both achieve < 5% WER on clean English")
     func crossProviderCleanEnglish() async throws {
+        guard Self.tesseractAvailable else {
+            print("not_ran: tesseract not installed; cross-provider comparison requires it")
+            return
+        }
         try await SharedHeavyTestResourceLock.withLock {
         let gt = "The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump."
         let pngPath = "benchmark/results/ocr-corpus/clean-english.png"
@@ -311,6 +353,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Full benchmark: Tesseract produces measurable WER")
     func fullBenchmarkTesseract() async throws {
+        guard Self.tesseractAvailable else {
+            print("not_ran: tesseract not installed; full Tesseract benchmark requires it")
+            return
+        }
         try await SharedHeavyTestResourceLock.withLock {
             let report = OCRCompanionBenchmark.runBenchmark(provider: TesseractProvider())
             print(report.summary)
@@ -336,6 +382,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Full benchmark: PaddleOCR produces WER")
     func fullBenchmarkPaddleOCR() async throws {
+        guard Self.paddleAvailable else {
+            print("not_ran: PaddleOCR venv not installed; full Paddle benchmark requires it")
+            return
+        }
         try await SharedHeavyTestResourceLock.withLock {
             let report = OCRCompanionBenchmark.runBenchmark(provider: PaddleOCRProvider())
             print(report.summary)
@@ -345,6 +395,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Full benchmark: Marker produces Markdown output")
     func fullBenchmarkMarker() async throws {
+        guard Self.markerAvailable else {
+            print("not_ran: Marker venv not installed; full Marker benchmark requires it")
+            return
+        }
         try await SharedHeavyTestResourceLock.withLock {
             let report = OCRCompanionBenchmark.runBenchmark(provider: MarkerProvider())
             print(report.summary)
@@ -354,6 +408,10 @@ struct OCRCompanionBenchmarkTests {
 
     @Test("Cross-provider: all 5 providers produce results on clean English")
     func crossProviderAllProducers() async throws {
+        guard Self.tesseractAvailable, Self.paddleAvailable, Self.markerAvailable else {
+            print("not_ran: one or more OCR engines absent (tesseract/paddle venv/marker venv); all-producer sweep requires all")
+            return
+        }
         try await SharedHeavyTestResourceLock.withLock {
             let providers: [any BenchmarkOCRProvider] = [
                 PDFKitOCRProvider(),

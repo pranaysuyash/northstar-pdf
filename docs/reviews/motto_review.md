@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T18:33:18Z
+- Generated: 2026-09-14T19:13:12Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: eliminates the environment-parity failure class across the whole test target in one pass — one new path-resolution helper, 17 files converted from owner-absolute corpus paths, three tool-dependent suites converted to the repo's not_ran provenance convention, zero production source changes; local evidence covers every converted suite by direct execution.
+- Evidence: Integrated audit of this diff: closes the four evidenced node-contract failures and three swift failures from run 34883315361 — an ESM/CJS module-format fix for vendored code, one repo-relative fixture path, two wrong availability predicates made honest (wrapper-vs-engine, import-crash-vs-skip), one deadline calibrated to observed CI cold start, and tool-dependent swift guards converted to the repo not_ran convention; remaining 10 node files with owner-absolute paths run only in tool-dependent lanes and are ledgered as hygiene follow-up, not masked.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Tool-dependent tests now follow the repo's absence=not_ran convention: PopplerRendererTests guards print not_ran instead of Issue.record, Form6DetectorTests handles its gitignored local fixture, Tests/pdf_object_preservation_test.mjs skips when qpdf spawnSync fails (the validator requires it at benchmark/pdf-object-preservation-validator.mjs:64).
+- Evidence: web/vendor/pdf-lib/package.json pins commonjs so the vendored UMD bundle loads under Node 24 require; AcroFormParityExperimentTests gains a qpdfAvailable() Process probe gating the experiment with not_ran provenance; RecoveryCrashInterruptionTests startup deadline 240s to 480s with CI cold-start observation recorded in the comment.
 
 ## SECTION_12
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2: swift build green; affected suites 57 tests/8 suites plus 26 tests/5 suites all pass locally after TestRepoRoot conversion; node pdf_object_preservation passes strict locally and emits not_ran provenance exit 0 under a qpdf-absent PATH simulation.
+- Evidence: Verified Tier 2 locally: node export_page_fact passes after web/vendor/pdf-lib/package.json commonjs pin (Node 24 was loading the UMD as ESM where self is undefined); multi_engine passes with repo-relative fixture; pdf_ua strict pass; template_match syntax-checked; swift suites AcroFormParity 53s, Poppler, RecoveryCrashInterruption all pass (18 tests).
 
 ## SECTION_4
 
@@ -117,4 +117,4 @@
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: Systematic fix over whack-a-mole: new Tests/PDFEditorCoreTests/TestRepoRoot.swift resolves repo root from #filePath; 17 test files' 28 hardcoded /Users/pranay absolute corpus paths converted via replace_all; remaining match is a documentation comment only.
+- Evidence: Findings keyed to CI run 34883315361 logs at /Users/runner/work checkout: playwright ERR_MODULE_NOT_FOUND for Tests/template_match_native_browser_parity_test.mjs, absolute Governed-fixture path in Tests/multi_engine_conformance_test.mjs, qpdf-verifier count zero in Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift, and Node 24 ESM-detection of the vendored UMD under web/vendor/pdf-lib/.

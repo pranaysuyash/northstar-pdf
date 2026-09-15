@@ -15,7 +15,13 @@ import PDFKit
 ///   chart and the other is a form. OCR extracts different text → reject.
 /// - **Re-encoding pair**: Same document saved twice. OCR extracts the same
 ///   text with minor noise → promote.
-@Suite("OCR confirm lane (§8 capability routing)")
+@Suite("OCR confirm lane (§8 capability routing)", .serialized)
+/// .serialized (2026-09-15): every test takes the shared named semaphore
+/// /pdf-editor-heavy-2; parallel dispatch only manufactures queue depth, and
+/// under full-suite load the critical sections stretch until peers behind the
+/// queue hit the 300s bounded acquire and fail closed (flaky-register
+/// 2026-09-12 mechanism, 2026-09-15 chunkA2 evidence: 2/8 tests failed at
+/// exactly 301.8s). No parallelism to lose — the lock serializes either way.
 struct OCRConfirmLaneTests {
 
     private let lane = OCRConfirmLane(werThreshold: 0.10)
@@ -240,7 +246,7 @@ struct OCRConfirmLaneTests {
 /// load (Observed twice in full-suite runs 2026-09-14: "Vision: 0 chars,
 /// WER 1.0000" → false abstain; passed standalone both times).
 private enum SharedHeavyTestResourceLock {
-  private static let name = "/pdf-editor-heavy"
+  private static let name = "/pdf-editor-heavy-2"
 
   static func withLock<T>(_ operation: () async throws -> T) async throws -> T {
     let failed = UnsafeMutablePointer<sem_t>(bitPattern: -1)
@@ -251,7 +257,12 @@ private enum SharedHeavyTestResourceLock {
         userInfo: [NSLocalizedDescriptionKey: "Could not open heavy test resource semaphore"]
       )
     }
-    let acquireDeadline = Date().addingTimeInterval(300)
+    // 600s: the longest legitimate holder is the Marker full benchmark
+    // (Observed 330-530s); a 300s bound expired behind legitimate holders
+    // once three suites contended here (Observed 2026-09-15, Code=3 in the
+    // PDFKit full-benchmark test). Leaked-lock detection stays fail-closed
+    // at 10 minutes.
+    let acquireDeadline = Date().addingTimeInterval(600)
     var acquired = false
     while !acquired {
       if sem_trywait(semaphore) == 0 {

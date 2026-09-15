@@ -6,7 +6,7 @@ import Darwin
 
 /// Tests for OCR companion benchmark with real ground-truth fixtures.
 // .serialized (2026-09-12): every real-provider test takes the shared named
-// semaphore /pdf-editor-heavy anyway, so parallel dispatch here only creates
+// semaphore /pdf-editor-heavy-2 anyway, so parallel dispatch here only creates
 // semaphore queue depth — in a single-process full-suite run that depth let
 // tests behind the ~200s Paddle + ~230s Marker holders exceed the lock's
 // 300s bounded acquire and fail closed (flaky-register 2026-09-12). The
@@ -433,7 +433,7 @@ struct OCRCompanionBenchmarkTests {
 /// test processes concurrently, so OCR shares a named semaphore with the
 /// recovery crash-interruption harness.
 private enum SharedHeavyTestResourceLock {
-    private static let name = "/pdf-editor-heavy"
+    private static let name = "/pdf-editor-heavy-2"
 
     static func withLock<T>(_ operation: () throws -> T) async throws -> T {
         let failed = UnsafeMutablePointer<sem_t>(bitPattern: -1)
@@ -449,7 +449,11 @@ private enum SharedHeavyTestResourceLock {
         // timeout-killed run leaks the lock and the previous unbounded spin hung
         // every later heavy-lane run silently forever. Bound converts the silent
         // hang into a fail-closed error that names the exact remediation.
-        let acquireDeadline = Date().addingTimeInterval(300)
+        // 600s (raised 2026-09-15 from 300s): three suites now contend for
+        // this semaphore and waiters must outlast the longest legitimate
+        // hold (Marker full benchmark, Observed 330-530s). A leaked lock
+        // still fails closed, at 10 minutes.
+        let acquireDeadline = Date().addingTimeInterval(600)
         var acquired = false
         while !acquired {
             if sem_trywait(semaphore) == 0 {

@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T20:11:21Z
+- Generated: 2026-09-14T20:54:19Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -15,7 +15,7 @@
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: root-cause fix for the recurring Vision-starvation flake (second occurrence in three full-suite runs) by extending the existing cross-suite heavy-OCR semaphore to the last unserialized heavy OCR consumer; no assertion changes, no new dependencies, lock provenance and leak remediation copied verbatim from the established helper.
+- Evidence: Integrated audit of this diff: last reachable red leg in the Swift job after the test step went green — calibration-gate validator bound was unsatisfiable since the encrypted fixture entered the corpus (artifact history proves it); producer now persists the precision-relevant max alongside the reported overall; expectation set that RG-135 human-review gate is fail-closed by design at 0/38 and requires owner action, not code.
 
 ## SECTION_1
 
@@ -33,7 +33,7 @@
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Tests/PDFEditorCoreTests/OCRConfirmLaneTests.swift now takes the shared /pdf-editor-heavy named semaphore (same helper pattern as Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift) around all four real-OCR confirm calls; the suite previously ran heavy OCR concurrently with the 16-minute OCR Companion benchmark.
+- Evidence: Calibration validator gated on the wrong quantity: overall maxHardNegative includes encrypted-reader.pdf degenerate pairs (similarity exactly 1.0 — no extractable content, evidence-floor abstention per RG-138) and the documented graphics-heavy cluster; Tests/PDFEditorCoreTests/LayoutFingerprintThresholdCalibrationTests.swift now persists maxHardNegativeWithEvidence and scripts/calibration-gate.sh gates on it, reporting the overall.
 
 ## SECTION_12
 
@@ -45,7 +45,7 @@
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: Claim reality preserved per repo convention: graceful skips print explicit not_ran reasons to run logs rather than silently passing (see Tests/PDFEditorCoreTests/PopplerRendererTests.swift and Tests/pdf_object_preservation_test.mjs); strict assertions still execute wherever the tool exists, verified by local byte-identical no-op and mutation-rejection runs.
+- Evidence: Gate claim reality per scripts/calibration-gate.sh and docs/release-gates.md RG-138: the validator now gates the precision-relevant quantity (evidence-bearing hard negatives cannot reach promotion similarity) and merely reports the degenerate-cluster overall, so the persisted evidence matches what the Swift test actually ratifies.
 
 ## SECTION_14
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2: swift build green; swift test --filter OCRConfirmLaneTests passes 8/8 in 33.5s with the lock in place; the flake evidence chain is Observed twice (runs of 2026-09-14: Vision 0 chars under load, standalone passes) meeting the S2 shape of failed-under-contention then passing.
+- Evidence: Verified Tier 2 end to end: scripts/calibration-gate.sh passes locally with the new gated quantity maxHardNegativeWithEvidence=0.8493 (regenerated artifact) versus the reported-not-gated overall 1.0 from the degenerate encrypted fixture; swift build green after persistArtifact signature update.
 
 ## SECTION_4
 

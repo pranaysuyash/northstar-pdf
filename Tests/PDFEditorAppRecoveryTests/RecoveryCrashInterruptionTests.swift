@@ -224,7 +224,7 @@ struct RecoveryCrashInterruptionTests {
 /// tasks and SwiftPM test processes. A suite-local `.serialized` trait cannot
 /// prevent OCR workers from starving the recovery child-process handshake.
 private enum SharedHeavyTestResourceLock {
-  private static let name = "/pdf-editor-heavy"
+  private static let name = "/pdf-editor-heavy-2"
 
   static func withLock<T>(_ operation: () async throws -> T) async throws -> T {
     let failed = UnsafeMutablePointer<sem_t>(bitPattern: -1)
@@ -240,7 +240,10 @@ private enum SharedHeavyTestResourceLock {
     // timeout-killed run leaks the lock and the previous unbounded spin hung
     // every later heavy-lane run silently forever. Bound converts the silent
     // hang into a fail-closed error that names the exact remediation.
-    let acquireDeadline = Date().addingTimeInterval(300)
+    // 600s (raised 2026-09-15 from 300s): with the OCR confirm lane also
+    // taking this semaphore, waiters queue behind the Marker full benchmark
+    // (Observed 330-530s holds). Leaked-lock detection stays fail-closed.
+    let acquireDeadline = Date().addingTimeInterval(600)
     var acquired = false
     while !acquired {
       if sem_trywait(semaphore) == 0 {

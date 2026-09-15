@@ -240,10 +240,11 @@ private enum SharedHeavyTestResourceLock {
     // timeout-killed run leaks the lock and the previous unbounded spin hung
     // every later heavy-lane run silently forever. Bound converts the silent
     // hang into a fail-closed error that names the exact remediation.
-    // 600s (raised 2026-09-15 from 300s): with the OCR confirm lane also
-    // taking this semaphore, waiters queue behind the Marker full benchmark
-    // (Observed 330-530s holds). Leaked-lock detection stays fail-closed.
-    let acquireDeadline = Date().addingTimeInterval(600)
+    // 5400s (raised 2026-09-15, 300s → 600s → 5400s): with the OCR confirm
+    // lane also serialized here, waiters queue behind the OCR benchmark
+    // suite's whole ~74-minute run (Observed: Code=3 at 602s). Leaked-lock
+    // detection stays fail-closed at 90 minutes.
+    let acquireDeadline = Date().addingTimeInterval(5400)
     var acquired = false
     while !acquired {
       if sem_trywait(semaphore) == 0 {

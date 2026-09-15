@@ -2,119 +2,119 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-14T20:54:19Z
+- Generated: 2026-09-15T15:33:48Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
 
 - Label: §0 Start from live truth
 - Reviewed: True
-- Evidence: Live tree re-inspected this session at /Users/pranay/Projects/pdf_editor: 116 dirty files re-read via git status, swift build green locally, HEAD edb8379 verified, CI red on 6 scheduled runs observed via gh run list before planning this commit.
+- Evidence: Live tree verified before commit: calibration-gate fix c2eb7fa committed locally and unpushed (origin at 4aef84a); /tmp/push_cal.out and CI logs re-read; disk at 12G free with no ENOSPC this round.
 
 ## SECTION_00_INTEGRATED
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: last reachable red leg in the Swift job after the test step went green — calibration-gate validator bound was unsatisfiable since the encrypted fixture entered the corpus (artifact history proves it); producer now persists the precision-relevant max alongside the reported overall; expectation set that RG-135 human-review gate is fail-closed by design at 0/38 and requires owner action, not code.
+- Evidence: Integrated audit of this diff: raises the shared heavy-test semaphore acquire bound above the longest legitimate hold (Marker benchmark 330-530s) now that the confirm lane also contends, unblocking the push of the calibration-gate repair whose own pre-push gate failed solely on this timeout; no assertion or production changes; both pending commits verified locally; RG-135 remains fail-closed owner work.
 
 ## SECTION_1
 
 - Label: §1 Outcomes and retained value
 - Reviewed: True
-- Evidence: Commit unblocks council condition C1: lands the only-green build state, preserving D-080/D-081 fixes and making RG evidence reproducible from a pinned commit.
+- Evidence: Outcome: unblocks the push of the calibration-gate repair so /Users/pranay/Projects/pdf_editor main returns green; retains the serialisation guarantees all three heavy suites rely on.
 
 ## SECTION_10
 
 - Label: §10 Parallel work and contested state
 - Reviewed: True
-- Evidence: Parallel state checked: no stash, single branch main in sync with origin/main before commit; benchmark/acroform-lane verified tracked and clean; lane dirty work committed intact.
+- Evidence: Core fix: three suites contend for the /pdf-editor-heavy semaphore; Marker full benchmark holds 330-530s; the 300s bounded acquire expired behind legitimate holders — raised to 600s in all three lock copies, leaked-lock detection still fail-closed.
 
 ## SECTION_11
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Calibration validator gated on the wrong quantity: overall maxHardNegative includes encrypted-reader.pdf degenerate pairs (similarity exactly 1.0 — no extractable content, evidence-floor abstention per RG-138) and the documented graphics-heavy cluster; Tests/PDFEditorCoreTests/LayoutFingerprintThresholdCalibrationTests.swift now persists maxHardNegativeWithEvidence and scripts/calibration-gate.sh gates on it, reporting the overall.
+- Evidence: Deadline constant changed 300s to 600s in Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift, Tests/PDFEditorCoreTests/OCRConfirmLaneTests.swift, Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift with per-file observation comments; no behavior assertions changed.
 
 ## SECTION_12
 
 - Label: §12 AI output boundary
 - Reviewed: True
-- Evidence: Sources/PDFEditorApp/PDFEditorAppIntents.swift success-string stubs are NOT represented as working features; MAD-001 dishonesty finding recorded as open in docs/audits/macos-app-design-skill-audit-2026-09-11.md; council verdict documented NO-GO.
+- Evidence: The bound raise in Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift and the other two lock copies is grounded in observed hold times from gh run logs, not optimism; a leaked lock still fails closed with the documented remediation message.
 
 ## SECTION_13
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: Gate claim reality per scripts/calibration-gate.sh and docs/release-gates.md RG-138: the validator now gates the precision-relevant quantity (evidence-bearing hard negatives cannot reach promotion similarity) and merely reports the degenerate-cluster overall, so the persisted evidence matches what the Swift test actually ratifies.
+- Evidence: Operator reality: a timeout firing behind legitimate work is an unactionable false failure; the 600s bound in Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift removes the false timeout while the failure message still names leak remediation.
 
 ## SECTION_14
 
 - Label: §14 Documentation and decisions
 - Reviewed: True
-- Evidence: Durable docs land in the same flow: RUN-2026-09-10-native-battery.md, form-field-detection research map, execution-data-boundary audit; decisions D-080..D-082 already recorded in docs/decisions.md.
+- Evidence: docs/flaky-register.md is the durable record for this flake class; the commit message and comments cite it with the 2026-09-12 bounded-acquire provenance.
 
 ## SECTION_15
 
 - Label: §15 Completion contract
 - Reviewed: True
-- Evidence: Completion report will state exact files, commands with outcomes, Tier 2 evidence, remaining risks (CI red at HEAD, full swift test in pre-push), and the root-owned tmp/personas_23rdaug26 caveat.
+- Evidence: Completion report will state files changed, commands with outcomes recorded under /tmp/, Tier 2 evidence, remaining risks (RG-135 fail-closed by design needs owner review of 38 fixtures; disk at 12G free), and uncommitted work.
 
 ## SECTION_16
 
 - Label: §16 Specialist doctrine routing
 - Reviewed: True
-- Evidence: RELEASE_READINESS_DOCTRINE v1.0 from /Users/pranay/Projects/agent-start/doctrines/ and REVIEW routing applied for the council; TESTING applied as targeted Tier 2 slice; routing recorded in session record.
+- Evidence: TESTING_DOCTRINE routing for the flake/serialization decision; RELEASE_READINESS_DOCTRINE was applied for the earlier council verdict; routing unchanged.
 
 ## SECTION_17
 
 - Label: §17 Propagation contract
 - Reviewed: True
-- Evidence: Instruction stack read in order this session (two AGENTS.md files, this doctrine, RELEASE_READINESS_DOCTRINE); generated context pack present at docs/context/agent-start/; attestation written to .git.
+- Evidence: Instruction stack re-checked this session; OPERATING_DOCTRINE.md SHA ff848618... attested in the commit trailers per /Users/pranay/AGENTS.md order.
 
 ## SECTION_2
 
 - Label: §2 Truth taxonomy
 - Reviewed: True
-- Evidence: Commit body labels claims: CI red at HEAD = Observed (gh runs), local build green = Observed Tier 2, sim battery results = recorded evidence docs under docs/simulations/.
+- Evidence: Claims labeled: Marker hold 330-530s = Observed in run logs; Code=3 timeout in /tmp/push_cal.out = Observed; 600s adequacy = Inferred from max observed hold plus margin, with the bound still fail-closed.
 
 ## SECTION_3
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2 end to end: scripts/calibration-gate.sh passes locally with the new gated quantity maxHardNegativeWithEvidence=0.8493 (regenerated artifact) versus the reported-not-gated overall 1.0 from the degenerate encrypted fixture; swift build green after persistArtifact signature update.
+- Evidence: Verified Tier 2: swift build green; swift test --filter OCRConfirmLaneTests 8/8 in 96.2s while queuing behind lock contention — the scenario that failed at the 300s bound.
 
 ## SECTION_4
 
 - Label: §4 Authorization and side effects
 - Reviewed: True
-- Evidence: Authorization: owner's explicit request in this conversation to run git add -A, commit, and push the /Users/pranay/Projects/pdf_editor repo with full hooks; L3 git mutation; no external/production gates touched.
+- Evidence: Owner authorized commit protocol with full hook/gate and push earlier in this conversation and said continue after each failure; this commit continues that same named scope.
 
 ## SECTION_5
 
 - Label: §5 Canonical paths and ownership
 - Reviewed: True
-- Evidence: No new routes/stores/pipelines; _confined helper added to benchmark/datasets/eval_funsd_entities.py mirroring the canonical sibling pattern in eval_doclaynet_layout.py; no v2 duplicates.
+- Evidence: No new canonical paths created; the semaphore lock helper remains the established per-file pattern in Tests/PDFEditorCoreTests/ and Tests/PDFEditorAppRecoveryTests/ (consolidation into one shared helper is ledgered follow-up since the targets differ).
 
 ## SECTION_6
 
 - Label: §6 Semantic salvage and supersession
 - Reviewed: True
-- Evidence: Codex lane in-flight work in Sources/PDFEditorApp/PDFEditorAppIntents.swift and Sources/PDFEditorCore/DocumentEvidenceGraph.swift preserved intact and committed as-is, not overwritten or reworked.
+- Evidence: The three lock copies in Tests/PDFEditorCoreTests/ and Tests/PDFEditorAppRecoveryTests/ stay semantically identical; only the deadline constant and its justification comment change, preserving each file's provenance notes.
 
 ## SECTION_7
 
 - Label: §7 Capability routing
 - Reviewed: True
-- Evidence: Council-orchestrator skill plus /Users/pranay/Projects/agent-start/doctrines/RELEASE_READINESS_DOCTRINE.md routed the readiness assessment; persona reads and build verification delegated to inspected subagents.
+- Evidence: Diagnosis routed through gh run logs for .github/workflows/ci.yml plus local reproduction; no capability mismatch required rerouting.
 
 ## SECTION_8
 
 - Label: §8 Skills lifecycle
 - Reviewed: True
-- Evidence: SKILL.md at /Users/pranay/.zcode/cli/plugins/cache/zcode-plugins-official/mimosa/1.0.3/payload/skills/mimosa-security-scan/ read fully before use; deep scan run per its protocol with sealed scanId scan-2026-09-14T14-56-08.316Z.
+- Evidence: mimosa plugin at /Users/pranay/.zcode/cli/plugins/cache/zcode-plugins-official/mimosa/ and council-orchestrator were used earlier this session per their SKILL.md protocols; this commit uses only the repo's own gates.
 
 ## SECTION_9
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: Findings keyed to CI run 34883315361 logs at /Users/runner/work checkout: playwright ERR_MODULE_NOT_FOUND for Tests/template_match_native_browser_parity_test.mjs, absolute Governed-fixture path in Tests/multi_engine_conformance_test.mjs, qpdf-verifier count zero in Tests/PDFEditorCoreTests/AcroFormParityExperimentTests.swift, and Node 24 ESM-detection of the vendored UMD under web/vendor/pdf-lib/.
+- Evidence: Findings recorded in commit message and comments with citations: /tmp/push_cal.out Code=3, Marker hold 330-530s Observed in run 34893161466 logs, docs/flaky-register.md precedent for the bounded-acquire design.

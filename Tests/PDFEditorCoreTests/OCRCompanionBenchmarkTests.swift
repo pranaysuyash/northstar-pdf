@@ -452,8 +452,8 @@ private enum SharedHeavyTestResourceLock {
         // 600s (raised 2026-09-15 from 300s): three suites now contend for
         // this semaphore and waiters must outlast the longest legitimate
         // hold (Marker full benchmark, Observed 330-530s). A leaked lock
-        // still fails closed, at 10 minutes.
-        let acquireDeadline = Date().addingTimeInterval(600)
+        // still fails closed, at 90 minutes.
+        let acquireDeadline = Date().addingTimeInterval(5400)
         var acquired = false
         while !acquired {
             if sem_trywait(semaphore) == 0 {

@@ -260,9 +260,11 @@ private enum SharedHeavyTestResourceLock {
     // 600s: the longest legitimate holder is the Marker full benchmark
     // (Observed 330-530s); a 300s bound expired behind legitimate holders
     // once three suites contended here (Observed 2026-09-15, Code=3 in the
-    // PDFKit full-benchmark test). Leaked-lock detection stays fail-closed
-    // at 10 minutes.
-    let acquireDeadline = Date().addingTimeInterval(600)
+    // PDFKit full-benchmark test). Raised to 5400s (2026-09-15, second
+    // failure): the benchmark suite holds/reacquires the lock continuously
+    // for its whole ~74-minute run, so the bound must cover a full suite
+    // plus margin. Leaked-lock detection stays fail-closed at 90 minutes.
+    let acquireDeadline = Date().addingTimeInterval(5400)
     var acquired = false
     while !acquired {
       if sem_trywait(semaphore) == 0 {

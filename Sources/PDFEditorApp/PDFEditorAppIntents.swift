@@ -28,7 +28,20 @@ public struct SanitizePDFIntent: AppIntent {
     guard FileManager.default.fileExists(atPath: fileURL.path) else {
       return .result(value: "Source file not found at \(fileURL.path)")
     }
-    return .result(value: "PDF Sanitized successfully on-device (Zero Network Egress). Metadata stripped.")
+    do {
+      let data = try Data(contentsOf: fileURL)
+      let sanitizer = PDFSanitizer()
+      let (sanitizedData, report) = sanitizer.sanitize(pdfData: data)
+      let parentDir = fileURL.deletingLastPathComponent()
+      let baseName = fileURL.deletingPathExtension().lastPathComponent
+      let ext = fileURL.pathExtension.isEmpty ? "pdf" : fileURL.pathExtension
+      let outputURL = parentDir.appendingPathComponent("\(baseName)-sanitized.\(ext)")
+      try sanitizedData.write(to: outputURL, options: .atomic)
+      let details = "Stripped XMP: \(report.xmpMetadataStripped), Cleaned Info: \(report.infoDictionaryCleaned), Neutralized Actions: \(report.actionsNeutralized), Removed Attachments: \(report.attachmentsRemoved)"
+      return .result(value: "PDF Sanitized successfully on-device (Zero Network Egress). \(details). Output saved to: \(outputURL.path)")
+    } catch {
+      return .result(value: "Sanitization failed: \(error.localizedDescription)")
+    }
   }
 }
 
@@ -54,9 +67,25 @@ public struct ExtractTableCSVIntent: AppIntent {
 
   public func perform() async throws -> some IntentResult & ReturnsValue<String> {
     guard FileManager.default.fileExists(atPath: fileURL.path) else {
-      return .result(value: "Source file not found.")
+      return .result(value: "Source file not found at \(fileURL.path)")
     }
-    return .result(value: "Table extraction completed on-device.")
+    do {
+      let data = try Data(contentsOf: fileURL)
+      let textExtractor = ImprovedTextExtractor()
+      let extraction = try textExtractor.extract(data: data)
+      let tableExtractor = TableExtractor()
+      let result = tableExtractor.extract(extraction: extraction)
+      if result.tables.isEmpty {
+        return .result(value: "No tables detected in \(fileURL.lastPathComponent) across \(extraction.pageCount) page(s).")
+      }
+      let csvContent = tableExtractor.exportAllCSV(result)
+      let outputURL = fileURL.deletingPathExtension().appendingPathExtension("csv")
+      try csvContent.write(to: outputURL, atomically: true, encoding: .utf8)
+      let avgConf = String(format: "%.1f%%", result.averageConfidence * 100)
+      return .result(value: "Extracted \(result.totalTables) table(s) across \(result.totalPages) page(s) (Avg confidence: \(avgConf)). CSV exported to: \(outputURL.path)")
+    } catch {
+      return .result(value: "Table extraction failed: \(error.localizedDescription)")
+    }
   }
 }
 
@@ -81,7 +110,26 @@ public struct ComparePDFVersionsIntent: AppIntent {
   }
 
   public func perform() async throws -> some IntentResult & ReturnsValue<String> {
-    return .result(value: "Diff comparison report generated.")
+    guard FileManager.default.fileExists(atPath: originalURL.path) else {
+      return .result(value: "Original file not found at \(originalURL.path)")
+    }
+    guard FileManager.default.fileExists(atPath: modifiedURL.path) else {
+      return .result(value: "Modified file not found at \(modifiedURL.path)")
+    }
+    do {
+      let provider = PDFKitProvider()
+      let sourceInspection = try provider.inspect(url: originalURL, password: nil)
+      let modifiedInspection = try provider.inspect(url: modifiedURL, password: nil)
+      let diff = DocumentDiffBuilder.build(
+        source: sourceInspection,
+        output: modifiedInspection,
+        operations: []
+      )
+      let summary = diff.summary
+      return .result(value: "Diff comparison complete. Pages: \(diff.pageCount), Pages with changes: \(summary.pagesWithChanges), Unexpected changes: \(summary.unexpectedChanges), Matched operations: \(summary.operationRegionsMatched), Overall status: \(summary.overallStatus).")
+    } catch {
+      return .result(value: "Diff comparison failed: \(error.localizedDescription)")
+    }
   }
 }
 

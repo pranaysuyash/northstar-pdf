@@ -36,7 +36,7 @@
   "corpusSize" : 56,
   "familyThreshold" : 0.90000000000000002,
   "gatePassed" : true,
-  "generatedAt" : "2026-09-15T15:41:19Z",
+  "generatedAt" : "2026-09-15T17:06:50Z",
   "schema" : "pdf-editor.raster-blend-gate",
   "version" : "1.0"
 }

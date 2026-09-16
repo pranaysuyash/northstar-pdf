@@ -2,7 +2,7 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-15T15:33:48Z
+- Generated: 2026-09-15T16:58:19Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
@@ -27,13 +27,13 @@
 
 - Label: §10 Parallel work and contested state
 - Reviewed: True
-- Evidence: Core fix: three suites contend for the /pdf-editor-heavy semaphore; Marker full benchmark holds 330-530s; the 300s bounded acquire expired behind legitimate holders — raised to 600s in all three lock copies, leaked-lock detection still fail-closed.
+- Evidence: Contention math from observed runs: the OCR Companion suite holds/reacquires the /pdf-editor-heavy semaphore continuously across its 74-minute run (4462.6s Observed in /tmp/pdf-editor-swift-test-last.log), so the confirm-lane e2e waiter hit the 600s bound at 602.3s; any fixed bound below a full suite duration fails under this contention pattern — 5400s covers a full suite plus margin in all three lock copies.
 
 ## SECTION_11
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Deadline constant changed 300s to 600s in Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift, Tests/PDFEditorCoreTests/OCRConfirmLaneTests.swift, Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift with per-file observation comments; no behavior assertions changed.
+- Evidence: Deadline constant 600s to 5400s in Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift, Tests/PDFEditorCoreTests/OCRConfirmLaneTests.swift, Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift; each file's comment records the observed evidence chain (330-530s single hold, then 74-minute suite hold chain).
 
 ## SECTION_12
 
@@ -81,7 +81,7 @@
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2: swift build green; swift test --filter OCRConfirmLaneTests 8/8 in 96.2s while queuing behind lock contention — the scenario that failed at the 300s bound.
+- Evidence: Verified Tier 2: swift build green at 260s with the 5400s bound; the 600s bound's insufficiency is Observed in /tmp/pdf-editor-swift-test-last.log (Code=3 at 602.296s wait, immediately after the OCR Companion suite's 4462s hold chain).
 
 ## SECTION_4
 

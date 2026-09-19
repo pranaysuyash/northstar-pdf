@@ -8,7 +8,9 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import { chromium } from "playwright";
 
-const ROOT = "/Users/pranay/Projects/pdf_editor";
+// Repo root derived from this file's location — runner-portable (a hardcoded
+// /Users/... path only ever resolved on the owner's machine).
+const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
 const FIXTURE = path.join(ROOT, "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf");
 const PORT = 4924;
 const BASE = `http://127.0.0.1:${PORT}/web/index.html`;

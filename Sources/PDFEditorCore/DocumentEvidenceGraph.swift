@@ -180,7 +180,7 @@ public struct DocumentEvidenceGraph: Codable, Equatable, Sendable {
         answer: "Please enter a specific question about this document.",
         citations: [],
         confidence: 0.0,
-        route: .onDeviceNeuralEngine
+        route: .onDeviceLocal
       )
     }
 
@@ -210,7 +210,7 @@ public struct DocumentEvidenceGraph: Codable, Equatable, Sendable {
         answer: "Could not establish this from the provided document evidence.",
         citations: [],
         confidence: 0.0,
-        route: .onDeviceNeuralEngine
+        route: .onDeviceLocal
       )
     }
 
@@ -234,7 +234,7 @@ public struct DocumentEvidenceGraph: Codable, Equatable, Sendable {
       answer: answerText,
       citations: citations,
       confidence: min(1.0, bestMatch.score / 4.0),
-      route: .onDeviceNeuralEngine
+      route: .onDeviceLocal
     )
   }
 }
@@ -348,7 +348,7 @@ public struct GroundedQueryResult: Codable, Equatable, Sendable {
     answer: String,
     citations: [EvidenceCitation],
     confidence: Double,
-    route: CapabilityRoute = .onDeviceNeuralEngine
+    route: CapabilityRoute = .onDeviceLocal
   ) {
     self.answer = answer
     self.citations = citations
@@ -358,18 +358,22 @@ public struct GroundedQueryResult: Codable, Equatable, Sendable {
 }
 
 public enum CapabilityRoute: String, Codable, Sendable {
-  case onDeviceNeuralEngine = "On-device (Apple Silicon ANE)"
+  // Epistemic rule (OPERATING_DOCTRINE §2): route labels and disclosure badges
+  // state observed execution facts only. Hardware routing (ANE) and absolute
+  // guarantees ("Zero Network Egress") are not asserted from a static route
+  // tag; egress claims belong to ExecutionDataBoundary on the receipt.
+  case onDeviceLocal = "On-device (local execution)"
   case applePrivateCloudCompute = "Apple Private Cloud Compute"
   case hostedProvider = "Hosted Provider (Metadata Scrubbed)"
 
   public var disclosureBadge: String {
     switch self {
-    case .onDeviceNeuralEngine:
-      return "● On-device (Neural Engine) — Zero Network Egress"
+    case .onDeviceLocal:
+      return "● On-device (local execution)"
     case .applePrivateCloudCompute:
-      return "● Apple PCC — Cryptographically Verified Isolated Enclave"
+      return "● Apple PCC — isolated-enclave route"
     case .hostedProvider:
-      return "● External Hosted Provider — Minimal Redacted Scope"
+      return "● External hosted provider — redacted scope"
     }
   }
 }

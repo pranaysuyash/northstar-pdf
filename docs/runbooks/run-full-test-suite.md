@@ -70,9 +70,14 @@ swift test
 ```
 
 **Browser workflow test times out:**
-The test self-boots a server. If it fails, check if port 4173 is in use:
+Run the canonical runner, which self-boots a static server on a free port
+(never 4173) and shuts it down afterwards:
 ```bash
-lsof -i :4173
+node Tests/run-web-e2e.mjs web_editor
+```
+If a run still hangs, check for a squatter on the port it selected:
+```bash
+lsof -i :8090
 # Kill any process using it
 ```
 

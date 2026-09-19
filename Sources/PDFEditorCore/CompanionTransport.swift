@@ -187,6 +187,9 @@ public struct CompanionTransportFactory {
 /// Uses URLSession for HTTP communication with TLS support,
 /// timeout enforcement, and retry logic.
 public final class HTTPCompanionTransport: CompanionTransport, @unchecked Sendable {
+    // UNSAFE (MDEV-I2 sweep, 2026-09-17): `connected` is written by the send,
+    // handshake, and disconnect paths and read by `isConnected` with no
+    // synchronization. Remediation is ledgered as MDEV-I6.
     private let configuration: TransportConfiguration
     private let session: URLSession
     private let sessionDelegate: HTTPTransportDelegate
@@ -412,6 +415,10 @@ private final class HTTPTransportDelegate: NSObject, URLSessionDelegate, URLSess
 /// Protocol: length-prefixed JSON messages over a stream socket.
 /// Frame format: [4-byte big-endian length][JSON payload]
 public final class LocalCompanionTransport: CompanionTransport, @unchecked Sendable {
+    // UNSAFE (MDEV-I2 sweep, 2026-09-17): `connected` and the pipe/handle/
+    // process optionals are torn between `disconnect()` (closes and nils) and
+    // `send` (reads the same optionals) with no synchronization. Remediation
+    // is ledgered as MDEV-I6.
     private let configuration: TransportConfiguration
     private let socketPath: String
     private var readPipe: Pipe?

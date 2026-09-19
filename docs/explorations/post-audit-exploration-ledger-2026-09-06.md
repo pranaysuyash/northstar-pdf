@@ -23,6 +23,7 @@
 - **Falsifier:** real-corpus WER ≈ synthetic WER and round-trip ≈ 1.000 → gates are already representative; document and close.
 - **Next check:** sample 20 governed fixtures, hand-write ground truth, run `benchmark/compare_ocr_wer.py` + `AcroFormParityExperiment` over them; record per-document-class WER.
 - **If true:** add the real slice as a second gated corpus ( RG-136 heavy lane). **If false:** record "synthetic gates representative" as evidence in release-gates.
+- **2026-09-18 update:** plan written and executed to the pre-measurement boundary — `docs/research/real-document-corpus-plan-2026-09-18.md` (sampling frame ≈ 20 governed docs across 7 classes, ground-truth protocol, pre-registered falsifiers for both H-OCR and H-PARITY). Remaining: human ground-truth pass (~2–3h) + measurement run; RG-136 second-lane adoption is an owner decision after measurement. Status: OPEN (plan complete, execution pending human time).
 
 ## X2 — Tamper-evident audit trail
 

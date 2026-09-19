@@ -227,13 +227,27 @@ public final class PublishPipeline: ObservableObject {
             )
         }
 
-        // Print via NSPrintOperation
+        // Print the real document through a PDFView so the standard print
+        // dialog operates on the actual pages (MAD-002: this previously ran
+        // NSPrintOperation on an empty NSView and reported success).
         let printInfo = NSPrintInfo.shared
-        let printOp = NSPrintOperation(view: NSView(), printInfo: printInfo)
+        if let printer = NSPrinter(name: printerName) {
+            printInfo.printer = printer
+        }
+        printInfo.horizontalPagination = .automatic
+        printInfo.verticalPagination = .automatic
+
+        let pdfView = PDFView()
+        pdfView.document = pdfDocument
+        pdfView.autoScales = true
+
+        let printOp = NSPrintOperation(view: pdfView, printInfo: printInfo)
+        printOp.showsPrintPanel = true
         printOp.run()
+
         return PublishResult(
             success: true,
-            destination: .printer(name: printerName),
+            destination: .printer(name: printInfo.printer.name),
             pageCount: pdfDocument.pageCount
         )
     }

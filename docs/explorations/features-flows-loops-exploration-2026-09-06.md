@@ -206,9 +206,9 @@ Consolidated from v1.0+v1.1 sweeps. Per D-055, `docs/task-inventory.md` owns tas
 | R7 | `pdf_oxide` cascade lane: is the external CLI vendored, or does the lane always fall through? | research | `PdfOxideExtractor.swift:52` | `which pdf_oxide` + cascade history |
 | R8 | How is Swift↔`.mjs` parity-mirror drift caught between `regenerate_browser_contract_bundles.mjs` runs? | research | §2.2; §5 | map which tests compare live bundles vs persisted snapshots |
 | R9 | Full flow/loop map of the React plane when it becomes the deployable editor of record | exploration continuation | H6 | re-run this map scoped to `web/app/` |
-| R10 | OCR reading-order post-processing to unblock PaddleOCR/Marker absolute thresholds | research | `compare_ocr_wer.py:35-52` | prototype reading-order normalization on multi-column fixtures |
+| R10 | ~~OCR reading-order post-processing~~ **DONE 2026-09-18 status correction** — `benchmark/ocr_reading_order.py` landed 2026-09-08; re-baselined 2026-09-11 (multi-column outlier WER 0.7297→0.0000, PaddleOCR threshold 0.10 enforced via `GATE_WER_THRESHOLDS`, `benchmark/compare_ocr_wer.py:38-45`) | resolved | `benchmark/ocr_reading_order.py` | no further action; ledger row was stale ("plan only") after the re-baseline |
 | R11 | Persistence placement review: `AnnotationVersionStore` → `UserDefaults.standard`, 3-backend scatter (UserDefaults/files/Keychain) | review | §1.1, §3 L15 | inventory per-store payload growth + retention risk |
-| R12 | Capability matrix as 918-line data-as-code — evaluate extraction to a governed manifest | exploration (architecture) | §3 caveat | sketch manifest format + GateMaturityBridge read path |
+| R12 | Capability matrix as 918-line data-as-code — evaluate extraction to a governed manifest | exploration (architecture) | §3 caveat | **ADR drafted 2026-09-18:** `docs/decisions/capability-matrix-manifest-extraction-adr-2026-09-18.md` (Option B governed JSON manifest, proposed — owner acceptance pending) |
 | R13 | Document: `DocumentDiffReport` renders a PDF (not JSON) — note in artifacts/error-taxonomy docs | documentation | `DocumentDiffReport.swift:45` | one-paragraph doc note |
 | R14 | Is `verify_appmodel.sh` integrated into the pre-push hook, or manual-only? | review (cheap) | `tools/pre-push-hook.sh` | read hook script; wire if absent |
 

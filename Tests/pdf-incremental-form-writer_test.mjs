@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import fs from "node:fs";
+import path from "node:path";
 import crypto from "node:crypto";
 import { execFileSync, spawnSync } from "node:child_process";
 import { incrementalFieldUpdate } from "../web/pdf-incremental-form-writer.mjs";
@@ -10,8 +11,11 @@ function spawnSyncSafe(cmd, args) {
   return { stdout: r.stdout || "", stderr: r.stderr || "" };
 }
 
-const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
-const TMP = "/Users/pranay/Projects/pdf_editor/tmp";
+// Paths derived from this file's location — runner-portable (a hardcoded
+// /Users/... path only ever resolved on the owner's machine).
+const projectRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const SRC = path.join(projectRoot, "benchmark/results/public-sample-form.pdf");
+const TMP = path.join(projectRoot, "tmp");
 fs.mkdirSync(TMP, { recursive: true });
 const incPath = `${TMP}/inc-update-out.pdf`;
 const rewPath = `${TMP}/full-rewrite-out.pdf`;

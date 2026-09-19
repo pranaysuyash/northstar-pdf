@@ -4,13 +4,20 @@
 // both are gone while the file still reopens and keeps its page count.
 import assert from "node:assert";
 import fs from "node:fs";
+import path from "node:path";
 import { spawnSync, execFileSync } from "node:child_process";
 import { neutralizeActions } from "../web/pdf-action-neutralize.mjs";
 import { pdfPython } from "./pdf-python.mjs";
 
-const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
+// Paths derived from this file's location — runner-portable (a hardcoded
+// /Users/... path only ever resolved on the owner's machine).
+const projectRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const projectTmp = path.join(projectRoot, "tmp");
+const dirtyPath = path.join(projectTmp, "dirty.pdf");
+const neutralizedPath = path.join(projectTmp, "neutralized.pdf");
+const SRC = path.join(projectRoot, "benchmark/results/public-sample-form.pdf");
 const srcBuf = fs.readFileSync(SRC);
-fs.mkdirSync("/Users/pranay/Projects/pdf_editor/tmp", { recursive: true });
+fs.mkdirSync(projectTmp, { recursive: true });
 
 // Build a malicious-ish fixture locally (auto-executing JS + Launch annotation).
 const dirty = execFileSync(
@@ -30,22 +37,22 @@ const dirty = execFileSync(
       "pdf.save(out)",
     ].join("\n"),
     SRC,
-    "/Users/pranay/Projects/pdf_editor/tmp/dirty.pdf",
+    dirtyPath,
   ],
   { encoding: "utf8" }
 );
 void dirty;
 
-const dirtyBuf = fs.readFileSync("/Users/pranay/Projects/pdf_editor/tmp/dirty.pdf");
+const dirtyBuf = fs.readFileSync(dirtyPath);
 const out = neutralizeActions(dirtyBuf);
 assert.ok(out.length > 0, "neutralized output is non-empty");
 
 const check = (() => {
-  const r = spawnSync("qpdf", ["--check", "/Users/pranay/Projects/pdf_editor/tmp/neutralized.pdf"], {
+  const r = spawnSync("qpdf", ["--check", neutralizedPath], {
     encoding: "utf8",
   });
-  fs.writeFileSync("/Users/pranay/Projects/pdf_editor/tmp/neutralized.pdf", out);
-  const r2 = spawnSync("qpdf", ["--check", "/Users/pranay/Projects/pdf_editor/tmp/neutralized.pdf"], {
+  fs.writeFileSync(neutralizedPath, out);
+  const r2 = spawnSync("qpdf", ["--check", neutralizedPath], {
     encoding: "utf8",
   });
   return (r2.stdout || "") + (r2.stderr || "");
@@ -60,7 +67,7 @@ const res = JSON.parse(
     [
       "-c",
       "import pikepdf,sys,json; p=pikepdf.open(sys.argv[1]); root=p.Root; anns=[]\nfor pg in p.pages:\n  if '/Annots' in pg:\n    for a in pg.Annots:\n      if hasattr(a,'keys'): anns.append({'subtype':str(a.get('/Subtype')),'hasA':'/A' in a,'hasS':'/S' in a})\nprint(json.dumps({'openAction':'/OpenAction' in root,'aa':'/AA' in root,'pages':len(p.pages),'ann':anns}))",
-      "/Users/pranay/Projects/pdf_editor/tmp/neutralized.pdf",
+      neutralizedPath,
     ],
     { encoding: "utf8" }
   ).trim()

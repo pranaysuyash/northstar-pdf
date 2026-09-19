@@ -27,6 +27,7 @@ public enum InspectorTab: String, CaseIterable, Identifiable {
 
 public struct ContextualInspectorView: View {
   @Bindable var model: AppModel
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
   let inspection: DocumentInspection
   let renderingPipeline: RenderingPipeline
   @Binding var isSecurityVaultPresented: Bool
@@ -181,9 +182,9 @@ public struct ContextualInspectorView: View {
         searchMatchesSection
       }
     }
-    .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedFieldID)
-    .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedCandidateID)
-    .animation(.spring(response: 0.35, dampingFraction: 0.82), value: model.selectedAnnotationID)
+    .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.82), value: model.selectedFieldID)
+    .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.82), value: model.selectedCandidateID)
+    .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.82), value: model.selectedAnnotationID)
   }
 
   private func xfaFormBanner(_ xfa: XFAFormProcessor.XFAInspectionResult) -> some View {
@@ -312,7 +313,7 @@ public struct ContextualInspectorView: View {
             Circle()
               .fill(Color.green)
               .frame(width: 6, height: 6)
-            Text("Ready")
+            Text("Opened")
               .font(.caption.weight(.medium))
               .foregroundStyle(Color.primary)
           }
@@ -2421,7 +2422,7 @@ public struct ContextualInspectorView: View {
         VStack(alignment: .leading, spacing: 2) {
           Text("Local Privacy & Provenance")
             .font(.subheadline.weight(.semibold))
-          Text("Zero network egress · Hardware isolated stores")
+          Text("No network egress by local execution paths · stores on-device")
             .font(.caption2)
             .foregroundStyle(.secondary)
         }

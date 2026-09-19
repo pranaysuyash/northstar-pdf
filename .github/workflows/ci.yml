@@ -54,6 +54,70 @@ jobs:
       - name: Swift test
         run: swift test 2>&1
 
+      # Semaphore wiring proof (fail-fast). The shared heavy-test lock's
+      # environment-scaled acquire bound (flaky-register 2026-09-12 and
+      # 2026-09-18; PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND) must actually
+      # work on every push — a regression here cost full CI runs to silent
+      # hangs. Two cheap legs prove the wiring:
+      #   positive: with the semaphore FREE, a lock-using test acquires and
+      #             passes (the override + acquire path work on a cold runner)
+      #   negative: with the semaphore externally HELD by a raw sem_wait, the
+      #             same lock-using test must FAIL CLOSED within the small
+      #             explicit bound, with the Code=3 diagnostic naming the
+      #             bound and the override — not hang, and not silently pass
+      # Catches: reintroduced unbounded spin, flat/ignored bound, override
+      # parsing regressions, and diagnostic-message drift.
+      - name: Semaphore wiring proof (fail-fast)
+        run: |
+          set -eo pipefail
+          export PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND=30
+
+          echo "[positive leg] semaphore free → lock-using test acquires and passes"
+          swift test --filter "OCRConfirmLaneTests/chartVsScanRejects" 2>&1 | tee /tmp/sem-pos.log
+          grep -q "passed after" /tmp/sem-pos.log || {
+            echo "::error::semaphore proof, positive leg: no passing test summary"
+            exit 1
+          }
+
+          echo "[negative leg] semaphore externally held → fail-closed within the 30s bound (not a hang)"
+          python3 - <<'PY' &
+          import ctypes, ctypes.util, time
+          libc = ctypes.CDLL(ctypes.util.find_library("c"), use_errno=True)
+          libc.sem_open.restype = ctypes.c_void_p
+          libc.sem_open.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_int, ctypes.c_uint]
+          libc.sem_wait.argtypes = [ctypes.c_void_p]
+          libc.sem_post.argtypes = [ctypes.c_void_p]
+          sem = libc.sem_open(b"/pdf-editor-heavy-2", 0, 0o600, 1)
+          libc.sem_wait(sem)
+          print("[holder] semaphore held", flush=True)
+          time.sleep(90)  # outlives the bounded attempt; then releases cleanly
+          libc.sem_post(sem)
+          PY
+          HOLDER_PID=$!
+          sleep 2
+          START=$SECONDS
+          if swift test --filter "OCRConfirmLaneTests/chartVsScanRejects" 2>&1 | tee /tmp/sem-neg.log; then
+            echo "::error::semaphore proof, negative leg: test PASSED while the semaphore was externally held — fail-closed wiring is broken"
+            kill -9 "$HOLDER_PID" 2>/dev/null || true
+            exit 1
+          fi
+          DURATION=$((SECONDS - START))
+          grep -q "not acquired within" /tmp/sem-neg.log || {
+            echo "::error::semaphore proof, negative leg: test failed but the Code=3 'not acquired within' diagnostic is missing (message drift)"
+            kill -9 "$HOLDER_PID" 2>/dev/null || true
+            exit 1
+          }
+          echo "  ✓ fail-closed fired after ${DURATION}s (bound: 30s)"
+          wait "$HOLDER_PID" || true
+
+          python3 - <<'PY'
+          import ctypes, ctypes.util
+          libc = ctypes.CDLL(ctypes.util.find_library("c"), use_errno=True)
+          rc = libc.sem_unlink(b"/pdf-editor-heavy-2")
+          print(f"[cleanup] sem_unlink rc={rc} (next sem_open(O_CREAT) recreates fresh)")
+          PY
+          echo "Semaphore wiring proof PASSED (both legs)"
+
       # Detector measurement gate: run the live native candidate pipeline
       # against the reviewed ground truth. Fails the job non-zero on any
       # detection regression (also enforced in-process by

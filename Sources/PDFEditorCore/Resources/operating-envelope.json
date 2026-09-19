@@ -1,0 +1,38 @@
+{
+  "schema": "pdf-editor.operating-envelope",
+  "schemaVersion": { "major": 1, "minor": 0 },
+  "envelopeID": "cohort-1-recurring-forms",
+  "title": "Northstar PDF — Operating Envelope (Cohort 1)",
+  "generatedAt": "2026-09-17",
+  "truthStatus": "proposed-pending-cohort-certification",
+  "claims": {
+    "statement": "This envelope names the document class the product currently certifies. Documents outside any row below are refused at open with the exceeded rows named. Certification of the named form class is pending cohort fixtures (RG-135 cohort scope); no inside-envelope claim is sale-backed until that gate reports green.",
+    "claimDiscipline": "honest-claims-only; no capability is claimed beyond rows below"
+  },
+  "rows": {
+    "maxFileSizeBytes": 52428800,
+    "maxPageCount": 25,
+    "maxParseMilliseconds": {
+      "value": 2000,
+      "provisional": true,
+      "reference": "envelope-max document, main-actor-free parse",
+      "note": "Datasheet parse row (audit round-3 §7.1 child 4). Provisional until measured; the budget test binds this row to the 250MB-refactor acceptance criterion."
+    },
+    "supportedFieldClasses": ["text", "checkbox", "radio", "choice"],
+    "excludedDocumentFeatures": ["xfa", "encrypted"]
+  },
+  "evaluation": {
+    "openTimeEvaluatedRows": ["maxFileSizeBytes", "maxPageCount", "excludedDocumentFeatures:encrypted", "excludedDocumentFeatures:xfa"],
+    "openTimeNote": "Rows evaluated with facts available before or during open (file size, page count, encryption, XFA flags). Field-class coverage is a published datasheet row, not an open-time refusal trigger: it is attested after detection, not guessed pre-parse.",
+    "rejectionMessageContract": "Every exceeded row is named; the message states which envelope row the document exceeds and that the document was not opened. No silent fallback."
+  },
+  "formClass": {
+    "named": "IRS W-9",
+    "status": "fixture-generation-pending",
+    "note": "The cohort-anchored single-form edition (round-3 merged branch). Form-class selection is a recorded decision (D-055 path) before any sale claim."
+  },
+  "provenance": {
+    "source": "docs/audits/comprehensive-adhd-audit-round3-2026-09-17.md §7.1",
+    "decisionGate": "docs/decisions.md (D-055 gate-authority doctrine) — envelope adoption as a product claim requires a decision entry"
+  }
+}

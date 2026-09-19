@@ -1,17 +1,19 @@
 /** Template Index Mode — indexes, matches, and benchmarks templates.
- * 
+ *
  * Bridges app.js template-index, template-match-benchmark, and
  * template-correction-benchmark workflows:
  * - Index template layouts from PDF documents
  * - Match new templates against existing index
  * - Run benchmark comparisons against corpus
  * - Display correction UI for mismatches
+ *
+ * NOTE: unwired scaffold. No mode currently mounts this component, the
+ * loadTemplates path is placeholder data, and the real workflows live in the
+ * legacy app.js template-index lane. Implement or retire by owner decision —
+ * see the ready-game decision pack before building on this.
  */
 
-import React, { useState, useEffect, useRef } from "react";
-import { pdfPython } from "./pdf-python.mjs";
-import { compareBrowserExportWithIndependentViewer } from "../benchmark/browser-export-independent-viewer-validator.mjs";
-import { use } from "react";
+import { useState } from "react";
 
 export interface TemplateMatch {
   id: string;
@@ -35,8 +37,8 @@ export function TemplateIndex({
   const [matches, setMatches] = useState<TemplateMatch[]>(initialMatches);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedMatch, setSelectedMatch] = useState<TemplateMatch | null>(null);
-  const [sourceDigest, setSourceDigest] = useState<string>("");
-  const [fixturePath, setFixturePath] = useState<string>("/");
+  const [, setSourceDigest] = useState<string>("");
+  const [, setFixturePath] = useState<string>("/");
 
   // Load templates from a PDF document
   const loadTemplates = async (pdfPath: string) => {
@@ -90,7 +92,7 @@ export function TemplateIndex({
     }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
         <h2>Template Index</h2>
-        <button onClick={() => onBenchmark("/fixtures/template-benchmark.pdf")} style={{ padding: "8px 16px" }}>
+        <button onClick={() => runBenchmark("/fixtures/template-benchmark.pdf")} style={{ padding: "8px 16px" }}>
           Run Benchmark
         </button>
       </header>
@@ -98,83 +100,83 @@ export function TemplateIndex({
       <section style={{ marginBottom: "20px" }}>
         <h3>Template Matches ({matches.length})</h3>
         {matches.length === 0 ? (
-          <p>No templates indexed. Use "Load Templates" to index a document.</p> : (
-            <ul style={{ listStyle: "none", padding: 0, maxHeight: "300px", overflowY: "auto" }}>
-              {matches.map((match) => (
-                <li key={match.id} style={{ marginBottom: "12px", padding: "8px", border: "1px solid #ddd" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span>
-                      <strong>Score: {match.matchScore.toFixed(2)}</span>
-                      <span style={{ color: "#666" }}>{match.kind}</span>
-                    </span>
-                    <span>{match.sourceDigest?.substring(0, 16) + "..."}</span>
-                  </div>
-                  <div style={{ flex: 1, marginLeft: "12px" }}>
-                    <p style={{ margin: "4px 0" }}>{match.details || "No details"}</p>
-                    <button
-                      style={{
-                        marginLeft: "8px",
-                        cursor: "pointer",
-                        fontSize: "12px",
-                      }}
-                      onClick={() => handleSelect(match)}
-                    >
-                      Select
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        {loading ? (
-          <p>Indexing templates...</p> : (
-            <section>
-              <h3>Load Template Document</h3>
-              <p>Index templates from a PDF document:</p>
-              <div style={{ marginTop: "12px" }}>
-                <button
-                  style={{
-                    padding: "8px 16px",
-                    cursor: "pointer",
-                    background: "#0066cc",
-                    color: "white",
-                  }}
-                  onClick={() => loadTemplates("/fixtures/template-sample.pdf")}
+          <p>No templates indexed. Use &quot;Load Templates&quot; to index a document.</p>
+        ) : (
+          <ul style={{ listStyle: "none", padding: 0, maxHeight: "300px", overflowY: "auto" }}>
+            {matches.map((match) => (
+              <li key={match.id} style={{ marginBottom: "12px", padding: "8px", border: "1px solid #ddd" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>
+                    <strong>Score: {match.matchScore.toFixed(2)}</strong>
+                    <span style={{ color: "#666" }}>{match.kind}</span>
+                  </span>
+                  <span>{match.sourceDigest?.substring(0, 16) + "..."}</span>
+                </div>
+                <div style={{ flex: 1, marginLeft: "12px" }}>
+                  <p style={{ margin: "4px 0" }}>{match.details || "No details"}</p>
+                  <button
+                    style={{
+                      marginLeft: "8px",
+                      cursor: "pointer",
+                      fontSize: "12px",
+                    }}
+                    onClick={() => handleSelect(match)}
                   >
-                    Index Template Document
+                    Select
                   </button>
-              </div>
-            </section>
-          )}
-        </section>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
-        {selectedMatch && selectedMatch.kind !== "exact" ? (
-          <section style={{ marginTop: "20px" }}>
-            <h3>Mismatch Details</h3>
-            <p><strong>Kind:</strong> {selectedMatch.kind}</p>
-            <p><strong>Details:</strong> {selectedMatch.details || "No additional details"}</p>
+      {loading ? (
+        <p>Indexing templates...</p>
+      ) : (
+        <section>
+          <h3>Load Template Document</h3>
+          <p>Index templates from a PDF document:</p>
+          <div style={{ marginTop: "12px" }}>
             <button
               style={{
                 padding: "8px 16px",
-                marginTop: "8px",
                 cursor: "pointer",
-                background: "#e74c3c",
+                background: "#0066cc",
                 color: "white",
               }}
-              onClick={() => {
-                setSelectedMatch(null);
-              }}
+              onClick={() => loadTemplates("/fixtures/template-sample.pdf")}
             >
-              Close
+              Index Template Document
             </button>
-          </section>
-        ) : null}
-      </section>
+          </div>
+        </section>
+      )}
+
+      {selectedMatch && selectedMatch.kind !== "exact" ? (
+        <section style={{ marginTop: "20px" }}>
+          <h3>Mismatch Details</h3>
+          <p><strong>Kind:</strong> {selectedMatch.kind}</p>
+          <p><strong>Details:</strong> {selectedMatch.details || "No additional details"}</p>
+          <button
+            style={{
+              padding: "8px 16px",
+              marginTop: "8px",
+              cursor: "pointer",
+              background: "#e74c3c",
+              color: "white",
+            }}
+            onClick={() => {
+              setSelectedMatch(null);
+            }}
+          >
+            Close
+          </button>
+        </section>
+      ) : null}
 
       <footer style={{ display: "flex", justifyContent: "flex-end", marginTop: "24px" }}>
-        <button onClick={() => setSelectedMatch(null)} style={{ marginRight: "8px" }} padding="8px 16px">
+        <button onClick={() => setSelectedMatch(null)} style={{ marginRight: "8px", padding: "8px 16px" }}>
           Deselect
         </button>
         <button style={{ padding: "8px 16px" }}>Close</button>

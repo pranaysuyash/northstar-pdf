@@ -101,11 +101,18 @@ required action.
 | NM-T10 | Implement | partial | Menu/command routing exists; complete sidebar/inspector/toolbar recovery inventory. |
 | NM-T11 | Implement | open | Replace or reorganize the generic Manager entry by outcome. |
 | NM-T12 | Implement | open | Define focus restoration and keyboard traversal contracts. |
-| NM-T13 | Implement | partial | Home recents/drop/create and in-place-drop source slices exist; available recent entries are full-row actions with stable identifiers, while stale entries expose explicit Locate recovery. T2 bookmark/history, successful replacement, and rejected replacement checks pass, while T4 stale-row, drop/preflight, and provider fallback proof remain. |
+| NM-T13 | Implement | partial | Home recents/drop/create and in-place-drop source slices exist; available recent entries are full-row actions with stable identifiers, while stale entries expose explicit Locate recovery. T2 bookmark/history, successful replacement, and rejected replacement checks pass. Drop-disambiguation semantic defects found by the 2026-09-17 council review (compare not bound to the dropped document; switch without preservation gate) are fixed — `openDiffComparison(against:)` cross-document diff plus flush-before-open preservation and a dirty-session confirmation boundary — while T4 stale-row, drop/preflight, and provider fallback proof remain. |
 | NM-T14 | Implement | partial | Recovery Inspect/Discard source slice exists; T4 restore/source mismatch remains. |
 | NM-T15 | Research/implement | open | Build screenshot and interaction regression matrix. |
 | NM-T16 | Implement | partial | Evidence rail/passport source exists; contract-to-view and comprehension proof remain. |
-| NM-T17 | Implement | partial | Review receipt/profile routing exists; extracted-page and sanitized-copy writers now have focused T2 reopen/source-preservation validation; edited/merge/T4 export proof remains. |
+| NM-T17 | Implement | partial | Review receipt/profile routing exists; extracted-page and sanitized-copy writers now have focused T2 reopen/source-preservation validation; edited/merge/T4 export proof remains. 2026-09-17: execution receipts now carry observed-only provenance (`executionRoute` + mandatory `ExecutionDataBoundary`, no defaults; unconditional trailer and fabricated `passed:true` checks removed) — one plan/trace identity across proposal→receipt remains open. |
+| NM-T39 | Decide | open | **Re-scoped by D-083 (2026-09-17):** owns the surviving "whether" questions via cohort instruments — library/corpus demand AND agentic-organizer demand (pre-registered kill thresholds: <30% of cohort sessions open the agent loop, or >50% of approved plans abandoned ⇒ organizing-surface thesis falsified; loop remains a wedge tool). Multi-document workspace machinery stays declined; NM-T39 no longer gates shell interaction/visual direction (D-083 owns that). |
+| NM-T40 | Implement | open | Wire shared EgressGate/transport state into execution-receipt derivation so data-boundary disclosure reflects live session state instead of the executing path's static scope (council review 2026-09-17 §5, epistemic seat). |
+| NM-T41 | Research/implement | open | **D-083 slice 0 (no new UI):** X7 unification design doc — vocabulary, authority boundaries, execution-route table per capability (on-device Foundation Models / deterministic / absent / deferred-cloud); run-journal persistence verified (persist `AgentRunJournal` to the session store if in-memory); PL-D09 cohort instrument landed with the pre-registered kill thresholds. |
+| NM-T42 | Implement | open | **D-083 slice 1:** "Teach Northstar this workflow" through the wired D-078 loop (drop → recurrence → plan sheet → per-step approval → bulk fill → receipt → save as workflow) with the inspectable journal/plan surface. Oracle: every rendered entry traces to a journal/receipt row. Outcome test: validated receipted mutation or saved workflow in under two minutes. Gate: T01 matrix accepted + touched AppModel seams extracted (A-9) before new surface work. |
+| NM-T43 | Implement | open | **D-083 slice 2:** goal capture as the shell's organizing input; open-ended goals degrade honestly to ranked command search (every offered step maps to an `AdaptiveCommandID` with a live `assess()` projection). |
+| NM-T44 | Implement | open | **D-083 slice 3:** escalation/retry honesty surface — reason codes derived only from journal entries; visible "ledger unchanged" terminal state after escalated runs. |
+| NM-T45 | Implement | open | **D-083 slice 4:** AI-native empty state; CTAs only to planner-supported goals (every CTA completes a real loop end-to-end); "Agent Desk" name ships here at the earliest. |
 | NM-T18 | Implement | partial | Rework/variance/discard state machine exists; failed-review T4 remains. |
 | NM-T19 | Implement | open | Add WIP-limited, page-local candidate review waves. |
 | NM-T20 | Research | partial | Capability passport exists; document the research falsifiers and open-flow result. |
@@ -128,6 +135,41 @@ required action.
 | NM-T37 | Implement | implemented-source | Northstar is now the native user-facing name through `ProductIdentity` and preview bundle metadata; `PDFEditor` remains the technical target name. Fresh packaged app-menu/window-title and release identity verification remain open. |
 | NM-T38 | Implement/verify | implemented-source | The document toolbar is hidden when `model.inspection` is absent and restored for open-document reading modes; fresh packaged home/document/home, narrow-window, skim, and menu recovery observation remains open. |
 
+## 2026-09-17 macos-development skill audit crosswalk
+
+Findings, rationale, and skill-verdict detail:
+[`audits/macos-development-skill-audit-2026-09-17.md`](audits/macos-development-skill-audit-2026-09-17.md).
+**MAD-D1 resolved 2026-09-17 by D-083** (owner-directed AI-native agentic workspace;
+council: [`audits/shell-decision-council-2026-09-17.md`](audits/shell-decision-council-2026-09-17.md))
+— MAD-I6 (toolbar declutter) is unblocked, and the vision doc's spatial phases 2–5
+proceed as D-083's parallel styling track (each surface ships only with
+MAD-R1/R2 accessibility + human-visual evidence).
+Delta on the MAD-001..018 ledger (macos-app-design audit 2026-09-11): MAD-001
+resolved (commit `aa7e2da`). **Landed 2026-09-17 (implemented-source, built +
+targeted tests green):** MAD-I2 real print (PDFView-based `NSPrintOperation` in
+`PublishPipeline` + ⌘P `Print…` via `CommandGroup(replacing: .printItem)`,
+routed through `AppModel.printDocument` so print shares the export lane);
+MAD-I5 Help (⌘⇧/ + `northstar-help` Window scene, static honest content);
+MAD-I8 reduce-motion gates (ContextualInspectorView, DocumentSplitView,
+FreezePaneDragHandle, PageThumbnailRailView) + stale §12 comment removed;
+MAD-I10 (⌘0 Actual Size; Confirm/Reject Field moved to a new Form Review menu;
+Reject Field re-mapped ⌘⌫ → ⇧⌘⌫); MAD-I12 (Governance severity icons —
+CollaborationHistoryView re-inspection found existing symbol+text redundancy);
+MAD-003 partial (`LSApplicationCategoryType`; `scripts/package_mac_app.sh`
+collapsed onto the canonical `tools/native-preview-Info.plist` so the dist
+bundle can no longer drift — dist rebuilt with document types present).
+Remaining open as stated in the audit: MAD-003 icon pass (design decision),
+MAD-004 (main-actor parse), MAD-I7/I9/I11/I13, MAD-R1/R2/R5/R8.
+
+| ID | Type | State | Current evidence or next action |
+|---|---|---|---|
+| MDEV-I1 | Research/implement | partial | `tools/native-preview.entitlements` (minimal set, no network) + `PDF_EDITOR_ENABLE_SANDBOX=1` signing flag in `build-native-preview-app.sh` + plan doc (`docs/research/sandbox-entitlements-plan-2026-09-17.md`) landed. Default-on remains gated on: companion child-process design under sandbox, recents/bookmark T4 round-trip, and NM-T32 signing decision. |
+| MDEV-I2 | Implement | partial | Sweep verified all 26 bypass sites; ledger at `docs/research/sendability-invariant-ledger-2026-09-17.md` + drift check `tools/check-unchecked-concurrency.mjs` (green). CompanionNegotiator's dead-lock race **fixed** (lock now guards all three properties); OCRConfirmLane comment reconciled to the real semaphore mechanism; 5 unsafe sites carry inline UNSAFE markers. Remediation = MDEV-I6. |
+| MDEV-I3 | Decide | open | Merge into A-9: AppModel.swift (6,527 lines, `@MainActor`) is the primary decomposition debt, not ContentView (NM-T06); coordinate with NM-T01 ownership matrix and MAD-I4 async open. |
+| MDEV-I4 | Implement | implemented-source | App Intent failures now `throw` (`NorthstarIntentFailure`) instead of returning failure-shaped success strings; Shortcuts shows real errors. Shortcuts runtime T4 still open. |
+| MDEV-I5 | Implement | implemented-source | `scripts/package_mac_app.sh` now consumes the canonical plist (executable/version stamped via `plutil`); dist rebuilt 2026-09-17 — `CFBundleDocumentTypes` + category verified in the packaged Info.plist. |
+| MDEV-I6 | Implement | open | Fix the five race-flagged sites from the sendability ledger (RenderingPipeline mixed discipline; HTTPCompanionTransport + LocalCompanionTransport unsynchronized `connected`/handles; StudyLoopManager unlocked dictionary; FreezePaneState property-bypass) and give the PDFPage cross-actor handoff (AppModel:3961/:4003, DocumentCanvasView:607) a real enforcement mechanism. CompanionTransport pair + StudyLoopManager are small standalone fixes; RenderingPipeline should ride MAD-I4/A-9. |
+
 ## Research and exploration ledger
 
 | ID | State | Research deliverable |
@@ -146,6 +188,48 @@ required action.
 | NM-R12 | partial | Aging and explicit-pin contract exists; reset/stale-pin comprehension remains. |
 | NM-R13 | open | Target-detection evidence matrix with annotation/image abstention cases. |
 | NM-R14 | open | Quiet-menu recovery and absence-versus-capability comprehension study. |
+| NM-R15 | open | External decision-tier model (TypeSafe AI Jev / System One) shadow-mode calibration spike replaying labeled security-finding history. **Access granted 2026-09-19 — unblocked; EXP-JEV-1 is runnable** (pin `jev-1.13.x`; key via `.env`, never tracked). Living doc: `docs/research/jev-system-one-model-capability-map-2026-09-18.md`; exploration map entry 10; increments in the JEV register below. |
+
+## Snappiness + Jev work register (opened 2026-09-19)
+
+Registered from [`audits/swiftui-performance-audit-2026-09-19.md`](audits/swiftui-performance-audit-2026-09-19.md)
+(12 confirmed findings, 2 critical, code-backed; all file:line refs live there)
+and the Jev product-fit map (J-01…J-06 + EXP-JEV-1…5 agenda). Promotion rule
+unchanged: implementation slices land here first; Jev exploration results write
+back to the research doc's change log before any promotion.
+
+### PERF-S — SwiftUI snappiness fixes (implementation, payoff-ordered)
+
+| ID | Type | Status | Task |
+|---|---|---|---|
+| PERF-S01 | Implement | open | **Critical.** Hoist freeze-pane table extraction out of ContentView body: revision-keyed cached extraction off the main actor; `FreezePaneToggleButton` reads the cache; never call `extractText()` from a view builder (ContentView.swift:900-910 eager `{…}()` → PdfOxide temp-file write + sync `pdf_oxide` spawn per body eval). |
+| PERF-S02 | Implement | open | **Critical.** Coalesce `handleViewportOrPageChange` to one drain per runloop tick; debounce reading-position persist (sync JSONEncoder+UserDefaults per tick); guard `freezePaneOverlay.needsDisplay` on `(page,scale)` change; route `tileOverlay.forceReload` through its 0.05s debounce (DocumentCanvasView.swift:1213-1303; RenderingPipeline.swift:490-524). |
+| PERF-S03 | Implement | open | One-liner: `HumanReviewPanelView.updateNSView` compares `view.document !== document` instead of two full `dataRepresentation()` serializations per SwiftUI pass (HumanReviewPanelView.swift:367-371). |
+| PERF-S04 | Implement | open | Root-body fan-out: extract status pill / redaction badge / export-enabled into leaf views taking narrow inputs; precompute `AdaptiveCommandContext.input` on mutating operations instead of per body eval (ContentView.swift:673-674, 1053-1115; `statusMessage` written from ~200 sites). |
+| PERF-S05 | Implement | open | AgentCommandHUD: build `allCommands` once (cached), compute `filteredCommands` once per body eval, resolve adaptive context on open/selection-change — currently rebuilt+rescored 2-4× per keystroke (AgentCommandHUD.swift:60-544). |
+| PERF-S06 | Implement | open | Guard nil→nil selection writes so a plain click stops invalidating the ~2.9k-line ContextualInspectorView (DocumentCanvasView.swift:202-206, 245-248). |
+| PERF-S07 | Implement | open | DocumentCanvasView.updateNSView: incremental rotation on the presentation document; drop the full `document.copy()` + `dataRepresentation()` round-trip per revision change (DocumentCanvasView.swift:1413-1423). |
+| PERF-S08 | Implement | open | Precompute page-rail badge counts in the model on operations/candidates change; cache `canOrganizePages` policy assessment — currently 3 dict builds + policy resolve per rail body eval (PageThumbnailRailView.swift:145-167). |
+| PERF-S09 | Implement | open | Pipeline mode (opt-in): extract text once per revision; feed renderer document bytes once per open (currently full re-parse per render, 8 parses/open via warmUp); enforce cache eviction (maxCachedPages never enforced, clearCaches uncalled) + invalidate on revision; align warm-up DPI 72 with rail request DPI 12 so the warm cache actually hits (PipelineCanvasView.swift:275-347; ProgressiveRenderer.swift:85-161; RenderingPipeline.swift:315-384). |
+| PERF-S10 | Implement | open | Comic mode: move panel detection + 150 DPI page render off the main actor (ComicPanelZoomView.swift:136-255). |
+| PERF-S11 | Implement | open | Authoring canvas: decode/downsample image elements once per element (cached by id+data hash) instead of `NSImage(data:)` in body per drag frame (AuthoringCanvasView.swift:338-358). |
+| PERF-S12 | Implement | open | Assorted lows: split-view per-pane full reparse + no-op updateNSView (correctness: pane page nav silently dead, DocumentSplitView.swift:223-237); browser `filteredDocuments` 3× per body; cache `fillProgressLabel`/`rankedActiveCandidates`; static Date/ByteCount formatters; remove leaked NotificationCenter observer (ContentView.swift:137-146); per-keystroke autosave Task churn. |
+| PERF-S13 | Implement | open | Latent-path hardening BEFORE wiring: FreezePaneCompositeView drag double-publish + equality-free `config` didSet; PipelineTileOverlayView would sync-render tiles on main if ever wired (fix while unwired = cheap insurance). |
+| PERF-S14 | Verify | open | Instruments baseline capture (Time Profiler + SwiftUI View Body) around S01/S02 with a 100+ page doc; before/after diff is the acceptance oracle for this register. Complements MAD-004 (main-actor open parse, still open). |
+
+### JEV — TypeSafe Jev (exploration; access granted 2026-09-19)
+
+| ID | Type | Status | Task |
+|---|---|---|---|
+| JEV-0 | Bookkeeping | open | Update research doc access state ("no API grant yet" → granted 2026-09-19); pin `jev-1.13.x`; key in `.env` only; §1-2 claims stay sourced-only until EXP-JEV-1 first-party numbers. |
+| JEV-1 | Research | open | **EXP-JEV-1 / NM-R15 (owner-locked entry point):** calibration replay of labeled security-finding history (fixture corpora + Mimosa episode) through close/escalate/contain triage. Reusable harness in `tools/jev-replay/` (document in tools/README.md). Exit oracle: per-class accuracy + calibration error vs regex/heuristic baseline. Kill: materially worse calibration or inflated confidence on the known false-positive class. |
+| JEV-2 | Research | open | **EXP-JEV-4 pulled forward:** prompt-injection red-team on `state` (adversarial PDF text vs all three primitives). Hard gate before any customer-facing use; feeds threat-model addendum. |
+| JEV-3 | Research | open | EXP-JEV-2: agent-trace "needs human review" replay over ExecutionReceipt corpora. Depends: JEV-1 pass + D-067 evidence-tier decision (JEV-6). |
+| JEV-4 | Research | open | EXP-JEV-3: OCR confirm-queue ordering simulation on OCREvalHarness corpora (J-04). Most product-adjacent increment; waits for JEV-1 per agenda. |
+| JEV-5 | Decide | open | EXP-JEV-5: doctrine §7 zero-egress amendment draft (opt-in egress lane, disclosure, dark-session exclusion). Owner call, informed by JEV-1/JEV-2. |
+| JEV-6 | Decide | open | D-067 evidence-tier amendment: define `asserted-by-calibrated-model(confidence, model-version, prompt-version)` as a recorded-but-not-proof tier. Gates J-01 (agent lane) / J-02 (receipt risk column) promotion. |
+| JEV-NOT | Note | closed | **Recorded verdict: Jev does not help the snappiness criticals.** PERF-S01/S02 are deterministic code defects. The hot-path decision seams (FreezePanePresetMatcher.match, AdaptiveCommandPolicy.resolve, ContentRouter.route) are Choice-primitive candidates ONLY after PERF-S caching lands — a 70-500ms network judgment inside a body eval would worsen finding 1. Shadow-first if ever pursued. |
+
 
 ## Carried-over open items (from the archived 2026-08-25 inventory)
 
@@ -163,12 +247,12 @@ Discovered by the 2026-08-25/26 audits; statuses re-verified 2026-09-06 in
 | A-8 | Portability: remove machine-local paths (28 Swift test paths + 14 mjs; `#filePath`-derived `AcroFormExternalEngines.projectRoot`; `/opt/homebrew/bin` hardcodes); document `Tests/pdf-python.mjs` fallback; stamp pdf-lib version | implicit | Open |
 | A-9 | AppModel decomposition + module-rename evaluation (behavior-preserving, gated on green build) | implicit | Open — see epistemic audit §9 item 6 (X6) |
 | A-10 | Termination probe relocation out of production binary; dead-code disposition for XFAFormProcessor/PDFBatchProcessor (re-verify parallel-lane wiring before acting) | implicit | Open |
-| A-11 | **P7.G1**: route `PdfController.exportCopy` through `pdf-contract-mutation-gate.mjs` + preflight (currently bypasses the canonical gate) | implicit | **Open — highest priority gate** |
+| A-11 | **P7.G1**: route `PdfController.exportCopy` through `pdf-contract-mutation-gate.mjs` + preflight (currently bypasses the canonical gate) | implicit | **Implemented-source 2026-09-18 (T2)**: React lane now imports the canonical gate; `exportCopy` runs `assertExportableContract` with digest binding + per-page rotation facts before any pdf-lib usage; all three op-creation paths stamp `sourceDigest`+`bounds`+crop-space coordinates at creation; `web/operation-history.d.mts` + new `web/pdf-contract-mutation-gate.d.mts` carry the canonical types. Typecheck clean, `npm run build` green, gate tests pass. Remainder (P7.G1 completion): preflight reports (`sourcePreflight`/`expectedPreflightTransitions`) not yet passed from the React lane — app.js parity gap, fold into A-12; browser-driven export test (S2/T3) absent — named next check. |
 | A-12 | **P7.G2a–c**: port vault/session/recovery UI, template domain UI, profiles/completion to React | implicit | Open |
 | A-13 | **P7.G2d–G5**: reader completeness features; interaction parity dispositions | implicit | Open |
 | A-14 | **P7.G3**: retarget ~35 legacy-coupled browser tests to React bundle; accessibility gate on React markup | implicit | Open |
 | A-15 | **P7.G4**: `deploy-web.mjs` prebuilt-dist mode | implicit | Deployer half **completed 2026-09-01** (`--prebuilt` + `tools/smoke-dist.mjs`; evidence: `audits/prebuilt-dist-deploy-evidence-2026-09-01.md`); test repointing left to A-14 |
-| A-16 | **P7.G6**: actual sunset deletion of app.js + legacy DOM — only after G1–G5 evidence green | implicit | Blocked on A-11…A-14 |
+| A-16 | **P7.G6**: actual sunset deletion of app.js + legacy DOM — only after G1–G5 evidence green | implicit | Blocked on A-11…A-14. **2026-09-18 supersession finding (audit):** app.js (5,743 lines) is the editor of record and the repo's *only* implementation of session/draft persistence (IndexedDB `sessions` store keyed by sourceDigest, `web/app.js:441-533`), static-candidate detection pipeline, preflight integration, and the source-preserving export lane — the React lane has none of these. Deletion before porting those capabilities would destroy them. Salvage order: draft persistence → React first (this is audit IMP-1), then candidates/preflight (A-12/A-13 scope). X4 retirement-timing decision should explicitly sequence the port before any deletion. |
 
 ## Execution order
 

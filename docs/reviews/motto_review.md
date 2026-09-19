@@ -2,119 +2,119 @@
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
 - SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-15T16:58:19Z
+- Generated: 2026-09-16T18:23:13Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
 
 - Label: §0 Start from live truth
 - Reviewed: True
-- Evidence: Live tree verified before commit: calibration-gate fix c2eb7fa committed locally and unpushed (origin at 4aef84a); /tmp/push_cal.out and CI logs re-read; disk at 12G free with no ENOSPC this round.
+- Evidence: Live tree re-inspected 2026-09-16 23:47 IST after a 33-hour session gap (machine slept mid-gate, killing the previous push chain): 3 commits verified ahead of origin, codex lane edits to Sources/PDFEditorApp/PDFEditorAppIntents.swift and Tests/PDFEditorCoreTests/AdvancedCoreCapabilitiesTests.swift classified, zero untracked files.
 
 ## SECTION_00_INTEGRATED
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: raises the shared heavy-test semaphore acquire bound above the longest legitimate hold (Marker benchmark 330-530s) now that the confirm lane also contends, unblocking the push of the calibration-gate repair whose own pre-push gate failed solely on this timeout; no assertion or production changes; both pending commits verified locally; RG-135 remains fail-closed owner work.
+- Evidence: Integrated audit of this diff: lands the codex lane's MAD-I1 remediation (intents now drive real PDFSanitizer/TableExtractor/DocumentDiff engines with truthful outputs, verified 6/6 by new workflow tests), refreshes four gate-evidence JSONs from legitimate runs, and carries the context-pack regen — all inside the owner-ordered commit protocol, with the only remaining known red (RG-135 0/38) being fail-closed owner work rather than code.
 
 ## SECTION_1
 
 - Label: §1 Outcomes and retained value
 - Reviewed: True
-- Evidence: Outcome: unblocks the push of the calibration-gate repair so /Users/pranay/Projects/pdf_editor main returns green; retains the serialisation guarantees all three heavy suites rely on.
+- Evidence: Commit lands the lane's MAD-I1 progress (dishonest App Intents stubs wired to real PDFSanitizer/TableExtractor pipelines) plus refreshed gate-report evidence — direct value against the buyer-trust criticals from docs/audits/macos-app-design-skill-audit-2026-09-11.md.
 
 ## SECTION_10
 
 - Label: §10 Parallel work and contested state
 - Reviewed: True
-- Evidence: Contention math from observed runs: the OCR Companion suite holds/reacquires the /pdf-editor-heavy semaphore continuously across its 74-minute run (4462.6s Observed in /tmp/pdf-editor-swift-test-last.log), so the confirm-lane e2e waiter hit the 600s bound at 602.3s; any fixed bound below a full suite duration fails under this contention pattern — 5400s covers a full suite plus margin in all three lock copies.
+- Evidence: Parallel state: codex lane edits in Sources/PDFEditorApp/PDFEditorAppIntents.swift preserved intact; previous push chain death diagnosed as machine sleep mid-gate (no orphaned swift-test processes remain — verified via ps).
 
 ## SECTION_11
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Deadline constant 600s to 5400s in Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift, Tests/PDFEditorCoreTests/OCRConfirmLaneTests.swift, Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift; each file's comment records the observed evidence chain (330-530s single hold, then 74-minute suite hold chain).
+- Evidence: No production behavior change from me this diff; lane changes verified by build + 6/6 new tests; gate reports are test-run outputs with fresh timestamps.
 
 ## SECTION_12
 
 - Label: §12 AI output boundary
 - Reviewed: True
-- Evidence: The bound raise in Tests/PDFEditorAppRecoveryTests/RecoveryCrashInterruptionTests.swift and the other two lock copies is grounded in observed hold times from gh run logs, not optimism; a leaked lock still fails closed with the documented remediation message.
+- Evidence: MAD-001 honesty gap directly reduced: SanitizePDFIntent/ExtractTableCSVIntent now call real engines and report real outcomes (including failure strings) instead of unconditional success strings; ComparePDFVersionsIntent wiring checked in the diff as well.
 
 ## SECTION_13
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: Operator reality: a timeout firing behind legitimate work is an unactionable false failure; the 600s bound in Tests/PDFEditorCoreTests/OCRCompanionBenchmarkTests.swift removes the false timeout while the failure message still names leak remediation.
+- Evidence: Claim reality: the Shortcuts sanitation flow in Sources/PDFEditorApp/PDFEditorAppIntents.swift now writes a real sanitized file and reports truthful per-check counts and failure strings, closing the buyer-trust violation documented in docs/audits/macos-app-design-skill-audit-2026-09-11.md MAD-001.
 
 ## SECTION_14
 
 - Label: §14 Documentation and decisions
 - Reviewed: True
-- Evidence: docs/flaky-register.md is the durable record for this flake class; the commit message and comments cite it with the 2026-09-12 bounded-acquire provenance.
+- Evidence: Durable records refreshed in the same flow: benchmark/results/ gate JSONs (acroform-parity, control-viewer, human-review, raster-blend) carry fresh run timestamps; docs/context/agent-start/ regenerated by the pre-commit hook per its design.
 
 ## SECTION_15
 
 - Label: §15 Completion contract
 - Reviewed: True
-- Evidence: Completion report will state files changed, commands with outcomes recorded under /tmp/, Tier 2 evidence, remaining risks (RG-135 fail-closed by design needs owner review of 38 fixtures; disk at 12G free), and uncommitted work.
+- Evidence: Completion report will state the four queued commits at /Users/pranay/Projects/pdf_editor, commands with outcomes (build 0.3s, AdvancedCoreCapabilitiesTests 6/6), the ~75-minute local gate expectation, RG-135 fail-closed owner work, and disk headroom.
 
 ## SECTION_16
 
 - Label: §16 Specialist doctrine routing
 - Reviewed: True
-- Evidence: TESTING_DOCTRINE routing for the flake/serialization decision; RELEASE_READINESS_DOCTRINE was applied for the earlier council verdict; routing unchanged.
+- Evidence: TESTING_DOCTRINE from /Users/pranay/Projects/agent-start/doctrines/ governed the targeted pre-commit verification; RELEASE_READINESS_DOCTRINE governed the gate-semantics assessment earlier this session; routes unchanged for this landing.
 
 ## SECTION_17
 
 - Label: §17 Propagation contract
 - Reviewed: True
-- Evidence: Instruction stack re-checked this session; OPERATING_DOCTRINE.md SHA ff848618... attested in the commit trailers per /Users/pranay/AGENTS.md order.
+- Evidence: Instruction stack order followed this session (/Users/pranay/AGENTS.md, /Users/pranay/Projects/AGENTS.md, OPERATING_DOCTRINE.md, RELEASE_READINESS_DOCTRINE.md); attestation SHA matches the trailer.
 
 ## SECTION_2
 
 - Label: §2 Truth taxonomy
 - Reviewed: True
-- Evidence: Claims labeled: Marker hold 330-530s = Observed in run logs; Code=3 timeout in /tmp/push_cal.out = Observed; 600s adequacy = Inferred from max observed hold plus margin, with the bound still fail-closed.
+- Evidence: Commit message labels: MAD-I1 wiring Observed in diff (real sanitizer/extractor calls with output writes), gate report JSONs are regenerated evidence refreshes, context pack regenerated by pre-commit hook.
 
 ## SECTION_3
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2: swift build green at 260s with the 5400s bound; the 600s bound's insufficiency is Observed in /tmp/pdf-editor-swift-test-last.log (Code=3 at 602.296s wait, immediately after the OCR Companion suite's 4462s hold chain).
+- Evidence: Verified Tier 2 pre-commit: swift build green (0.3s incremental), AdvancedCoreCapabilitiesTests 6/6 pass covering the new TableExtractor-CSV and DocumentDiff workflows; full swift test gate runs on push.
 
 ## SECTION_4
 
 - Label: §4 Authorization and side effects
 - Reviewed: True
-- Evidence: Owner authorized commit protocol with full hook/gate and push earlier in this conversation and said continue after each failure; this commit continues that same named scope.
+- Evidence: Authorization: owner's standing instruction in this conversation (update gitignore, git add -A, commit with full hook/gate and push) reaffirmed this turn; L3 git mutations covered; no external gates touched.
 
 ## SECTION_5
 
 - Label: §5 Canonical paths and ownership
 - Reviewed: True
-- Evidence: No new canonical paths created; the semaphore lock helper remains the established per-file pattern in Tests/PDFEditorCoreTests/ and Tests/PDFEditorAppRecoveryTests/ (consolidation into one shared helper is ledgered follow-up since the targets differ).
+- Evidence: No new routes/stores/pipelines; the lane wired intents to existing canonical engines (Sources/PDFEditorCore PDFSanitizer, TableExtractor, ImprovedTextExtractor) rather than duplicating them.
 
 ## SECTION_6
 
 - Label: §6 Semantic salvage and supersession
 - Reviewed: True
-- Evidence: The three lock copies in Tests/PDFEditorCoreTests/ and Tests/PDFEditorAppRecoveryTests/ stay semantically identical; only the deadline constant and its justification comment change, preserving each file's provenance notes.
+- Evidence: Stub retirement in Sources/PDFEditorApp/PDFEditorAppIntents.swift: the fake success strings are superseded by real PDFSanitizer/TableExtractor/ImprovedTextExtractor calls, with Tests/PDFEditorCoreTests/AdvancedCoreCapabilitiesTests.swift pinning the new behavior.
 
 ## SECTION_7
 
 - Label: §7 Capability routing
 - Reviewed: True
-- Evidence: Diagnosis routed through gh run logs for .github/workflows/ci.yml plus local reproduction; no capability mismatch required rerouting.
+- Evidence: Routing used the repo's own gates plus gh run evidence at .github/workflows/ci.yml; council-orchestrator and RELEASE_READINESS_DOCTRINE carried the earlier verdict work this session.
 
 ## SECTION_8
 
 - Label: §8 Skills lifecycle
 - Reviewed: True
-- Evidence: mimosa plugin at /Users/pranay/.zcode/cli/plugins/cache/zcode-plugins-official/mimosa/ and council-orchestrator were used earlier this session per their SKILL.md protocols; this commit uses only the repo's own gates.
+- Evidence: Skills unchanged this round; mimosa-security-scan protocol (start/status/seal) was followed earlier in the session per /Users/pranay/.zcode/cli/plugins/cache/zcode-plugins-official/mimosa/ skill doc.
 
 ## SECTION_9
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: Findings recorded in commit message and comments with citations: /tmp/push_cal.out Code=3, Marker hold 330-530s Observed in run 34893161466 logs, docs/flaky-register.md precedent for the bounded-acquire design.
+- Evidence: Durable knowledge preserved: docs/audits/macos-app-design-skill-audit-2026-09-11.md tracks MAD-001 which this diff remediates; gate evidence JSONs under benchmark/results/ refreshed from real runs.

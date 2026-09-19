@@ -441,6 +441,11 @@ struct PDFEditorApp: App {
         }
         .defaultSize(width: 680, height: 520)
 
+        Window("Northstar Help", id: "northstar-help") {
+            NorthstarHelpView()
+        }
+        .defaultSize(width: 720, height: 620)
+
         Settings {
             SettingsView()
         }

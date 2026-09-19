@@ -97,3 +97,58 @@ kernel-persistent stall, not a test defect.
 2026-09-12 entry already fail-closes the related lock path). Suite run completed
 green after remediation: 24/24 companion across provider-batched runs,
 184/184 suites total.
+
+## 2026-09-18 — CI cold-runner manifestation: flat acquire bound too small on origin/main; bound made environment-scaled
+
+**Suite:** `OCRConfirmLaneTests` (4 tests, 367s each), CI run 35323352649,
+Swift-test leg.
+
+**Symptom:** on scheduled CI, four confirm-lane tests failed at ~367s with the
+bounded-acquire Code=3 diagnostic. Locally the same suite passed in 40s.
+
+**Mechanism:** origin/main still carries the original **300s** acquire bound
+(the 600s/5400s raises are among 4 local commits not yet pushed). Under
+full-suite parallel dispatch on a cold runner, a legitimate holder's critical
+section (child startup, first-build extraction) stretched past 300s and the
+fail-closed bound fired — the diagnostic did its job (named cause +
+remediation) but the bound itself did not fit the environment. The error
+message also hardcoded "300s" regardless of the actual bound — a stale-text
+bug that made CI logs claim a bound that no longer existed in the code.
+
+**Fix (2026-09-18):** the acquire bound is now **environment-scaled** in all
+three `SharedHeavyTestResourceLock` copies (OCRConfirmLaneTests,
+OCRCompanionBenchmarkTests, RecoveryCrashInterruptionTests):
+explicit `PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND` (seconds) → CI
+(`GITHUB_ACTIONS`/`XCODE_ACTION`) 5400s (no operator can remediate a leak
+mid-run; must cover the ~74-minute serialized benchmark suite, 4440s observed)
+→ local default 600s (operator can remediate; exceeds the 301.8s worst
+observed contention). The fail-closed message now reports the actual scaled
+bound and names the override.
+
+**Verification:** suite green (8/8, 40.6s) after leak remediation; mutation
+proof — an external process held the semaphore and the test failed closed in
+1.9s under `PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND=1`, message naming the
+override; `RecoveryCrashInterruptionTests` 4/4 on the same build.
+
+**Diagnostic rule (extends 2026-09-12):** a Code=3 acquire failure reports its
+own effective bound — if the environment did not set the override, reconcile
+the reported bound with the expected default for that environment before
+suspecting a leaked lock.
+
+**CI enforcement of the scaled design (2026-09-18, same day):** a fail-fast
+`Semaphore wiring proof` step now runs in the `swift-gate` job immediately
+after `Swift test` on every push/PR. Two legs prove the wiring on a cold
+runner with `PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND=30`:
+(1) semaphore free → lock-using `chartVsScanRejects` acquires and passes
+(also warms the build for leg 2); (2) a background Python holder takes the
+semaphore with a raw `sem_wait`, and the same lock-using test must FAIL
+CLOSED within the 30s bound with the Code=3 "not acquired within"
+diagnostic — a hang or a false pass fails the step with `::error::`. Catches
+reintroduced unbounded spin, ignored/flat bound, override-parsing
+regressions, and diagnostic-message drift in ~35s. Verified end-to-end
+locally from the exact extracted workflow script: positive leg pass (34.3s
+real OCR), negative leg fail-closed at 30.014s, cleanup `sem_unlink` rc=0.
+Runs only after a green `Swift test` (sequential, deliberate: the proof
+needs a buildable tree).
+
+| 2026-09-18 | `Tests/toolbar_visual_regression_test.mjs` | Failed standalone with "Screenshot matches baseline at 320px (diff: 100.00%)" — byte-equality comparison against Aug-26 baselines (message template was also inverted: said "matches" while asserting on mismatch) | **Harness design + stale baselines**: `channel:"chrome"` had been re-applied, but comparison was still `Buffer.equals` on PNG bytes; a Chrome update re-encodes identical pixels into different bytes → false 100% diff | **FIXED 2026-09-18 (P6.8)**: new dependency-free PNG perceptual pixel diff `tools/png-pixel-diff.mjs` (zlib decode, 8-bit non-interlaced RGB/RGBA, per-channel tolerance 8, dimension-mismatch detection) wired into the test; baselines refreshed via `UPDATE_BASELINES=1` from the current tree; inverted message template fixed. Green ×2 consecutive standalone (35/35 checks each) | web lane |

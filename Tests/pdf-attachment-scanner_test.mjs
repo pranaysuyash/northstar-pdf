@@ -11,7 +11,12 @@ import { execFileSync } from "node:child_process";
 import { scanAttachments, assertAttachmentsSafe } from "../web/pdf-attachment-scanner.mjs";
 import { pdfPython } from "./pdf-python.mjs";
 
-const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
+// Source path derived from this file's location — runner-portable (a
+// hardcoded /Users/... path only ever resolved on the owner's machine).
+const SRC = path.join(
+  path.resolve(new URL("..", import.meta.url).pathname),
+  "benchmark/results/public-sample-form.pdf"
+);
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "att-"));
 const corpusPath = path.join(tmpDir, "attachment-corpus.pdf");
 

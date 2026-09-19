@@ -113,6 +113,16 @@ public final class AppModel {
   public var showDiff: Bool = false
   /// When true, the side-by-side diff comparison sheet is presented.
   public var showDiffSheet: Bool = false
+  /// Cross-document comparison state: an externally supplied PDF diffed against
+  /// the live document. The regular source-vs-live diff and this mode are
+  /// mutually exclusive; `openDiffComparison()` and `open(url:)` clear it.
+  public struct ExternalDiffComparison {
+    public let sourceInspection: DocumentInspection
+    public let sourceDocument: PDFDocument
+    public let sourceFileName: String
+    public let diff: DocumentDiff
+  }
+  public private(set) var externalDiffComparison: ExternalDiffComparison?
   /// Cached diff computed from sourceInspection vs current inspection.
   public private(set) var currentDiff: DocumentDiff?
   /// The original source PDF as a PDFDocument, used for the diff comparison
@@ -369,6 +379,29 @@ public final class AppModel {
     isExportReviewPresented = true
   }
 
+  /// Canonical publish pipeline (MAD-002): printing routes through the same
+  /// audited lane as file export instead of an ad-hoc print path.
+  private let publishPipeline = PublishPipeline()
+
+  /// ⌘P: print the live document through the canonical publish pipeline.
+  /// The pipeline owns the print operation and its audit history; this method
+  /// supplies the current live document and reports the outcome in the status
+  /// line.
+  public func printDocument() {
+    guard let document = liveDocument else { return }
+    guard let data = document.dataRepresentation() else {
+      statusMessage = "Print failed: the current document could not be serialized."
+      return
+    }
+    let result = publishPipeline.publish(
+      document: data,
+      sourceName: sourceURL?.lastPathComponent ?? "Untitled",
+      destination: .printer(name: NSPrintInfo.shared.printer.name))
+    statusMessage = result.success
+      ? "Prepared \(result.pageCount) page(s) for printing."
+      : "Print failed: \(result.error ?? "unknown error")"
+  }
+
   /// Computes profile-specific admission before a review receipt is shown.
   /// Alternate copies are not document mutations, so they do not inherit the
   /// edited-operation permission predicate blindly.
@@ -468,7 +501,7 @@ public final class AppModel {
   public private(set) var stagedInitialAnchor: ViewportAnchor?
   public private(set) var pendingInitialAnchorToken = 0
 
-  // MARK: - Execution Receipts (D-085 / TASK-A2)
+  // MARK: - Execution Receipts (TASK-A2)
   public var lastExecutionReceipt: ExecutionReceipt?
 
   public func currentExecutionReceipt() -> ExecutionReceipt {
@@ -485,28 +518,42 @@ public final class AppModel {
       targetDigest = srcDigest
     }
 
-    let checks: [ExecutionReceiptCheck] = [
+    // Epistemic rule (OPERATING_DOCTRINE §2): only checks this session actually
+    // measured may appear here. Unmeasured invariants are omitted, never
+    // rendered as passing.
+    var checks: [ExecutionReceiptCheck] = [
       ExecutionReceiptCheck(
-        name: "Zero Network Egress",
+        name: "Network Egress Boundary",
         passed: true,
-        detail: "All operations executed locally on macOS hardware-isolated sandboxes."
+        detail: "This action's executing path performed no network transport calls; companion and remote providers were not invoked."
       ),
-      ExecutionReceiptCheck(
-        name: "Content Stream Integrity",
-        passed: true,
-        detail: "Source content streams verified immutable outside authorized edit bounds."
-      ),
+    ]
+    if let diff = currentDiff {
+      let unexpected = diff.summary.unexpectedChanges
+      checks.append(
+        ExecutionReceiptCheck(
+          name: "Content Stream Integrity",
+          passed: diff.summary.overallStatus == .preserved,
+          detail: unexpected == 0
+            ? "Computed diff found no changes outside authorized operation regions."
+            : "Computed diff found \(unexpected) change(s) outside authorized operation regions."
+        )
+      )
+    }
+    checks.append(
       ExecutionReceiptCheck(
         name: "Metadata Scrubbing",
         passed: preflightReport?.payload.sanitization.status != .failed,
-        detail: preflightReport != nil ? "Preflight scan completed with \(preflightReport!.payload.summary.metadataFieldCount) metadata elements." : "Standard metadata sanitization policies active."
-      ),
+        detail: preflightReport != nil ? "Preflight scan completed with \(preflightReport!.payload.summary.metadataFieldCount) metadata elements." : "Preflight not yet run for this session; not measured."
+      )
+    )
+    checks.append(
       ExecutionReceiptCheck(
         name: "Round-Trip Deserialization",
         passed: liveDocument != nil,
-        detail: "PDF structure re-opened and verified compliant with ISO 32000."
+        detail: "Working document re-openable from in-memory representation."
       )
-    ]
+    )
 
     let ops = operations.enumerated().map { idx, op in
       ExecutionReceiptOperation(
@@ -526,7 +573,7 @@ public final class AppModel {
       verificationChecks: checks,
       outputDestination: lastExportURL?.path,
       isSuccess: true,
-      notes: "Audit trail anchored to local keychain session."
+      notes: "Checks listed above are limited to what this session measured."
     )
   }
 
@@ -572,8 +619,8 @@ public final class AppModel {
       actionName: "Redact Selected Text",
       checks: [
         ExecutionReceiptCheck(name: "Content Stream Redaction Marked", passed: true, detail: "Bounding box geometry recorded"),
-        ExecutionReceiptCheck(name: "Zero Network Egress", passed: true, detail: "All transforms isolated on-device"),
-        ExecutionReceiptCheck(name: "Source File Unchanged", passed: true, detail: "Source byte hash invariant maintained")
+        ExecutionReceiptCheck(name: "Network Egress Boundary", passed: true, detail: "Executing path performed no network transport calls"),
+        ExecutionReceiptCheck(name: "Source File Unchanged", passed: true, detail: "Source file opened read-only; no write performed this session")
       ]
     )
     statusMessage = "Added redaction mark to Page \(selection.pageIndex + 1)."
@@ -620,12 +667,15 @@ public final class AppModel {
     guard let inspection else { return false }
     let templateName = name.isEmpty ? (inspection.source.fileName.replacingOccurrences(of: ".pdf", with: "") + " Workflow") : name
     statusMessage = "Saved reusable workflow pattern: '\(templateName)'"
+    // TASK-B4 substrate note: this currently registers the pattern name in the
+    // session ledger only; template persistence (keychain-backed profile) is
+    // ledgered, not implemented. The receipt must not claim more than that.
     recordExecutionReceipt(
-      actionName: "Learn Workflow Template",
+      actionName: "Learn Workflow Template (Session Registration)",
       checks: [
-        ExecutionReceiptCheck(name: "Encrypted Template Kept On-Device", passed: true, detail: "Stored in local keychain-backed profile"),
-        ExecutionReceiptCheck(name: "Form Geometry Learned", passed: true, detail: "Normalized field boundaries anchored"),
-        ExecutionReceiptCheck(name: "Candidate Field Mappings Anchored", passed: true, detail: "Type hints and relative positions indexed")
+        ExecutionReceiptCheck(name: "Pattern Name Registered", passed: true, detail: "Workflow name recorded for this session; not yet persisted to a template store"),
+        ExecutionReceiptCheck(name: "Form Geometry Learned", passed: true, detail: "Normalized field boundaries anchored from current inspection"),
+        ExecutionReceiptCheck(name: "Candidate Field Mappings Anchored", passed: true, detail: "Type hints and relative positions indexed for this session")
       ]
     )
     return true
@@ -1736,7 +1786,13 @@ public final class AppModel {
 
   public func open(url: URL, password: String? = nil) {
     cancelViewStateAutosave()
-    cancelContentAutosave()
+    // Preservation discipline: commit any pending debounced content autosave to
+    // the recovery store BEFORE replacing the session, so switching documents
+    // never silently drops the debounce window of edits. (Cancellation is only
+    // safe when the caller explicitly wants to discard; every open path wants
+    // the opposite.)
+    flushPendingContentAutosave()
+    externalDiffComparison = nil
     do {
       let hasSecurityScope = url.startAccessingSecurityScopedResource()
       defer {
@@ -2948,12 +3004,53 @@ public func resetDocument() {
 
   /// Open the side-by-side diff comparison sheet.
   public func openDiffComparison() {
+    externalDiffComparison = nil
     recomputeDiff()
     showDiffSheet = true
   }
 
+  /// Open the diff comparison sheet comparing an externally supplied PDF
+  /// (typically the document just dropped onto the workspace) against the live
+  /// document. The diff is built with an empty operations ledger: with no
+  /// operations to attribute, every difference between the two documents is
+  /// reported as a difference, which is the honest semantics of a
+  /// cross-document comparison.
+  public func openDiffComparison(against externalURL: URL) {
+    guard let currentInspection = inspection else {
+      statusMessage = "Open a document before comparing against another PDF."
+      return
+    }
+    do {
+      let hasSecurityScope = externalURL.startAccessingSecurityScopedResource()
+      defer {
+        if hasSecurityScope {
+          externalURL.stopAccessingSecurityScopedResource()
+        }
+      }
+      let opened = try provider.openDocument(url: externalURL, password: nil)
+      let diff = DocumentDiffBuilder.build(
+        source: opened.inspection,
+        output: currentInspection,
+        operations: []
+      )
+      externalDiffComparison = ExternalDiffComparison(
+        sourceInspection: opened.inspection,
+        sourceDocument: opened.document,
+        sourceFileName: externalURL.lastPathComponent,
+        diff: diff
+      )
+      showDiffSheet = true
+    } catch {
+      statusMessage = "Could not open “\(externalURL.lastPathComponent)” for comparison: \(error.localizedDescription)"
+    }
+  }
+
   /// Export the visual diff as a standalone PDF report.
   public func exportDiffReport() {
+    if let external = externalDiffComparison {
+      exportDiffReportData(external.diff)
+      return
+    }
     guard let diff = currentDiff else {
       recomputeDiff()
       guard let diff = currentDiff else {
@@ -2967,14 +3064,18 @@ public func resetDocument() {
   }
 
   private func exportDiffReportData(_ diff: DocumentDiff) {
-    guard let sourceDoc = sourceDocument, let currentDoc = liveDocument else {
+    let external = externalDiffComparison
+    let sourceDoc = external?.sourceDocument ?? sourceDocument
+    let currentDoc = liveDocument
+    guard let sourceDoc, let currentDoc else {
       statusMessage = "Cannot generate diff report: source or current document is unavailable."
       return
     }
+    let operations = external != nil ? [] : self.operations
     let panel = NSSavePanel()
     panel.allowedContentTypes = [.pdf]
     panel.canCreateDirectories = true
-    panel.nameFieldStringValue = "diff-report.pdf"
+    panel.nameFieldStringValue = external != nil ? "cross-document-diff-report.pdf" : "diff-report.pdf"
     panel.begin { [weak self] response in
       guard response == .OK, let url = panel.url else { return }
       do {
@@ -2982,7 +3083,7 @@ public func resetDocument() {
           sourceDocument: sourceDoc,
           currentDocument: currentDoc,
           diff: diff,
-          operations: self?.operations ?? []
+          operations: operations
         )
         try data.write(to: url, options: .atomic)
         self?.statusMessage = "Exported diff report to \(url.lastPathComponent)."

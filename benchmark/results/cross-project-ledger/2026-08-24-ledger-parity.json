@@ -129,7 +129,7 @@
       "projectID": "extracted-forms",
       "sourcePath": "/Users/pranay/Projects/extracted_forms/OPERATING_DOCTRINE.md",
       "kind": "file",
-      "sha256": "93dc8e76f2c264898cd5adaa3ccd3bbd045275b653696460bc32ed5064479823"
+      "sha256": "ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a"
     },
     {
       "entryID": "CP-006",
@@ -153,8 +153,7 @@
       {
         "sourceFixture": "benchmark/results/public-sample-form.pdf",
         "mismatchCount": 0,
-        "mismatchKinds": [],
-        "allowedOpenMismatchKinds": []
+        "mismatchKinds": []
       },
       {
         "sourceFixture": "benchmark/results/navigation-corpus/navigation-metadata.pdf",

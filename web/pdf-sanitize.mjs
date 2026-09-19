@@ -15,6 +15,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { pdfPython } from "./pdf-python.mjs";
 
 export function sanitizePdf(srcBuf, opts = {}) {
   const removeMetadata = opts.removeMetadata !== false;
@@ -56,7 +57,7 @@ export function sanitizePdf(srcBuf, opts = {}) {
         "if '/Metadata' in p.Root: del p.Root['/Metadata']",
         "p.save(sys.argv[2])",
       ].join("\n");
-      execFileSync("python3", ["-c", py, outP, metaP], { stdio: "pipe" });
+      execFileSync(pdfPython, ["-c", py, outP, metaP], { stdio: "pipe" });
       finalP = metaP;
     }
     return fs.readFileSync(finalP);

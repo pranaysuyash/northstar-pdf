@@ -21,16 +21,16 @@ responsive breakpoints actually render — not how they look in code.
 
 ## How to View
 
-From the project root:
+From the project root (canonical web preview route, port 8090):
 
 ```bash
-python3 -m http.server 4173 --bind 127.0.0.1
+node Tests/serve-web.mjs
 ```
 
 Then open:
-- http://127.0.0.1:4173/web/typography-specimen.html
-- http://127.0.0.1:4173/web/typography-regression.html
-- http://127.0.0.1:4173/web/color-palette-specimen.html
+- http://127.0.0.1:8090/typography-specimen.html
+- http://127.0.0.1:8090/typography-regression.html
+- http://127.0.0.1:8090/color-palette-specimen.html
 
 All pages are self-contained (inline CSS/JS) and work without a build step.
 

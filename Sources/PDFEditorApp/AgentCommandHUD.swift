@@ -887,9 +887,9 @@ public struct AgentCommandHUD: View {
               detail: "\(outcomes.count) step(s) verified and applied."
             ),
             ExecutionReceiptCheck(
-              name: "Local Zero-Egress Boundary",
+              name: "Network Egress Boundary",
               passed: true,
-              detail: "Executed entirely on-device without remote calls."
+              detail: "Executed by the local governed plan executor; no network transport calls in this action's path."
             )
           ]
         )

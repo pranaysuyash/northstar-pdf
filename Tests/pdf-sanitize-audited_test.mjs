@@ -11,7 +11,12 @@ import { sanitizePdfAudited, SanitizeAuditError } from "../web/pdf-sanitize-audi
 import { incrementalFieldUpdate, readSourceXref } from "../web/pdf-incremental-form-writer.mjs";
 import { pdfPython } from "./pdf-python.mjs";
 
-const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
+// Source path derived from this file's location — runner-portable (a
+// hardcoded /Users/... path only ever resolved on the owner's machine).
+const SRC = path.join(
+  path.resolve(new URL("..", import.meta.url).pathname),
+  "benchmark/results/public-sample-form.pdf"
+);
 const srcBuf = fs.readFileSync(SRC);
 
 // --- Clean source: sanitize passes without ceremony ------------------------

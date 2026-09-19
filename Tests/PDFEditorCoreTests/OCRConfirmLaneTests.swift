@@ -257,14 +257,30 @@ private enum SharedHeavyTestResourceLock {
         userInfo: [NSLocalizedDescriptionKey: "Could not open heavy test resource semaphore"]
       )
     }
-    // 600s: the longest legitimate holder is the Marker full benchmark
-    // (Observed 330-530s); a 300s bound expired behind legitimate holders
-    // once three suites contended here (Observed 2026-09-15, Code=3 in the
-    // PDFKit full-benchmark test). Raised to 5400s (2026-09-15, second
-    // failure): the benchmark suite holds/reacquires the lock continuously
-    // for its whole ~74-minute run, so the bound must cover a full suite
-    // plus margin. Leaked-lock detection stays fail-closed at 90 minutes.
-    let acquireDeadline = Date().addingTimeInterval(5400)
+    // Environment-scaled acquire bound (2026-09-18): the right bound is the
+    // longest legitimate hold the invoking environment can produce, while a
+    // leaked kernel semaphore still fails closed fast enough to diagnose.
+    // History: 300s (2026-09-12) expired behind legitimate holds (Code=3 at
+    // 301.8s, flaky-register 2026-09-15 chunkA2; CI run 35323352649 failed 4
+    // confirm-lane tests at 367s on a cold runner — origin/main still carries
+    // the 300s bound); 600s expired behind the OCR benchmark suite's whole
+    // run (Code=3 at 602s); 5400s covers the ~74-minute serialized benchmark
+    // suite (4440s) plus margin. On CI no operator can remediate a leak
+    // mid-run, so the bound is the full 5400s there; locally 600s keeps
+    // leak-discovery latency bounded (fresh runners cannot inherit a leak —
+    // the leak mechanism needs a killed holder in the same kernel). An
+    // explicit PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND (seconds) overrides
+    // both, per the project's PDF_EDITOR_* env convention.
+    let acquireBoundSeconds: TimeInterval = {
+      if let raw = ProcessInfo.processInfo.environment["PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND"],
+         let parsed = Double(raw), parsed > 0 {
+        return parsed
+      }
+      let env = ProcessInfo.processInfo.environment
+      let onCI = env["GITHUB_ACTIONS"] == "true" || env["XCODE_ACTION"] == "true"
+      return onCI ? 5400 : 600
+    }()
+    let acquireDeadline = Date().addingTimeInterval(acquireBoundSeconds)
     var acquired = false
     while !acquired {
       if sem_trywait(semaphore) == 0 {
@@ -281,7 +297,7 @@ private enum SharedHeavyTestResourceLock {
       throw NSError(
         domain: "PDFEditorCoreTests",
         code: 3,
-        userInfo: [NSLocalizedDescriptionKey: "Heavy test resource semaphore '\(name)' not acquired within 300s. Known cause (flaky-register 2026-09-12): a previous run holding the lock was killed, leaking the kernel-persistent named semaphore. Remediate with: pkill -f swiftpm-testing-helper (confirm orphans first), then sem_unlink('\(name)') — the next sem_open(O_CREAT) recreates it."]
+        userInfo: [NSLocalizedDescriptionKey: "Heavy test resource semaphore '\(name)' not acquired within \(Int(acquireBoundSeconds))s (environment-scaled: 600s locally, 5400s on CI; override with PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND). Known cause (flaky-register 2026-09-12): a previous run holding the lock was killed, leaking the kernel-persistent named semaphore. Remediate with: pkill -f swiftpm-testing-helper (confirm orphans first), then sem_unlink('\(name)') — the next sem_open(O_CREAT) recreates it."]
       )
     }
     defer {

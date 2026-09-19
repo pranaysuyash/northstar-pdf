@@ -135,6 +135,13 @@ public protocol RenderingPipelineDelegate: AnyObject {
 // MARK: - Rendering Pipeline
 
 /// Unified rendering pipeline that chains Parse → Interpret → Rasterize → Display.
+///
+/// CONCURRENCY STATUS (MDEV-I2 sweep, 2026-09-17): KNOWN MIXED LOCK DISCIPLINE
+/// — do not treat the `@unchecked Sendable` conformance as verified. `lock`
+/// guards some accessors of `documentData`/`documentModel`/`readingPositions`,
+/// but `loadDocument`, the progressive/tile render paths, and text extraction
+/// read or write the same fields unguarded, and `currentState` mixes MainActor
+/// writes with a locked reader. Remediation is ledgered as MDEV-I6.
 public final class RenderingPipeline: @unchecked Sendable {
   private let config: RenderingPipelineConfig
   private let parser: HybridPDFParser

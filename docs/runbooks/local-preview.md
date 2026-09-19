@@ -32,11 +32,13 @@ not a test to weaken.
 swift run PDFEditor
 ```
 
-In another terminal, launch the local web companion:
+In another terminal, launch the local web companion (canonical route —
+`Tests/serve-web.mjs` on port 8090; the old `python3 -m http.server 4173`
+default is retired because 4173 is frequently hijacked by unrelated Vite apps):
 
 ```bash
-python3 -m http.server 4173 --bind 127.0.0.1
-open http://127.0.0.1:4173/web/
+node Tests/serve-web.mjs
+open http://127.0.0.1:8090/
 ```
 
 The browser workflow is intentionally local and air-gapped. It loads the
@@ -48,9 +50,9 @@ PDF.
 After any typography, color, spacing, or layout change, open the living specimen
 pages to visually verify the tokens:
 
-- http://127.0.0.1:4173/web/typography-specimen.html — type scale, weights, font stacks
-- http://127.0.0.1:4173/web/typography-regression.html — responsive viewport widths
-- http://127.0.0.1:4173/web/color-palette-specimen.html — all oklch tokens, WCAG contrast pairs
+- http://127.0.0.1:8090/typography-specimen.html — type scale, weights, font stacks
+- http://127.0.0.1:8090/typography-regression.html — responsive viewport widths
+- http://127.0.0.1:8090/color-palette-specimen.html — all oklch tokens, WCAG contrast pairs
 
 See [`docs/design-system-specimen.md`](../design-system-specimen.md) for details.
 

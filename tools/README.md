@@ -134,3 +134,69 @@ node tools/airgap-watch.mjs --exec ./app --allow api.example.com:443
 ```
 
 Verdict is in the JSON report (`verdict: PASS|FAIL`); exit code mirrors it.
+
+## `parity-settlement-classify.mjs` — netting-feasibility measurement
+
+Round-3 (R3-15) measurement instrument over native/web semantic-parity
+reports. Classifies every fixture into settlement classes (exact-agree,
+classified-variance, dispute, malformed-agree, never-run, unclassified) and
+answers whether the parity state is a dispute backlog (netting pays off) or
+open measurement scope (netting settles an empty set). Measurement only — no
+gate authority (D-055). Run before any ParitySettlementReport reducer build.
+
+```bash
+node tools/parity-settlement-classify.mjs \
+  --report benchmark/results/preflight-parity-2026-08-25/parity-report.json \
+  --out benchmark/results/parity-settlement/classification-2026-09-17.json
+```
+
+Unit tests: `Tests/parity_settlement_classification_test.mjs` (pure functions,
+synthetic fixtures).
+
+## `export-form-class-ledger.mjs` — public form-class ledger generator
+
+Round-3 presale branch (R3-29/R3-25 step 1): renders gate evidence as the
+public ledger page — corpus-fixture human-visual status plus the certified
+form-class section (honestly empty until a D-055 decision, cohort fixtures,
+and human review exist). Every row carries source-report path + SHA-256 so
+the page is traceable to the reports it renders. Disclosure only.
+
+```bash
+node tools/export-form-class-ledger.mjs \
+  --human-report benchmark/results/human-visual-confirmation/human-review-gate-report.json
+# writes docs/public/form_class_ledger.json + docs/public/ledger.html
+```
+
+## `register-lifecycle-check.mjs` — exploration-pool register validator
+
+Closes the adhd skill's persistence step 8: validates the pool ledger's
+register lifecycle — unique IDs per round, status vocabulary, explicit
+promote/revisit conditions on every parked-conditional row, pointers on
+graduated rows, header coverage vs. actual round sections. Run before
+claiming any divergent-round work done.
+
+```bash
+node tools/register-lifecycle-check.mjs
+# exit 0 = register clean; 1 = violations listed; 2 = usage/input error
+```
+
+## `png-pixel-diff.mjs` — dependency-free PNG perceptual pixel diff
+
+Node-side visual regression support (landed 2026-09-18 for the toolbar
+flaky-register fix): decodes 8-bit non-interlaced PNG (RGB/RGBA) with
+node:zlib — no pixelmatch/pngjs dependency, air-gap friendly — and compares
+actual pixels with a per-channel tolerance instead of PNG byte equality,
+which Chrome updates flip to false 100% diffs. Reports
+`identical | dimension-mismatch | undecodable | diffPercent` (fraction of
+pixels exceeding tolerance) so tests can assert against a human-meaningful
+tolerance (e.g. 2%).
+
+```js
+import { pixelDiff } from "../tools/png-pixel-diff.mjs";
+const { diffPercent, detail } = pixelDiff(baselineBytes, currentBytes);
+```
+
+Consumed by `Tests/toolbar_visual_regression_test.mjs` (baselines refresh
+with `UPDATE_BASELINES=1` after an intentional toolbar change, never to mask
+a regression). Reuse it for any new screenshot-regression test instead of
+`Buffer.equals` on PNG bytes.

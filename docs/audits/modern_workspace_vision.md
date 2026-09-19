@@ -1,5 +1,12 @@
 # Northstar — Modern Spatial Workspace Vision & Blueprint
 
+> **Status (2026-09-17, per D-083):** aspiration blueprint (T0) — an owner-directed design
+> proposition. Not status authority (D-055: task state lives in `docs/task-inventory.md`, gate
+> state in `docs/release-gates.md`) and not evidence of shipped state. The pillars proceed as
+> D-083's **parallel styling track**: styling on existing surfaces, each shipping only with
+> MAD-R1/R2 accessibility and human-visual gate evidence. The agentic spine is governed by
+> D-078 + D-083's slice sequence (NM-T41…NM-T45), not by this document.
+
 > **Mission:** Transform Northstar from a cramped, 20-year-old utility PDF reader into a modern, calm, spatial document workbench. The start/welcome workspace already embodies this clean, contemporary ethos; this document codifies how that same breathing room, physical presence, visual hierarchy, and tactile affordance extends across the active document canvas, inspector, and navigation surfaces.
 
 ---
@@ -80,7 +87,7 @@ Transform the technical inspector into a calm, context-aware companion:
   - **Reader:** Study/review layouts, typography options, and reading modes.
   - **Review:** Provenance evidence, sanitization audit trail, and signature attestation.
 * **Tactile Tool Tiles:** Replace flat, gray buttons with modern action tiles featuring distinct icon badges, spring hover micro-interactions, and clear state indicators.
-* **Elevated Metric & Evidence Cards:** Rounded cards (`cornerRadius: 12, .continuous`) with subtle glassmorphic material, clean 14pt typography, and accent-tinted status badges (`EVIDENCE`, `SAFE TO SIGN`, `100% COMPLIANT`).
+* **Elevated Metric & Evidence Cards:** Rounded cards (`cornerRadius: 12, .continuous`) with subtle glassmorphic material, clean 14pt typography, and accent-tinted status badges (`EVIDENCE`, `SAFE TO SIGN`) plus scoped, count-backed check badges (e.g. `7 CHECKS PASSED`) — never absolute-state badges like `100% COMPLIANT` (claim discipline: D-067/PL-I12; council review 2026-09-17).
 
 ### Pillar 4: Visual Filmstrip Rail (Left Panel)
 Make page navigation feel like scrolling through a high-end photography or design studio:
@@ -94,12 +101,12 @@ Make page navigation feel like scrolling through a high-end photography or desig
 
 ---
 
-## 4. Verification & Proof of Resolution
+## 4. Observed Resolution (one-shot capture — not a verification gate)
 
-The rendering fix was implemented and verified with live macOS window captures:
+The rendering fix was implemented and observed with a live macOS window capture on 2026-09-06:
 1. **Pipeline Toggle Disabled:** `usePipelineRendering` was set to `false` in `AppModel.swift:623`, ensuring that `DocumentCanvasView` mounts native `PDFKitView` (`InteractivePDFView`).
 2. **Defensive Layout:** Subview zero-frame traps were eliminated.
-3. **Live Rendering Proof:** When launched with real PDF fixtures (e.g. `plain-text.pdf`), page text ("Heading Two", paragraphs, and formatting) now renders with 100% native vector fidelity.
+3. **Live Rendering Observation:** When launched with real PDF fixtures (e.g. `plain-text.pdf`), page text ("Heading Two", paragraphs, and formatting) rendered through the native PDFKit view in the captured session. This is a one-shot observation — no repeatable fidelity oracle exists; per-fixture fidelity claims remain governed by D-076's `production_ready`/`experimental` tiers. (Previously stated as "100% native vector fidelity" — restated 2026-09-17 per D-067/council claim discipline.)
 
 ![Live Document Canvas Rendering Fixed](screenshots/02_document_rendering_fixed.png)
 

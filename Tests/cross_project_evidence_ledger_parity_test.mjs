@@ -26,7 +26,11 @@ function sha256(filePath) {
 
 function manifestEntries() {
   const contents = fs.readFileSync(manifestPath, "utf8");
-  return [...contents.matchAll(/^\| `([^`]+\.pdf)` \| `([0-9a-f]{64})` \|/gm)].map((match) => ({
+  // The digest cell may carry a trailing provenance note inside the row
+  // (e.g. public-sample-form.pdf's D-054 incident note after the digest),
+  // so the regex must NOT require `|` immediately after the digest — the
+  // old strict form silently dropped that row (17 vs 18 entries).
+  return [...contents.matchAll(/^\| `([^`]+\.pdf)` \| `([0-9a-f]{64})`/gm)].map((match) => ({
     sourceFixture: match[1],
     sourceDigest: match[2]
   }));
@@ -61,7 +65,15 @@ function stopProjectServer(server) {
 function validateLedger(ledger) {
   assert.equal(ledger.ledgerName, "pdf-editor.cross-project-evidence-ledger");
   assert.deepEqual(ledger.ledgerVersion, { major: 1, minor: 0 });
-  assert.equal(ledger.canonicalOwner, "/Users/pranay/Projects/pdf_editor");
+  // Contract: the ledger's canonicalOwner names the repository itself
+  // (basename "pdf_editor"), not an owner-specific absolute prefix — a
+  // hardcoded /Users/pranay/... assertion would only ever hold on one
+  // machine. The governed fixture
+  // (Tests/fixtures/cross_project_evidence_ledger.json) still records the
+  // historical absolute path; migrating that governed data is a separate
+  // decision and is NOT changed silently here, so the assertion compares
+  // the repo identity (basename) rather than the full path.
+  assert.equal(path.basename(ledger.canonicalOwner), "pdf_editor");
   assert.equal(ledger.entries.length, 6);
   const ids = new Set();
   const sourceEvidence = [];
@@ -143,7 +155,7 @@ try {
   await waitForServer(baseURL);
   execFileSync(process.execPath, ["Tests/pdf_contract_parity_test.mjs"], {
     cwd: projectRoot,
-    env: { ...process.env, PDF_PROOF_BASE_URL: baseURL },
+    env: { ...process.env, PDF_EDITOR_BASE_URL: baseURL },
     stdio: "inherit"
   });
   parityReport = readJSON(parityReportPath);

@@ -3,19 +3,24 @@
 // must strip /Info and /Metadata, keep the file re-openable, and pass qpdf.
 import assert from "node:assert";
 import fs from "node:fs";
+import path from "node:path";
 import { execFileSync, spawnSync } from "node:child_process";
 import { sanitizePdf } from "../web/pdf-sanitize.mjs";
 import { pdfPython } from "./pdf-python.mjs";
 
-const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
+// Paths derived from this file's location — runner-portable (a hardcoded
+// /Users/... path only ever resolved on the owner's machine).
+const projectRoot = path.resolve(new URL("..", import.meta.url).pathname);
+const SRC = path.join(projectRoot, "benchmark/results/public-sample-form.pdf");
 const srcBuf = fs.readFileSync(SRC);
 
 const out = sanitizePdf(srcBuf, {});
 assert.ok(out.length > 0, "sanitized output is non-empty");
 
 // Re-read the sanitized bytes via a temp file (pikepdf needs a path).
-fs.mkdirSync("/Users/pranay/Projects/pdf_editor/tmp", { recursive: true });
-const tmp = "/Users/pranay/Projects/pdf_editor/tmp/sanitized-out.pdf";
+const projectTmp = path.join(projectRoot, "tmp");
+fs.mkdirSync(projectTmp, { recursive: true });
+const tmp = path.join(projectTmp, "sanitized-out.pdf");
 fs.writeFileSync(tmp, out);
 
 const check = (() => {

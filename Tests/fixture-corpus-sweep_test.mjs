@@ -13,7 +13,10 @@ import { detectSignatures } from "../web/pdf-signature-guard.mjs";
 import { detectXfa } from "../web/pdf-xfa-guard.mjs";
 import { pdfPython } from "./pdf-python.mjs";
 
-const ROOT = "/Users/pranay/Projects/pdf_editor";
+// Repo root derived from this file's location — runner-portable (same
+// convention as pdf_object_preservation_test.mjs; a hardcoded /Users/...
+// path only ever resolved on the owner's machine).
+const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
 const OUT = path.join(ROOT, "benchmark/results/corpus-sweep-2026-08-25");
 const BASE = path.join(ROOT, "benchmark/results/public-sample-form.pdf");
 

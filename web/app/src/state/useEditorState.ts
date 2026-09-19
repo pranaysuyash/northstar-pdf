@@ -120,13 +120,22 @@ export function useEditorState() {
   }, []);
 
   const handleConfirmEdit = useCallback((field: NativeField, value: string) => {
-    dispatchSession({
-      type: "edit-field",
-      fieldID: field.id,
-      pageIndex: field.pageIndex,
-      value,
-      previousValue: field.value
-    });
+    // Operations are bound to the inspected source digest and the page's
+    // effective crop-space rotation at creation time — the mutation gate
+    // proves that binding at export.
+    void (async () => {
+      const rotationDegrees = await pdfController.getEffectiveRotation(field.pageIndex + 1);
+      dispatchSession({
+        type: "edit-field",
+        fieldID: field.id,
+        pageIndex: field.pageIndex,
+        value,
+        previousValue: field.value,
+        sourceDigest: pdfController.sourceDigest,
+        rect: field.rect,
+        rotationDegrees
+      });
+    })();
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -146,7 +155,10 @@ export function useEditorState() {
           targetID: op.targetID,
           pageIndex: op.pageIndex,
           value: op.value,
-          previousValue: op.previousValue
+          previousValue: op.previousValue,
+          sourceDigest: op.sourceDigest as string,
+          bounds: op.bounds as Rect,
+          coordinate: op.coordinate as PdfEditOperation["coordinate"]
         });
       }
     }
@@ -168,22 +180,27 @@ export function useEditorState() {
   }, [dispatch, session.exporting, history]);
 
   const handleAutofillProfile = useCallback(() => {
-    const updates: AutofillUpdate[] = [];
-    for (const field of session.fields) {
-      const lower = field.name.toLowerCase();
-      for (const [key, value] of Object.entries(SAMPLE_PROFILE)) {
-        if (lower.includes(key) && field.value !== value) {
-          updates.push({
-            targetID: field.id,
-            pageIndex: field.pageIndex,
-            previousValue: field.value,
-            value
-          });
-          break;
+    void (async () => {
+      const updates: AutofillUpdate[] = [];
+      for (const field of session.fields) {
+        const lower = field.name.toLowerCase();
+        for (const [key, value] of Object.entries(SAMPLE_PROFILE)) {
+          if (lower.includes(key) && field.value !== value) {
+            updates.push({
+              targetID: field.id,
+              pageIndex: field.pageIndex,
+              previousValue: field.value,
+              value,
+              sourceDigest: pdfController.sourceDigest,
+              rect: field.rect,
+              rotationDegrees: await pdfController.getEffectiveRotation(field.pageIndex + 1)
+            });
+            break;
+          }
         }
       }
-    }
-    dispatchSession({ type: "autofill-applied", updates });
+      dispatchSession({ type: "autofill-applied", updates });
+    })();
   }, [session.fields]);
 
   const handleRunOCR = useCallback(() => {
@@ -214,13 +231,20 @@ export function useEditorState() {
       const current = pendingPlacementRef.current;
       if (!current) return;
       setPendingPlacement(null);
-      dispatchSession({
-        type: "placement-confirmed",
-        targetID: `overlay-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        pageIndex: current.pageIndex,
-        value,
-        rect: current.rect
-      });
+      // Overlay operations are bound to digest + effective rotation like
+      // field edits, so the mutation gate can verify them at export.
+      void (async () => {
+        const rotationDegrees = await pdfController.getEffectiveRotation(current.pageIndex + 1);
+        dispatchSession({
+          type: "placement-confirmed",
+          targetID: `overlay-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          pageIndex: current.pageIndex,
+          value,
+          rect: current.rect,
+          sourceDigest: pdfController.sourceDigest,
+          rotationDegrees
+        });
+      })();
     },
     []
   );

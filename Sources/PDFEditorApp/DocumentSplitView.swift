@@ -69,6 +69,7 @@ public final class SplitViewState: ObservableObject {
 /// Two-pane split view for side-by-side document viewing.
 public struct DocumentSplitView: View {
   @ObservedObject var state: SplitViewState
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
   let document: PDFDocument?
   let onNavigate: (Int) -> Void
 
@@ -195,7 +196,7 @@ public struct DocumentSplitView: View {
       .help(state.isSynchronized ? "Panes are synchronized" : "Panes navigate independently")
 
       Button {
-        withAnimation {
+        withAnimation(reduceMotion ? nil : .default) {
           state.splitDirection = state.splitDirection == .horizontal ? .vertical : .horizontal
         }
       } label: {

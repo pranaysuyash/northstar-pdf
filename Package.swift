@@ -64,7 +64,14 @@ let package = Package(
 
     targets: [
         .target(
-            name: "PDFEditorCore"
+            name: "PDFEditorCore",
+            resources: [
+                // Canonical operating-envelope artifact (cohort datasheet): shipped
+                // with the app so envelope claims are versioned and auditable the
+                // same way gate reports are. Single source of truth — the JSON is
+                // canonical; code never hard-codes envelope values.
+                .copy("Resources/operating-envelope.json")
+            ]
         ),
         .target(
             name: "PDFEditorRecovery",

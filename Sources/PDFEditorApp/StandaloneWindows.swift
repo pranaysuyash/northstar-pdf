@@ -55,10 +55,10 @@ public struct GovernanceSettingsTab: View {
       }
 
       Section {
-        LabeledContent("Execution Route", value: "Strictly On-Device (Apple Silicon ANE)")
-        LabeledContent("Network Egress", value: "Zero Egress Mode (Active)")
+        LabeledContent("Execution Route", value: "On-Device (Apple PDFKit / optional Metal pipeline)")
+        LabeledContent("Network Egress", value: "Remote transports disabled by default (EgressGate)")
         LabeledContent("Source Protection", value: "Original Files Read-Only / Never Overwritten")
-        LabeledContent("Audit Ledger", value: "Cryptographically Verified SHA-256 Receipts")
+        LabeledContent("Audit Ledger", value: "SHA-256 Source/Target Identity Receipts")
       } header: {
         Text("Invariants")
       }

@@ -20,15 +20,24 @@ export interface HistoryOperation {
   readonly pageIndex: number;
   readonly value: string;
   readonly previousValue: string;
+  /** SHA-256 of the inspected source this operation is bound to. */
+  readonly sourceDigest: string;
+  /** Writer bounds; the mutation gate requires bounds === coordinate.rect. */
+  readonly bounds: { x: number; y: number; width: number; height: number };
   readonly sequence: number;
   readonly confirmedAt: string;
   readonly undoneBy?: number;
   readonly undoes?: number;
   /** Provider-shaped authorization rectangle for coordinate-bearing operations. */
-  readonly coordinate?: {
+  readonly coordinate: {
     pageIndex: number;
     rect: { x: number; y: number; width: number; height: number };
-    coordinateSpace?: { unit?: string; origin?: string; pageBox?: string };
+    coordinateSpace: {
+      unit: "points";
+      origin: "lowerLeft";
+      pageBox: "crop";
+      rotationDegrees: number;
+    };
   };
 }
 

@@ -314,11 +314,15 @@ struct RuleRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Severity indicator
-            Circle()
-                .fill(rule.severity == .critical ? .red : rule.severity == .warning ? .orange : .blue)
-                .frame(width: 10, height: 10)
-            
+            // Severity indicator: icon shape + color so state is never encoded
+            // by color alone (MAD-013).
+            Image(systemName: rule.severity == .critical
+                ? "exclamationmark.octagon.fill"
+                : rule.severity == .warning ? "exclamationmark.triangle.fill" : "info.circle.fill")
+                .foregroundStyle(rule.severity == .critical ? Color.red : rule.severity == .warning ? Color.orange : Color.blue)
+                .font(.caption)
+                .accessibilityLabel("Severity: \(rule.severity == .critical ? "critical" : rule.severity == .warning ? "warning" : "informational")")
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(rule.name)
                     .font(.body)
@@ -356,11 +360,15 @@ struct ViolationRowView: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Severity indicator
-            Circle()
-                .fill(violation.severity == .critical ? .red : violation.severity == .warning ? .orange : .blue)
-                .frame(width: 10, height: 10)
-            
+            // Severity indicator: icon shape + color so state is never encoded
+            // by color alone (MAD-013).
+            Image(systemName: violation.severity == .critical
+                ? "exclamationmark.octagon.fill"
+                : violation.severity == .warning ? "exclamationmark.triangle.fill" : "info.circle.fill")
+                .foregroundStyle(violation.severity == .critical ? Color.red : violation.severity == .warning ? Color.orange : Color.blue)
+                .font(.caption)
+                .accessibilityLabel("Severity: \(violation.severity == .critical ? "critical" : violation.severity == .warning ? "warning" : "informational")")
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(violation.ruleName)
                     .font(.body)

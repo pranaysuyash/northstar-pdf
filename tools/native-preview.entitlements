@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!--
+  Northstar sandbox entitlements (staged, opt-in — see
+  docs/research/sandbox-entitlements-plan-2026-09-17.md).
+
+  Sign with: PDF_EDITOR_ENABLE_SANDBOX=1 tools/build-native-preview-app.sh
+  Minimal set per the sandbox doctrine: every grant is tied to an
+  already-shipped app capability. No network entitlements exist by design
+  (zero-egress product; a network grant would contradict the core story).
+-->
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- Open/save panels and App Intent output written beside the source PDF. -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<!-- Recent-document identity across launches (bookmark-backed recents). -->
+	<key>com.apple.security.files.bookmarks.app-scope</key>
+	<true/>
+	<!-- File ▸ Print… / publish-to-printer lane. -->
+	<key>com.apple.security.print</key>
+	<true/>
+</dict>
+</plist>

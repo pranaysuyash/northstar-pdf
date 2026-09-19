@@ -6,6 +6,10 @@ import {
   proposeOverlayBounds,
   valuesMatch
 } from "../../../pdf-write-planning.mjs";
+import {
+  assertExportableContract,
+  ContractMutationError
+} from "../../../pdf-contract-mutation-gate.mjs";
 import { ensurePdfLib } from "./ensurePdfLib";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -82,6 +86,15 @@ async function sha256Hex(bytes: Uint8Array): Promise<string> {
  * independent impact validator. Shape-compatible with the contract module's
  * history entries plus the coordinate rectangle the validator authorizes.
  */
+/** Coordinate space the browser writer admits: PDF points, lower-left
+ * origin, crop-box page space, bound to the page's effective rotation. */
+export interface OperationCoordinateSpace {
+  unit: "points";
+  origin: "lowerLeft";
+  pageBox: "crop";
+  rotationDegrees: number;
+}
+
 export interface PdfEditOperation {
   id: string;
   kind: "nativeFieldValue" | "overlayText";
@@ -89,11 +102,15 @@ export interface PdfEditOperation {
   pageIndex: number;
   value: string;
   previousValue: string;
+  /** SHA-256 of the inspected source this operation is bound to. */
+  sourceDigest: string;
+  /** Writer bounds; the gate requires bounds === coordinate.rect. */
+  bounds: Rect;
   payload?: { kind?: string; options?: string[] };
-  coordinate?: {
+  coordinate: {
     pageIndex: number;
     rect: Rect;
-    coordinateSpace?: { unit?: string; origin?: string; pageBox?: string };
+    coordinateSpace: OperationCoordinateSpace;
   };
 }
 
@@ -624,6 +641,35 @@ export class PdfController {
     });
   }
 
+  /** Digest of the currently inspected source, for binding new operations. */
+  get sourceDigest(): string {
+    return this.#sourceDigest;
+  }
+
+  /**
+   * Effective page rotation in degrees (source /Rotate plus the session
+   * rotate delta), normalized to 0..359. Operation coordinates are bound to
+   * this space at creation time so the mutation gate can prove they still
+   * match the inspected page contract at export.
+   */
+  async getEffectiveRotation(pageNumber: number): Promise<number> {
+    if (!this.#doc) return 0;
+    const page = await this.#doc.getPage(pageNumber).catch(() => null);
+    if (!page) return 0;
+    const rotation = ((page.rotate || 0) + this.#snapshot.rotation) % 360;
+    return ((rotation % 360) + 360) % 360;
+  }
+
+  /** Per-page facts for the mutation-gate contract (0-based page index). */
+  async #pageCoordinateFacts(): Promise<{ pageIndex: number; rotation: number }[]> {
+    if (!this.#doc) return [];
+    const facts: { pageIndex: number; rotation: number }[] = [];
+    for (let n = 1; n <= this.#doc.numPages; n++) {
+      facts.push({ pageIndex: n - 1, rotation: await this.getEffectiveRotation(n) });
+    }
+    return facts;
+  }
+
   /**
    * Produces a new PDF copy with confirmed operations replayed through
    * pdf-lib, then validates it in the independent PDF.js lane before any
@@ -649,37 +695,28 @@ export class PdfController {
 
     if (!this.#sourceBytes) throw new Error("No source document is open.");
 
-    // G1: Mutation-gate preflight — validate operations against the canonical contract
-    // before any pdf-lib usage. Reject early if the contract is violated.
+    // G1: Canonical mutation-gate preflight. Every operation must satisfy the
+    // browser export contract — digest binding, admitted kinds, crop-space
+    // coordinates matching the inspected page contract — before any pdf-lib
+    // usage. A rejected contract yields a failed report; nothing downloads.
     try {
-      const { ok } = await assertExportableContract({
+      assertExportableContract({
         currentSourceDigest: this.#sourceDigest,
         operations,
+        pageCoordinates: await this.#pageCoordinateFacts()
       });
-      if (!ok) {
-        checks.push({
-          id: "mutationGate",
-          kind: "failed",
-          detail: "Operations failed canonical contract validation."
-        });
-        const passed = checks.every((c) => c.status !== "failed");
-        if (!passed) {
-          triggerDownload(new Uint8Array(), exportFileName());
-          return { checks, passed };
+    } catch (error) {
+      if (!(error instanceof ContractMutationError)) throw error;
+      check(
+        "mutationGate",
+        "failed",
+        `Export rejected by the canonical mutation gate: ${error.message}`,
+        {
+          codes: error.issues.map((issue) => issue.code),
+          operationIDs: error.operationIDs
         }
-      }
-    } catch (e) {
-      // Gate rejected via throw (ContractMutationError).
-      checks.push({
-        id: "mutationGate",
-        kind: "failed",
-        detail: e instanceof Error ? e.message : String(e)
-      });
-      const passed = checks.every((c) => c.status !== "failed");
-      if (!passed) {
-        triggerDownload(new Uint8Array(), exportFileName());
-        return { checks, passed };
-      }
+      );
+      return { checks, passed: false };
     }
 
     // Encrypted sources stay write-refused; only byte-preserving copies pass.

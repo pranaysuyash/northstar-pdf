@@ -49,6 +49,11 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
   public let outputDestination: String?
   public let isSuccess: Bool
   public let notes: String?
+  /// Ed25519 signature over this receipt's canonical encoding, when the
+  /// receipt was issued by a signing authority. Nil means explicitly unsigned
+  /// — the receipt's provenance is then its producing path, and no consumer
+  /// may render it as cryptographically verified. See `ReceiptSigning.swift`.
+  public let signature: Data?
 
   public init(
     id: UUID = UUID(),
@@ -62,7 +67,8 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
     verificationChecks: [ExecutionReceiptCheck] = [],
     outputDestination: String? = nil,
     isSuccess: Bool = true,
-    notes: String? = nil
+    notes: String? = nil,
+    signature: Data? = nil
   ) {
     self.id = id
     self.actionName = actionName
@@ -76,7 +82,13 @@ public struct ExecutionReceipt: Identifiable, Codable, Equatable, Hashable, Send
     self.outputDestination = outputDestination
     self.isSuccess = isSuccess
     self.notes = notes
+    self.signature = signature
   }
+
+  /// Observed fact: whether this receipt carries a signature. Rendering of any
+  /// "verified" claim must branch on this — an unsigned receipt must never be
+  /// described as cryptographically verified.
+  public var isSigned: Bool { signature != nil }
 
   /// Formats the execution receipt as a structured plain-text audit record.
   public func exportAsPlainText() -> String {

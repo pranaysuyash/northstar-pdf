@@ -15,6 +15,7 @@ read them for method and findings history only.
 
 | Date | Audit | Title | Status |
 |---|---|---|---|
+| 2026-09-19 | [swiftui-performance-audit-2026-09-19.md](swiftui-performance-audit-2026-09-19.md) | SwiftUI Performance Audit: runtime snappiness pass over the native shell — 12 confirmed findings (2 critical: body-time pdf_oxide spawn in ContentView, per-scroll-tick main-thread I/O storm), latent unwired-path hazards, code-backed | current |
 | 2026-09-11 | [macos-app-design-skill-audit-2026-09-11.md](macos-app-design-skill-audit-2026-09-11.md) | macOS App Design Skill Audit: Mac-citizenship pass over the native shell with MAD-001..018 findings and implement/research/decision task ledger | current |
 | 2026-09-06 | [epistemic-integrity-audit-per-0922-2026-09-06.md](epistemic-integrity-audit-per-0922-2026-09-06.md) | Epistemic Integrity Audit — Full Repository (PER-0922): claim-vs-enforcement, reproducibility, doc-truth drift, full task ledger + implementation plan | current |
 | 2026-08-24 | [application-security-audit-per-pdev-0167.md](application-security-audit-per-pdev-0167.md) | Application Security & Threat Model Audit | current |

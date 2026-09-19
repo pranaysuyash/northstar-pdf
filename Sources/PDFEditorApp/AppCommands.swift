@@ -30,6 +30,7 @@ private enum PDFEditorCommand: Hashable {
     case openDocument
     case closeWindow
     case exportCopy
+    case printDocument
     case savePinnedLayout
     case clearPinnedLayout
     case undo
@@ -88,6 +89,8 @@ private struct PDFEditorCommandRouter {
             return model != nil
         case .closeWindow:
             return model != nil && windowController?.window != nil
+        case .printDocument:
+            return model?.liveDocument != nil
         case .savePinnedLayout, .clearPinnedLayout:
             return model?.liveDocument != nil
         case .exportCopy, .undo, .redo, .find:
@@ -181,6 +184,8 @@ private struct PDFEditorCommandRouter {
             withCloseConfirmation(model: model, windowController: windowController)
         case .exportCopy:
             model?.presentExportReview()
+        case .printDocument:
+            model?.printDocument()
         case .savePinnedLayout:
             model?.savePinnedLayout()
         case .clearPinnedLayout:
@@ -345,7 +350,17 @@ struct AppCommands: Commands {
         )
     }
 
+    // Decomposed into @CommandsBuilder properties: a single monolithic body
+    // grew past the SwiftUI type-checker's comfort threshold ("extra argument
+    // in call" on a previously valid CommandGroup call).
     var body: some Commands {
+        documentCommands
+        formReviewAndHelp
+        viewAndWindowCommands
+    }
+
+    @CommandsBuilder
+    private var documentCommands: some Commands {
         CommandGroup(replacing: .newItem) {
             Button("New Document") {
                 router.perform(.newDocument)
@@ -397,6 +412,19 @@ Button("Append PDF Pages...") {
             }
             .keyboardShortcut("w", modifiers: .command)
             .disabled(!router.isEnabled(.closeWindow))
+        }
+
+        // Real print path (MAD-002): replaces the default .printItem, which
+        // sent an unhandled responder-chain print and silently did nothing.
+        // Routes through AppModel into the PublishPipeline so printing uses
+        // the same audited publish lane as file export.
+        CommandGroup(replacing: .printItem) {
+            Button("Print…") {
+                router.perform(.printDocument)
+            }
+            .keyboardShortcut("p", modifiers: .command)
+            .disabled(!router.isEnabled(.printDocument))
+            .help("Print the current document with the standard print dialog.")
         }
 
         CommandGroup(after: .saveItem) {
@@ -458,22 +486,6 @@ Button("Append PDF Pages...") {
         }
 
         CommandGroup(after: .textEditing) {
-            Button("Confirm Field") {
-                router.perform(.confirmField)
-            }
-            .keyboardShortcut(.return, modifiers: .command)
-            .disabled(!router.isEnabled(.confirmField))
-            .help("Confirm the selected field suggestion.")
-
-            Button("Reject Field") {
-                router.perform(.rejectField)
-            }
-            .keyboardShortcut(.delete, modifiers: .command)
-            .disabled(!router.isEnabled(.rejectField))
-            .help("Dismiss the selected field suggestion.")
-
-            Divider()
-
             Button("Find...") {
                 router.perform(.find)
                 searchFocusEvent?.wrappedValue += 1
@@ -539,6 +551,7 @@ Button("Append PDF Pages...") {
                 Button("Actual Size") {
                     router.perform(.actualSize)
                 }
+                .keyboardShortcut("0", modifiers: .command)
                 .disabled(!router.isEnabled(.actualSize))
 
                 Button("Fit Page") {
@@ -620,7 +633,41 @@ Button("Append PDF Pages...") {
             .keyboardShortcut("d", modifiers: [.command, .option])
             .disabled(!router.isEnabled(.compareDiff))
         }
+    }
 
+    @CommandsBuilder
+    private var formReviewAndHelp: some Commands {
+        // Review-workflow commands live in their own menu rather than Edit,
+        // where users expect the Cut/Copy/Paste family (MAD-011). Reject moves
+        // off ⌘⌫, which collides with "delete to beginning of line" while a
+        // text field has focus.
+        CommandMenu("Form Review") {            Button("Confirm Field") {
+                router.perform(.confirmField)
+            }
+            .keyboardShortcut(.return, modifiers: .command)
+            .disabled(!router.isEnabled(.confirmField))
+            .help("Confirm the selected field suggestion.")
+
+            Button("Reject Field") {
+                router.perform(.rejectField)
+            }
+            .keyboardShortcut(.delete, modifiers: [.command, .shift])
+            .disabled(!router.isEnabled(.rejectField))
+            .help("Dismiss the selected field suggestion.")
+        }
+
+        CommandGroup(replacing: .help) {
+            Button("Northstar Help") {
+                openWindow(id: "northstar-help")
+            }
+            .keyboardShortcut("/", modifiers: [.command, .shift])
+            .help("Open the built-in help: export-only model, adaptive commands, palette, vault.")
+        }
+
+    }
+
+    @CommandsBuilder
+    private var viewAndWindowCommands: some Commands {
         CommandGroup(after: .windowArrangement) {
             Button("Bring All to Front") {
                 NSApp.arrangeInFront(nil)

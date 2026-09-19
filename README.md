@@ -59,13 +59,32 @@ export vertical slice on local fixtures. The remaining fidelity, OCR,
 accessibility, signature, XFA, packaging, collaboration, and conversion lanes
 are implementation work still to be completed, not permanent exclusions.
 
+### Slice status as of 2026-09-17 (observed, not a promise)
+
+Beyond the bounded-completion loop above, the native lane now also has: bounded
+native field-value edits on AcroForm documents via a source-preserving
+incremental writer (RG-001; fail-closed with the destination untouched when the
+structure is unsupported), digital-signature status verification on open,
+XFA presence inspection with field extraction on open, PII redaction scanning
+and staging, a review-learning loop that ranks suggestions from accepted
+history, background companion capability negotiation (the app works without
+companions), and a single-parse open path with the privacy preflight computed
+off the main thread. The web preview route is `node Tests/serve-web.mjs`
+(port 8090); the Playwright suite runs via `node Tests/run-web-e2e.mjs` on a
+free port. Final provider activation and release claims remain evidence-gated.
+
 Run both local surfaces:
 
 ```bash
 swift run PDFEditor
-python3 -m http.server 4173 --bind 127.0.0.1
-open http://127.0.0.1:4173/web/
+node Tests/serve-web.mjs
+open http://127.0.0.1:8090/
 ```
+
+(`Tests/serve-web.mjs` on port 8090 is the canonical web preview route; the
+previous `python3 -m http.server 4173` default is retired because port 4173 is
+frequently occupied by unrelated dev servers. The Playwright suite uses
+`node Tests/run-web-e2e.mjs`, which picks a free port automatically.)
 
 The focused browser workflow check is:
 

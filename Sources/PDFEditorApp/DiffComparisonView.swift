@@ -24,6 +24,12 @@ struct DiffComparisonView: View {
   let selectedPageIndex: Int
   let onPageChange: (Int) -> Void
   let onExportReport: () -> Void
+  /// Header title; callers compare either the edited document against its
+  /// source or two distinct documents, and the header must say which.
+  var title: String = "Visual Diff — Original vs Filled"
+  /// Fall-through summary shown when no diff data exists. Must state absence,
+  /// never assert a passing result that was not measured.
+  var emptySummaryText: String = "No diff computed yet."
 
   @State private var pageIndex: Int = 0
   @State private var zoom: CGFloat = 1.0
@@ -57,14 +63,14 @@ struct DiffComparisonView: View {
       }
 
       VStack(alignment: .leading, spacing: 2) {
-        Text("Visual Diff — Original vs Filled")
+        Text(title)
           .font(.headline)
         if let diff {
           Text(diffSummaryText(diff))
             .font(.caption)
             .foregroundStyle(.secondary)
         } else {
-          Text("Preserved non-destructive audit view (0 unexpected mutations)")
+          Text(emptySummaryText)
             .font(.caption)
             .foregroundStyle(.secondary)
         }

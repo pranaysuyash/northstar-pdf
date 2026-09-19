@@ -65,7 +65,7 @@ struct DocumentEvidenceGraphTests {
     #expect(result.answer.contains("Applicant Name"))
     #expect(!result.citations.isEmpty)
     #expect(result.citations.first?.pageIndex == 0)
-    #expect(result.route == .onDeviceNeuralEngine)
+    #expect(result.route == .onDeviceLocal)
   }
 
   @Test("Grounded query returns strict doctrine negative assertion when unsupported")
@@ -78,8 +78,12 @@ struct DocumentEvidenceGraphTests {
 
   @Test("CapabilityRoute verifiable disclosure badge")
   func testCapabilityRouteDisclosures() {
-    let route = CapabilityRoute.onDeviceNeuralEngine
+    let route = CapabilityRoute.onDeviceLocal
     #expect(route.disclosureBadge.contains("On-device"))
-    #expect(route.disclosureBadge.contains("Zero Network Egress"))
+    // Route badges state observed execution scope only; absolute guarantees
+    // ("Zero Network Egress", hardware claims) must never appear (S2: prior
+    // assertion of the absolute claim failed after the claim was scoped).
+    #expect(!route.disclosureBadge.contains("Zero Network Egress"))
+    #expect(!route.disclosureBadge.lowercased().contains("neural engine"))
   }
 }

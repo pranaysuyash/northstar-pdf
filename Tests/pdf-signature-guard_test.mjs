@@ -16,7 +16,12 @@ import {
   validateSignatureIntegrity
 } from "../web/pdf-signature-guard.mjs";
 
-const SRC = "/Users/pranay/Projects/pdf_editor/benchmark/results/public-sample-form.pdf";
+// Source path derived from this file's location — runner-portable (a
+// hardcoded /Users/... path only ever resolved on the owner's machine).
+const SRC = path.join(
+  path.resolve(new URL("..", import.meta.url).pathname),
+  "benchmark/results/public-sample-form.pdf"
+);
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "sig-"));
 const signedPath = path.join(tmpDir, "signed.pdf");
 

@@ -93,6 +93,9 @@ public struct ContentView: View {
   @State private var isCanvasDropTargeted = false
   @State private var droppedDocumentURL: URL?
   @State private var isDropDisambiguationPresented = false
+  /// Staged switch target for the dirty-session approval boundary: non-nil
+  /// while the "switch documents" confirmation dialog is visible.
+  @State private var pendingSwitchDocumentURL: URL?
   // Apple Design §13: haptic trigger tokens
   @State private var hapticNew = UUID()
   @State private var hapticOpen = UUID()
@@ -142,7 +145,6 @@ public struct ContentView: View {
           }
         }
       }
-      // Apple Design §12: translucent toolbar — .ultraThinMaterial on macOS
       .fileImporter(
         isPresented: $model.isImporterPresented,
         allowedContentTypes: [.pdf],
@@ -212,17 +214,33 @@ public struct ContentView: View {
           .transition(.scale(scale: 0.96).combined(with: .opacity))
       }
       .sheet(isPresented: $model.showDiffSheet) {
-        DiffComparisonView(
-          sourceDocument: model.sourceDocument,
-          currentDocument: model.liveDocument,
-          sourceInspection: model.sourceInspection,
-          currentInspection: model.inspection,
-          operations: model.operations,
-          diff: model.currentDiff,
-          selectedPageIndex: model.selectedPageIndex,
-          onPageChange: { model.selectedPageIndex = $0 },
-          onExportReport: { model.exportDiffReport() }
-        )
+        if let external = model.externalDiffComparison {
+          DiffComparisonView(
+            sourceDocument: external.sourceDocument,
+            currentDocument: model.liveDocument,
+            sourceInspection: external.sourceInspection,
+            currentInspection: model.inspection,
+            operations: [],
+            diff: external.diff,
+            selectedPageIndex: model.selectedPageIndex,
+            onPageChange: { model.selectedPageIndex = $0 },
+            onExportReport: { model.exportDiffReport() },
+            title: "Cross-Document Diff — “\(external.sourceFileName)” vs Current",
+            emptySummaryText: "No comparison data available."
+          )
+        } else {
+          DiffComparisonView(
+            sourceDocument: model.sourceDocument,
+            currentDocument: model.liveDocument,
+            sourceInspection: model.sourceInspection,
+            currentInspection: model.inspection,
+            operations: model.operations,
+            diff: model.currentDiff,
+            selectedPageIndex: model.selectedPageIndex,
+            onPageChange: { model.selectedPageIndex = $0 },
+            onExportReport: { model.exportDiffReport() }
+          )
+        }
       }
       .alert(
         "Commit Redactions Permanently?",
@@ -360,7 +378,10 @@ public struct ContentView: View {
           },
           onCompareSideBySide: {
             isDropDisambiguationPresented = false
-            model.openDiffComparison()
+            // Bind the comparison to the dropped document: the diff sheet will
+            // show the dropped PDF against the live document, not the
+            // source-vs-edited diff.
+            model.openDiffComparison(against: droppedURL)
           },
           onAppendPages: {
             isDropDisambiguationPresented = false
@@ -368,7 +389,14 @@ public struct ContentView: View {
           },
           onSwitchDocument: {
             isDropDisambiguationPresented = false
-            model.open(url: droppedURL)
+            if !model.operations.isEmpty {
+              // Approval boundary: unsaved work gets an explicit preserve-first
+              // decision; `open(url:)` flushes pending session recovery before
+              // replacing the document.
+              pendingSwitchDocumentURL = droppedURL
+            } else {
+              model.open(url: droppedURL)
+            }
           },
           onCancel: {
             isDropDisambiguationPresented = false
@@ -376,6 +404,27 @@ public struct ContentView: View {
           }
         )
       }
+    }
+    .confirmationDialog(
+      "Switch Documents with Unsaved Edits?",
+      isPresented: Binding(
+        get: { pendingSwitchDocumentURL != nil },
+        set: { if !$0 { pendingSwitchDocumentURL = nil } }
+      ),
+      titleVisibility: .visible
+    ) {
+      Button("Preserve Work & Switch") {
+        guard let url = pendingSwitchDocumentURL else { return }
+        pendingSwitchDocumentURL = nil
+        model.open(url: url)
+      }
+      Button("Cancel", role: .cancel) {
+        pendingSwitchDocumentURL = nil
+      }
+    } message: {
+      Text(
+        "Your current edits will be committed to session recovery before “\(pendingSwitchDocumentURL?.lastPathComponent ?? "the new document")” opens. This session stays restorable from recovery."
+      )
     }
     .onChange(of: model.selectedPageIndex) { _, _ in model.scheduleViewStateAutosave() }
     .onChange(of: model.selectedFieldID) { _, _ in model.scheduleViewStateAutosave() }
@@ -2407,7 +2456,7 @@ private struct AppearanceSettingsSection: View {
   }
 }
 
-// MARK: - Document Drop Disambiguation Sheet (TASK-A5 / D-086)
+// MARK: - Document Drop Disambiguation Sheet (TASK-A5 / Screen 22 / NM-T13)
 
 struct DocumentDropDisambiguationSheet: View {
   let droppedURL: URL

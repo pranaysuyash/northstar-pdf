@@ -7,6 +7,7 @@ import UniformTypeIdentifiers
 public struct PageThumbnailRailView: View {
   let model: AppModel
   let inspection: DocumentInspection
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
   /// Shared rendering pipeline (owned by ContentView) whose cache this rail
   /// both consumes and warms.
   let renderingPipeline: RenderingPipeline
@@ -95,7 +96,7 @@ public struct PageThumbnailRailView: View {
           }
         }
         .onChange(of: model.selectedPageIndex) { _, newIndex in
-          withAnimation(.easeInOut(duration: 0.25)) {
+          withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
             proxy.scrollTo(newIndex, anchor: .center)
           }
         }

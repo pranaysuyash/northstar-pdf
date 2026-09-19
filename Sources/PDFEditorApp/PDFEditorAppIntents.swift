@@ -4,6 +4,13 @@ import PDFEditorCore
 
 // MARK: - Native macOS App Intents Substrate [TASK-B5]
 
+/// Intents surface failures as real failures so Shortcuts shows them as errors
+/// instead of a green success carrying a failure-shaped message.
+struct NorthstarIntentFailure: LocalizedError {
+  let message: String
+  var errorDescription: String? { message }
+}
+
 @available(macOS 15.0, *)
 public struct SanitizePDFIntent: AppIntent {
   public static var title: LocalizedStringResource { "Sanitize PDF" }
@@ -26,7 +33,7 @@ public struct SanitizePDFIntent: AppIntent {
 
   public func perform() async throws -> some IntentResult & ReturnsValue<String> {
     guard FileManager.default.fileExists(atPath: fileURL.path) else {
-      return .result(value: "Source file not found at \(fileURL.path)")
+      throw NorthstarIntentFailure(message: "Source file not found at \(fileURL.path)")
     }
     do {
       let data = try Data(contentsOf: fileURL)
@@ -38,9 +45,9 @@ public struct SanitizePDFIntent: AppIntent {
       let outputURL = parentDir.appendingPathComponent("\(baseName)-sanitized.\(ext)")
       try sanitizedData.write(to: outputURL, options: .atomic)
       let details = "Stripped XMP: \(report.xmpMetadataStripped), Cleaned Info: \(report.infoDictionaryCleaned), Neutralized Actions: \(report.actionsNeutralized), Removed Attachments: \(report.attachmentsRemoved)"
-      return .result(value: "PDF Sanitized successfully on-device (Zero Network Egress). \(details). Output saved to: \(outputURL.path)")
+      return .result(value: "PDF Sanitized successfully on-device (no remote execution). \(details). Output saved to: \(outputURL.path)")
     } catch {
-      return .result(value: "Sanitization failed: \(error.localizedDescription)")
+      throw NorthstarIntentFailure(message: "Sanitization failed: \(error.localizedDescription)")
     }
   }
 }
@@ -67,7 +74,7 @@ public struct ExtractTableCSVIntent: AppIntent {
 
   public func perform() async throws -> some IntentResult & ReturnsValue<String> {
     guard FileManager.default.fileExists(atPath: fileURL.path) else {
-      return .result(value: "Source file not found at \(fileURL.path)")
+      throw NorthstarIntentFailure(message: "Source file not found at \(fileURL.path)")
     }
     do {
       let data = try Data(contentsOf: fileURL)
@@ -84,7 +91,7 @@ public struct ExtractTableCSVIntent: AppIntent {
       let avgConf = String(format: "%.1f%%", result.averageConfidence * 100)
       return .result(value: "Extracted \(result.totalTables) table(s) across \(result.totalPages) page(s) (Avg confidence: \(avgConf)). CSV exported to: \(outputURL.path)")
     } catch {
-      return .result(value: "Table extraction failed: \(error.localizedDescription)")
+      throw NorthstarIntentFailure(message: "Table extraction failed: \(error.localizedDescription)")
     }
   }
 }
@@ -111,10 +118,10 @@ public struct ComparePDFVersionsIntent: AppIntent {
 
   public func perform() async throws -> some IntentResult & ReturnsValue<String> {
     guard FileManager.default.fileExists(atPath: originalURL.path) else {
-      return .result(value: "Original file not found at \(originalURL.path)")
+      throw NorthstarIntentFailure(message: "Original file not found at \(originalURL.path)")
     }
     guard FileManager.default.fileExists(atPath: modifiedURL.path) else {
-      return .result(value: "Modified file not found at \(modifiedURL.path)")
+      throw NorthstarIntentFailure(message: "Modified file not found at \(modifiedURL.path)")
     }
     do {
       let provider = PDFKitProvider()
@@ -128,7 +135,7 @@ public struct ComparePDFVersionsIntent: AppIntent {
       let summary = diff.summary
       return .result(value: "Diff comparison complete. Pages: \(diff.pageCount), Pages with changes: \(summary.pagesWithChanges), Unexpected changes: \(summary.unexpectedChanges), Matched operations: \(summary.operationRegionsMatched), Overall status: \(summary.overallStatus).")
     } catch {
-      return .result(value: "Diff comparison failed: \(error.localizedDescription)")
+      throw NorthstarIntentFailure(message: "Diff comparison failed: \(error.localizedDescription)")
     }
   }
 }

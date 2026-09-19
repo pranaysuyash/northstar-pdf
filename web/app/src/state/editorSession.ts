@@ -4,7 +4,12 @@ import {
   type HistoryOperation,
   type OperationHistory
 } from "../../../operation-history.mjs";
-import type { ExportReport, NativeField } from "../pdf/PdfController";
+import type {
+  ExportReport,
+  NativeField,
+  OperationCoordinateSpace,
+  Rect
+} from "../pdf/PdfController";
 
 /**
  * Single source of truth for everything tied to the currently open document.
@@ -25,6 +30,18 @@ export interface AutofillUpdate {
   readonly pageIndex: number;
   readonly previousValue: string;
   readonly value: string;
+  /** Digest binding + crop-space proof required by the mutation gate. */
+  readonly sourceDigest: string;
+  readonly rect: Rect;
+  readonly rotationDegrees: number;
+}
+
+/** Coordinate evidence carried by every recorded operation. */
+export interface OperationCoordinate {
+  pageIndex: number;
+  rect: Rect;
+  bounds: Rect;
+  coordinateSpace: OperationCoordinateSpace;
 }
 
 /** Result payload produced by the pure `undoLastOperation` helper. */
@@ -44,6 +61,9 @@ export type EditorSessionAction =
       pageIndex: number;
       value: string;
       previousValue: string;
+      sourceDigest: string;
+      rect: Rect;
+      rotationDegrees: number;
     }
   | { type: "undo-applied"; outcome: UndoOutcome }
   | { type: "autofill-applied"; updates: readonly AutofillUpdate[] }
@@ -56,6 +76,8 @@ export type EditorSessionAction =
       pageIndex: number;
       value: string;
       rect: { x: number; y: number; width: number; height: number };
+      sourceDigest: string;
+      rotationDegrees: number;
     };
 
 export function createEditorSessionState(): EditorSessionState {
@@ -85,6 +107,17 @@ export function editorSessionReducer(
     case "select-field":
       return { ...state, selectedFieldId: action.fieldID };
     case "edit-field": {
+      const coordinate: OperationCoordinate = {
+        pageIndex: action.pageIndex,
+        rect: action.rect,
+        bounds: action.rect,
+        coordinateSpace: {
+          unit: "points",
+          origin: "lowerLeft",
+          pageBox: "crop",
+          rotationDegrees: action.rotationDegrees
+        }
+      };
       return {
         ...state,
         fields: state.fields.map((field) =>
@@ -95,7 +128,10 @@ export function editorSessionReducer(
           targetID: action.fieldID,
           pageIndex: action.pageIndex,
           value: action.value,
-          previousValue: action.previousValue
+          previousValue: action.previousValue,
+          sourceDigest: action.sourceDigest,
+          bounds: action.rect,
+          coordinate
         })
       };
     }
@@ -117,7 +153,19 @@ export function editorSessionReducer(
           targetID: update.targetID,
           pageIndex: update.pageIndex,
           value: update.value,
-          previousValue: update.previousValue
+          previousValue: update.previousValue,
+          sourceDigest: update.sourceDigest,
+          bounds: update.rect,
+          coordinate: {
+            pageIndex: update.pageIndex,
+            rect: update.rect,
+            coordinateSpace: {
+              unit: "points",
+              origin: "lowerLeft",
+              pageBox: "crop",
+              rotationDegrees: update.rotationDegrees
+            }
+          }
         });
       }
       return {
@@ -144,10 +192,17 @@ export function editorSessionReducer(
           pageIndex: action.pageIndex,
           value: action.value,
           previousValue: "",
+          sourceDigest: action.sourceDigest,
+          bounds: action.rect,
           coordinate: {
             pageIndex: action.pageIndex,
             rect: action.rect,
-            coordinateSpace: { unit: "points", origin: "lowerLeft", pageBox: "crop" }
+            coordinateSpace: {
+              unit: "points",
+              origin: "lowerLeft",
+              pageBox: "crop",
+              rotationDegrees: action.rotationDegrees
+            }
           }
         })
       };

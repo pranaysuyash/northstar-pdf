@@ -76,8 +76,8 @@ availability.
 | Inventory AcroForm fields | Yes in current PDFKit lane | Yes with PDF.js inspection or pdf-lib form APIs | `NativeField` | Native fields are higher-confidence than visual candidates |
 | Text fields | Yes | Yes | `FieldValueOperation` | Font embedding, Unicode, appearance streams, multiline and comb settings need corpus tests |
 | Checkboxes | Yes | Yes | `FieldValueOperation` | Preserve export value and appearance state |
-| Radio groups | Conditional | Conditional | `ChoiceValueOperation` | Existing PDFKit public-form benchmark lost radio-choice metadata on no-op save; keep this provider gate visible |
-| Combo boxes and list boxes | Conditional | Conditional | `ChoiceValueOperation` | Preserve option labels, export values, selected index, and appearance |
+| Radio groups | Yes (PDFKit lane measured production-ready 2026-09-06: 16v/0f, conf 1.00; cross-provider parity honestly Mixed — pdf-lib 0.69) | Conditional | `ChoiceValueOperation` | The earlier "radio-choice metadata lost on no-op save" gate row was a phantom: the 2026-09-06 fix (`docs/audits/choice-opt-lane-fix-2026-09-06.md`) root-caused it to the *experiment's* write API (`buttonWidgetState` no-ops on `/Ch` and `/Tx` widgets), not the provider. Choice went 0/12 → 11v/0f production_ready; both regressions and the repair are documented at the write site. |
+| Combo boxes and list boxes | Yes (choice lane measured production-ready 2026-09-06) | Conditional | `ChoiceValueOperation` | Preserve option labels, export values, selected index, and appearance |
 | Signature widgets | Inventory only initially | Inventory only initially | `SignatureField` | A visible signature is not a cryptographic signature |
 | Required-field and format validation | Yes | Yes | `FieldValidationResult` | Use provider metadata plus product-level rules; never infer legal validity |
 | Keyboard field navigation | Yes | Yes | `FieldOrder` | Required for fast completion of long forms |
@@ -101,7 +101,7 @@ This is the product differentiator. It is not the same as reading AcroForm widge
 | Suggest tab order | Yes | Yes | `FieldOrderSuggestion` | Never silently make a guessed order authoritative |
 | Guided “next blank” entry | Yes | Yes | `CompletionSession` | Entering text should be easy; applying it should remain reversible |
 | Create a real native form field from a static region | Later | Later | `CreateFieldOperation` | Separate from overlay fill; needs external-viewer round-trip proof |
-| Learn a reusable template | Designed next | Designed next | `TemplateDefinition` | Privacy-minimized keyed layout fingerprints, explicit reviewed mappings, local value references, and immutable revisions; no silent autofill |
+| Learn a reusable template | Yes (implemented: `TemplateContracts.swift`, `TemplateCaptureContracts.swift`, `TemplateIndexContracts.swift`, `TemplateRuntimeContracts.swift`, `ProfileStore.swift`) | Partial | `TemplateDefinition` | Privacy-minimized keyed layout fingerprints, explicit reviewed mappings, local value references, and immutable revisions; no silent autofill |
 
 ### 4. Bounded editing and markup
 
@@ -178,6 +178,15 @@ The product should promise parity at the intent and safety level, not identical 
 
 ### Native application
 
+*(2026-09-18 status note: this list is the 2026-08-24 surface inventory. The
+product has since grown agent command HUD, governance dashboard, contextual
+inspector, study loop, and companion transport surfaces — see
+`docs/decisions/native-beta-contract-2026-09-01.md` and the D-083 shell
+decision for the current surface authority. Native open-with/recents sim
+defects PL-I29–I32 are ledgered with statuses in `docs/decisions.md` and
+`docs/simulations/RUN-2026-09-10-native-battery.md`: PL-I29/I30/I30b/I32
+fixed + verified, PL-I31 on watch, PL-I36 dissolves with RG-122 signing.)*
+
 - Finder/open-with and recent documents.
 - Large-document reader with thumbnails, search, outline, and page navigator.
 - “Complete form” mode that moves through native fields and reviewed static candidates.
@@ -219,18 +228,34 @@ That is a claim boundary, not a build boundary.
 
 ## Discovery exit criteria
 
+*(2026-09-18 scorecard — the original framing "before the next implementation
+slice is selected" predates 25 days of implementation; each criterion is now
+annotated with its evidence or its open owner.)*
+
 Before the next implementation slice is selected, the project should have:
 
 - a fixed representative corpus: native AcroForms, static text forms, grids/tables, scans, rotated pages, mixed text/image PDFs, malformed/encrypted files, annotations, and signed files;
+  **✓ SATISFIED** — fixture manifests (`docs/fixtures/manifest.md`, `docs/fixtures/detector-calibration-manifest.md`) + 40-fixture parity corpus (`docs/audits/choice-opt-lane-fix-2026-09-06.md`).
 - a provider capability manifest for native and web;
+  **✓ SATISFIED** — code-populated matrix (`CanonicalCapabilityMatrixPopulation.swift`, `docs/native-web-platform-matrix.md`).
 - a license inventory and dependency boundary;
+  **✓ SATISFIED** — `docs/pdf-license-hygiene-sweep-2026-08-25.md`.
 - an operation schema and coordinate transform test;
+  **✓ SATISFIED** — `Tests/rotated_operation_replay_test.mjs`, `Tests/export_page_fact_replay_test.mjs`.
 - a static-region benchmark with reviewed ground truth and abstention metrics;
+  **✓ SATISFIED** — detector calibration + semantic comparison evidence (`docs/audits/detector-hard-negative-calibration-evidence-2026-08-25.md`, `docs/audits/detector-semantic-comparison-evidence-2026-08-25.md`).
 - no-op and bounded-edit preservation tests against at least two independent viewers or renderers;
+  **✓ SATISFIED** — acroform parity gate across PDFKit + pdf-lib + qpdf verifier.
 - a web storage and privacy threat model;
+  **~ PARTIAL** — `docs/web-deployment-decision.md` + browser resource policy cover deployment posture; a dedicated draft-persistence threat model is open (web IndexedDB/OPFS draft cache is not implemented — see 2026-09-18 audit IMP-1).
 - an explicit choice between browser-only, native-only, and companion-backed lanes for OCR and high-fidelity editing.
+  **~ PARTIAL (implicit choice made, never recorded)** — companion lane exists (`CompanionNegotiator.swift`, `CompanionTransport.swift`), native OCR confirm lane exists (`OCRConfirmLane.swift`); the lane decision should be recorded explicitly in `docs/decisions.md` (2026-09-18 audit RES-2).
 
 ## Sources consulted on 2026-08-24
+
+*(External sources retrieved 2026-08-24; links are point-in-time captures and
+were not re-verified as of 2026-09-18. Refresh before relying on a version,
+license posture, or API claim from this list — see 2026-09-18 audit RES-1.)*
 
 - [Apple PDFKit](https://developer.apple.com/documentation/pdfkit)
 - [PDF.js API](https://mozilla.github.io/pdf.js/api/)

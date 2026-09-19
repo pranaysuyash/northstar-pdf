@@ -67,20 +67,19 @@ function createServer() {
 }
 
 // --- Image comparison ---
-function compareImages(bufA, bufB) {
-  // Simple byte-level comparison for now.
-  // For production, use pixelmatch or similar.
-  if (bufA.length !== bufB.length) return false;
-  return bufA.equals(bufB);
-}
+// Perceptual pixel diff (P6.8, flaky-register 2026-08-26): byte-level PNG
+// comparison is engine-sensitive — a Chrome update re-encodes identical
+// pixels and flips the test to a false 100% diff. The tool decodes PNG and
+// compares actual pixels with a small per-channel tolerance.
+// UPDATE_BASELINES=1 regenerates baselines from the current build (use after
+// an intentional toolbar change, never to mask a regression).
+import { pixelDiff } from "../tools/png-pixel-diff.mjs";
 
-function computePixelDiffPercent(bufA, bufB) {
-  if (bufA.length !== bufB.length) return 1.0; // completely different
-  let diff = 0;
-  for (let i = 0; i < bufA.length; i++) {
-    if (bufA[i] !== bufB[i]) diff++;
-  }
-  return diff / bufA.length;
+const UPDATE_BASELINES = process.env.UPDATE_BASELINES === "1";
+
+function compareImages(baseline, current) {
+  const result = pixelDiff(baseline, current);
+  return result;
 }
 
 // --- Main test ---
@@ -177,24 +176,23 @@ async function run() {
 
         // Compare against baseline if it exists
         const baselinePath = path.join(baselineDir, `toolbar-${width}px.png`);
-        if (fs.existsSync(baselinePath)) {
+        if (fs.existsSync(baselinePath) && !UPDATE_BASELINES) {
           const baseline = fs.readFileSync(baselinePath);
           const current = fs.readFileSync(screenshotPath);
-          const identical = compareImages(baseline, current);
-          if (!identical) {
-            const diffPercent = computePixelDiffPercent(baseline, current);
+          const result = compareImages(baseline, current);
+          if (result.status !== "identical") {
             check(
-              diffPercent < TOLERANCE,
-              `Screenshot matches baseline at ${width}px (diff: ${(diffPercent * 100).toFixed(2)}%)`
+              result.diffPercent < TOLERANCE,
+              `Screenshot differs from baseline at ${width}px (pixel diff: ${(result.diffPercent * 100).toFixed(2)}%${result.detail ? `, ${result.detail}` : ""}; tolerance ${(TOLERANCE * 100).toFixed(0)}%)`
             );
-            results.push({ width, status: "CHANGED", diffPercent });
+            results.push({ width, status: "CHANGED", diffPercent: result.diffPercent });
           } else {
             results.push({ width, status: "IDENTICAL" });
           }
         } else {
-          // No baseline yet — copy current as baseline
+          // No baseline yet (or explicit refresh) — copy current as baseline
           fs.copyFileSync(screenshotPath, baselinePath);
-          results.push({ width, status: "BASELINE_CREATED" });
+          results.push({ width, status: UPDATE_BASELINES ? "BASELINE_REFRESHED" : "BASELINE_CREATED" });
         }
       }
 

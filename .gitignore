@@ -17,7 +17,10 @@ xcuserdata/
 
 # Local agent/session state and runtime logs
 .agent/
+.antigravity/
+.commandcode/
 .freebuff/
+.gemini/
 .vscode/
 .idea/
 .workbuddy-ai/
@@ -66,6 +69,7 @@ tools/verapdf-cli-*/
 web/app/.adal/
 web/app/.agents/
 web/app/.aider-desk/
+web/app/.antigravity/
 web/app/.augment/
 web/app/.bob/
 web/app/.claude/
@@ -73,12 +77,14 @@ web/app/.codeartsdoer/
 web/app/.codebuddy/
 web/app/.codemaker/
 web/app/.codestudio/
+web/app/.commandcode/
 web/app/.continue/
 web/app/.cortex/
 web/app/.crush/
 web/app/.cursor/
 web/app/.factory/
 web/app/.forge/
+web/app/.gemini/
 web/app/.github/
 web/app/.goose/
 web/app/.iflow/
@@ -136,3 +142,11 @@ __pycache__/
 # Do not "fix" this drift with git rm --cached; untracking would delete the
 # design source-of-truth and historical reports from the repo surface.
 /Web-Prototype.zip
+
+# TypeSafe Jev exploration artifacts (NM-R15 / EXP-JEV register, added 2026-09-19).
+# Raw API captures and local replay state are tool outputs and stay local;
+# calibration reports land under docs/research/ and stay tracked.
+# The API key itself lives in .env (covered by the .env.* rule above) — never
+# in tracked files.
+tools/jev-replay/raw/
+tools/jev-replay/cache/

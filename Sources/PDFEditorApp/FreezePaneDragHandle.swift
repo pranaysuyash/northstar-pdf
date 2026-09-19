@@ -246,6 +246,7 @@ public struct FreezePaneDragHandleView: View {
   @Binding var rowSeparatorY: CGFloat?
   @Binding var columnSeparatorX: CGFloat?
   @Binding var isDragging: Bool
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   let viewHeight: CGFloat
   let viewWidth: CGFloat
@@ -421,6 +422,6 @@ public struct FreezePaneDragHandleView: View {
     }
     .position(x: (columnSeparatorX ?? viewWidth / 2), y: (rowSeparatorY ?? viewHeight / 2) - 20)
     .transition(.opacity)
-    .animation(.easeInOut(duration: 0.15), value: isDragging)
+    .animation(reduceMotion ? nil : .easeInOut(duration: 0.15), value: isDragging)
   }
 }

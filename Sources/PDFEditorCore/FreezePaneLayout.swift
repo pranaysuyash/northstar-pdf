@@ -174,6 +174,11 @@ public struct FreezePaneLayout: Sendable {
 // MARK: - Freeze Pane State
 
 /// Mutable state for the freeze-pane interaction.
+///
+/// UNSAFE (MDEV-I2 sweep, 2026-09-17): the method-mediated mutations below take
+/// `lock`, but the `@Published` properties are `public var` — SwiftUI bindings
+/// and observers read and write them directly, bypassing the lock. The lock
+/// protects only method-mediated mutation; remediation is ledgered as MDEV-I6.
 public final class FreezePaneState: @unchecked Sendable, ObservableObject {
   /// Current freeze configuration.
   @Published public var config: FreezePaneConfig = .none

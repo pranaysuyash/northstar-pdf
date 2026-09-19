@@ -1,36 +1,10 @@
 /**
- * Resolves a Python interpreter that has the project's PDF utilities
- * (pikepdf, pypdf, pdfplumber) available.
+ * Test-side Python resolver — thin re-export shim.
  *
- * Preference order:
- *   1. $PDF_PYTHON (CI / explicit override)
- *   2. `python3` on PATH if it can import pikepdf
- *   3. The project's documented pdf-utils environment
- *   4. `python3` as a last resort (tests will fail with a clear traceback)
- *
- * Tests must never hardcode "python3" for pikepdf work — the system Python
- * frequently lacks the project's declared PDF tooling.
+ * The canonical resolver lives in `web/pdf-python.mjs` so that companion
+ * runtime modules (pdf-sanitize, pdf-action-neutralize, pdf-object-inspect)
+ * and tests share ONE resolution rule. This shim keeps the historical
+ * `import { pdfPython } from "./pdf-python.mjs"` sites working and preserves
+ * the documented rule ("Tests must never hardcode python3 for pikepdf work").
  */
-import { execFileSync } from "node:child_process";
-import fs from "node:fs";
-
-const PDF_UTILS_ENV = "/Users/pranay/.workbuddy-ai/binaries/python/envs/pdf-utils/bin/python";
-
-function canImportPikepdf(python) {
-  try {
-    execFileSync(python, ["-c", "import pikepdf"], { stdio: "ignore", timeout: 10_000 });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function resolve() {
-  const explicit = process.env.PDF_PYTHON;
-  if (explicit) return explicit;
-  if (canImportPikepdf("python3")) return "python3";
-  if (fs.existsSync(PDF_UTILS_ENV) && canImportPikepdf(PDF_UTILS_ENV)) return PDF_UTILS_ENV;
-  return "python3";
-}
-
-export const pdfPython = resolve();
+export { pdfPython } from "../web/pdf-python.mjs";

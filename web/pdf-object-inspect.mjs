@@ -16,6 +16,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { pdfPython } from "./pdf-python.mjs";
 
 export function inspectPdfWithPikepdf(srcBuf, pySnippet) {
   if (!(srcBuf instanceof Uint8Array) || srcBuf.length === 0) {
@@ -30,7 +31,7 @@ export function inspectPdfWithPikepdf(srcBuf, pySnippet) {
     pySnippet + "\n" +
     "print(json.dumps(RESULT))";
   try {
-    const out = execFileSync("python3", ["-c", py, inP], {
+    const out = execFileSync(pdfPython, ["-c", py, inP], {
       encoding: "utf8",
       maxBuffer: 64 * 1024 * 1024
     });

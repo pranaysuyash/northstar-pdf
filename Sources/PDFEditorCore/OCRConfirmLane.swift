@@ -293,13 +293,15 @@ public struct OCRConfirmLane: Sendable {
     /// not crash the process.
     ///
     /// Crash fix (2026-09-07, EXC_BREAKPOINT under load): the previous
-    /// implementation shared a captured `var result: T?` between the calling
-    /// thread and the background closure. When the deadline fired, the caller
-    /// read the boxed local while the background closure was still writing
-    /// it — a dynamic exclusivity violation that traps in `_assertionFailure`
-    /// (observed in the 08:06 crash report, frame `OCRConfirmLane.withTimeout`).
-    /// The result now lives in a lock-guarded box: safe on both the happy
-    /// path and the abandoned-timeout path.
+    /// implementation let the calling thread and the background closure access
+    /// a shared `var result: T?` with no ordering. This version keeps the same
+    /// shape but orders access strictly through the semaphore: the background
+    /// closure is the only writer, the caller reads `result` only after `wait`
+    /// returns `.success` (signal → wait-success establishes happens-before),
+    /// and the timeout path returns nil without touching the variable again.
+    /// There is deliberately no lock-guarded box — the semaphore pairing IS the
+    /// synchronization. The abandoned `body()` still runs to completion on the
+    /// global queue; its result is discarded and the caller must abstain.
     private func withTimeout<T>(_ timeout: TimeInterval, body: @escaping () -> T) -> T? {
         // Use a simple optional to hold the result; the semaphore ensures synchronization.
         var result: T? = nil

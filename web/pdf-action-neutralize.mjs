@@ -16,6 +16,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { pdfPython } from "./pdf-python.mjs";
 
 export function neutralizeActions(srcBuf, opts = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pdfan-"));
@@ -50,7 +51,7 @@ export function neutralizeActions(srcBuf, opts = {}) {
   ].join("\n");
 
   try {
-    execFileSync("python3", ["-c", py, inP, outP], { stdio: "pipe" });
+    execFileSync(pdfPython, ["-c", py, inP, outP], { stdio: "pipe" });
     return fs.readFileSync(outP);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });

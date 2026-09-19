@@ -1,3 +1,9 @@
+> **SUPERSESSION (2026-09-17, D-055):** This review-extraction doc is not status
+> authority. Its "Completed" claims for TASK-A2/A4/A5 conflict with
+> `docs/task-inventory.md` (NM-T13/NM-T17 `partial`, NM-T09 open). Task state
+> lives in `docs/task-inventory.md`; the 2026-09-17 follow-up review of the
+> pushed code is adjudicated in `docs/audits/chatgpt-feedback-council-review-2026-09-17.md`.
+
 # Strategic Product & Architecture Review: Analysis & Task Extraction
 
 > **Context:** Architectural review of Northstar based on pre-push Git state.  

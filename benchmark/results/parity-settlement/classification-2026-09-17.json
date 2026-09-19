@@ -1,0 +1,190 @@
+{
+  "schema": "pdf-editor.parity-settlement-classification",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "generatedAt": "2026-09-17T16:44:06.590Z",
+  "sourceReport": {
+    "path": "benchmark/results/preflight-parity-2026-08-25/parity-report.json",
+    "sha256": "ec6417143d50d30d76be6b379723045afb58f2dd168df89df58225fb5be02b8b"
+  },
+  "sourceHarness": "pdf-editor-native-web-contract-parity",
+  "sourceProviders": {
+    "native": "pdfkit",
+    "web": "pdfjs-pdflib"
+  },
+  "fixtureCount": 18,
+  "counts": {
+    "exact-agree": 13,
+    "classified-variance": 3,
+    "malformed-agree": 2
+  },
+  "disputeCount": 0,
+  "neverRunCount": 0,
+  "verdict": {
+    "nettingFeasible": false,
+    "statement": "Zero unexpected mismatches: the residual dispute set is EMPTY. The parity state is driven by open measurement scope (lanes/corpus classes not yet measured), not by engine disagreement. A settlement reducer would attest an empty set and add machinery with zero payoff — record the revisit condition instead of building it.",
+    "reducerBuildRecommended": false
+  },
+  "truthStatus": "observed-measurement",
+  "gateAuthority": "none-measurement-only",
+  "fixtures": [
+    {
+      "parityCaseID": "PARITY-001",
+      "sourcePath": "benchmark/results/public-sample-form.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-002",
+      "sourcePath": "benchmark/results/navigation-corpus/navigation-metadata.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-003",
+      "sourcePath": "benchmark/results/2026-08-23-pdfkit-widgets/fixture.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-004",
+      "sourcePath": "benchmark/results/2026-08-23-public-acroform/noop.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-005",
+      "sourcePath": "docs/benchmarks/pdfkit-form6-run-2026-08-23/noop.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "classified-variance",
+      "reason": "2 mismatch(es), all within the fixture's allowed/kinds classification",
+      "kinds": [
+        "candidate-semantic-set",
+        "candidate.count"
+      ]
+    },
+    {
+      "parityCaseID": "PARITY-006",
+      "sourcePath": "benchmark/results/security-corpus/encrypted-reader.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-007",
+      "sourcePath": "benchmark/results/security-corpus/truncated-128-bytes.pdf",
+      "nativeStatus": "inspectionFailed",
+      "webStatus": "inspectionFailed",
+      "class": "malformed-agree",
+      "reason": "both lanes failed inspection; failure digests match exactly"
+    },
+    {
+      "parityCaseID": "PARITY-008",
+      "sourcePath": "benchmark/results/security-corpus/repeated-20-pages.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-009",
+      "sourcePath": "benchmark/results/ocr-corpus/printed-scan.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-010",
+      "sourcePath": "benchmark/results/rotation-corpus/rotated-widget-90.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-011",
+      "sourcePath": "benchmark/results/rotation-corpus/rotated-form6-mixed.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "classified-variance",
+      "reason": "2 mismatch(es), all within the fixture's allowed/kinds classification",
+      "kinds": [
+        "candidate-semantic-set",
+        "candidate.count"
+      ]
+    },
+    {
+      "parityCaseID": "PARITY-012",
+      "sourcePath": "benchmark/results/browser-corpus/hybrid-text-raster-form.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-013",
+      "sourcePath": "benchmark/results/browser-corpus/scanned-noisy.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-014",
+      "sourcePath": "benchmark/results/browser-corpus/rotated-hybrid-90.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-015",
+      "sourcePath": "benchmark/results/browser-corpus/encrypted-hybrid.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "classified-variance",
+      "reason": "2 mismatch(es), all within the fixture's allowed/kinds classification",
+      "kinds": [
+        "coordinates",
+        "page.geometry-or-text"
+      ]
+    },
+    {
+      "parityCaseID": "PARITY-016",
+      "sourcePath": "benchmark/results/browser-corpus/malformed-hybrid-truncated.pdf",
+      "nativeStatus": "inspectionFailed",
+      "webStatus": "inspectionFailed",
+      "class": "malformed-agree",
+      "reason": "both lanes failed inspection; failure digests match exactly"
+    },
+    {
+      "parityCaseID": "PARITY-017",
+      "sourcePath": "benchmark/results/browser-corpus/large-hybrid-40-pages.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    },
+    {
+      "parityCaseID": "PARITY-018",
+      "sourcePath": "benchmark/results/governed-corpus/handwritten-simulated-entries.pdf",
+      "nativeStatus": "inspected",
+      "webStatus": "inspected",
+      "class": "exact-agree",
+      "reason": "comparator equivalence"
+    }
+  ]
+}

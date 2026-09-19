@@ -103,13 +103,31 @@ public final class CompanionNegotiator: @unchecked Sendable {
     public let negotiationTimeout: TimeInterval
 
     /// The most recent negotiation result.
-    public private(set) var lastResult: NegotiationResult?
+    ///
+    /// Sendability invariant: the negotiator is invoked from detached tasks
+    /// (`AppModel.open`), so every mutable property below is guarded by
+    /// `lock`. The sweep that found the race (MDEV-I2, 2026-09-17) also found
+    /// that `lock` was declared but never acquired — the accessors below are
+    /// the fix; do not add unguarded writes to these properties.
+    private var _lastResult: NegotiationResult?
+    public private(set) var lastResult: NegotiationResult? {
+        get { lock.withLock { _lastResult } }
+        set { lock.withLock { _lastResult = newValue } }
+    }
 
+    private var _activeCapabilities: [NegotiatedCapability] = []
     /// Currently active capabilities.
-    public private(set) var activeCapabilities: [NegotiatedCapability] = []
+    public private(set) var activeCapabilities: [NegotiatedCapability] {
+        get { lock.withLock { _activeCapabilities } }
+        set { lock.withLock { _activeCapabilities = newValue } }
+    }
 
+    private var _onNegotiationComplete: (@Sendable (NegotiationResult) -> Void)?
     /// Callback invoked when negotiation completes.
-    public var onNegotiationComplete: (@Sendable (NegotiationResult) -> Void)?
+    public var onNegotiationComplete: (@Sendable (NegotiationResult) -> Void)? {
+        get { lock.withLock { _onNegotiationComplete } }
+        set { lock.withLock { _onNegotiationComplete = newValue } }
+    }
 
     private let lock = NSLock()
 

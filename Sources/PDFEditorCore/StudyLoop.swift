@@ -642,6 +642,10 @@ public struct StudyProgressReport: Codable, Sendable {
 /// manager.advanceSession(&session)
 /// ```
 public final class StudyLoopManager: ObservableObject, @unchecked Sendable {
+  // UNSAFE (MDEV-I2 sweep, 2026-09-17): `masteryByDocument` is an unlocked
+  // read-modify-write dictionary; safety rests entirely on an undocumented
+  // main-thread-only convention that nothing enforces. Remediation is
+  // ledgered as MDEV-I6.
   /// Per-document mastery data, keyed by document ID.
   @Published public var masteryByDocument: [String: [UUID: MarkMastery]] = [:]
 

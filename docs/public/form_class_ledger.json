@@ -1,0 +1,182 @@
+{
+  "schema": "pdf-editor.form-class-ledger",
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "generatedAt": "2026-09-17T17:09:06.114Z",
+  "truthStatus": "observed-gate-state-public-disclosure",
+  "gateAuthority": "none-disclosure-only",
+  "sources": [
+    {
+      "path": "benchmark/results/human-visual-confirmation/human-review-gate-report.json",
+      "sha256": "7f373e17a78b27b57891b8b894ebef0b360ab1c9d52d3106bac0afb3eab1baad",
+      "schema": "pdf-editor.human-review-gate",
+      "status": "pending"
+    }
+  ],
+  "humanVisualGate": {
+    "schema": "pdf-editor.human-review-gate",
+    "status": "pending",
+    "totalFixtures": 38,
+    "confirmedCount": 0,
+    "failedCount": 0,
+    "staleCount": 0,
+    "fixtures": [
+      {
+        "fixture": "dense-grid",
+        "status": "pending"
+      },
+      {
+        "fixture": "encrypted-aes256",
+        "status": "pending"
+      },
+      {
+        "fixture": "encrypted-hybrid",
+        "status": "pending"
+      },
+      {
+        "fixture": "form-layout",
+        "status": "pending"
+      },
+      {
+        "fixture": "geometry-rotation",
+        "status": "pending"
+      },
+      {
+        "fixture": "graphics-heavy",
+        "status": "pending"
+      },
+      {
+        "fixture": "handwritten-simulated",
+        "status": "pending"
+      },
+      {
+        "fixture": "header-footer",
+        "status": "pending"
+      },
+      {
+        "fixture": "landscape-chart",
+        "status": "pending"
+      },
+      {
+        "fixture": "large-hybrid-40",
+        "status": "pending"
+      },
+      {
+        "fixture": "layout-three-column",
+        "status": "pending"
+      },
+      {
+        "fixture": "malformed-hybrid-truncated",
+        "status": "pending"
+      },
+      {
+        "fixture": "malformed-metadata",
+        "status": "pending"
+      },
+      {
+        "fixture": "malformed-signed-invalid",
+        "status": "pending"
+      },
+      {
+        "fixture": "malformed-truncated-128",
+        "status": "pending"
+      },
+      {
+        "fixture": "mixed-3page",
+        "status": "pending"
+      },
+      {
+        "fixture": "mixed-text-raster-form",
+        "status": "pending"
+      },
+      {
+        "fixture": "multi-column",
+        "status": "pending"
+      },
+      {
+        "fixture": "navigation",
+        "status": "pending"
+      },
+      {
+        "fixture": "navigation-metadata",
+        "status": "pending"
+      },
+      {
+        "fixture": "ocr-multi-column",
+        "status": "pending"
+      },
+      {
+        "fixture": "plain-text",
+        "status": "pending"
+      },
+      {
+        "fixture": "public-sample-form",
+        "status": "pending"
+      },
+      {
+        "fixture": "rotated-90",
+        "status": "pending"
+      },
+      {
+        "fixture": "rotated-hybrid",
+        "status": "pending"
+      },
+      {
+        "fixture": "rotated-mixed",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-clean",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-dense-paragraph",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-low-contrast",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-noisy",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-noisy-invoice",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-printed-scan",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-rotated",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-simulated",
+        "status": "pending"
+      },
+      {
+        "fixture": "scanned-small-font",
+        "status": "pending"
+      },
+      {
+        "fixture": "sparse-text",
+        "status": "pending"
+      },
+      {
+        "fixture": "xfa-dynamic",
+        "status": "pending"
+      },
+      {
+        "fixture": "xfa-hybrid",
+        "status": "pending"
+      }
+    ]
+  },
+  "formClasses": [],
+  "formClassNote": "Empty by construction: no recurring form class is certified. Certification requires a recorded decision (D-055), a cohort fixture set spanning real arrival variance, and human visual confirmation."
+}

@@ -67,6 +67,9 @@ public struct ManualTextPlacement: Equatable, Sendable {
 public final class AppModel {
   private let provider = PDFKitProvider()
   private let sessionStore: FileSessionStore
+  /// PL-D09 run-journal instrument (D-083 slice 0, NM-T41). App-level rows
+  /// carry capability facts only — digests and plan outcomes, never content.
+  private let runJournalLog = AgentRunJournalLog()
   private let recoveryStore: SessionRecoveryStore
   private let recoveryPayloadStore: SessionPayloadStore
   private let recoveryPairStore: RecoveryPairStore
@@ -1784,6 +1787,25 @@ public final class AppModel {
     selectPreviousSearchMatch()
   }
 
+  /// PL-D09 instrument rows (D-083 slice 0, NM-T41). Best-effort appends;
+  /// `AgentRunJournalLog.isHealthy` exposes a dead instrument (X2 rule).
+  public func recordSessionOpen(sourceDigest: String) {
+    runJournalLog.append(AgentRunJournalRow(
+      kind: .sessionOpen,
+      timestamp: Date(),
+      sessionID: runJournalLog.sessionID,
+      sourceDigest: sourceDigest))
+  }
+
+  public func recordAgentRun(_ record: AgentRunRecord, sourceDigest: String) {
+    runJournalLog.append(AgentRunJournalRow(
+      kind: .agentRun,
+      timestamp: Date(),
+      sessionID: runJournalLog.sessionID,
+      sourceDigest: sourceDigest,
+      run: record))
+  }
+
   public func open(url: URL, password: String? = nil) {
     cancelViewStateAutosave()
     // Preservation discipline: commit any pending debounced content autosave to
@@ -1815,6 +1837,9 @@ public final class AppModel {
       isScratchDocument = false
       cachedSourceData = data
       rememberRecentDocument(url)
+      // PL-D09 session-open denominator row (D-083 slice 0, NM-T41): the
+      // digest hash is a capability fact; document content never lands here.
+      recordSessionOpen(sourceDigest: nextInspection.source.sha256)
       verifyDigitalSignatures()
       inspectXFA()
       // Stage 1 learning loop: load value-free priors so remaining
@@ -2839,7 +2864,13 @@ public func resetDocument() {
   }
 
   private func refreshCandidateCaches() {
-    let candidates = inspection?.candidates ?? []
+    // Lab-salvaged composition invariant: a proposed region that duplicates
+    // an existing native widget is suppressed, while unrelated painted
+    // fields elsewhere on the same page stay in the review list.
+    let candidates = StaticRegionDetector.suppressingNativeDuplicates(
+      inspection?.candidates ?? [],
+      nativeFields: inspection?.fields ?? []
+    )
     _activeCandidates = candidates.filter { $0.status != .rejected }
     _dismissedCandidates = candidates.filter { $0.status == .rejected }
   }
@@ -3389,7 +3420,7 @@ public func resetDocument() {
       candidateID: pendingSignatureRegion?.id,
       sourceDigest: inspection?.source.sha256,
       coordinate: PDFPageRegion(pageIndex: pageIndex, rect: bounds),
-      payload: .asset(assetID: "signature-\(UUID().uuidString)", mimeType: "image/png"),
+      payload: .assetData(data: imageData, mimeType: "image/png"),
       reversible: true,
       destructive: false
     )

@@ -244,6 +244,64 @@ public enum PDFImpactValidator {
         )
     }
 
+    /// Bounded presence evidence for a serialized image stamp: does the
+    /// reopened output page visibly differ from the source page inside the
+    /// authorized overlay bounds? The user-space bounds are mapped through
+    /// the page's /Rotate transform first, so placement is verified against
+    /// where viewers actually render it — rotated pages included. This is
+    /// presence evidence only; outside-region damage is carried by the text
+    /// and raster comparisons. Returns false whenever the comparison cannot
+    /// be completed, so export fails closed rather than publishing an
+    /// unverifiable placement.
+    public static func overlayImagePresent(
+        sourcePage: PDFPage,
+        outputPage: PDFPage,
+        bounds: CGRect
+    ) -> Bool {
+        let scale: CGFloat = 2.0
+        guard let sourceRaster = raster(for: sourcePage, scale: scale),
+              let outputRaster = raster(for: outputPage, scale: scale),
+              sourceRaster.width == outputRaster.width,
+              sourceRaster.height == outputRaster.height,
+              sourceRaster.samplesPerPixel == outputRaster.samplesPerPixel,
+              sourceRaster.bytes.count == outputRaster.bytes.count else {
+            return false
+        }
+        let displayBounds = bounds.applying(outputPage.transform(for: .cropBox))
+        let interior = displayBounds.insetBy(
+            dx: displayBounds.width * 0.15, dy: displayBounds.height * 0.15)
+        guard interior.width > 0, interior.height > 0 else { return false }
+        var differingSamples = 0
+        let grid = 5
+        for row in 0..<grid {
+            for column in 0..<grid {
+                let displayPoint = CGPoint(
+                    x: interior.minX + interior.width * CGFloat(column) / CGFloat(grid - 1),
+                    y: interior.minY + interior.height * CGFloat(row) / CGFloat(grid - 1))
+                let x = min(sourceRaster.width - 1, max(0, Int(displayPoint.x * scale)))
+                // The raster is rendered top-down; display space is bottom-up.
+                let y = min(
+                    sourceRaster.height - 1,
+                    max(0, sourceRaster.height - 1 - Int(displayPoint.y * scale)))
+                var maxDelta = 0
+                for channel in 0..<min(sourceRaster.samplesPerPixel, 4) {
+                    let sourceOffset =
+                        sourceRaster.bytesPerRow * y + x * sourceRaster.samplesPerPixel + channel
+                    let outputOffset =
+                        outputRaster.bytesPerRow * y + x * outputRaster.samplesPerPixel + channel
+                    guard sourceOffset < sourceRaster.bytes.count,
+                          outputOffset < outputRaster.bytes.count else { return false }
+                    maxDelta = max(
+                        maxDelta,
+                        abs(Int(sourceRaster.bytes[sourceOffset])
+                            - Int(outputRaster.bytes[outputOffset])))
+                }
+                if maxDelta >= 48 { differingSamples += 1 }
+            }
+        }
+        return differingSamples >= 3
+    }
+
     private struct Raster {
         let width: Int
         let height: Int

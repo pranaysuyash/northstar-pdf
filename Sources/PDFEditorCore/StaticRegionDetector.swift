@@ -632,33 +632,80 @@ public enum StaticRegionDetector {
 
   private static func inferFieldType(from label: String) -> SuggestedFieldType {
     let lower = label.lowercased()
-    if lower.contains("date") || lower.contains("dob") || lower.contains("dd/mm")
+
+    // Collision-prone short cues match only as whole tokens (or safe word
+    // prefixes); longer phrases stay substring-matched. Salvaged from the
+    // Fieldroom defect rules: "Candidate name:" must not infer Date through
+    // the "date" inside "candidate", "Designation:" must not infer Signature
+    // through "sign" inside "design", and "Ticket No:" must not infer
+    // Checkbox through "tick" inside "ticket".
+    let words = tokenize(lower)
+
+    if words.contains("date") || words.contains("dob") || lower.contains("dd/mm")
       || lower.contains("yyyy")
     {
       return .date
     }
-    if lower.contains("sign") || lower.contains("signature") || lower.contains("signed") {
+    if words.contains(where: { $0.hasPrefix("sign") }) {
       return .signature
     }
-    if lower.contains("ssn") || lower.contains("phone") || lower.contains("zip")
-      || lower.contains("amount") || lower.contains("number")
+    if words.contains("ssn") || words.contains(where: { $0.hasPrefix("phone") })
+      || words.contains("telephone") || words.contains("tel") || words.contains("zip")
+      || words.contains("zipcode") || words.contains(where: { $0.hasPrefix("amount") })
+      || words.contains("number")
     {
       return .number
     }
-    if lower.contains("select one") || lower.contains("one of") || lower.contains("gender")
-      || lower.contains("relationship") || lower.contains("relative type")
+    if lower.contains("select one") || lower.contains("one of") || words.contains("gender")
+      || words.contains("relationship") || lower.contains("relative type")
       || lower.contains("proof choice")
     {
       return .radio
     }
-    if lower.contains("check") || lower.contains("yes/no") || lower.contains("yes / no")
-      || lower.contains("male") || lower.contains("female") || lower.contains("father")
-      || lower.contains("mother") || lower.contains("husband") || lower.contains("wife")
-      || lower.contains("tick") || lower.contains("select")
+    if lower.contains("yes/no") || lower.contains("yes / no") || words.contains("check")
+      || words.contains("checkbox") || words.contains("tick") || words.contains("ticked")
+      || words.contains("male") || words.contains("female") || words.contains("father")
+      || words.contains("mother") || words.contains("husband") || words.contains("wife")
+      || words.contains("select")
     {
       return .checkbox
     }
     return .text
+  }
+
+  /// Lowercased alphanumeric tokens: "Ticket No.:" -> ["ticket", "no"].
+  /// A standalone "no" is deliberately never a field-type cue.
+  private static func tokenize(_ lower: String) -> [String] {
+    lower.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init)
+  }
+
+  /// Lab-salvaged per-page composition invariant: native field evidence
+  /// suppresses only an inferred proposal that duplicates the same widget
+  /// region; unrelated painted fields elsewhere on the same page — and on
+  /// other pages — survive untouched.
+  public static func suppressingNativeDuplicates(
+    _ candidates: [RegionCandidate],
+    nativeFields: [NativeField]
+  ) -> [RegionCandidate] {
+    guard !candidates.isEmpty, !nativeFields.isEmpty else { return candidates }
+    return candidates.filter { candidate in
+      !nativeFields.contains { field in
+        guard field.pageIndex == candidate.pageIndex else { return false }
+        return overlapRatio(field.bounds, candidate.bounds) >= 0.60
+      }
+    }
+  }
+
+  /// Intersection area over the smaller region's area (1.0 when one fully
+  /// contains the other; degenerate areas never match).
+  private static func overlapRatio(_ a: PDFRect, _ b: PDFRect) -> Double {
+    let x0 = max(a.x, b.x)
+    let y0 = max(a.y, b.y)
+    let x1 = min(a.x + a.width, b.x + b.width)
+    let y1 = min(a.y + a.height, b.y + b.height)
+    let intersection = max(0, x1 - x0) * max(0, y1 - y0)
+    let smaller = min(max(a.width * a.height, 0.0001), max(b.width * b.height, 0.0001))
+    return intersection / smaller
   }
 
   private static func entryMode(

@@ -155,6 +155,8 @@ public final class RenderingPipeline: @unchecked Sendable {
   private var documentData: Data?
   private var documentModel: PDFDocumentModel?
   private var readingPositions: [String: ReadingPosition] = [:]
+  /// PERF-S02: coalesces the UserDefaults write in persistReadingPositions().
+  private var pendingPersistWorkItem: DispatchWorkItem?
   private var renderTimes: [String: [Double]] = [:]
 
   @MainActor public weak var delegate: RenderingPipelineDelegate?
@@ -173,6 +175,13 @@ public final class RenderingPipeline: @unchecked Sendable {
   // MARK: - Document Loading
 
   /// Load a document into the pipeline.
+  /// Posted on the main thread after loadDocument() finishes parsing. PERF-S01
+  /// consumers (e.g. the freeze-pane table cache in ContentView) use this as
+  /// their refresh trigger: documentData is guaranteed present, unlike the
+  /// AppModel projection revision, which can bump before the canvas has
+  /// handed the pipeline its bytes.
+  public static let didLoadDocumentNotification = Notification.Name("renderingPipelineDidLoadDocument")
+
   public func loadDocument(data: Data, documentID: String) async throws -> PDFDocumentModel {
     self.documentData = data
 
@@ -191,6 +200,13 @@ public final class RenderingPipeline: @unchecked Sendable {
           isHighResComplete: false
         )
       }
+    }
+
+    await MainActor.run {
+      NotificationCenter.default.post(
+        name: RenderingPipeline.didLoadDocumentNotification,
+        object: self
+      )
     }
 
     return model
@@ -427,6 +443,34 @@ public final class RenderingPipeline: @unchecked Sendable {
     return try extractor.extract(data: data)
   }
 
+  /// Snapshot-based async extraction (PERF-S01).
+  ///
+  /// `extractText()` re-parses the entire document in-process (PDFKit) and
+  /// must never be called from a SwiftUI view builder, where it would re-run
+  /// on every body evaluation. This variant snapshots the document bytes
+  /// under the lock, then runs the identical extraction on a background
+  /// task. View surfaces should await this once per document revision and
+  /// cache the result.
+  public func extractTextAsync() async throws -> StructuredExtractionResult {
+    let data = snapshotDocumentData()
+    guard let data else {
+      throw ExtractionError.invalidDocument
+    }
+    let extractor = self.extractor
+    return try await Task.detached(priority: .userInitiated) {
+      try extractor.extract(data: data)
+    }.value
+  }
+
+  /// Synchronous lock scope for async entry points: NSLock.lock() is
+  /// unavailable from async contexts, so the guarded snapshot happens here
+  /// and only the extraction itself runs detached.
+  private func snapshotDocumentData() -> Data? {
+    lock.lock()
+    defer { lock.unlock() }
+    return documentData
+  }
+
   // MARK: - Content Routing
 
   /// Detect dominant content type and suggest the optimal reading mode.
@@ -586,11 +630,22 @@ public final class RenderingPipeline: @unchecked Sendable {
   }
 
   private func persistReadingPositions() {
-    // Persist reading positions to UserDefaults
-    let encoder = JSONEncoder()
-    if let data = try? encoder.encode(readingPositions) {
-      UserDefaults.standard.set(data, forKey: "readingPositions")
+    // PERF-S02: the viewport handler fires per scroll tick, so the disk write
+    // is coalesced to one encode+store per 1s idle window. The in-memory dict
+    // was already updated synchronously by saveReadingPosition; only the
+    // UserDefaults write is deferred.
+    pendingPersistWorkItem?.cancel()
+    let work = DispatchWorkItem { [weak self] in
+      guard let self else { return }
+      self.lock.lock()
+      let positions = self.readingPositions
+      self.lock.unlock()
+      if let data = try? JSONEncoder().encode(positions) {
+        UserDefaults.standard.set(data, forKey: "readingPositions")
+      }
     }
+    pendingPersistWorkItem = work
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: work)
   }
 
   private func loadReadingPositions() {

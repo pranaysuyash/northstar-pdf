@@ -198,6 +198,10 @@ public struct DocumentSessionOperationMetadata: Codable, Equatable, Hashable, Id
       return .nativeField
     case .some(.asset(_, _)):
       return .asset
+    // Asset bytes are payload content and stay out of the recovery-safe
+    // session ledger; only the asset-bearing kind tag is recorded.
+    case .some(.assetData(_, _)):
+      return .asset
     case .some(.stamp(_)):
       return .stamp
     }

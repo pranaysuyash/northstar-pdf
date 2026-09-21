@@ -51,8 +51,19 @@ public struct DocumentCanvasView: View {
   var annotationStore: AnnotationStore?
   // RG-058: honor Reduce Motion for canvas-level transitions.
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  // RG-059: raised-contrast chrome under the Increased Contrast setting.
+
   @Environment(\.colorSchemeContrast) private var colorSchemeContrast
+
+  // MAD-008 remediation start (vision council 2026-09-22 R3): glass islands
+  // collapse to a near-opaque desk surface when the user reduces transparency.
+  @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+  private var hudSurfaceStyle: AnyShapeStyle {
+    reduceTransparency
+      ? AnyShapeStyle(Color(nsColor: .windowBackgroundColor).opacity(0.94))
+      : AnyShapeStyle(.ultraThinMaterial)
+  }
+  // RG-059: raised-contrast chrome under the Increased Contrast setting.
   /// RG-057: incremented by the ⌘F command; consuming it focuses the field.
   @Binding var searchFocusEvent: Int
   @Binding var isCommandPalettePresented: Bool
@@ -433,7 +444,7 @@ public struct DocumentCanvasView: View {
     }
     .padding(.horizontal, 10)
     .padding(.vertical, 5)
-    .background(.ultraThinMaterial)
+    .background(hudSurfaceStyle)
     .clipShape(Capsule())
     .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
     .overlay(
@@ -588,7 +599,7 @@ public struct DocumentCanvasView: View {
     }
     .padding(.horizontal, 10)
     .padding(.vertical, 6)
-    .background(.ultraThinMaterial)
+    .background(hudSurfaceStyle)
     .clipShape(Capsule())
     .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 2)
     .overlay(
@@ -1188,6 +1199,13 @@ public struct PDFKitView: NSViewRepresentable {
     var lastScaleSignature: String?
     var lastDisplayMode: PDFDisplayMode?
     var didForceInitialLayout = false
+    // PERF-S02: one viewport drain per runloop tick. The bounds/frame
+    // observers fire 2-3x per scroll tick; only the first schedules work.
+    var viewportDrainPending = false
+    // PERF-S02: freeze-pane overlay invalidation is guarded on a
+    // (page, scale-in-hundredths) key so unchanged viewports stop paying a
+    // full overlay redraw per scroll tick.
+    var lastFreezePaneKey: (page: Int, scaleHundredths: Int)?
 
     func invalidateOverlay() {
       overlayView?.invalidateProjection()
@@ -1207,6 +1225,23 @@ public struct PDFKitView: NSViewRepresentable {
       observedRootView = nil
       observedScrollContentView = nil
       observedDocumentView = nil
+    }
+
+    /// PERF-S02: coalesce viewport work to one drain per runloop tick. The
+    /// bounds/frame notifications for a single scroll tick are all delivered
+    /// as blocks on the main queue within one runloop turn; the first caller
+    /// schedules a drain at the end of that turn and the rest no-op.
+    @MainActor
+    func scheduleViewportDrain() {
+      guard !viewportDrainPending else { return }
+      viewportDrainPending = true
+      DispatchQueue.main.async { [weak self] in
+        guard let self else { return }
+        MainActor.assumeIsolated {
+          self.viewportDrainPending = false
+          self.handleViewportOrPageChange()
+        }
+      }
     }
 
     @MainActor
@@ -1237,16 +1272,27 @@ public struct PDFKitView: NSViewRepresentable {
         pageIndex: pageIndex,
         scale: view.scaleFactor
       )
-      // Update freeze pane overlay for new page
-      freezePaneOverlay?.currentPageIndex = pageIndex
-      freezePaneOverlay?.pdfDocument = doc
-      freezePaneOverlay?.zoomScale = view.scaleFactor
-      freezePaneOverlay?.needsDisplay = true
-      // Update pipeline tile overlay for new page
+      // Update freeze pane overlay for new page (PERF-S02: guarded — skip the
+      // full overlay redraw when neither page nor zoom changed this tick)
+      let freezeKey = (page: pageIndex, scaleHundredths: Int((view.scaleFactor * 100).rounded()))
+      // Tuple optionals are not Equatable, so the skip guard compares the
+      // components: nil matches nothing, forcing the first redraw.
+      if lastFreezePaneKey?.page != freezeKey.page
+        || lastFreezePaneKey?.scaleHundredths != freezeKey.scaleHundredths
+      {
+        lastFreezePaneKey = freezeKey
+        freezePaneOverlay?.currentPageIndex = pageIndex
+        freezePaneOverlay?.pdfDocument = doc
+        freezePaneOverlay?.zoomScale = view.scaleFactor
+        freezePaneOverlay?.needsDisplay = true
+      }
+      // Update pipeline tile overlay for new page (PERF-S02: reloadTiles()
+      // keeps PipelineTileOverlayView's own 0.05 s debounce in the path;
+      // forceReload() bypassed it)
       tileOverlay?.currentPageIndex = pageIndex
       tileOverlay?.currentScale = view.scaleFactor
       tileOverlay?.viewportRect = page.bounds(for: view.displayBox)
-      tileOverlay?.forceReload()
+      tileOverlay?.reloadTiles()
 
       // Propagate visible page change to application model
       if lastNavigatedPageIndex != pageIndex {
@@ -1294,8 +1340,10 @@ public struct PDFKitView: NSViewRepresentable {
               object: observedView,
               queue: .main
             ) { [weak self] _ in
-              Task { @MainActor [weak self] in
-                self?.handleViewportOrPageChange()
+              // PERF-S02: coalesce — one drain per runloop tick instead of a
+              // fresh Task per notification (bounds+frame fire 2-3x per tick).
+              MainActor.assumeIsolated {
+                self?.scheduleViewportDrain()
               }
             }
           )
@@ -1312,8 +1360,9 @@ public struct PDFKitView: NSViewRepresentable {
         projectionObserverTokenStore.tokens.append(
           notificationCenter.addObserver(forName: name, object: view, queue: .main) {
             [weak self] _ in
-            Task { @MainActor [weak self] in
-              self?.handleViewportOrPageChange()
+            MainActor.assumeIsolated {
+              // PERF-S02: same coalescing path as the bounds/frame observers.
+              self?.scheduleViewportDrain()
               // Re-pre-render at adaptive DPI when scale changes
               if name == Notification.Name("PDFViewScaleChanged"),
                  let view = self?.observedRootView as? InteractivePDFView,
@@ -1359,6 +1408,10 @@ public struct PDFKitView: NSViewRepresentable {
     view.displayMode = .singlePageContinuous
     view.displayBox = .cropBox
     view.backgroundColor = .windowBackgroundColor
+    // Vision pillar 1 (modern workspace vision, council R3 2026-09-22): pages
+    // read as physical paper on the desk. PDFKit's native page shadow is used;
+    // hairline page borders are not exposed by PDFKit and are not faked.
+    view.pageShadowsEnabled = true
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
     view.onPageTap = onPageTap

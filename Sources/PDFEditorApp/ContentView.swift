@@ -74,6 +74,11 @@ public struct ContentView: View {
   /// same cache so thumbnails and progressive renders warm each other.
   @Environment(\.openWindow) private var openWindow
   @State private var renderingPipeline = RenderingPipeline()
+  // PERF-S01: table extraction is a full-document re-parse; it must never run
+  // inside a view builder. Cached per projection revision — the body root's
+  // .task(id:) refreshes it off the main actor.
+  @State private var cachedTableExtraction: StructuredExtractionResult?
+  @State private var cachedTableExtractionRevision: UInt64?
   @StateObject private var themeManager = ThemeManager()
   @StateObject private var readingHistory = ReadingHistoryManager()
   @StateObject private var annotationStore = AnnotationStore()
@@ -115,6 +120,41 @@ public struct ContentView: View {
     ReadingDisplayParams.params(for: model.readingMode)
   }
 
+  /// PERF-S01: preset matching runs against the cached extraction only. The
+  /// matcher itself is cheap (no document access) and stays in the builder;
+  /// the expensive full-document extraction happens once per document state
+  /// in refreshTableExtractionIfNeeded(), triggered by the pipeline's
+  /// didLoadDocument notification.
+  private var cachedMatchedPresets: [(preset: FreezePanePreset, score: Double)] {
+    guard let extraction = cachedTableExtraction,
+          !extraction.tables.isEmpty else { return [] }
+    let table = extraction.tables[0]
+    let cellTexts = table.cells.flatMap { $0 }
+    return FreezePanePresetMatcher().match(
+      rows: table.rows,
+      columns: table.columns,
+      cellTexts: cellTexts
+    )
+  }
+
+  /// PERF-S01: one async full-document extraction per projection revision.
+  /// Runs off the main actor; the toolbar builder only ever reads the cache.
+  private func refreshTableExtractionIfNeeded() {
+    let revision = model.documentProjectionRevision
+    guard revision != cachedTableExtractionRevision else { return }
+    cachedTableExtractionRevision = revision
+    guard model.liveDocument != nil else {
+      cachedTableExtraction = nil
+      return
+    }
+    Task {
+      let extraction = try? await renderingPipeline.extractTextAsync()
+      if revision == cachedTableExtractionRevision {
+        cachedTableExtraction = extraction
+      }
+    }
+  }
+
   /// The window toolbar is a document instrument, not a disabled home-screen menu.
   private var showsDocumentToolbar: Bool {
     model.inspection != nil
@@ -123,6 +163,15 @@ public struct ContentView: View {
   public var body: some View {
     mainContent
       .applyTheme(using: themeManager)
+      .onReceive(NotificationCenter.default.publisher(for: RenderingPipeline.didLoadDocumentNotification)) { notification in
+        // PERF-S01: refresh the table cache when the canvas hands the
+        // pipeline fresh document bytes. The notification (not the projection
+        // revision) is the trigger: documentData is guaranteed present at
+        // this point. The revision guard keeps it once per document state.
+        guard notification.object == nil
+          || (notification.object as? RenderingPipeline) === renderingPipeline else { return }
+        refreshTableExtractionIfNeeded()
+      }
       .toolbar {
         if showsDocumentToolbar {
           if readingParams.showToolbar {
@@ -863,17 +912,18 @@ public struct ContentView: View {
       FreezePaneToggleButton(
         isFrozen: $model.isFreezePaneActive,
         onAutoDetect: {
-          if let extraction = try? renderingPipeline.extractText(),
-             !extraction.tables.isEmpty {
-            let table = extraction.tables[0]
-            let config = FreezePaneConfig.autoDetect(
-              rows: table.rows,
-              columns: table.columns,
-              confidence: table.confidence
-            )
-            model.freezePaneConfig = config
-            model.isFreezePaneActive = config.isActive
-          }
+          // PERF-S01: detection reads the cached extraction instead of
+          // re-parsing the whole document on the main thread.
+          guard let extraction = cachedTableExtraction,
+                !extraction.tables.isEmpty else { return }
+          let table = extraction.tables[0]
+          let config = FreezePaneConfig.autoDetect(
+            rows: table.rows,
+            columns: table.columns,
+            confidence: table.confidence
+          )
+          model.freezePaneConfig = config
+          model.isFreezePaneActive = config.isActive
         },
         onApplyPreset: { preset in
           model.freezePaneConfig = preset.config
@@ -897,17 +947,7 @@ public struct ContentView: View {
             ]
           )
         },
-        matchedPresets: {
-          guard let extraction = try? renderingPipeline.extractText(),
-                !extraction.tables.isEmpty else { return [] }
-          let table = extraction.tables[0]
-          let cellTexts = table.cells.flatMap { $0 }
-          return FreezePanePresetMatcher().match(
-            rows: table.rows,
-            columns: table.columns,
-            cellTexts: cellTexts
-          )
-        }()
+        matchedPresets: cachedMatchedPresets
       )
     }
 

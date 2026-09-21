@@ -261,6 +261,11 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
   /// Describes an explicitly synthesized widget created from a reviewed static region.
   case nativeField(fieldType: SuggestedFieldType)
   case asset(assetID: String, mimeType: String)
+  /// Self-contained image bytes for overlay-style operations. A reference-only
+  /// payload cannot be serialized by any provider, so overlay operations that
+  /// must survive ledger replay carry their bytes here, capped by the
+  /// provider's asset-size limit.
+  case assetData(data: Data, mimeType: String)
   case stamp(name: String)
   case empty
 
@@ -276,6 +281,7 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
     case choice
     case assetID
     case mimeType
+    case data
     case name
     case cells
   }
@@ -289,6 +295,7 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
     case choiceMark
     case nativeField
     case asset
+    case assetData
     case stamp
     case empty
   }
@@ -323,6 +330,10 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
     case .asset(let assetID, let mimeType):
       try container.encode(Kind.asset, forKey: .kind)
       try container.encode(assetID, forKey: .assetID)
+      try container.encode(mimeType, forKey: .mimeType)
+    case .assetData(let data, let mimeType):
+      try container.encode(Kind.assetData, forKey: .kind)
+      try container.encode(data, forKey: .data)
       try container.encode(mimeType, forKey: .mimeType)
     case .stamp(let name):
       try container.encode(Kind.stamp, forKey: .kind)
@@ -360,6 +371,11 @@ public enum EditPayload: Codable, Equatable, Hashable, Sendable {
     case .asset:
       self = .asset(
         assetID: try container.decode(String.self, forKey: .assetID),
+        mimeType: try container.decode(String.self, forKey: .mimeType)
+      )
+    case .assetData:
+      self = .assetData(
+        data: try container.decode(Data.self, forKey: .data),
         mimeType: try container.decode(String.self, forKey: .mimeType)
       )
     case .stamp:

@@ -845,13 +845,20 @@ public struct AgentCommandHUD: View {
   }
 
   private func journalTerminal(plan: AgentPlan, escalated: Bool) {
-    runJournal.append(AgentRunRecord(
+    let record = AgentRunRecord(
       planID: plan.id,
       goal: plan.goal,
       stepOutcomes: plan.steps.map { "\($0.id):\($0.state.rawValue)" },
       escalated: escalated,
       reasonCodes: (plan.escalation?.reasons ?? []).map(\.rawValue)
-    ))
+    )
+    runJournal.append(record)
+    // PL-D09 (D-083 slice 0, NM-T41): the in-memory journal is session-local
+    // and capped, so it cannot answer the cohort question. Every terminal run
+    // also lands in the on-disk instrument or the denominator lies.
+    model.recordAgentRun(
+      record,
+      sourceDigest: model.inspection?.source.sha256 ?? "")
   }
 
   private func runApprovedPlan(plan: inout AgentPlan) {

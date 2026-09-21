@@ -128,7 +128,13 @@ public enum FieldLabelCanonicalizer {
 
   public static func inferSemanticKey(from text: String) -> String? {
     let lower = text.lowercased()
-    if lower.contains("full name") || lower.contains("applicant name") || lower.contains("legal name") || lower == "name" {
+    // Collision-prone short keys match only as whole tokens: "statement"
+    // must not become State, "capacity" must not become City,
+    // "automobile"/"excellent" must not become mobile/cell, and
+    // "accountant" must not become an account-number key.
+    let words = Set(
+      lower.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init))
+    if lower.contains("full name") || lower.contains("applicant name") || lower.contains("legal name") || words.contains("name") {
       return SemanticFieldTaxonomy.personFullName.rawValue
     }
     if lower.contains("first name") || lower.contains("given name") {
@@ -149,10 +155,10 @@ public enum FieldLabelCanonicalizer {
     if lower.contains("passport") {
       return SemanticFieldTaxonomy.identityPassport.rawValue
     }
-    if lower.contains("mobile") || lower.contains("cell") {
+    if words.contains("mobile") || words.contains("cell") || words.contains("cellphone") {
       return SemanticFieldTaxonomy.contactMobile.rawValue
     }
-    if lower.contains("phone") || lower.contains("telephone") || lower.contains("tel") {
+    if words.contains(where: { $0.hasPrefix("phone") }) || words.contains("telephone") || words.contains("tel") {
       return SemanticFieldTaxonomy.contactPhone.rawValue
     }
     if lower.contains("email") || lower.contains("e-mail") {
@@ -161,10 +167,10 @@ public enum FieldLabelCanonicalizer {
     if lower.contains("address") || lower.contains("street") {
       return SemanticFieldTaxonomy.contactAddress.rawValue
     }
-    if lower.contains("city") || lower.contains("town") {
+    if words.contains("city") || words.contains("town") {
       return SemanticFieldTaxonomy.contactCity.rawValue
     }
-    if lower.contains("state") || lower.contains("province") {
+    if words.contains("state") || words.contains("province") {
       return SemanticFieldTaxonomy.contactState.rawValue
     }
     if lower.contains("zip") || lower.contains("postal") {
@@ -176,10 +182,10 @@ public enum FieldLabelCanonicalizer {
     if lower.contains("iban") {
       return SemanticFieldTaxonomy.financialIBAN.rawValue
     }
-    if lower.contains("routing") {
+    if words.contains("routing") {
       return SemanticFieldTaxonomy.financialRouting.rawValue
     }
-    if lower.contains("account") {
+    if words.contains("account") {
       return SemanticFieldTaxonomy.financialAccount.rawValue
     }
     return nil

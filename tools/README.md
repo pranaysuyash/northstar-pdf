@@ -200,3 +200,58 @@ Consumed by `Tests/toolbar_visual_regression_test.mjs` (baselines refresh
 with `UPDATE_BASELINES=1` after an intentional toolbar change, never to mask
 a regression). Reuse it for any new screenshot-regression test instead of
 `Buffer.equals` on PNG bytes.
+
+## `jev-replay/` — TypeSafe Jev (System One) client + EXP-JEV-1 harness
+
+Client (`jev-client.mjs`) for the pinned decision-tier model, plus the NM-R15
+calibration replay (`replay.mjs`, `corpus.mjs`, `baseline.mjs`) and the
+EXP-JEV-4 injection red-team (`injection.mjs`). Key precedence: process env →
+repo `.env` → shared `~/Projects/.env.local` (single live copy across
+projects; see `/Users/pranay/Projects/.env.example`; never logged; raw
+captures land in `jev-replay/raw/`, gitignored).
+
+- Run: `node tools/jev-replay/replay.mjs` (auto-detects key; `--baseline-only` for the comparator lane).
+- Live-API findings (2026-09-21): request the EXACT version `jev-1.13.0` —
+  the minor alias `jev-1.13` and wildcard `jev-1.13.x` return 400 "Unknown
+  model"; `/v1/models` exposes only `jev-latest`/`jev-preview`, and
+  `jev-latest` serves `jev-1.13.0`. The response's `model` field is the
+  version anchor recorded in raw captures. Request schema: `questions`
+  is a dict keyed by id, each value a tagged variant (`score` takes
+  `criteria` as a list of level labels; `choice` takes `criteria` as an
+  option→description dict).
+- EXP-JEV-1 executed 2026-09-21: **KILL SIGNAL** on the triage corpus —
+  see `docs/research/jev-expjev1-report-2026-09-21.md`.
+- `injection.mjs` — EXP-JEV-4 prompt-injection red-team (paired benign/
+  adversarial document text × three primitives × raw/framed conditions;
+  `noul` takes an `instructions` string — validated against the live API).
+  Run: `node tools/jev-replay/injection.mjs [--limit=N]`. Executed
+  2026-09-21: zero genuine steering; report
+  `docs/research/jev-expjev4-injection-report-2026-09-21.md`.
+
+## `jev-prioritize/prioritize.mjs` — Jev priority pass over the open-items ledger
+
+Two typed questions per open item (2–10 priority score on an explicit ladder +
+execution-lane choice), identical project preamble for comparability.
+
+- Run: `node tools/jev-prioritize/prioritize.mjs [--limit N] [--concurrency N]`.
+- Items snapshot: `jev-prioritize/open-items-2026-09-21.json` (regenerate from
+  `docs/task-inventory.md` + launch-critical gates when the ledger moves).
+- Results: `jev-prioritize/results-<date>.json`; narrative report:
+  `docs/agent-artifacts/jev-priority-pass-2026-09-21.md`.
+- Validity ceiling: EXP-JEV-1 kill signal stands — treat output as advisory,
+  trust only the high-confidence top of the table.
+
+## `perf-s14-capture/capture.sh` — headless snappiness before/after capture
+
+Measures the PERF-S01/S02 validation oracles without GUI Instruments: `sample`
+call-tree capture at open + interaction, cputime checkpoints, pdf_oxide
+PATH-shim spawn counter, persisted reading-position marker. Launches the app
+via `PDF_EDITOR_OPEN_SOURCE` (bare-binary argv suppresses windows, PL-I30).
+
+- Run: `tools/perf-s14-capture/capture.sh before|after`
+- Fixture: `benchmark/datasets/generate_multipage_text_fixture.py` (venv:
+  `benchmark/datasets/.venv`, reportlab installed via uv).
+- Output: `benchmark/results/2026-09-21-perf-s01s02/<phase>/`.
+- Caveats: capture only on a quiet machine — a parallel build storm
+  (load >10, dozens of swift-frontend processes) makes absolute cputime
+  meaningless; thread placement of frames remains valid under load.

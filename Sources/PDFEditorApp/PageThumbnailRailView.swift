@@ -190,7 +190,7 @@ private struct PageThumbnailCardView: View {
 
   private var cardBackground: Color {
     if isSelected {
-      return Color.accentColor.opacity(0.12)
+      return Color.accentColor.opacity(0.14)
     } else if isHovered {
       return Color.primary.opacity(0.05)
     } else {
@@ -200,7 +200,9 @@ private struct PageThumbnailCardView: View {
 
   private var cardBorderColor: Color {
     if isSelected {
-      return Color.accentColor.opacity(0.35)
+      // Vision pillar 4: the selected card reads as a soft accent ring, not a
+      // flat fill; the outer halo is layered in the body overlay below.
+      return Color.accentColor.opacity(0.6)
     } else if isHovered {
       return Color.primary.opacity(0.12)
     } else {
@@ -240,11 +242,8 @@ private struct PageThumbnailCardView: View {
             }
           }
 
-          Text("\(page.characterCount) chars · \(Int(page.bounds.width))×\(Int(page.bounds.height))")
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-            .monospacedDigit()
-
+          // Raw diagnostics (character counts, page pixel bounds) stay in the
+          // accessibility label only; the visual rail shows semantic pills.
           // Semantic Pills
           HStack(spacing: 4) {
             if fieldCount > 0 {
@@ -289,6 +288,14 @@ private struct PageThumbnailCardView: View {
         RoundedRectangle(cornerRadius: 8)
           .strokeBorder(cardBorderColor, lineWidth: 1)
       )
+      .overlay(
+        // Soft accent halo around the selection (vision pillar 4). Rendered
+        // outside the card bounds so it reads as a ring, not a second border.
+        RoundedRectangle(cornerRadius: 11)
+          .strokeBorder(Color.accentColor.opacity(isSelected ? 0.35 : 0), lineWidth: 3)
+      )
+      .shadow(color: Color.accentColor.opacity(isSelected ? 0.25 : 0), radius: 7)
+      .animation(.spring(response: 0.28, dampingFraction: 0.85), value: isSelected)
     }
     .buttonStyle(.plain)
     .onHover { hovering in

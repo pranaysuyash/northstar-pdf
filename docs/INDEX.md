@@ -5,7 +5,8 @@
 **Truth-status rule (OPERATING_DOCTRINE §2):** claims are Observed / Verified / Inferred / Proposed / Unknown / Contested. A capability is "Implemented" only when a passing, tier-appropriate assertion exists (see `docs/audits/pda-impl-plan-2026-08-28.md` Phase 1).
 
 ## Canonical (source of truth)
-- `docs/decisions.md` — durable product/evaluation decisions (D-001 … D-064; D-007/D-010 collisions renumbered to D-056/D-057).
+- `docs/decisions.md` — durable product/evaluation decisions (D-001 … D-064; D-007/D-010 collisions renumbered to D-056/D-057). **D-083 (2026-09-17) + Amendment 1 (2026-09-22): owner-directed AI-native, agentic review-first shell; slice sequence NM-T41…45 with the 2026-09-30 slice-0 checkpoint, per-user falsifier operationalization, and styling-track-as-chrome-restructuring. Slice state lives in `task-inventory.md`.**
+- `docs/audits/vision-and-app-council-2026-09-22.md` — six-seat vision council (design / workspace / experimenter / out-of-box / thesis guardian / adversarial; Lead PER-0926): "drift-washed" verdict on execution, R1–R6 recommendations, owner-ratified same day.
 - `docs/release-gates.md` — release-gate state (single authority per D-055).
 - `docs/task-inventory.md` — task state (single authority per D-055).
 - `docs/DOCUMENTATION_DOCTRINE.md` — vendored documentation doctrine (symlink to `../OPERATING_DOCTRINE.md`).

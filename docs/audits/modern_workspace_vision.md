@@ -7,6 +7,17 @@
 > MAD-R1/R2 accessibility and human-visual gate evidence. The agentic spine is governed by
 > D-078 + D-083's slice sequence (NM-T41…NM-T45), not by this document.
 
+> **Restatement (2026-09-22, D-083 Amendment 1):** "styling on existing surfaces" means
+> **chrome restructuring + hierarchy**, not re-skin in place — toolbar demotion (MAD-006),
+> inspector two-tier hierarchy (MAD-007), rail declutter (pillar 4), page paper elevation
+> (pillar 1), on an accessibility substrate; MAD-008 (reduce-transparency/contrast handling)
+> closes first on every touched surface. First tranche landed 2026-09-22: rail diagnostic
+> declutter + selected-card accent halo (pillar 4), native PDFKit page shadows (pillar 1 —
+> hairline page borders are not exposed by PDFKit and are deliberately not faked), and
+> reduce-transparency fallbacks on the canvas HUD islands. Before/after captures:
+> `docs/audits/screenshots/2026-09-22_workspace_before_canvas.png`,
+> `docs/audits/screenshots/2026-09-22_workspace_after_canvas.png`.
+
 > **Mission:** Transform Northstar from a cramped, 20-year-old utility PDF reader into a modern, calm, spatial document workbench. The start/welcome workspace already embodies this clean, contemporary ethos; this document codifies how that same breathing room, physical presence, visual hierarchy, and tactile affordance extends across the active document canvas, inspector, and navigation surfaces.
 
 ---

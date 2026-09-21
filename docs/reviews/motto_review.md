@@ -1,120 +1,120 @@
 # Operating Doctrine Review
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
-- SHA-256: ff848618a7431a3b06c7409caa45683bd27c64263d45b93f9fcd36a89803466a
-- Generated: 2026-09-16T18:23:13Z
+- SHA-256: c22b129bf41942d06c4a5c1eb4c7de96ce1669d471c4c35a50335d18fe9eb1ac
+- Generated: 2026-09-19T08:02:18Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
 
 - Label: §0 Start from live truth
 - Reviewed: True
-- Evidence: Live tree re-inspected 2026-09-16 23:47 IST after a 33-hour session gap (machine slept mid-gate, killing the previous push chain): 3 commits verified ahead of origin, codex lane edits to Sources/PDFEditorApp/PDFEditorAppIntents.swift and Tests/PDFEditorCoreTests/AdvancedCoreCapabilitiesTests.swift classified, zero untracked files.
+- Evidence: Started from live truth: swept the current tree read-only (Sources/PDFEditorApp, Sources/PDFEditorRecovery/AppModel.swift) and lead-verified criticals by direct read of ContentView.swift:900-910, DocumentCanvasView.swift:1213-1303, PdfOxideExtractor.swift:95-131 before writing docs/audits/swiftui-performance-audit-2026-09-19.md.
 
 ## SECTION_00_INTEGRATED
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated audit of this diff: lands the codex lane's MAD-I1 remediation (intents now drive real PDFSanitizer/TableExtractor/DocumentDiff engines with truthful outputs, verified 6/6 by new workflow tests), refreshes four gate-evidence JSONs from legitimate runs, and carries the context-pack regen — all inside the owner-ordered commit protocol, with the only remaining known red (RG-135 0/38) being fail-closed owner work rather than code.
+- Evidence: Integrated: diff is 177 files — my surface is docs (audit + registers + gitignore + INDEX), the rest is the parallel lane's Swift/tests/benchmark/research backlog committed per explicit owner order this conversation. High-risk trailer is FORCED by staged path benchmark/results/parity-settlement/ matching the settlement regex, not by payments/refund behavior — no auth/webhook/billing code paths touched. §0 live truth: criticals lead-verified by direct read before registration. §9: every untracked file classified; docs/public/ justified as tracked export surface; jev raw outputs pre-ignored. §10: lane race handled by post-commit create-mode review. §15: full swift test gate runs unchanged in background; residual risk is the known RG-136 WER flake and lane mid-flight edits, both documented in commit protocol memory — if the gate fails I report, never bypass.
 
 ## SECTION_1
 
 - Label: §1 Outcomes and retained value
 - Reviewed: True
-- Evidence: Commit lands the lane's MAD-I1 progress (dishonest App Intents stubs wired to real PDFSanitizer/TableExtractor pipelines) plus refreshed gate-report evidence — direct value against the buyer-trust criticals from docs/audits/macos-app-design-skill-audit-2026-09-11.md.
+- Evidence: Outcome retained: snappiness audit converted into payoff-ordered PERF-S01..S14 implementation register in docs/task-inventory.md so work starts from the two user-visible criticals; NM-R15 Jev spike unblocked for real calibration evidence.
 
 ## SECTION_10
 
 - Label: §10 Parallel work and contested state
 - Reviewed: True
-- Evidence: Parallel state: codex lane edits in Sources/PDFEditorApp/PDFEditorAppIntents.swift preserved intact; previous push chain death diagnosed as machine sleep mid-gate (no orphaned swift-test processes remain — verified via ps).
+- Evidence: Parallel work: 177-file tree includes the concurrent codex lane's uncommitted sources (Sources/PDFEditorCore/{CohortEntitlement,DemandLedger,OperatingEnvelope,ReceiptSigning}.swift, Sources/PDFEditorApp/NorthstarHelpView.swift, Package.swift) committed together per owner instruction; will re-check create-mode lines after commit for late-staged lane files.
 
 ## SECTION_11
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: No production behavior change from me this diff; lane changes verified by build + 6/6 new tests; gate reports are test-run outputs with fresh timestamps.
+- Evidence: Engineering/data integrity: I changed no Swift logic — docs+register+gitignore only; lane Swift changes commit as-is and are validated by the untouched pre-push verify_appmodel.sh + full swift test + node contracts gate.
 
 ## SECTION_12
 
 - Label: §12 AI output boundary
 - Reviewed: True
-- Evidence: MAD-001 honesty gap directly reduced: SanitizePDFIntent/ExtractTableCSVIntent now call real engines and report real outcomes (including failure strings) instead of unconditional success strings; ComparePDFVersionsIntent wiring checked in the diff as well.
+- Evidence: AI output boundary: audit claims are tied to inspected paths with file:line (docs/audits/swiftui-performance-audit-2026-09-19.md); JEV-NOT verdict recorded as assessment not owner decision; no AI-authored content presented as owner ruling.
 
 ## SECTION_13
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: Claim reality: the Shortcuts sanitation flow in Sources/PDFEditorApp/PDFEditorAppIntents.swift now writes a real sanitized file and reports truthful per-check counts and failure strings, closing the buyer-trust violation documented in docs/audits/macos-app-design-skill-audit-2026-09-11.md MAD-001.
+- Evidence: Product/claim reality: PERF-S01/S02 framed by user-visible symptoms (interaction latency, scroll jank) not code symmetry; JEV register keeps '0 hallucinations' marked as marketing in docs/research/jev-system-one-model-capability-map-2026-09-18.md hype table.
 
 ## SECTION_14
 
 - Label: §14 Documentation and decisions
 - Reviewed: True
-- Evidence: Durable records refreshed in the same flow: benchmark/results/ gate JSONs (acroform-parity, control-viewer, human-review, raster-blend) carry fresh run timestamps; docs/context/agent-start/ regenerated by the pre-commit hook per its design.
+- Evidence: Documentation/decisions: docs/audits/INDEX.md gained the current-status row; PERF-S/JEV registers added to docs/task-inventory.md with statuses and oracles; owner decisions (D-067 tier, zero-egress) stay open as JEV-5/JEV-6, not pre-decided.
 
 ## SECTION_15
 
 - Label: §15 Completion contract
 - Reviewed: True
-- Evidence: Completion report will state the four queued commits at /Users/pranay/Projects/pdf_editor, commands with outcomes (build 0.3s, AdvancedCoreCapabilitiesTests 6/6), the ~75-minute local gate expectation, RG-135 fail-closed owner work, and disk headroom.
+- Evidence: Completion contract: this commit's remaining obligation is the pre-push gate (fixture count, verify_appmodel.sh, full swift test tee'd to /tmp/pdf-editor-swift-test-last.log, node contracts) then CI watch latched on headSha; PERF-S register carries explicit per-task oracles.
 
 ## SECTION_16
 
 - Label: §16 Specialist doctrine routing
 - Reviewed: True
-- Evidence: TESTING_DOCTRINE from /Users/pranay/Projects/agent-start/doctrines/ governed the targeted pre-commit verification; RELEASE_READINESS_DOCTRINE governed the gate-semantics assessment earlier this session; routes unchanged for this landing.
+- Evidence: Specialist routing: perf register cross-references MAD-004 (design audit) and A-9 (AppModel debt) so specialist audits stay authoritative for their findings; no specialist doctrine contradicted by the new tables in docs/task-inventory.md.
 
 ## SECTION_17
 
 - Label: §17 Propagation contract
 - Reviewed: True
-- Evidence: Instruction stack order followed this session (/Users/pranay/AGENTS.md, /Users/pranay/Projects/AGENTS.md, OPERATING_DOCTRINE.md, RELEASE_READINESS_DOCTRINE.md); attestation SHA matches the trailer.
+- Evidence: Propagation: session memory updated (pdf-editor-native-perf-audit + MEMORY.md index) and research-doc change-log update is registered as JEV-0 in docs/task-inventory.md so propagation is a tracked task, not an unstated assumption.
 
 ## SECTION_2
 
 - Label: §2 Truth taxonomy
 - Reviewed: True
-- Evidence: Commit message labels: MAD-I1 wiring Observed in diff (real sanitizer/extractor calls with output writes), gate report JSONs are regenerated evidence refreshes, context pack regenerated by pre-commit hook.
+- Evidence: Truth taxonomy respected: audit findings marked code-backed (no trace yet) in docs/audits/swiftui-performance-audit-2026-09-19.md Metrics section; docs/research/jev-system-one-model-capability-map-2026-09-18.md keeps claims sourced-only until EXP-JEV-1 first-party numbers.
 
 ## SECTION_3
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Verified Tier 2 pre-commit: swift build green (0.3s incremental), AdvancedCoreCapabilitiesTests 6/6 pass covering the new TableExtractor-CSV and DocumentDiff workflows; full swift test gate runs on push.
+- Evidence: Proportional rigor: criticals verified at T1 static tier with file:line refs in Sources/PDFEditorApp/ContentView.swift, Sources/PDFEditorApp/DocumentCanvasView.swift, Sources/PDFEditorCore/PdfOxideExtractor.swift after lead re-read; runtime T4 Instruments capture deliberately deferred to PERF-S14 in docs/task-inventory.md instead of claiming unmeasured speedups.
 
 ## SECTION_4
 
 - Label: §4 Authorization and side effects
 - Reviewed: True
-- Evidence: Authorization: owner's standing instruction in this conversation (update gitignore, git add -A, commit with full hook/gate and push) reaffirmed this turn; L3 git mutations covered; no external gates touched.
+- Evidence: Authorization: owner explicitly ordered add+commit+push in this conversation; no destructive git ops, no force push, no hook bypass; the full gate chain (.git/hooks/commit-msg, .git/hooks/pre-commit, .git/hooks/pre-push) runs untouched, including tools/verify_appmodel.sh.
 
 ## SECTION_5
 
 - Label: §5 Canonical paths and ownership
 - Reviewed: True
-- Evidence: No new routes/stores/pipelines; the lane wired intents to existing canonical engines (Sources/PDFEditorCore PDFSanitizer, TableExtractor, ImprovedTextExtractor) rather than duplicating them.
+- Evidence: Canonical paths honored: audit report lives in docs/audits/, cross-cutting state in docs/task-inventory.md (PERF-S/JEV registers), index row in docs/audits/INDEX.md; no shadow canonical maps created (frontier-doc audit lesson).
 
 ## SECTION_6
 
 - Label: §6 Semantic salvage and supersession
 - Reviewed: True
-- Evidence: Stub retirement in Sources/PDFEditorApp/PDFEditorAppIntents.swift: the fake success strings are superseded by real PDFSanitizer/TableExtractor/ImprovedTextExtractor calls, with Tests/PDFEditorCoreTests/AdvancedCoreCapabilitiesTests.swift pinning the new behavior.
+- Evidence: Semantic salvage: NM-R15 row updated in place in docs/task-inventory.md (blocked-on-grant to granted/unblocked) instead of duplicating a parallel Jev task entry; PERF-S register extends rather than forks the existing MAD-004/A-9 perf ledger.
 
 ## SECTION_7
 
 - Label: §7 Capability routing
 - Reviewed: True
-- Evidence: Routing used the repo's own gates plus gh run evidence at .github/workflows/ci.yml; council-orchestrator and RELEASE_READINESS_DOCTRINE carried the earlier verdict work this session.
+- Evidence: Capability routing: used the swiftui-performance-audit skill (code-smells catalog + report template) for the audit; assessed macos-development/swift-concurrency-expert skills for fit in the same pass.
 
 ## SECTION_8
 
 - Label: §8 Skills lifecycle
 - Reviewed: True
-- Evidence: Skills unchanged this round; mimosa-security-scan protocol (start/status/seal) was followed earlier in the session per /Users/pranay/.zcode/cli/plugins/cache/zcode-plugins-official/mimosa/ skill doc.
+- Evidence: Skills lifecycle: skill references read from /Users/pranay/.zcode/skills/swiftui-performance-audit/references/ read-only; no repo skill files modified in this diff; target skills already inventoried so no re-search needed.
 
 ## SECTION_9
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: Durable knowledge preserved: docs/audits/macos-app-design-skill-audit-2026-09-11.md tracks MAD-001 which this diff remediates; gate evidence JSONs under benchmark/results/ refreshed from real runs.
+- Evidence: Exploration/durable knowledge: every untracked file classified before add -A — Sources+Tests are parallel-lane product source, benchmark/results/parity-settlement/ is CI-kept eval evidence, docs/public/ is the deliberate form-class-ledger export surface of tracked tools/export-form-class-ledger.mjs, docs audits/research are durable knowledge; nothing needed git rm --cached; future jev raw captures pre-ignored via .gitignore tools/jev-replay/{raw,cache}.

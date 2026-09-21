@@ -1,17 +1,68 @@
 import AppKit
-import CryptoKit
 import CoreGraphics
+import CryptoKit
 import Foundation
+import ImageIO
 import PDFKit
 
 public struct PDFKitProvider: PDFProvider {
   public struct Limits: Sendable {
     public let maximumInputBytes: Int
     public let maximumPageCount: Int
+    public let maximumOverlayAssetBytes: Int
 
-    public init(maximumInputBytes: Int = 250_000_000, maximumPageCount: Int = 2_000) {
+    public init(
+      maximumInputBytes: Int = 250_000_000,
+      maximumPageCount: Int = 2_000,
+      maximumOverlayAssetBytes: Int = 5_000_000
+    ) {
       self.maximumInputBytes = maximumInputBytes
       self.maximumPageCount = maximumPageCount
+      self.maximumOverlayAssetBytes = maximumOverlayAssetBytes
+    }
+  }
+
+  /// Page wrapper that bakes image overlays into the LIVE in-memory preview.
+  ///
+  /// System PDFKit exposes no image-bearing annotation that survives save:
+  /// the stamp subtype is ASCII-name-only and custom appearance streams are
+  /// not settable through the public API (verified against the SDK headers
+  /// and `swiftc -typecheck`, 2026-09-21). The documented `PDFPage` drawing
+  /// override IS serialized on save, and placement under page rotation is
+  /// correct (probe 5), but page annotations are dropped as objects when the
+  /// bake is written — so validated exports never serialize this wrapper:
+  /// overlay operations go through the incremental stamp writer instead
+  /// (see appendOverlayStamps), and `apply` restricts the bake to
+  /// annotation-free pages so live-document publication paths stay lossless.
+  private final class OverlayImagePage: PDFPage {
+    private struct Overlay {
+      let image: CGImage
+      let rect: CGRect
+    }
+
+    private let wrappedPage: PDFPage
+    private var overlays: [Overlay] = []
+
+    init(wrapping page: PDFPage, image: CGImage, rect: CGRect) {
+      self.wrappedPage = page
+      super.init()
+      overlays = [Overlay(image: image, rect: rect)]
+      let mediaBox = page.bounds(for: .mediaBox)
+      setBounds(mediaBox, for: .mediaBox)
+      setBounds(page.bounds(for: .cropBox), for: .cropBox)
+    }
+
+    func addOverlay(image: CGImage, rect: CGRect) {
+      overlays.append(Overlay(image: image, rect: rect))
+    }
+
+    override func draw(with box: PDFDisplayBox, to context: CGContext) {
+      wrappedPage.draw(with: box, to: context)
+      for overlay in overlays {
+        context.saveGState()
+        context.draw(overlay.image, in: overlay.rect)
+        context.restoreGState()
+      }
     }
   }
 
@@ -127,18 +178,38 @@ public struct PDFKitProvider: PDFProvider {
     // in content/annotation strings, and it sees through cross-reference and
     // object streams where the catalog dictionary is compressed.
     if !operations.isEmpty && hasDocumentLevelAcroForm(sourceData) {
-      // RG-001: bounded native field-value edits route through the incremental
-      // form writer, which preserves the source bytes as a byte-exact prefix
-      // and never touches widget choice metadata. Anything else stays
-      // fail-closed: the PDFKit writer must not rewrite AcroForm documents.
-      if operations.allSatisfy({ $0.kind == .nativeFieldValue }) {
-        return try exportAcroFormViaIncrementalWriter(
-          url: url, sourceData: sourceData, source: source,
-          operations: operations, to: outputURL)
+      // RG-001: bounded native field-value edits AND image overlays route
+      // through the incremental writers, which preserve the source bytes as a
+      // byte-exact prefix and never touch widget choice metadata. Anything
+      // else stays fail-closed: the PDFKit writer must not rewrite AcroForm
+      // documents.
+      guard operations.allSatisfy({
+        $0.kind == .nativeFieldValue || $0.kind == .overlayImage
+      }) else {
+        throw PDFEditorError.exportFailed(
+          "This PDF contains an existing document-level AcroForm. Only native field-value edits and image overlays are supported on it (via the source-preserving incremental writers); synthesis and page operations remain rejected until the form-aware provider lane covers them."
+        )
       }
-      throw PDFEditorError.exportFailed(
-        "This PDF contains an existing document-level AcroForm. Only native field-value edits are supported on it (via the source-preserving incremental writer); overlays, synthesis, and page operations remain rejected until the form-aware provider lane covers them."
-      )
+      return try exportAcroFormViaIncrementalWriter(
+        url: url, sourceData: sourceData, source: source,
+        operations: operations, to: outputURL)
+    }
+
+    let overlayOperations = operations.filter { $0.kind == .overlayImage }
+    let pdfKitOperations = operations.filter { $0.kind != .overlayImage }
+    if !overlayOperations.isEmpty {
+      let hasStructuralOperation = operations.contains {
+        [.pageInsert, .pageDelete, .pageMove, .pageTransform].contains($0.kind)
+      }
+      guard !hasStructuralOperation else {
+        throw PDFEditorError.exportFailed(
+          "Image overlays and page-structure operations cannot yet be serialized in one pass; apply image overlays after page assembly is complete."
+        )
+      }
+      for operation in overlayOperations {
+        try validateSourceBinding(operation, source: source.source)
+        try validateOperationShape(operation)
+      }
     }
 
     let fileManager = FileManager.default
@@ -147,7 +218,7 @@ public struct PDFKitProvider: PDFProvider {
     let temporaryURL =
       fileManager.temporaryDirectory
       .appendingPathComponent(".pdf-editor-\(UUID().uuidString).pdf")
-    if operations.isEmpty {
+    if operations.isEmpty || pdfKitOperations.isEmpty {
       do {
         try fileManager.copyItem(at: url, to: temporaryURL)
       } catch {
@@ -155,12 +226,32 @@ public struct PDFKitProvider: PDFProvider {
           "The unchanged source could not be staged for export: \(error.localizedDescription)")
       }
     } else {
-      for operation in operations {
+      for operation in pdfKitOperations {
         try validateSourceBinding(operation, source: source.source)
         try apply(operation, to: document)
       }
       guard document.write(to: temporaryURL) else {
         throw PDFEditorError.exportFailed("The PDF provider could not write the temporary export.")
+      }
+    }
+
+    // Image overlays serialize through the source-preserving stamp writer, so
+    // existing annotations, links, and rotation survive — the in-memory page
+    // bake is preview-only and never reaches a published file.
+    if !overlayOperations.isEmpty {
+      var stagedData: Data
+      do {
+        stagedData = try Data(contentsOf: temporaryURL)
+      } catch {
+        throw PDFEditorError.exportFailed(
+          "The staged export could not be read back for image-overlay serialization: \(error.localizedDescription)")
+      }
+      stagedData = try appendOverlayStamps(stagedData, operations: overlayOperations)
+      do {
+        try stagedData.write(to: temporaryURL, options: .atomic)
+      } catch {
+        throw PDFEditorError.exportFailed(
+          "The stamped export could not be staged: \(error.localizedDescription)")
       }
     }
 
@@ -235,6 +326,9 @@ public struct PDFKitProvider: PDFProvider {
     do {
       for operation in operations {
         try validateSourceBinding(operation, source: source.source)
+        // Overlay operations serialize through the stamp stage below, not
+        // the field-edit planner.
+        guard operation.kind == .nativeFieldValue else { continue }
         guard let targetID = operation.targetID, !targetID.isEmpty else {
           throw PDFEditorError.invalidOperation(
             "A native field edit on an AcroForm document requires a field name.")
@@ -250,9 +344,14 @@ public struct PDFKitProvider: PDFProvider {
       }
       let updated = try PDFIncrementalFormWriter.incrementalFieldUpdate(
         sourceData, edits: objectEdits, newObjects: newObjects)
+      var outputData = updated
+      let overlayOperations = operations.filter { $0.kind == .overlayImage }
+      if !overlayOperations.isEmpty {
+        outputData = try appendOverlayStamps(outputData, operations: overlayOperations)
+      }
       // Defense in depth: the prefix invariant is asserted inside the writer
       // and verified again here before anything touches disk.
-      guard updated.prefix(sourceData.count) == sourceData else {
+      guard outputData.prefix(sourceData.count) == sourceData else {
         throw PDFEditorError.exportFailed(
           "RG-017 violated: the incremental output diverged from the source prefix."
         )
@@ -260,7 +359,7 @@ public struct PDFKitProvider: PDFProvider {
       let fileManager = FileManager.default
       let temporaryURL = fileManager.temporaryDirectory
         .appendingPathComponent(".pdf-editor-incremental-\(UUID().uuidString).pdf")
-      try updated.write(to: temporaryURL, options: .atomic)
+      try outputData.write(to: temporaryURL, options: .atomic)
       defer { try? fileManager.removeItem(at: temporaryURL) }
 
       let report = try validate(
@@ -506,16 +605,114 @@ public struct PDFKitProvider: PDFProvider {
       annotation.backgroundColor = .clear
       page.addAnnotation(annotation)
 
+    case .overlayImage:
+      // Live-preview representation: the image is baked into the in-memory
+      // page so the visible document matches the eventual export. File
+      // serialization goes through the source-preserving stamp writer in
+      // export(), so this bake never reaches a published file. Placement is
+      // verified correct under page rotation (probe 5, 2026-09-21).
+      guard let bounds = operation.bounds else {
+        throw PDFEditorError.invalidOperation("An image overlay requires page bounds.")
+      }
+      let assetData = try PDFKitProvider.overlayAssetPayload(
+        operation, limit: limits.maximumOverlayAssetBytes)
+      guard let imageSource = CGImageSourceCreateWithData(assetData as CFData, nil),
+        let image = CGImageSourceCreateImageAtIndex(imageSource, 0, nil)
+      else {
+        throw PDFEditorError.invalidOperation(
+          "The image overlay payload could not be decoded as an image.")
+      }
+      guard page.annotations.isEmpty else {
+        throw PDFEditorError.invalidOperation(
+          "Image overlays are limited to annotation-free pages in the live editor: the in-memory preview bakes the image into the page, and the merge/split/copy paths that serialize the live document would drop the \(page.annotations.count) existing annotation(s) on page \(operation.pageIndex + 1). Validated exports already serialize annotated pages through the incremental stamp writer; unifying the remaining publication paths is tracked as NM-T47.")
+      }
+      if let overlayPage = page as? OverlayImagePage {
+        overlayPage.addOverlay(image: image, rect: bounds.cgRect)
+      } else {
+        let overlayPage = OverlayImagePage(wrapping: page, image: image, rect: bounds.cgRect)
+        document.removePage(at: operation.pageIndex)
+        document.insert(overlayPage, at: operation.pageIndex)
+      }
+
     default:
-      // Fail closed with the real constraint: system PDFKit exposes no image
-      // annotation that survives save (stamps are name-only; custom appearance
-      // streams are not serializable through the public API). Silently faking a
-      // placement would violate the review-before-trust contract, so signature
-      // placement stays unavailable until a form-aware provider lane lands.
+      // Fail closed with the real, per-kind constraint instead of silently
+      // faking a placement (review-before-trust contract).
       throw PDFEditorError.invalidOperation(
-        "The PDFKit adapter cannot serialize \(operation.kind.rawValue) operations: system PDFKit has no image-annotation API that survives save. The edit was rejected before any file was written; signature placement requires the form-aware provider lane."
-      )
+        PDFKitProvider.rejectionMessage(for: operation.kind))
     }
+  }
+
+  static func rejectionMessage(for kind: EditKind) -> String {
+    switch kind {
+    case .overlayImage:
+      return
+        "Image overlays require encoded image bytes in the operation payload; every other overlay case requires the form-aware provider lane."
+    case .stamp:
+      return
+        "Stamp operations are rejected in the PDFKit lane: the stamp annotation subtype is ASCII-name-only, no custom appearance stream can be authored through the public API, and a saved stamp without one would not render in other viewers. Requires the form-aware provider lane."
+    case .flatten:
+      return
+        "Flattened export is not available in the PDFKit adapter: system PDFKit cannot bake fields and annotations into page content with verified semantics. The source file was not modified; flattening requires the form-aware provider lane."
+    case .redactMark, .applyRedaction:
+      return
+        "Permanent redaction is not available in the PDFKit lane: removing content without verifiable removal evidence risks publishing an incomplete redaction. Requires the form-aware provider lane."
+    case .metadata, .sanitize:
+      return
+        "\(kind.rawValue) operations are not page edits and are rejected by the PDFKit adapter's apply path; use the export/sanitization surface, which carries its own validation."
+    default:
+      return
+        "The PDFKit adapter cannot serialize \(kind.rawValue) operations; this edit was rejected before any file was written."
+    }
+  }
+
+  /// Extracts the self-contained image bytes an overlayImage operation must
+  /// carry. Reference-only payloads cannot be serialized by any lane.
+  static func overlayAssetPayload(_ operation: EditOperation, limit: Int) throws -> Data {
+    switch operation.payload {
+    case .assetData(let data, _):
+      guard data.count <= limit else {
+        throw PDFEditorError.invalidOperation(
+          "The image overlay payload is \(data.count) bytes; the lane caps image assets at \(limit) bytes.")
+      }
+      return data
+    case .asset(let assetID, _):
+      throw PDFEditorError.invalidOperation(
+        "The image overlay for \(assetID) carries an asset reference but no image bytes, so nothing can be serialized. Pass the encoded image as asset data in the operation payload.")
+    default:
+      throw PDFEditorError.invalidOperation(
+        "An image overlay requires encoded image bytes in the operation payload.")
+    }
+  }
+
+  /// Serializes overlayImage operations as chained source-preserving stamp
+  /// annotations through the D-048 incremental writer. Existing annotations,
+  /// links, widget appearance, and page rotation all survive; the source
+  /// bytes remain a byte-exact prefix (RG-017, asserted in the writer).
+  private func appendOverlayStamps(
+    _ data: Data, operations: [EditOperation]
+  ) throws -> Data {
+    var staged = data
+    for operation in operations {
+      guard let bounds = operation.bounds else {
+        throw PDFEditorError.invalidOperation("An image overlay requires page bounds.")
+      }
+      let asset = try PDFKitProvider.overlayAssetPayload(
+        operation, limit: limits.maximumOverlayAssetBytes)
+      do {
+        staged = try PDFIncrementalFormWriter.incrementalImageStamp(
+          staged,
+          pageIndex: operation.pageIndex,
+          imageData: asset,
+          bounds: bounds.cgRect,
+          name: "ns-\(operation.id.uuidString)")
+      } catch let error as PDFIncrementalFormWriter.WriterError {
+        throw PDFEditorError.exportFailed(error.localizedDescription)
+      } catch {
+        throw PDFEditorError.exportFailed(
+          "The image-stamp writer failed: \(error.localizedDescription)")
+      }
+    }
+    return staged
   }
 
   private func applyCharacterGrid(_ value: String, cells: [PDFRect], to page: PDFPage) throws {
@@ -1087,6 +1284,22 @@ public struct PDFKitProvider: PDFProvider {
         if !found {
           messages.append(
             "Overlay edit \(operation.id.uuidString) could not be located after reopen.")
+        }
+      case .overlayImage:
+        guard let bounds = operation.bounds,
+          let outputPage = outputDocument.page(at: operation.pageIndex),
+          let sourcePage = sourceDocument.page(at: operation.pageIndex)
+        else {
+          messages.append("Image overlay could not be located after reopen.")
+          continue
+        }
+        if !PDFImpactValidator.overlayImagePresent(
+          sourcePage: sourcePage,
+          outputPage: outputPage,
+          bounds: bounds.cgRect)
+        {
+          messages.append(
+            "Image overlay \(operation.id.uuidString) could not be located after reopen.")
         }
       case .pageInsert, .pageDelete, .pageMove, .pageTransform:
         // Per-operation structural evidence is carried by the

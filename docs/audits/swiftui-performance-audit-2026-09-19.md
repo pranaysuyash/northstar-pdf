@@ -113,3 +113,68 @@ No Instruments baseline has been captured yet — the findings above are code-ba
 ## Next step
 
 Apply finding 1 (hoist `matchedPresets`/auto-detect extraction out of the view builder into revision-keyed model state) and finding 2 (coalesce `handleViewportOrPageChange` + debounce the reading-position persist) — both are small, local, independent patches with the highest payoff, and both directly serve the "snappy" target. Then re-capture the trace above and diff. Finding 6 and finding 3 are one-line guards that can ride along in the same pass.
+
+---
+
+## Fix pass 2026-09-21/22 — PERF-S01 + PERF-S02 (implemented-source)
+
+**Mechanism correction (finding 1):** the audit's named chain
+(`RenderingPipeline.extractText()` → `PdfOxideExtractor.extract` → temp-file
+write + child-process spawn) is wrong for the toolbar call site. The
+pipeline's extractor is `ImprovedTextExtractor` — a pure in-process PDFKit
+full re-parse (`PDFDocument(data:)` + per-page text/block/table detection,
+ImprovedTextExtractor.swift:150+). Verified live: with a PATH-shim counting
+`pdf_oxide` on a machine where pdf_oxide is not installed, the baseline run
+records **0 spawn attempts** — no child process is ever spawned on this path.
+The finding stands with the corrected mechanism: a full-document in-process
+re-parse inside a view builder, re-run per body evaluation.
+
+**Implemented (PERF-S01):**
+- `RenderingPipeline.extractTextAsync()` — snapshots document bytes, runs the
+  identical extraction on `Task.detached` (async-context lock access
+  subsequently refactored into `snapshotDocumentData()`).
+- `ContentView` cache: `cachedTableExtraction` + revision guard; both
+  `matchedPresets` and `onAutoDetect` read the cache only. No extraction in
+  any view builder.
+- Trigger: `RenderingPipeline.didLoadDocumentNotification` (posted on main
+  from `loadDocument`), consumed via `onReceive` →
+  `refreshTableExtractionIfNeeded()`. The first implementation keyed on the
+  AppModel projection revision and raced the canvas's `loadDocument` — the
+  cache never filled (caught by a background-thread probe before ship).
+
+**Implemented (PERF-S02):**
+- `scheduleViewportDrain()` — bounds/frame observers (2–3 fires per scroll
+  tick) now schedule one drain per runloop tick via a dirty flag +
+  `DispatchQueue.main.async`; PDFView* notification leg routed the same way.
+- `freezePaneOverlay.needsDisplay` guarded on a (page, scale-in-hundredths)
+  key; `forceReload()` → `reloadTiles()` (restores the 0.05 s tile debounce;
+  it had exactly one caller).
+- `persistReadingPositions()` debounced to a 1 s idle `DispatchWorkItem`
+  (in-memory dict still updated synchronously; no test or termination path
+  asserts synchronous persistence).
+
+**Validation evidence (headless capture protocol, `tools/perf-s14-capture/`):**
+120-page reportlab fixture (`benchmark/datasets/generate_multipage_text_fixture.py`,
+reportlab installed into `benchmark/datasets/.venv` via uv). Protocol: launch
+with `PDF_EDITOR_OPEN_SOURCE` (bare-binary argv suppresses the window, PL-I30),
+6 s open-phase `sample`, 20 s idle, 12 scripted page-down keystrokes, 10 s
+interaction sample, cputime checkpoints, pdf_oxide spawn counter.
+
+- **Frame-level (primary, load-independent):** BEFORE open-phase sample shows
+  `RenderingPipeline.extractText()` on the MAIN thread (138 samples in a 6 s
+  window, inside the toolbar builder chain). After the fix: **zero**
+  extraction frames on the main thread; extraction executes exactly once, on
+  a background thread (331 `ImprovedTextExtractor.extract` samples in a 10 s
+  launch-window probe).
+- Spawn counter: 0 attempts before and after — corrected mechanism confirmed.
+- CPU deltas (process-total): the matched quiet-machine pair gives open
+  6.77 s → 6.42 s, idle churn +1.93 s → +0.36 s, interaction +0.13 s →
+  +0.00 s. The final capture after the notification fix landed during a
+  parallel-agent build storm (load 13+, 54 swift-frontend processes) and its
+  absolute numbers are contention noise — re-measure when the machine is
+  quiet. Thread placement (the acceptance-critical property) is
+  load-independent and stands.
+
+**Remaining for PERF-S14:** formal Instruments (Time Profiler + SwiftUI View
+Body template) before/after capture per the audit's original recommendation,
+plus an in-app handler-invocation counter for the O(ticks×3)→O(1) claim.

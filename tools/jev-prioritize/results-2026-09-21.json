@@ -1,0 +1,2735 @@
+{
+  "run_date": "2026-09-21",
+  "items_file": "/Users/pranay/Projects/pdf_editor/tools/jev-prioritize/open-items-2026-09-21.json",
+  "item_count": 101,
+  "errors": 0,
+  "results": [
+    {
+      "id": "RG-135",
+      "priorityScore": 7.93,
+      "priorityLevel": 9.93,
+      "priorityConfidence": 0.97,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0.03,
+        "8": 0.97
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.26,
+      "laneProbabilities": {
+        "owner-decision": 0.34,
+        "do-next": 0.23,
+        "park": 0.01,
+        "do-now": 0.4,
+        "do-later": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-2",
+      "priorityScore": 7.89,
+      "priorityLevel": 9.89,
+      "priorityConfidence": 0.95,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0.06,
+        "8": 0.9400000000000001
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.57,
+      "laneProbabilities": {
+        "do-next": 0.12,
+        "park": 0.01,
+        "do-later": 0.02,
+        "owner-decision": 0.19,
+        "do-now": 0.66
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T32",
+      "priorityScore": 7.71,
+      "priorityLevel": 9.71,
+      "priorityConfidence": 0.87,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.01,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0.01,
+        "7": 0.13,
+        "8": 0.85
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 1,
+      "laneProbabilities": {
+        "do-now": 0,
+        "do-later": 0,
+        "do-next": 0,
+        "park": 0,
+        "owner-decision": 1
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "RG-122",
+      "priorityScore": 7.68,
+      "priorityLevel": 9.68,
+      "priorityConfidence": 0.86,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.01,
+        "3": 0,
+        "4": 0,
+        "5": 0.01,
+        "6": 0.02,
+        "7": 0.12,
+        "8": 0.84
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.99,
+      "laneProbabilities": {
+        "do-later": 0,
+        "do-next": 0,
+        "do-now": 0,
+        "park": 0,
+        "owner-decision": 1
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "MDEV-I1",
+      "priorityScore": 7.35,
+      "priorityLevel": 9.35,
+      "priorityConfidence": 0.71,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.02,
+        "3": 0,
+        "4": 0,
+        "5": 0.01,
+        "6": 0.05,
+        "7": 0.28,
+        "8": 0.63
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.67,
+      "laneProbabilities": {
+        "do-later": 0.02,
+        "park": 0.02,
+        "owner-decision": 0.73,
+        "do-next": 0.16,
+        "do-now": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "RG-123",
+      "priorityScore": 7.24,
+      "priorityLevel": 9.24,
+      "priorityConfidence": 0.66,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.02,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.02,
+        "6": 0.04,
+        "7": 0.27,
+        "8": 0.62
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.98,
+      "laneProbabilities": {
+        "do-now": 0.01,
+        "do-next": 0,
+        "park": 0,
+        "do-later": 0,
+        "owner-decision": 0.99
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S02",
+      "priorityScore": 7.13,
+      "priorityLevel": 9.129999999999999,
+      "priorityConfidence": 0.61,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.01,
+        "3": 0,
+        "4": 0,
+        "5": 0.09,
+        "6": 0.09,
+        "7": 0.32,
+        "8": 0.49
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.98,
+      "laneProbabilities": {
+        "do-later": 0,
+        "do-next": 0.01,
+        "owner-decision": 0.01,
+        "do-now": 0.98,
+        "park": 0
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S01",
+      "priorityScore": 7.07,
+      "priorityLevel": 9.07,
+      "priorityConfidence": 0.58,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.01,
+        "3": 0,
+        "4": 0,
+        "5": 0.11,
+        "6": 0.11,
+        "7": 0.31,
+        "8": 0.46
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.97,
+      "laneProbabilities": {
+        "do-later": 0,
+        "do-now": 0.98,
+        "park": 0,
+        "do-next": 0.01,
+        "owner-decision": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T21",
+      "priorityScore": 7.06,
+      "priorityLevel": 9.059999999999999,
+      "priorityConfidence": 0.58,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.01,
+        "2": 0.05,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.02,
+        "6": 0.05,
+        "7": 0.27,
+        "8": 0.57
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.21,
+      "laneProbabilities": {
+        "do-later": 0.03,
+        "do-next": 0.28,
+        "do-now": 0.37,
+        "owner-decision": 0.3,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R10",
+      "priorityScore": 6.99,
+      "priorityLevel": 8.99,
+      "priorityConfidence": 0.54,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.02,
+        "2": 0.05,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.03,
+        "6": 0.04,
+        "7": 0.3,
+        "8": 0.53
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.93,
+      "laneProbabilities": {
+        "do-next": 0.02,
+        "do-now": 0.02,
+        "owner-decision": 0.94,
+        "do-later": 0.01,
+        "park": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-4",
+      "priorityScore": 6.93,
+      "priorityLevel": 8.93,
+      "priorityConfidence": 0.68,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.01,
+        "3": 0,
+        "4": 0,
+        "5": 0.02,
+        "6": 0.26,
+        "7": 0.39,
+        "8": 0.32
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.99,
+      "laneProbabilities": {
+        "do-now": 0.01,
+        "do-next": 0,
+        "park": 0,
+        "do-later": 0,
+        "owner-decision": 0.99
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T34",
+      "priorityScore": 6.86,
+      "priorityLevel": 8.86,
+      "priorityConfidence": 0.59,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.01,
+        "2": 0.04,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.06,
+        "6": 0.08,
+        "7": 0.39999999999999997,
+        "8": 0.38
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.43,
+      "laneProbabilities": {
+        "owner-decision": 0.11,
+        "do-next": 0.3,
+        "do-now": 0.54,
+        "do-later": 0.03,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T39",
+      "priorityScore": 6.72,
+      "priorityLevel": 8.719999999999999,
+      "priorityConfidence": 0.77,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.03,
+        "3": 0,
+        "4": 0,
+        "5": 0.03,
+        "6": 0.09,
+        "7": 0.73,
+        "8": 0.11
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.71,
+      "laneProbabilities": {
+        "do-now": 0.13,
+        "do-later": 0.01,
+        "owner-decision": 0.76,
+        "park": 0.01,
+        "do-next": 0.09
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T27",
+      "priorityScore": 6.7,
+      "priorityLevel": 8.7,
+      "priorityConfidence": 0.6,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.01,
+        "2": 0.04,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.06,
+        "6": 0.09,
+        "7": 0.49,
+        "8": 0.29
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.97,
+      "laneProbabilities": {
+        "do-next": 0.01,
+        "owner-decision": 0.98,
+        "do-now": 0.01,
+        "do-later": 0,
+        "park": 0
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "MDEV-I6",
+      "priorityScore": 6.67,
+      "priorityLevel": 8.67,
+      "priorityConfidence": 0.57,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.04,
+        "3": 0,
+        "4": 0,
+        "5": 0.08,
+        "6": 0.22,
+        "7": 0.35000000000000003,
+        "8": 0.31
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.42,
+      "laneProbabilities": {
+        "owner-decision": 0.1,
+        "do-next": 0.34,
+        "do-now": 0.53,
+        "do-later": 0.02,
+        "park": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T15",
+      "priorityScore": 6.59,
+      "priorityLevel": 8.59,
+      "priorityConfidence": 0.52,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.01,
+        "2": 0.05,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.09,
+        "6": 0.09,
+        "7": 0.4,
+        "8": 0.33
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.31,
+      "laneProbabilities": {
+        "do-now": 0.41,
+        "do-next": 0.45,
+        "do-later": 0.07,
+        "park": 0.04,
+        "owner-decision": 0.03
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T03",
+      "priorityScore": 6.54,
+      "priorityLevel": 8.54,
+      "priorityConfidence": 0.34,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.1,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.04,
+        "6": 0.11,
+        "7": 0.34,
+        "8": 0.38
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.41,
+      "laneProbabilities": {
+        "do-later": 0.06,
+        "do-now": 0.53,
+        "do-next": 0.34,
+        "park": 0.01,
+        "owner-decision": 0.06
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S14",
+      "priorityScore": 6.52,
+      "priorityLevel": 8.52,
+      "priorityConfidence": 0.57,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.02,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.19,
+        "6": 0.17,
+        "7": 0.38,
+        "8": 0.23
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.6,
+      "laneProbabilities": {
+        "do-now": 0.68,
+        "park": 0.01,
+        "do-next": 0.27,
+        "do-later": 0.01,
+        "owner-decision": 0.03
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S12",
+      "priorityScore": 6.47,
+      "priorityLevel": 8.469999999999999,
+      "priorityConfidence": 0.5,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.04,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.17,
+        "6": 0.18,
+        "7": 0.31,
+        "8": 0.29
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.57,
+      "laneProbabilities": {
+        "do-later": 0.03,
+        "owner-decision": 0.1,
+        "park": 0.01,
+        "do-next": 0.2,
+        "do-now": 0.66
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-12",
+      "priorityScore": 6.42,
+      "priorityLevel": 8.42,
+      "priorityConfidence": 0.58,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.03,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.04,
+        "6": 0.39,
+        "7": 0.35,
+        "8": 0.16
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.38,
+      "laneProbabilities": {
+        "park": 0.02,
+        "do-now": 0.31,
+        "do-next": 0.51,
+        "do-later": 0.03,
+        "owner-decision": 0.13
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S03",
+      "priorityScore": 6.35,
+      "priorityLevel": 8.35,
+      "priorityConfidence": 0.28,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.02,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.32,
+        "6": 0.1,
+        "7": 0.23,
+        "8": 0.31
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.88,
+      "laneProbabilities": {
+        "do-later": 0.02,
+        "do-next": 0.06,
+        "do-now": 0.9,
+        "park": 0.01,
+        "owner-decision": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S11",
+      "priorityScore": 6.35,
+      "priorityLevel": 8.35,
+      "priorityConfidence": 0.53,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.02,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.27,
+        "6": 0.16,
+        "7": 0.34,
+        "8": 0.2
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.8,
+      "laneProbabilities": {
+        "do-later": 0.01,
+        "park": 0,
+        "owner-decision": 0.01,
+        "do-next": 0.13,
+        "do-now": 0.85
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-1",
+      "priorityScore": 6.35,
+      "priorityLevel": 8.35,
+      "priorityConfidence": 0.26,
+      "priorityProbabilities": {
+        "0": 0.02,
+        "1": 0.04,
+        "2": 0.07,
+        "3": 0.03,
+        "4": 0.03,
+        "5": 0.04,
+        "6": 0.06,
+        "7": 0.28,
+        "8": 0.43
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 1,
+      "laneProbabilities": {
+        "do-now": 0,
+        "do-next": 0,
+        "park": 0,
+        "do-later": 0,
+        "owner-decision": 1
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-16",
+      "priorityScore": 6.35,
+      "priorityLevel": 8.35,
+      "priorityConfidence": 0.57,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.04,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.01,
+        "6": 0.37,
+        "7": 0.38,
+        "8": 0.16
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.29,
+      "laneProbabilities": {
+        "do-now": 0.01,
+        "do-later": 0.14,
+        "owner-decision": 0.33,
+        "park": 0.09,
+        "do-next": 0.43
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T40",
+      "priorityScore": 6.27,
+      "priorityLevel": 8.27,
+      "priorityConfidence": 0.44,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.09,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.08,
+        "6": 0.18,
+        "7": 0.36,
+        "8": 0.26
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.38,
+      "laneProbabilities": {
+        "do-later": 0.11,
+        "do-now": 0.28,
+        "park": 0.03,
+        "owner-decision": 0.08,
+        "do-next": 0.5
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T01",
+      "priorityScore": 6.23,
+      "priorityLevel": 8.23,
+      "priorityConfidence": 0.49,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.07,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.14,
+        "6": 0.18,
+        "7": 0.4,
+        "8": 0.18
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.57,
+      "laneProbabilities": {
+        "owner-decision": 0.65,
+        "do-next": 0.18,
+        "do-now": 0.14,
+        "do-later": 0.02,
+        "park": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T29",
+      "priorityScore": 6.16,
+      "priorityLevel": 8.16,
+      "priorityConfidence": 0.45,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.09,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.1,
+        "6": 0.2,
+        "7": 0.39,
+        "8": 0.18
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.26,
+      "laneProbabilities": {
+        "do-later": 0.08,
+        "owner-decision": 0.39999999999999997,
+        "park": 0.02,
+        "do-next": 0.39,
+        "do-now": 0.11
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S10",
+      "priorityScore": 6.15,
+      "priorityLevel": 8.15,
+      "priorityConfidence": 0.31,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.04,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.3,
+        "6": 0.13,
+        "7": 0.27,
+        "8": 0.23
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.69,
+      "laneProbabilities": {
+        "do-next": 0.21,
+        "owner-decision": 0.02,
+        "do-later": 0.01,
+        "do-now": 0.76,
+        "park": 0
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T18",
+      "priorityScore": 6.13,
+      "priorityLevel": 8.129999999999999,
+      "priorityConfidence": 0.4,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.01,
+        "2": 0.09,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.16,
+        "6": 0.17,
+        "7": 0.31,
+        "8": 0.23
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.58,
+      "laneProbabilities": {
+        "do-now": 0.67,
+        "park": 0.01,
+        "do-later": 0.03,
+        "owner-decision": 0.05,
+        "do-next": 0.24
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S07",
+      "priorityScore": 6.13,
+      "priorityLevel": 8.129999999999999,
+      "priorityConfidence": 0.4,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.02,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.37,
+        "6": 0.13,
+        "7": 0.29000000000000004,
+        "8": 0.18
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.75,
+      "laneProbabilities": {
+        "park": 0,
+        "do-later": 0.01,
+        "do-next": 0.17,
+        "do-now": 0.8,
+        "owner-decision": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S04",
+      "priorityScore": 6.1,
+      "priorityLevel": 8.1,
+      "priorityConfidence": 0.39,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.03,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.36,
+        "6": 0.13,
+        "7": 0.3,
+        "8": 0.17
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.61,
+      "laneProbabilities": {
+        "park": 0.01,
+        "owner-decision": 0.03,
+        "do-later": 0.02,
+        "do-now": 0.6799999999999999,
+        "do-next": 0.26
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-9",
+      "priorityScore": 6.1,
+      "priorityLevel": 8.1,
+      "priorityConfidence": 0.5,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.03,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.21,
+        "6": 0.32,
+        "7": 0.32,
+        "8": 0.1
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.44,
+      "laneProbabilities": {
+        "do-later": 0.05,
+        "owner-decision": 0.16,
+        "park": 0.02,
+        "do-now": 0.21,
+        "do-next": 0.56
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T14",
+      "priorityScore": 6.06,
+      "priorityLevel": 8.059999999999999,
+      "priorityConfidence": 0.35,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.02,
+        "2": 0.11,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.12,
+        "6": 0.17,
+        "7": 0.29,
+        "8": 0.25
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.36,
+      "laneProbabilities": {
+        "owner-decision": 0.13,
+        "do-now": 0.49,
+        "do-later": 0.06,
+        "park": 0.02,
+        "do-next": 0.3
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-5",
+      "priorityScore": 6.01,
+      "priorityLevel": 8.01,
+      "priorityConfidence": 0.32,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.03,
+        "2": 0.11,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.09,
+        "6": 0.14,
+        "7": 0.31,
+        "8": 0.27
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.72,
+      "laneProbabilities": {
+        "park": 0.01,
+        "owner-decision": 0.78,
+        "do-later": 0.05,
+        "do-next": 0.11,
+        "do-now": 0.05
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "MDEV-I3",
+      "priorityScore": 6,
+      "priorityLevel": 8,
+      "priorityConfidence": 0.67,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.04,
+        "3": 0,
+        "4": 0,
+        "5": 0.12,
+        "6": 0.52,
+        "7": 0.24,
+        "8": 0.07
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.85,
+      "laneProbabilities": {
+        "park": 0.01,
+        "do-later": 0.01,
+        "do-next": 0.09,
+        "do-now": 0.01,
+        "owner-decision": 0.88
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S05",
+      "priorityScore": 5.97,
+      "priorityLevel": 7.97,
+      "priorityConfidence": 0.43,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.03,
+        "3": 0,
+        "4": 0.01,
+        "5": 0.41000000000000003,
+        "6": 0.15,
+        "7": 0.22,
+        "8": 0.18
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.84,
+      "laneProbabilities": {
+        "do-later": 0.01,
+        "do-next": 0.1,
+        "do-now": 0.88,
+        "park": 0,
+        "owner-decision": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S13",
+      "priorityScore": 5.95,
+      "priorityLevel": 7.95,
+      "priorityConfidence": 0.52,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.05,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.27,
+        "6": 0.29,
+        "7": 0.21,
+        "8": 0.15
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.38,
+      "laneProbabilities": {
+        "do-now": 0.52,
+        "do-later": 0.05,
+        "park": 0.04,
+        "owner-decision": 0.02,
+        "do-next": 0.37
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-11",
+      "priorityScore": 5.93,
+      "priorityLevel": 7.93,
+      "priorityConfidence": 0.52,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.07,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.14,
+        "6": 0.37,
+        "7": 0.27,
+        "8": 0.11
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.4,
+      "laneProbabilities": {
+        "do-later": 0.12,
+        "do-next": 0.53,
+        "do-now": 0.13,
+        "park": 0.04,
+        "owner-decision": 0.18
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T28",
+      "priorityScore": 5.92,
+      "priorityLevel": 7.92,
+      "priorityConfidence": 0.33,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.14,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.1,
+        "6": 0.24,
+        "7": 0.28,
+        "8": 0.2
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.36,
+      "laneProbabilities": {
+        "park": 0.02,
+        "do-later": 0.13,
+        "owner-decision": 0.12,
+        "do-now": 0.23,
+        "do-next": 0.5
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T30",
+      "priorityScore": 5.88,
+      "priorityLevel": 7.88,
+      "priorityConfidence": 0.33,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.02,
+        "2": 0.11,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.2,
+        "6": 0.15,
+        "7": 0.31,
+        "8": 0.18
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.39,
+      "laneProbabilities": {
+        "owner-decision": 0.03,
+        "do-now": 0.36,
+        "do-later": 0.08,
+        "park": 0.02,
+        "do-next": 0.51
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T16",
+      "priorityScore": 5.8,
+      "priorityLevel": 7.8,
+      "priorityConfidence": 0.3,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.02,
+        "2": 0.13,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.1,
+        "6": 0.2,
+        "7": 0.32,
+        "8": 0.18
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.37,
+      "laneProbabilities": {
+        "do-next": 0.5,
+        "owner-decision": 0.1,
+        "do-now": 0.28,
+        "do-later": 0.09,
+        "park": 0.03
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "MDEV-I2",
+      "priorityScore": 5.77,
+      "priorityLevel": 7.77,
+      "priorityConfidence": 0.27,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.1,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.28,
+        "6": 0.14,
+        "7": 0.26,
+        "8": 0.18
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.36,
+      "laneProbabilities": {
+        "do-next": 0.48,
+        "do-now": 0.19,
+        "owner-decision": 0.22,
+        "do-later": 0.09,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S06",
+      "priorityScore": 5.71,
+      "priorityLevel": 7.71,
+      "priorityConfidence": 0.54,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0,
+        "2": 0.03,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.54,
+        "6": 0.11,
+        "7": 0.16,
+        "8": 0.14
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.7,
+      "laneProbabilities": {
+        "do-later": 0.03,
+        "do-next": 0.19,
+        "do-now": 0.75,
+        "park": 0.01,
+        "owner-decision": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-10",
+      "priorityScore": 5.71,
+      "priorityLevel": 7.71,
+      "priorityConfidence": 0.3,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.09,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.27,
+        "6": 0.21,
+        "7": 0.22,
+        "8": 0.16
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.54,
+      "laneProbabilities": {
+        "do-later": 0.07,
+        "park": 0.03,
+        "owner-decision": 0.08,
+        "do-next": 0.64,
+        "do-now": 0.18
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-6",
+      "priorityScore": 5.69,
+      "priorityLevel": 7.69,
+      "priorityConfidence": 0.29,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.03,
+        "2": 0.09,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.19,
+        "6": 0.2,
+        "7": 0.3,
+        "8": 0.14
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.9,
+      "laneProbabilities": {
+        "do-later": 0.02,
+        "park": 0.01,
+        "do-next": 0.03,
+        "owner-decision": 0.92,
+        "do-now": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R12",
+      "priorityScore": 5.67,
+      "priorityLevel": 7.67,
+      "priorityConfidence": 0.22,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.03,
+        "2": 0.14,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.16,
+        "6": 0.13,
+        "7": 0.29000000000000004,
+        "8": 0.21
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.15,
+      "laneProbabilities": {
+        "do-now": 0.13,
+        "owner-decision": 0.31,
+        "park": 0.04,
+        "do-later": 0.2,
+        "do-next": 0.32
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T41",
+      "priorityScore": 5.65,
+      "priorityLevel": 7.65,
+      "priorityConfidence": 0.33,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.03,
+        "2": 0.11,
+        "3": 0.02,
+        "4": 0.01,
+        "5": 0.13,
+        "6": 0.28,
+        "7": 0.36,
+        "8": 0.06
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.27,
+      "laneProbabilities": {
+        "do-later": 0.04,
+        "do-next": 0.41,
+        "do-now": 0.3,
+        "owner-decision": 0.23,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-8",
+      "priorityScore": 5.59,
+      "priorityLevel": 7.59,
+      "priorityConfidence": 0.45,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.08,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.35,
+        "6": 0.26,
+        "7": 0.18,
+        "8": 0.1
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.32,
+      "laneProbabilities": {
+        "park": 0.01,
+        "do-now": 0.46,
+        "do-next": 0.42,
+        "do-later": 0.07,
+        "owner-decision": 0.04
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T42",
+      "priorityScore": 5.51,
+      "priorityLevel": 7.51,
+      "priorityConfidence": 0.3,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.04,
+        "2": 0.13,
+        "3": 0.03,
+        "4": 0.02,
+        "5": 0.08,
+        "6": 0.27,
+        "7": 0.39,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.56,
+      "laneProbabilities": {
+        "do-next": 0.65,
+        "do-now": 0.01,
+        "park": 0.05,
+        "owner-decision": 0.17,
+        "do-later": 0.12
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S09",
+      "priorityScore": 5.51,
+      "priorityLevel": 7.51,
+      "priorityConfidence": 0.52,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.01,
+        "2": 0.06,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.48,
+        "6": 0.15,
+        "7": 0.17,
+        "8": 0.1
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.34,
+      "laneProbabilities": {
+        "owner-decision": 0.12,
+        "do-next": 0.47,
+        "do-now": 0.31,
+        "do-later": 0.08,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T04",
+      "priorityScore": 5.49,
+      "priorityLevel": 7.49,
+      "priorityConfidence": 0.21,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.02,
+        "2": 0.14,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.23,
+        "6": 0.17,
+        "7": 0.28,
+        "8": 0.12
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.35,
+      "laneProbabilities": {
+        "do-later": 0.09,
+        "do-now": 0.39,
+        "do-next": 0.48,
+        "owner-decision": 0.02,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T17",
+      "priorityScore": 5.49,
+      "priorityLevel": 7.49,
+      "priorityConfidence": 0.41,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.12,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.21,
+        "6": 0.31,
+        "7": 0.21,
+        "8": 0.09
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.25,
+      "laneProbabilities": {
+        "do-later": 0.06,
+        "park": 0.03,
+        "owner-decision": 0.3,
+        "do-now": 0.2,
+        "do-next": 0.41000000000000003
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T20",
+      "priorityScore": 5.49,
+      "priorityLevel": 7.49,
+      "priorityConfidence": 0.18,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.03,
+        "2": 0.15,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.18,
+        "6": 0.15,
+        "7": 0.29000000000000004,
+        "8": 0.15
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.29,
+      "laneProbabilities": {
+        "do-now": 0.44,
+        "park": 0.04,
+        "do-later": 0.1,
+        "owner-decision": 0.07,
+        "do-next": 0.35
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "PERF-S08",
+      "priorityScore": 5.48,
+      "priorityLevel": 7.48,
+      "priorityConfidence": 0.54,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.01,
+        "2": 0.05,
+        "3": 0.01,
+        "4": 0.03,
+        "5": 0.53,
+        "6": 0.09,
+        "7": 0.15,
+        "8": 0.12
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.63,
+      "laneProbabilities": {
+        "do-next": 0.22,
+        "owner-decision": 0.02,
+        "park": 0.01,
+        "do-now": 0.7,
+        "do-later": 0.05
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-5",
+      "priorityScore": 5.45,
+      "priorityLevel": 7.45,
+      "priorityConfidence": 0.5,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.11,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.22,
+        "6": 0.42,
+        "7": 0.15,
+        "8": 0.06
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.5,
+      "laneProbabilities": {
+        "do-next": 0.26,
+        "park": 0.02,
+        "owner-decision": 0.06,
+        "do-now": 0.61,
+        "do-later": 0.05
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R15",
+      "priorityScore": 5.36,
+      "priorityLevel": 7.36,
+      "priorityConfidence": 0.08,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.07,
+        "2": 0.17,
+        "3": 0.03,
+        "4": 0.02,
+        "5": 0.1,
+        "6": 0.14,
+        "7": 0.26,
+        "8": 0.2
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.99,
+      "laneProbabilities": {
+        "do-later": 0,
+        "do-now": 0,
+        "park": 0,
+        "do-next": 0,
+        "owner-decision": 1
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T13",
+      "priorityScore": 5.34,
+      "priorityLevel": 7.34,
+      "priorityConfidence": 0.32,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.15,
+        "3": 0.02,
+        "4": 0.03,
+        "5": 0.26,
+        "6": 0.22,
+        "7": 0.2,
+        "8": 0.1
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.32,
+      "laneProbabilities": {
+        "owner-decision": 0.12,
+        "do-next": 0.46,
+        "park": 0.02,
+        "do-now": 0.33,
+        "do-later": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-3",
+      "priorityScore": 5.34,
+      "priorityLevel": 7.34,
+      "priorityConfidence": 0.38,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.18,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.1,
+        "6": 0.39,
+        "7": 0.2,
+        "8": 0.08
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.32,
+      "laneProbabilities": {
+        "do-next": 0.39,
+        "owner-decision": 0.47000000000000003,
+        "park": 0.03,
+        "do-now": 0.01,
+        "do-later": 0.1
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T06",
+      "priorityScore": 5.33,
+      "priorityLevel": 7.33,
+      "priorityConfidence": 0.47,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.14,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.21,
+        "6": 0.39,
+        "7": 0.18,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.58,
+      "laneProbabilities": {
+        "do-now": 0.01,
+        "do-next": 0.65,
+        "park": 0.08,
+        "do-later": 0.19,
+        "owner-decision": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R13",
+      "priorityScore": 5.27,
+      "priorityLevel": 7.27,
+      "priorityConfidence": 0.06,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.03,
+        "2": 0.22,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.14,
+        "6": 0.14,
+        "7": 0.24,
+        "8": 0.18
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.2,
+      "laneProbabilities": {
+        "do-next": 0.35,
+        "park": 0.06,
+        "do-now": 0.04,
+        "owner-decision": 0.25,
+        "do-later": 0.3
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-14",
+      "priorityScore": 5.26,
+      "priorityLevel": 7.26,
+      "priorityConfidence": 0.36,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.03,
+        "2": 0.16,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.19,
+        "6": 0.33,
+        "7": 0.19,
+        "8": 0.07
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.48,
+      "laneProbabilities": {
+        "do-next": 0.58,
+        "park": 0.07,
+        "owner-decision": 0.11,
+        "do-later": 0.17,
+        "do-now": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-6",
+      "priorityScore": 5.2,
+      "priorityLevel": 7.2,
+      "priorityConfidence": 0.36,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.17,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.2,
+        "6": 0.35000000000000003,
+        "7": 0.14,
+        "8": 0.08
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.25,
+      "laneProbabilities": {
+        "owner-decision": 0.08,
+        "do-now": 0.33,
+        "do-later": 0.14,
+        "do-next": 0.4,
+        "park": 0.05
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T07",
+      "priorityScore": 5.19,
+      "priorityLevel": 7.19,
+      "priorityConfidence": 0.28,
+      "priorityProbabilities": {
+        "0": 0.03,
+        "1": 0.03,
+        "2": 0.12,
+        "3": 0.02,
+        "4": 0.04,
+        "5": 0.31,
+        "6": 0.13,
+        "7": 0.21,
+        "8": 0.11
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.31,
+      "laneProbabilities": {
+        "do-next": 0.44,
+        "park": 0.02,
+        "do-now": 0.44,
+        "do-later": 0.07,
+        "owner-decision": 0.03
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T12",
+      "priorityScore": 5.16,
+      "priorityLevel": 7.16,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.24000000000000002,
+        "3": 0.01,
+        "4": 0.01,
+        "5": 0.17,
+        "6": 0.22,
+        "7": 0.23,
+        "8": 0.1
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.47,
+      "laneProbabilities": {
+        "park": 0.02,
+        "owner-decision": 0.05,
+        "do-later": 0.12,
+        "do-next": 0.57,
+        "do-now": 0.24
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T10",
+      "priorityScore": 5.14,
+      "priorityLevel": 7.14,
+      "priorityConfidence": 0.42,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.02,
+        "2": 0.13,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.35,
+        "6": 0.25,
+        "7": 0.13,
+        "8": 0.07
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.42,
+      "laneProbabilities": {
+        "do-next": 0.53,
+        "park": 0.02,
+        "owner-decision": 0.06,
+        "do-now": 0.3,
+        "do-later": 0.09
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T25",
+      "priorityScore": 5.14,
+      "priorityLevel": 7.14,
+      "priorityConfidence": 0.3,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.02,
+        "2": 0.17,
+        "3": 0.03,
+        "4": 0.04,
+        "5": 0.26,
+        "6": 0.19,
+        "7": 0.21,
+        "8": 0.08
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.37,
+      "laneProbabilities": {
+        "owner-decision": 0.09,
+        "park": 0.02,
+        "do-later": 0.09,
+        "do-now": 0.29,
+        "do-next": 0.51
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-13",
+      "priorityScore": 5.13,
+      "priorityLevel": 7.13,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.03,
+        "2": 0.26,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.12,
+        "6": 0.16,
+        "7": 0.23,
+        "8": 0.16
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.37,
+      "laneProbabilities": {
+        "do-later": 0.16,
+        "do-next": 0.27,
+        "owner-decision": 0.5,
+        "do-now": 0.03,
+        "park": 0.04
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R04",
+      "priorityScore": 5.09,
+      "priorityLevel": 7.09,
+      "priorityConfidence": 0.02,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.04,
+        "2": 0.23,
+        "3": 0.02,
+        "4": 0.02,
+        "5": 0.15,
+        "6": 0.17,
+        "7": 0.22999999999999998,
+        "8": 0.13
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.18,
+      "laneProbabilities": {
+        "do-now": 0.04,
+        "do-next": 0.33,
+        "owner-decision": 0.28,
+        "do-later": 0.28,
+        "park": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R08",
+      "priorityScore": 5.06,
+      "priorityLevel": 7.06,
+      "priorityConfidence": 0.08,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.05,
+        "2": 0.18,
+        "3": 0.03,
+        "4": 0.03,
+        "5": 0.17,
+        "6": 0.22,
+        "7": 0.26,
+        "8": 0.05
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.22,
+      "laneProbabilities": {
+        "do-later": 0.18,
+        "do-now": 0.04,
+        "park": 0.03,
+        "do-next": 0.36,
+        "owner-decision": 0.39
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T23",
+      "priorityScore": 5,
+      "priorityLevel": 7,
+      "priorityConfidence": 0.31,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.03,
+        "2": 0.18,
+        "3": 0.02,
+        "4": 0.01,
+        "5": 0.26,
+        "6": 0.29000000000000004,
+        "7": 0.16,
+        "8": 0.05
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.4,
+      "laneProbabilities": {
+        "owner-decision": 0.11,
+        "park": 0.04,
+        "do-later": 0.13,
+        "do-next": 0.52,
+        "do-now": 0.2
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-4",
+      "priorityScore": 4.98,
+      "priorityLevel": 6.98,
+      "priorityConfidence": 0.38,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.03,
+        "2": 0.2,
+        "3": 0.01,
+        "4": 0.02,
+        "5": 0.17,
+        "6": 0.43,
+        "7": 0.1,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.59,
+      "laneProbabilities": {
+        "owner-decision": 0.12,
+        "do-next": 0.66,
+        "do-now": 0.01,
+        "do-later": 0.17,
+        "park": 0.04
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "A-7",
+      "priorityScore": 4.9,
+      "priorityLevel": 6.9,
+      "priorityConfidence": 0.34,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.03,
+        "2": 0.17,
+        "3": 0.03,
+        "4": 0.05,
+        "5": 0.36,
+        "6": 0.12,
+        "7": 0.14,
+        "8": 0.09
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.31,
+      "laneProbabilities": {
+        "do-now": 0.45,
+        "do-next": 0.4,
+        "do-later": 0.08,
+        "park": 0.03,
+        "owner-decision": 0.04
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "MDEV-I4",
+      "priorityScore": 4.8,
+      "priorityLevel": 6.8,
+      "priorityConfidence": 0.23,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.04,
+        "2": 0.19999999999999998,
+        "3": 0.05,
+        "4": 0.07,
+        "5": 0.22999999999999998,
+        "6": 0.14,
+        "7": 0.17,
+        "8": 0.09
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.17,
+      "laneProbabilities": {
+        "do-now": 0.31,
+        "do-next": 0.34,
+        "do-later": 0.12,
+        "park": 0.05,
+        "owner-decision": 0.18
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T35",
+      "priorityScore": 4.77,
+      "priorityLevel": 6.77,
+      "priorityConfidence": 0.24,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.03,
+        "2": 0.24,
+        "3": 0.02,
+        "4": 0.04,
+        "5": 0.25,
+        "6": 0.17,
+        "7": 0.18,
+        "8": 0.07
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.29,
+      "laneProbabilities": {
+        "do-later": 0.24,
+        "owner-decision": 0.18,
+        "do-next": 0.43,
+        "do-now": 0.09,
+        "park": 0.06
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R05",
+      "priorityScore": 4.66,
+      "priorityLevel": 6.66,
+      "priorityConfidence": 0.32,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.05,
+        "2": 0.19,
+        "3": 0.04,
+        "4": 0.05,
+        "5": 0.3,
+        "6": 0.18,
+        "7": 0.13,
+        "8": 0.05
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.7,
+      "laneProbabilities": {
+        "do-later": 0.05,
+        "do-next": 0.12,
+        "do-now": 0.06,
+        "owner-decision": 0.75,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T37",
+      "priorityScore": 4.49,
+      "priorityLevel": 6.49,
+      "priorityConfidence": 0.02,
+      "priorityProbabilities": {
+        "0": 0.1,
+        "1": 0.1,
+        "2": 0.12,
+        "3": 0.03,
+        "4": 0.05,
+        "5": 0.19,
+        "6": 0.1,
+        "7": 0.19,
+        "8": 0.12
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.15,
+      "laneProbabilities": {
+        "owner-decision": 0.32,
+        "do-next": 0.25,
+        "do-now": 0.21,
+        "park": 0.06,
+        "do-later": 0.16
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T43",
+      "priorityScore": 4.39,
+      "priorityLevel": 6.39,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.07,
+        "2": 0.29,
+        "3": 0.05,
+        "4": 0.03,
+        "5": 0.14,
+        "6": 0.17,
+        "7": 0.19,
+        "8": 0.05
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.2,
+      "laneProbabilities": {
+        "park": 0.04,
+        "do-later": 0.14,
+        "do-next": 0.36,
+        "do-now": 0.11,
+        "owner-decision": 0.35
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T24",
+      "priorityScore": 4.38,
+      "priorityLevel": 6.38,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.06,
+        "2": 0.33,
+        "3": 0.04,
+        "4": 0.03,
+        "5": 0.17,
+        "6": 0.1,
+        "7": 0.18,
+        "8": 0.09
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.35,
+      "laneProbabilities": {
+        "park": 0.07,
+        "do-now": 0.05,
+        "do-later": 0.3,
+        "do-next": 0.48,
+        "owner-decision": 0.1
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T05",
+      "priorityScore": 4.37,
+      "priorityLevel": 6.37,
+      "priorityConfidence": 0.36,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.04,
+        "2": 0.22,
+        "3": 0.04,
+        "4": 0.07,
+        "5": 0.39,
+        "6": 0.1,
+        "7": 0.09,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.19,
+      "laneProbabilities": {
+        "owner-decision": 0.04,
+        "do-next": 0.35,
+        "do-now": 0.32,
+        "do-later": 0.25,
+        "park": 0.04
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T44",
+      "priorityScore": 4.36,
+      "priorityLevel": 6.36,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.06,
+        "2": 0.32,
+        "3": 0.05,
+        "4": 0.03,
+        "5": 0.12,
+        "6": 0.16,
+        "7": 0.18,
+        "8": 0.07
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.28,
+      "laneProbabilities": {
+        "park": 0.05,
+        "owner-decision": 0.43,
+        "do-next": 0.29,
+        "do-now": 0.14,
+        "do-later": 0.09
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T02",
+      "priorityScore": 4.33,
+      "priorityLevel": 6.33,
+      "priorityConfidence": 0.35,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.04,
+        "2": 0.2,
+        "3": 0.07,
+        "4": 0.11,
+        "5": 0.37,
+        "6": 0.06,
+        "7": 0.1,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.27,
+      "laneProbabilities": {
+        "park": 0.02,
+        "do-later": 0.11,
+        "owner-decision": 0.04,
+        "do-next": 0.42,
+        "do-now": 0.41
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T38",
+      "priorityScore": 4.33,
+      "priorityLevel": 6.33,
+      "priorityConfidence": 0.19,
+      "priorityProbabilities": {
+        "0": 0.05,
+        "1": 0.06,
+        "2": 0.19,
+        "3": 0.04,
+        "4": 0.08,
+        "5": 0.3,
+        "6": 0.08,
+        "7": 0.12,
+        "8": 0.08
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.22,
+      "laneProbabilities": {
+        "do-next": 0.32,
+        "park": 0.08,
+        "do-later": 0.16,
+        "do-now": 0.37,
+        "owner-decision": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "JEV-0",
+      "priorityScore": 4.17,
+      "priorityLevel": 6.17,
+      "priorityConfidence": 0.32,
+      "priorityProbabilities": {
+        "0": 0.07,
+        "1": 0.03,
+        "2": 0.16,
+        "3": 0.05,
+        "4": 0.1,
+        "5": 0.39,
+        "6": 0.1,
+        "7": 0.05,
+        "8": 0.05
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.7,
+      "laneProbabilities": {
+        "do-next": 0.09,
+        "do-now": 0.76,
+        "owner-decision": 0.03,
+        "do-later": 0.1,
+        "park": 0.02
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R11",
+      "priorityScore": 4.15,
+      "priorityLevel": 6.15,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.06,
+        "2": 0.3,
+        "3": 0.04,
+        "4": 0.06,
+        "5": 0.25,
+        "6": 0.12,
+        "7": 0.12,
+        "8": 0.04
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.17,
+      "laneProbabilities": {
+        "do-later": 0.34,
+        "do-now": 0.06,
+        "do-next": 0.28,
+        "owner-decision": 0.24,
+        "park": 0.08
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T08",
+      "priorityScore": 4.13,
+      "priorityLevel": 6.13,
+      "priorityConfidence": 0.29,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.05,
+        "2": 0.29,
+        "3": 0.03,
+        "4": 0.06,
+        "5": 0.33,
+        "6": 0.12,
+        "7": 0.08,
+        "8": 0.03
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.42,
+      "laneProbabilities": {
+        "park": 0.05,
+        "owner-decision": 0.05,
+        "do-next": 0.53,
+        "do-now": 0.19,
+        "do-later": 0.18
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T31",
+      "priorityScore": 4.13,
+      "priorityLevel": 6.13,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.04,
+        "2": 0.32,
+        "3": 0.04,
+        "4": 0.06,
+        "5": 0.27,
+        "6": 0.13,
+        "7": 0.09,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.28,
+      "laneProbabilities": {
+        "park": 0.06,
+        "owner-decision": 0.12,
+        "do-next": 0.42,
+        "do-now": 0.15,
+        "do-later": 0.25
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R06",
+      "priorityScore": 4.04,
+      "priorityLevel": 6.04,
+      "priorityConfidence": 0.3,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.04,
+        "2": 0.28,
+        "3": 0.05,
+        "4": 0.09,
+        "5": 0.34,
+        "6": 0.11,
+        "7": 0.05,
+        "8": 0.03
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.26,
+      "laneProbabilities": {
+        "do-now": 0.18,
+        "owner-decision": 0.03,
+        "do-later": 0.32,
+        "do-next": 0.41,
+        "park": 0.06
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T19",
+      "priorityScore": 4.01,
+      "priorityLevel": 6.01,
+      "priorityConfidence": 0.05,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.04,
+        "2": 0.35000000000000003,
+        "3": 0.06,
+        "4": 0.06,
+        "5": 0.26,
+        "6": 0.1,
+        "7": 0.09,
+        "8": 0.04
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.36,
+      "laneProbabilities": {
+        "park": 0.06,
+        "do-next": 0.49,
+        "do-later": 0.24,
+        "owner-decision": 0.09,
+        "do-now": 0.12
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T45",
+      "priorityScore": 4.01,
+      "priorityLevel": 6.01,
+      "priorityConfidence": 0,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.09,
+        "2": 0.39,
+        "3": 0.04,
+        "4": 0.03,
+        "5": 0.08,
+        "6": 0.09,
+        "7": 0.2,
+        "8": 0.07
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.36,
+      "laneProbabilities": {
+        "park": 0.07,
+        "owner-decision": 0.49,
+        "do-now": 0.04,
+        "do-later": 0.16,
+        "do-next": 0.24
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T33",
+      "priorityScore": 3.97,
+      "priorityLevel": 5.970000000000001,
+      "priorityConfidence": 0.11,
+      "priorityProbabilities": {
+        "0": 0.07,
+        "1": 0.06,
+        "2": 0.24,
+        "3": 0.05,
+        "4": 0.1,
+        "5": 0.24,
+        "6": 0.07,
+        "7": 0.1,
+        "8": 0.07
+      },
+      "lane": "do-now",
+      "laneConfidence": 0.48,
+      "laneProbabilities": {
+        "do-now": 0.57,
+        "park": 0.05,
+        "do-next": 0.16,
+        "do-later": 0.15,
+        "owner-decision": 0.07
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R02",
+      "priorityScore": 3.93,
+      "priorityLevel": 5.93,
+      "priorityConfidence": 0.05,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.08,
+        "2": 0.39,
+        "3": 0.05,
+        "4": 0.04,
+        "5": 0.14,
+        "6": 0.09,
+        "7": 0.13,
+        "8": 0.07
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.2,
+      "laneProbabilities": {
+        "owner-decision": 0.27,
+        "do-next": 0.26,
+        "do-now": 0.01,
+        "do-later": 0.37,
+        "park": 0.09
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R14",
+      "priorityScore": 3.86,
+      "priorityLevel": 5.859999999999999,
+      "priorityConfidence": 0.05,
+      "priorityProbabilities": {
+        "0": 0.02,
+        "1": 0.09,
+        "2": 0.34,
+        "3": 0.06,
+        "4": 0.05,
+        "5": 0.16,
+        "6": 0.11,
+        "7": 0.12,
+        "8": 0.05
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.31,
+      "laneProbabilities": {
+        "park": 0.09,
+        "do-next": 0.28,
+        "do-later": 0.45,
+        "do-now": 0.01,
+        "owner-decision": 0.17
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R01",
+      "priorityScore": 3.74,
+      "priorityLevel": 5.74,
+      "priorityConfidence": 0.12,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.1,
+        "2": 0.33999999999999997,
+        "3": 0.08,
+        "4": 0.05,
+        "5": 0.17,
+        "6": 0.1,
+        "7": 0.11,
+        "8": 0.04
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.2,
+      "laneProbabilities": {
+        "do-later": 0.35,
+        "park": 0.08,
+        "owner-decision": 0.3,
+        "do-now": 0.01,
+        "do-next": 0.26
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R09",
+      "priorityScore": 3.62,
+      "priorityLevel": 5.62,
+      "priorityConfidence": 0.17,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.1,
+        "2": 0.38,
+        "3": 0.11,
+        "4": 0.04,
+        "5": 0.12,
+        "6": 0.08,
+        "7": 0.11,
+        "8": 0.05
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.24,
+      "laneProbabilities": {
+        "owner-decision": 0.25,
+        "park": 0.08,
+        "do-later": 0.4,
+        "do-next": 0.26,
+        "do-now": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T11",
+      "priorityScore": 3.61,
+      "priorityLevel": 5.609999999999999,
+      "priorityConfidence": 0.19,
+      "priorityProbabilities": {
+        "0": 0.02,
+        "1": 0.06,
+        "2": 0.38,
+        "3": 0.06,
+        "4": 0.05,
+        "5": 0.28,
+        "6": 0.07,
+        "7": 0.05,
+        "8": 0.03
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.21,
+      "laneProbabilities": {
+        "owner-decision": 0.23,
+        "park": 0.05,
+        "do-later": 0.27,
+        "do-next": 0.36,
+        "do-now": 0.09
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T09",
+      "priorityScore": 3.49,
+      "priorityLevel": 5.49,
+      "priorityConfidence": 0.21,
+      "priorityProbabilities": {
+        "0": 0.04,
+        "1": 0.05,
+        "2": 0.32,
+        "3": 0.08,
+        "4": 0.12,
+        "5": 0.31,
+        "6": 0.05,
+        "7": 0.02,
+        "8": 0.01
+      },
+      "lane": "do-next",
+      "laneConfidence": 0.22,
+      "laneProbabilities": {
+        "park": 0.08,
+        "do-next": 0.38,
+        "owner-decision": 0.08,
+        "do-later": 0.29,
+        "do-now": 0.17
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R07",
+      "priorityScore": 3.41,
+      "priorityLevel": 5.41,
+      "priorityConfidence": 0.25,
+      "priorityProbabilities": {
+        "0": 0.02,
+        "1": 0.1,
+        "2": 0.43,
+        "3": 0.07,
+        "4": 0.05,
+        "5": 0.12000000000000001,
+        "6": 0.08,
+        "7": 0.09,
+        "8": 0.04
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.37,
+      "laneProbabilities": {
+        "do-next": 0.21,
+        "park": 0.12,
+        "owner-decision": 0.17,
+        "do-now": 0.01,
+        "do-later": 0.49
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-R03",
+      "priorityScore": 3.36,
+      "priorityLevel": 5.359999999999999,
+      "priorityConfidence": 0.29,
+      "priorityProbabilities": {
+        "0": 0,
+        "1": 0.1,
+        "2": 0.47000000000000003,
+        "3": 0.06,
+        "4": 0.05,
+        "5": 0.14,
+        "6": 0.07,
+        "7": 0.08,
+        "8": 0.03
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.26,
+      "laneProbabilities": {
+        "do-later": 0.39999999999999997,
+        "do-now": 0.01,
+        "do-next": 0.28,
+        "park": 0.05,
+        "owner-decision": 0.26
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T36",
+      "priorityScore": 3.18,
+      "priorityLevel": 5.18,
+      "priorityConfidence": 0.29,
+      "priorityProbabilities": {
+        "0": 0.03,
+        "1": 0.14,
+        "2": 0.41000000000000003,
+        "3": 0.09,
+        "4": 0.05,
+        "5": 0.11,
+        "6": 0.06,
+        "7": 0.08,
+        "8": 0.03
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.26,
+      "laneProbabilities": {
+        "owner-decision": 0.25,
+        "do-next": 0.21,
+        "park": 0.11,
+        "do-now": 0.02,
+        "do-later": 0.41
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T22",
+      "priorityScore": 2.59,
+      "priorityLevel": 4.59,
+      "priorityConfidence": 0.5,
+      "priorityProbabilities": {
+        "0": 0.02,
+        "1": 0.22,
+        "2": 0.39,
+        "3": 0.17,
+        "4": 0.06,
+        "5": 0.06,
+        "6": 0.03,
+        "7": 0.03,
+        "8": 0.02
+      },
+      "lane": "owner-decision",
+      "laneConfidence": 0.15,
+      "laneProbabilities": {
+        "do-next": 0.29,
+        "park": 0.07,
+        "do-later": 0.25,
+        "owner-decision": 0.31,
+        "do-now": 0.08
+      },
+      "servedModel": "jev-1.13.0"
+    },
+    {
+      "id": "NM-T26",
+      "priorityScore": 2.59,
+      "priorityLevel": 4.59,
+      "priorityConfidence": 0.63,
+      "priorityProbabilities": {
+        "0": 0.01,
+        "1": 0.11,
+        "2": 0.57,
+        "3": 0.12,
+        "4": 0.06,
+        "5": 0.09,
+        "6": 0.03,
+        "7": 0.01,
+        "8": 0
+      },
+      "lane": "do-later",
+      "laneConfidence": 0.48,
+      "laneProbabilities": {
+        "do-later": 0.58,
+        "do-next": 0.28,
+        "park": 0.08,
+        "owner-decision": 0.05,
+        "do-now": 0.01
+      },
+      "servedModel": "jev-1.13.0"
+    }
+  ]
+}

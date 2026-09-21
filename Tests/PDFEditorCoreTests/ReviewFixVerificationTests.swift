@@ -99,7 +99,11 @@ struct ReviewFixVerificationTests {
     #expect(!PDFKitProvider.buttonValueRetained(fields: text, requested: "Grace"))
   }
 
-  @Test func overlayImageOperationFailsClosedWithoutPublishing() throws {
+  /// Reference-only image payloads still fail closed: without bytes in the
+  /// operation payload nothing can be serialized, nothing is published, and
+  /// the source stays untouched. (Previously ALL overlayImage operations were
+  /// denied because the PDFKit lane had no persisting overlay path at all.)
+  @Test func overlayImageWithReferenceOnlyPayloadStillFailsClosed() throws {
     let directory = FileManager.default.temporaryDirectory
       .appendingPathComponent("pdf-editor-signature-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -129,6 +133,287 @@ struct ReviewFixVerificationTests {
     // Fail-closed: nothing published, source untouched.
     #expect(!FileManager.default.fileExists(atPath: outputURL.path))
     #expect(try provider.inspect(url: sourceURL).source.sha256 == sourceDigest)
+  }
+
+  /// The verified persisting path: on an annotation-free, unrotated page the
+  /// PDFKit lane bakes the overlay into page content, the export publishes,
+  /// the placement is visible after reopen (raster presence evidence), and
+  /// the source bytes are untouched. A second overlay exercises the chained
+  /// wrap.
+  @Test func overlayImageOnCleanPagePersistsThroughExport() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-signature-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    let sourceURL = directory.appendingPathComponent("source.pdf")
+    let outputURL = directory.appendingPathComponent("output.pdf")
+    let fixture = PDFDocument()
+    fixture.insert(PDFPage(), at: 0)
+    #expect(fixture.write(to: sourceURL))
+    let provider = PDFKitProvider()
+    let sourceDigest = try provider.inspect(url: sourceURL).source.sha256
+
+    let firstBounds = PDFRect(x: 72, y: 600, width: 140, height: 48)
+    let secondBounds = PDFRect(x: 250, y: 500, width: 120, height: 40)
+    let operations = [
+      EditOperation(
+        pageIndex: 0, kind: .overlayImage, value: "signature",
+        bounds: firstBounds,
+        sourceDigest: sourceDigest,
+        coordinate: PDFPageRegion(pageIndex: 0, rect: firstBounds),
+        payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")),
+      EditOperation(
+        pageIndex: 0, kind: .overlayImage, value: "initials",
+        bounds: secondBounds,
+        sourceDigest: sourceDigest,
+        coordinate: PDFPageRegion(pageIndex: 0, rect: secondBounds),
+        payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")),
+    ]
+
+    let result = try provider.export(url: sourceURL, operations: operations, to: outputURL)
+    #expect(result.report.status != .failed)
+    #expect(FileManager.default.fileExists(atPath: outputURL.path))
+    #expect(try provider.inspect(url: sourceURL).source.sha256 == sourceDigest)
+
+    // Presence evidence: both placements are visibly present after reopen.
+    guard let sourceDoc = PDFDocument(url: sourceURL),
+      let outputDoc = PDFDocument(url: outputURL),
+      let sourcePage = sourceDoc.page(at: 0),
+      let outputPage = outputDoc.page(at: 0)
+    else {
+      Issue.record("The exported overlay could not be reopened for presence verification.")
+      return
+    }
+    #expect(
+      PDFImpactValidator.overlayImagePresent(
+        sourcePage: sourcePage, outputPage: outputPage, bounds: firstBounds.cgRect))
+    #expect(
+      PDFImpactValidator.overlayImagePresent(
+        sourcePage: sourcePage, outputPage: outputPage, bounds: secondBounds.cgRect))
+  }
+
+  /// The live-editor guard stays: an annotated page rejects the in-memory
+  /// preview bake, because merge/split/copy paths serialize the live
+  /// document and would drop the annotations. (Validated exports DO support
+  /// annotated pages — see the writer test below.)
+  @Test func overlayImageOnAnnotatedPageIsRejectedInLiveEditor() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-signature-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    let sourceURL = directory.appendingPathComponent("source.pdf")
+    let fixture = PDFDocument()
+    let page = PDFPage()
+    let existing = PDFAnnotation(
+      bounds: CGRect(x: 72, y: 700, width: 200, height: 22),
+      forType: .freeText, withProperties: nil)
+    existing.contents = "existing mark"
+    page.addAnnotation(existing)
+    fixture.insert(page, at: 0)
+    #expect(fixture.write(to: sourceURL))
+
+    let provider = PDFKitProvider()
+    let document = try #require(PDFDocument(url: sourceURL))
+    let signature = EditOperation(
+      pageIndex: 0,
+      kind: .overlayImage,
+      value: "signature",
+      bounds: PDFRect(x: 72, y: 600, width: 140, height: 48),
+      payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")
+    )
+
+    #expect(throws: PDFEditorError.self) {
+      try provider.apply(signature, to: document)
+    }
+    do {
+      try provider.apply(signature, to: document)
+    } catch {
+      #expect(String(describing: error).contains("annotation"))
+    }
+  }
+
+  /// The stamp-writer path preserves everything the PDFKit bake would drop:
+  /// an annotated page exports successfully, the existing annotation is
+  /// still present after reopen, the stamp is visibly placed, and the source
+  /// bytes remain a byte-exact prefix (RG-017).
+  @Test func overlayImageOnAnnotatedPagePersistsThroughExport() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-signature-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    let sourceURL = directory.appendingPathComponent("source.pdf")
+    let outputURL = directory.appendingPathComponent("output.pdf")
+    let fixture = PDFDocument()
+    let page = PDFPage()
+    let existing = PDFAnnotation(
+      bounds: CGRect(x: 72, y: 700, width: 200, height: 22),
+      forType: .freeText, withProperties: nil)
+    existing.contents = "SURVIVOR-MARK"
+    page.addAnnotation(existing)
+    fixture.insert(page, at: 0)
+    #expect(fixture.write(to: sourceURL))
+
+    let provider = PDFKitProvider()
+    let bounds = PDFRect(x: 200, y: 500, width: 160, height: 60)
+    let signature = EditOperation(
+      pageIndex: 0,
+      kind: .overlayImage,
+      value: "signature",
+      bounds: bounds,
+      coordinate: PDFPageRegion(pageIndex: 0, rect: bounds),
+      payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")
+    )
+
+    let result = try provider.export(url: sourceURL, operations: [signature], to: outputURL)
+    #expect(result.report.status != .failed)
+
+    // RG-017: the writer path must keep the source as a byte-exact prefix.
+    let sourceData = try Data(contentsOf: sourceURL)
+    let outputData = try Data(contentsOf: outputURL)
+    #expect(outputData.count > sourceData.count)
+    #expect(outputData.prefix(sourceData.count) == sourceData)
+
+    guard let reopened = PDFDocument(url: outputURL), let reopenedPage = reopened.page(at: 0),
+      let sourceDoc = PDFDocument(url: sourceURL), let sourcePage = sourceDoc.page(at: 0)
+    else {
+      Issue.record("the stamped export could not be reopened")
+      return
+    }
+    #expect(reopenedPage.annotations.contains { $0.contents == "SURVIVOR-MARK" })
+    #expect(
+      PDFImpactValidator.overlayImagePresent(
+        sourcePage: sourcePage, outputPage: reopenedPage, bounds: bounds.cgRect))
+  }
+
+  /// Rotated pages: the stamp annotation lives in user space, so placement
+  /// is rotation-safe by construction and verified against the /Rotate
+  /// transform at validation. (Probe 5, 2026-09-21: 25/25 interior samples.)
+  @Test func overlayImageOnRotatedPagePersistsThroughExport() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-signature-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+
+    let sourceURL = directory.appendingPathComponent("source.pdf")
+    let outputURL = directory.appendingPathComponent("output.pdf")
+    let fixture = PDFDocument()
+    let page = PDFPage()
+    page.rotation = 90
+    fixture.insert(page, at: 0)
+    #expect(fixture.write(to: sourceURL))
+
+    let provider = PDFKitProvider()
+    let bounds = PDFRect(x: 72, y: 600, width: 140, height: 48)
+    let signature = EditOperation(
+      pageIndex: 0,
+      kind: .overlayImage,
+      value: "signature",
+      bounds: bounds,
+      coordinate: PDFPageRegion(pageIndex: 0, rect: bounds),
+      payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")
+    )
+
+    let result = try provider.export(url: sourceURL, operations: [signature], to: outputURL)
+    #expect(result.report.status != .failed)
+
+    guard let reopened = PDFDocument(url: outputURL), let reopenedPage = reopened.page(at: 0),
+      let sourceDoc = PDFDocument(url: sourceURL), let sourcePage = sourceDoc.page(at: 0)
+    else {
+      Issue.record("the stamped export could not be reopened")
+      return
+    }
+    #expect(reopenedPage.rotation == 90)
+    #expect(
+      PDFImpactValidator.overlayImagePresent(
+        sourcePage: sourcePage, outputPage: reopenedPage, bounds: bounds.cgRect))
+  }
+
+  /// AcroForm documents: field-value edits and image overlays combine in one
+  /// pass through the source-preserving incremental writers — the structural
+  /// guard keeps rejecting everything else.
+  @Test func overlayImageOnAcroFormDocumentCombinesWithFieldEdits() throws {
+    let results = "\(TestRepoRoot.prefix)benchmark/results"
+    let sampleForm = URL(fileURLWithPath: "\(results)/public-sample-form.pdf")
+    guard FileManager.default.fileExists(atPath: sampleForm.path) else { return }
+
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent("pdf-editor-signature-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: directory) }
+    let outputURL = directory.appendingPathComponent("output.pdf")
+
+    let nodes = try PDFIncrementalFormWriter.walkAcroForm(try Data(contentsOf: sampleForm))
+    guard let textField = nodes.first(where: {
+      $0.fieldType == "Tx" && !$0.fullyQualifiedName.isEmpty
+    }) else { return }
+
+    let provider = PDFKitProvider()
+    let inspection = try provider.inspect(url: sampleForm)
+    let bounds = PDFRect(x: 200, y: 500, width: 160, height: 60)
+    let operations = [
+      EditOperation(
+        pageIndex: 0,
+        targetID: textField.fullyQualifiedName,
+        kind: .nativeFieldValue,
+        value: "overlay-combo",
+        sourceDigest: inspection.source.sha256,
+        payload: .text("overlay-combo")),
+      EditOperation(
+        pageIndex: 0,
+        kind: .overlayImage,
+        value: "signature",
+        bounds: bounds,
+        sourceDigest: inspection.source.sha256,
+        coordinate: PDFPageRegion(pageIndex: 0, rect: bounds),
+        payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")),
+    ]
+
+    let result = try provider.export(url: sampleForm, operations: operations, to: outputURL)
+    #expect(result.report.status != .failed)
+
+    let sourceData = try Data(contentsOf: sampleForm)
+    let outputData = try Data(contentsOf: outputURL)
+    #expect(outputData.prefix(sourceData.count) == sourceData)
+
+    guard let reopened = try? provider.inspect(url: outputURL) else {
+      Issue.record("the stamped AcroForm export could not be reopened")
+      return
+    }
+    #expect(reopened.fields.contains { $0.name == textField.fullyQualifiedName })
+  }
+
+  /// Asset size is capped at the provider limit so operation ledgers cannot
+  /// silently absorb arbitrarily large payloads.
+  @Test func overlayImageRejectsOversizedAssetPayload() throws {
+    let provider = PDFKitProvider(limits: .init(maximumOverlayAssetBytes: 16))
+    let document = PDFDocument()
+    document.insert(PDFPage(), at: 0)
+    let signature = EditOperation(
+      pageIndex: 0,
+      kind: .overlayImage,
+      value: "signature",
+      bounds: PDFRect(x: 72, y: 600, width: 140, height: 48),
+      payload: .assetData(data: Self.makeSolidPNG(), mimeType: "image/png")
+    )
+
+    #expect(throws: PDFEditorError.self) {
+      try provider.apply(signature, to: document)
+    }
+  }
+
+  private static func makeSolidPNG() -> Data {
+    let context = CGContext(
+      data: nil, width: 80, height: 40, bitsPerComponent: 8, bytesPerRow: 320,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    context.setFillColor(CGColor(red: 0.8, green: 0.1, blue: 0.1, alpha: 1))
+    context.fill(CGRect(x: 0, y: 0, width: 80, height: 40))
+    let image = context.makeImage()!
+    let representation = NSBitmapImageRep(cgImage: image)
+    return representation.representation(using: .png, properties: [:])!
   }
 
   @Test func rasterCompareSurvivesRotatedPageWithAuthorizedEdit() throws {

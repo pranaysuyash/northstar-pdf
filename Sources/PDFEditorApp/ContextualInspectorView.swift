@@ -47,6 +47,7 @@ public struct ContextualInspectorView: View {
   @State private var isReceiptCopied = false
   @State private var evidenceQueryDraft = ""
   @State private var groundedQueryResult: GroundedQueryResult?
+  @State private var signatureObservations: [SignatureObservation] = []
 
   public init(
     model: AppModel,
@@ -171,6 +172,7 @@ public struct ContextualInspectorView: View {
         detectedFieldsNavigator
         profileBulkFillCard
         candidateSuggestionsList
+        signatureAuditCard
       }
 
       // Explain quiet contextual projections without turning the canvas
@@ -185,6 +187,14 @@ public struct ContextualInspectorView: View {
     .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.82), value: model.selectedFieldID)
     .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.82), value: model.selectedCandidateID)
     .animation(reduceMotion ? nil : .spring(response: 0.35, dampingFraction: 0.82), value: model.selectedAnnotationID)
+    .task(id: model.sourceURL) {
+      // Review-only signature occupancy audit. Bounded to the first pages so
+      // opening the inspector never pays a full-document raster cost.
+      signatureObservations = []
+      guard let document = model.liveDocument else { return }
+      let observations = SignatureOccupancyAudit.observations(in: document, pageLimit: 12)
+      if !Task.isCancelled { signatureObservations = observations }
+    }
   }
 
   private func xfaFormBanner(_ xfa: XFAFormProcessor.XFAInspectionResult) -> some View {
@@ -1427,6 +1437,64 @@ public struct ContextualInspectorView: View {
     .clipShape(RoundedRectangle(cornerRadius: 8))
   }
 
+  /// Review-only signature occupancy audit (lab-salvaged). Existing ink is
+  /// document evidence; a missing signature is an actionable finding. This
+  /// card never appears on pages without a multi-signer block, and its
+  /// observations never become fillable fields.
+  private var signatureAuditCard: some View {
+    Group {
+      if !signatureObservations.isEmpty {
+        VStack(alignment: .leading, spacing: 8) {
+          Label("Signature Audit", systemImage: "signature")
+            .font(.caption.weight(.bold))
+            .foregroundStyle(.secondary)
+          Text("Review-only document evidence — observations never become fields.")
+            .font(.caption2)
+            .foregroundStyle(.tertiary)
+          ForEach(signatureObservations) { observation in
+            HStack(spacing: 10) {
+              signatureStatusChip(observation.status)
+              VStack(alignment: .leading, spacing: 2) {
+                Text(observation.signer.map { "\($0) — \(observation.role)" } ?? observation.role)
+                  .font(.caption.weight(.medium))
+                  .lineLimit(1)
+                Text("Page \(observation.pageIndex + 1) · \(Int((observation.confidence * 100).rounded()))% confidence")
+                  .font(.caption2)
+                  .foregroundStyle(.secondary)
+              }
+              Spacer()
+            }
+            .padding(8)
+            .background(Color.primary.opacity(0.02), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+          }
+        }
+        .padding(12)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .strokeBorder(Color.primary.opacity(0.06), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+      }
+    }
+  }
+
+  private func signatureStatusChip(_ status: SignatureObservation.Status) -> some View {
+    let (label, color): (String, Color) = {
+      switch status {
+      case .present: return ("PRESENT", .green)
+      case .missing: return ("MISSING", .orange)
+      case .uncertain: return ("UNCERTAIN", .secondary)
+      }
+    }()
+    return Text(label)
+      .font(.system(size: 9, weight: .bold, design: .monospaced))
+      .padding(.horizontal, 6)
+      .padding(.vertical, 2)
+      .background(color.opacity(0.15), in: Capsule())
+      .foregroundStyle(color)
+  }
+
   private var candidateSuggestionsList: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack {
@@ -1454,7 +1522,7 @@ public struct ContextualInspectorView: View {
           Text("No suggestions detected")
             .font(.caption.weight(.semibold))
             .foregroundStyle(.primary)
-          Text("Switch to Fill mode to detect form fields, or run OCR to extract text regions.")
+          Text("The detector may have abstained: a region needs both a field-like label and nearby geometry. Switch to Fill mode to detect form fields, or run OCR to extract text regions.")
             .font(.caption2)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)

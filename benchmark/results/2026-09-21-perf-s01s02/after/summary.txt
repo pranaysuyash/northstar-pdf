@@ -1,0 +1,7 @@
+phase=after
+pdf_oxide_spawn_attempts=0
+windows=1
+cpu_postopen=  0:14.11
+cpu_postidle=  0:15.16
+cpu_postinteraction=  0:15.79
+ax_error=no

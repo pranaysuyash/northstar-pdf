@@ -1,0 +1,179 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager and Xcode build state
+.build/
+.build-app/
+.swiftpm/
+DerivedData/
+xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Local agent/session state and runtime logs
+.agent/
+.antigravity/
+.commandcode/
+.freebuff/
+.gemini/
+.vscode/
+.idea/
+.workbuddy-ai/
+mcp-shell.log
+*.log
+
+# Editor and temporary files
+*.swp
+*.swo
+*~
+
+# Testing, coverage, and playwright artifacts
+test-results/
+playwright-report/
+.playwright-artifacts/
+.playwright-mcp/
+Tests/toolbar-regression-output/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Local generated fixtures and scratch outputs
+tmp/
+dist/
+
+# Root-level test artifacts (prevent test output from landing in repo root)
+/out.pdf
+/out.*
+/*.pdf
+
+# Local downloaded benchmark fixture (use the governed corpus under docs/benchmarks/)
+/benchmark/results/form6-voter-application.pdf
+
+# Agent-generated reports and task outputs
+outputs/
+
+# Local web app dependencies and build output
+web/app/node_modules/
+web/app/dist/
+node_modules/
+
+# Downloaded PDF validation tool payloads
+tools/verapdf-cli-*/
+
+# IDE/agent skill artifacts (react-doctor and similar)
+web/app/.adal/
+web/app/.agents/
+web/app/.aider-desk/
+web/app/.antigravity/
+web/app/.augment/
+web/app/.bob/
+web/app/.claude/
+web/app/.codeartsdoer/
+web/app/.codebuddy/
+web/app/.codemaker/
+web/app/.codestudio/
+web/app/.commandcode/
+web/app/.continue/
+web/app/.cortex/
+web/app/.crush/
+web/app/.cursor/
+web/app/.factory/
+web/app/.forge/
+web/app/.gemini/
+web/app/.github/
+web/app/.goose/
+web/app/.iflow/
+web/app/.junie/
+web/app/.kilocode/
+web/app/.kiro/
+web/app/.kode/
+web/app/.mcpjam/
+web/app/.mux/
+web/app/.neovate/
+web/app/.openhands/
+web/app/.pochi/
+web/app/.qoder/
+web/app/.qwen/
+web/app/.roo/
+web/app/.rovodev/
+web/app/.tabnine/
+web/app/.trae/
+web/app/.vibe/
+web/app/.windsurf/
+web/app/.zencoder/
+web/app/skills/
+.venv
+
+# External evaluation datasets (large, not for push)
+benchmark/datasets/*/data/
+benchmark/datasets/*/images/
+benchmark/datasets/*/*.parquet
+benchmark/datasets/*/*.arrow
+benchmark/datasets/*/*.jsonl
+benchmark/datasets/.venv/
+
+# Keep eval reports and results (for CI)
+!benchmark/datasets/*/eval/
+!benchmark/datasets/*/results/
+!benchmark/datasets/*/README.md
+
+# HTML sketches and design artifacts
+EMPTY-STATE-SKETCHES*.html
+
+# Agent state directories (added 2026-09-06, epistemic audit N16)
+.mimosa/
+
+# Python bytecode (added 2026-09-06 — a tracked .pyc was previously committed)
+__pycache__/
+*.pyc
+
+# Intentionally tracked exceptions to the rules above (classified 2026-09-14
+# during the pre-commit artifact classification for the C1 evidence commit):
+# - /Web-Prototype.zip is the web-audit design source-of-truth artifact and
+#   stays tracked even though it matches the ignore pattern below.
+# - outputs/agent-task-registry.md, outputs/delightful-experience-redesign-report.md,
+#   and outputs/overview.md predate the outputs/ rule and stay tracked as
+#   historical reports. NEW files under outputs/ remain ignored.
+# Do not "fix" this drift with git rm --cached; untracking would delete the
+# design source-of-truth and historical reports from the repo surface.
+/Web-Prototype.zip
+
+# TypeSafe Jev exploration artifacts (NM-R15 / EXP-JEV register, added 2026-09-19).
+# Raw API captures and local replay state are tool outputs and stay local;
+# calibration reports land under docs/research/ and stay tracked.
+# The API key itself lives in .env (covered by the .env.* rule above) — never
+# in tracked files.
+tools/jev-replay/raw/
+tools/jev-replay/cache/
+
+# ===== ↑ 以上同步自 .gitignore（「从 .gitignore 同步」只重写以上部分）=====
+.git/
+.hg/
+.svn/
+bower_components/
+jspm_packages/
+site-packages/
+venv/
+htmlcov/
+lcov-report/
+cmakefiles/
+cmake-build-*/
+bazel-*/
+pods/
+deriveddata/
+storybook-static/
+allure-results/
+allure-report/
+cdk.out/
+*.egg-info/
+*.dist-info/
+eggs/
+pip-wheel-metadata/
+wheels/
+# ----- ↑ 以上为 ZCode 默认排除规则（自定义规则请写在本行下方，不会被同步/恢复改动）-----
+# 自定义规则写在下方（本行提示可删除）

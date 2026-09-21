@@ -2305,6 +2305,43 @@ Implementation and evidence:
 - Existing validators: [`benchmark/test_pdfkit_benchmark.sh`](../benchmark/test_pdfkit_benchmark.sh),
   qpdf/Poppler in-environment reopen checks (RG-003/RG-016)
 
+## D-048 Amendment: Image stamps serialized by the own incremental writer; PDFKit bake demoted to live preview
+
+- **Date:** 2026-09-21
+- **Status:** Active; implements the writer direction of this decision for image overlays
+- **Context:** The `overlayImage` denial claimed "system PDFKit has no
+  image-annotation API that survives save." Header + compiler probes confirm
+  that is true for the annotation API (`PDFAnnotationStamp` is deprecated and
+  ASCII-name-only; `PDFAppearanceStream` does not exist; no settable
+  appearance stream). Empirical probes showed the `PDFPage` drawing override
+  persists content and images, with one verified hazard: annotations on the
+  wrapped page are dropped as objects. Probe record:
+  [`docs/audits/pdfkit-overlay-image-limit-verification-2026-09-21.md`](audits/pdfkit-overlay-image-limit-verification-2026-09-21.md).
+- **Selected path:** Extend this decision's incremental writer with
+  `incrementalImageStamp` — a `/Subtype /Stamp` annotation with authored
+  `/AP` (FlateDecode RGB XObject + `/SMask` transparency), appended as a
+  chained `/Prev` update. Placement is rotation-safe by construction
+  (annotations live in user space), existing annotations survive
+  byte-for-byte, and AcroForm documents accept field edits + stamps in one
+  pass through the source-preserving writers. The PDFKit page-draw bake is
+  demoted to the live in-memory preview and is never serialized to a
+  published file.
+- **Trade-offs:** The writer re-encodes images to Flate RGB (no PNG/JPEG
+  container passthrough) because PNG is not a PDF image filter and DCTDecode
+  cannot carry signature alpha. Mixed structural-page + overlay operation
+  sets fail closed pending ordering semantics.
+- **Validation:** T2 empirical probes (5 rounds, incl. rotation-aware
+  re-sampling) plus T2/S2 targeted tests: annotated-page survival, rotated
+  placement, AcroForm+overlay combination, RG-017 prefix assertions, fail
+  -closed reference-only and oversized payloads.
+- **Remaining:** publication-path unification (merge/split/copy serialize
+  the live document, so the interactive editor still restricts its preview
+  bake to annotation-free pages) and structural+overlay ordering — tracked
+  as NM-T47.
+- **Owner:** Core provider lane; revisit trigger — an incremental-writer
+  corpus failure on stamped output, or a shipping macOS release whose
+  PDFKit validates the stamps differently (independent-viewer check).
+
 ## D-049: Separate local recovery from portable cross-device recovery
 
 - **Date:** 2026-08-25
@@ -3371,3 +3408,20 @@ and produce an implementation plan.
 - **Validation:** council doc (above); slice 0 = NM-T41; slice entries NM-T42…NM-T45 in task-inventory.
 - **Revisit trigger:** slice-0 kill-test fires; PL-D09 cohort shows agentic-organizer demand absence; or a planning-quality harness changes D-078's model-assistance calculus.
 - **Owner:** Product + native shell lanes; ratification: owner via this record.
+
+## D-083 Amendment 1: thesis reservation, falsifier operationalization, styling-track restatement (vision council 2026-09-22)
+
+- **Date:** 2026-09-22
+- **Status:** Accepted amendment (owner-ratified)
+- **Approval source:** owner directive 2026-09-22 ("do all") ratifying recommendations R1–R6 of the vision council (`docs/audits/vision-and-app-council-2026-09-22.md`; seats PER-0755, PER-1228, PER-0749, PER-0436, PER-0172, PER-91013 adversarial; Lead PER-0926). The council's central finding — the thesis was documented but unexecuted (all slices NM-T41…45 open; zero thesis commits between the 2026-09-17 directive and 2026-09-22) — is accepted as the record of fact, not as a direction challenge.
+- **Amendments:**
+  1. **Thesis reservation (amends ¶6):** D-055 keeps launch-path ordering authority, but slice 0 (NM-T41) carries a dated checkpoint of **2026-09-30** — it ships by then regardless of launch-path pressure — and the shell slices NM-T42…45 receive a standing lane allocation instead of pure paraxial status. Rationale: the observed execution pattern is the exact deferral mode the guardian and adversarial seats independently identified.
+  2. **Slice-0 falsifier operationalization (amends slice 0 kill thresholds):** the cohort test is recorded as **unreachable until a cohort exists** (PL-D09 was gated on commerce PL-I04; GA is NO-GO per the 2026-09-07 launch audit). Until then the pre-registered thresholds are per-user, not pooled: "≥30% of users open the loop within their first 5 GUI sessions or 14 days, whichever first" and "abandonment = an approved plan with no terminal receipt/journal row." Only GUI-surface rows count; owner self-tests never count toward threshold numbers; the instrument has a named consumption date (first cohort analysis). Interim reachable proxies: E1 switch interviews (5–8, using `docs/research/user-interview-guide-2026-09-07.md`), E3 styling forced-choice test (recruited with the RG-135 pass), and the n=1 outcome test in (3).
+  3. **Slice-1 oracle sharpened (amends NM-T42):** in addition to "validated receipted mutation or saved workflow in under two minutes," the slice-1 outcome test at n=1 (owner as cohort) must record the **same task performed through the existing Guided Next Blank direct path** and the loop must not be slower. If the loop is slower, that is recorded evidence scoping the spine to recurring workflows — not a direction kill.
+  4. **Styling track restated (amends the parallel-track sentence):** "styling on existing surfaces" means **chrome restructuring + hierarchy on existing surfaces** — toolbar demotion (MAD-006), inspector two-tier hierarchy (MAD-007), rail declutter (pillar 4), page paper elevation (pillar 1) — built on an accessibility substrate; **pure re-skin in place is declined** (it reproduces the "20-year-old reader in nicer materials" failure the owner rejected). MAD-008 (zero `reduceTransparency`/`increaseContrast` handling) closes first on every touched surface. First tranche landed 2026-09-22: rail diagnostic declutter + selected-card accent halo (pillar 4), native PDFKit page shadows (pillar 1; hairline borders are not exposed by PDFKit and are not faked), and reduce-transparency fallbacks on the canvas HUD islands (MAD-008 start). Toolbar demotion and inspector hierarchy are the named next moves, each shipping with MAD-R1/R2 + human-visual evidence.
+  5. **NM-T39 instrument additions:** the library/corpus "whether" question gets its own pre-registered observables (recents re-find rate; multi-document session recurrence) so the declined question can actually fire; PL-D09's loop-adoption thresholds alone never answer it.
+  6. **D-078 revisit trigger made concrete (amends the revisit trigger):** "a planning-quality harness changes the model-assistance calculus" is replaced by a named trip condition: an EXP-JEV-class local eval re-run on **region-scoped prompts** (short structured states, avoiding Jev's documented long-doc-text mode collapse) meeting pre-registered accuracy thresholds on the real-document corpus. Until then the deterministic planner stays.
+  7. **Slice-0 execution recorded:** the PL-D09 instrument landed 2026-09-22 — `AgentRunJournalLog` (append-only JSONL at Application Support/PDFEditor/Instrumentation, `session-open` + `agent-run` rows, capability facts only, health flag per the X2 rule), wired through `AppModel.recordSessionOpen`/`recordAgentRun` and the agent HUD terminal-run path; unit-tested (`Tests/PDFEditorCoreTests/AgentRunJournalLogTests.swift`). Remaining NM-T41 item: the X7 unification design doc.
+- **Falsifier for this amendment:** if the X7 doc does not complete by the 2026-09-30 checkpoint, the council's "drift-washed" verdict becomes the standing record of this decision and the reservation is judged failed.
+- **Evidence tiers:** council findings T1 static + external inference (marked in the council doc); instrument T2/S1 (unit tests pass in this commit); styling tranche T4 before/after window captures (`docs/audits/screenshots/2026-09-22_workspace_{before,after}_*.png`).
+- **Owner:** Product + native shell lanes; checkpoint enforcement: owner via this record.

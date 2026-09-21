@@ -1,5 +1,7 @@
 import Compression
+import CoreGraphics
 import Foundation
+import ImageIO
 
 /// Source-preserving incremental form writer for the native lane (RG-001).
 ///
@@ -14,7 +16,8 @@ import Foundation
 /// - Classic xref tables and xref streams are parsed; field objects inside
 ///   compressed object streams are refused (fail closed), not shadowed.
 /// - Encrypted documents are refused.
-/// - Only native field-value edits (`/V`, `/AS`) are emitted; appearance
+/// - Native field-value edits (`/V`, `/AS`) and image stamp annotations
+///   (`/Subtype /Stamp` with authored `/AP`) are emitted; field appearance
 ///   streams are never regenerated, matching the web lane's verified oracle
 ///   (value-level independent reopen via pikepdf/Poppler, `qpdf --check`).
 public enum PDFIncrementalFormWriter {
@@ -961,6 +964,293 @@ private static func parseXrefStream(_ bytes: [UInt8], offset: Int) throws -> Xre
       throw WriterError.malformedStructure("output is not a source-preserving prefix")
     }
     return output
+  }
+
+  // MARK: - Image stamp serialization (NM-T47, D-048 lane extension)
+
+  struct StampPixels {
+    let width: Int
+    let height: Int
+    let rgb: [UInt8]
+    let alpha: [UInt8]?
+  }
+
+  /// Decodes encoded image bytes into normalized 8-bit device-RGB pixels plus
+  /// an optional 8-bit alpha plane. PDF image XObjects carry straight alpha
+  /// through a /SMask while CoreGraphics rasterizes premultiplied, so RGB
+  /// values are un-premultiplied here — without this, translucent signature
+  /// ink would render darkened in viewers.
+  static func decodeStampPixels(_ data: Data) throws -> StampPixels {
+    guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+      let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
+    else {
+      throw WriterError.malformedStructure("the stamp image could not be decoded")
+    }
+    let width = image.width
+    let height = image.height
+    guard width > 0, height > 0, width * height <= 16_000_000 else {
+      throw WriterError.malformedStructure(
+        "the stamp image dimensions are invalid or exceed the 16M-pixel bound")
+    }
+    var rgba = [UInt8](repeating: 0, count: width * height * 4)
+    let drawn = rgba.withUnsafeMutableBytes { buffer -> Bool in
+      guard let context = CGContext(
+        data: buffer.baseAddress, width: width, height: height,
+        bitsPerComponent: 8, bytesPerRow: width * 4,
+        space: CGColorSpaceCreateDeviceRGB(),
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+      else { return false }
+      context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+      return true
+    }
+    guard drawn else {
+      throw WriterError.malformedStructure("the stamp image raster could not be built")
+    }
+    var rgb = [UInt8](repeating: 0, count: width * height * 3)
+    var alpha = [UInt8](repeating: 0, count: width * height)
+    var alphaUsed = false
+    for pixel in 0..<(width * height) {
+      let r = rgba[pixel * 4]
+      let g = rgba[pixel * 4 + 1]
+      let b = rgba[pixel * 4 + 2]
+      let a = rgba[pixel * 4 + 3]
+      if a < 255 { alphaUsed = true }
+      if a == 255 || a == 0 {
+        rgb[pixel * 3] = r
+        rgb[pixel * 3 + 1] = g
+        rgb[pixel * 3 + 2] = b
+      } else {
+        let scale = 255.0 / Double(a)
+        rgb[pixel * 3] = UInt8(min(255, Int((Double(r) * scale).rounded())))
+        rgb[pixel * 3 + 1] = UInt8(min(255, Int((Double(g) * scale).rounded())))
+        rgb[pixel * 3 + 2] = UInt8(min(255, Int((Double(b) * scale).rounded())))
+      }
+      alpha[pixel] = a
+    }
+    return StampPixels(
+      width: width, height: height, rgb: rgb, alpha: alphaUsed ? alpha : nil)
+  }
+
+  static func formatPdfNumber(_ value: CGFloat) -> String {
+    let rounded = (value * 1000).rounded() / 1000
+    if rounded == rounded.rounded() { return String(Int(rounded)) }
+    return String(format: "%.3f", rounded)
+  }
+
+  /// Appends a source-preserving image stamp annotation (`/Subtype /Stamp`
+  /// with an authored `/AP` appearance stream) as a chained incremental
+  /// update. Placement is rotation-safe by construction — annotations live in
+  /// page user space, which /Rotate never disturbs — and every existing
+  /// object, including the page's other annotations, is preserved
+  /// byte-for-byte (RG-017 prefix invariant, asserted below).
+  ///
+  /// The image is re-encoded as a FlateDecode RGB XObject plus a /SMask when
+  /// the source carries transparency. Container passthrough is not attempted:
+  /// PNG is not a valid PDF image filter, and DCTDecode cannot carry the
+  /// alpha a signature stamp needs.
+  public static func incrementalImageStamp(
+    _ source: Data,
+    pageIndex: Int,
+    imageData: Data,
+    bounds: CGRect,
+    name: String
+  ) throws -> Data {
+    let pixels = try decodeStampPixels(imageData)
+    guard bounds.width > 0, bounds.height > 0 else {
+      throw WriterError.malformedStructure("the stamp bounds must have positive size")
+    }
+
+    let xrefOffset = try findLastStartxrefOffset(source)
+    let xref = try parseXref(source, offset: xrefOffset)
+    guard xref.trailer["/Encrypt"] == nil else { throw WriterError.encryptedUnsupported }
+    guard let rootToken = xref.trailer["/Root"], let catalogNumber = refObjectNumber(rootToken)
+    else {
+      throw WriterError.malformedStructure("trailer has no usable /Root")
+    }
+    let pageObject = try pageObjectNumber(
+      source, xref: xref, catalogObject: catalogNumber, pageIndex: pageIndex)
+
+    // Existing /Annots: a direct array, a one-level indirect array (observed
+    // on public-sample-form), or absent. All forms collapse into one direct
+    // array carrying the existing refs plus the new annotation.
+    let (_, pageText) = try objectSpan(source, xref: xref, objectNumber: pageObject)
+    var existingAnnotRefs = ""
+    if var annotsToken = valueOfKey("/Annots", in: pageText) {
+      if !annotsToken.hasPrefix("["),
+        let arrayNumber = refObjectNumber(annotsToken),
+        let (_, arrayText) = try? objectSpan(source, xref: xref, objectNumber: arrayNumber),
+        let open = arrayText.firstIndex(of: "["),
+        let close = arrayText.lastIndex(of: "]"), open < close
+      {
+        annotsToken = String(arrayText[open...close])
+      }
+      existingAnnotRefs = arrayRefs(annotsToken).joined(separator: " ")
+    }
+
+    // New-object numbering must mirror incrementalFieldUpdate's baseline
+    // exactly (max of xref size and the highest edited object + 1, in
+    // newObjects order), or the appended xref would point at the wrong
+    // bodies. The only edit below targets pageObject, so the baseline is
+    // max(xref.size, pageObject + 1) on both sides.
+    var nextNumber = max(xref.size, pageObject + 1)
+    var newObjects: [String] = []
+
+    // Foundation's compressed(using:) is unavailable on this toolchain (both
+    // Data and NSData forms), so emit the RFC 1950 zlib stream by hand:
+    // zlib header + raw deflate (COMPRESSION_ZLIB) + Adler-32. PDF
+    // /FlateDecode requires the wrapped stream, not bare deflate.
+    func zlib(_ bytes: [UInt8]) throws -> [UInt8] {
+      let dstCapacity = bytes.count + bytes.count / 2 + 1024
+      var dst = [UInt8](repeating: 0, count: dstCapacity)
+      let encodedSize = dst.withUnsafeMutableBufferPointer { dstBuffer -> Int in
+        bytes.withUnsafeBufferPointer { srcBuffer -> Int in
+          guard let dstBase = dstBuffer.baseAddress,
+            let srcBase = srcBuffer.baseAddress
+          else { return 0 }
+          return compression_encode_buffer(
+            dstBase, dstCapacity, srcBase, bytes.count, nil, COMPRESSION_ZLIB)
+        }
+      }
+      guard encodedSize > 0 else {
+        throw WriterError.malformedStructure(
+          "zlib compression failed for \(bytes.count) bytes")
+      }
+      var stream: [UInt8] = [0x78, 0x9C]
+      stream.append(contentsOf: dst[0..<encodedSize])
+      let adler = adler32(bytes)
+      stream.append(UInt8((adler >> 24) & 0xFF))
+      stream.append(UInt8((adler >> 16) & 0xFF))
+      stream.append(UInt8((adler >> 8) & 0xFF))
+      stream.append(UInt8(adler & 0xFF))
+      return stream
+    }
+
+    func adler32(_ bytes: [UInt8]) -> UInt32 {
+      var a: UInt32 = 1
+      var b: UInt32 = 0
+      for byte in bytes {
+        a = (a + UInt32(byte)) % 65_521
+        b = (b + a) % 65_521
+      }
+      return (b << 16) | a
+    }
+    func flateImageBody(_ header: String, _ payload: [UInt8]) throws -> String {
+      "\(header) /Length \(payload.count) >>\nstream\n\(latin1(payload))\nendstream"
+    }
+
+    var smaskObjectNumber: Int?
+    if let alpha = pixels.alpha {
+      let number = nextNumber
+      nextNumber += 1
+      smaskObjectNumber = number
+      newObjects.append(try flateImageBody(
+        "<< /Type /XObject /Subtype /Image /Width \(pixels.width) /Height \(pixels.height)"
+          + " /ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /FlateDecode",
+        try zlib(alpha)))
+    }
+
+    let imageNumber = nextNumber
+    nextNumber += 1
+    var imageHeader =
+      "<< /Type /XObject /Subtype /Image /Width \(pixels.width) /Height \(pixels.height)"
+      + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode"
+    if let smask = smaskObjectNumber { imageHeader += " /SMask \(smask) 0 R" }
+    newObjects.append(try flateImageBody(imageHeader, try zlib(pixels.rgb)))
+
+    let appearanceNumber = nextNumber
+    let annotationNumber = appearanceNumber + 1
+    nextNumber += 2
+
+    let width = formatPdfNumber(bounds.width)
+    let height = formatPdfNumber(bounds.height)
+    let appearanceStream = "q \(width) 0 0 \(height) 0 0 cm /Im0 Do Q"
+    newObjects.append(
+      "<< /Type /XObject /Subtype /Form /BBox [0 0 \(width) \(height)]"
+        + " /Resources << /XObject << /Im0 \(imageNumber) 0 R >> >>"
+        + " /Length \(appearanceStream.utf8.count) >>\nstream\n\(appearanceStream)\nendstream")
+
+    let rect =
+      "\(formatPdfNumber(bounds.minX)) \(formatPdfNumber(bounds.minY)) "
+      + "\(formatPdfNumber(bounds.maxX)) \(formatPdfNumber(bounds.maxY))"
+    let safeName = String(name.map {
+      $0.isASCII && $0 != "(" && $0 != ")" && $0 != "\\" ? $0 : "-"
+    })
+    newObjects.append(
+      "<< /Type /Annot /Subtype /Stamp /Rect [\(rect)] /F 4 /NM (\(safeName))"
+        + " /P \(pageObject) 0 R /AP << /N \(appearanceNumber) 0 R >> >>")
+
+    // /Annots must reference an ARRAY of annotation dictionaries (directly
+    // or indirectly) — a bare "N 0 R" pointing at the annotation dict itself
+    // is invalid and PDFKit silently drops the whole annotation set.
+    let annotsValue = existingAnnotRefs.isEmpty
+      ? "[\(annotationNumber) 0 R]"
+      : "[\(existingAnnotRefs) \(annotationNumber) 0 R]"
+    let pageEdit = PDFIncrementalFormWriter.ObjectEdit(
+      objectNumber: pageObject,
+      pairs: [("/Annots", annotsValue)])
+
+    let updated = try incrementalFieldUpdate(
+      source, edits: [pageEdit], newObjects: newObjects)
+    guard updated.prefix(source.count) == source else {
+      throw WriterError.malformedStructure("stamp output diverged from the source prefix")
+    }
+    return updated
+  }
+
+  /// Resolves the page-tree node for `pageIndex` in DOCUMENT order (via
+  /// /Kids), which object-number scan order does not guarantee.
+  private static func pageObjectNumber(
+    _ source: Data, xref: XrefInfo, catalogObject: Int, pageIndex: Int
+  ) throws -> Int {
+    let (_, catalogText) = try objectSpan(source, xref: xref, objectNumber: catalogObject)
+    guard let pagesToken = valueOfKey("/Pages", in: catalogText),
+      let pagesNumber = refObjectNumber(pagesToken)
+    else {
+      throw WriterError.malformedStructure("catalog has no /Pages tree")
+    }
+    var index = pageIndex
+    var visited: Set<Int> = []
+    var current = pagesNumber
+    while true {
+      guard visited.insert(current).inserted else {
+        throw WriterError.malformedStructure("cycle in the page tree")
+      }
+      let (_, text) = try objectSpan(source, xref: xref, objectNumber: current)
+      guard let kidsToken = valueOfKey("/Kids", in: text) else {
+        // Leaf page: reached the requested index or the tree is short.
+        guard index == 0 else {
+          throw WriterError.malformedStructure(
+            "stamp page index \(pageIndex) is out of range")
+        }
+        return current
+      }
+      var descended = false
+      for ref in arrayRefs(kidsToken) {
+        guard let kid = refObjectNumber(ref) else { continue }
+        if let count = subtreePageCount(source, xref: xref, objectNumber: kid), index >= count {
+          index -= count
+          continue
+        }
+        current = kid
+        descended = true
+        break
+      }
+      guard descended else {
+        throw WriterError.malformedStructure("stamp page index \(pageIndex) is out of range")
+      }
+    }
+  }
+
+  private static func subtreePageCount(
+    _ source: Data, xref: XrefInfo, objectNumber: Int
+  ) -> Int? {
+    guard let (_, text) = try? objectSpan(source, xref: xref, objectNumber: objectNumber)
+    else { return nil }
+    guard valueOfKey("/Kids", in: text) != nil
+      || valueOfKey("/Type", in: text)?.hasPrefix("/Pages") == true
+    else { return 1 }
+    guard let token = valueOfKey("/Count", in: text) else { return nil }
+    return Int(token.trimmingCharacters(in: .whitespaces))
   }
 
   // MARK: - AcroForm tree walking

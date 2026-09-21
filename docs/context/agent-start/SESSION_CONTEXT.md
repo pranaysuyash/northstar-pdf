@@ -1,6 +1,6 @@
 # Session Context
 
-- Generated: 2026-09-19T03:36:01Z
+- Generated: 2026-09-21T16:32:56Z
 - Project: `pdf_editor`
 - Provider: `local`
 - Model: `BAAI/bge-m3`
@@ -13,7 +13,7 @@
 - Operating doctrine: `OPERATING_DOCTRINE.md` v8.1 (sha256 `c22b129bf41942d0…`) — always applies
 - Project: `pdf_editor`
 - Routing mechanism: agent-start doctrine-family router v1.1 (deterministic intent-signal model)
-- Generated at: 2026-09-19T03:36:02Z
+- Generated at: 2026-09-21T16:32:56Z
 - Generator: agent-start lib/doctrine_family.py
 
 Doctrine routing for this run (task intent not supplied; deferred):
@@ -41,29 +41,52 @@ No specialist doctrine was selected for this run. The Operating Doctrine routing
 
 ## Project-Focused Retrieval
 
-> NOTE: Project collection is temporarily locked by another index/search process; using shared workspace context for this run.
+### Architecture Decisions
+- Collection: `projects_proj_pdf_editor`
+- Query: `architecture decisions for pdf_editor`
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
+
+### Project Management Workflow
+- Collection: `projects_proj_pdf_editor`
+- Query: `project management workflow for pdf_editor`
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
+
+### Known Issues and Worklogs
+- Collection: `projects_proj_pdf_editor`
+- Query: `known issues and worklog for pdf_editor`
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
+
+### Prompts and Guidelines
+- Collection: `projects_proj_pdf_editor`
+- Query: `prompts and guidelines for pdf_editor`
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
+
+### System Learning Graph
+- Collection: `projects_proj_pdf_editor`
+- Query: `knowledge graph memory learning feedback loops autoresearch semantic taste graph for pdf_editor`
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
 
 ## Shared Cross-Project Retrieval
 
 ### Reusable Patterns
 - Collection: `projects_workspace_shared`
 - Query: `similar architecture patterns for pdf_editor`
-_Collection check timed out. Retry shortly._
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
 
 ### Process Templates
 - Collection: `projects_workspace_shared`
 - Query: `project management templates and workflows`
-_Collection check timed out. Retry shortly._
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
 
 ### Common Failure Modes
 - Collection: `projects_workspace_shared`
 - Query: `lessons learned mistakes retrospectives postmortems`
-_Collection check timed out. Retry shortly._
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
 
 ### System Learning Graph
 - Collection: `projects_workspace_shared`
 - Query: `knowledge graph memory learning feedback loops autoresearch semantic taste graph`
-_Collection check timed out. Retry shortly._
+_Fast mode (--skip-index): retrieval skipped to keep startup non-blocking. Run `/Users/pranay/Projects/agent-start --project pdf_editor` for full retrieval, or set `AGENT_START_SKIP_INDEX_RETRIEVE=1` if you want retrieval with skip-index._
 
 
 ---

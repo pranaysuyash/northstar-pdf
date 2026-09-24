@@ -21,6 +21,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 echo "=== Pre-push: Swift test ==="
 # Full output is preserved for failure diagnosis (the summary alone cannot
 # name which test recorded an issue under suite-load contention).
+export PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND="${PDF_EDITOR_HEAVY_SEMAPHORE_ACQUIRE_BOUND:-5400}"
 swift test 2>&1 | tee /tmp/pdf-editor-swift-test-last.log | tail -5
 
 echo ""

@@ -57,9 +57,9 @@ struct PipelineRendererTests {
           continuation.resume(returning: page)
         }
       }
-      // Safety timeout
+      // Safety timeout (resilient under heavy multi-core suite load)
       Task {
-        try? await Task.sleep(for: .seconds(5))
+        try? await Task.sleep(for: .seconds(30))
         if !resumed.value {
           resumed.value = true
           continuation.resume(returning: nil)

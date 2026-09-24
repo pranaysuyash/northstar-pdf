@@ -140,7 +140,7 @@ struct OCRCompanionBenchmarkTests {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+        let (text, _) = try await SharedHeavyTestResourceLock.withLock {
             provider.ocrPNG(pngPath)
         }
         #expect(!text.isEmpty, "Tesseract must produce output on noisy image")
@@ -163,7 +163,7 @@ struct OCRCompanionBenchmarkTests {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+        let (text, _) = try await SharedHeavyTestResourceLock.withLock {
             provider.ocrPNG(pngPath)
         }
         #expect(!text.isEmpty, "Tesseract must handle rotated images")
@@ -186,7 +186,7 @@ struct OCRCompanionBenchmarkTests {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+        let (text, _) = try await SharedHeavyTestResourceLock.withLock {
             provider.ocrPNG(pngPath)
         }
         #expect(!text.isEmpty, "Tesseract must produce output")
@@ -227,7 +227,7 @@ struct OCRCompanionBenchmarkTests {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+        let (text, _) = try await SharedHeavyTestResourceLock.withLock {
             provider.ocrPNG(pngPath)
         }
         #expect(!text.isEmpty, "Vision must handle noisy images")
@@ -246,7 +246,7 @@ struct OCRCompanionBenchmarkTests {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+        let (text, _) = try await SharedHeavyTestResourceLock.withLock {
             provider.ocrPNG(pngPath)
         }
         #expect(!text.isEmpty, "Vision must handle multi-column")
@@ -297,7 +297,7 @@ struct OCRCompanionBenchmarkTests {
             Issue.record("Fixture not found: \(pngPath)")
             return
         }
-        let (text, confidence) = try await SharedHeavyTestResourceLock.withLock {
+        let (text, _) = try await SharedHeavyTestResourceLock.withLock {
             provider.ocrPNG(pngPath)
         }
         #expect(!text.isEmpty, "PaddleOCR must handle noisy images")

@@ -3,6 +3,7 @@ import Foundation
 import ImageIO
 import PDFKit
 import Testing
+import UniformTypeIdentifiers
 
 @testable import PDFEditorCore
 
@@ -1666,7 +1667,7 @@ struct PDFEditorCoreTests {
     ctx.fillEllipse(in: CGRect(x: 35, y: 35, width: 30, height: 30))
 
     let srcData = NSMutableData()
-    let dst = CGImageDestinationCreateWithData(srcData as CFMutableData, kUTTypePNG, 1, nil)!
+    let dst = CGImageDestinationCreateWithData(srcData as CFMutableData, UTType.png.identifier as CFString, 1, nil)!
     CGImageDestinationAddImage(dst, ctx.makeImage()!, nil)
     #expect(CGImageDestinationFinalize(dst))
 
@@ -1702,7 +1703,7 @@ struct PDFEditorCoreTests {
 
   private func pngData(from image: CGImage) -> Data {
     let d = NSMutableData()
-    let dst = CGImageDestinationCreateWithData(d as CFMutableData, kUTTypePNG, 1, nil)!
+    let dst = CGImageDestinationCreateWithData(d as CFMutableData, UTType.png.identifier as CFString, 1, nil)!
     CGImageDestinationAddImage(dst, image, nil)
     #expect(CGImageDestinationFinalize(dst))
     return d as Data

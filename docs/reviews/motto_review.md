@@ -1,120 +1,120 @@
 # Operating Doctrine Review
 
 - Doctrine path: /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md
-- SHA-256: c22b129bf41942d06c4a5c1eb4c7de96ce1669d471c4c35a50335d18fe9eb1ac
-- Generated: 2026-09-19T08:02:18Z
+- SHA-256: 3b3523ef815da1e87d923578976d45d90d13dbac1bd28cae452a3ea1e2105d90
+- Generated: 2026-09-24T08:43:21Z
 - This is a generated review artifact, not an instruction source.
 
 ## SECTION_0
 
 - Label: §0 Start from live truth
 - Reviewed: True
-- Evidence: Started from live truth: swept the current tree read-only (Sources/PDFEditorApp, Sources/PDFEditorRecovery/AppModel.swift) and lead-verified criticals by direct read of ContentView.swift:900-910, DocumentCanvasView.swift:1213-1303, PdfOxideExtractor.swift:95-131 before writing docs/audits/swiftui-performance-audit-2026-09-19.md.
+- Evidence: Rebuilt and relaunched /Users/pranay/Projects/pdf_editor/.build/debug/PDFEditor before and after edits; runtime instrument row observed in Application Support/PDFEditor/Instrumentation/run-journal.jsonl; parallel-lane git status re-checked before each edit.
 
 ## SECTION_00_INTEGRATED
 
 - Label: Full doctrine integrated audit
 - Reviewed: True
-- Evidence: Integrated: diff is 177 files — my surface is docs (audit + registers + gitignore + INDEX), the rest is the parallel lane's Swift/tests/benchmark/research backlog committed per explicit owner order this conversation. High-risk trailer is FORCED by staged path benchmark/results/parity-settlement/ matching the settlement regex, not by payments/refund behavior — no auth/webhook/billing code paths touched. §0 live truth: criticals lead-verified by direct read before registration. §9: every untracked file classified; docs/public/ justified as tracked export surface; jev raw outputs pre-ignored. §10: lane race handled by post-commit create-mode review. §15: full swift test gate runs unchanged in background; residual risk is the known RG-136 WER flake and lane mid-flight edits, both documented in commit protocol memory — if the gate fails I report, never bypass.
+- Evidence: Whole-change audit across /Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp and /Users/pranay/Projects/pdf_editor/Sources/PDFEditorCore: council R1-R6 landed as D-083 Amendment 1 in docs/decisions.md; PL-D09 instrument Sources/PDFEditorCore/AgentRunJournalLog.swift unit-tested T2/S1 and live-verified; R3 styling tranche captured before/after under docs/audits/screenshots/2026-09-22_workspace_before_canvas.png and 2026-09-22_workspace_after_canvas.png; canonical paths extended only, no duplicate routes or shadow files.
 
 ## SECTION_1
 
 - Label: §1 Outcomes and retained value
 - Reviewed: True
-- Evidence: Outcome retained: snappiness audit converted into payoff-ordered PERF-S01..S14 implementation register in docs/task-inventory.md so work starts from the two user-visible criticals; NM-R15 Jev spike unblocked for real calibration evidence.
+- Evidence: User value: rail declutter plus page presence in /Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp/PageThumbnailRailView.swift and DocumentCanvasView.swift; operator value: PL-D09 instrument closes the unmeasurable-falsifier gap recorded in docs/audits/vision-and-app-council-2026-09-22.md.
 
 ## SECTION_10
 
 - Label: §10 Parallel work and contested state
 - Reviewed: True
-- Evidence: Parallel work: 177-file tree includes the concurrent codex lane's uncommitted sources (Sources/PDFEditorCore/{CohortEntitlement,DemandLedger,OperatingEnvelope,ReceiptSigning}.swift, Sources/PDFEditorApp/NorthstarHelpView.swift, Package.swift) committed together per owner instruction; will re-check create-mode lines after commit for late-staged lane files.
+- Evidence: Parallel-lane dirty tree preserved: pre-existing 42-path git status re-checked before edits, codex lane verified idle by process check, and /Users/pranay/Projects/pdf_editor tree synced without overwriting any lane's edits.
 
 ## SECTION_11
 
 - Label: §11 Engineering and data integrity
 - Reviewed: True
-- Evidence: Engineering/data integrity: I changed no Swift logic — docs+register+gitignore only; lane Swift changes commit as-is and are validated by the untouched pre-push verify_appmodel.sh + full swift test + node contracts gate.
+- Evidence: Instrument mirrors /Users/pranay/Projects/pdf_editor/Sources/PDFEditorCore/SessionStore.swift conventions (Application Support directory, ISO-8601, sorted keys, NSLock @unchecked Sendable); append-only JSONL with torn-line tolerance covered by tests.
 
 ## SECTION_12
 
 - Label: §12 AI output boundary
 - Reviewed: True
-- Evidence: AI output boundary: audit claims are tied to inspected paths with file:line (docs/audits/swiftui-performance-audit-2026-09-19.md); JEV-NOT verdict recorded as assessment not owner decision; no AI-authored content presented as owner ruling.
+- Evidence: All AI-authored edits verified against live build (swift build pass) and /Users/pranay/Projects/pdf_editor/Tests/PDFEditorCoreTests/AgentRunJournalLogTests.swift; council document separates seat judgment from repository evidence — no fabricated claims.
 
 ## SECTION_13
 
 - Label: §13 Product, operator, and claim reality
 - Reviewed: True
-- Evidence: Product/claim reality: PERF-S01/S02 framed by user-visible symptoms (interaction latency, scroll jank) not code symmetry; JEV register keeps '0 hallucinations' marked as marketing in docs/research/jev-system-one-model-capability-map-2026-09-18.md hype table.
+- Evidence: No user-facing claim text changed; 'AI-native' stays out of UI per D-083 paragraph 4; instrument rows carry capability facts only — verified runtime row in Application Support/PDFEditor/Instrumentation/run-journal.jsonl contains no content fields.
 
 ## SECTION_14
 
 - Label: §14 Documentation and decisions
 - Reviewed: True
-- Evidence: Documentation/decisions: docs/audits/INDEX.md gained the current-status row; PERF-S/JEV registers added to docs/task-inventory.md with statuses and oracles; owner decisions (D-067 tier, zero-egress) stay open as JEV-5/JEV-6, not pre-decided.
+- Evidence: Decisions appended not rewritten: /Users/pranay/Projects/pdf_editor/docs/decisions.md Amendment 1; docs/INDEX.md, docs/task-inventory.md, docs/audits/modern_workspace_vision.md updated in the same flow; council doc carries the ratification note.
 
 ## SECTION_15
 
 - Label: §15 Completion contract
 - Reviewed: True
-- Evidence: Completion contract: this commit's remaining obligation is the pre-push gate (fixture count, verify_appmodel.sh, full swift test tee'd to /tmp/pdf-editor-swift-test-last.log, node contracts) then CI watch latched on headSha; PERF-S register carries explicit per-task oracles.
+- Evidence: Completion contract reported in-session: files changed enumerated, checks run (swift build, swift test --filter AgentRunJournalLogTests 3/3), evidence tiers labeled, remaining risk (toolbar demotion deferred) recorded in /Users/pranay/Projects/pdf_editor/docs/decisions.md Amendment 1 item 4.
 
 ## SECTION_16
 
 - Label: §16 Specialist doctrine routing
 - Reviewed: True
-- Evidence: Specialist routing: perf register cross-references MAD-004 (design audit) and A-9 (AppModel debt) so specialist audits stay authoritative for their findings; no specialist doctrine contradicted by the new tables in docs/task-inventory.md.
+- Evidence: REVIEW_DOCTRINE mode governed the council per /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md section 16; implementation tasks returned to Operating Doctrine; routing recorded in the council document header.
 
 ## SECTION_17
 
 - Label: §17 Propagation contract
 - Reviewed: True
-- Evidence: Propagation: session memory updated (pdf-editor-native-perf-audit + MEMORY.md index) and research-doc change-log update is registered as JEV-0 in docs/task-inventory.md so propagation is a tracked task, not an unstated assumption.
+- Evidence: Project doctrine copy /Users/pranay/Projects/pdf_editor/OPERATING_DOCTRINE.md v8.1 unchanged in this commit; generated context docs/context/agent-start/SESSION_CONTEXT.md will regenerate via pre-commit hook as expected drift.
 
 ## SECTION_2
 
 - Label: §2 Truth taxonomy
 - Reviewed: True
-- Evidence: Truth taxonomy respected: audit findings marked code-backed (no trace yet) in docs/audits/swiftui-performance-audit-2026-09-19.md Metrics section; docs/research/jev-system-one-model-capability-map-2026-09-18.md keeps claims sourced-only until EXP-JEV-1 first-party numbers.
+- Evidence: Claims labeled in /Users/pranay/Projects/pdf_editor/docs/audits/vision-and-app-council-2026-09-22.md (T1 static, external inference marked); instrument evidence T2/S1 via /Users/pranay/Projects/pdf_editor/Tests/PDFEditorCoreTests/AgentRunJournalLogTests.swift plus T4 runtime row; styling claims T4 via docs/audits/screenshots/.
 
 ## SECTION_3
 
 - Label: §3 Proportional rigor and evidence
 - Reviewed: True
-- Evidence: Proportional rigor: criticals verified at T1 static tier with file:line refs in Sources/PDFEditorApp/ContentView.swift, Sources/PDFEditorApp/DocumentCanvasView.swift, Sources/PDFEditorCore/PdfOxideExtractor.swift after lead re-read; runtime T4 Instruments capture deliberately deferred to PERF-S14 in docs/task-inventory.md instead of claiming unmeasured speedups.
+- Evidence: Smallest sufficient rigor: T2 filtered tests (swift test --filter AgentRunJournalLogTests, 3/3 pass) with full-suite T3 owned by the pre-push gate at /Users/pranay/Projects/pdf_editor/tools/pre-push-hook.sh before any push.
 
 ## SECTION_4
 
 - Label: §4 Authorization and side effects
 - Reviewed: True
-- Evidence: Authorization: owner explicitly ordered add+commit+push in this conversation; no destructive git ops, no force push, no hook bypass; the full gate chain (.git/hooks/commit-msg, .git/hooks/pre-commit, .git/hooks/pre-push) runs untouched, including tools/verify_appmodel.sh.
+- Evidence: Owner message 2026-09-22 ('do all ... git add -A, commit with hook/gate and push all then') authorizes L1 workspace edits plus git mutation and push for this scope; ratification recorded in /Users/pranay/Projects/pdf_editor/docs/audits/vision-and-app-council-2026-09-22.md; no external or production actions.
 
 ## SECTION_5
 
 - Label: §5 Canonical paths and ownership
 - Reviewed: True
-- Evidence: Canonical paths honored: audit report lives in docs/audits/, cross-cutting state in docs/task-inventory.md (PERF-S/JEV registers), index row in docs/audits/INDEX.md; no shadow canonical maps created (frontier-doc audit lesson).
+- Evidence: Extended canonical surfaces only: /Users/pranay/Projects/pdf_editor/docs/decisions.md (Amendment 1 appended), docs/task-inventory.md NM-T39/41/42 rows, docs/INDEX.md registry line; no v2 or shadow files created.
 
 ## SECTION_6
 
 - Label: §6 Semantic salvage and supersession
 - Reviewed: True
-- Evidence: Semantic salvage: NM-R15 row updated in place in docs/task-inventory.md (blocked-on-grant to granted/unblocked) instead of duplicating a parallel Jev task entry; PERF-S register extends rather than forks the existing MAD-004/A-9 perf ledger.
+- Evidence: No superseded artifacts discarded: dirty parallel-lane work classified via /Users/pranay/Projects/pdf_editor/docs/research/form-field-lab-salvage-implementation-2026-09-21.md and committed intact per semantic salvage.
 
 ## SECTION_7
 
 - Label: §7 Capability routing
 - Reviewed: True
-- Evidence: Capability routing: used the swiftui-performance-audit skill (code-smells catalog + report template) for the audit; assessed macos-development/swift-concurrency-expert skills for fit in the same pass.
+- Evidence: Council routed to persona seats per /Users/pranay/.agents/skills/council-orchestrator/SKILL.md; UI work matched to live Swift evidence in /Users/pranay/Projects/pdf_editor/Sources/PDFEditorApp; no model-backed path material to this commit.
 
 ## SECTION_8
 
 - Label: §8 Skills lifecycle
 - Reviewed: True
-- Evidence: Skills lifecycle: skill references read from /Users/pranay/.zcode/skills/swiftui-performance-audit/references/ read-only; no repo skill files modified in this diff; target skills already inventoried so no re-search needed.
+- Evidence: council-orchestrator used and recorded; no new skill adopted; gitignore additions in /Users/pranay/Projects/pdf_editor/.gitignore follow the existing tools/jev-replay precedent entries.
 
 ## SECTION_9
 
 - Label: §9 Exploration and durable knowledge
 - Reviewed: True
-- Evidence: Exploration/durable knowledge: every untracked file classified before add -A — Sources+Tests are parallel-lane product source, benchmark/results/parity-settlement/ is CI-kept eval evidence, docs/public/ is the deliberate form-class-ledger export surface of tracked tools/export-form-class-ledger.mjs, docs audits/research are durable knowledge; nothing needed git rm --cached; future jev raw captures pre-ignored via .gitignore tools/jev-replay/{raw,cache}.
+- Evidence: Vision-council exploration recorded durably in /Users/pranay/Projects/pdf_editor/docs/audits/vision-and-app-council-2026-09-22.md with rejected candidates, gaps, and dissent; discovery implemented only where ratified (R1-R6).

@@ -20,7 +20,6 @@ struct NativePerformanceBudgetTests {
 
   @Test func coldStartInspectionCompletesWithinBudget() throws {
     guard let url = publicSampleURL else { return }
-    let data = try Data(contentsOf: url)
     let provider = PDFKitProvider()
 
     let start = CFAbsoluteTimeGetCurrent()

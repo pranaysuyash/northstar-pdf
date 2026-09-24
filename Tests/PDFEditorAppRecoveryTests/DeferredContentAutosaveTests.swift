@@ -52,7 +52,9 @@ struct DeferredContentAutosaveTests {
     let document = PDFDocument()
     document.insert(PDFPage(), at: 0)
     let url = rootURL.appendingPathComponent("deferred-autosave-source.pdf")
-    try document.write(to: url)
+    guard document.write(to: url) else {
+      throw CocoaError(.fileWriteUnknown)
+    }
     return url
   }
 

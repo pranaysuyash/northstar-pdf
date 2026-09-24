@@ -229,7 +229,7 @@
     }
   ],
   "gatePassed" : false,
-  "generatedAt" : "2026-09-19T08:07:03Z",
+  "generatedAt" : "2026-09-24T07:42:07Z",
   "measurement" : {
     "independentEngine" : "pdf-lib (pure-JS, benchmark\/acroform-lane)",
     "independentVerifier" : "qpdf (qpdf --json structural read)",

@@ -55,7 +55,7 @@ let output: String
 let gateStatus: String
 var reportError: String?
 do {
-    let (text, status, writeError) = try MainActor.assumeIsolated {
+    let (text, status, writeError) = MainActor.assumeIsolated {
         let store = HumanVisualConfirmationStore(projectRoot: root)
         let report = store.evaluateGate()
 

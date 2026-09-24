@@ -90,6 +90,13 @@ failure cost increases.
 - Tier 4: live runtime, browser, device, or operator observation.
 - Tier 5: production-like, external-service, real-data, or deployed verification.
 
+Visual-evidence sharpening (operator, 2026-09-22): any change that alters what
+a user sees — including a brand-new surface — records a BEFORE and AFTER
+rendered capture pair of the same screen region (the before of a new surface
+is trivially the region without the change). A claimed "no visible change" is
+itself a claim and must be proven with a pair, never asserted from code
+reasoning.
+
 For tests, state sensitivity:
 
 - S0 means the check exists.

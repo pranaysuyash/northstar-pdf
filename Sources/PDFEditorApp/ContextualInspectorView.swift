@@ -1398,7 +1398,7 @@ public struct ContextualInspectorView: View {
         }
       }
 
-      if let profile = model.currentProfile {
+      if model.currentProfile != nil {
         HStack(spacing: 8) {
           Button("Preview Fill") {
             model.previewBulkFill()
@@ -2552,7 +2552,7 @@ public struct ContextualInspectorView: View {
             HStack {
               Text("Sanitization")
               Spacer()
-              Text("\(report.payload.sanitization.status)")
+              Text(report.payload.sanitization.status.rawValue)
                 .foregroundStyle(.secondary)
             }
             HStack {

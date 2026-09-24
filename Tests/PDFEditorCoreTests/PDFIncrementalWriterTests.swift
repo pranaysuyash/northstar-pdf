@@ -438,7 +438,7 @@ struct PDFIncrementalWriterTests {
 
   @Test func singleByteSourcePrefixCorruptionIsDetected() throws {
     guard let sourceURL = publicSampleURL else { return }
-    var sourceData = try Data(contentsOf: sourceURL)
+    let sourceData = try Data(contentsOf: sourceURL)
     let nodes = try PDFIncrementalFormWriter.walkAcroForm(sourceData)
     let edits = try PDFIncrementalFormWriter.resolveEdits(
       nodes: nodes, targetFieldName: "applicant.name", requestedValue: "Mutation")
@@ -463,7 +463,6 @@ struct PDFIncrementalWriterTests {
       "%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R /AcroForm 3 0 R >>\nendobj\n"
         .utf8)
     var data = Data(pdfBytes)
-    let headerCount = pdfBytes.count
     let trailer = Data(
       "trailer\n<< /Size 4 /Root 1 0 R /Encrypt 4 0 R >>\nstartxref\n0\n%%EOF\n"
         .utf8)

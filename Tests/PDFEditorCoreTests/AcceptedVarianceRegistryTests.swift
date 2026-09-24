@@ -41,7 +41,7 @@ struct AcceptedVarianceRegistryTests {
     @Test("Accept and reject variance")
     func acceptReject() {
         var registry = AcceptedVarianceRegistry()
-        var variance = AcceptedVariance(
+        let variance = AcceptedVariance(
             name: "Text position variance",
             category: .textPosition,
             severity: .cosmetic,

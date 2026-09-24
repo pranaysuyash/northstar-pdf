@@ -76,7 +76,7 @@ struct CollaborationApprovalTests {
     
     @Test("Approval request deadline expiry")
     func requestDeadlineExpiry() {
-        var request = ApprovalRequest(
+        let request = ApprovalRequest(
             requester: "Alice",
             documentName: "report.pdf",
             requiredApprovers: ["Bob"],

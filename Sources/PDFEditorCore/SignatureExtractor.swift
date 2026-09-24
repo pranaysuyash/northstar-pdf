@@ -3,6 +3,7 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import CoreGraphics
 import ImageIO
+import UniformTypeIdentifiers
 
 /// Native Swift signature extraction built from first principles — no external
 /// dependency and not a port of any prior v1. A photo or scan of a signature is:
@@ -360,7 +361,7 @@ public struct SignatureExtractor {
 
   private func encodePNG(_ cg: CGImage) throws -> Data {
     let data = NSMutableData()
-    guard let dest = CGImageDestinationCreateWithData(data as CFMutableData, kUTTypePNG, 1, nil) else {
+    guard let dest = CGImageDestinationCreateWithData(data as CFMutableData, UTType.png.identifier as CFString, 1, nil) else {
       throw SignatureExtractionError.processingFailed
     }
     CGImageDestinationAddImage(dest, cg, nil)

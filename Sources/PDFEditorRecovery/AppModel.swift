@@ -3294,11 +3294,11 @@ public func resetDocument() {
 
     switch editor.target.kind {
     case .nativeField:
-      if let field = selectedField {
+      if selectedField != nil {
         applyFieldValue(value)
       }
     case .candidate:
-      if let candidate = selectedCandidate {
+      if selectedCandidate != nil {
         if !value.isEmpty {
           applyOverlay(value)
         }

@@ -186,7 +186,6 @@ struct AnnotationCreationFlowTests {
     #expect(chain?.versions[1].changeType == .noteEdited)
 
     // Edit note again — need a fresh read of the mark to ensure the change is detected
-    let currentMark = store.marks.first!
     store.updateMark(id: mark.id) { $0.note = "Updated note" }
     let chainAfter = store.versionStore.chain(for: mark.id)
     #expect(chainAfter?.count == 3)

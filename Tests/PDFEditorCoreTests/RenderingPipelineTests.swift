@@ -68,7 +68,7 @@ struct ImprovedTextExtractorTests {
 
     let result = try extractor.extract(data: pdfData)
 
-    #expect(result.blocks is [TextBlock])
+    #expect(result.pageCount >= 0)
   }
 
   @Test("Text extractor handles invalid PDF")
@@ -141,8 +141,7 @@ struct TileBasedDisplayTests {
     )
 
     let tiles = display.getTiles(data: pdfData, viewport: viewport)
-
-    #expect(tiles is [PageTile])
+    _ = tiles
   }
 
   @Test("Viewport state tracks position")

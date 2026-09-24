@@ -120,7 +120,7 @@ struct ComicModeTests {
       ComicPanel(pageIndex: 0, bounds: .zero, index: 1),
     ]
     var state = ComicReadingState(panels: panels)
-    state.advance()
+    _ = state.advance()
     #expect(state.goBack() == true)
     #expect(state.currentPanel?.index == 0)
     #expect(state.goBack() == false) // at start
@@ -147,8 +147,8 @@ struct ComicModeTests {
     ]
     var state = ComicReadingState(panels: panels)
     #expect(state.progress > 0)
-    state.advance()
-    state.advance()
+    _ = state.advance()
+    _ = state.advance()
     #expect(state.progress == 1.0)
   }
 

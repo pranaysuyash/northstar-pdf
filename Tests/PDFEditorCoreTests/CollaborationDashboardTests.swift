@@ -105,7 +105,7 @@ struct CollaborationDashboardTests {
 
     let r1 = manager.importPackage(makePackage(), documentID: "d1", documentName: "A.pdf")
     let r2 = manager.importPackage(makePackage(), documentID: "d2", documentName: "B.pdf")
-    let r3 = manager.importPackage(makePackage(), documentID: "d1", documentName: "A.pdf")
+    _ = manager.importPackage(makePackage(), documentID: "d1", documentName: "A.pdf")
 
     manager.updateMergeStatus(packageID: r1.id, status: .merged)
     manager.updateMergeStatus(packageID: r2.id, status: .conflicts, newConflicts: [makeConflict()])

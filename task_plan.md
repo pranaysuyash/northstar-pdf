@@ -1165,3 +1165,24 @@ Implementation and evidence:
 - [`Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift`](Tests/PDFEditorCoreTests/ProviderRejectionLedgerTests.swift)
 - [`benchmark/results/rejection-ledger/2026-08-31/report.json`](benchmark/results/rejection-ledger/2026-08-31/report.json)
 - [`docs/audits/provider-rejection-ledger-evidence-2026-08-31.md`](docs/audits/provider-rejection-ledger-evidence-2026-08-31.md)
+
+## Session verification — 2026-09-24 dual-surface bring-up (no new phase)
+
+Evidence-only note; does not open Phase 39. Re-verified live state before each
+edit per `OPERATING_DOCTRINE.md`. Zero Git mutations. Parallel-worker islands
+work left untouched.
+
+- Surfaces: native pid 32742, web pid 80995 HTTP 200 on canonical **8090**.
+- Full swift test (`/tmp/pdf-editor-swift-test-last.log`): build clean,
+  **0 warnings / 0 errors**; XCTest 100% pass; swift-testing
+  **1656/1658 passed + 2 issues** (1677.992s).
+- Both residual issues classified and closed:
+  - OCR semaphore timeout → isolated re-run green (8/8 in 326.272s);
+    kernel semaphore `/pdf-editor-heavy-2` absent.
+  - `PipelineRendererTests` progressive-render issue at L72 → isolation re-run
+    green (8/8 in 2.135s; progressive test 0.547s); load-induced flake, not a
+    regression. Recorded as `F-078`.
+- Web e2e workflow suite PASSED via `node Tests/run-web-e2e.mjs`.
+- Session narrative: `progress.md` `## 2026-09-24`.
+- Finding ledger: `findings.md` `F-078`.
+

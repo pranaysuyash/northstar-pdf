@@ -52,7 +52,7 @@ struct DualLaneDetectorGateTests {
     let allCandidates = NativeDetectorGate.liveCandidates(inspection)
 
     // Drop one candidate to simulate a regression
-    guard var candidates = allCandidates.first else { return }
+    guard allCandidates.first != nil else { return }
     let droppedCandidates = Array(allCandidates.dropFirst())
 
     let gate = DualLaneDetectorGate()
@@ -93,9 +93,6 @@ struct DualLaneDetectorGateTests {
   func bothLanesMeasured() throws {
     let fixtures = corpusSweepFixtures()
     guard let firstFixture = fixtures.first else { return }
-
-    let inspection = try PDFKitProvider().inspect(url: firstFixture)
-    let nativeCands = NativeDetectorGate.liveCandidates(inspection)
 
     // Provide empty browser candidates to trigger browser lane measurement
     let result = try gate.run(

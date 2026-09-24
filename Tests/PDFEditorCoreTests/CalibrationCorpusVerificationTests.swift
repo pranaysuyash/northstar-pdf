@@ -577,7 +577,7 @@ struct CalibrationCorpusVerificationTests {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         guard let data = try? encoder.encode(artifact),
-              let json = String(data: data, encoding: .utf8) else {
+              String(data: data, encoding: .utf8) != nil else {
             #expect(Bool(false), "Artifact must serialize")
             return
         }

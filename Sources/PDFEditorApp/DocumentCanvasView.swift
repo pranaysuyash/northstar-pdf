@@ -120,10 +120,13 @@ public struct DocumentCanvasView: View {
 
         HStack {
           Spacer()
-          floatingCanvasHUD
+          NavigationIslandView(
+            model: model,
+            inspection: inspection
+          )
+          Spacer()
         }
-        .padding(.bottom, 16)
-        .padding(.trailing, 16)
+        .padding(.bottom, 18)
       }
     }
     .frame(minWidth: 480)
@@ -1304,6 +1307,14 @@ public struct PDFKitView: NSViewRepresentable {
     func installProjectionObservers(for view: InteractivePDFView) {
       // PDFView embeds its NSScrollView as a child subview rather than being enclosed by one
       let internalScrollView = view.subviews.compactMap { $0 as? NSScrollView }.first ?? view.enclosingScrollView
+      if let internalScrollView {
+        internalScrollView.automaticallyAdjustsContentInsets = false
+        var insets = internalScrollView.contentInsets
+        if insets.bottom < 72 {
+          insets.bottom = 72
+          internalScrollView.contentInsets = insets
+        }
+      }
       let scrollContentView = internalScrollView?.contentView
       let documentView = view.documentView ?? internalScrollView?.documentView
       if observedRootView === view,
@@ -1412,6 +1423,9 @@ public struct PDFKitView: NSViewRepresentable {
     // read as physical paper on the desk. PDFKit's native page shadow is used;
     // hairline page borders are not exposed by PDFKit and are not faked.
     view.pageShadowsEnabled = true
+    // Pillar 2 (Council hardening MAD-I6): 72pt bottom margin ensures the
+    // floating navigation island never occludes page signatures or footers.
+    view.pageBreakMargins = NSEdgeInsets(top: 12, left: 12, bottom: 72, right: 12)
     view.onManualPlacement = onManualPlacement
     view.onDirectEdit = onDirectEdit
     view.onPageTap = onPageTap

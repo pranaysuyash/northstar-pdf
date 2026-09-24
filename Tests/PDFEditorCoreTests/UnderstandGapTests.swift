@@ -19,8 +19,6 @@ struct DocumentSummarizerTests {
 
     #expect(summary.totalSentences >= 0)
     #expect(summary.extractionTimeMs >= 0)
-    #expect(summary.keyPoints is [KeyPoint])
-    #expect(summary.structure is [SummarySection])
   }
 
   @Test("Summarizer scores sentences correctly")
@@ -103,7 +101,6 @@ struct EntityRecognizerTests {
 
     #expect(result.totalCount >= 0)
     #expect(result.extractionTimeMs >= 0)
-    #expect(result.entities is [DocumentEntity])
   }
 
   @Test("Recognizer finds email addresses")
@@ -222,7 +219,6 @@ struct KeyPointExtractorTests {
 
     #expect(result.totalCount >= 0)
     #expect(result.extractionTimeMs >= 0)
-    #expect(result.keyPoints is [ExtractedKeyPoint])
   }
 
   @Test("Extractor finds obligations")

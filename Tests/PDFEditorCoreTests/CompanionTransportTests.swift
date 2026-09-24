@@ -416,7 +416,7 @@ struct CompanionTransportTests {
     func httpTransportInit() {
         let config = TransportConfiguration.http(endpoint: URL(string: "https://example.com")!)
         let transport = HTTPCompanionTransport(configuration: config)
-        #expect(transport is HTTPCompanionTransport)
+        #expect(transport.isConnected == false)
     }
 
     @Test("HTTP transport throws without endpoint")
@@ -540,7 +540,6 @@ struct CompanionTransportTests {
     func localTransportInit() {
         let config = TransportConfiguration.local(socketPath: "/tmp/test.sock")
         let transport = LocalCompanionTransport(configuration: config)
-        #expect(transport is LocalCompanionTransport)
         #expect(!transport.isConnected)
     }
 

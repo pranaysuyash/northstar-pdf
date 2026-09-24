@@ -19,7 +19,6 @@ struct PipelineRendererTests {
 
   @Test("Pipeline renders page at all quality levels")
   func rendersAllLevels() {
-    let pipeline = RenderingPipeline()
     let fixtureURL = URL(fileURLWithPath: "benchmark/results/public-sample-form.pdf")
     guard let pdfData = try? Data(contentsOf: fixtureURL) else {
       Issue.record("Fixture not found")

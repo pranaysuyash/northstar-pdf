@@ -96,7 +96,6 @@ struct ReadingModeTests {
 
   @Test("Each mode produces unique params")
   func uniqueParams() {
-    let allParams = ReadingMode.allCases.map { ReadingDisplayParams.params(for: $0) }
     // At least skim should differ from study (no inspector, no toolbar)
     let study = ReadingDisplayParams.params(for: .study)
     let skim = ReadingDisplayParams.params(for: .skim)

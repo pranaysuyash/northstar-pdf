@@ -219,7 +219,6 @@ struct CollaborationHistoryTests {
     // Get the suggested resolutions
     let s1 = c1.conflict.suggestedResolution
     let s2 = c2.conflict.suggestedResolution
-    let s3 = c3.conflict.suggestedResolution
 
     history.recordResolution(actor: "A", conflict: c1, resolution: s1, documentName: "A.pdf") // follows
     history.recordResolution(actor: "A", conflict: c2, resolution: s2, documentName: "A.pdf") // follows

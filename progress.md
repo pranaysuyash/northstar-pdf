@@ -4273,3 +4273,31 @@ alone does not help, because the restriction applies to the agent process.
   - `findings.md`: Added finding `F-077: Static form vector decomposition requires orthogonal stroke reconstruction and prose suppression`.
   - Implementation Plan published in `implementation_plan.md`.
 
+## 2026-09-24 — Dual-surface bring-up, warning elimination, full-suite evidence, and residual-issue classification
+
+- **Surfaces Live:**
+  - Native: `.build/out/Products/Debug/PDFEditor` pid **32742** (restarted this session; log `/tmp/pdf-editor-native.log`).
+  - Web: `node Tests/serve-web.mjs` pid **80995**, **HTTP 200 on 8090** (canonical preview; port 4173 permanently retired — squatted by another project).
+- **Hang / Slow-Open / Port Fixes (re-verified live before finalizing):**
+  - Click hang: `DocumentCanvasView.swift` guards `lastScaleSignature` L1202, `didForceInitialLayout` L1204/1535-1536, `scaleSignature` L1559-1561.
+  - Slow open: deferred preflight (`pendingPreflightSessionID` `AppModel.swift` L104 set 1857, guarded 1874/1880, cleared 1875/1881/2090) + single-parse `provider.openDocument`.
+  - Port docs 4173→8090: README L73/81/84-85, `docs/runbooks/local-preview.md`, `docs/design-system-specimen.md`, `docs/runbooks/run-full-test-suite.md`.
+- **Warning Elimination (full run log `/tmp/pdf-editor-swift-test-last.log`, 4601 lines):**
+  - **0 `: warning:` lines, 0 errors.** Build clean.
+  - Applied fixes (read-verified): `PipelineRendererTests`, `ReadingModeTests`, `CollaborationHistoryTests`, `DualLaneDetectorGateTests` (×2), `RenderingPipelineTests` (×2), `UnderstandGapTests`, `ComicModeTests` (`_ = state.advance()`), `CompanionTransportTests` (L419/L543 always-true `is`), `GroundTruthExportTests:101`, `CalibrationCorpusVerificationTests:580`, `CollaborationDashboardTests:108`.
+  - kUTTypePNG migration applied: `SignatureExtractor.swift:364` uses `UTType.png.identifier`.
+  - `var data`/`let data` usage checks: ALL sites used — no fixes (`AgentRunJournalLogTests:64`, `CompanionTransportTests:626`, `PDFIncrementalWriterTests:465`, `RadioCorpusDiversityTests`, `GeneratedRadioFixtureTests`).
+  - Stale/do-not-touch confirmed clean: `AppModel` 2298/2302, `ContextualInspectorView:413`, `ContentView:719`, `CompanionTransportTests` L177/184/191 factory `is`, `CalibrationCorpusVerificationTests:629` `json`, `.self` type checks, `UnderstandGapTests` tautologies, `RenderingPipelineTests:71` tautology.
+- **Full-Suite Evidence (background run, `/tmp/pdf-editor-swift-test-last.log`):**
+  - XCTest: 100% PASSED.
+  - swift-testing: **1658 tests / 174 suites, 1656 passed + 2 issues**, 1677.992s wall.
+  - Heavy suites green in-run: LayoutFingerprint 198.486s, RasterBlend 207.646s, AcroForm Parity 155.925s, EncryptedTemplatePersistence 101.513s, `RecoveryCrashInterruptionTests` 74/10 suites in 1.215s.
+  - OCR benchmarks: Tesseract WER 18.09% PASS, Vision avg WER 4.07% PASS, PDFKit baseline PASS.
+  - rg-131 corpus dual-engine: 38 fixtures, 38 passed, 0 failed.
+- **Residual Issue Classification (both issues closed):**
+  1. **OCR semaphore timeout** (full run): re-run alone → `/tmp/ocr-rerun.log` **8 tests / 1 suite passed in 326.272s**. Semaphore `/pdf-editor-heavy-2` confirmed absent (unlink helper errno=2). **Closed — flake under load, resolved.**
+  2. **`Pipeline progressive render produces valid image at each stage`** failed at `PipelineRendererTests.swift:72:19` after 136.269s in the full run (`Issue.record` from the 5s safety timeout inside `progressiveImageValid` after nil resume). Isolation re-run `/tmp/pdf-editor-pipeline-rerun.log` (pid 32739): **8 tests / 1 suite passed in 2.135s**; the progressive test alone passed in **0.547s**. **Closed — load-induced flake**, not a regression. See `findings.md` F-078.
+- **Npm Lanes:** both installed; Node v24.13.0, npm 11.6.2, playwright 1.58.2. Canonical Playwright runner: `node Tests/run-web-e2e.mjs` — workflow suite **PASSED**.
+- **Constraints Observed:** zero Git mutations (no stage/commit/push); parallel worker's untracked islands work (`ActionIslandView`, `ModeSelectorIslandView`, `NavigationIslandView`, `VISUAL_SPECIMEN_DOCRINE`, `docs/visual_specimens/`, `tools/capture_island_evidence.swift`, council audits) left untouched; no second doctrine surface created.
+- **Docs Updated:** this entry; `task_plan.md` session-verification section; `findings.md` F-078.
+

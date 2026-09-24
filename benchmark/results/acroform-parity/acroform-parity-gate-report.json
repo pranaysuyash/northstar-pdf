@@ -142,14 +142,14 @@
           "canRead" : true,
           "canRoundTrip" : true,
           "canWrite" : true,
-          "confidence" : 1,
-          "decision" : "production_ready",
-          "failedFixtures" : 0,
+          "confidence" : 0.9375,
+          "decision" : "experimental",
+          "failedFixtures" : 1,
           "fieldType" : "choice",
           "provider" : "pdf-lib",
           "role" : "provider",
           "specComplete" : true,
-          "verifiedFixtures" : 16
+          "verifiedFixtures" : 15
         },
         {
           "canDetect" : true,
@@ -167,12 +167,12 @@
         }
       ],
       "crossProviderAgreement" : 1,
-      "decision" : "All providers production-ready for choice",
+      "decision" : "Mixed: production_ready, experimental",
       "fieldType" : "choice",
       "fixtureCount" : 40,
       "ghostFields" : 0,
-      "isProductionReady" : true,
-      "roundTripSuccessRate" : 1
+      "isProductionReady" : false,
+      "roundTripSuccessRate" : 0.96875
     },
     {
       "capabilities" : [
@@ -229,7 +229,7 @@
     }
   ],
   "gatePassed" : false,
-  "generatedAt" : "2026-09-24T09:35:57Z",
+  "generatedAt" : "2026-09-24T12:23:36Z",
   "measurement" : {
     "independentEngine" : "pdf-lib (pure-JS, benchmark\/acroform-lane)",
     "independentVerifier" : "qpdf (qpdf --json structural read)",

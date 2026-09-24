@@ -85,4 +85,34 @@ struct ExportProfileValidationTests {
     #expect(model.statusMessage?.contains("unavailable") == true)
     #expect(model.isExportReviewPresented == false)
   }
+
+  @Test("commitRedactions executes forensic redaction, eliminates redact marks, and presents redacted copy profile")
+  func commitRedactionsExecutesForensicRedaction() throws {
+    let root = try makeRoot()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let model = makeModel(root: root)
+    model.newDocument()
+
+    let markOp = EditOperation(
+      pageIndex: 0,
+      targetID: "redact:test",
+      kind: .redactMark,
+      value: "Redacted text: \"CONFIDENTIAL\"",
+      bounds: PDFRect(x: 50, y: 500, width: 200, height: 30),
+      sessionID: UUID(),
+      sourceDigest: model.inspection?.source.sha256 ?? "test-digest",
+      coordinate: PDFPageRegion(pageIndex: 0, rect: PDFRect(x: 50, y: 500, width: 200, height: 30))
+    )
+    model.operations = [markOp]
+    #expect(model.redactionMarkCount == 1)
+
+    model.commitRedactions()
+
+    #expect(model.redactionMarkCount == 0)
+    #expect(model.operations.contains(where: { $0.kind == .applyRedaction }))
+    #expect(model.exportReviewProfile == .redactedCopy)
+    #expect(model.isExportReviewPresented == true)
+    #expect(model.stagedRedactedData != nil)
+    #expect(model.canPrepareExportReviewProfile == true)
+  }
 }

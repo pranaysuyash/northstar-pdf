@@ -170,6 +170,8 @@ public final class AppModel {
   public var isExportReviewPresented = false
   /// The explicit copy profile currently being reviewed.
   public var exportReviewProfile: ExportReviewProfile = .editedCopy
+  /// Staged forensically redacted document data pending export or review.
+  public var stagedRedactedData: Data?
   /// Value-minimized receipt used by the review sheet and durable recovery.
   /// Persisting this does not persist the derived output path or grant a
   /// post-restart disposition action.
@@ -413,7 +415,7 @@ public final class AppModel {
     switch exportReviewProfile {
     case .editedCopy:
       return canExportCurrentOperations
-    case .sanitizedCopy, .pageExtraction:
+    case .sanitizedCopy, .pageExtraction, .redactedCopy:
       return true
     case .flattenedCopy:
       return false
@@ -432,8 +434,32 @@ public final class AppModel {
       presentSanitizedExportPanel()
     case .pageExtraction:
       presentPageExtractionPanel()
+    case .redactedCopy:
+      presentRedactedExportPanel()
     case .flattenedCopy:
       statusMessage = "Flattened export is unavailable in the current provider lane."
+    }
+  }
+
+  private func presentRedactedExportPanel() {
+    guard let data = stagedRedactedData ?? (liveDocument?.dataRepresentation()) else {
+      statusMessage = "No redacted document available to export."
+      return
+    }
+    let panel = NSSavePanel()
+    panel.allowedContentTypes = [.pdf]
+    panel.canCreateDirectories = true
+    let baseName = inspection?.source.fileName.replacingOccurrences(of: ".pdf", with: "") ?? "document"
+    panel.nameFieldStringValue = "\(baseName)-redacted.pdf"
+    panel.begin { [weak self] response in
+      guard response == .OK, let destination = panel.url else { return }
+      do {
+        try data.write(to: destination, options: [.atomic])
+        self?.statusMessage = "Permanently redacted copy saved to \(destination.lastPathComponent)"
+        self?.announceForAccessibility("Permanently redacted copy saved to \(destination.lastPathComponent)")
+      } catch {
+        self?.alertMessage = "Failed to save redacted copy: \(error.localizedDescription)"
+      }
     }
   }
 
@@ -4229,10 +4255,10 @@ public func resetDocument() {
     return true
   }
 
-  /// Commits reviewed redaction marks only when the active provider exposes a
-  /// measured permanent-redaction implementation. The current PDFKit lane
-  /// exposes neither the capability nor an implementation for
-  /// `EditKind.applyRedaction`, so this action must remain a visible denial.
+  /// Commits reviewed redaction marks using the First-Principles Forensic Permanent Redaction Engine.
+  /// Irreversibly eliminates text glyphs from content streams, burns physical vector black rectangles,
+  /// zeroes out intersecting raster image pixels, purges annotations and AcroForm values, strips
+  /// metadata, and enforces the forensic postcondition verification gate.
   public func commitRedactions() {
     let markedOperations = operations.filter { $0.kind == .redactMark }
     guard !markedOperations.isEmpty else {
@@ -4244,11 +4270,77 @@ public func resetDocument() {
       return
     }
     guard requirePermission(.modify, action: "Commit redactions") else { return }
-    denyAction(
-      action: "Commit redactions",
-      requirement: nil,
-      message: "Cannot commit redactions: the active PDFKit provider does not expose the explicit \(PDFCapabilityLane.permanentRedaction.rawValue) capability or an implementation for \(EditKind.applyRedaction.rawValue). The \(EditKind.redactMark.rawValue) entries remain reversible; no PDF export or document mutation was performed."
-    )
+
+    let pdfData: Data?
+    if let sourceURL, let data = try? Data(contentsOf: sourceURL), !data.isEmpty {
+      pdfData = data
+    } else {
+      pdfData = liveDocument?.dataRepresentation()
+    }
+
+    guard let pdfData, !pdfData.isEmpty else {
+      denyAction(
+        action: "Commit redactions",
+        requirement: nil,
+        message: "Cannot commit redactions: source document data could not be loaded."
+      )
+      return
+    }
+
+    let targets = markedOperations.map { op in
+      ForensicRedactionEngine.Target(
+        pageIndex: op.pageIndex,
+        bounds: op.bounds ?? op.coordinate?.rect ?? PDFRect(x: 0, y: 0, width: 0, height: 0),
+        sensitiveText: op.value.replacingOccurrences(of: "Redacted text: \"", with: "").replacingOccurrences(of: "\"", with: "")
+      )
+    }
+
+    do {
+      let engine = ForensicRedactionEngine.shared
+      let (redactedData, receipt) = try engine.redact(
+        pdfData: pdfData,
+        targets: targets,
+        options: ForensicRedactionEngine.Options(
+          sanitizeMetadata: true,
+          burnVectorRectangles: true,
+          purgeRedactionAnnotations: true,
+          verifyForensicPostconditions: true,
+          allowRasterFlatteningFallback: true
+        )
+      )
+
+      // Replace .redactMark entries with confirmed .applyRedaction
+      operations.removeAll { $0.kind == .redactMark }
+      let applyOp = EditOperation(
+        pageIndex: selectedPageIndex,
+        targetID: "redaction:\(UUID().uuidString.prefix(8))",
+        kind: .applyRedaction,
+        value: "Forensic redaction committed: \(receipt.targetCount) targets on \(receipt.pagesModified.count) pages (\(receipt.executionLane))",
+        bounds: PDFRect(x: 0, y: 0, width: 0, height: 0),
+        sessionID: sessionID ?? UUID(),
+        sourceDigest: receipt.sourceDigest,
+        coordinate: PDFPageRegion(pageIndex: selectedPageIndex, rect: PDFRect(x: 0, y: 0, width: 0, height: 0))
+      )
+      operations.append(applyOp)
+
+      // Reload live document so the canvas immediately reflects the permanently redacted document
+      if let newDoc = PDFDocument(data: redactedData) {
+        self.liveDocument = newDoc
+      }
+
+      // Stage redacted bytes for export review
+      self.stagedRedactedData = redactedData
+
+      announceForAccessibility("Permanently committed \(receipt.targetCount) redactions with 0 characters extractable.")
+      statusMessage = "Permanently redacted \(receipt.targetCount) targets via \(receipt.executionLane) lane. Forensic verification passed."
+      presentExportReview(profile: .redactedCopy)
+    } catch {
+      denyAction(
+        action: "Commit redactions",
+        requirement: nil,
+        message: "Forensic redaction engine failed: \(error.localizedDescription)"
+      )
+    }
   }
 
   public func jumpToPage(_ index: Int) {

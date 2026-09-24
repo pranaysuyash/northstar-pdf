@@ -8,6 +8,7 @@ public enum ExportReviewProfile: String, Codable, Equatable, Hashable, Sendable 
   case sanitizedCopy
   case pageExtraction
   case flattenedCopy
+  case redactedCopy
 
   public var title: String {
     switch self {
@@ -15,6 +16,7 @@ public enum ExportReviewProfile: String, Codable, Equatable, Hashable, Sendable 
     case .sanitizedCopy: return "Sanitized Copy"
     case .pageExtraction: return "Extracted Pages"
     case .flattenedCopy: return "Flattened Copy"
+    case .redactedCopy: return "Permanently Redacted Copy"
     }
   }
 
@@ -28,6 +30,8 @@ public enum ExportReviewProfile: String, Codable, Equatable, Hashable, Sendable 
       return "A separate PDF containing the selected page range."
     case .flattenedCopy:
       return "A separate PDF with fields and annotations baked into page content."
+    case .redactedCopy:
+      return "A separate PDF with text glyphs destroyed, raster areas burned, and metadata purged."
     }
   }
 }

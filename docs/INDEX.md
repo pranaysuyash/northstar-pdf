@@ -22,6 +22,7 @@
 - `docs/decisions/document-session-ownership-matrix-2026-09-01.md` — proposed one-owner-per-fact matrix and safe extraction order for native document and view state.
 - `docs/explorations/native-macos-visual-grammar-2026-09-01.md` — source-backed visual grammar, motion/illustration/infographic rules, explicit and implicit design task inventory, and home-surface implementation plan.
 - `docs/VISUAL_SPECIMEN_DOCTRINE.md` — canonical visual specimen and design-first operating protocol (operator directive 2026-09-24: interactive Before/After HTML specimen required before native visual changes).
+- `docs/explorations/first_principles_forensic_redaction_engine.md` — canonical first-principles forensic permanent redaction engine architecture & multi-lane specification (breaking PDFKit single-provider dependency).
 - `docs/audits/council_feature_listing_and_prioritization.md` — six-seat council report on feature listing and prioritization (Sprint 1: Chrome Restructuring & Won't-Change Map; Sprint 2: AI Spine & Teach Northstar; Sprint 3: Deep macOS Integration).
 - `docs/audits/council_review_toolbar_islands_and_plan.md` — five-seat design and architecture council review on Floating Glass Islands (MAD-I6) and native implementation plan (unanimously approved with .principal/.primaryAction titlebar mounting, 72pt bottom inset, and accessibility reduce fallbacks).
 

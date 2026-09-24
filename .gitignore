@@ -3,6 +3,7 @@
 
 # Swift Package Manager and Xcode build state
 .build/
+.build-*/
 .build-app/
 .swiftpm/
 DerivedData/

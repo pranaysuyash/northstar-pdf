@@ -210,9 +210,24 @@ public enum AcroFormExternalEngines {
                 process.terminate()
             }
         }
+        var outData = Data()
+        var errData = Data()
+        let group = DispatchGroup()
+
+        group.enter()
+        DispatchQueue.global().async {
+            outData = outPipe.fileHandleForReading.readDataToEndOfFile()
+            group.leave()
+        }
+
+        group.enter()
+        DispatchQueue.global().async {
+            errData = errPipe.fileHandleForReading.readDataToEndOfFile()
+            group.leave()
+        }
+
         process.waitUntilExit()
-        let outData = outPipe.fileHandleForReading.readDataToEndOfFile()
-        let errData = errPipe.fileHandleForReading.readDataToEndOfFile()
+        group.wait()
         return (
             process.terminationStatus,
             String(data: outData, encoding: .utf8) ?? "",
@@ -266,7 +281,9 @@ public enum AcroFormExternalEngines {
     public static func qpdfFields(_ pdfPath: String) -> [QpdfField]? {
         guard let qpdf = findExecutable("qpdf") else { return nil }
         let (status, out, _) = run(qpdf, args: ["--json", pdfPath])
-        guard status == 0, let data = out.data(using: .utf8),
+        // qpdf exits 0 on clean success, and 3 on success with non-fatal warnings
+        // (such as repairing a missing page-level Resources dict). Both produce valid JSON.
+        guard (status == 0 || status == 3), let data = out.data(using: .utf8),
               let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let acro = root["acroform"] as? [String: Any],
               let rawFields = acro["fields"] as? [[String: Any]]

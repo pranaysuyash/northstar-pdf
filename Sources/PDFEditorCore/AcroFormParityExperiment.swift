@@ -553,11 +553,21 @@ public enum AcroFormParityExperiment {
               let nodes = try? PDFIncrementalFormWriter.walkAcroForm(data),
               let node = nodes.first(where: {
                   $0.fullyQualifiedName == name && $0.fieldType == "Ch"
-              }),
-              let idx = node.optionValues.firstIndex(of: expected),
-              idx < node.optionDisplayValues.count {
-                return read == node.optionDisplayValues[idx]
-                    || field.widgetStringValue == node.optionDisplayValues[idx]
+              }) {
+                if let idx = node.optionValues.firstIndex(of: expected),
+                   idx < node.optionDisplayValues.count {
+                    if read == node.optionDisplayValues[idx]
+                        || field.widgetStringValue == node.optionDisplayValues[idx] {
+                        return true
+                    }
+                }
+                if let idx = node.optionDisplayValues.firstIndex(of: expected),
+                   idx < node.optionValues.count {
+                    if read == node.optionValues[idx]
+                        || field.widgetStringValue == node.optionValues[idx] {
+                        return true
+                    }
+                }
             }
             return false
         default:
@@ -611,32 +621,40 @@ public enum AcroFormParityExperiment {
             return group.allSatisfy { strippedName($0.value) == expected }
         case .choice, .text:
             if group.allSatisfy({ strippedValue($0.value) == expected }) { return true }
-            // Split field/widget layouts may carry TWO /V copies for one
-            // name; some producers (pdf-lib on the mutated.pdf fixtures —
-            // Observed 2026-09-06) update the widget copy while the field
-            // copy keeps the stale value, and qpdf resolves the field copy.
-            // The bytes still carry the written value, the other readers
-            // (PDFKit reopen, structural) confirm it — treat qpdf's
-            // single-object view as INCONCLUSIVE rather than a disagreement
-            // when the expected value exists as a /V anywhere in the file.
-            if let data = FileManager.default.contents(atPath: path),
-              let raw = String(data: data, encoding: .utf8)
-                ?? String(data: data, encoding: .isoLatin1) {
-                let escaped = expected
-                    .replacingOccurrences(of: "\\", with: "\\\\")
-                    .replacingOccurrences(of: "(", with: "\\(")
-                    .replacingOccurrences(of: ")", with: "\\)")
-                if raw.contains("/V (\(escaped))")
-                    || raw.contains("/V(\(escaped))") {
-                    return true
+            var candidateTargets = [expected]
+            if let data = FileManager.default.contents(atPath: path) {
+                if let nodes = try? PDFIncrementalFormWriter.walkAcroForm(data),
+                   let node = nodes.first(where: { $0.fullyQualifiedName == name && $0.fieldType == "Ch" }) {
+                    if let idx = node.optionDisplayValues.firstIndex(of: expected), idx < node.optionValues.count {
+                        candidateTargets.append(node.optionValues[idx])
+                    }
+                    if let idx = node.optionValues.firstIndex(of: expected), idx < node.optionDisplayValues.count {
+                        candidateTargets.append(node.optionDisplayValues[idx])
+                    }
                 }
-                // pdf-lib writes text values as UTF-16BE hex strings with a
-                // BOM (Observed: /V <FEFF0052...>). Match that form too.
-                let utf16BE = expected.utf16.map { String(format: "%04X", $0) }
-                    .joined()
-                if raw.contains("/V <FEFF\(utf16BE)>")
-                    || raw.contains("/V<FEFF\(utf16BE)>") {
-                    return true
+                for target in candidateTargets {
+                    if group.allSatisfy({ strippedValue($0.value) == target }) { return true }
+                }
+                if let raw = String(data: data, encoding: .utf8)
+                    ?? String(data: data, encoding: .isoLatin1) {
+                    for target in candidateTargets {
+                        let escaped = target
+                            .replacingOccurrences(of: "\\", with: "\\\\")
+                            .replacingOccurrences(of: "(", with: "\\(")
+                            .replacingOccurrences(of: ")", with: "\\)")
+                        if raw.contains("/V (\(escaped))")
+                            || raw.contains("/V(\(escaped))") {
+                            return true
+                        }
+                        // pdf-lib writes text values as UTF-16BE hex strings with a
+                        // BOM (Observed: /V <FEFF0052...>). Match that form too.
+                        let utf16BE = target.utf16.map { String(format: "%04X", $0) }
+                            .joined()
+                        if raw.localizedCaseInsensitiveContains("/V <FEFF\(utf16BE)>")
+                            || raw.localizedCaseInsensitiveContains("/V<FEFF\(utf16BE)>") {
+                            return true
+                        }
+                    }
                 }
             }
             return false

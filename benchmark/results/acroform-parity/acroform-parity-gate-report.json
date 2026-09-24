@@ -43,7 +43,7 @@
           "provider" : "qpdf",
           "role" : "verifier",
           "specComplete" : true,
-          "verifiedFixtures" : 9
+          "verifiedFixtures" : 17
         },
         {
           "canDetect" : true,
@@ -110,7 +110,7 @@
           "provider" : "qpdf",
           "role" : "verifier",
           "specComplete" : true,
-          "verifiedFixtures" : 9
+          "verifiedFixtures" : 22
         }
       ],
       "crossProviderAgreement" : 1,
@@ -142,14 +142,14 @@
           "canRead" : true,
           "canRoundTrip" : true,
           "canWrite" : true,
-          "confidence" : 0.9375,
-          "decision" : "experimental",
-          "failedFixtures" : 1,
+          "confidence" : 1,
+          "decision" : "production_ready",
+          "failedFixtures" : 0,
           "fieldType" : "choice",
           "provider" : "pdf-lib",
           "role" : "provider",
           "specComplete" : true,
-          "verifiedFixtures" : 15
+          "verifiedFixtures" : 16
         },
         {
           "canDetect" : true,
@@ -163,16 +163,16 @@
           "provider" : "qpdf",
           "role" : "verifier",
           "specComplete" : true,
-          "verifiedFixtures" : 9
+          "verifiedFixtures" : 16
         }
       ],
       "crossProviderAgreement" : 1,
-      "decision" : "Mixed: production_ready, experimental",
+      "decision" : "All providers production-ready for choice",
       "fieldType" : "choice",
       "fixtureCount" : 40,
       "ghostFields" : 0,
-      "isProductionReady" : false,
-      "roundTripSuccessRate" : 0.96875
+      "isProductionReady" : true,
+      "roundTripSuccessRate" : 1
     },
     {
       "capabilities" : [
@@ -229,7 +229,7 @@
     }
   ],
   "gatePassed" : false,
-  "generatedAt" : "2026-09-24T12:23:36Z",
+  "generatedAt" : "2026-09-24T13:30:53Z",
   "measurement" : {
     "independentEngine" : "pdf-lib (pure-JS, benchmark\/acroform-lane)",
     "independentVerifier" : "qpdf (qpdf --json structural read)",

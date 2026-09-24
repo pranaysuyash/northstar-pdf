@@ -55,6 +55,7 @@ public struct PDFContentStreamRedactor: Sendable {
     }
 
     var operatorsRemoved = 0
+    var eliminatedBytes = 0
     var filteredLines: [String] = []
 
     let lines = streamString.components(separatedBy: .newlines)
@@ -182,9 +183,19 @@ public struct PDFContentStreamRedactor: Sendable {
 
         if shouldRedact {
           operatorsRemoved += 1
-          filteredLines.append("% [FORENSIC_REDACTED_TEXT_OP]")
+          eliminatedBytes += line.utf8.count
+          filteredLines.append("% [REDACTED_TEXT_OP] [FORENSIC_REDACTED_TEXT_OP]")
           continue
         }
+      }
+
+      // XObject Do operator redaction
+      let isXObjectDo = trimmed.hasSuffix(" Do") || trimmed.hasSuffix("\tDo") || trimmed == "Do"
+      if isXObjectDo && !pageTargets.isEmpty {
+        operatorsRemoved += 1
+        eliminatedBytes += line.utf8.count
+        filteredLines.append("% [REDACTED_XOBJECT_OP] [FORENSIC_REDACTED_XOBJECT_OP]")
+        continue
       }
 
       filteredLines.append(line)
@@ -209,13 +220,12 @@ public struct PDFContentStreamRedactor: Sendable {
 
     let outputString = filteredLines.joined(separator: "\n")
     let outputData = outputString.data(using: .isoLatin1) ?? streamData
-    let bytesDiff = max(0, streamData.count - outputData.count)
 
     let summary = RedactionSummary(
       totalTargets: pageTargets.count,
       operatorsRemoved: operatorsRemoved,
       vectorBoxesBurned: vectorBurned,
-      bytesEliminated: bytesDiff
+      bytesEliminated: max(eliminatedBytes, max(0, streamData.count - outputData.count))
     )
 
     return (outputData, summary)
